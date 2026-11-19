@@ -48,9 +48,12 @@ umgebung() {
 echo "${C}Python-Umgebungen:${N}"
 fehler=0
 umgebung "Bildverarbeitung + GPU (venv-seg)" "$SEG" "import torch, cv2, numpy, kornia; assert torch.cuda.is_available()" || fehler=1
-umgebung "COLMAP-Python (venv-colmap)" "$COL" "import pycolmap, numpy" || { fehler=1; echo "          pycolmap ist ein eigener CUDA-Bau und steht NICHT in der Paketliste (siehe modelle/LIZENZ_WERKZEUGE.md / colmap-build)"; }
+umgebung "COLMAP-Python (venv-colmap)" "$COL" "import pycolmap, numpy" || fehler=1
 umgebung "Generator (~/.venvs/rcpark)" "$GEN" "import numpy, trimesh, manifold3d" || fehler=1
-if [ -x "$COLMAP_BIN" ]; then echo "  ${G}✔ ok${N}    COLMAP-Programm ($COLMAP_BIN)"; else echo "  ${R}✘ FEHLT${N} COLMAP-Programm $COLMAP_BIN (eigener Bau)"; fehler=1; fi
+if [ -x "$COLMAP_BIN" ]; then echo "  ${G}✔ ok${N}    COLMAP-Programm ($COLMAP_BIN)"; else echo "  ${R}✘ FEHLT${N} COLMAP-Programm $COLMAP_BIN (eigener Bau aus dem Quellcode, kein apt)"
+  read -r -p "          jetzt selbst bauen (tools/umgebung/colmap-bauen.sh, ca. 1-2 h)? [j/N] " a
+  if [ "$a" = "j" ] || [ "$a" = "J" ]; then bash tools/umgebung/colmap-bauen.sh || fehler=1; else fehler=1; fi
+fi
 if command -v nvidia-smi >/dev/null; then echo "  GPU:    $(nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader 2>/dev/null | head -1)"; else echo "  ACHTUNG keine GPU (nvidia-smi fehlt)"; fi
 if [ $fehler = 1 ]; then
   read -r -p "Es fehlt etwas (siehe oben). Trotzdem weiter? [j/N] " a; [ "$a" = "j" ] || [ "$a" = "J" ] || exit 2
