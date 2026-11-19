@@ -107,5 +107,6 @@ k=$($P -I tools/test_konsens_urteil.py 2>&1); [ $? = 0 ] && ok "Konsens-Mapper a
 k=$($P -I tools/test_vorpruefen_cache.py 2>&1); [ $? = 0 ] && ok "Zwischenspeicher Bildvorpruefung (bleibt ueber Neustart, geaenderte Datei/Referenz/Schwelle = neu rechnen)" || { rot "vorpruefen_cache: $(echo "$k" | tail -2)"; }
 k=$($P -I tools/test_netz_fotos_holen.py 2>&1); [ $? = 0 ] && ok "Netzfotos in der Kette (netz_fotos_holen: Suchbegriffe, Umkreis aus koordinate_utm, Zwischenspeicher je Quelle, Trockenlauf)" || { rot "netz_fotos_holen: $(echo "$k" | tail -2)"; }
 k=$($P -I tools/test_wolke_gruppen.py 2>&1); [ $? = 0 ] && ok "Wolken-Gruppen-Tor (Bildgruppe setzt Punkte hoch ueber die LoD2-Hoehe: auffaellig; gute Gruppe und unbewertbare Punkte nicht)" || { rot "wolke_gruppen: $(echo "$k" | tail -2)"; }
+k=$($P -I tools/test_seiten_erkennen.py 2>&1); [ $? = 0 ] && ok "Seitenerkennung (Gemeinschaften im Paar-Graphen trennen zwei Seiten, Zusammenhangsteile, Urteil-Schwelle)" || { rot "seiten_erkennen: $(echo "$k" | grep FEHLER | head -3)"; }
 k=$($P -I tools/test_brennweite_waehlen.py 2>&1); [ $? = 0 ] && ok "Brennweite aus EXIF-Pixelgroesse + GPS-Gegenprobe (Martinstor-061-Fall, Seitenverhaeltnis-Regel)" || { rot "brennweite_waehlen: $(echo "$k" | head -2 | tr '\n' ' ')"; }
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

@@ -7,6 +7,9 @@ Das ist keine Rechtsberatung. Offen ist immer, ob Messwerte/Ergebnisse, die mit 
 ## ⚠ Werkzeuge, bei denen die Lizenz (noch) nicht zu kommerzieller Nutzung passt
 | Werkzeug | Lizenz | Status | Wo genutzt | Was tun vor Verkauf |
 |---|---|---|---|---|
+| **Doppelgangers** (Cai et al. ICCV 2023, Code + Gewichte `doppelgangers_classifier_loftr.pt`) | **MIT** (geprüft 2026-11-19, LICENSE im Repo + GitHub-API) ; Trainingsbilder Wikimedia (ungeprüft, ob das die Gewichte einschränkt) | ok | `tools/doppelgaenger_paare.py`, `tools/seiten_erkennen.py` (Seitenverwechslung); `/media/oem/scan/doppelgangers/` | Gewichte-Lizenz vor Verkauf nachsehen; Ergebnis ist nur ein Paarfilter (keine Geometrie daraus) |
+| **LoFTR** (kornia `pretrained='outdoor'`) | Apache 2.0 (Code kornia/LoFTR, ungeprüft für die Gewichte: MegaDepth-Training) | ok / ungeprüft | Zuordnungen für den Doppelgangers-Prüfer | vor Verkauf Gewichte-Lizenz nachsehen |
+| **Doppelgangers++** (2024, MASt3R-Merkmale) | MASt3R **CC BY-NC-SA 4.0** (Websuche 2026-11-19, ungeprüft an der Quelle) | ⚠ nicht verwendet | – | nicht einsetzen |
 | **VGGT-1B** (Meta, Gewichte `facebook/VGGT-1B`) | **CC BY-NC 4.0** (geprüft, HF-API) | ⚠ nur Forschung; Nutzer hat am 2026-10-31 "nur zur Forschung testen" gewählt | geplanter Fototest `/media/oem/scan/vggt/` | Ergebnisse nur als Hinweis verwenden, nichts daraus ins Produkt übernehmen, bis Lizenz geklärt. Alternative: `VGGT-1B-Commercial` (geprüft: `gated: manual`, Lizenz "other", Antrag nötig) |
 | MASt3R / DUSt3R (Naver) | CC BY-NC-SA (ungeprüft) | ⚠ noch nicht benutzt | – | nicht verwenden, bis geprüft |
 | Depth Anything V2 (größere Modelle) | CC BY-NC (ungeprüft; kleinste Variante Apache-2.0, ungeprüft) | ⚠ noch nicht benutzt | – | nur kleine Variante oder anderes Modell, nach Prüfung |
