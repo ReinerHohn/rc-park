@@ -149,7 +149,8 @@ def main():
     for t, meta in info.items():
         if not meta["url"]: continue
         safe = t.replace("File:", "").replace(" ", "_")
-        safe = "".join(c for c in safe if c.isalnum() or c in "._-")[:80]
+        safe = "".join(c for c in safe if c.isalnum() or c in "._-"); stamm_, ext_ = os.path.splitext(safe)
+        safe = stamm_[:max(1, 80 - len(ext_))] + ext_      # 19.11.2026 (Martinstor, 75 LABW-Bilder): der Schnitt auf 80 Zeichen nahm langen Titeln die Endung - Vorpruefung und SfM sahen die Dateien nie
         dst = os.path.join(a.out, f"{n:03d}_{safe}")
         daten = None
         for versuch in range(4):                                   # 429 (Ratenlimit) mit Wartezeit wiederholen; Datei erst nach Erfolg schreiben

@@ -221,7 +221,20 @@ def main():
     if dran("sfm"):
         # 17.11.2026: (1) scheiterte die SfM, rechneten Tore und alle Folgestufen mit Wolke/Ausrichtung eines FRUEHEREN Laufs weiter. (2) pipeline_objekt.py endet auch dann mit rc 0, wenn sein
         # LoD2-Abgleich abstuerzt (Zeile 'abgleich ... FEHLER' steht nur in pipe/pipeline.log) - dann sind Wolke und Ausrichtung alt. Beides: Abbruch statt stiller Weiterarbeit. 'lage' gilt bis zum naechsten Tor-Lauf als ungeprueft.
-        t_s = time.time(); rc_s = lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe] + (["--mapper", a.mapper] if a.mapper else []), log, platz=[P])[0]
+        # 19.11.2026: Fotosatz geaendert (neue Netzfotos/Videobilder) -> SfM NEU. Vorher galt 'sfm/sparse/0 existiert' als erledigt: neu geholte Bilder kamen nie ins Modell.
+        import hashlib, sqlite3
+        fsj = os.path.join(P, "fotosatz.json"); namen_ = sorted(os.listdir(FV)) if os.path.isdir(FV) else []; sha_ = hashlib.sha1("\n".join(namen_).encode()).hexdigest(); neu_sfm = []
+        if os.path.isdir(os.path.join(P, "sfm", "sparse", "0")):
+            alt_ = json.load(open(fsj)) if os.path.isfile(fsj) else None
+            if alt_ is None:                                                    # Lauf vor dem 19.11.: Bildnamen aus der SfM-Datenbank
+                try:
+                    c_ = sqlite3.connect("file:" + os.path.join(P, "sfm", "db.db") + "?mode=ro", uri=True); nd_ = sorted(r_[0] for r_ in c_.execute("SELECT name FROM images")); c_.close()
+                    alt_ = dict(n=len(nd_), sha=hashlib.sha1("\n".join(nd_).encode()).hexdigest())
+                except Exception as e_: print("HINWEIS Fotosatz des alten SfM-Laufs nicht lesbar (wird wiederverwendet):", e_, flush=True)
+            if alt_ and alt_.get("sha") != sha_:
+                neu_sfm = ["--neu", "sfm"]; notiz(B, "sfm_neu", True, hinweis=f"Fotosatz geaendert ({alt_.get('n')} -> {len(namen_)} Bilder): SfM und dichte Wolke werden neu gerechnet, alter Stand beiseite (pipe/*.alt_<zeit>, nicht geloescht)")
+        t_s = time.time(); rc_s = lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe] + (["--mapper", a.mapper] if a.mapper else []) + neu_sfm, log, platz=[P])[0]
+        if rc_s == 0: json.dump(dict(n=len(namen_), sha=sha_, zeit=time.strftime("%Y-%m-%d %H:%M")), open(fsj, "w"))
         B["lage"] = dict(bestanden=None, hinweis="neue SfM - Lage-Tore noch nicht gelaufen (Stufe 'tore')")
         mwj = os.path.join(P, "sfm", "mapper_wahl.json")                         # 19.11.2026 (Nutzer): trug der Konsens-Mapper nicht, steht der DATENMANGEL als eigene rote Zeile im Bericht (nie still die langsamere/schlechtere Methode)
         try:
