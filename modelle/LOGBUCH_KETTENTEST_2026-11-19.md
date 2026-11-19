@@ -179,3 +179,11 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
 | 29 | Zeitfenster um Videotreffer (Gegenseite/Durchgang) | Q | gebaut |
 | 30 | Videosuche: Zusaetze 'walking tour', 'Rundgang', 'Fuehrerstandsmitfahrt/cab ride' + laengere Clips, nur der Abschnitt um die Treffer | Q | offen |
 | 31 | Gegenseiten-Referenz: nach dem ersten Mapper Bilder der schwach gedeckten Seite als ZUSAETZLICHE Referenzfotos der Vorpruefung nehmen und nicht bestandene Bilder erneut pruefen | Q | offen |
+
+## 11:46 Martinstor, Lauf mt_gk3t: Mapper fertig (1990 Bilder, mit Zeitfenster-Bildern)
+- Konsens-Mapper 4072 s (68 min; erster Lauf mit 1032 Bildern: 33 min). Rueckgrat 677 von 1265 gemeinsamen, im Modell 1012 von 1990, 603 unstabil. Kein Datenmangel.
+- Zeitfenster-Bilder: 453 von 596 registriert - die Regel bringt Bilder ins Modell.
+- GEGENSEITE: Kameras hinter dem Turm 22 statt 4 (Clips jRN8bKSDj2U 12, o34426Ez5_U 6, 4 Fotos), aber Turmpunkte je 45-Grad-Sektor weiter 12482/12703 vorn gegen 35/30/725 hinten -> Gegenseite in der duennen Wolke weiter fast leer. Das Zeitfenster allein loest es NICHT; die Clips laufen offenbar kaum durch das Tor bzw. blicken dahinter nicht zurueck.
+- Fruehe 3D-Seite (duenne Wolke + Kameras) 1 min nach dem Mapper: neues Modell ueber 562 gemeinsame Rueckgrat-Kameras (Sim3, Rest 0,15 m) ins Metersystem der Pruefausrichtung gebracht - keine neue Ausrichtung noetig. https://claude.ai/artifact/8CrWrbZYSBDfGgdE2nKxTH (Skripte im Scratchpad mt3d/duenn2*.py)
+- Verbesserung 32 (Idee): diese fruehe Seite + Sektor-Zaehlung (Kameras und Punkte je Turmseite) als Kettenstufe direkt nach dem Mapper; kamera_abdeckung zaehlt nur Kameras, nicht ob die Seite Punkte bekommt.
+- Naechster Schritt Gegenseite: gezielte Videosuche (Ideen 30/31) laeuft parallel zur dichten Wolke (nur Netz/CPU).
