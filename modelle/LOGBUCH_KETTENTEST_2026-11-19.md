@@ -345,3 +345,11 @@ REIHENFOLGE (Vorschlag): erst 38-41 + 43 (stille Fehler, je < 1 h), dann 47 + 45
 - Bild audit/fein_vs_schnell_belegung_1119.png: Belegung fast gleich; fein macht die Loecher an Uhr/Fenstern sauberer, schnell hat dort Streupunkte.
 - URTEIL: fein bringt ~1/3 weniger Fehlpunkte und 3,4 cm duennere Wand, aber nicht mehr Putzflaeche, fuer 6,5-fache Zeit. Da die Wolke nach der Kernmethode nur Lage-Veto ist, bleibt fein OPTIONAL (Startskript bietet es nachts an), nicht automatisch. Sinnvoll gezielt dort, wo eine Wand aus der Wolke vermessen wird (Wanddicke, Tiefenstufen).
 - Zeitgewinn-Idee (nicht gemessen): fein nur fuer die Bilder einer Seite/Wand statt aller.
+
+## 21:30-22:10 A/B globaler Mapper alt (ce2b5ab, Stand 30.10.) gegen neu (c1b5a967, 18.11.), Schwabentor 504 Bilder, gleiche DB
+- alt L1_IRLS: 344 s, 494 Bilder, 79 534 Punkte, 1,21 px
+- neu L1_IRLS: 422 s (letzter BA-Durchgang 117 s statt 20 s; parallel lief meine CPU-Messung -> evtl. gestoert), 494, 78 808, 1,10 px
+- neu Ceres: 385 s, 493, 91 270 Punkte (+15 %), 1,08 px
+- neu Ceres + COVARIANCE: 376 s, 493, 78 944, 1,18 px. (Erster Versuch mit COVARIANCE brach ab: "not implemented for the L1_IRLS rotation averaging backend" -> braucht --GlobalMapper.ra_backend CERES.)
+- Vorlaeufig: neuer Stand nicht schneller; Genauigkeitsgewichtung bringt hier nichts; Ceres-Drehungsmittelung gibt die meisten Punkte. Rueckprojektionsfehler allein ist kein Genauigkeitsbeweis (Filter verschieden).
+- Gegenprobe laeuft (colmap-ab3): alter Bau mit Ceres + neuer Bau L1_IRLS wiederholt ungestoert.
