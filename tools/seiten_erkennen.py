@@ -8,7 +8,8 @@ Verfahren (ohne Vorwissen, ohne Kamerastandorte):
   1. GEMEINSCHAFTEN im Paar-Graphen (Louvain, Kantengewicht = bestaetigte Zuordnungen >= 30): Bilder einer Seite haengen untereinander stark zusammen,
      Seiten untereinander schwach. Martinstor: Gruppe 0 = 63 gepruefte Bilder 'Nebenhaus rechts' / 0 'links', Gruppe 1 = 0 / 7, Gruppe 3 = 0 / 12.
   2. Je Gruppenpaar mit >= --min-paare Verbindungen: Stichprobe der Paare durch den gelernten Paar-Pruefer (tools/doppelgaenger_paare.py, MIT).
-     Median p_gleich < --schwelle = VERWECHSLUNG (Martinstor: verwechselt 0,32; echt 0,57 / 0,75 / 0,89; ANNAHME Schwelle 0,45, 'unklar' bis 0,55 wird gemeldet, nicht geloescht).
+     ECHT, wenn >= 10 % der Stichprobe eindeutig gleich sind (p_gleich >= 0,8); VERWECHSELT, wenn fast kein Paar gleich aussieht (90. Perzentil < 0,5);
+     sonst 'unklar' (gemeldet, nicht geloescht). Martinstor: verwechselt p90 0,42 und 0 % eindeutig; echt 25 / 47 / 65 % eindeutig. Der Median trennt NICHT (siehe urteil()).
   3. --db-aus: Kopie der Datenbank, in der ALLE Paare zwischen verwechselten Gruppen geloescht sind (matches + two_view_geometries).
      Dazu: Gruppen-Zusammenhang ohne die geloeschten Verbindungen; Teile ohne ein einziges Objektfoto (--referenz Namensanfang) = FREMD (anderes Bauwerk aus
      Stadtrundgang-Videos) -> ihre Paare werden ebenfalls geloescht (sie kosteten am Martinstor 35 min Mapper-Zeit ohne Nutzen), Liste in seiten.json 'fremd'.
@@ -45,8 +46,14 @@ def teile(n, verbunden):
     return sorted(aus.values(), key=lambda v: (-len(v), v[0]))
 
 
-def urteil(p_median, schwelle, unklar=0.10):
-    return "verwechselt" if p_median < schwelle else ("unklar" if p_median < schwelle + unklar else "echt")
+def urteil(p, hoch=0.8, min_hoch=0.10, p90_falsch=0.5):
+    """p = p_gleich der Stichprobe einer Gruppenverbindung. ECHT, wenn es eindeutig gleiche Paare GIBT (>= min_hoch der Paare ueber hoch): bei einer echten Verbindung
+    sind immer einige Paare leicht (aehnlicher Standort). VERWECHSELT, wenn fast kein Paar gleich aussieht (90. Perzentil < p90_falsch). Sonst unklar (nichts loeschen).
+    Der Median taugt nicht: echte Paare aus Video/Drohne liegen oft bei 0,4-0,6 (Martinstor 19.11.2026: verwechselt 0,33, echt Drohne<->Strasse 0,38)."""
+    p = np.asarray(p, float)
+    if len(p) < 6: return "unklar"
+    if (p >= hoch).mean() >= min_hoch: return "echt"
+    return "verwechselt" if np.percentile(p, 90) < p90_falsch else "unklar"
 
 
 def main(argv=None):
@@ -72,13 +79,15 @@ def main(argv=None):
         for (k, _, _), e in zip(proben, erg):
             if e[2] is not None: P[k].append(e[2])
         for k in kand:
-            pm = float(np.median(P[k])) if P[k] else 1.0; verb.append(dict(a=k[0], b=k[1], paare=len(quer[k]), geprueft=len(P[k]), p_median=round(pm, 3), urteil=urteil(pm, a.schwelle)))
+            pm = float(np.median(P[k])) if P[k] else 1.0
+            verb.append(dict(a=k[0], b=k[1], paare=len(quer[k]), geprueft=len(P[k]), p_median=round(pm, 3), p90=round(float(np.percentile(P[k], 90)), 3) if P[k] else None,
+                             anteil_hoch=round(float((np.array(P[k]) >= 0.8).mean()), 3) if P[k] else None, p=[round(x, 3) for x in P[k]], urteil=urteil(P[k])))
     falsch = {(v["a"], v["b"]) for v in verb if v["urteil"] == "verwechselt"}
     # Zusammenhang der Gruppen ohne die verwechselten Verbindungen (kleine Gruppen und ungepruefte schwache Verbindungen zaehlen als echt)
     S = teile(len(C), [k for k in quer if k not in falsch]); ref = lambda k: sum(1 for i in C[k] if nm[i].startswith(a.referenz))
     seiten = [s for s in S if sum(ref(k) for k in s) > 0]; fremd_g = {k for s in S if sum(ref(k) for k in s) == 0 for k in s}; fremd = sorted(nm[i] for k in fremd_g for i in C[k])
-    for v in sorted(verb, key=lambda v: v["p_median"] if v["p_median"] is not None else 9)[:14]:
-        print(f"  Gruppe {v['a']:3d} ({len(C[v['a']]):4d} Bilder) <-> {v['b']:3d} ({len(C[v['b']]):4d}): {v['paare']:5d} Paare, p_gleich Median {v['p_median']}  {v['urteil'].upper() if v['urteil'] != 'echt' else 'echt'}")
+    for v in sorted(verb, key=lambda v: v.get("p90") if v.get("p90") is not None else 9)[:40]:
+        print(f"  Gruppe {v['a']:3d} ({len(C[v['a']]):4d} Bilder) <-> {v['b']:3d} ({len(C[v['b']]):4d}): {v['paare']:5d} Paare, p_gleich Median {v['p_median']}, 90 % unter {v.get('p90')}, eindeutig gleich {v.get('anteil_hoch')}  {v['urteil'].upper() if v['urteil'] != 'echt' else 'echt'}")
     for n, s in enumerate(seiten[:6]):
         q = collections.Counter(quelle(nm[i]) for k in s for i in C[k]); print(f"  Teil {n}: {sum(len(C[k]) for k in s)} Bilder in {len(s)} Gruppen ({', '.join(f'{x[-14:]} {c}' for x, c in q.most_common(4))})")
     geloescht = 0

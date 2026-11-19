@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""seiten_geometrie.py <seiten.json> <db.db> <bilder_ordner> --arbeit <ordner> [--db-aus <kopie.db>] [--sim3 0.5] [--parallel 4] [--nur-messen]
+"""STAND 19.11.2026: NICHT IN DER KETTE - Messung am Martinstor trennt nicht (siehe unten ERGEBNIS). Nur als Messwerkzeug behalten.
+ERGEBNIS Martinstor (25 gemessene Verbindungen): Sim3-Anteil 0,11-0,58, fast alles < 0,5 - auch Verbindungen, die der Pruefer mit 0,90 / 0,94 fuer echt haelt
+(1<->16: 1239 gemeinsame Punkte, 0,30). Ursache: Teilmodelle kleiner Videogruppen sind in sich verzogen, eine starre Abbildung passt dann auch bei echter Verbindung nur
+teilweise; die 75 % der Handmessung galten fuer zwei Haelften EINER grossen Gruppe. Dazu teuer: Gruppe mit 242 Bildern nicht in 40 min fertig (CPU), eine Gruppe ohne Modell.
+
+seiten_geometrie.py <seiten.json> <db.db> <bilder_ordner> --arbeit <ordner> [--db-aus <kopie.db>] [--sim3 0.5] [--parallel 4] [--nur-messen]
 
 Zweite Stufe der SEITENERKENNUNG (nach tools/seiten_erkennen.py): GEOMETRISCHE Gegenprobe jeder verdaechtigen Gruppenverbindung.
 Warum: der gelernte Paar-Pruefer allein trennt nicht sicher (Martinstor 19.11.2026: 31 von 80 Verbindungen unter der Schwelle, darunter Drohne <-> Strasse;
