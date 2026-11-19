@@ -260,3 +260,27 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
   (3) Turmwaende bei x = +4,12 und -4,12 m (Tiefe 8,2 m; LoD2-Sockel 11,6 m), Dachflaechen beider Seiten treffen sich an der Spitze (audit/zweiseitig_turm_1119.png).
 - 3D-Seite: https://claude.ai/artifact/She8oNNLBDGohUwFKbmFGh, Bilder audit/zweiseitig_*_1119.png. Skripte tools/versuche/seiten_*_1119.py.
 - OFFEN: Genauigkeit vorn/hinten nur ueber LoD2-Achse (+-0,4 m), Massstab B aus Turmwand-Paaren; dichte Wolke beider Seiten; verlorene Clips wieder anhaengen; alles in die Kette (Stufe 'seiten'), Seitentest Blickrichtung als Tor; Schwabentor/Kaufhaus gegenpruefen.
+
+## 16:50 DURCHSICHT der ganzen Kette (Nutzer: "tief durchgehen, Schwachpunkte, Tempo, Qualitaet")
+Quelle: Code-Durchsicht durch einen zweiten Durchgang (nur gelesen) + Zeiten aus den Laeufen. [n] = von mir im Code nachgeprueft, [d] = nur aus der Durchsicht.
+Gemessene Zeiten Martinstor 1990 Bilder: Merkmale+Paare ~19 min (293 389 Paare), Mapper 68 min (ohne fremde Bilder 45), dichte Wolke 27 min (Fusion 4,5), Tore + 3 Korrekturschleifen 7 min, Vorpruefung aus Cache 6 s; davor seriell Videosuche 77 min (Median 4600 s), Vorpruefung 23 min (ohne Cache), Netzfotos 11 min, Commons 3 min; Seitenerkennung 22-30 min.
+STILLE FEHLER
+38 [n] wolke_neu_fusionieren.py:104 Neu-Fusion im Korrekturweg ohne RAM-Schutz (keine Teilfusion) - bei > ~200 Bildern OOM, danach laeuft die Kette auf der UNGEFILTERTEN Wolke weiter.
+39 [n] iphone_sfm.py:44-45 SfM-Cache gilt als gut, wenn Bildzahl stimmt und irgendein Paar existiert - nach Abbruch mitten im Abgleich rechnet der Mapper auf halbem Paarnetz ("aus Cache").
+40 [n] global_mapper_konsens.py:77 Absturz des Bewertungsskripts -> n_reg 0 -> Meldung DATENMANGEL, fertiges Konsens-Modell verworfen, alter langsamer Weg.
+41 [d] gesamtkette.py:79 + iphone_sfm.py:115-132: 3-h-Stufengrenze toetet den Rueckfall (schrittweiser Mapper, kein Zwischenstand) - naechster Lauf beginnt denselben Weg von vorn (heute zweimal rc 124).
+42 [d] netz_fotos_holen.py:74-75 abgebrochene/gedrosselte Ernte zaehlt 7 Tage als frisch; Suchbegriffe/--max nicht im Schluessel.
+43 [d] pipeline_objekt.py:201-203 gescheiterte Bildwahl -> stillschweigend ALLE Bilder (auch unstabile) in die dichte Wolke, kein Eintrag im Bericht; :247 Rueckgabewert des Dichte-Skripts ignoriert.
+44 [d] bilder_vorpruefen.py:68 Cache-Schluessel nur Referenz-DATEINAMEN (nicht Groesse/Zeit) - ersetztes Referenzfoto = alte Urteile; ein neues eigenes Foto verwirft dagegen alles (Schrittweite).
+QUALITAET
+45 [d] 50-%-Regeln (global_mapper_konsens.py:35, pipeline_objekt.py:160) zaehlen ungepruefte Zeitfenster-Videobilder im Nenner: Martinstor 1012 von 1990, Ziel 995 = 17 Bilder Abstand zum falschen DATENMANGEL. -> Nenner = objektnahe Bilder (Seitenerkennung liefert 'fremd').
+46 [n] dicht_bildwahl.py:64-65 Zahl der Tiefenkarten-Bilder haengt vom FREIEN PLATTENPLATZ ab (Martinstor 354, 76 wegen Platz gestrichen) - nur im JSON sichtbar. :66-70 Auswahl nimmt die entferntesten Kameras zuerst; :21 'Objekt' = Median aller Punkte (trennt kaum). Berichtigung Punkt 18: die Bildwahl nutzt die Ausrichtung nicht.
+47 [n] clips_waehlen.py:42-43 / video_frames.py: je Clip die N SCHAERFSTEN Bilder des GANZEN Clips (bis 300), nicht der Trefferabschnitte aus video_suchen; Unschaerfe-Schwelle 20 statt 60. Martinstor: 84 % der Bilder sind Videobilder, 6 von 12 Clips mit 299-300 Bildern -> Quelle der 637 fremden Bilder.
+48 [d] Aufloesung vor der SfM ungemessen gedeckelt: Netzfotos 1600/1920 px, Video 1080p obwohl nach '4k' gesucht wird; SfM 2400 px / 6400 Merkmale ohne Messung.
+49 [d] sfm_lod2_ausrichten.py:225-322 Grobsuche um die KAMERAMITTE (nicht das Objekt), Kandidaten < 30 % im Raster ohne Meldung verworfen, Wolkenmitte > 20 m vom Objekt maskiert - bei Durchgangs-Clips kann die richtige Lage vor dem Feinfit herausfallen.
+50 [d] Paarliste iphone_sfm.py:18-27: keine Bildsuche; Schluesselbilder gegen ALLES (46 % der Paare Schluesselbild x Foto, 28 % Clip x Clip) - liefert vermutlich die Vorder-/Rueckseiten-Paare; Videonachbarn nach Rang statt Zeit; Dateien mit Endung _2 gelten nicht als Videobild.
+TEMPO
+51 [n] gesamtkette.py:168-201 ~2 h streng nacheinander VOR der SfM (Commons -> Netz -> Videosuche -> Frames -> Vorpruefung); Videosuche ohne Cache (jedes Mal alle Vorschauen neu, Kandidatenliste ueberschrieben), prueft jedes Bild gegen alle Referenzen ohne fruehes Ende.
+52 [d] Inseltor (nur duenne Wolke) laeuft NACH der dichten Wolke und wird per Neu-Fusion repariert; jede --loesung k wiederholt die ganze Grobsuche (115 s, bis 413 s).
+53 (ich) Mapper: fremde Bilder vor dem Mapper streichen = 68 -> 45 min (gemessen). Seitenerkennung: Pruefer 0,6-0,8 s je Paar; Gruppen + Urteile zwischenspeichern (--pruefer-aus vorhanden), Stichprobe frueh beenden.
+REIHENFOLGE (Vorschlag): erst 38-41 + 43 (stille Fehler, je < 1 h), dann 47 + 45 (Videobilder nur aus Trefferabschnitten; behebt Fremdbilder an der Quelle), dann 51 (Vorstufen parallel + Videosuche-Cache), dann 46/48 mit Messung, 49/50 als Versuche.
