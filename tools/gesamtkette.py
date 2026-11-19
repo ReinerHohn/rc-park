@@ -255,6 +255,8 @@ def main():
         if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT)], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende
         if os.path.isdir(sp): erg["insel"] = lauf(B, f"tor_insel{tag}", [PYC, "-I", "tools/kette_insel_pruefen.py", ZR, sp], log, ok=(0, 3))[0]   # 15.11. (Schwabentor): Bildketten ohne Fremdstuetze (Videoclip) = Faecher/Geisterwolke; schreibt audit/kette_insel.json
         erg["grundriss"] = lauf(B, f"tor_grundriss{tag}", [PY, "-I", "tools/wolke_grundriss_pruefen.py", ZR, "--wolke", W], log)[0] if os.path.exists(W) else None
+        if os.path.isdir(sp) and os.path.exists(AU):                       # 19.11.2026 (Martinstor, schiefe uebergrosse Haeuserzeile aus einem Fernclip): setzt eine Bildgruppe Punkte hoch ueber die LoD2-Hoehe? -> audit/wolke_gruppen.json
+            erg["gruppen"] = lauf(B, f"tor_gruppen{tag}", [PYC, "-I", "tools/wolke_gruppen_pruefen.py", ZR, os.path.relpath(AU, ROOT), sp, "--schreiben"], log, ok=(0, 3))[0]
         return erg
 
     if dran("tore"):
@@ -264,7 +266,10 @@ def main():
             _o = json.load(open(os.path.join(ROOT, ZR)))
             if _o.get("lod2", {}).get("id") and "hoehen_tor" not in _o: _o["hoehen_tor"] = True; __import__("json_sicher").schreiben(os.path.join(ROOT, ZR), _o)
         except Exception as e_: print("hoehen_tor nicht gesetzt:", e_, flush=True)
-        if (not bestanden(erg) or erg.get("insel") == 3) and (erg.get("kamera_gelaende") == 3 or erg.get("insel") == 3) and erg.get("gps") in (0, None):   # 15.11.: Geisterwand aus Kameras unter Gelaende -> ohne sie neu fusionieren (Minuten), Tore wiederholen
+        def _gruppen_aus():                                                # Liste des Wolken-Gruppen-Tors nicht leer (leer = Ausrichtung selbst verdaechtig, dann nichts ausschliessen)
+            try: return bool(json.load(open(os.path.join(Z, "audit", "wolke_gruppen.json"))).get("ausschliessen"))
+            except Exception: return False
+        if ((not bestanden(erg) or erg.get("insel") == 3) and (erg.get("kamera_gelaende") == 3 or erg.get("insel") == 3) and erg.get("gps") in (0, None)) or (erg.get("gruppen") == 3 and _gruppen_aus()):   # 15.11.: Geisterwand aus Kameras unter Gelaende -> ohne sie neu fusionieren (Minuten), Tore wiederholen; 19.11.: auch wenn das Gruppen-Tor Bilder nennt (unabhaengig vom GPS-Tor, das am Martinstor blind ist)
             rc_f, _ = lauf(B, "neu_fusionieren", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe], log, ok=(0, 2), platz=[P])
             if rc_f == 0: erg = tore("_ohne_tiefe_kameras")
             if rc_f in (0, 2) and not bestanden(erg) and erg.get("grundriss") == 3:        # Haufen aus EINER Bildquelle (Geisterwand, Kameras nicht unter Gelaende) -> diese Bilder auch weg

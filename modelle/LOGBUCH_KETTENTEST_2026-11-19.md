@@ -142,3 +142,23 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
 | 12 | nur Rueckgrat-Kameras in die dichte Wolke | Q+G | gebaut |
 | 24 | 3D-Seite der Kette: Ausschnitt = Objektgrundriss + Rand, nicht die ganze Wolke; Ansichten vorher rendern | Q | offen (bisher von Hand) |
 | 25 | Tore: unstabile Kameras getrennt ausweisen (rot nur, wenn Rueckgrat-Kameras betroffen) | Q | offen |
+
+## 10:15-10:45 Warum fehlt eine Turmwand? + Wolken-Gruppen-Tor (Idee 26) gebaut
+- Messung am Turmschaft (8-32 m, Wandnormalen je 45-Grad-Sektor): gesehene Seite ~240 000 Punkte / 568 stabile Kameras; Flanken je ~30 000 / 20-35; Gegenseite < 3000 / 4 Kameras.
+  Mit ALLEN Kameras gleich wenig (735 gegen 742) -> nicht durch das Aussortieren der unstabilen Kameras verursacht.
+- Kontaktboegen (audit/bogen_gesehene_seite_1119.jpg, bogen_gegenseite_flanken_1119.jpg): praktisch alle Fotos und Clips zeigen DIESELBE Turmseite (die mit dem
+  Staffelgiebelhaus/McDonald's daneben). Die 4 Kameras 'auf der Gegenseite' sind Bilder eines Gangs durch die Durchfahrt und blicken vom Turm WEG die Strasse hinunter.
+  Die Flanken kommen nur aus Drohnenclips (Dach und obere Turmhaelfte von schraeg oben).
+- Unter den nicht registrierten Bildern sind einzelne Kandidaten der Gegenseite; ohne Brueckenbilder (gleiche Punkte auf beiden Seiten sieht kein Foto) kann der Mapper sie nicht anhaengen.
+  ANNAHME, nicht einzeln belegt.
+- Himmelsrichtung der fehlenden Seite: nach der Einpassung Sued-Suedwest; Einpassung noch 'mehrdeutig' -> nicht sicher.
+- NEU `tools/wolke_gruppen_pruefen.py` (Kette: tor_gruppen, wolke_neu_fusionieren liest audit/wolke_gruppen.json): Punkte > 6 m ueber der LoD2-Hoehe ihrer Umgebung (Umkreis 10 m)
+  oder > 4 m unter Gelaende = unmoeglich; Videoclip auffaellig ab 25 % seiner eigenen Punkte, Einzelfotos je Bild. Martinstor: Fernclip gjVSpDSd8rU 44 % + 6 Vorschaubilder = 22 Bilder.
+  Schutz: sind > 6 % ALLER Punkte unmoeglich, ist die Ausrichtung falsch -> nichts ausschliessen (alte, auf der Seite liegende Ausrichtung: 11,3 %; richtige: 1,8 %). 4,5 s.
+- Die Kette fusionierte bisher nur neu, wenn das GPS-Tor gruen war (am Martinstor blind) -> jetzt auch, wenn das Gruppen-Tor Bilder nennt.
+- 10:13 Martinstor-Kette `mt_gk3s` gestartet: 1503 Bilder (vorher 1032; 12 neue Clips, Netzfotos). Vorpruefung 6295 Bilder in 36 min (Zwischenspeicher nur 265 Treffer: Referenzsatz neu).
+| Nr | Idee | Art | Stand |
+|---|---|---|---|
+| 26 | Wolken-Gruppen-Tor | Q | gebaut |
+| 27 | Vorpruef-Zwischenspeicher: Schluessel haengt am ganzen Referenzsatz - aendert sich ein Referenzfoto, ist alles neu. Besser je (Bild, Referenzfoto) speichern | G | offen |
+| 28 | Gegenseite gezielt suchen: nicht registrierte Bilder, die das Objekt zeigen (Vorpruefung ja, Mapper nein), als Kontaktbogen + Fotoauftrag 'Bruecke' ausgeben | Q | offen |

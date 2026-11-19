@@ -114,6 +114,8 @@ def main():
     if aktiv is None: aktiv = list(alle)
     ki = os.path.join(od, "audit", "kette_insel.json")                    # 15.11.2026: Insel-Ketten (tools/kette_insel_pruefen.py) - Bilder ohne Fremdstuetze, Massstab der Kette nicht belegt
     if os.path.exists(ki): n0 = len(listen); listen |= set(json.load(open(ki))["ausschliessen"]); print(f"Insel-Ketten: {len(listen) - n0} weitere Bilder ausgeschlossen")
+    wg = os.path.join(od, "audit", "wolke_gruppen.json")                  # 19.11.2026 (Martinstor): Bildgruppen/Einzelfotos, die Punkte hoch ueber die LoD2-Hoehe setzen (tools/wolke_gruppen_pruefen.py)
+    if os.path.exists(wg): n0 = len(listen); listen |= {stamm(b) for b in json.load(open(wg)).get("ausschliessen", [])}; print(f"Wolken-Gruppen-Tor: {len(listen) - n0} weitere Bilder ausgeschlossen")
     aj = os.path.join(D, "stereo", "fusion_ausschluss.json"); gem_neu = not os.path.exists(aj)
     gem = dict(haufen=[], uebernommen=sorted(({stamm(b) for b in alle} - {stamm(b) for b in aktiv}) - listen)) if gem_neu else json.load(open(aj))
     if gem_neu and gem["uebernommen"]: print(f"Ausschluss uebernommen: {len(gem['uebernommen'])} Bilder fehlen in fusion.cfg und stehen heute in keiner Liste (frueherer Listenstand oder Haufenquelle) - bleiben ausgeschlossen, gemerkt in {aj}")
