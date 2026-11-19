@@ -329,3 +329,11 @@ REIHENFOLGE (Vorschlag): erst 38-41 + 43 (stille Fehler, je < 1 h), dann 47 + 45
 - Dichte Vorderseite mit Anhang (mt_dicht_n2, 384 Bilder, Fenster 11, ncc 0,05): 10,1 Mio Punkte (Teilfusion 7 Teile, 318 s).
 - 21:xx COLMAP-Testbau FERTIG mit tools/umgebung/colmap-bauen.sh: /media/oem/rcdaten/colmap-test/prefix/bin/colmap = COLMAP 4.3.0.dev0 c1b5a967 (18.11.) mit CUDA; Ceres 07a9526; CUDA aus pip im eigenen Ordner. ONNX 1.32.0 als Vorrat gesichert. Neu verfuegbar: FeatureMatching.type FLEXGLUE (min_covisibility 0,5), GlobalMapper.ra_reweighting {UNIFORM, INLIER_MATCH_COUNT, COVARIANCE}.
 - A/B gestartet (Job colmap-ab): Schwabentor db_orig 504 Bilder, view_graph_calibrator + global_mapper: alt / neu / neu mit COVARIANCE. Vergleich schnell gegen fein (Job fein-vgl, Rueckseite 74 Bilder, Fenster 11, ncc 0,05) laeuft.
+
+## 21:10-21:40 seiten_vereinen.py: Achse und Lot korrigiert (offener Punkt von 18:45)
+- Befund: Werkzeug setzte die Drehachse 2,1 m neben die Helmstange (Meter-System: +0,98/-1,30 statt -0,87/-0,26). Zwei Ursachen:
+  (1) Dachende/'alle hohen Punkte' liegen zur Kameraseite verschoben (abgewandte Dachhaelfte fehlt in jeder Seitenwolke): vorn +0,7/+1,2, hinten +1,4/+1,7 m.
+  (2) Kameralot (Bild-x-Achsen) 2,3 Grad verkippt; Wandnormalen der dichten Wolke (Turm 0,8, Haeuser 0,4, alle 0,3 Grad zur LoD2-Ausrichtung) belegen das LoD2-Lot. Bei 60 m Hoehe wanderte die Achse dadurch am Boden um 2 m.
+- Fix: `stange()` = oberstes Band (2,5 % H unter 99,9 %) der DICHTEN Wolke; `lot_aus_waenden()` schaerft das Lot aus Normalen senkrechter Ebenen nach (Ausgabe `lot_herkunft`). Dachende nur noch Ersatzweg, als unsicher markiert.
+- Ergebnis Martinstor: Achse oben -0,86/-0,20, am Boden -0,92/-0,52 (0,06 m neben der Handmessung), Einigkeit 0,67 % (0,37 m), Turmtiefe 0,18 H = 10,1 m (vorher 7,3; LoD2-Sockel 11,6), Urteil vereint.
+- Test `tools/test_seiten_vereinen.py` (synthetischer Turm, gekipptes Startlot) im Schnelltest; Schnelltest 0 Fehler. Lehre: das Kameralot ist eine Startschaetzung - wo eine dichte Wolke da ist, entscheiden die Waende.
