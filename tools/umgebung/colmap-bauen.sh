@@ -30,7 +30,7 @@ CUDA_PAKETE="nvidia-cuda-nvcc==13.2.86 nvidia-cuda-runtime==13.2.86 nvidia-cuda-
 # Systembibliotheken (aus apt: Grundbausteine, bei denen eine neuere Version nichts bringt; COLMAP/Ceres/CUDA selbst NICHT aus apt)
 APT="build-essential cmake ninja-build git libeigen3-dev libgoogle-glog-dev libgflags-dev libsqlite3-dev libcgal-dev
  libmetis-dev libsuitesparse-dev libblas-dev liblapack-dev libcurl4-openssl-dev libssl-dev libopengl-dev
- libopenimageio-dev libboost-dev libgmp-dev libmpfr-dev libunwind-dev"
+ libopenimageio-dev libgmp-dev libmpfr-dev libunwind-dev"
 
 echo "== COLMAP-Bau: Ziel $ZIEL, COLMAP $COLMAP_REF, Ceres $CERES_REF"
 fehl_apt=$(for p in $APT; do dpkg -s "$p" >/dev/null 2>&1 || echo -n "$p "; done)
@@ -52,6 +52,7 @@ for t in "$CUDA_DIR"/pip/nvidia/*/; do
   [ -d "$t/bin" ] && [ ! -e "$KOMBI/bin" ] && [ -x "$t/bin/nvcc" ] && ln -sfn "$t/bin" "$KOMBI/bin"
   [ -d "$t/nvvm" ] && ln -sfn "$t/nvvm" "$KOMBI/nvvm"
 done
+ln -sfn lib64 "$KOMBI/lib"   # CMake sucht neben bin/ in lib/ (19.11.: ohne -> "-lcudart_static kann nicht gefunden werden")
 for so in "$KOMBI"/lib64/lib*.so.*; do b=${so%%.so.*}.so; [ -e "$b" ] || ln -s "$(basename "$so")" "$b"; done   # libcublas.so -> libcublas.so.13 (zum Linken)
 "$KOMBI/bin/nvcc" --version | tail -1
 CUDSS=$(dirname "$(find "$CUDA_DIR/pip" -name 'libcudss.so.*' | head -1)")
@@ -70,7 +71,9 @@ export PATH="$KOMBI/bin:$PATH" LD_LIBRARY_PATH="$KOMBI/lib64:$CUDSS:${LD_LIBRARY
 
 # 2) Quellen holen (fester Stand = reproduzierbar; 'main'/'master' = neuester Stand fuer Testbauten)
 holen() { local url=$1 dir=$2 ref=$3; [ -d "$dir/.git" ] || git clone --quiet "$url" "$dir"; git -C "$dir" fetch --quiet origin; git -C "$dir" checkout --quiet "$ref"
-          [ "$ref" = main ] || [ "$ref" = master ] && git -C "$dir" pull --quiet --ff-only origin "$ref"; echo "  $(basename "$dir"): $(git -C "$dir" log -1 --format='%h %cd %s' --date=short | cut -c1-90)"; }
+          [ "$ref" = main ] || [ "$ref" = master ] && git -C "$dir" pull --quiet --ff-only origin "$ref"
+          git -C "$dir" submodule update --init --recursive --quiet   # Ceres bringt abseil als Untermodul mit (19.11.: ohne -> 'absl not found')
+          echo "  $(basename "$dir"): $(git -C "$dir" log -1 --format='%h %cd %s' --date=short | cut -c1-90)"; }
 mkdir -p "$QUELLE"
 holen https://github.com/ceres-solver/ceres-solver.git "$QUELLE/ceres" "$CERES_REF"
 holen https://github.com/colmap/colmap.git "$QUELLE/colmap" "$COLMAP_REF"

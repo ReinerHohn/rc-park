@@ -215,6 +215,14 @@ _dm = os.path.join(out, "stereo", "depth_maps")
 for _k in _g.glob(os.path.join(out, "stereo", "*_maps", "*.bin")):
     if os.path.getsize(_k) < 2048: os.remove(_k); print("kaputte Karte geloescht:", os.path.basename(_k), flush=True)
 _fertig = os.path.isdir(_dm) and len(_g.glob(os.path.join(_dm, "*.photometric.bin"))) >= _n and (STUFE != "fein" or len(_g.glob(os.path.join(_dm, "*.geometric.bin"))) >= _n)
+# 19.11.2026 FALLE: COLMAP rechnet fuer geom_consistency zuerst UNGEFILTERTE fotometrische Karten - sind schon (gefilterte) Karten der Stufe grob/schnell da,
+# ueberspringt es sie und die Feinstufe laeuft still auf den falschen Karten. -> abbrechen, ausser RCPARK_FEIN_KARTEN_NEU=1 (dann gefilterte Karten loeschen, neu rechnen).
+_pm = _g.glob(os.path.join(_dm, "*.photometric.bin")); _gm = _g.glob(os.path.join(_dm, "*.geometric.bin"))
+if STUFE == "fein" and not _fertig and _pm and not _gm:
+    if os.environ.get("RCPARK_FEIN_KARTEN_NEU") != "1":
+        print("ABBRUCH FEIN: " + str(len(_pm)) + " gefilterte fotometrische Karten (Stufe grob/schnell) liegen in " + _dm + " - die geometrische Pruefung braucht ungefilterte. Neu rechnen mit RCPARK_FEIN_KARTEN_NEU=1 (loescht sie) oder anderer Ordner.", flush=True); sys.exit(5)
+    for _k in _pm + _g.glob(os.path.join(out, "stereo", "normal_maps", "*.photometric.bin")): os.remove(_k)
+    print("FEIN: gefilterte fotometrische Karten geloescht (RCPARK_FEIN_KARTEN_NEU=1), werden ungefiltert neu gerechnet", flush=True)
 if _fertig:
     print("Tiefenkarten aus Cache (" + str(_n) + " Bilder, Modus " + STUFE + ")", flush=True)
 else:

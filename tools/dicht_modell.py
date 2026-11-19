@@ -21,6 +21,10 @@ def main(argv=None):
     for k in glob.glob(os.path.join(a.aus, "stereo", "*_maps", "*.bin")):
         if os.path.getsize(k) < 2048: os.remove(k)
     fertig = os.path.isdir(dm) and len(glob.glob(os.path.join(dm, "*.photometric.bin"))) >= n and (not FEIN or len(glob.glob(os.path.join(dm, "*.geometric.bin"))) >= n)
+    _pm = glob.glob(os.path.join(dm, "*.photometric.bin")); _gm = glob.glob(os.path.join(dm, "*.geometric.bin"))
+    if FEIN and not fertig and _pm and not _gm:                     # 19.11.2026 FALLE: gefilterte Karten der Stufe schnell wuerden still als Grundlage der geometrischen Pruefung genommen
+        if os.environ.get("RCPARK_FEIN_KARTEN_NEU") != "1": print(f"ABBRUCH FEIN: {len(_pm)} gefilterte fotometrische Karten in {dm} - eigener Ordner oder RCPARK_FEIN_KARTEN_NEU=1 (loescht sie)"); return 5
+        for _k in _pm + glob.glob(os.path.join(a.aus, "stereo", "normal_maps", "*.photometric.bin")): os.remove(_k)
     print(f"dichte Wolke: {n} Bilder, Stufe {a.stufe}" + (" (Tiefenkarten aus Cache)" if fertig else ""), flush=True)
     if not fertig:
         uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = 1600; pycolmap.undistort_images(a.aus, sparse, a.bilder, output_type="COLMAP", undistort_options=uo)

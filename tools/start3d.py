@@ -201,11 +201,11 @@ def kette_befehl(z, ab="anlegen", stufe=None):
     return b
 
 
-def starten(job, log, befehl, trocken):
+def starten(job, log, befehl, trocken, umgebung=None):
     voll = ["bash", "tools/job_start.sh", job, log] + befehl
     print("Start: JOB_RAM_MB=11000 " + " ".join(voll))
     if trocken: print("  (--trocken: nicht gestartet)"); return 0
-    env = dict(os.environ, JOB_RAM_MB="11000"); return subprocess.call(voll, cwd=ROOT, env=env)
+    env = dict(os.environ, JOB_RAM_MB="11000", **(umgebung or {})); return subprocess.call(voll, cwd=ROOT, env=env)
 
 
 def verfolgen(z):
@@ -246,6 +246,9 @@ def nacht_planen(z, uhr, trocken):
     """einmaliger systemd-Zeitgeber, der 'start3d.py --nacht <kurz>' startet."""
     heute = time.strftime("%Y-%m-%d"); zeit = f"{heute} {uhr}:00"
     if time.strftime("%H:%M") >= uhr: zeit = time.strftime("%Y-%m-%d", time.localtime(time.time() + 86400)) + f" {uhr}:00"
+    print(f("  Die Feinstufe braucht UNGEFILTERTE Tiefenkarten: die Karten der schnellen Stufe werden dafuer geloescht und neu gerechnet (Platz/Zeit, kein Datenverlust - Wolke bleibt bis zum Ende).", "gelb"))
+    if not ja("Einverstanden, dass die schnellen Tiefenkarten dafuer geloescht werden?", "j"): print("  Feinstufe nicht geplant."); return
+    z["fein_karten_neu"] = True
     unit = f"plan-fein-{z['kurz']}"
     b = ["systemd-run", "--user", f"--unit={unit}", f"--on-calendar={zeit}", "--timer-property=AccuracySec=1min",
          f"--working-directory={ROOT}", PY, "-I", os.path.join(ROOT, "tools", "start3d.py"), "--nacht", z["kurz"]]
@@ -265,7 +268,7 @@ def nacht(k):
     if le.get("abbruch"):
         z["fein"] = f"NICHT gestartet: Kettenlauf abgebrochen ({le['abbruch'][:120]})"; zustand_schreiben(k, z); print(z["fein"]); return 3
     job = f"fein-{k}"; log = os.path.join(LOGS, job + ".log")
-    rc = starten(job, log, kette_befehl(z, ab="sfm", stufe="fein"), False)
+    rc = starten(job, log, kette_befehl(z, ab="sfm", stufe="fein"), False, {"RCPARK_FEIN_KARTEN_NEU": "1"} if z.get("fein_karten_neu") else None)
     z.update(fein=f"gestartet {time.strftime('%Y-%m-%d %H:%M')} (rc {rc})", fein_job=job, fein_log=log); zustand_schreiben(k, z); return rc
 
 
