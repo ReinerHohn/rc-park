@@ -284,3 +284,9 @@ TEMPO
 52 [d] Inseltor (nur duenne Wolke) laeuft NACH der dichten Wolke und wird per Neu-Fusion repariert; jede --loesung k wiederholt die ganze Grobsuche (115 s, bis 413 s).
 53 (ich) Mapper: fremde Bilder vor dem Mapper streichen = 68 -> 45 min (gemessen). Seitenerkennung: Pruefer 0,6-0,8 s je Paar; Gruppen + Urteile zwischenspeichern (--pruefer-aus vorhanden), Stichprobe frueh beenden.
 REIHENFOLGE (Vorschlag): erst 38-41 + 43 (stille Fehler, je < 1 h), dann 47 + 45 (Videobilder nur aus Trefferabschnitten; behebt Fremdbilder an der Quelle), dann 51 (Vorstufen parallel + Videosuche-Cache), dann 46/48 mit Messung, 49/50 als Versuche.
+
+## 16:55 Dichte Wolke BEIDER Seiten (tools/dicht_modell.py, Stufe schnell)
+- Sued: 74 Bilder (Bildwahl aus 114), 189 518 Punkte, ~8 min. Nord: 217 Bilder (77 unstabile heraus), 1 016 020 Punkte, ~22 min, Fusion am Stueck.
+- In Meter (Ausrichtung Nord; Sued ueber geklappte Lage + 180-Grad-Drehung um die LoD2-Achse): Turm 12,5..14 m Umkreis: vorn 529 474, hinten 186 224 Punkte. Turmwaende bei x = +4,15 / -4,15 m. Bild audit/zweiseitig_dicht_1119.png: beide Fassaden vollstaendig (Uhr, Bogen, Ecktuermchen, Helm), Dachflaechen treffen sich an der Spitze, Nebenhaus beidseitig auf derselben Flanke.
+- 3D-Seite aktualisiert: https://claude.ai/artifact/She8oNNLBDGohUwFKbmFGh (Version 2, 716 000 Punkte).
+- Offen: Flanken (Seitenwaende) leer - niemand fotografiert sie, nur Drohne (Clips fielen in --streng heraus -> Anhang-Lauf); Rueckseite duenner (nur Fotos + 1 Clip).
