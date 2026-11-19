@@ -162,3 +162,20 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
 | 26 | Wolken-Gruppen-Tor | Q | gebaut |
 | 27 | Vorpruef-Zwischenspeicher: Schluessel haengt am ganzen Referenzsatz - aendert sich ein Referenzfoto, ist alles neu. Besser je (Bild, Referenzfoto) speichern | G | offen |
 | 28 | Gegenseite gezielt suchen: nicht registrierte Bilder, die das Objekt zeigen (Vorpruefung ja, Mapper nein), als Kontaktbogen + Fotoauftrag 'Bruecke' ausgeben | Q | offen |
+
+## 10:20-10:25 Fehlende Turmseite: die Vorpruefung selbst sortiert die Gegenseite aus (Zeitfenster gebaut)
+- Befund: `bilder_vorpruefen.py` laesst ein Fremdbild nur durch, wenn es >= 60 Merkmals-Inlier zu einem OBJEKTFOTO hat. Die Objektfotos zeigen (fast) alle dieselbe Turmseite ->
+  jedes Bild der Gegenseite gilt als 'zeigt das Objekt nicht'. In Videoclips rettet die Nachbar-Kette nur, solange Nachbarbilder sich treffen (reisst im dunklen Durchgang).
+- Netzfotos helfen hier nicht: 51 abgelehnte Netzbilder mit 'Martinstor' im Namen durchgesehen (Kontaktbogen) = historische Festzuege VOM Turm aus, Details, Panoramen; keine Gegenseite.
+  Unter den 91 vom Mapper nicht registrierten Einzelbildern des alten Laufs eine Handvoll Kandidaten der Gegenseite (eigen__067, __124, __129, __135) - zu wenige, ohne Bruecke.
+- Fix: `--fenster 12` (Standard): in jedem Videoclip zaehlen 12 Bilder vor/nach jedem Treffer mit. Martinstor: +596 Bilder aus 28 Clips (Kontaktbogen: Stadtrundgaenge, darunter
+  Blicke auf Torturm und Wandbild; auch Unbeteiligtes wie Muenster/Markthalle - das wirft die SfM ab).
+- Zwischenspeicher wirkt: Vorpruefung von 6295 Bildern beim zweiten Lauf 6 s statt 36 min.
+- Lauf mt_gk3s (1503 Bilder, noch im Abgleich) gestoppt; neu `mt_gk3t` ab vorpruefen bis tore mit den Fensterbildern.
+- Falls die Gegenseite danach noch fehlt: gezielte Videosuche (Stadtrundgaenge/Strassenbahn-Fuehrerstand fahren DURCH das Tor; video_suchen --anfragen, --max-s hoeher als 1500 s),
+  danach Fotoauftrag.
+| Nr | Idee | Art | Stand |
+|---|---|---|---|
+| 29 | Zeitfenster um Videotreffer (Gegenseite/Durchgang) | Q | gebaut |
+| 30 | Videosuche: Zusaetze 'walking tour', 'Rundgang', 'Fuehrerstandsmitfahrt/cab ride' + laengere Clips, nur der Abschnitt um die Treffer | Q | offen |
+| 31 | Gegenseiten-Referenz: nach dem ersten Mapper Bilder der schwach gedeckten Seite als ZUSAETZLICHE Referenzfotos der Vorpruefung nehmen und nicht bestandene Bilder erneut pruefen | Q | offen |
