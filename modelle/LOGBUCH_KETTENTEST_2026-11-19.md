@@ -91,3 +91,18 @@ Je Lauf: Zeiten je Stufe, Bildzahlen, Tore, Auffaelligkeiten hier eintragen.
 |---|---|---|---|
 | 15 | Massstab-Startwert aus Kamerahoehe ueber Boden (Strassenclips, Lot bekannt), Grobsuche auf Faktor 0,6..1,6 darum begrenzen | Q+G | als Naechstes |
 | 18 | Bildwahl der dichten Wolke haengt an der Ausrichtung (>= 60 Objektpunkte): bei falscher Ausrichtung falsche 548 Bilder? pruefen | Q | offen |
+
+## 09:17 Kaufhaus: Konsens-Mapper gegen den alten schrittweisen Lauf (gleiche Datenbank, gleiche Kennzahlen `tools/mapper_bewerten.py`)
+| Modell | Zeit | Bilder | Teilmodelle | Fehler px | GPS-Median (n) | GPS > 15 m | f unplausibel / fern | groesste Luecke |
+|---|---|---|---|---|---|---|---|---|
+| schrittweise (17.11.) | 5,6 h | 982 | 13 | 1,05 | 4,6 m (110) | 32 % | 0 / 0 | 78 Grad |
+| global einfach (17.11.) | 27 min | 1050 | 15 | 1,09 | 9,1 m (115) | 38 % | 29 / 30 | 39 Grad |
+| KONSENS (19.11.) | 56 min | 949 | 1 | 0,99 | 5,1 m (107) | 33 % | 0 / 0 | 93 Grad |
+- Konsens = Qualitaet des schrittweisen Laufs (GPS 5,1 gegen 4,6 m, Anteil gleich) in einem Sechstel der Zeit; Rueckgrat 870 von 1050 (83 %), unstabil 17 %.
+- Preis: 33 Bilder weniger, die Kameraluecke waechst von 78 auf 93 Grad (ueber der 90-Grad-Grenze 'Seite ungesehen') -> pruefen, welche Bilder fehlen (unstabil.txt) und ob sie die Luecke schliessen.
+- Zeiten: Lauf 1 1265 s, Lauf 2 1346 s, Stufe 2 761 s. Die zwei globalen Laeufe sind 77 % der Zeit (Idee 5b: parallel, sobald RAM reicht).
+- 32-33 % der GPS-Fotos > 15 m in ALLEN Modellen -> das sind falsche Geotags, kein Modellfehler (Schwelle 15 % des GPS-Tors ist fuer dieses Objekt nicht erreichbar).
+| Nr | Idee | Art | Stand |
+|---|---|---|---|
+| 19 | Konsens Stufe 2: verworfene Bilder, die eine Kameraluecke schliessen wuerden, gezielt nachregistrieren (lockerere Schwelle nur fuer diese) | Q | offen |
+| 20 | GPS-Tor: Schwelle relativ zum besten erreichbaren Anteil / Mehrheitscluster statt fest 15 % | Q | offen |
