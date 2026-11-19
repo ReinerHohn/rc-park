@@ -337,3 +337,11 @@ REIHENFOLGE (Vorschlag): erst 38-41 + 43 (stille Fehler, je < 1 h), dann 47 + 45
 - Fix: `stange()` = oberstes Band (2,5 % H unter 99,9 %) der DICHTEN Wolke; `lot_aus_waenden()` schaerft das Lot aus Normalen senkrechter Ebenen nach (Ausgabe `lot_herkunft`). Dachende nur noch Ersatzweg, als unsicher markiert.
 - Ergebnis Martinstor: Achse oben -0,86/-0,20, am Boden -0,92/-0,52 (0,06 m neben der Handmessung), Einigkeit 0,67 % (0,37 m), Turmtiefe 0,18 H = 10,1 m (vorher 7,3; LoD2-Sockel 11,6), Urteil vereint.
 - Test `tools/test_seiten_vereinen.py` (synthetischer Turm, gekipptes Startlot) im Schnelltest; Schnelltest 0 Fehler. Lehre: das Kameralot ist eine Startschaetzung - wo eine dichte Wolke da ist, entscheiden die Waende.
+
+## 21:40 Messung schnell gegen fein (Martinstor Rueckseite, 74 Bilder, sonst gleiche Einstellungen, Fusion beide min_num_pixels 3)
+- Zeit: schnell 729 s, fein 4766 s (6,5-fach; geometrischer Durchgang ~20 s je Bild).
+- Rueckwand (Turmbreite, 3-35 m, Meter-System nach neuer Vereinigung): Punkte 1,19 / 1,23 Mio; Wand belegt (10-cm-Raster) 85 / 83 %; Fehlpunkte hinter der Wand (im Turm) 5,4 / 3,7 %, vor der Wand 0,9 / 0,3 %; Wanddicke (2 x 75-%-Abstand) 16,9 / 13,5 cm.
+  Mit COLMAP-Voreinstellung min_num_pixels 5 waere fein nur 0,58 Mio Punkte, 80 % belegt - die Fusion-Einstellung zaehlt mehr als die Stufe.
+- Bild audit/fein_vs_schnell_belegung_1119.png: Belegung fast gleich; fein macht die Loecher an Uhr/Fenstern sauberer, schnell hat dort Streupunkte.
+- URTEIL: fein bringt ~1/3 weniger Fehlpunkte und 3,4 cm duennere Wand, aber nicht mehr Putzflaeche, fuer 6,5-fache Zeit. Da die Wolke nach der Kernmethode nur Lage-Veto ist, bleibt fein OPTIONAL (Startskript bietet es nachts an), nicht automatisch. Sinnvoll gezielt dort, wo eine Wand aus der Wolke vermessen wird (Wanddicke, Tiefenstufen).
+- Zeitgewinn-Idee (nicht gemessen): fein nur fuer die Bilder einer Seite/Wand statt aller.
