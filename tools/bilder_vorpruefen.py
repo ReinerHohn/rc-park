@@ -55,6 +55,7 @@ def main():
     ap.add_argument("--ref", type=int, default=24); ap.add_argument("--min-inlier", type=int, default=60)
     ap.add_argument("--kette", type=int, default=40,   # 15.11.2026: 6 liess vom Drohnenclip nur 6 von 81 Bildern durch (Dach fehlte); mit allen 81 behielt die Objektregel der Bildwahl 23 -> Kette lang, Aussortieren uebernimmt dicht_bildwahl (>= 60 Objektpunkte)
                      help="Videobilder: Nachbarbilder (<= N Schritte, gleicher Ordner) eines Treffers zaehlen, wenn sie ihn >= min-inlier treffen")
+    ap.add_argument("--fenster", type=int, default=12, help="Videobilder: so viele Bilder vor/nach jedem Treffer im selben Clip zaehlen mit, auch ohne Merkmalstreffer (0 = aus)")
     a = ap.parse_args(); t0 = time.time(); op = os.path.abspath(a.objekt); obj = json.load(open(op))
     root = os.path.dirname(os.path.dirname(os.path.dirname(op))); fotos, fd, woher = VS.referenzfotos(obj, root)      # 17.11.2026: .JPG wurde nicht gefunden; Referenz kam nach dem ersten Kettenlauf auch aus Fremdbildern (siehe video_suchen.referenzfotos)
     if not fotos: print(f"FEHLER: kein Objektfoto (.jpg/.jpeg/.png) in {fd} - ohne Referenz waere jedes Fremdbild 'zeigt das Objekt nicht'; {a.aus} NICHT geschrieben"); return 2
@@ -106,6 +107,24 @@ def main():
                         erg[L[j]].update(inlier_kette=n, kette_von=os.path.basename(q), kette_schritt=schritt[L[j]], inlier_direkt=erg[L[j]]["inlier"], inlier=a.min_inlier)
             cache.clear()
         print(f"Kette: {sum('kette_von' in e for e in erg.values())} Nachbarbilder dazu ({SP.treffer - n_direkt} Paare aus dem Zwischenspeicher)", flush=True)
+    # ZEITFENSTER (19.11.2026, Martinstor: 568 Kameras auf einer Turmseite, 4 dahinter - und die blicken vom Turm weg). Die Pruefung vergleicht mit den Objektfotos; zeigen die
+    # alle DIESELBE Seite, faellt jedes Bild der Gegenseite durch ('zeigt das Objekt nicht'), auch im Videoclip, der durch das Tor geht - die Kette oben reisst im dunklen Durchgang.
+    # Regel: in einem Videoclip zaehlen die --fenster Bilder vor und nach jedem Treffer mit (der Clip ist am Objekt; ob das Bild taugt, entscheidet die SfM). Nur Videobilder (vf_NNN).
+    if a.fenster > 0:
+        from collections import defaultdict
+        ordner = defaultdict(list); n_f = 0
+        for p in bilder:
+            if "vf_" in os.path.basename(p): ordner[os.path.dirname(p)].append(p)
+        for d, L in ordner.items():
+            L = sorted(L); tr = [i for i, p in enumerate(L) if erg[p]["inlier"] >= a.min_inlier and "fenster_von" not in erg[p]]
+            if not tr: continue
+            nah = np.zeros(len(L), bool)
+            for i in tr: nah[max(0, i - a.fenster):i + a.fenster + 1] = True
+            for j in np.where(nah)[0]:
+                e = erg[L[j]]
+                if e["inlier"] < a.min_inlier and not e.get("fehler"):
+                    k = min(tr, key=lambda i: abs(i - j)); e.update(inlier_direkt=e["inlier"], fenster_von=os.path.basename(L[k]), fenster_abstand=int(abs(k - j)), inlier=a.min_inlier); n_f += 1
+        print(f"Zeitfenster: {n_f} Videobilder im Abstand <= {a.fenster} Bilder zu einem Treffer dazu (Gegenseite/Durchgang; die SfM entscheidet)", flush=True)
     SP.sichern()
     ja = [p for p, e in erg.items() if e["inlier"] >= a.min_inlier]
     json.dump(dict(objekt=op, min_inlier=a.min_inlier, referenz=[r[0] for r in R], treffer=len(ja), bilder=erg), open(a.aus, "w"), indent=1, ensure_ascii=False)
