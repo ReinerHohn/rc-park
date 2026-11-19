@@ -216,3 +216,10 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
   unklar (h_a:c3): 435, 42 %, 1,3 %; c1:c3 keine einzige Verbindung (Fern- gegen Nahaufnahmen).
   -> Sim3-Inlier trennt (75 gegen 33 %), aber nur EIN echtes Beispiel; Freiraum-Probe zu schwach (Nahaufnahmen sehen nur die Wand). Schwache echte Verbindung (Eckfotos) sieht bei "gemeinsame Punkte" genauso aus wie eine Verwechslung.
 - Naechster Schritt: gelernten Paar-Klassifikator pruefen (Doppelgangers, Lizenz/Gewichte), nur auf Paare ZWISCHEN Gemeinschaften anwenden (wenige tausend) und je Gemeinschaftspaar abstimmen; dazu mehr echte Vergleichspaare (Schwabentor mit GPS als Wahrheit).
+
+## 13:00 Seitenerkennung: erster voller Lauf, Pruefer allein reicht nicht; Geometrie-Gegenprobe gebaut
+- tools/seiten_erkennen.py Martinstor (1990 Bilder, 22 min GPU, 1912 Paare, 0,7 s je Paar): 148 Gemeinschaften, 43 >= 12 Bilder, 80 Verbindungen: 31 'verwechselt', 26 'unklar', 23 'echt'. Verteilung p_gleich: Median 0,46. Sicher verwechselt (0<->1) 0,333, vermutlich echt Drohne<->Strasse (0<->4) 0,383 -> Schwelle 0,45 trennt am Martinstor NICHT. 637 fremde Bilder erkannt (brauchbar).
+- Schwabentor (504 Bilder, 310 Paare): 13 Verbindungen, 1 verwechselt (0,399), 1 unklar (0,503), 11 echt (0,58-1,0) - dort deutlich klarer.
+- Neu tools/seiten_geometrie.py: jede Gruppe allein rekonstruieren, Sim3-Anteil der gemeinsamen 3D-Punkte je Verbindung; verwechselt nur wenn Geometrie < 0,5 UND Pruefer nicht 'echt'.
+- FEHLER (echter Werkzeugfehler, behoben): 4 Mapper gleichzeitig auf EINER Datenbank -> 'SQLite error: database is locked', 12 von 23 Gruppen ohne Modell; ausserdem multiple_models 0 -> nach schlechtem Startpaar nur 3 von 42 Bildern. Jetzt: eigene DB-Kopie je Platz (2,5 GB, 2-TB-SSD), mehrere Anlaeufe, groesstes Modell zaehlt. Nebenwirkung: db_kalib.db der Kette wurde schreibend geoeffnet (mtime 12:56) - Werkzeug arbeitet jetzt nur noch auf Kopien.
+- Zeitfresser: Pruefer 0,7 s je Paar (Bild laden 12 MP + LoFTR 1024 px). Verbesserung 36: Bilder einmal verkleinert zwischenspeichern, Stichprobe 24 -> 12 bei eindeutigen Gruppenpaaren (fruehes Ende).
