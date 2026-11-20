@@ -78,3 +78,8 @@ Quelle der Speicherdaten: `sudo dmidecode -t memory` / `-t slot` (Nutzer, 20.11.
   also 3-10 C WAERMER als der Lauf ohne Luefter um 15:43 (63 / 70 / 79 / 93 C). Ursache benannt: Geraet war durchgewaermt (seit 15:55 Betrieb mit 60-100 W statt 55 W,
   dazu Kette + Mapper), der erste Lauf startete aus dem 55-W-Zustand. Luefterwirkung damit NICHT belegt und sicher klein gegen den Waermestau. Sauber nur: gleiche Stufe (90 W),
   je 3 min direkt nacheinander mit und ohne Luefter. Realistische Dauerleistung durchgewaermt: 80-90 W (88 C Spitze bei 90 W).
+
+## KORREKTUR 20.11. 19:00 (Agentenmessung 09_systemtuning + Nachmessung)
+- "Grafikkarte bei ~80 W gedeckelt" ist UEBERHOLT: unter Last (Schwabentor-Abgleich) 108-114 W bei Grenze 115-120 W gemessen, Dynamic Boost arbeitet, PCIe 4.0 x8.
+- Neue Hauptbremse bei gleichzeitiger GPU-Last: gemeinsame Waerme. Paket faellt auf 55 W, Mapper-Faden 2,8-3,9 GHz statt 5,3-5,5 GHz, CPU 89-95 C bei GPU 80-84 C.
+- Alle Agentenberichte (Cloud, Hardware-Preise, dichte Wolke, Systemtuning, ...) liegen unter /media/oem/rcdaten/tmp/hebel_1120/; Zusammenfuehrung folgt in PERFORMANCE_BREMSEN.
