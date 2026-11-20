@@ -192,6 +192,10 @@ Ergebnis Schwabentor:
 - West (9 Fotos fast aus einem Punkt, steil): Tiefenbild Streifenmuster, Tor lehnt ab (26 % auf Wandtiefe).
 Tor: >= 35 % der sicheren Zellen auf der Wandtiefe, sichere Tiefe auf >= 30 % der Wand, Wandtiefe nicht am Rand des Suchbereichs; sonst rc 4, keine Kandidaten. Schwellen an EINEM Bauwerk gesetzt.
 OFFEN: Verdeckung (Baum, Nachbarhaus), Fotowahl nach Standortabstand, Kandidaten automatisch vermessen und mit `bauteile` bauen. Bis dahin: Kandidatenliste = Hinweis, wo eine zweite Ebene noetig ist.
+**ERLEDIGT 20.11.2026 (Bau):** Vier Tage lang endete der Sweep als Vorschlag, und der Erker existierte nur im Hand-Generator schwab_v3. Der Nutzer: „Wir haben hier manuell alles gebastelt … und jetzt haben wir diese Fähigkeit verloren“.
+Jetzt gilt in der Kettenstufe `bauplan`: `fassade_tiefe.py` für jede Fassade, dann `tools/vorbauten_bauplan.py`, das `audit/vorbauten_auto.json` schreibt (Gruppe = Körper mit ebener Front plus Dach darüber, Gestalt = Höhenfeld je 0,2-m-Zelle aus der Sweep-Tiefe), dann `bauteile.vorbauten_aus_json` in der Generator-Vorlage, dann der Bau.
+Ausgeschlossen werden: Durchblick (Streuung > 0,6 m) und Fronten am Rand des Suchbereichs (Schwabentor f03: zwei Scheinkörper bei +2,2 m).
+Schwabentor-Ergebnis: eine Gruppe, f00 Erker u -3,90..4,58, z 9,10..19,62, Front +1,15 m, Dach +2,15 m.
 
 ## Nachregistrieren fremder Fotos - Stand 16.11.2026
 Lauf mit 46 Fotos (13 unregistrierte + 33 Openverse): `paare` fand 472 verifizierte Paare; `einlesen` kennt kein `--ref-db` (im Skript behoben); `registrieren` brach ab:
@@ -587,3 +591,7 @@ in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz
   innenwaende (tools/innenwaende_finden.py: Ebenen-Sweep 1,26-m-Kostenfenster in den Kernen grosser Erkenner-Bogen/Tuer-Zonen, Spitze >= 3 x Hintergrund, vor der
   LoD2-Rueckseite), innenwand_oeffnungen (Sicht-Modell mit offenen Zonen -> fassade_ortho/fein/parsing -> oeffnungen_wandbild). Generator-Vorlage (objekt_anlegen.py)
   ruft oeffnungen_aus_wandbild(nur_frei=True) und rueckwaende immer auf; oeffnungen_aus_json(innenwaende=...) fuehrt einen erkannten Bogen bis auf die Innenwand.
+Beweis 20.11. ~00:20: Kantenstufe neu gerechnet (Band um das neue Modell) in `kanten_vorbau/`. Im Erkerbereich (f00 u -4,2..4,9, z 8,5..20,5) gibt es 10 953 Fotokantenpunkte, davon 7 917 > 0,4 m vor der Wand (Median 1,11 m).
+Anteil dieser Punkte, die ≤ 15 cm an der Modellfläche liegen: vorher 22 % (vor der Wand 0 %), nachher 95 % (vor der Wand 97 %). Gesamt-F1 0,213 → 0,228. Die Abnahme hat alle Prüfungen bestanden.
+Einschränkung: Die Sweep-Punkte suchen im Band um das neue Modell; die Tiefe der Punkte (Median 1,11 m) stimmt aber unabhängig mit dem Sweep (+1,15 m) überein. Fehler: Das Dach ist treppig (0,2-m-Raster statt einer Ebene), Konsolen und Streben fehlen, die Unterseite ist geschlossen.
+Weitere Lücken (Handarbeit nicht in der Kette, 15 Fälle): `modelle/KETTE_LUECKEN_2026-11-20.md`.

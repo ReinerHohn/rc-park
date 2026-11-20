@@ -402,7 +402,7 @@ def main():
     # Von Hand eingetragene Werte (ohne "auto") bleiben unberuehrt (die Werkzeuge melden rc 3).
     if dran("bauplan") and os.path.exists(AU):
         fo = os.path.join(D, "fassade"); ffn = fo + "_fein"; bp_ = os.path.join(D, "bauplan"); os.makedirs(bp_, exist_ok=True); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); erg_ = {}
-        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
+        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
         if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
         else:
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
@@ -428,6 +428,14 @@ def main():
                 __import__("json_sicher").schreiben(ZJ, oz_)
             elif not IW_ and IO_ and IO_.get("auto"): oz_.pop("innenwand_oeffnungen", None); __import__("json_sicher").schreiben(ZJ, oz_)
             oz_ = json.load(open(ZJ)); erg_.update(innenwaende=[(x_["name"], x_.get("versatz"), x_.get("u"), x_.get("z")) for x_ in oz_.get("innenwaende", [])], rueckwand=(oz_.get("rueckwand") or {}).get("tiefe"))
+            # 20.11.2026 (Nutzer: "Wir haben hier manuell alles gebastelt ... und jetzt haben wir diese Faehigkeit verloren"): Vorbauten aus dem Ebenen-Sweep BAUEN statt nur vorschlagen.
+            # Der Sweep lief bisher erst in Stufe 'seiten' (nach dem Bau) und endete als Vorschlagsliste - hier vor dem Bau, Ergebnis audit/vorbauten_auto.json -> bauteile.vorbauten_aus_json
+            vb_ = {}
+            for i_ in range(len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])):
+                vb_[f"f{i_:02d}"] = lauf(B, f"bauplan_sweep_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
+            erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo], log, ok=(0, 3))[0]
+            try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
+            except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
             if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
             notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
     # --- Ende Stufe 'bauplan' ---

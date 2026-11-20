@@ -1,0 +1,197 @@
+[
+ {
+  "seite": "dach",
+  "element": "Dach Teil 0 (walm_a)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_001000hPLcp-Grundriss Teil 0",
+  "first": 45.46,
+  "neigung_grad": 56.1,
+  "rms_m": 0.26,
+  "eindeutig": true,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Spitze Teil 0",
+  "quelle": "DOM1 6 Pixel bis 49.6 m; Hoehe objekt.json hoehe_m",
+  "hoehe": 50.8,
+  "hinweis": "ANNAHME: Pyramide Grundseite 2.4 m (sqrt Pixel), Form nicht gemessen",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 0",
+  "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 0",
+  "breite_u": 12.13,
+  "tiefe_v": 12.5,
+  "flaeche_m2": 141.3,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Teil 1 (ohne Dachmessung)",
+  "quelle": "LoD2 DEBW_001000hPLcp Wandoberkante (31 eigene Waende)",
+  "hoehe": 13.69,
+  "hinweis": "ANNAHME: Flachdach auf Wandoberkante (Teil zu klein fuer DOM1-Dachfit)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 1",
+  "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 1",
+  "breite_u": 2.99,
+  "tiefe_v": 2.65,
+  "flaeche_m2": 6.9,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w00 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_114133, eigen__IMG_20261106_114023, eigen__IMG_20261106_114050); Loecher generiert",
+  "generiert_anteil": 0.032,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w01 ab z 10 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 198,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w01 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113429, eigen__IMG_20261106_113441, eigen__IMG_20261106_113532); Loecher generiert",
+  "generiert_anteil": 0.141,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w02 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113429, eigen__IMG_20261106_113605, eigen__IMG_20261106_113441); Loecher generiert",
+  "generiert_anteil": 0.129,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w03 ab z 10 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 231,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w03 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113416, eigen__IMG_20261106_113338_1, eigen__IMG_20261106_113340); Loecher generiert",
+  "generiert_anteil": 0.164,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "1 Fenster Fassade f00 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_113130, eigen__IMG_20261106_113142, eigen__IMG_20261106_113141",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "2 Fenster Fassade f03 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_114049, eigen__IMG_20261106_114046, eigen__IMG_20261106_114050",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Bogenoeffnung Fassade f00 (spitz, automatisch erkannt)",
+  "quelle": "OWLv2-Bogenkasten als Suchfenster (fassade_parsing.py) -> Ebenen-Sweep ueber die Fotos (fassade_tiefe.py: Durchblick = Fotos in der Wandtiefe nicht deckungsgleich) -> Formfamilie eingepasst (tools/oeffnungen_bogen.py), Fotos eigen__IMG_20261106_113130, eigen__IMG_20261106_113142, eigen__IMG_20261106_113141",
+  "lichte_breite": 4.786,
+  "kaempfer": 3.018,
+  "scheitel": 6.204,
+  "tiefe": 0.6,
+  "hinweis": "ERKENNUNG, am Bild oeffnungen_<id>.jpg pruefen; ANNAHME: Tiefe 0.6 m (kein Gegenstueck auf der Gegenseite gefunden/gesehen); ANNAHME: Kreisbogen der Formfamilie, Gewaende ohne Profil",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Gebaeude hohl, 3 Fenster durchgebrochen",
+  "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
+  "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Rueckwand hinter 3 Oeffnungen in Leibungstiefe 0.15 m (Kragen zum Hohlraum geschlossen)",
+  "quelle": "ANNAHME: 0.15 m (nur 0 belastbare Fenstertiefen < 3; Anhalt Kaufhaus-Fotomass 0,14 / 0,19 m an einem anderen Haus, modelle/kaufhaus_gk/objekt.json rueckwand)",
+  "hinweis": "nicht gemessen - mit Fotomass (foto_mass --kamera, zwei Gegenrichtungen) ersetzen",
+  "umrisse": [
+   {
+    "u0": -3.675,
+    "u1": 1.17,
+    "z0": 8.338,
+    "z1": 10.27,
+    "vorn": -0.005,
+    "schale": [
+     -0.06,
+     -0.0
+    ],
+    "tiefe_ist": 0.15,
+    "flaeche_m2": 9.361,
+    "erkannt": 1,
+    "nur_feld": false
+   },
+   {
+    "u0": -0.018,
+    "u1": 1.419,
+    "z0": 17.14,
+    "z1": 18.848,
+    "vorn": -0.005,
+    "schale": [
+     -0.1,
+     -0.0
+    ],
+    "tiefe_ist": 0.15,
+    "flaeche_m2": 2.454,
+    "erkannt": 1,
+    "nur_feld": false
+   },
+   {
+    "u0": -0.525,
+    "u1": 2.307,
+    "z0": 21.807,
+    "z1": 24.959,
+    "vorn": -0.005,
+    "schale": [
+     -0.1,
+     -0.0
+    ],
+    "tiefe_ist": 0.15,
+    "flaeche_m2": 8.926,
+    "erkannt": 1,
+    "nur_feld": false
+   }
+  ],
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Vorbau f00 u -3.90..4.58 z 9.10..19.62",
+  "quelle": "Ebenen-Sweep tools/fassade_tiefe.py -> tools/vorbauten_bauplan.py (Hoehenfeld je Zelle)",
+  "breite": 8.48,
+  "ausladung_front": 1.15,
+  "dach_ausladung": 2.15,
+  "kaesten": 545,
+  "hinweis": "Gestalt = gemessene Tiefe je 0.20-m-Zelle (3x3-Median); Unterseite geschlossen (Konsolen/Streben nicht einzeln) = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "141 Null-Volumen-Splitter entfernt",
+  "quelle": "Generator (decompose, Volumen < 1e-5 m3)",
+  "seite_name": "wand"
+ }
+]

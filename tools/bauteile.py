@@ -266,6 +266,36 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
     return koerper, belege
 
 
+def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
+    """Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep an die Wand bauen (20.11.2026, GENERISCH; Liste: tools/vorbauten_bauplan.py
+    -> audit/vorbauten_auto.json, Kettenstufe 'bauplan'). Je Gruppe ein Hoehenfeld w[zeile][spalte] (m vor der gemessenen Wand, Raster 'raster', Zeile 0 = oben):
+    zeilenweise gleich tiefe Laeufe (auf 'stufe' gerundet) werden Kaesten von 'einbinden' m in der Wand bis zur Front. Gestalt = gemessene Tiefe je Zelle, kein Musterteil.
+    Liefert (koerper, belege); ohne Datei unveraendert."""
+    if not os.path.exists(datei): return koerper, []
+    J = json.load(open(datei)); teile = []; belege = []
+    for F in J.get("fassaden", []):
+        o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0)); w0 = min(0.0, ww) - einbinden
+        P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
+        for g in F["gruppen"]:
+            W_ = np.round(np.array(g["w"], float) / stufe) * stufe; r_ = float(g["raster"]); nk = 0
+            for r in range(W_.shape[0]):
+                za, zb = g["z1"] - (r + 1) * r_, g["z1"] - r * r_; s = 0
+                while s < W_.shape[1]:
+                    e = s
+                    while e + 1 < W_.shape[1] and W_[r, e + 1] == W_[r, s]: e += 1
+                    if W_[r, s] >= min_w:
+                        ua, ub = g["u0"] + s * r_, g["u0"] + (e + 1) * r_; wf = ww + float(W_[r, s])
+                        teile.append(M.hull_points([P(u, z, w) for u in (ua, ub) for z in (za, zb) for w in (w0, wf)])); nk += 1
+                    s = e + 1
+            k_ = g["koerper"]; d_ = g.get("dach")
+            belege.append(dict(seite="wand", element=f"Vorbau {F.get('id', '')} u {g['u0']:.2f}..{g['u1']:.2f} z {g['z0']:.2f}..{g['z1']:.2f}",
+                               quelle="Ebenen-Sweep tools/fassade_tiefe.py -> tools/vorbauten_bauplan.py (Hoehenfeld je Zelle)", breite=round(g["u1"] - g["u0"], 2),
+                               ausladung_front=k_["w_median"], dach_ausladung=d_["w_median"] if d_ else None, kaesten=nk,
+                               hinweis="Gestalt = gemessene Tiefe je %.2f-m-Zelle (3x3-Median); Unterseite geschlossen (Konsolen/Streben nicht einzeln) = ANNAHME" % r_))
+    if teile: koerper = koerper + M.batch_boolean(teile, OpType.Add)
+    return koerper, belege
+
+
 def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5, innenwaende=None):
     """Automatisch erkannte Bogenoeffnungen / Tordurchfahrten (tools/oeffnungen_bogen.py: je Fassade o, d, n und 'oeffnungen' mit form, u, breite, kaempfer, scheitel, unten, tiefe_m)
     in den Koerper schneiden. Nur Eintraege mit gebaut = true (Durchblick im Ebenen-Sweep belegt, Form gegengeprueft). Der Schnitt reicht von 'vor' m vor der Fassadenebene

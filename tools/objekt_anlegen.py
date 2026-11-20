@@ -45,7 +45,7 @@ def main():
     if nur_gen and os.path.exists(gp):
         alt = open(gp).read()
         if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 70: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
-        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt and "vorbauten_aus_json" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
         import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
@@ -99,6 +99,10 @@ if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundris
             from bauteile import entlueften                 # Hohlraum nach Regel A ringsum zu -> Schacht zur Standflaeche (sonst 2 Koerper / Luftblase)
             koerper, bel_e = entlueften(koerper)
             for b_ in bel_e: beleg(**b_)
+    if os.environ.get("OHNE_VORBAU") != "1":          # 20.11.2026: Vorbauten (Erker/Galerie/Vordach) aus dem Ebenen-Sweep - Kettenstufe 'bauplan': tools/vorbauten_bauplan.py -> audit/vorbauten_auto.json
+        from bauteile import vorbauten_aus_json
+        koerper, bel_v = vorbauten_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "vorbauten_auto.json"))
+        for b_ in bel_v: beleg(**b_)
     tl_ = koerper.decompose()                         # Null-Volumen-Splitter entfernen (wie Kaufhaus-Generator 17.11.); echte schwebende Teile bleiben und fallen in der Pruefung auf
     if len(tl_) > 1 and any(t_.volume() < 1e-5 for t_ in tl_):
         koerper = M.batch_boolean([t_ for t_ in tl_ if t_.volume() >= 1e-5], __import__("manifold3d").OpType.Add); beleg("wand", "%d Null-Volumen-Splitter entfernt" % sum(1 for t_ in tl_ if t_.volume() < 1e-5), "Generator (decompose, Volumen < 1e-5 m3)")
