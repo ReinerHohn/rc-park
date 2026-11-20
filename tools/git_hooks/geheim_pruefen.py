@@ -3,13 +3,13 @@
   python3 tools/git_hooks/geheim_pruefen.py --staged            pre-commit: gestagte Aenderungen pruefen
   python3 tools/git_hooks/geheim_pruefen.py --bereich A..B      pre-push: alle Commits A..B (neue Blobs) pruefen
   python3 tools/git_hooks/geheim_pruefen.py --test              Selbsttest (synthetisch)
-Sperrt (rc 1): Datei > 95 MB (GitHub-Grenze 100 MB); bekannte Zugangsdaten aus ~/.config/rcpark/*.json (Werte der Schluessel code/sn/passwort/
+Sperrt (rc 1): Datei > 1 MB ohne Git LFS (globale Regel 20.11.2026; GitHub-Grenze 100 MB); bekannte Zugangsdaten aus ~/.config/rcpark/*.json (Werte der Schluessel code/sn/passwort/
 token/key/... ); typische Schluessel (privater SSH/PEM-Schluessel, GitHub-, AWS-, OpenAI/Anthropic-, Slack-, Google-Token);
 Zuweisungen wie  password = "..." / CODE = "..."  mit >= 8 Zeichen. Warnt: Datei > 50 MB.
 Fehlalarm: Zeile mit "geheim-ok" markieren oder RCPARK_GEHEIM_OK=1 setzen (nur bewusst!). Ausgabe nennt nie das Geheimnis selbst. Nur Standardbibliothek."""
 import os, re, subprocess, sys, json, glob
 
-GRENZE, WARN = 95_000_000, 50_000_000
+GRENZE, WARN = 1_000_000, 500_000   # globale Regel 20.11.2026: > 1 MB nur per Git LFS (GitHub selbst: 100 MB)
 MUSTER = [("privater Schluessel", r"-----BEGIN (RSA |OPENSSH |EC |DSA |PGP )?PRIVATE KEY"),
           ("GitHub-Token", r"\b(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36}\b|\bgithub_pat_[A-Za-z0-9_]{40,}"),
           ("AWS-Schluessel", r"\bAKIA[0-9A-Z]{16}\b"),
@@ -48,8 +48,9 @@ def staged(geheim):
     for z in git("diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z").split("\0"):
         if not z: continue
         g = int(git("cat-file", "-s", f":{z}").strip() or 0)
-        if g > GRENZE: funde.append(f"{z}: {g / 1e6:.0f} MB > 95 MB (GitHub lehnt ab) - in .gitignore eintragen")
-        elif g > WARN: warn.append(f"{z}: {g / 1e6:.0f} MB (GitHub warnt ab 50 MB)")
+        lfs = "lfs" in git("check-attr", "filter", "--", z)
+        if g > GRENZE and not lfs: funde.append(f"{z}: {g / 1e6:.1f} MB > 1 MB ohne Git LFS - in .gitignore eintragen (globale Regel)")
+        elif g > WARN and not lfs: warn.append(f"{z}: {g / 1e6:.1f} MB (nahe 1 MB)")
     diff = git("diff", "--cached", "-U0", "--no-color", "--diff-filter=ACMR")
     datei = "?"; zeilen = {}
     for l in diff.splitlines():
@@ -69,7 +70,7 @@ def bereich(spanne, geheim):
         t = l.split()
         if len(t) != 3 or t[0] != "blob": continue
         g = int(t[2]); p = pfad.get(t[1], "")
-        if g > GRENZE: funde.append(f"{p}: {g / 1e6:.0f} MB > 95 MB in der Historie (GitHub lehnt den Push ab)")
+        if g > GRENZE: funde.append(f"{p}: {g / 1e6:.1f} MB > 1 MB in der Historie (globale Regel; GitHub lehnt ab 100 MB ab)")
         elif g < 2_000_000 and p.endswith((".py", ".sh", ".json", ".md", ".txt", ".yml", ".yaml", ".toml", ".cfg", ".ini", ".env")): lesen.append((t[1], p))
     # Stapel: ein einziger cat-file --batch statt eines Prozesses je Datei (1160 Commits: sonst > 10 min)
     if lesen:
