@@ -45,10 +45,12 @@ pl1=$START; setzen $pl1; korr=0
 echo "Regler: START=$START MAX=$MAX SCHRITT=$SCHRITT TOK=$TOK THOCH=$THOCH TNOT=$TNOT GOK=$GOK T=${T}s (Ausgang $((PL1_0/1000000))/$((PL2_0/1000000)) W)"
 e1=$(cat $RAPL/energy_uj); t1=$(date +%s.%N)
 while true; do
-  sleep "$T"
+  # 20.11.2026: Temperatur als MITTEL ueber das Messfenster (1 Wert je s) statt Augenblickswert - einzelne Turbo-Spitzen eines Kerns (92-96 C fuer < 1 s)
+  # loesten sonst Ruecknahmen bis zum Notfallwert aus (Journal 15:57-16:01: 100 -> 55 W bei nur 30 W Paketleistung).
+  tsum=0; for _ in $(seq "$T"); do sleep 1; tsum=$(( tsum + $(ptemp) )); done
   e2=$(cat $RAPL/energy_uj); t2=$(date +%s.%N)
   watt=$(awk -v a="$e1" -v b="$e2" -v x="$t1" -v y="$t2" 'BEGIN{d=b-a; if(d<0)d=0; printf "%d", d/1e6/(y-x)}'); e1=$e2; t1=$t2
-  temp=$(ptemp); gpu=$(gtemp); gpu=${gpu:-0}
+  temp=$(( tsum / T )); gpu=$(gtemp); gpu=${gpu:-0}
   ist=$(( $(cat $RAPL/constraint_0_power_limit_uw) / 1000000 ))
   if [ "$ist" -ne "$pl1" ]; then korr=$((korr+1)); setzen $pl1; fi            # fremde Aenderung (thermald/Firmware) zurueckschreiben
   neu=$(entscheiden $pl1 $temp $watt $gpu)
