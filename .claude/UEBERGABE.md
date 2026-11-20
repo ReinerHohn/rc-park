@@ -1,4 +1,4 @@
-# Übergabe 20.11.2026 12:55
+# Übergabe 20.11.2026 13:07
 Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
 
 ## Auftrag
@@ -25,22 +25,23 @@ Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
 - `rcpark-mt_anh_sued3` · Log `job_logs/mt_anh_sued3.log` · 985/1990 Bilder, Gesamtausgleich seit 11:59 · Prüfen: `grep JOB_ENDE LOG; grep -o 'num_reg_frames=[0-9]*' LOG | tail -1` · danach Skill `wolke-tore`
 - `regr-schwab` wartet in `job_start.sh` auf RAM-Buchung (Kette bucht 11000 MB); Log `job_logs/regr-schwab.log` entsteht beim Start · danach Ergebnis prüfen + `modelle/schwab_v3/` regression committen
 
-- 3 Lese-Agenten (Lehren Runde 2, gestartet 12:58): Register, Archiv, Memory → `/media/oem/rcdaten/tmp/baum_sicherung/runde2/{register,archiv,memory}.md` · Prüfen: `ls -la` dort + Zeile „NICHT GESCHAFFT“ am Dateiende · fehlt eine Datei nach /clear: diesen Agenten neu starten (Auftrag = Nächste Schritte 2)
+- Lehren Runde 2: alle 3 Agenten FERTIG (13:07), nichts läuft mehr · Ergebnis `/media/oem/rcdaten/tmp/baum_sicherung/runde2/` register.md (244 Z.), memory.md (276), archiv.md (439, inkl. neuer Ast lizenzen-werkzeuge) = 1161 Zeilen, gruppiert `## AST: <ast>[ / GILT| / OFFEN]` · Lücken je Datei am Ende (NICHT GESCHAFFT); Abgleich gegen Baum nur per Stichwort ⇒ beim Zusammenführen Doppeltes verschmelzen
 
 ## Nächste Schritte
 1. Jobs oben prüfen (`systemctl --user list-units 'rcpark-*' --no-legend`); Kettenende auswerten (Skill objekt-von-null Schritt 5)
-2. Zweiter Lehren-Durchgang (Agenten laufen, s. oben) zusammenführen: Zeilen je `## AST:` in den Ast eintragen, Ast > 110 Zeilen ⇒ teilen, `check.py --strict`, Verlustprüfung, commit + push. Quellen: Versuchsregister BH–BK/BR/DG–DL/ab Z.1864, `modelle/archiv/UEBERGABE_*`, `RECHERCHE_*`, `STAND_2026-11-05..12`, `LOG_FORMEN/KOERPER/VERFEINERN`, Memory `archiv_index.md` → je Ast nachtragen (Rohsammlung `/media/oem/rcdaten/tmp/baum_sicherung/`, Skript-Muster dort)
+2. SOFORT: Runde 2 zusammenführen — Skript nach Muster `/tmp/.../scratchpad/baum_bauen.py` (geht bei /clear verloren; neu schreiben): Zeilen je `## AST:` in den Ast, Teilthemen übernehmen, Doppeltes (gleicher Ansatz+Datum) verschmelzen; Äste > 110 Zeilen teilen (sicher: bauteile-kreis → bauteile-generator + kreis-abnahme; kanten-messen → kanten-linien + foto-tore-messen; lage-seiten, wolke-wandbild prüfen), neuer Ast lizenzen-werkzeuge; Zeilen in PROJEKT.md; Verlustprüfung (jede Quellzeile in genau einem Ast), `check.py --strict`, commit + push. Danach REZEPT: doppelte L-Nummern (L11–L13, L-KR17–29) auflösen
 3. „Offen“-Punkte mit „(ungeprüft)“ in den Ästen gegen Code prüfen
 4. Regression für kaufhaus_gk2 (Ordner bisher unversioniert) und martinstor-1120 anlegen
 
 ## Entscheidungen des Nutzers
 - ✓ Push nach jedem Arbeitsblock · ✓ „neuer ist besser“ · ✓ Archivieren · ✓ 1-MB-Grenze · ✓ doku-pflege regelmäßig
-- ✓ kein Force-Push für die ~160 MB Altdateien (20.11., Empfehlung angenommen vorbehaltlich Nutzer): Wachstum per Sperre gestoppt; später ggf. geplante LFS-Umstellung, beide Rechner vorher gepusht
+- ✓ (vorläufig) kein Force-Push für die ~160 MB Altdateien (20.11., meine Empfehlung, Nutzer „können wir überlegen“): Wachstum per Sperre gestoppt; später ggf. geplante LFS-Umstellung, beide Rechner vorher gepusht
 - ? FlexGlue als Standard (+30/+40 % Bilder Martinstor, +2,5 h)
 - ? Bambu-Zugangscode am Drucker neu setzen (alter seit 30.10. auf GitHub), neuen in `~/.config/rcpark/p1s.json`
 - ✓ Datei `sys` gelöscht (20.11., Nutzer „Ja“)
 
 ## Fehler und Lehren dieser Sitzung
+- Nutzerfrage 20.11.: „ist das [20 h Rechnen] einmalig?“ → ja: FlexGlue-Stufe 2 und Süd-Anhang sind einmalige Messläufe; pro Modell nur die Kette (Dauer für Martinstor noch messen und melden)
 - 1159 Commits nie gepusht → Memory feedback-push-je-arbeitsblock, CLAUDE.md
 - Push hätte 8,2 GB Binärdateien hochgeladen; Bereinigung hätte 21 fremde Dateien gelöscht → erkannt, nur eigene entfernt (Ast betrieb)
 - doku-pflege lag bereit, lief nie regelmäßig → Memory feedback-nutzer-skills-einbinden
