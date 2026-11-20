@@ -12,6 +12,8 @@ if [ -z "$W" ] && [ "$(basename "$T")" = "p1s_print.py" ]; then [ -n "${PY_ZEIGE
 if [ -z "$W" ]; then
   if grep -qE '^\s*(import\s+([A-Za-z0-9_.]+(\s+as\s+[A-Za-z0-9_]+)?\s*,\s*)*pycolmap\b|from\s+pycolmap\b)' "$T"; then W=col
   elif grep -qE '^\s*(import\s+([A-Za-z0-9_.]+(\s+as\s+[A-Za-z0-9_]+)?\s*,\s*)*(torch|cv2|kornia|lightglue)\b|from\s+(torch|cv2|kornia|lightglue)\b)' "$T"; then W=seg
+  # 20.11.2026: Strahlen (trimesh .ray) gehen nur in venv-seg (rtree + embreex); in ~/.venvs/rcpark fehlt rtree -> ModuleNotFoundError. 14 Werkzeuge wurden falsch nach gen geschickt.
+  elif grep -qE '\.ray\.|intersects_(location|first|id)\(|RayMeshIntersector' "$T"; then W=seg
   elif grep -qE '^\s*(import\s+([A-Za-z0-9_.]+(\s+as\s+[A-Za-z0-9_]+)?\s*,\s*)*(trimesh|manifold3d|shapely)\b|from\s+(trimesh|manifold3d|shapely)\b)' "$T"; then W=gen
   else W=seg; fi
 fi

@@ -73,3 +73,11 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - ANDERER Fund gleicher Art: trimesh rechnet Strahlen mit dem langsamen reinen numpy-Verfahren (`trimesh.ray.ray_triangle`), 58 Werkzeuge nutzen Strahlen (pruefstand 15 Stellen, wolke_solid, fehlerkarte,
   fassade_ortho ...). Mit `embreex` (Rad fuer Python 3.12 vorhanden, Intel Embree Apache-2.0 - Lizenz vor Einsatz in LIZENZ_WERKZEUGE pruefen) nimmt trimesh automatisch Embree.
   ACHTUNG: Embree rechnet einfach genau -> Ergebnisse nicht bitgleich (am 1.11. wurde float32 fuer Hoehenkarten deshalb verworfen) -> nur mit Regression/Abnahme-A/B. Nicht umgesetzt, nicht gemessen.
+
+## KORREKTUR Embree (20.11. 17:10, gemessen `tools/versuche/embree_ab.py`)
+- Der Fund "trimesh rechnet Strahlen langsam" war FALSCH eingeordnet: ich hatte in der Generator-Umgebung (`~/.venvs/rcpark`) nachgesehen. Dort fehlen `embreex` UND `rtree` -
+  Strahlen laufen dort gar nicht (ModuleNotFoundError). In `venv-seg`, wo Pruefstand, Fehlerkarte, Fassadenbild laufen, ist `embreex 4.4.0` laengst installiert und aktiv (`ray_pyembree`).
+- Was Embree dort bringt (Kaufhaus-STL, 543 Tsd. Dreiecke, 2025 Strahlen, alle Treffer): numpy-Verfahren 3,40 s, Embree 0,28 s = 12 x; 9268 / 9268 Treffer, Abweichung der ersten
+  Trefferentfernung 0,000 mm. Also kein zusaetzlicher Gewinn zu holen - er ist schon da.
+- Nebenfund (Fehler, keine Bremse): `tools/py` schickte 14 Werkzeuge mit Strahlen (druck_klips, h0_druckfertig, fertigung_split, filigran, duese_check ...) in die Generator-Umgebung,
+  wo sie beim ersten Strahl abstuerzen wuerden. Behoben: Werkzeuge mit `.ray.`/`intersects_*` gehen nach venv-seg.
