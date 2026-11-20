@@ -213,3 +213,14 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   (b) Speicherbedarf von fassade_ortho bei 1 cm messen und begrenzen (Fassaden nacheinander freigeben / Kacheln) - heute > 11,7 GB bei einem 4-Seiten-Turm.
 - perf am Mapper mit allen Faeden (21:25, 36 Faeden, 370 % CPU bei drei parallelen Jobs): ChunkOuterProduct 43 %, GetCell 19,5 %, pthread_mutex_lock/unlock 13,5 % -> Kandidat dichte Kameramatrix.
   Varianten-Skript `tools/versuche/mt_eng_varianten_1120.sh` (redundant, dicht, eng allein) - Einreihung ging mit den Wartern verloren, neu starten wenn die Mapper fertig sind.
+
+## Nachtrag 22:20 - Agent Mapper-Skalierung (Bericht `/media/oem/rcdaten/tmp/hebel_1120/10_mapper_skalierung.md`, Quelltextstellen dort)
+- AUSGEZAEHLT (Modell 1681 Kameras, 152 471 Punkte): Spurlaenge Median 5, p99 91, Maximum 684. 0,9 % der Punkte (L > 100) tragen 65 % von Summe(L^2), 2,2 % (L > 50) 78 %.
+  Der Engpass sind wenige sehr lange Videospuren. Ein Spurlaengen-Deckel 50 im Ausgleich (Patch ~30 Zeilen, bundle_adjustment_ceres.cc:693-730) spart 67 % bei 13 % weniger Beobachtungen (ANNAHME zur Zeit).
+- Hebel 1 (nur Schalter): globale Ausgleiche seltener/kuerzer - `ba_global_frames_ratio/points_ratio 1.4`, `max_refinements 2`, `max_num_iterations 25` = Video-Voreinstellung der Entwickler
+  (option_manager.cc:113). Von 100 auf 600 Bilder ~5 statt ~19 Runden. Variante `selten` im A/B-Skript.
+- Hebel 2: DENSE_SCHUR bis 1200 Bilder (GetCell = Feldindex). Variante `dicht`. Hebel 4: ITERATIVE_SCHUR ab 300 Bildern (implizit, ~Summe(L)), Variante `iterativ`.
+- Zwischenstaende: `--Mapper.snapshot_path <Ordner> --Mapper.snapshot_frames_freq N` schreibt normale Binaermodelle; fortsetzen mit `colmap mapper --input_path <stand> --output_path <neu>`
+  (Ergebnis dann OHNE /0). Im A/B-Skript jetzt immer an (alle 100 Bilder); in `iphone_sfm.py` noch NICHT (erst nach dem ersten echten Schnappschuss + Fortsetzungstest).
+- `ba_global_ignore_redundant_points3D`: laut Quelltext werden lange Spuren zuerst BEHALTEN -> wenig Gewinn erwartet, aus dem Messplan genommen.
+- Eingereiht 22:20 (`mt_eng_varianten`): startet erst, wenn der enge Mapper UND die Schwabentor-Kette fertig sind; rechnet `selten`, dann `dicht` allein am engen Satz.

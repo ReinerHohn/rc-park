@@ -11,10 +11,12 @@ C=/media/oem/scan/colmap-build/prefix/bin/colmap
 export LD_LIBRARY_PATH=/media/oem/scan/cuda-toolkit-combo/lib64:/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib:/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib:/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib
 mkdir -p "$A"
 for v in $V; do
-  case $v in std|eng) X="";; redundant) X="--Mapper.ba_global_ignore_redundant_points3D 1";; dicht) X="--Mapper.ba_max_num_images_direct_dense_gpu_solver 1200";; *) echo "unbekannt: $v"; continue;; esac
+  case $v in std|eng) X="";; redundant) X="--Mapper.ba_global_ignore_redundant_points3D 1";; dicht) X="--Mapper.ba_max_num_images_direct_dense_gpu_solver 1200";; selten) X="--Mapper.ba_global_frames_ratio 1.4 --Mapper.ba_global_points_ratio 1.4 --Mapper.ba_global_max_refinements 2 --Mapper.ba_global_max_num_iterations 25";;   # Video-Voreinstellung der COLMAP-Entwickler (option_manager.cc:113), Bericht hebel_1120/10
+      iterativ) X="--Mapper.ba_max_num_images_direct_sparse_gpu_solver 300";; *) echo "unbekannt: $v"; continue;; esac
   D0="--Mapper.ba_max_num_images_direct_dense_gpu_solver 0"; [ "$v" = dicht ] && D0=""
   [ -n "${BILDLISTE:-}" ] && X="$X --Mapper.image_list_path $BILDLISTE"      # gilt fuer jede Variante (21:25: eng/redundant/dicht am selben engen Satz vergleichbar)
-  z="$A/$v"; rm -rf "$z"; mkdir -p "$z"; cp "$DB" "$z/db.db"; t0=$(date +%s)
+  z="$A/$v"; rm -rf "$z"; mkdir -p "$z/zwischen"; cp "$DB" "$z/db.db"; t0=$(date +%s)
+  X="$X --Mapper.snapshot_path $z/zwischen --Mapper.snapshot_frames_freq ${ZWISCHEN_FREQ:-100}"      # Zwischenstaende (normales Binaermodell je Zeitstempel; fortsetzen: colmap mapper --input_path)
   $C mapper --database_path "$z/db.db" --image_path "$IMG" --output_path "$z" --Mapper.num_threads -1 --Mapper.ba_use_gpu 1 --Mapper.ba_gpu_index 0 $D0 $X > "$z/log.txt" 2>&1; rc=$?; t1=$(date +%s)
   gr=$(ls -d "$z"/[0-9]* 2>/dev/null | while read m; do echo "$(stat -c %s "$m/images.bin") $m"; done | sort -rn | head -1 | cut -d' ' -f2)
   echo "$(date +%T) $v: rc $rc, $((t1-t0)) s, Modelle $(ls -d "$z"/[0-9]* 2>/dev/null | wc -l), Loeserfehler $(grep -c 'Linear solver failure' "$z/log.txt"), globale Ausgleiche $(grep -c 'Global bundle adjustment' "$z/log.txt"); groesstes: $($C model_analyzer --path "$gr" 2>&1 | grep -E 'Registered images|Points|Mean reprojection error|Mean track length' | sed 's/.*] //' | tr '\n' ';')"
