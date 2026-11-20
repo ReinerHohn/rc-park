@@ -66,3 +66,11 @@ Quelle der Speicherdaten: `sudo dmidecode -t memory` / `-t slot` (Nutzer, 20.11.
 - Dauerloesung: `tools/cpu_leistung_regler.sh` setzt jetzt alle drei Stellen; Dienst MAX=100, START=55, hoch bei < 80 C, runter ab 88 C, Notfall 94 C -> 55 W.
   Einspielen: `sudo bash tools/cpu_leistung_installieren.sh`. Gilt nur mit dem neuen hp-wmi-Modul (nach Kernel-Update neu bauen/signieren).
 - Kuehlung: ab ~90 W ist die Temperatur die Grenze (79 C bei 90 W, 93 C bei 110 W) -> externer Luefter/Unterlage lohnt JETZT (verschiebt, wo der Regler stehen bleibt). Vorher/nachher am Regler-Zustand `/run/cpu_leistung_regler.state` messbar.
+
+## Nachtraege 20.11. ab 16:00
+- Regler im Dauerbetrieb (Kette + Nebenlast): pendelt 60-80 W. Befund: bei WENIGEN Faeden mit vollem Turbo ist die Pakettemperatur (heissester Kern) hoeher als bei Volllast
+  auf allen Kernen (16:15: 82 C Mittel bei 50 W Kettenlast; 16:16 Volllast 28 Faeden: 65-68 C Mittel bei 65-74 W, Spitze 84 C). Der Regler nimmt dann die Grenze zurueck,
+  obwohl sie gar nicht bindet -> offen: Regel nur anwenden, wenn die Paketleistung nahe der Grenze liegt.
+- Externer Luefter seit ca. 16:13 dran: Wirkung NICHT sauber belegt (Kettenlast wechselt). Sauberer Vergleich = `vollgas_test2.sh` erneut (Bezug ohne Luefter 15:43: 63/70/79/93 C bei 55/70/90/110 W).
+- OpenBLAS-A/B: kein Gewinn (158 -> 148 s CPU, GPU-Loeser 33 s), siehe Ast betrieb. Globaler Mapper: Gesamtausgleich je Runde ~2,5 min statt 6,5 min (alle Kerne + mehr Leistung).
+- zswap an (zstd). Grosse Speicherseiten (THP always): noch nicht getestet.
