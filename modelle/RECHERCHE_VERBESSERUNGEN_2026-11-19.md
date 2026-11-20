@@ -108,3 +108,15 @@ Wichtigster Lizenzbefund vorab (neu): **Die LoMa-Gewichte, die COLMAP automatisc
 ## Zusammenfassung
 
 Der staerkste neue Hebel fuer genaue Kameras liegt schon im eigenen Bau: Der globale Mapper nimmt je Bild eine Schwerkraftrichtung (`ra_use_gravity`, `ra_use_stratified`, Tabelle `pose_priors.gravity`). Wir koennen sie lizenzfrei aus dem vorhandenen Fluchtpunkt-Lot (`lot_aus_fotos.py`) liefern, wahlweise aus GeoCalib (Gewichte CC BY 4.0). Bei FlexGlue lassen sich Tempo und Speicher ohne neuen Code verbessern: frueher abbrechen (`early_stop_decay`), Paarliste fuer den Cache sortieren, Paare per Bildsuche vorwaehlen (COLMAP-PR #4544 oder eigenes MegaLoc/DINOv2-Skript). Grosse Bilder laufen im Python-Pfad mit `query_chunk_size`. Weil FlexGlue die DB-Punkte nutzt, kann man seine Treffer mit den SIFT-Treffern auf denselben Punkten vereinigen; das ist eine dritte Variante neben Tuersteher und reinem FlexGlue. Wichtiger Lizenzbefund: COLMAP laedt fuer LoMa die normalen Gewichte, die auch auf nicht-kommerziellen Daten trainiert sind. Die Autoren bieten getrennte "commercial_*"-Gewichte an, aber nur als .pt; vor jedem LoMa-Versuch also die Weiche stellen. Fuer weissen Putz gibt es kaum Neues mit freier Lizenz. Lohnend sind die offene PatchMatch-Korrektur fuer schraege Ebenen (#5041, billig im Testbau) und DA3-Base/Small (Apache), das nachweislich bekannte Kameras als Eingabe nimmt. Fuer Rolling Shutter gibt es 2026 kein einsatzfaehiges Werkzeug. Pruefbar ist zuerst, ob schnelle Drehung in Videobildern mit dem Reprojektionsfehler zusammenhaengt; dazu kommt die BA-Kovarianz je Kamera (in pycolmap 4.2.1 vorhanden), um unsichere Kameras aus dem Wandbild fernzuhalten.
+
+## Ergebnis der Abarbeitung (Nacht 19./20.11.2026, Details LOGBUCH_KETTENTEST_2026-11-19.md)
+1. Schwerkraft je Bild: Werkzeug gebaut (tools/schwerkraft_je_bild.py, Median 0,7 Grad), aber im Mapper SCHAEDLICH: 12-14 Bilder weniger, fast alle mit (falscher) Vorgabe; kein Genauigkeitsgewinn. NICHT in der Kette.
+2. FlexGlue frueher abbrechen (0,3 / 0,2): nicht schneller, Qualitaet gleich. Standard bleibt.
+3. LoMa: an der Quelle bestaetigt nicht kommerziell nutzbar (Gewichte). Gesperrt.
+4. SIFT ∪ FlexGlue: trennt Seiten, 949/154 Bilder (zwischen SIFT 818/111 und FlexGlue 1065/161), 1,39 px. Kein Vorteil gegen FlexGlue allein.
+5. Kamera-Unsicherheit lokal: alle Springer unter den 10 % unsichersten (Schwabentor). Werkzeug in tools/versuche.
+6. Bildsuche (DINOv2): fuer neue FlexGlue-Paare wertlos (nur 9 % in top-150). Verworfen als Vorfilter.
+7. PatchMatch-PR 5041: kein messbarer Unterschied. Nicht uebernehmen.
+8. Rollverschluss: keine Massnahme.
+9. DA3-BASE als Fuelltiefe: kein klarer Gewinn gegen Ebenenfuellung.
+NEBENFUNDE mit groesstem Nutzen: (a) globaler Mapper legt punktlos getrennte Stuecke in EIN Modell -> tools/modell_zerlegen.py; (b) echtes Verkleben kam aus der Konsens-Stufe 2 -> Seitenfilter in global_mapper_konsens.py (belegt: 0 verklebte Bilder, Lage gleich); (c) FlexGlue = stabil +30/+40 % Bilder am Martinstor (zuschaltbar); (d) tools/gps_seiten_pruefen.py.
