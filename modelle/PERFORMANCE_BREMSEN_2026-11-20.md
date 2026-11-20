@@ -185,3 +185,11 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   die Westseite des Turms hat keine Punkte (Kameras fast nur Sektor 180-210 Grad: 405 von 623).
 - Deutung (ANNAHME bis gemessen): kein Lagefehler, sondern (a) einseitige Abdeckung -> das Grundriss-Tor kann beim fast quadratischen Turm die 90-Grad-Drehung nicht ausschliessen,
   (b) rund 20 falsch eingebaute Bilder (7 Commons, 1 Clip). Naechster Schritt: diese Bilder aus Modell/Fusion nehmen und Tore neu; Tore NICHT lockern.
+
+## Nachtrag 20:55 - Martinstor-Kette 1120b nach 6 h am Zeitlimit der SfM-Stufe abgebrochen (rc 124, 20:51) - EIGENER FEHLER
+- Mein Limit-Fix vom Nachmittag (`max(21600, RCPARK_STUFE_MAX_S)`) liess 6 h stehen; der 14:50 noch mit 1 Faden gestartete schrittweise Mapper stand bei 610 von 2107 Bildern
+  (globale Ausgleiche zuletzt 38 min je Stueck) und haette nie gereicht. 4 h Mapperarbeit verloren (COLMAP schreibt ohne Snapshot nichts). Limit jetzt 12 h Standard (`RCPARK_STUFE_MAX_S`).
+  LEHRE: lange Mapperlaeufe mit `--Mapper.snapshot_path/--Mapper.snapshot_frames_freq` starten, damit ein Abbruch nicht alles kostet (offen, in iphone_sfm einbauen + messen).
+- Statt die Kette blind zu wiederholen, zwei Mapperlaeufe direkt auf der vorhandenen Datenbank (alle Faeden, parallel, Zeiten daher nur grob vergleichbar), 20:52 gestartet:
+  `mt_inkr_alle` = alle 2107 Bilder -> `/media/oem/rcdaten/tmp/martinstor_inkr_1120/std`;
+  `mt_inkr_eng2` = 1156 Bilder (direkter Treffer oder Kette <= 2, ohne Zeitfenster; Liste `bilder_eng.txt`) -> `.../eng`. Frage: wie viele Torbilder/Seiten je Variante, wie lange.
