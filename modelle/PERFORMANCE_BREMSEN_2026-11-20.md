@@ -120,3 +120,26 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   nur CPU 501 s / 85 / 180; COLMAP-Standard 367 s / 91 / 173. Die "Linear solver failure"-Meldungen treten bei JEDEM Loeser auf (38-221) -> keine Eigenheit von cuDSS, sondern der
   Ausgleichsaufgabe selbst (Schritt nicht berechenbar, Ceres daempft staerker). Kein Loeser ist klar besser; heutige Einstellung war die schnellste -> KEINE Aenderung.
   Offen bleibt, WARUM die Schritte scheitern (Kandidat: schlecht bestimmte Kameras/Punkte); bei 1 Lauf je Variante und 272-402 s Streuung desselben Baus ist die Rangfolge nicht sicher.
+
+## Agentenrunde 20.11. 18:40-19:00 (9 Auftraege, Berichte /media/oem/rcdaten/tmp/hebel_1120/NN_*.md) - Kernaussagen, [n] = von der Sitzung nachgemessen
+- [n] LOESERFEHLER SIND DER HAUPTZEITFRESSER des laufenden Martinstor-Mappers (Korrektur zur Loeser-A/B-Aussage oben): aus `pipe/pipeline.log` 50 globale Ausgleiche;
+  33 ohne Fehler = zusammen 253 s, 16 mit Fehlern (ab 153 Bildern, je 32-91 Fehler) = zusammen 6922 s (Einzelwerte 196 / 211 / 428 / 797 / 914 s). Meldung dort
+  909 x "...step: Success." = Faktorisierung des duenn besetzten GPU-Loesers (cuDSS) scheitert; im kleinen Schwabentor-A/B waren es dagegen 38 x "Eigen failure ... dense Cholesky"
+  (Kleinstprobleme, belanglos) - der A/B hat das eigentliche Problem also NICHT getroffen. Nicht reproduzierbar am fertigen Stueck (`zeigen/stuecke/0`, 817 Bilder: 85 s, 0 Fehler).
+  Verdacht (Agent 05): eigene Kamera je Bild in `db.db` (2107 Kameras) macht die Aufgabe schlecht bestimmt; der Konsens-Weg rechnet mit Kamera je Clip und zeigt die Fehler nicht.
+  Naechster Schritt: Zwischenstand des schrittweisen Mappers sichern (`--Mapper.snapshot_path/_frames_freq`) und daran Loeser/Kameraregel deterministisch vergleichen.
+- [n] Caspar (GPU-Loeser ohne Schur-Aufbau, in unserem Bau enthalten, `--BundleAdjustment.backend CASPAR`): 817-Bilder-Stueck 4 s statt 85 s, ABER Ergebnis zerstoert
+  (mittlerer Rueckprojektionsfehler 1e147 px); Konsensmodell 3,1 s, Fehler 0,770 -> 0,777 px (keine Verbesserung); Schwabentor 1,2 s, unveraendert. Urteil: sehr schnell, so nicht einsetzbar.
+- Agent 05 weitere Stellschrauben (ungemessen): Stufe 2 mit `--Mapper.multiple_models 0` (34 % der Stufe-2-Zeit fuer Nebenmodelle), `ba_global_frames_ratio/points_ratio 1.2`
+  (weniger globale Ausgleiche), `view_graph_calibrator` laeuft ohne `--random_seed` (Quelle der Streuung), `GlobalMapper.min_model_size`, `TwoViewGeometry.max_num_trials`.
+- Agent 09: bei gleichzeitiger GPU-Last bremst die gemeinsame Waerme (Mapper-Faden 2,8-3,9 statt 5,3-5,5 GHz); THP/Allocator/SQLite/Platte bringen nichts; GPU zieht 108-114 W (kein 80-W-Deckel).
+- Agent 06 (dichte Wolke): 83 % der Zeit GPU-Sweep, haengt an der Pixelzahl; Vorschlag 1200 statt 1600 px (ANNAHME x 0,55-0,6), Fusion mit bounding_box + Himmelsmaske gegen Falschpunkte.
+- Agent 03 (Seiten verbinden): es fehlen echte Brueckenbilder; Rang 1 Fotogang durchs Tor (Nutzer), Rang 2 `colmap guided_geometric_verifier` nach Einzelausrichtung der Stuecke an LoD2
+  (im Bau vorhanden, nie benutzt); MASt3R/DUSt3R/Doppelgangers++ nur NC.
+- Agent 08 (offene Daten): Stadt Freiburg hat Schraegluftbilder 2021 im 3D-Viewer (Abruf gesperrt -> Anfrage Vermessungsamt); Panoramax 163 Bilder am Schwabentor (CC BY-SA);
+  Mapillary-Sperre im Lizenzregister vermutlich zu streng (Nutzerentscheid).
+- Agent 02 (Hardware, Preise 20.11.): RAM 2 x 16 GB ~563 EUR, 2 x 32 GB ~1110 EUR (Speicherkrise); zweiter M.2-Platz laut HP-Handbuch sehr wahrscheinlich; NVMe 1 TB 130-180 EUR, 2 TB ab 305 EUR.
+- Agent 01 (Cloud): Trooper.ai (PayPal/SEPA) 4090 + 96 GB 0,89 EUR/h; Hetzner CCX53 (32 vCPU/128 GB) 0,73 EUR/h als Mapper-Knoten; CPU-Typ der Mietmaschinen vor Entscheidung messen.
+- Agent 07 (Kette parallel): Zweig `ram-je-stufe-1120` (Commit 105727c7b, Worktree .claude/worktrees/agent-a1b159488c8983a24), RAM-Buchung je Stufe + Netzstufen parallel hinter Schaltern
+  (Standard AUS), nur synthetisch getestet, NICHT zusammengefuehrt. Offen: GPU-Buchung je Stufe, Dienst-Sperre fuer zwei Ketten am selben Netzdienst.
+- Agent 04 (Paarschema): laeuft noch.
