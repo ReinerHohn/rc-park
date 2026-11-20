@@ -18,3 +18,8 @@ daten/hoellental/dgm025_full.npy
 .venv-pc/
 daten/kaufhaus_freiburg/dop/
 daten/kaufhaus_freiburg/lod2/
+
+# Claude Code: lokal/temporär
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+.claude/worktrees/

@@ -9,49 +9,51 @@ selbst steuern.
 
 ## Inhalt
 
+> Für Claude/Mitarbeit: Regeln + Aufbau in [`CLAUDE.md`](CLAUDE.md), Entscheidungen und **was schon versucht wurde** in [`PROJEKT.md`](PROJEKT.md).
+
 | Datei | Inhalt |
 |---|---|
 | [`KONZEPT.md`](KONZEPT.md) | Vision, USP, Attraktionen, Zielgruppen, Risiken |
-| [`bauplan-miniaturwunderland.md`](bauplan-miniaturwunderland.md) | **Bauplan** extrem detailliert in Sektionen (Maßstab 1:500, LoD2+Hero+Magnorail) |
-| [`plan-schnellstes-modell.md`](plan-schnellstes-modell.md) | **Schnellster Weg zum Detailmodell**: Hybrid Druck (Körper) + Laser (Flächen), parallel, 36 Kacheln |
-| [`plan-wahrzeichen-drucken.md`](plan-wahrzeichen-drucken.md) | **Wahrzeichen in Top-Qualität drucken**: scannen → aufbereiten → FDM/Resin → Finish |
-| [`datenquellen.md`](datenquellen.md) | **3D-Daten „aus allen Rohren"**: Android-Scan-Apps, Drohne, Fusion, offene Meshes, Kitbash |
-| [`sweet-spot-fertigung.md`](sweet-spot-fertigung.md) | **Sweet Spot HW+SW**: gut scannen + schnell drucken, 3 Budget-Stufen, Produktlogik |
-| [`prototyp-konzept.md`](prototyp-konzept.md) | **Schneller Prototyp**: eBay-Gear reparieren + Druckmodule + Personal-Konzept |
-| [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
-| [`mieten-kalkulation.md`](mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |
-| [`preise-wettbewerb.md`](preise-wettbewerb.md) | Was andere Parks verlangen (Benchmark) + eigene Preisempfehlung |
-| [`mvp-kalkulation.md`](mvp-kalkulation.md) | **MVP durchgerechnet**: Sweet Spot Lage + Features, CapEx, Break-even |
-| [`display-mvp.md`](display-mvp.md) | **Pflegeleichtes Display-MVP** durchgerechnet (wenig Wartung, Break-even ~3-4 Souvenirs/Tag) |
-| [`sweet-spots-schnellstart.md`](sweet-spots-schnellstart.md) | Schnell + wenig Personal + viel drucken: Pop-up, Druckfarm, Lage |
-| [`sweet-spots-aktion.md`](sweet-spots-aktion.md) | Gedrucktes Mini-Freiburg + Aktion (Drohnen/Bagger/Flieger) = der USP |
-| [`baggerland-markt.md`](baggerland-markt.md) | Marktgröße RC-Baggerland (Diggerland etc.) + wie man es spannend macht |
-| [`rc-baustellenwelt.md`](rc-baustellenwelt.md) | **MVP ohne Drohnen**: Bagger/Kräne/Radlader/Kipper + Flotte ~6.300 € |
-| [`baggerland-stationen.md`](baggerland-stationen.md) | Stationen-Konzept + Baggerführerschein (6 Missionen, Punkte, Level) |
-| [`bagger-auswahl.md`](bagger-auswahl.md) | Größter RC-Bagger (1:8) + Preis-Leistungs-Sweet-Spot + Flotten-Stufen |
-| [`indoor-fpv.md`](indoor-fpv.md) | Indoor-FPV-Bereich konkret: Whoops, Parcours, Netz, Kosten, Schlechtwetter |
-| [`machbarkeit-und-hebel.md`](machbarkeit-und-hebel.md) | Machbarkeit + Beschaffung: gebraucht kaufen, Module, RC-Baggerland |
-| [`kaufen-statt-drucken.md`](kaufen-statt-drucken.md) | Einkaufsliste H0-Stadt (fertig/gebraucht) + Maßstabs-Guide + nur Unikate drucken |
-| [`3d-stadtmodell.md`](3d-stadtmodell.md) | **Ganze Stadt Freiburg als amtliches 3D-Modell (LoD2, gratis)** → STL drucken |
+| [`bauplan-miniaturwunderland.md`](Doku/konzept/bauplan-miniaturwunderland.md) | **Bauplan** extrem detailliert in Sektionen (Maßstab 1:500, LoD2+Hero+Magnorail) |
+| [`plan-schnellstes-modell.md`](Doku/modellbau/plan-schnellstes-modell.md) | **Schnellster Weg zum Detailmodell**: Hybrid Druck (Körper) + Laser (Flächen), parallel, 36 Kacheln |
+| [`plan-wahrzeichen-drucken.md`](Doku/modellbau/plan-wahrzeichen-drucken.md) | **Wahrzeichen in Top-Qualität drucken**: scannen → aufbereiten → FDM/Resin → Finish |
+| [`datenquellen.md`](Doku/modellbau/datenquellen.md) | **3D-Daten „aus allen Rohren"**: Android-Scan-Apps, Drohne, Fusion, offene Meshes, Kitbash |
+| [`sweet-spot-fertigung.md`](Doku/modellbau/sweet-spot-fertigung.md) | **Sweet Spot HW+SW**: gut scannen + schnell drucken, 3 Budget-Stufen, Produktlogik |
+| [`prototyp-konzept.md`](Doku/konzept/prototyp-konzept.md) | **Schneller Prototyp**: eBay-Gear reparieren + Druckmodule + Personal-Konzept |
+| [`standort.md`](Doku/standort/standort.md) | Anforderungsprofil & Standortlogik Freiburg |
+| [`mieten-kalkulation.md`](Doku/markt-kalkulation/mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |
+| [`preise-wettbewerb.md`](Doku/markt-kalkulation/preise-wettbewerb.md) | Was andere Parks verlangen (Benchmark) + eigene Preisempfehlung |
+| [`mvp-kalkulation.md`](Doku/markt-kalkulation/mvp-kalkulation.md) | **MVP durchgerechnet**: Sweet Spot Lage + Features, CapEx, Break-even |
+| [`display-mvp.md`](Doku/markt-kalkulation/display-mvp.md) | **Pflegeleichtes Display-MVP** durchgerechnet (wenig Wartung, Break-even ~3-4 Souvenirs/Tag) |
+| [`sweet-spots-schnellstart.md`](Doku/standort/sweet-spots-schnellstart.md) | Schnell + wenig Personal + viel drucken: Pop-up, Druckfarm, Lage |
+| [`sweet-spots-aktion.md`](Doku/rc-attraktionen/sweet-spots-aktion.md) | Gedrucktes Mini-Freiburg + Aktion (Drohnen/Bagger/Flieger) = der USP |
+| [`baggerland-markt.md`](Doku/markt-kalkulation/baggerland-markt.md) | Marktgröße RC-Baggerland (Diggerland etc.) + wie man es spannend macht |
+| [`rc-baustellenwelt.md`](Doku/rc-attraktionen/rc-baustellenwelt.md) | **MVP ohne Drohnen**: Bagger/Kräne/Radlader/Kipper + Flotte ~6.300 € |
+| [`baggerland-stationen.md`](Doku/rc-attraktionen/baggerland-stationen.md) | Stationen-Konzept + Baggerführerschein (6 Missionen, Punkte, Level) |
+| [`bagger-auswahl.md`](Doku/rc-attraktionen/bagger-auswahl.md) | Größter RC-Bagger (1:8) + Preis-Leistungs-Sweet-Spot + Flotten-Stufen |
+| [`indoor-fpv.md`](Doku/rc-attraktionen/indoor-fpv.md) | Indoor-FPV-Bereich konkret: Whoops, Parcours, Netz, Kosten, Schlechtwetter |
+| [`machbarkeit-und-hebel.md`](Doku/konzept/machbarkeit-und-hebel.md) | Machbarkeit + Beschaffung: gebraucht kaufen, Module, RC-Baggerland |
+| [`kaufen-statt-drucken.md`](Doku/modellbau/kaufen-statt-drucken.md) | Einkaufsliste H0-Stadt (fertig/gebraucht) + Maßstabs-Guide + nur Unikate drucken |
+| [`3d-stadtmodell.md`](Doku/modellbau/3d-stadtmodell.md) | **Ganze Stadt Freiburg als amtliches 3D-Modell (LoD2, gratis)** → STL drucken |
 | `modelle/terrain_gen.py` | Schwarzwald-Gelände-Sockel aus echten Höhendaten (SRTM) → STL |
-| [`prioliste-freiburg.md`](prioliste-freiburg.md) | Prioliste Freiburg-Wahrzeichen + Faller-Sets + Martinstor-Qualität scannen |
-| [`risikolos-ohne-personal.md`](risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
-| [`wartung-risiko.md`](wartung-risiko.md) | RC-Aktion vs Display: Wartung/Risiko + low-maintenance Interaktivität |
-| [`automatisierung-ohne-rc.md`](automatisierung-ohne-rc.md) | MiWuLa-Qualität ohne RC: Magnorail (Magnet-Autos) + Märklin Höllentalbahn |
-| [`demo-standort.md`](demo-standort.md) | Risikoärmster Start: Demo bei bemanntem Partner am Münster |
-| [`standort-display-pilot.md`](standort-display-pilot.md) | Pilot-Standorte Display (Stadtbibliothek/Tourist-Info/Museum) + StadtModell e.V. |
-| [`host-indoor-spielplatz.md`](host-indoor-spielplatz.md) | **RC-Baustelle bei Indoor-Spielplatz (Kindergalaxie)** via Umsatzbeteiligung |
-| [`schutzbox-plexiglas.md`](schutzbox-plexiglas.md) | Sicherer Schutzkasten (von außen gesteuert, kindersicher, Polycarbonat) |
-| [`lean-phasen.md`](lean-phasen.md) | Lean-Start in Phasen: Demo & Pop-up & große Fläche (Gates) |
-| [`startausstattung.md`](startausstattung.md) | Einkaufsliste mit Preisen (gebraucht/neu) + Kastelburg-Vorbild |
-| [`3d-druck-strategie.md`](3d-druck-strategie.md) | Schnell Gebäude/Dioramen als Bausatz drucken; Mehrfarb-Druck-Urteil |
-| [`modelle-schwarzwald.md`](modelle-schwarzwald.md) | Sweet-Spot-Modelle (Freiburg/Schwarzwald), sortiert nach Erfolg × Wow |
-| [`beleuchtung-detail.md`](beleuchtung-detail.md) | Max. Detail (Resin) + Beleuchtung der Wahrzeichen (Wow-Hebel) |
-| [`farbe-drucken.md`](farbe-drucken.md) | Scan in Farbe drucken: Vollfarb-Service vs AMS vs bemalen (Irrtum geklärt) |
-| [`max-detail-scan.md`](max-detail-scan.md) | Detail-Obergrenze via echtem 3D-Scan (Photogrammetrie) + Lizenz |
-| [`diy-scan.md`](diy-scan.md) | Selbst scannen (Kamera+Drohne+RealityCapture) + Drohnen-Recht |
+| [`prioliste-freiburg.md`](Doku/modellbau/prioliste-freiburg.md) | Prioliste Freiburg-Wahrzeichen + Faller-Sets + Martinstor-Qualität scannen |
+| [`risikolos-ohne-personal.md`](Doku/konzept/risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
+| [`wartung-risiko.md`](Doku/konzept/wartung-risiko.md) | RC-Aktion vs Display: Wartung/Risiko + low-maintenance Interaktivität |
+| [`automatisierung-ohne-rc.md`](Doku/konzept/automatisierung-ohne-rc.md) | MiWuLa-Qualität ohne RC: Magnorail (Magnet-Autos) + Märklin Höllentalbahn |
+| [`demo-standort.md`](Doku/standort/demo-standort.md) | Risikoärmster Start: Demo bei bemanntem Partner am Münster |
+| [`standort-display-pilot.md`](Doku/standort/standort-display-pilot.md) | Pilot-Standorte Display (Stadtbibliothek/Tourist-Info/Museum) + StadtModell e.V. |
+| [`host-indoor-spielplatz.md`](Doku/standort/host-indoor-spielplatz.md) | **RC-Baustelle bei Indoor-Spielplatz (Kindergalaxie)** via Umsatzbeteiligung |
+| [`schutzbox-plexiglas.md`](Doku/rc-attraktionen/schutzbox-plexiglas.md) | Sicherer Schutzkasten (von außen gesteuert, kindersicher, Polycarbonat) |
+| [`lean-phasen.md`](Doku/konzept/lean-phasen.md) | Lean-Start in Phasen: Demo & Pop-up & große Fläche (Gates) |
+| [`startausstattung.md`](Doku/rc-attraktionen/startausstattung.md) | Einkaufsliste mit Preisen (gebraucht/neu) + Kastelburg-Vorbild |
+| [`3d-druck-strategie.md`](Doku/modellbau/3d-druck-strategie.md) | Schnell Gebäude/Dioramen als Bausatz drucken; Mehrfarb-Druck-Urteil |
+| [`modelle-schwarzwald.md`](Doku/modellbau/modelle-schwarzwald.md) | Sweet-Spot-Modelle (Freiburg/Schwarzwald), sortiert nach Erfolg × Wow |
+| [`beleuchtung-detail.md`](Doku/modellbau/beleuchtung-detail.md) | Max. Detail (Resin) + Beleuchtung der Wahrzeichen (Wow-Hebel) |
+| [`farbe-drucken.md`](Doku/modellbau/farbe-drucken.md) | Scan in Farbe drucken: Vollfarb-Service vs AMS vs bemalen (Irrtum geklärt) |
+| [`max-detail-scan.md`](Doku/modellbau/max-detail-scan.md) | Detail-Obergrenze via echtem 3D-Scan (Photogrammetrie) + Lizenz |
+| [`diy-scan.md`](Doku/modellbau/diy-scan.md) | Selbst scannen (Kamera+Drohne+RealityCapture) + Drohnen-Recht |
 | [`annahmen.json`](annahmen.json) | **Alle editierbaren Finanz-Annahmen** |
-| [`attraktionen/*.json`](attraktionen/) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
+| [`attraktionen/*.json`](attraktionen) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
 | `start.sh` | **Baut + oeffnet beide Dashboards** (businessplan.html + mvp-rechner.html) |
 | `build.py` | Erzeugt `businessplan.html` aus den Daten |
 | `businessplan.html` | Interaktiver Businessplan mit Live-Reglern & Charts (generiert) |
