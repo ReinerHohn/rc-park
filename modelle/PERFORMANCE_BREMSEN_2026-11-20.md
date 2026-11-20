@@ -203,3 +203,13 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   0P_MuzeClHM bei -6,8 m, eigen__vf_018..031 bei -4 m, einzelne eigene Fotos bis -84 m) und diese Bilder aus der Fusion nehmen; danach Tore neu.
 - Nebenbefund: `tools/kamera_gelaende.py` rechnet mit ebenem Gelaende (ANNAHME im Werkzeug). Nahe Kameras (0-15 m) stehen im Median bei +1,2 m, die tiefen Gruppen liegen 15-60 m entfernt
   bei -4 bis -7 m - das ist kein Hang, die Gruppen sind falsch verortet.
+
+## Nachtrag 21:36 - Speicher voll: `fassade_ortho.py --zelle 0.01` (Schwabentor, 444 Messkameras) wuchs auf 4,4 GB RAM + 7,3 GB Auslagerung, Auslagerung 16 GB voll
+- 21:33 von Hand beendet (kill, rc -15 in der Kette, Stufe `fenster_ortho_fein` fehlt damit; Kette lief weiter), um die zwei Mapperlaeufe (je 40 min Arbeit) vor dem OOM-Killer zu schuetzen.
+  Claude Code hat dabei alle meine Warter-Shells beendet (Speicherdruck) - Jobs selbst unberuehrt.
+- Ursache der Enge: EIGENER FEHLER - Kette mit von Hand gesenkter Buchung (5000 statt 11000 MiB) neben zwei Mappern gestartet. Die gesenkte Buchung galt nur fuer die Mapperphase;
+  spaete Stufen (Feinbild 1 cm) brauchen > 10 GB. Strukturelle Loesung = Zweig `ram-je-stufe-1120` (Buchung je Stufe), noch nicht zusammengefuehrt.
+- OFFEN: (a) `fenster_ortho_fein` fuer schwabentor-1120 nachholen, wenn die Mapper fertig sind (Kette `--ab fenster` allein, Buchung 11000);
+  (b) Speicherbedarf von fassade_ortho bei 1 cm messen und begrenzen (Fassaden nacheinander freigeben / Kacheln) - heute > 11,7 GB bei einem 4-Seiten-Turm.
+- perf am Mapper mit allen Faeden (21:25, 36 Faeden, 370 % CPU bei drei parallelen Jobs): ChunkOuterProduct 43 %, GetCell 19,5 %, pthread_mutex_lock/unlock 13,5 % -> Kandidat dichte Kameramatrix.
+  Varianten-Skript `tools/versuche/mt_eng_varianten_1120.sh` (redundant, dicht, eng allein) - Einreihung ging mit den Wartern verloren, neu starten wenn die Mapper fertig sind.
