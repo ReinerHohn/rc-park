@@ -112,3 +112,7 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   Einstellung dabei: `--Mapper.ba_use_gpu 1 --Mapper.ba_max_num_images_direct_dense_gpu_solver 0` = immer duenn besetzter GPU-Loeser (cuDSS).
   A/B LAEUFT (`tools/versuche/mapper_loeser_ab.sh`, Log `/media/oem/rcdaten/tmp/loeser_ab_1120.log`): heute / dichter GPU-Loeser / CPU / COLMAP-Standard - Zeit, Loeserfehler, Ergebnis.
 - AVX2-Bau, sauber eingeordnet: enthaelt die Befehle (libceres.a 120 877 AVX- / 40 974 FMA-Befehle gegen 525 / 0), bringt beim Buendelausgleich nichts (CPU 165/158/156 s, GPU 41/46/40 s).
+- AVX2-A/B Abschluss (18:05): Mapper Schwabentor 203 Bilder alt 402 s / neu 480 s / alt 272 s (176 / 172 / 180 Bilder; Loeserfehler 205 / 66 / 37; globale Ausgleiche 56 / 101 / 67).
+  Die Streuung zwischen zwei Laeufen DESSELBEN Baus (272 gegen 402 s) ist groesser als jeder Bau-Unterschied - der Mapper nimmt je Lauf einen anderen Weg (nicht deterministisch),
+  dazu wechselnde Nebenlast. ENTSCHEIDUNG: kein Gewinn belegt -> alter Bau bleibt in Betrieb; Testbau bleibt liegen (`/media/oem/rcdaten/colmap-opt`, 8 GB) bis zu einer Wiederholung auf leerem Rechner.
+  Lehre fuer alle Mapper-A/Bs: ein Lauf je Variante reicht nicht; mindestens 3 je Variante oder ein deterministischer Teilschritt (Buendelausgleich) als Messgroesse.
