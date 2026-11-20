@@ -1,62 +1,61 @@
-# Übergabe 20.11.2026 13:07
-Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
+# Übergabe 20.11.2026 16:30
+Weiter mit: „weiter“ (oder /uebergabe fortsetzen; vorher Skill `sitzungsbeginn`)
 
 ## Auftrag
-- „Okay, arbeite wirklich komplett autonom heute Nacht … bleib nirgends mit einer Frage stehen“ (19./20.11., gilt weiter)
-- „Kannst du mal das Projekt KI-konform aufräumen … Skills und Workflows bauen“ → erledigt
-- „Informationen baumartig strukturieren … damit dein Kontext nicht immer voll ballert“ → erledigt
-- „musst pushen … mach die sensiblen Daten raus“ / „Hook, der in jedem Commit guckt“ → erledigt
-- „nichts Gelerntes und keine neue Methode darf verloren“ → erledigt (Rest s. Nächste Schritte 2)
-- „das, was neuer ist, ist besser“ (Regelwidersprüche) → entschieden, CLAUDE.md „ENTSCHIEDEN 20.11.“
-- „Übergabe-Skill … im allgemeinen Claude-MDs-Repo, damit alle davon profitieren“ → erledigt
-- Ziel: H0-Modelle aus Fotos (Kernmethode CLAUDE.md); aktiv Martinstor-Kette von null
+- „Zeig mir das Kameramodell, sobald es fertig ist“ (16:20) → OFFEN, Schritt 1
+- „Bitte nachher den Lauf nicht stoppen, ich bin nicht zu Hause, lass durchlaufen“ → Schwabentor-Kette startet automatisch nach dem Martinstor
+- „Ich will alle Optionen für mehr Qualität, mehr Geschwindigkeit und Vollgas“ / „weitere Hardware-Configs oder Kernel-Optionen … Dateisysteme, Caching, CPU-Clocks“ → läuft, Stand `modelle/HARDWARE_STAND_2026-11-20.md`
+- „gib mir jeweils Uhrzeiten, wann war es fertig“ → bei jeder Meldung die echte Fertig-Uhrzeit nennen
+- HARTE REGEL neu: „es darf nur auf der SSD sein, was unbedingt sein muss, der Rest muss ausgelagert werden … vielleicht sogar gezippt“ (CLAUDE.md Technik, Memory feedback-interne-ssd-nur-noetiges)
+- Weiter gültig: komplett autonom arbeiten, nirgends mit einer Frage stehen bleiben. Ziel: H0-Modelle aus Fotos (Kernmethode), aktiv Martinstor-Kette von null, danach Schwabentor, FlexGlue-Messung, Kaufhaus
 
 ## Erledigt und geprüft
-- main == origin/main (12:54), Historie ohne Dateien > 1 MB und ohne Drucker-Zugangscode; pre-commit/pre-push-Hook aktiv (`tools/git_hooks/`)
-- CLAUDE.md zusammengeführt, 12 Projekt-Skills `.claude/skills/`, 3 Workflows `.claude/workflows/` (Workflows nicht syntaxgetestet, kein node)
-- Wissensbaum: `PROJEKT.md` → 7 Äste `Doku/projekt/` (foto-sfm, lage-seiten, wolke-wandbild, kanten-messen, bauteile-kreis, betrieb, modellbau-druck); ~490 Lehren, Verlustprüfung 0 fehlend; `check.py --strict` rc 0
-- doku-pflege fest eingebaut: Schnelltest (grün, 80 s), Skill sitzungsbeginn (schnell), logbuch-commit (voll vor Push)
-- claude-mds: Skill `/uebergabe` + Hinweis in `bootstrap.sh` (gepusht 9064e65), getestet mit/ohne Übergabe
-- Archiv: 109 Altdokumente `modelle/archiv/`, 53 Werkzeuge `tools/archiv/` (nichts gelöscht)
+- Ursache Kettenabbruch 13:27 gefunden + behoben: Start 08:36 mit Standardwerten (nur 12 langsame Kerne 16-27 + 3 h Limit). `tools/job_start.sh` gibt Kette/SfM/Mapper/dichte Wolke immer alle Kerne, `gesamtkette.py` SfM mind. 6 h (Pin-Test beide Richtungen, Schnelltest 0 Fehler). Konsens-Läufe 77 → 49 min gemessen
+- CPU-Dauerleistung: 110 W statt 55 W gemessen (Nutzer mit sudo, `tools/versuche/vollgas_test2.sh`: 70/90/110 W = 70/79/93 °C kalt, 80/88/96 °C durchgewärmt, 0 % Drosselung). Nötig: WMI (neues hp-wmi mit `rcpark_pl*`, geladen) + MSR + MMIO gemeinsam. Regler `cpu_leistung_regler` eingespielt (MAX=100, START=55, Temperaturmittel), pendelt 55–80 W
+- Interne SSD freigeräumt (geprüftes Verschieben, `tools/versuche/intern_freiraeumen_1120*.sh`): scan 40 GB frei (vorher 15), Volume 159 GB frei (vorher 18); Altarchive in `/media/oem/rcdaten/auslagern_Volume_archiv`, alter Lauf `martinstor_gk3/pipe` als Verknüpfung nach rcdaten; rcdaten 43 % belegt
+- zswap an (zstd, 25 % RAM, dauerhaft; `tools/zswap_an.sh`): 16:28 gemessen 522 MB in 147 MB (Faktor 3,6)
+- RAM-Bestand gelesen: 2 × 8 GB DDR5-5600, Firmware erlaubt 64 GB → Kaufempfehlung 2 × 32 GB DDR5-5600 SO-DIMM
+- OpenBLAS-A/B: kein Gewinn (158 → 148 s CPU, GPU-Löser 33 s) – nicht umgestellt (Ast betrieb)
+- Externer Lüfter: Wirkung NICHT belegt (durchgewärmt 3–10 °C wärmer als kalter Lauf ohne Lüfter)
+- yt-dlp 2026.10.26 in `~/.local/bin` (ohne root); Video h6nO14cZSqE löst wieder auf
+- `tools/sparse_zeigen.py` + Vorlage: Kameramodell als Bild + 3D-HTML; Bild am Konsens-Modell angesehen (Boden waagrecht), HTML erzeugt aber NICHT im Browser geprüft
+- Regression Schwabentor (`regr-schwab`): „identisch – nichts verloren“
+- Alles committet + gepusht (main == origin/main 16:25, 18 Commits seit 268f63f6c)
 
 ## Läuft gerade
-- NACHTRAG 14:55: Erste Kette `kette-martinstor-1120` brach 13:27 ab (SfM-Zeitlimit 3 h im globalen Mapper, rc 124; Konsens 843/2107 Bilder, 774 fremde Seite). Neu: `rcpark-kette-martinstor-1120b` (ab sfm, RCPARK_STUFE_MAX_S=21600, Merkmale/Paare aus Cache) · Log `job_logs/kette-martinstor-1120b.log` · danach Skill `wolke-tore`, `konsens_arbeit/fremde_seite.txt`, audit/seiten.jpg, Realitäts-%
-- FlexGlue-Stufe 2 und `mt_anh_sued3` (seit 11:59 im Gesamtausgleich hängend, 1 Kern) auf Nutzerwunsch GESTOPPT 14:48 (RAM für Kette). Nach Kettenende neu starten; Süd-Anhang mit mehr Kernen. Warter-Lehre: startete FlexGlue auch nach GESCHEITERTER Kette (rc prüfen!)
-- NACHTRAG 15:45: Nutzer unterwegs, "Lauf nicht stoppen, durchlaufen lassen" -> Warter `rcpark-warter_schwab` startet nach Ende von 1120b automatisch `kette-schwabentor-1120` (schwab_auto -> schwabentor-1120, Log job_logs/kette-schwabentor-1120.log). KEIN Windows-Neustart heute. Danach FlexGlue-Stufe 2 + Sued-Anhang neu starten
-- Interne SSD freigeraeumt (Regel CLAUDE.md Technik): scan 40 GB frei, Volume-Altarchive auf rcdaten/auslagern_Volume_archiv; Nachlaeufe `intern_frei2/3` (Logs /media/oem/rcdaten/tmp/intern_frei*_1120.log) pruefen
-- Hardware: `modelle/HARDWARE_STAND_2026-11-20.md` (RAM-Kauf 2x32 GB DDR5-5600 empfohlen; CPU 55 W; hp-wmi mit PL-Parametern GEBAUT, nicht geladen - Nutzer muss signieren/laden)
-- yt-dlp: sudo geht aus der Sitzung nicht (kein Terminal) -> aktuelle 2026.10.26 nach ~/.local/bin (steht in PATH vor /usr/local/bin, auch systemd); h6nO14cZSqE löst wieder auf (1080p). Die 2 Videos fehlen im laufenden Lauf noch
-- `regr-schwab` FERTIG: „identisch - nichts verloren“
-
-- Lehren Runde 2: alle 3 Agenten FERTIG (13:07), nichts läuft mehr · Ergebnis `/media/oem/rcdaten/tmp/baum_sicherung/runde2/` register.md (244 Z.), memory.md (276), archiv.md (439, inkl. neuer Ast lizenzen-werkzeuge) = 1161 Zeilen, gruppiert `## AST: <ast>[ / GILT| / OFFEN]` · Lücken je Datei am Ende (NICHT GESCHAFFT); Abgleich gegen Baum nur per Stichwort ⇒ beim Zusammenführen Doppeltes verschmelzen
+- `rcpark-kette-martinstor-1120b` (Start 14:50, ab sfm) · Log `job_logs/kette-martinstor-1120b.log` · Prüfen: `grep -E '^\[[0-9:]+\] [a-z_]+:' LOG | tail -1; grep -c Traceback LOG; grep JOB_ENDE LOG` · 16:28: globaler Mapper seit 16:01, Gesamtausgleich 16:13 fertig, seitdem „iterative retriangulation and refinement“ (`pipe/sfm/global.log`), 0 Fehler. Konsens-Zwischenstand: 815/2107 Bilder, 793 „fremde Seite“, GPS-Median 8,7 m · danach Schritt 1
+- `rcpark-warter_schwab` (einmalig): startet nach Ende von 1120b `kette-schwabentor-1120` (schwab_auto → schwabentor-1120, Log `job_logs/kette-schwabentor-1120.log`)
+- GESTOPPT 14:48, später neu starten: FlexGlue-Stufe 2 (`/media/oem/rcdaten/tmp/flexglue/stufe2.sh`, ~20 h) und Süd-Anhang `mt_anh_sued3` (hing seit 11:59; mit mehr Kernen)
 
 ## Nächste Schritte
-1. Jobs oben prüfen (`systemctl --user list-units 'rcpark-*' --no-legend`); Kettenende auswerten (Skill objekt-von-null Schritt 5)
-2. SOFORT: Runde 2 zusammenführen — Skript nach Muster `/tmp/.../scratchpad/baum_bauen.py` (geht bei /clear verloren; neu schreiben): Zeilen je `## AST:` in den Ast, Teilthemen übernehmen, Doppeltes (gleicher Ansatz+Datum) verschmelzen; Äste > 110 Zeilen teilen (sicher: bauteile-kreis → bauteile-generator + kreis-abnahme; kanten-messen → kanten-linien + foto-tore-messen; lage-seiten, wolke-wandbild prüfen), neuer Ast lizenzen-werkzeuge; Zeilen in PROJEKT.md; Verlustprüfung (jede Quellzeile in genau einem Ast), `check.py --strict`, commit + push. Danach REZEPT: doppelte L-Nummern (L11–L13, L-KR17–29) auflösen
-3. „Offen“-Punkte mit „(ungeprüft)“ in den Ästen gegen Code prüfen
-4. Regression für kaufhaus_gk2 (Ordner bisher unversioniert) und martinstor-1120 anlegen
+1. Kameramodell zeigen, sobald `pipe/sfm/sparse/0/images.bin` neu ist: `tools/py tools/sparse_zeigen.py /media/oem/scan/rc-park_daten/martinstor-1120/pipe/sfm/sparse/0 --png <bild> --html <seite> --titel "Martinstor Kameramodell 20.11."` → Bild per SendUserFile, HTML als Artifact (icon „map“), Zahlen: registrierte Bilder von 2107, fremde Seite angebunden?, `mapper_wahl.json`
+2. Nach der dichten Wolke Skill `wolke-tore` (Zerfall, Abdeckung, Grundriss, GPS, Seiten), `audit/seiten.jpg` + `neben_*.jpg` ansehen, Fehlerliste, Realitäts-%, 3D-HTML; Stufenzeiten ins Logbuch (Vergleich alt/neu)
+3. Schwabentor-Kette auswerten (gleiche Tore); danach FlexGlue-Stufe 2 und Süd-Anhang neu starten (`JOB_CPU=alle`)
+4. „Seiten vereinen“ angehen (wichtigster Qualitätspunkt: fremde Seite wird aussortiert, aber nicht angebunden; Rückfall = jede Seite einzeln an LoD2)
+5. Regler nachbessern: Grenze nur zurücknehmen, wenn Paketleistung nahe der Grenze liegt (Wenig-Faden-Last ist heißer als Volllast); A/B große Speicherseiten (THP always) am Bündelausgleich; künftige Kettendaten wieder intern statt USB
+6. Offen aus der alten Übergabe: Lehren Runde 2 zusammenführen (`/media/oem/rcdaten/tmp/baum_sicherung/runde2/`, 1161 Zeilen, je `## AST:`), „(ungeprüft)“-Punkte gegen Code prüfen, Regression für kaufhaus_gk2 und martinstor-1120 anlegen
+7. Kaltes auf rcdaten packen (tar+zstd; Kandidaten `tmp` 181 GB, alte `auslagern_*`), nur wo keine Verknüpfung hineinzeigt
 
 ## Entscheidungen des Nutzers
-- ✓ Push nach jedem Arbeitsblock · ✓ „neuer ist besser“ · ✓ Archivieren · ✓ 1-MB-Grenze · ✓ doku-pflege regelmäßig
-- ✓ (vorläufig) kein Force-Push für die ~160 MB Altdateien (20.11., meine Empfehlung, Nutzer „können wir überlegen“): Wachstum per Sperre gestoppt; später ggf. geplante LFS-Umstellung, beide Rechner vorher gepusht
-- ? FlexGlue als Standard (+30/+40 % Bilder Martinstor, +2,5 h)
-- ? Bambu-Zugangscode am Drucker neu setzen (alter seit 30.10. auf GitHub), neuen in `~/.config/rcpark/p1s.json`
-- ✓ Datei `sys` gelöscht (20.11., Nutzer „Ja“)
+- ✓ FlexGlue für die Kette anhalten, Kette hat Vorrang · ✓ Altes von der internen SSD auslagern („Vollgas“) · ✓ Läufe heute durchlaufen lassen, kein Windows-Neustart
+- ? RAM kaufen (2 × 32 GB DDR5-5600, Rückgaberecht) · ? Volume leeren + als ext4 formatieren (nur nach „Ja“, private Ordner Bilder/3DScan vorher klären) · ? Windows-Partition noch nötig?
+- ? Cloud ohne Kreditkarte (Trooper.ai PayPal/SEPA, vast.ai Krypto) – Zahlungsart nicht genannt · ? zweiter Rechner (RAM/GPU unbekannt) als Rechenknoten
+- ? FlexGlue als Standard (+30/+40 % Bilder, +2,5 h) – erst nach Messung · ? Bambu-Zugangscode neu setzen (alter seit 30.10. auf GitHub)
 
 ## Fehler und Lehren dieser Sitzung
-- Nutzerfrage 20.11.: „ist das [20 h Rechnen] einmalig?“ → ja: FlexGlue-Stufe 2 und Süd-Anhang sind einmalige Messläufe; pro Modell nur die Kette (Dauer für Martinstor noch messen und melden)
-- 1159 Commits nie gepusht → Memory feedback-push-je-arbeitsblock, CLAUDE.md
-- Push hätte 8,2 GB Binärdateien hochgeladen; Bereinigung hätte 21 fremde Dateien gelöscht → erkannt, nur eigene entfernt (Ast betrieb)
-- doku-pflege lag bereit, lief nie regelmäßig → Memory feedback-nutzer-skills-einbinden
-- Übergabe-Hinweis zuerst im Projekt-Stub (erreicht andere Projekte nicht) → nach bootstrap.sh verlegt
-- globaler Hook `no_big_binaries` zählt bei `git add -u`/Ordnern im selben Befehl ignorierte Dateien mit → `git add` mit Einzelpfaden in eigenem Aufruf, dann commit
+- Startbefehle standen nur im Gespräch → nach /clear Start mit Standardwerten; Pin-Fehler beim Neustart 14:50 selbst kopiert → jetzt im Werkzeug (Ast betrieb)
+- Falschmeldungen von mir: „Abfall auf 38 W“ (veraltet), „Mapper wird von 55 W nicht gebremst“ (falsch, 55 W bei Teillast), „3,5 h Hitzedrosselung“ (nur ~1 %); erster Vollgas-Test übersah den eigenen Regler → Memory feedback-verbesserung-messen-nicht-doku
+- Warter startete FlexGlue nach GESCHEITERTER Kette (rc nicht geprüft) · Auslager-Skript zählte rsync-Hinweise als Abweichung (korrigiert) · `pgrep -f` traf die eigene Shell
+- Alle Messwerte: `modelle/HARDWARE_STAND_2026-11-20.md`, Ast `Doku/projekt/betrieb.md`
 
 ## Wichtige Pfade und Befehle
-- Logbuch der Nacht: `modelle/LOGBUCH_KETTENTEST_2026-11-19.md`; Aufräumplan `modelle/KI_AUFRAEUMEN_2026-11-20.md`
-- Sicherungszweige (lokal, enthalten Großdateien — nie pushen): `sicherung-vor-umschreiben-1120`, `-geheim-1120`, `-1mb-1120`, `-1mb-b-1120`
-- STL-Sicherung `/media/oem/rcdaten/tmp/schwab_v3_1-87.stl.sicherung`
+- Regler: `cat /run/cpu_leistung_regler.state`, `journalctl -u cpu_leistung_regler -n 20`; neu einspielen `sudo bash tools/cpu_leistung_installieren.sh`
+- sudo geht aus der Sitzung nicht (kein Terminal) → Nutzer führt Skripte im eigenen Terminal aus; `energy_uj` nach Neustart wieder freigeben (`sudo chmod a+r /sys/class/powercap/intel-rapl:0/energy_uj`)
+- hp-wmi: neues Modul in `/lib/modules/$(uname -r)/updates/`, alter Stand `/media/oem/scan/rc-park_null/hpwmi_bau/build/hp-wmi.ko.stand_0611`; nach Kernel-Update neu bauen/signieren
+- Logbuch `modelle/LOGBUCH_KETTENTEST_2026-11-19.md`; Sicherungszweige lokal (nie pushen): `sicherung-vor-umschreiben-1120`, `-geheim-1120`, `-1mb-1120`, `-1mb-b-1120`
 
 ## Vorsicht
-- Uncommittete fremde Änderungen (modelle/kaufhaus_grob3/…, martinstor/MASSNACHWEIS, martinstor_gk/objekt.json, martinstor_gk_gen.py, ober_tvdr, schwab*) nicht von mir — nicht mitcommitten
-- `daten/martinstor/fotos` ist Symlink (Kette liest daraus); Worktrees agent-a0d77/agent-a37e9/flaechen-wt haben ungesicherte Dateien — nicht entfernen
-- Toshiba-Platte nie anfassen; Löschen nur nach „Ja“; kein wiederkehrender Wach-Zeitplan
+- Uncommittete fremde Änderungen (modelle/kaufhaus_grob3/…, martinstor/MASSNACHWEIS, martinstor_gk*, ober_tvdr, schwab*) nicht mitcommitten; `git add` nur mit Einzelpfaden
+- Laufende Skripte nie an Ort und Stelle ändern (bash liest nach) → neu schreiben + `mv`; Regler-Änderung wirkt erst nach `sudo systemctl restart cpu_leistung_regler`
+- Kein zweiter Job mit RAM-Buchung > 2300 MB neben der Kette (15 GB); Worktrees agent-a0d77/agent-a37e9/flaechen-wt nicht entfernen
+- Toshiba-Platte nie anfassen; Löschen/Formatieren nur nach „Ja“; kein wiederkehrender Wach-Zeitplan

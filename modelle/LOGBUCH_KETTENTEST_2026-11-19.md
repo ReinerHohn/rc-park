@@ -420,3 +420,8 @@ REIHENFOLGE (Vorschlag): erst 38-41 + 43 (stille Fehler, je < 1 h), dann 47 + 45
 
 ## UEBERGABE 20.11.2026 12:55
 - Stand und naechste Schritte: `.claude/UEBERGABE.md` (Skill /uebergabe fortsetzen). Vormittag: Wissensbaum Doku/projekt/ (7 Aeste), Push bereinigt, Skill /uebergabe in claude-mds.
+
+## UEBERGABE 20.11.2026 16:30
+- Stand und naechste Schritte: `.claude/UEBERGABE.md`. Nachmittag: Kette 1120 um 13:27 am 3-h-Limit gescheitert (nur langsame Kerne) -> 1120b seit 14:50 mit allen Kernen/6 h;
+  Zeiten bisher: Konsens-Laeufe 77 -> 49 min, Gesamtausgleich je Runde 6,5 -> 2,5 min, globaler Mapper 16:01 gestartet, 16:13 Ausgleich fertig, 16:28 noch im Nachtriangulieren.
+  Hardware: CPU 110 W moeglich (Regler MAX=100), interne SSD freigeraeumt, zswap an - `modelle/HARDWARE_STAND_2026-11-20.md`. Schwabentor-Kette startet automatisch danach.
