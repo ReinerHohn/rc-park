@@ -1,0 +1,30 @@
+EGG-CRATE Gerüst  203x133 mm, Höhe bis 195 mm (vscale 0.85, 0.78125 mm/Zelle)
+Material 3.0 mm, Schlitz 2.90 mm  |  7 X-Rippen + 11 Y-Rippen (ADAPTIV: dicht bei Detail, weit bei flach)
+MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.
+Dann Gips/Haut über die Rippen-Oberkanten.
+
+  X0a: 169x122 mm (Zinken)
+  X0b: 51x48 mm (Zinken)
+  X1a: 169x89 mm (Zinken)
+  X1b: 51x66 mm (Zinken)
+  X2a: 169x68 mm (Zinken)
+  X2b: 51x86 mm (Zinken)
+  X3a: 169x66 mm (Zinken)
+  X3b: 51x102 mm (Zinken)
+  X4a: 169x67 mm (Zinken)
+  X4b: 51x136 mm (Zinken)
+  X5a: 169x108 mm (Zinken)
+  X5b: 51x175 mm (Zinken)
+  X6a: 169x132 mm (Zinken)
+  X6b: 51x182 mm (Zinken)
+  Y0: 133x120 mm
+  Y1: 133x139 mm
+  Y2: 133x140 mm
+  Y3: 133x161 mm
+  Y4: 133x166 mm
+  Y5: 133x167 mm
+  Y6: 133x167 mm
+  Y7: 133x154 mm
+  Y8: 133x167 mm
+  Y9: 133x175 mm
+  Y10: 133x191 mm

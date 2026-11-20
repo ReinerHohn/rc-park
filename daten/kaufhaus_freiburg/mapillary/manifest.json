@@ -1,0 +1,45 @@
+{
+  "target": [
+    47.99506,
+    7.85278
+  ],
+  "source": "mapillary",
+  "views": [
+    {
+      "file": "sv_00_360.jpg",
+      "mapillary_id": "1568654291013094",
+      "lat": 47.995343731181,
+      "lon": 7.8524238723752,
+      "alt": null,
+      "heading": 140.0,
+      "cam_angle": 25.859167240495,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1771330703000
+    },
+    {
+      "file": "sv_01_360.jpg",
+      "mapillary_id": "1599279817987837",
+      "lat": 47.9947748,
+      "lon": 7.8521804,
+      "alt": null,
+      "heading": 54.6,
+      "cam_angle": 291.741,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1772557632000
+    },
+    {
+      "file": "sv_02_360.jpg",
+      "mapillary_id": "929147416176256",
+      "lat": 47.9947506,
+      "lon": 7.8522509,
+      "alt": null,
+      "heading": 48.9,
+      "cam_angle": 297.155,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1772557628000
+    }
+  ]
+}

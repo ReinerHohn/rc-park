@@ -1,0 +1,15 @@
+{
+ "quelle": "Bildverarbeitung auf freigestelltem hf_front (ML-Maske) + LOD2-Maßstab 28.2px/m",
+ "ridge_m": 17.46,
+ "eave_m": 8.82,
+ "eg_top_m": 2.2,
+ "gallery_m": 6.45,
+ "n_axes": 11,
+ "alle_baender_m": [
+  2.2,
+  4.0,
+  6.45,
+  7.51,
+  8.82
+ ]
+}

@@ -1,0 +1,17 @@
+BETT-ROHLINGE (Weg 1)  Cutter 410x400 (nutzbar 400x390, Rand 5)
+200 Teile -> 13 Rohlinge. Je Rohling: Umrisse schneiden, Nummern gravieren, Rahmen+Füße ausrichten.
+ABLAUF: Rohling ~410x400 an Anschlag-Ecke spannen -> rohling_NN.gcode -> nächster Rohling. Kein Umsetzen.
+
+Rohling 01: 49 Teile
+Rohling 02: 39 Teile
+Rohling 03: 54 Teile
+Rohling 04: 5 Teile
+Rohling 05: 5 Teile
+Rohling 06: 5 Teile
+Rohling 07: 6 Teile
+Rohling 08: 7 Teile
+Rohling 09: 7 Teile
+Rohling 10: 7 Teile
+Rohling 11: 7 Teile
+Rohling 12: 6 Teile
+Rohling 13: 3 Teile

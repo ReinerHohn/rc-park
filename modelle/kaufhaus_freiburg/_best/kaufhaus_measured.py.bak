@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+"""kaufhaus_measured.py — Historisches Kaufhaus Freiburg, FEIN vermessen aus den
+hochauflösenden Frontalen/Detailfotos (kh_front2025b, kh_fenster, kh_erker) gegen
+Referenz Traufe 9,7 / First 21,4 m (LOD2, amtlich). Echte Geometrie mit Details:
+Arkade (6 Spitzbögen), Galerie mit Balustern, Maßwerk-Fensterband mit 4 Statuen,
+2 polygonale Erker mit oktogonalem Spitzhelm, giebelständige Gauben (3 Reihen),
+Treppengiebel (7 Stufen). Maße photo-abgelesen (±~5 %), Herkunft dokumentiert.
+"""
+import os, numpy as np, trimesh
+from shapely.geometry import Polygon
+from shapely.ops import unary_union
+from trimesh.creation import extrude_polygon, box as tbox, cone as tcone
+
+# ---- gemessene Maße (m) ----
+W, D = 25.0, 13.0
+EAVE, RIDGE = 9.7, 21.4
+ARC_SPRING, ARC_APEX = 1.3, 4.4   # hohe prominente Laube (Foto)
+GAL_Z = 4.5                      # Galerie-Brüstung Oberkante
+SILL, HEAD, OGEE = 5.2, 8.7, 9.4  # Fensterband hoch bis fast Traufe (Foto)
+N_ARCH = 6
+ORIEL_X = [0.085*W, 0.915*W]     # Erker/Spitztürme an den Ecken (Foto)
+STAT_Z = 5.3                     # Statuen-Fußpunkt
+
+
+def _tri(V, F):
+    return trimesh.Trimesh(np.array(V, float), np.array(F), process=True)
+
+
+# ---------- Fassadenwand mit Arkade + Kielbogen-Fenstern (shapely) ----------
+def pointed_arch(xc, bw, spring, apex):
+    a = bw/2; R = bw; lc, rc = xc+a, xc-a
+    pts = [(xc-a, 0.25), (xc-a, spring)]
+    for t in np.linspace(np.pi, np.pi-np.arcsin(a/R), 12):
+        pts.append((lc+R*np.cos(t), spring+R*np.sin(t)))
+    for t in np.linspace(np.arcsin(a/R), 0, 12):
+        pts.append((rc+R*np.cos(t), spring+R*np.sin(t)))
+    pts += [(xc+a, spring), (xc+a, 0.25)]
+    return Polygon(pts)
+
+
+def ogee_window(xc, w, sill, head, apex):
+    """Fensteröffnung mit Kielbogen-Spitze."""
+    a = w/2
+    pts = [(xc-a, sill), (xc-a, head), (xc-a*0.5, head+0.35*(apex-head)),
+           (xc, apex), (xc+a*0.5, head+0.35*(apex-head)), (xc+a, head), (xc+a, sill)]
+    return Polygon(pts)
+
+
+def facade_wall():
+    outer = Polygon([(0, 0), (W, 0), (W, EAVE), (0, EAVE)])
+    holes = []
+    pitch = W/N_ARCH
+    for i in range(N_ARCH):
+        holes.append(pointed_arch(pitch*(i+0.5), pitch*0.76, ARC_SPRING, ARC_APEX))
+    # Fensterband zwischen den Erkern: Gruppen à mehrere Lichter, durch Statuen getrennt
+    x0, x1 = ORIEL_X[0]+2.2, ORIEL_X[1]-2.2
+    nlight = 16
+    for i in range(nlight):
+        xc = x0 + (x1-x0)*i/(nlight-1)
+        holes.append(ogee_window(xc, 0.52, SILL, HEAD, OGEE))
+    poly = outer.difference(unary_union(holes))
+    return extrude_polygon(poly, 0.6)
+
+
+# ---------- Maßwerk: Mullions hinter den Fenstern (dunkel, lesbar) ----------
+def window_glazing():
+    x0, x1 = ORIEL_X[0]+2.2, ORIEL_X[1]-2.2
+    nlight = 16; parts = []
+    for i in range(nlight):
+        xc = x0 + (x1-x0)*i/(nlight-1)
+        g = tbox(extents=(0.50, 0.18, HEAD-SILL)); g.apply_translation((xc, 0.52, (SILL+HEAD)/2)); parts.append(g)
+    return trimesh.util.concatenate(parts)
+
+
+# ---------- Galerie-Brüstung mit Balustern ----------
+def gallery():
+    parts = [tbox(extents=(W*0.96, 0.3, 0.18))]; parts[0].apply_translation((W/2, -0.12, GAL_Z))
+    base = tbox(extents=(W*0.96, 0.3, 0.14)); base.apply_translation((W/2, -0.12, ARC_APEX+0.15)); parts.append(base)
+    for xb in np.linspace(0.4, W-0.4, 46):
+        b = tbox(extents=(0.12, 0.2, GAL_Z-ARC_APEX-0.25)); b.apply_translation((xb, -0.1, (GAL_Z+ARC_APEX)/2+0.05)); parts.append(b)
+    return trimesh.util.concatenate(parts)
+
+
+# ---------- Statuen (4) auf Konsolen mit Baldachin ----------
+def statue(xc):
+    parts = []
+    corbel = tcone(radius=0.3, height=0.6, sections=6); corbel.apply_translation((xc, -0.5, STAT_Z-0.3))
+    parts.append(corbel)
+    body = tbox(extents=(0.5, 0.4, 1.3)); body.apply_translation((xc, -0.7, STAT_Z+0.75)); parts.append(body)
+    head = trimesh.creation.icosphere(subdivisions=1, radius=0.22); head.apply_translation((xc, -0.7, STAT_Z+1.6)); parts.append(head)
+    cano = tcone(radius=0.45, height=0.9, sections=6); cano.apply_translation((xc, -0.6, STAT_Z+2.1)); parts.append(cano)
+    return trimesh.util.concatenate(parts)
+
+
+def statues():
+    x0, x1 = ORIEL_X[0]+2.2, ORIEL_X[1]-2.2
+    xs = np.linspace(x0+2.0, x1-2.0, 4)
+    return trimesh.util.concatenate([statue(x) for x in xs])
+
+
+# ---------- polygonaler Erker + oktogonaler Spitzhelm + Wappen ----------
+def oriel(xc, z0, z1, w=3.4, proj=1.9):
+    parts = []
+    # Konsole/Wappentafel unten (tapernder Körper)
+    for zz, sc in [(z0-1.4, 0.4), (z0-0.7, 0.7)]:
+        b = extrude_polygon(Polygon([(xc-w/2*sc, 0), (xc-w/4*sc, -proj*sc), (xc+w/4*sc, -proj*sc), (xc+w/2*sc, 0)]), 0.7)
+        b.apply_translation((0, 0, zz)); parts.append(b)
+    # Erkerkörper (3-facettiger Kasten)
+    base = Polygon([(xc-w/2, 0), (xc-w/4, -proj), (xc+w/4, -proj), (xc+w/2, 0)])
+    body = extrude_polygon(base, z1-z0); body.apply_translation((0, 0, z0)); parts.append(body)
+    # oktogonaler Spitzhelm + Finial (hoch + schlank) — VOR dem return!
+    spire = tcone(radius=w*0.40, height=7.8, sections=8); spire.apply_translation((xc, -proj*0.45, z1)); parts.append(spire)
+    fin = trimesh.creation.cylinder(radius=0.07, height=1.3); fin.apply_translation((xc, -proj*0.45, z1+7.4)); parts.append(fin)
+    # Facettenfenster (dunkel) → separate Gruppe
+    wins = []
+    for fx, fy in [(xc-0.38*w, -0.5*proj), (xc, -proj*0.92), (xc+0.38*w, -0.5*proj)]:
+        win = tbox(extents=(0.7, 0.18, (z1-z0)*0.6)); win.apply_translation((fx, fy, z0+(z1-z0)*0.55))
+        wins.append(win)
+    return trimesh.util.concatenate(parts), trimesh.util.concatenate(wins)
+
+
+# ---------- giebelständige Gaube (Satteldach) ----------
+def gable_dormer(xc, z, w=1.2, h=1.5, proj=1.25):
+    """kleine giebelständige Gaube: Kasten + flaches Satteldach, ragt aus der Schräge."""
+    ys = (D/2)*(z-EAVE)/(RIDGE-EAVE); yf = ys-proj; xl, xr = xc-w/2, xc+w/2
+    body = [(xl, yf, z), (xr, yf, z), (xr, ys, z), (xl, ys, z),
+            (xl, yf, z+h), (xr, yf, z+h), (xr, ys, z+h), (xl, ys, z+h)]
+    Fb = [(0, 1, 2), (0, 2, 3), (4, 6, 5), (4, 7, 6), (0, 4, 5), (0, 5, 1),
+          (0, 3, 7), (0, 7, 4), (1, 5, 6), (1, 6, 2)]
+    peak = z+h+0.35
+    rv = [(xl, yf, z+h), (xr, yf, z+h), (xr, ys, z+h), (xl, ys, z+h),
+          (xc, yf, peak), (xc, ys, peak)]
+    rf = [(0, 1, 4), (3, 2, 5), (0, 4, 5), (0, 5, 3), (1, 2, 5), (1, 5, 4)]
+    return trimesh.util.concatenate([_tri(body, Fb), _tri(rv, rf)])
+
+
+def dormers():
+    parts = []
+    for frac, n, w in [(0.13, 7, 1.7), (0.33, 5, 1.4), (0.55, 3, 1.1)]:
+        z = EAVE+frac*(RIDGE-EAVE)
+        for i in range(n):
+            parts.append(gable_dormer(W*(0.11+0.78*i/max(n-1, 1)), z, w))
+    return trimesh.util.concatenate(parts)
+
+
+def roof():
+    A = (0, 0, EAVE); B = (W, 0, EAVE); C = (W, D, EAVE); Dd = (0, D, EAVE)
+    R0 = (0, D/2, RIDGE); R1 = (W, D/2, RIDGE)
+    return _tri([A, B, C, Dd, R0, R1], [(0, 1, 5), (0, 5, 4), (2, 3, 4), (2, 4, 5), (0, 4, 3), (1, 2, 5)])
+
+
+def cornice():
+    c = tbox(extents=(W+0.6, 1.2, 0.5)); c.apply_translation((W/2, 0.0, EAVE-0.2)); return c
+
+
+def arcade_recess():
+    """dunkler Laubengang hinter der Arkade → Torbögen lesen sich als dunkle Öffnungen."""
+    p = tbox(extents=(W, 0.3, ARC_APEX)); p.apply_translation((W/2, 2.2, ARC_APEX/2)); return p
+
+
+def stepped_gable(x_end, steps=7, dx=0.6):
+    prof = [(0.0, EAVE)]
+    for i in range(steps):
+        z1 = EAVE+(RIDGE-EAVE)*(i+1)/steps; y = (D/2)*(i+1)/steps
+        prof += [(prof[-1][0], z1), (y, z1)]
+    for i in range(steps, 0, -1):
+        z = EAVE+(RIDGE-EAVE)*i/steps; y = D-(D/2)*i/steps
+        zb = EAVE if i == 1 else EAVE+(RIDGE-EAVE)*(i-1)/steps
+        prof += [(y, z), (y, zb)]
+    prof.append((D, EAVE))
+    P = Polygon(prof)
+    if not P.is_valid:
+        P = P.buffer(0)
+    if P.is_empty:
+        P = Polygon([(0, EAVE), (D/2, RIDGE), (D, EAVE)])
+    m = extrude_polygon(P, dx); V = m.vertices.copy()
+    m.vertices = np.c_[x_end+V[:, 2], V[:, 0], V[:, 1]]
+    return m
+
+
+def build():
+    e0b, e0w = oriel(ORIEL_X[0], 4.6, 11.2)
+    e1b, e1w = oriel(ORIEL_X[1], 4.6, 11.2)
+    parts = {
+        "fassade": facade_wall(),
+        "cornice": cornice(),
+        "dach": roof(),
+        "giebel": trimesh.util.concatenate([stepped_gable(0.0), stepped_gable(W)]),
+        "galerie": gallery(),
+        "fenster": trimesh.util.concatenate([window_glazing(), e0w, e1w]),
+        "statuen": statues(),
+        "erker": trimesh.util.concatenate([e0b, e1b]),
+        "gauben": dormers(),
+        "laube": arcade_recess(),
+    }
+    back = tbox(extents=(W, 0.6, EAVE)); back.apply_translation((W/2, D-0.3, EAVE/2))
+    left = tbox(extents=(0.6, D, EAVE)); left.apply_translation((0.3, D/2, EAVE/2))
+    right = tbox(extents=(0.6, D, EAVE)); right.apply_translation((W-0.3, D/2, EAVE/2))
+    parts["waende"] = trimesh.util.concatenate([back, left, right])
+
+    cols = {"fassade": [196, 102, 88, 255], "waende": [175, 95, 85, 255], "dach": [102, 106, 90, 255],
+            "giebel": [196, 102, 88, 255], "galerie": [150, 120, 70, 255], "fenster": [28, 32, 40, 255],
+            "statuen": [225, 220, 210, 255], "erker": [175, 140, 72, 255], "gauben": [80, 86, 72, 255],
+            "cornice": [160, 120, 70, 255], "laube": [22, 20, 24, 255]}
+    os.makedirs("modelle/kaufhaus_freiburg", exist_ok=True)
+    sc = trimesh.Scene()
+    for nm, m in parts.items():
+        if m is None or not len(m.faces):
+            print(f"  (leer {nm})"); continue
+        m.visual.face_colors = cols[nm]; m.export(f"modelle/kaufhaus_freiburg/khm_{nm}.stl")
+        sc.add_geometry(m, geom_name=nm); print(f"  {nm}: {len(m.faces)} F")
+    sc.export("modelle/kaufhaus_freiburg/kaufhaus_measured.glb")
+    print("-> modelle/kaufhaus_freiburg/kaufhaus_measured.glb")
+
+
+if __name__ == "__main__":
+    build()

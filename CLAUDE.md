@@ -1,7 +1,10 @@
-# RC-Park – Arbeitsregeln (Kurzfassung)
-Fotos -> SfM (COLMAP) -> 3D -> druckbares H0-Modell (1:87), wird verkauft. Deutsch, Anrede "Meister", keine breiten Tabellen.
-Stand zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> dort verlinktes Logbuch (UEBERGABE am Ende). Sitzungsbeginn: Skill `sitzungsbeginn`.
-WISSENSBAUM (nie ganze Ordner/grosse Dateien lesen): Dokumente `modelle/INDEX.md` -> Ast -> grosse Datei ueber `modelle/inhalt/<name>.md` (Zeilennummern, Read offset/limit); Werkzeuge `tools/INDEX.md` -> `tools/index/<thema>.md`; Archiv `modelle/archiv/INDEX.md`. Neu erzeugen: `python3 tools/baum_erzeugen.py`. Volltext Regeln: `modelle/REGELN_AUSFUEHRLICH.md`.
+# RC-Park Freiburg – Arbeitsregeln
+Gesamtprojekt: Miniatur-Wunderland zum Selbersteuern (Konzept/Businessplan) + 3D-Pipeline Fotos -> SfM (COLMAP) -> druckbares H0-Modell (1:87), wird verkauft.
+Vision `KONZEPT.md`, Dokumentindex `README.md`. Deutsch, Anrede "mein grosser Meister", keine breiten Tabellen.
+WISSENSBAEUME (nie ganze Ordner/grosse Dateien lesen):
+- Gesamtprojekt/Geschaeft: `PROJEKT.md` -> `Doku/projekt/<ast>.md` (Gilt · Versucht · Offen; vor neuem Ansatz "Versucht" lesen, nach Versuch eine Zeile eintragen). Businessplan: `./start.sh` bzw. `python3 build.py`.
+- 3D-Pipeline: `modelle/INDEX.md` -> Ast -> grosse Datei ueber `modelle/inhalt/<name>.md` (Read offset/limit); Werkzeuge `tools/INDEX.md` -> `tools/index/<thema>.md`; Archiv `modelle/archiv/INDEX.md`. Neu erzeugen: `python3 tools/baum_erzeugen.py`. Volltext Regeln: `modelle/REGELN_AUSFUEHRLICH.md`.
+Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> dort verlinktes Logbuch. Sitzungsbeginn: Skill `sitzungsbeginn`.
 
 ## KERNMETHODE (nie vergessen)
 - Form = Fotokanten + Triangulation (Kanten-Tiefen-Sweep mit SfM-Kameras). SfM liefert die KAMERAS. Dichte Wolke/LoD2/DOM1 nur Lage-Veto, Hoehe, Gegenprobe.
@@ -25,7 +28,7 @@ WISSENSBAUM (nie ganze Ordner/grosse Dateien lesen): Dokumente `modelle/INDEX.md
 - Python: `/media/oem/scan/venv-seg/bin/python -I` (torch/CUDA), `/media/oem/scan/venv-colmap/bin/python -I` (pycolmap), Generator `~/.venvs/rcpark` (trimesh). Einfachster Weg: `tools/py <werkzeug.py> ...` (waehlt die Umgebung nach Importen). Nackter `python3` hat weder trimesh noch pycolmap (224 Fehler bisher).
 - Lange Jobs nur per Skill `langer-job` (`tools/job_start.sh` mit JOB_GPU_MB/JOB_RAM_MB); vorher Dummy-Test; GPU immer nutzen, VRAM-Summe <= 7000 MiB.
 - Nie zwei Optimierer/Generatorlaeufe mit gleicher Zwischendatei parallel. Nie `pkill -f` mit Muster aus der eigenen Befehlszeile.
-- Loeschen nur nach ausdruecklichem "Ja". Kein Push ohne Auftrag. Eigene Aenderungen sofort committen (Skill `logbuch-commit`), Attribution-Zeilen. Hook nur Nutzer.
+- Loeschen nur nach ausdruecklichem "Ja". Eigene Aenderungen sofort committen UND nach jedem Arbeitsblock pushen (Nutzer 20.11.: lokal 1157 Commits ungepusht = Katastrophe; zwei Rechner arbeiten am Repo) - vorher `git fetch` + zusammenfuehren. Attribution-Zeilen. Hook nur Nutzer.
 - Nie idle, nachts weiterarbeiten; aber KEIN wiederkehrender Cron/Loop fuer Job-/GPU-Checks (einmalige Warter ok).
 - Kontext sparen: Ausgaben kuerzen (cut/head/tail). Bilder (SendUserFile) + 3D-HTML zeigen. Kein Druck ohne Nutzerwunsch.
 
@@ -37,3 +40,11 @@ WISSENSBAUM (nie ganze Ordner/grosse Dateien lesen): Dokumente `modelle/INDEX.md
 - Rippen/Baender/Leisten/Staebe -> `linien-features`.
 - Drucken -> `druck`.
 - Lehren: `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Lehren-Register). Platten: Memory reference-laufwerke-uuid.
+
+## Weitere Regeln (vom anderen Rechner, 20.11.2026)
+- Kein Hardcoding - alles erkennen: Masse/Stueckzahlen/Formen aus Daten/Fotos -> JSON -> generischer Generator; bei Fehler den Detektor fixen, nicht den Wert.
+- Erst die Realitaet zaehlen, dann bauen; selbst hinschauen - Score != Ergebnis, Foto-Grundwahrheit schlaegt Juror-Mehrheit.
+- Parametrisch-gueltig, nie degeneriert: keine freien Multiplikatoren auf gemessene Geometrie; Gueltigkeits-Guard + Fallback.
+- Aenderungs-Waechter `python3 tools/aenderung_check.py` nach Modell-Aenderungen (Heatmap gegen Foto). Harte Tests: `python3 tests/test_quellen_hart.py`, `tests/test_hybrid_hart.py`.
+- Businessplan-Schaetzungen = begruendete Annahmen (oeffentliche Benchmarks), keine testierte Finanzplanung.
+- WIDERSPRUCH, Nutzer klaeren (bis dahin gilt fuer 3D-Modelle die KERNMETHODE oben, weil neuer): (a) dort "Massing aus LOD2 schlaegt Foto-Schaetzung" vs. hier "Fotos -> SfM, LoD2 nur Abgleich"; (b) dort "Feindetail als Textur/Bemalung" vs. hier "Fenster = echte Loecher, Relief aus Wandbild".

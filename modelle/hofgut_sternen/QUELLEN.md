@@ -21,5 +21,5 @@ Status: ✅ genutzt · 🚫 n/a (begründet) · ⚠️ im Repo ungenutzt · ⬇�
 | 12 | **S1_SAR** (Sentinel-1 Radar) | SAR (wetterunabhängig, Struktur/Feuchte) | 0 | 🚫 n/a (begründet) | Sentinel-1 Radar: für Einzelgebäude-Geometrie irrelevant |
 | 13 | **COP_DEM** (Copernicus DEM) | 30 m globales DEM (grob, Fallback-Gelände) | 0 | 🚫 n/a (begründet) | Copernicus 30 m gröber als vorhandenes DGM1 1 m — redundant |
 | 14 | **OSM** (OpenStreetMap) | Vektor: Gebäudeumriss/Wege/Trasse/Tags | 0 | 🚫 n/a (begründet) | Lage/Umriss aus LOD2 gedeckt; OSM erst für Umgebungsszene (Straße/Wege) nötig, nicht fürs Gebäude |
-| 15 | **FOTO_BODEN** (Bodenfotos) | Fassadendetail/Material/Farben/Stückzahlen (eigene/Commons) | 17 | ✅ genutzt | eigene / Wikimedia Commons / Google |
+| 15 | **FOTO_BODEN** (Bodenfotos) | Fassadendetail/Material/Farben/Stückzahlen (eigene/Commons) | 22 | ✅ genutzt | eigene / Wikimedia Commons / Google |
 | 16 | **STREET** (Street-Level) | Panorama/Street-Level (Fassade schräg, Mapillary) | 0 | 🚫 n/a (begründet) | Bodenfotos (g2/g3/g4, wm_hotel) decken die Fassade; keine Mapillary-Aufnahme nötig |

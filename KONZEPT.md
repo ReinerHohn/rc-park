@@ -38,7 +38,7 @@ Tagestourismus aus der Dreiländer-Ecke ab.
 ## 4. Die Attraktionen
 
 Details und Investitionssummen je Attraktion liegen maschinenlesbar in
-[`attraktionen/*.json`](attraktionen/) und fließen automatisch in den Businessplan.
+[`attraktionen/*.json`](attraktionen) und fließen automatisch in den Businessplan.
 
 | # | Attraktion | Medium | Wow | Kernnutzen |
 |---|---|---|---|---|
@@ -88,7 +88,7 @@ rechnet live mit. Die Zahlen sind begründete Schätzungen, keine testierte Plan
 
 ## 8. Nächste Schritte
 
-1. Standortsuche konkretisieren (siehe [`standort.md`](standort.md)).
+1. Standortsuche konkretisieren (siehe [`standort.md`](Doku/standort/standort.md)).
 2. Attraktions-Prototyp (Rennstrecke + Becken) als Pop-up testen → reale Zahlungsbereitschaft messen.
 3. Gestaffelter Finanzierungsplan (EK, Förderung, Bank) auf Basis des Businessplans.
 4. Genehmigungen: Versammlungsstätte, Wasserbecken-Hygiene, Brandschutz, Fluglärm-/Netzkonzept Halle.

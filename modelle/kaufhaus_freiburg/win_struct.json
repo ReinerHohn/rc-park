@@ -1,0 +1,16 @@
+{
+  "mullions_xrel_centered": [
+    -0.167,
+    0.167
+  ],
+  "n_mullions": 2,
+  "transoms_zrel": [
+    0.498
+  ],
+  "n_transoms": 1,
+  "hex_R_rel_breite": 0.0673,
+  "_quelle": "fenster_struktur.py aus /home/md/git/rc-park/daten/kaufhaus_freiburg/fotos/kh_fenster.jpg box [0.435, 0.37, 0.575, 0.63]",
+  "breite_frac": 0.843,
+  "unit_pitch_frac": 0.6,
+  "_unit_pitch_quelle": "aus Foto-Einheit B/H 0.62 (volle Goldrahmen-BBox) ruekgerechnet: breite=0.62*hoehe -> unit/pitch 0.64; war 0.54 (nur Glas, zu schmal)"
+}

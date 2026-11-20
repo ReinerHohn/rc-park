@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="41.7mm" height="30.9mm" viewBox="0 0 41.7 30.9">
+<path d="M 35.69,6.00 L 35.69,7.70 L 35.69,9.26 L 35.69,10.83 L 35.69,12.39 L 35.69,13.95 L 35.69,15.51 L 35.69,17.08 L 35.69,18.64 L 35.69,20.20 L 35.69,21.76 L 35.69,23.33 L 35.69,24.89 L 34.12,24.89 L 32.56,24.89 L 31.00,24.89 L 29.44,24.89 L 27.88,24.89 L 26.31,24.89 L 24.75,24.89 L 23.19,24.89 L 21.62,24.89 L 20.06,24.89 L 18.50,24.89 L 16.94,24.89 L 15.38,24.89 L 13.81,24.89 L 12.25,24.89 L 10.69,24.89 L 9.12,24.89 L 7.56,24.89 L 6.00,24.89 L 6.75,23.33 L 7.56,22.65 L 8.92,21.76 L 9.91,21.26 L 11.47,20.60 L 12.57,20.20 L 13.81,19.79 L 14.97,19.42 L 16.16,19.01 L 17.17,18.64 L 18.50,18.09 L 20.06,17.35 L 21.62,16.50 L 23.19,15.53 L 24.33,14.73 L 25.35,13.95 L 26.30,13.17 L 27.09,12.47 L 27.88,11.76 L 28.66,11.02 L 29.44,10.26 L 30.22,9.51 L 31.00,8.78 L 31.78,8.09 L 32.56,7.45 L 34.12,6.47 L 35.69,6.00 Z" fill="none" stroke="#f00" stroke-width="0.1"/>
+<circle cx="25.69" cy="14.69" r="1.60" fill="none" stroke="#00f" stroke-width="0.1"/>
+<path d="M 9.00,15.00 L 12.60,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 12.60,15.00 L 12.60,12.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 12.60,12.00 L 12.60,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 9.00,9.00 L 12.60,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 9.00,12.00 L 9.00,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 9.00,15.00 L 9.00,12.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 14.60,15.00 L 18.20,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 18.20,15.00 L 18.20,12.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 14.60,12.00 L 18.20,12.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 18.20,12.00 L 18.20,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 14.60,9.00 L 18.20,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+</svg>

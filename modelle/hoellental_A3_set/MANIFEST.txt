@@ -1,0 +1,20 @@
+EGG-CRATE Gerüst  203x133 mm, Höhe bis 192 mm (vscale 0.85, 0.78125 mm/Zelle)
+Material 3.0 mm, Schlitz 2.60 mm  |  6 X-Rippen + 8 Y-Rippen (ADAPTIV: dicht bei Detail, weit bei flach)
+MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.
+Dann Gips/Haut über die Rippen-Oberkanten.
+
+  X0: 203x120 mm  (+1 Tunnel)
+  X1: 203x75 mm  (+1 Tunnel)
+  X2: 203x95 mm  (+1 Tunnel)
+  X3: 203x138 mm  (+1 Tunnel)
+  X4: 203x163 mm  (+1 Tunnel)
+  X5: 203x163 mm  (+1 Tunnel)
+  Y0: 133x119 mm
+  Y1: 133x145 mm
+  Y2: 133x162 mm
+  Y3: 133x159 mm
+  Y4: 133x142 mm  (+1 Tunnel)
+  Y5: 133x163 mm  (+1 Tunnel)
+  Y6: 133x163 mm  (+1 Tunnel)
+  Y7: 133x163 mm  (+1 Tunnel)
+  + KONTUR-STACK Lage 00..8 (z_t=163..192 mm, 9 Lagen)

@@ -73,7 +73,7 @@ def pyramid(w, d, h, z0, hip=0.0):
     return trimesh.Trimesh(np.array(V,float), np.array(F))
 
 
-def disc(r, z, face_y, depth=0.3):
+def disc(r, z, face_y, depth=0.15):
     """Zifferblatt-Scheibe an einer Schauseite (±Y)."""
     c = trimesh.creation.cylinder(radius=r, height=depth, sections=28)
     c.apply_transform(trimesh.transformations.rotation_matrix(np.pi/2, [1,0,0]))
@@ -129,16 +129,34 @@ def build(cfg):
         rb = ring_battlement(W, D, zc.get("z", H-1.0), zc.get("merlon",0.6),
                              zc.get("h",0.9), zc.get("gap",0.6))
         if rb is not None: parts["zinnen"]=rb
-    # Ecktürmchen
+    # Rustika: Bruchstein-Sockel (unteres Schaftband) + Eckquader-Lisenen
+    ru = cfg.get("rustika")
+    if ru and ru.get("enabled", True):
+        sh = ru.get("sockel_h", g["jamb_h"] + g["rise"] + 1.0 if g else 6.0)
+        parts["sockel"] = box(W + 0.3, D + 0.3, sh, 0)      # proud stone base
+        if g and g.get("enabled", True):                     # Tor wieder frei schneiden
+            try: parts["sockel"] = parts["sockel"].difference(
+                pointed_arch_prism(g["width"], g["jamb_h"], g["rise"], D + 0.5))
+            except Exception: pass
+        q = ru.get("quoin_w", 1.0)
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                parts[f"quoin_{sx}{sy}"] = box(q, q, H, 0, sx*(W/2-q*0.2), sy*(D/2-q*0.2))
+    # Wappen-/Zierplatte auf der Schauseite
+    wp = cfg.get("wappen")
+    if wp:
+        parts["wappen"] = box(wp.get("w",1.4), 0.25, wp.get("h",1.6), wp["z"], 0, D/2)
+    # Ecktürmchen (Fialen mit Spitzdach an den 4 Parapet-Ecken)
     et = cfg.get("ecktuermchen")
     if et and et.get("enabled"):
-        r=et.get("w",1.0); eh=et.get("h",4.0); z=et.get("z",H-eh)
-        for sx in (-1,1):
-            for sy in (-1,1):
-                cx,cy=sx*(W/2-0.2),sy*(D/2-0.2)
-                parts[f"et_{sx}{sy}"]=box(r,r,eh,z,cx,cy)
-                parts[f"etH_{sx}{sy}"]=pyramid(r*1.2,r*1.2,r*1.4,z+eh,cx if False else 0)  # placeholder
-                parts[f"etH_{sx}{sy}"].apply_translation([cx,cy,0])
+        r = et.get("w", 1.2); eh = et.get("h", 5.0); z = et.get("z", H - 1.0)
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                cx, cy = sx*(W/2 - r*0.3), sy*(D/2 - r*0.3)
+                parts[f"et_{sx}{sy}"] = box(r, r, eh, z, cx, cy)
+                tip = pyramid(r*1.25, r*1.25, r*1.8, z+eh)
+                tip.apply_translation([cx, cy, 0])
+                parts[f"etH_{sx}{sy}"] = tip
     return parts
 
 

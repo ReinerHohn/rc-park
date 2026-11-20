@@ -1,0 +1,15 @@
+{
+  "quelle": "LOD2 LoD2_32_414_5316_1_BW.gml (Masse, Gebaeude DEBW_0010007Tv9p) + Foto ob_platz_jm3399.jpg (Fassadengliederung)",
+  "W": 9.41,
+  "D": 16.4,
+  "EAVE": 11.84,
+  "RIDGE": 21.04,
+  "EG_TOP": 3.6,
+  "win_w": 1.02,
+  "win_h": 1.42,
+  "win_sill_off": 0.78,
+  "dormer_w": 1.05,
+  "dormer_h": 1.55,
+  "roof_type": "Satteldach_traufstaendig",
+  "hinweis": "Dach = 44% der Hoehe laut LOD2 (First21/Trauf11.84); Frontfoto verkuerzt das steile Dach auf ~27% -> LOD2 ist fuer die Masse massgeblich"
+}

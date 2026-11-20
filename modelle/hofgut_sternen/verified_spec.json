@@ -1,0 +1,137 @@
+{
+ "dach": {
+  "form": "steiles, weit heruntergezogenes Schwarzwald-Vollwalmdach (Schopfwalm) mit großem Dachüberstand; am Giebelende durch Walm geschopft",
+  "quelle": "g2/g4.jpg + dop_dach.png (voll abgewalmte Stirnseiten, korrigiert von Krüppelwalm)",
+  "zwerchhaeuser_anzahl": "2-3 große Walm-/Schopfgauben (hip-roofed Wandgauben), gestaffelt heruntergezogen, KEINE Spitzgiebel; exakte Zahl perspektivisch unsicher",
+  "quelle_zwerchhaeuser": "g4/g2.jpg (korrigiert: keine Giebel über Fresko)",
+  "schleppgauben_anzahl": "ca. 4-5 kleine Dachöffnungen (4 kleine Gauben/Dachfenster 0.3-0.7 m² + Rooflights)",
+  "quelle_schleppgauben": "dach_aufbauten.json (5 Objekte, davon 1 Kamin), g4/g2.jpg (~2 Rooflights sichtbar)",
+  "kamine_anzahl": 2,
+  "quelle_kamine": "g2/g4.jpg (2 Stöcke sicher, 3. möglich), dach_aufbauten.json (größtes Objekt 1.5 m² = Hauptkamin)",
+  "first_m": 17.46,
+  "first_max_komplex_m": 17.63,
+  "first_ueber_boden_m": 16.8,
+  "quelle_first": "footprint.json Teil4 ridge 17.46 / Teil2 ridge 17.63 (Max); ndom.json first_ueber_boden 16.8 (Quercheck PASS)",
+  "deckung": "grau-braune flache Ziegel-/Schiefer-artige Deckung mit Schneefanggittern (NICHT Holzschindeln, NICHT rot)",
+  "quelle_deckung": "wm_hotel2/g3.jpg Zoom (regelmäßige rechteckige Reihen, korrigiert von Holzschindeln); Glasdach 680 m²/360 Elemente = SteigenHaus-Neubau, separat",
+  "farbe_rgb": [
+   70,
+   60,
+   50
+  ],
+  "quelle_farbe": "wm_hotel2.jpg Schatten-Sample (farben.json [173,155,136] nicht als Dachfläche verifiziert; Schatten ca. [60-75,55-65,45-55])"
+ },
+ "fassade": {
+  "geschosse": "uneinheitlich: Naturstein-EG-Sockel + über die Front meist 1 durchlaufende Laube, zusätzliche Wohnebenen im Dach (Gauben); nur an Flügel-Enden 2 Balkonebenen",
+  "quelle_geschosse": "g2/g4/hs_aussen1.jpg (korrigiert von '3 Geschosse verputzt')",
+  "lauben_etagen": "1 durchlaufende Balkongalerie über die gesamte Hauptflügel-Front; eine zweite, kürzere obere Balkonebene nur an den Flügel-Enden; Mitte = Fresko-Wand ohne Balkon",
+  "quelle_lauben": "g4_gallery/g2.jpg (korrigiert von '2 durchlaufende')",
+  "achsen_pro_geschoss": "ca. 9-12 Achsen über die sichtbare Hauptflügel-Front (Grobschätzung, nicht zone-genau kalibriert)",
+  "quelle_achsen": "schema.json n_axes=12 (Kantenrhythmus über g4-Pixelcrop, NICHT auf 40 m kalibriert)",
+  "fresko": {
+   "vorhanden": true,
+   "motiv": "großes horizontales, stark verblasstes figürlich-ländliches Schwarzwald-Wandgemälde mittig über der durchlaufenden Galerie; Motiv nicht sicher lesbar",
+   "quelle": "g2/g4.jpg (g4_fresko); zusätzlich gemalte Trompe-l'oeil-Fensterumrahmungen (Säulen/Tauben/Weizengarbe/Blumen) + weißes Rankenwerk — wm_fresko.jpg, wm_hotel1.jpg"
+  }
+ },
+ "material": {
+  "dach_rgb": [
+   70,
+   60,
+   50
+  ],
+  "quelle_dach": "wm_hotel2.jpg Schatten (Sonne heller grau-braun)",
+  "og_holz_rgb": [
+   105,
+   85,
+   62
+  ],
+  "quelle_og": "farben.json og_lauben; wm_hotel1/wm_hotel2/hs_aussen1.jpg (Wand-Median [123,108,96], Schatten bis [33,29,26])",
+  "eg_rgb": [
+   105,
+   90,
+   72
+  ],
+  "quelle_eg": "hs_aussen1.jpg Naturstein-/Bruchstein-Sockel grau bis grau-braun ca. [90-120,85-95,65-80] (korrigiert: kein heller ocker Putz)",
+  "fensterrahmen_rgb": [
+   82,
+   45,
+   20
+  ],
+  "quelle_fensterrahmen": "wm_fresko.jpg dunkelbraun gebeiztes Holz ~[74-90,37-52,14-25] (korrigiert von [23,11,4]); Schauseite zusätzlich ocker/gelb gefasste Faschen (wm_hotel1.jpg)",
+  "lueftlmalerei": {
+   "ornament_rgb": [
+    190,
+    180,
+    165
+   ],
+   "putzwand_rgb": [
+    224,
+    220,
+    212
+   ],
+   "beschreibung": "cremeweiße/gebrochenweiße geschnitzte bzw. gemalte Ornamente + durchbrochene Baluster auf dunklem Holz; polychrome Freskofelder (Blumenkorb grün/gold/rosa in wm_hotel1; Vögel+Weizengarbe+Korb gold/oliv/grau+rosa in wm_fresko)",
+   "quelle": "wm_hotel1.jpg, wm_fresko.jpg (Ornament realistisch warm-cremefarben, nicht bläulich [208,222,232])"
+  }
+ },
+ "masse": {
+  "front_laenge_m": "längste gerade Fassadenkante Teil4 = 16,86 m (zweite 16,00 m); Teil4 ist geknickter/L-förmiger Flügel OHNE durchgehende 26,7/28-m-Front; max. Diagonal-Auszug 31,85 m",
+  "quelle_front": "footprint.json Teil4 edges (korrigiert: 26,7 m war Diagonale über Ecke, 28 m nicht belegbar)",
+  "footprint_m": "47,2 × 43,4 m BBox (8-Teil-Komplex); überbaute Grundfläche 945,6 m² (Teil4 460,4 m² + Teil2 282,7 m² = 79 %)",
+  "quelle_footprint": "footprint.json Shoelace/BBox (Python); Quercheck nDOM 1008 m² +6,6 % PASS",
+  "traufe_m": 9.37,
+  "quelle_traufe": "footprint.json Teil4 eave 9.37; Foto g2/g4 stützt niedrige Traufe (Dach ~46 % der Höhe); nDOM 12,3 m erwischte Gaubenoberkante (verworfen)",
+  "first_m": 17.46,
+  "quelle_first": "footprint.json Teil4 ridge 17.46 (Dach 8,1 m = 46 % der Höhe)",
+  "geschosshoehe_m": "Wandzone unter Traufe = ~2 Vollgeschosse (hohes Stein-EG + 1 Galerie-/Freskogeschoss); ~4,7 m bzw. ungleich verteilt; höhere Wohnebenen im Dach",
+  "quelle_geschosshoehe": "footprint.json eave 9.37 / 2 (korrigiert von 3,12 m bei falscher 3-Geschoss-Annahme)",
+  "gelaende_z_nn_m": 714.47,
+  "quelle_gelaende": "ndom.json 714.47 (DGM); footprint.json origin/ground 713.52 (LOD2-Origin); ~1 m Quellendifferenz"
+ },
+ "balkone": {
+  "bruestung": "flach gesägte, durchbrochene Holzbaluster (keine gedrechselten Säulen), eng gereiht; Durchbruch-Muster Herz-auf-Tropfen (Herz oben → langgezogene Schlüsselloch-/Tropfen-Schlaufe); weiß gestrichen auf dunkelbraunem Holz; kräftiger brauner Handlauf oben + durchlaufender Sockelbalken",
+  "quelle_bruestung": "wm_hotel1.jpg (/tmp/balust.png); seit-/talseitige Fassade (wm_hotel2) hat ANDERE, einfachere Vertikal-Baluster mit gelappten Köpfen, ohne Blumenkästen",
+  "blumen_farbe": "saisonabhängig: Frühjahr gemischte Stiefmütterchen (violett/gelb/dunkelrot, Nah wm_hotel1); Sommer dichte rote/orange Geranien (g4, hs_aussen1); Herbst überwiegend grünes Hängegrün (g2, g3). Rechteckige terrakotta-/tonfarbene Tröge auf schmalen Holzkonsolen außen über den Handlauf gehängt",
+  "quelle_blumen": "wm_hotel1.jpg (/tmp/flowerbox.png), g4/hs_aussen1.jpg (korrigiert: g2 belegt KEINE roten Geranien)",
+  "etagen": "untere durchlaufende blumengeschmückte Hauptlaube im 1. OG (über EG-Terrasse) PLUS zweite höher liegende durchlaufende Balkonebene im oberen Geschoss/Dachbereich der Front; EG hat Terrasse statt geländerten Balkon",
+  "quelle_etagen": "g4/g3.jpg (korrigiert von 'nur 1 Balkon')"
+ },
+ "web_fakten": [
+  {
+   "fakt": "1446 erstmals als Schänke erwähnt, früher 'Wirtshaus unter der Steig'",
+   "quelle": "hochschwarzwald.de, schwarzwald-tourismus.info (Zusatz 'Hinterzartener Pfarrchronik' unbelegt)"
+  },
+  {
+   "fakt": "St.-Oswald-Kapelle 1148 geweiht, 1606 barock umgestaltet; älteste noch erhaltene Pfarrkirche im Schwarzwald (nicht 'älteste Kapelle')",
+   "quelle": "hofgut-sternen.de, hochschwarzwald.de (Superlativ korrigiert)"
+  },
+  {
+   "fakt": "Marie-Antoinette-Brautzug Mai 1770: 21 Prunkkutschen, 36 Wagen, 450 Pferde (Weg zur Hochzeit mit Ludwig XVI.)",
+   "quelle": "hofgut-sternen.de, hochschwarzwald.de"
+  },
+  {
+   "fakt": "Goethe nächtigte zweimal; 'Goethehaus' = Baudenkmal, >500 Jahre altes Kellergewölbe, 18 Gästezimmer",
+   "quelle": "hofgut-sternen.de, hochschwarzwald.de"
+  },
+  {
+   "fakt": "Felix Mendelssohn Bartholdy malte das Goethehaus — sein erstes farbiges Bild",
+   "quelle": "hofgut-sternen.de (Konfidenz hoch)"
+  },
+  {
+   "fakt": "Glasbläserei/GlasManufaktur Marke 'STERNEN GLAS' (Schmuck, Lampen, Vasen); '>1000°C' plausibel aber nicht direkt belegt",
+   "quelle": "hofgut-sternen.de, hochschwarzwald.de"
+  },
+  {
+   "fakt": "Lage an historischer Handels-/Poststraße (Höllental/Falkensteige), benachbartes Zollhaus mit Verkehrs-Ausstellung; Ausbaujahr '1753-1755' unverifiziert",
+   "quelle": "schwarzwald-tourismus.info, hochschwarzwald.de"
+  },
+  {
+   "fakt": "Komplex aus mehreren benannten Häusern: Goethehaus (18 Zimmer), Schwarzwaldhaus (Stern im Lobbyboden), Ravennahaus (Wandmalereien von Bastian Fiala: Viadukt/Eule/Fuchs); Gleichsetzung mit genau 8 LOD2-Teilen ist unbelegte Hypothese",
+   "quelle": "hofgut-sternen.de"
+  },
+  {
+   "fakt": "Abgrenzung: hs_areal.jpg (rotes Giebel-Uhrenhaus), wm_front1.jpg (verfallenes rotes Ziegeldachhaus) und wm_front2.jpg (Pavillon mit Pyramiden-Schindeldach) sind FREMDGEBÄUDE — nicht in die Dachzählung einbeziehen. Name 'Haus der 1000 Uhren' unbelegt (das reale steht in Triberg)",
+   "quelle": "Foto-Abgleich g2/g3/g4.jpg vs. Fremdfotos"
+  }
+ ]
+}

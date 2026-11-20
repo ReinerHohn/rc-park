@@ -1,0 +1,4 @@
+HAUT-PLATTEN  203x133x183 mm (vscale 0.85), Schale 4.0 mm
+Montage: oben aufs Laser-Gerüst (terrain_eggcrate) legen/kleben/schrauben.
+
+  skin_y0x0_z0: 202x132x187 mm

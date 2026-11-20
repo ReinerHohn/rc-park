@@ -1,0 +1,102 @@
+{
+  "building_box_frac": [
+    0.027,
+    0.086,
+    0.593,
+    0.72
+  ],
+  "n_windows": 19,
+  "n_rows": 5,
+  "rows": [
+    {
+      "z_frac": 0.871,
+      "n": 4,
+      "x_fracs": [
+        0.155,
+        0.409,
+        0.591,
+        0.845
+      ],
+      "arched": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.06,
+      "h_frac": 0.163
+    },
+    {
+      "z_frac": 0.729,
+      "n": 2,
+      "x_fracs": [
+        0.409,
+        0.591
+      ],
+      "arched": [
+        false,
+        false
+      ],
+      "w_frac": 0.06,
+      "h_frac": 0.132
+    },
+    {
+      "z_frac": 0.584,
+      "n": 2,
+      "x_fracs": [
+        0.221,
+        0.779
+      ],
+      "arched": [
+        false,
+        false
+      ],
+      "w_frac": 0.06,
+      "h_frac": 0.138
+    },
+    {
+      "z_frac": 0.217,
+      "n": 7,
+      "x_fracs": [
+        0.092,
+        0.221,
+        0.274,
+        0.5,
+        0.726,
+        0.779,
+        0.908
+      ],
+      "arched": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.06,
+      "h_frac": 0.117
+    },
+    {
+      "z_frac": 0.061,
+      "n": 4,
+      "x_fracs": [
+        0.155,
+        0.409,
+        0.591,
+        0.845
+      ],
+      "arched": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.06,
+      "h_frac": 0.12
+    }
+  ],
+  "foto": "modelle/hofgut_sternen/fassade_crop.png",
+  "modell": "Xpitfire/segformer-finetuned-segments-cmp-facade"
+}

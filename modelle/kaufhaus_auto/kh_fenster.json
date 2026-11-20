@@ -1,0 +1,70 @@
+{
+  "building_box_frac": [
+    0.006,
+    0.197,
+    0.541,
+    0.428
+  ],
+  "n_windows": 8,
+  "n_rows": 4,
+  "rows": [
+    {
+      "z_frac": 0.957,
+      "n": 1,
+      "x_fracs": [
+        0.5
+      ],
+      "arched": [
+        false
+      ],
+      "w_frac": 0.035,
+      "h_frac": 0.087
+    },
+    {
+      "z_frac": 0.892,
+      "n": 1,
+      "x_fracs": [
+        0.5
+      ],
+      "arched": [
+        false
+      ],
+      "w_frac": 0.035,
+      "h_frac": 0.098
+    },
+    {
+      "z_frac": 0.522,
+      "n": 4,
+      "x_fracs": [
+        0.132,
+        0.39,
+        0.61,
+        0.868
+      ],
+      "arched": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "w_frac": 0.035,
+      "h_frac": 0.134
+    },
+    {
+      "z_frac": 0.122,
+      "n": 2,
+      "x_fracs": [
+        0.023,
+        0.977
+      ],
+      "arched": [
+        true,
+        true
+      ],
+      "w_frac": 0.035,
+      "h_frac": 0.132
+    }
+  ],
+  "foto": "../daten/kaufhaus_freiburg/mapillary_raw/img_003.jpg",
+  "modell": "Xpitfire/segformer-finetuned-segments-cmp-facade"
+}

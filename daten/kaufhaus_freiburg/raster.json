@@ -1,0 +1,16 @@
+{
+  "img": "daten/kaufhaus_freiburg/fotos/kh_front2025b.jpg",
+  "ref_height_m": 21.4,
+  "m_per_px": 0.0097,
+  "storey_rows_m": [
+    1.39,
+    9.96,
+    14.09
+  ],
+  "axis_m": 4.0,
+  "floor_m": 6.35,
+  "win_w": 1.86,
+  "win_h": 1.6,
+  "autocorr": 0.04,
+  "confidence": "niedrige Konfidenz → geklemmt 3–4 m"
+}

@@ -1,0 +1,109 @@
+{
+  "foto": "daten/kornhaus/fotos/kh_20230106.jpg",
+  "building_box_frac": [
+    0.329,
+    0.096,
+    0.733,
+    0.807
+  ],
+  "n_windows": 13,
+  "n_rows": 7,
+  "rows": [
+    {
+      "z_frac": 0.967,
+      "n": 1,
+      "x_fracs": [
+        0.479
+      ],
+      "arched": [
+        false
+      ],
+      "w_frac": 0.081,
+      "h_frac": 0.066
+    },
+    {
+      "z_frac": 0.835,
+      "n": 1,
+      "x_fracs": [
+        0.489
+      ],
+      "arched": [
+        false
+      ],
+      "w_frac": 0.073,
+      "h_frac": 0.074
+    },
+    {
+      "z_frac": 0.745,
+      "n": 2,
+      "x_fracs": [
+        0.39,
+        0.582
+      ],
+      "arched": [
+        false,
+        false
+      ],
+      "w_frac": 0.139,
+      "h_frac": 0.076
+    },
+    {
+      "z_frac": 0.622,
+      "n": 3,
+      "x_fracs": [
+        0.284,
+        0.505,
+        0.713
+      ],
+      "arched": [
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.135,
+      "h_frac": 0.082
+    },
+    {
+      "z_frac": 0.478,
+      "n": 2,
+      "x_fracs": [
+        0.177,
+        0.826
+      ],
+      "arched": [
+        false,
+        false
+      ],
+      "w_frac": 0.145,
+      "h_frac": 0.079
+    },
+    {
+      "z_frac": 0.367,
+      "n": 1,
+      "x_fracs": [
+        0.408
+      ],
+      "arched": [
+        false
+      ],
+      "w_frac": 0.045,
+      "h_frac": 0.032
+    },
+    {
+      "z_frac": 0.282,
+      "n": 3,
+      "x_fracs": [
+        0.113,
+        0.52,
+        0.896
+      ],
+      "arched": [
+        true,
+        true,
+        true
+      ],
+      "w_frac": 0.225,
+      "h_frac": 0.126
+    }
+  ]
+}

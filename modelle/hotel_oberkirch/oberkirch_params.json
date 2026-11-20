@@ -1,0 +1,16 @@
+{
+  "quelle": "gezaehlt an ob_platz_jm3399.jpg (frontal) + ob_gastro.jpg (Detail)",
+  "n_axes": 4,
+  "win_x_frac": [0.094, 0.306, 0.645, 0.890],
+  "n_upper_floors": 3,
+  "n_dormers": 4,
+  "n_skylights": 4,
+  "shutters": true,
+  "flower_boxes": true,
+  "eg_use": "restaurant",
+  "n_eg_windows": 2,
+  "lettering": "OBERKIRCHS WEINSTUBEN",
+  "sign": true,
+  "n_lanterns": 2,
+  "n_wappen": 2
+}

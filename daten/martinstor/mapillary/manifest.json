@@ -1,0 +1,117 @@
+{
+  "target": [
+    47.9931,
+    7.8503
+  ],
+  "source": "mapillary",
+  "views": [
+    {
+      "file": "sv_00_persp.jpg",
+      "mapillary_id": "1053186063729974",
+      "lat": 47.99341985297,
+      "lon": 7.849672339632,
+      "alt": null,
+      "heading": 127.3,
+      "cam_angle": 82.367618378311,
+      "camera_type": "perspective",
+      "tag": "persp",
+      "captured_at": 1783593467303
+    },
+    {
+      "file": "sv_01_persp.jpg",
+      "mapillary_id": "1303461518527949",
+      "lat": 47.993419840377,
+      "lon": 7.8495699926282,
+      "alt": null,
+      "heading": 123.2,
+      "cam_angle": 83.863490312992,
+      "camera_type": "perspective",
+      "tag": "persp",
+      "captured_at": 1783593462406
+    },
+    {
+      "file": "sv_02_360.jpg",
+      "mapillary_id": "4600867133487874",
+      "lat": 47.993261706731,
+      "lon": 7.8495948597925,
+      "alt": null,
+      "heading": 108.9,
+      "cam_angle": 99.267440077719,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1772556145000
+    },
+    {
+      "file": "sv_03_persp.jpg",
+      "mapillary_id": "1030535162801053",
+      "lat": 47.993419733079,
+      "lon": 7.8495270253232,
+      "alt": null,
+      "heading": 121.7,
+      "cam_angle": 87.081334982504,
+      "camera_type": "perspective",
+      "tag": "persp",
+      "captured_at": 1783593460368
+    },
+    {
+      "file": "sv_04_360.jpg",
+      "mapillary_id": "890811886900785",
+      "lat": 47.993263877788,
+      "lon": 7.8496307494636,
+      "alt": null,
+      "heading": 110.1,
+      "cam_angle": 105.32897904357,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1772556147000
+    },
+    {
+      "file": "sv_05_360.jpg",
+      "mapillary_id": "1268045991935786",
+      "lat": 47.993317238228,
+      "lon": 7.8500438308726,
+      "alt": null,
+      "heading": 141.7,
+      "cam_angle": 94.260886769418,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1772556173000
+    },
+    {
+      "file": "sv_06_360.jpg",
+      "mapillary_id": "1292062912827491",
+      "lat": 47.99330071425,
+      "lon": 7.8499792901615,
+      "alt": null,
+      "heading": 133.1,
+      "cam_angle": 90.423380577275,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1772556169000
+    },
+    {
+      "file": "sv_07_360.jpg",
+      "mapillary_id": "2893446417531119",
+      "lat": 47.993431333984,
+      "lon": 7.8503438388572,
+      "alt": null,
+      "heading": 185.1,
+      "cam_angle": 120.97299046972,
+      "camera_type": "spherical",
+      "tag": "360",
+      "captured_at": 1772556221000
+    },
+    {
+      "file": "sv_08_persp.jpg",
+      "mapillary_id": "1581465333578572",
+      "lat": 47.993420755209,
+      "lon": 7.8496324908858,
+      "alt": null,
+      "heading": 125.7,
+      "cam_angle": 85.476702030306,
+      "camera_type": "perspective",
+      "tag": "persp",
+      "captured_at": 1783593465404
+    }
+  ]
+}

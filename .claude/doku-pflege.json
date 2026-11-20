@@ -1,0 +1,9 @@
+{
+  "root_md_allowed": ["README.md", "CLAUDE.md", "PROJEKT.md", "KONZEPT.md", "HANDOFF.md"],
+  "budgets": {"CLAUDE.md": 120, "PROJEKT.md": 60},
+  "tree_root": "PROJEKT.md",
+  "tree_glob": "Doku/projekt/*.md",
+  "steer_globs": ["CLAUDE.md", "README.md", "KONZEPT.md"],
+  "sort_targets": {"Doku/konzept/": "Konzept/Vision", "Doku/markt-kalkulation/": "Markt/Kalkulation", "Doku/standort/": "Standort/Partner", "Doku/rc-attraktionen/": "RC-Attraktion/Ausstattung", "Doku/modellbau/": "Scan/Druck/Modelle", "Doku/archiv/": "Bericht/Status"},
+  "main_branch": "kaufhaus-freiburg"
+}

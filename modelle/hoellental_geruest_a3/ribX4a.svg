@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="45.4mm" height="30.3mm" viewBox="0 0 45.4 30.3">
+<path d="M 31.00,6.00 L 30.00,6.00 L 29.00,6.00 L 28.00,6.00 L 27.00,6.00 L 26.00,6.00 L 25.00,6.00 L 24.00,6.00 L 23.00,6.00 L 22.00,6.00 L 21.00,6.00 L 20.00,6.00 L 19.00,6.00 L 18.00,6.00 L 17.00,6.00 L 16.00,6.00 L 15.00,6.00 L 14.00,6.00 L 13.00,6.00 L 12.00,6.00 L 11.00,6.00 L 10.00,6.00 L 9.00,6.00 L 8.00,6.00 L 7.00,6.00 L 6.00,6.00 L 6.00,23.60 L 7.00,23.63 L 8.00,23.71 L 9.00,23.74 L 10.00,23.79 L 11.00,23.82 L 12.00,23.89 L 13.00,23.92 L 14.00,23.94 L 15.00,23.98 L 16.00,24.02 L 17.00,24.06 L 17.24,24.06 L 17.64,22.86 L 17.64,15.06 L 20.14,15.06 L 20.14,22.97 L 20.54,24.17 L 21.00,24.17 L 22.00,24.23 L 23.00,24.27 L 23.39,24.28 L 23.39,18.00 L 31.39,18.00 L 39.39,18.00 L 39.39,6.00 L 39.00,6.00 L 38.00,6.00 L 37.00,6.00 L 36.00,6.00 L 35.00,6.00 L 34.00,6.00 L 33.00,6.00 L 32.00,6.00 L 31.39,6.00 L 31.00,6.00 Z" fill="none" stroke="#f00" stroke-width="0.1"/>
+<path d="M 8.00,12.00 L 10.40,8.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 8.00,8.00 L 10.40,12.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 12.40,12.00 L 12.40,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 12.40,10.00 L 14.80,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 14.80,12.00 L 14.80,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 14.80,10.00 L 14.80,8.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 25.60,12.00 L 26.80,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 28.00,12.00 L 26.80,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 26.80,10.00 L 26.80,8.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 30.00,12.00 L 32.40,12.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 32.40,12.00 L 32.40,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 32.40,10.00 L 32.40,8.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 30.00,8.00 L 32.40,8.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 30.00,12.00 L 30.00,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 30.00,10.00 L 32.40,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 34.40,12.00 L 34.40,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 34.40,10.00 L 36.80,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 36.80,12.00 L 36.80,10.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 36.80,10.00 L 36.80,8.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<text x="2.27" y="5" font-family="Arial" font-size="3" fill="#f00" stroke="none">ribX4a</text>
+</svg>

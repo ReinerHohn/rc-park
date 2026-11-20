@@ -1,7 +1,7 @@
 # 3D-Scan-Setup — welches Script, wie starten
 
 Installiert alles für eigene Photogrammetrie-Scans (Handy-Fotos → 3D-Modell → Druck) auf
-dem **RTX-Rechner**. Siehe auch [`../diy-scan.md`](../diy-scan.md).
+dem **RTX-Rechner**. Siehe auch [`../Doku/modellbau/diy-scan.md`](../Doku/modellbau/diy-scan.md).
 
 ## Welches Script?
 - **Windows** → `scan-setup-windows.ps1`

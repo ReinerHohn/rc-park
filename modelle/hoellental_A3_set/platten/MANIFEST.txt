@@ -1,0 +1,11 @@
+AUTO-EINHÄNGPLATTEN — Fenster 203x133 mm, 5 flache + 1 steile (Wand) Platten
+
+FLACHE Platten (horizontal, auf echte Kontur):
+  P0: ~102x56 mm | 1560 mm² | Neigung 48° | 66 Konturpunkte | 5 Dübel
+  P1: ~178x105 mm | 6786 mm² | Neigung 3° | 168 Konturpunkte | 8 Dübel
+  P2: ~45x50 mm | 644 mm² | Neigung 2° | 51 Konturpunkte | 1 Dübel
+  P3: ~36x52 mm | 636 mm² | Neigung 1° | 48 Konturpunkte | 1 Dübel
+  P4: ~35x43 mm | 228 mm² | Neigung 2° | 42 Konturpunkte | 1 Dübel
+
+STEILE WÄNDE (vertikal, z.B. Tunnel-Steilwand) — als abgewickelter Streifen:
+  W0: Wand L~29 mm × H~42 mm | 199 mm² Grundriss -> Streifen 29x42 mm

@@ -1,0 +1,5 @@
+{ "name":"Ravenna-Viadukt", "typ":"bauwerk", "signatur":"viadukt",
+  "dem":"daten/ravenna/ravenna_dgm1.npy",
+  "cell_m":1.0,"nscale":6.25,"mm_per_cell":6.25,"vscale":1.0,"smooth":1.0,
+  "artifact":"","bed":[256,256],
+  "bauwerk":{"stl":"modelle/ravenna/ravenna_viadukt.stl","archetyp":"viadukt","n":9,"L":224,"H":40} }

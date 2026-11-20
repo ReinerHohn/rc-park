@@ -1,0 +1,12 @@
+{
+ "quelle": "DOP-Luftbild 20 cm (schaerfer als Laser) -> Fassaden-x-Anteil via massing_frame",
+ "kamine_x_frac": [
+  0.268,
+  0.816
+ ],
+ "gauben_x_frac": [
+  0.576
+ ],
+ "n_kamine": 2,
+ "n_gauben": 1
+}

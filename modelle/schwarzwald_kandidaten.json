@@ -1,0 +1,496 @@
+{
+  "natur": [
+    {
+      "name": "Feldsee",
+      "lat": 47.870278,
+      "lon": 8.0325,
+      "typ": "see/kar",
+      "relief_m": 300,
+      "dramatic_relief": true,
+      "markant": "Lehrbuch-Karsee: bis 300 m hohe halbrunde Steilwand unter dem Feldberg — eines der dramatischsten Reliefs des Schwarzwalds",
+      "E": 427648,
+      "N": 5302335,
+      "paket": "427_5302",
+      "subkachel": "427_5302"
+    },
+    {
+      "name": "Hirschsprung / Höllental",
+      "lat": 47.937778,
+      "lon": 8.020278,
+      "typ": "schlucht/felswand",
+      "relief_m": 130,
+      "dramatic_relief": true,
+      "markant": "engste Klause mit ~senkrechten 130-m-Gneiswänden + durchtunnelte Höllentalbahn",
+      "E": 426830,
+      "N": 5309849,
+      "paket": "425_5308",
+      "subkachel": "426_5309"
+    },
+    {
+      "name": "Triberger Wasserfälle",
+      "lat": 48.126799,
+      "lon": 8.228309,
+      "typ": "wasserfall",
+      "relief_m": 163,
+      "dramatic_relief": true,
+      "markant": "163 m über 7 Kaskaden — höchstes Wasser-Wahrzeichen; ideal als Lasercut-Stufenmodell",
+      "E": 442577,
+      "N": 5330682,
+      "paket": "441_5330",
+      "subkachel": "442_5330"
+    },
+    {
+      "name": "Belchen",
+      "lat": 47.8225,
+      "lon": 7.833611,
+      "typ": "gipfel",
+      "relief_m": 1414,
+      "dramatic_relief": true,
+      "markant": "ikonisch symmetrischer baumfreier Kegel — berühmtestes Schwarzwald-Profil von der Rheinebene",
+      "E": 412695,
+      "N": 5297231,
+      "paket": "411_5296",
+      "subkachel": "412_5297"
+    },
+    {
+      "name": "Feldberg",
+      "lat": 47.873611,
+      "lon": 8.003889,
+      "typ": "gipfel",
+      "relief_m": 1493,
+      "dramatic_relief": true,
+      "markant": "höchster Gipfel BWs, markante Kuppe + steiles Feldseekar an der Nordseite",
+      "E": 425514,
+      "N": 5302733,
+      "paket": "425_5302",
+      "subkachel": "425_5302"
+    },
+    {
+      "name": "Schauinsland",
+      "lat": 47.911944,
+      "lon": 7.898611,
+      "typ": "gipfel",
+      "relief_m": 1284,
+      "dramatic_relief": true,
+      "markant": "Freiburger Hausberg mit historischer Seilbahn, zerklüftete Bergbau-Flanken (~750 m Abfall ins Dreisamtal)",
+      "E": 417702,
+      "N": 5307100,
+      "paket": "417_5306",
+      "subkachel": "417_5307"
+    },
+    {
+      "name": "Herzogenhorn",
+      "lat": 47.835,
+      "lon": 8.019444,
+      "typ": "gipfel",
+      "relief_m": 1415,
+      "dramatic_relief": true,
+      "markant": "zweithöchster eigenständiger Gipfel, alpiner Charakter, steile Hänge",
+      "E": 426622,
+      "N": 5298427,
+      "paket": "425_5298",
+      "subkachel": "426_5298"
+    },
+    {
+      "name": "Kandel",
+      "lat": 48.062222,
+      "lon": 8.011944,
+      "typ": "gipfel",
+      "relief_m": 1241,
+      "dramatic_relief": true,
+      "markant": "freistehender Aussichts-/Gleitschirmberg über dem Elztal, klare Silhouette",
+      "E": 426385,
+      "N": 5323688,
+      "paket": "425_5322",
+      "subkachel": "426_5323"
+    },
+    {
+      "name": "Wutachschlucht",
+      "lat": 47.844722,
+      "lon": 8.311944,
+      "typ": "schlucht",
+      "relief_m": 170,
+      "dramatic_relief": true,
+      "markant": "größter Cañon Deutschlands, bis 170 m tiefe Steilwand-Schlucht (Ausschnitt wählen)",
+      "E": 448520,
+      "N": 5299271,
+      "paket": "447_5298",
+      "subkachel": "448_5299"
+    },
+    {
+      "name": "Ravennaschlucht",
+      "lat": 47.919722,
+      "lon": 8.085,
+      "typ": "schlucht",
+      "relief_m": 80,
+      "dramatic_relief": true,
+      "markant": "enge V-Schlucht des Höllentals mit Ravennaviadukt + Wasserfällen",
+      "E": 431640,
+      "N": 5307783,
+      "paket": "431_5306",
+      "subkachel": "431_5307"
+    },
+    {
+      "name": "Todtnauer Wasserfall",
+      "lat": 47.8434,
+      "lon": 7.9391,
+      "typ": "wasserfall",
+      "relief_m": 97,
+      "dramatic_relief": true,
+      "markant": "97 m Fallhöhe in steiler Felskerbe, teils freier Fall",
+      "E": 420623,
+      "N": 5299440,
+      "paket": "419_5298",
+      "subkachel": "420_5299"
+    },
+    {
+      "name": "Allerheiligen-Wasserfälle",
+      "lat": 48.5303,
+      "lon": 8.1889,
+      "typ": "wasserfall",
+      "relief_m": 66,
+      "dramatic_relief": true,
+      "markant": "66 m über 7 Stufen in enger Felsklamm bei der Klosterruine",
+      "E": 440119,
+      "N": 5375561,
+      "paket": "439_5374",
+      "subkachel": "440_5375"
+    },
+    {
+      "name": "Mummelsee / Hornisgrinde",
+      "lat": 48.5975,
+      "lon": 8.201111,
+      "typ": "see/kar",
+      "relief_m": 135,
+      "dramatic_relief": true,
+      "markant": "Karsee am Fuß der Hornisgrinde, Wahrzeichen der Schwarzwaldhochstraße",
+      "E": 441098,
+      "N": 5383021,
+      "paket": "441_5382",
+      "subkachel": "441_5383"
+    },
+    {
+      "name": "Battertfelsen",
+      "lat": 48.778889,
+      "lon": 8.253333,
+      "typ": "felsen",
+      "relief_m": 60,
+      "dramatic_relief": true,
+      "markant": "freistehende Porphyr-Felstürme (15–60 m) über Baden-Baden — dankbares Felsmodell",
+      "E": 445146,
+      "N": 5403145,
+      "paket": "445_5402",
+      "subkachel": "445_5403"
+    },
+    {
+      "name": "Titisee",
+      "lat": 47.893333,
+      "lon": 8.146111,
+      "typ": "see",
+      "relief_m": 20,
+      "dramatic_relief": false,
+      "markant": "größter natürlicher See, aber flache Ufer — als reines Gelände wenig markant (lebt vom Kontext)",
+      "E": 436173,
+      "N": 5304798,
+      "paket": "435_5304",
+      "subkachel": "436_5304"
+    },
+    {
+      "name": "Schluchsee (See)",
+      "lat": 47.821389,
+      "lon": 8.152778,
+      "typ": "see",
+      "relief_m": 30,
+      "dramatic_relief": false,
+      "markant": "größter See, aber sanfte Ufer — markant ist die Staumauer (Bauwerk), nicht das Gelände",
+      "E": 436583,
+      "N": 5296796,
+      "paket": "435_5296",
+      "subkachel": "436_5296"
+    }
+  ],
+  "bauwerk": [
+    {
+      "name": "Schluchsee-Staumauer",
+      "lat": 47.80064,
+      "lon": 8.18361,
+      "typ": "staumauer",
+      "masse": {
+        "hoehe": 63.5,
+        "laenge": 250
+      },
+      "parametrisierbar": true,
+      "markant": "größtes Massebauwerk im Schwarzwald, gekrümmte Gewichtsstaumauer am größten See",
+      "E": 438867,
+      "N": 5294465,
+      "paket": "437_5294",
+      "subkachel": "438_5294"
+    },
+    {
+      "name": "Linachtalsperre",
+      "lat": 48.01833,
+      "lon": 8.29056,
+      "typ": "staumauer",
+      "masse": {
+        "hoehe": 25,
+        "laenge": 143,
+        "bogen": 13
+      },
+      "parametrisierbar": true,
+      "markant": "einzige Gewölbereihen-Staumauer Deutschlands (13 Gewölbe) — unverwechselbar; Generator vorhanden",
+      "E": 447098,
+      "N": 5318581,
+      "paket": "447_5318",
+      "subkachel": "447_5318"
+    },
+    {
+      "name": "Ravenna-Viadukt",
+      "lat": 47.9175,
+      "lon": 8.07417,
+      "typ": "viadukt",
+      "masse": {
+        "hoehe": 40,
+        "laenge": 224,
+        "bogen": 9
+      },
+      "parametrisierbar": true,
+      "markant": "9 Sandstein-Rundbögen der Höllentalbahn — Postkarten-Ikone; Generator vorhanden",
+      "E": 430828,
+      "N": 5307546,
+      "paket": "429_5306",
+      "subkachel": "430_5307"
+    },
+    {
+      "name": "Epfenhofer Viadukt (Sauschwänzlebahn)",
+      "lat": 47.8332,
+      "lon": 8.525,
+      "typ": "viadukt",
+      "masse": {
+        "hoehe": 34,
+        "laenge": 264,
+        "bogen": 8
+      },
+      "parametrisierbar": true,
+      "markant": "größter Viadukt der Sauschwänzlebahn, 8 hohe Natursteinbögen",
+      "E": 464453,
+      "N": 5297871,
+      "paket": "463_5296",
+      "subkachel": "464_5297"
+    },
+    {
+      "name": "Biesenbach-Viadukt (Sauschwänzlebahn)",
+      "lat": 47.82549,
+      "lon": 8.55303,
+      "typ": "viadukt",
+      "masse": {
+        "hoehe": 24,
+        "laenge": 252,
+        "bogen": 4,
+        "radius": 360
+      },
+      "parametrisierbar": true,
+      "markant": "elegant gekrümmter Fischbauch-Bogenviadukt, R=360 m",
+      "E": 466546,
+      "N": 5297001,
+      "paket": "465_5296",
+      "subkachel": "466_5297"
+    },
+    {
+      "name": "Hornberg-Viadukt (Schwarzwaldbahn)",
+      "lat": 48.21433,
+      "lon": 8.23079,
+      "typ": "viadukt",
+      "masse": {
+        "hoehe": 35,
+        "laenge": 236
+      },
+      "parametrisierbar": true,
+      "markant": "Gewölbeviadukt über das Reichenbachtal (Bogenzahl verifizieren)",
+      "E": 442859,
+      "N": 5340409,
+      "paket": "441_5340",
+      "subkachel": "442_5340"
+    },
+    {
+      "name": "Hängebrücke Blackforestline Todtnau",
+      "lat": 47.84423,
+      "lon": 7.93666,
+      "typ": "bruecke",
+      "masse": {
+        "hoehe": 120,
+        "laenge": 450
+      },
+      "parametrisierbar": true,
+      "markant": "eine der längsten Fußgänger-Hängebrücken DEs, 450 m über den Todtnauer Wasserfall",
+      "E": 420442,
+      "N": 5299535,
+      "paket": "419_5298",
+      "subkachel": "420_5299"
+    },
+    {
+      "name": "Freiburger Münster (Turm)",
+      "lat": 47.99556,
+      "lon": 7.85278,
+      "typ": "turm",
+      "masse": {
+        "hoehe": 116
+      },
+      "parametrisierbar": false,
+      "markant": "einziger im MA vollendeter gotischer Turm DEs — Maßwerk-Helm nur über Skelett+Maßwerk-Platten",
+      "E": 414416,
+      "N": 5316443,
+      "paket": "413_5316",
+      "subkachel": "414_5316"
+    },
+    {
+      "name": "Feldbergturm",
+      "lat": 47.86445,
+      "lon": 8.02219,
+      "typ": "turm",
+      "masse": {
+        "hoehe": 42
+      },
+      "parametrisierbar": true,
+      "markant": "runder Turm auf dem höchsten Berg BWs, Rotationskörper",
+      "E": 426869,
+      "N": 5301697,
+      "paket": "425_5300",
+      "subkachel": "426_5301"
+    },
+    {
+      "name": "Schauinslandturm",
+      "lat": 47.91193,
+      "lon": 7.89858,
+      "typ": "turm",
+      "masse": {
+        "hoehe": 21.75
+      },
+      "parametrisierbar": true,
+      "markant": "dreieckiger Holz-Aussichtsturm, reguläres Stabwerk — gut für Lasercut-Stäbe",
+      "E": 417700,
+      "N": 5307099,
+      "paket": "417_5306",
+      "subkachel": "417_5307"
+    },
+    {
+      "name": "Hochfirstturm",
+      "lat": 47.90125,
+      "lon": 8.18433,
+      "typ": "turm",
+      "masse": {
+        "hoehe": 25
+      },
+      "parametrisierbar": true,
+      "markant": "Stahlgitterturm 1890, reguläres Fachwerk",
+      "E": 439039,
+      "N": 5305647,
+      "paket": "439_5304",
+      "subkachel": "439_5305"
+    },
+    {
+      "name": "Kastelburg Waldkirch",
+      "lat": 48.09755,
+      "lon": 7.95761,
+      "typ": "burg",
+      "masse": {
+        "hoehe": 28
+      },
+      "parametrisierbar": true,
+      "markant": "kompakte Kernburg mit hohem quadratischem Bergfried über dem Elztal",
+      "E": 422390,
+      "N": 5327668,
+      "paket": "421_5326",
+      "subkachel": "422_5327"
+    },
+    {
+      "name": "Yburg Baden-Baden",
+      "lat": 48.73056,
+      "lon": 8.20028,
+      "typ": "burg",
+      "masse": {
+        "hoehe": 25
+      },
+      "parametrisierbar": true,
+      "markant": "dominanter runder Bergfried mit Zinnenkranz über den Reben",
+      "E": 441192,
+      "N": 5397813,
+      "paket": "441_5396",
+      "subkachel": "441_5397"
+    },
+    {
+      "name": "Martinstor Freiburg",
+      "lat": 47.99361,
+      "lon": 7.84889,
+      "typ": "turm",
+      "masse": {
+        "hoehe": 60
+      },
+      "parametrisierbar": true,
+      "markant": "ältestes Stadttor Freiburgs, Torturm mit Spitzhelm",
+      "E": 414122,
+      "N": 5316231,
+      "paket": "413_5316",
+      "subkachel": "414_5316"
+    },
+    {
+      "name": "Schwabentor Freiburg",
+      "lat": 47.99306,
+      "lon": 7.85417,
+      "typ": "turm",
+      "masse": {
+        "hoehe": 26
+      },
+      "parametrisierbar": true,
+      "markant": "mittelalterliches Stadttor mit bemaltem Staffelgiebel",
+      "E": 414515,
+      "N": 5316164,
+      "paket": "413_5316",
+      "subkachel": "414_5316"
+    },
+    {
+      "name": "Villinger Münster",
+      "lat": 48.0602,
+      "lon": 8.45916,
+      "typ": "kirche",
+      "masse": {
+        "hoehe": 54
+      },
+      "parametrisierbar": true,
+      "markant": "markante Doppeltürme prägen die Silhouette Villingens",
+      "E": 459703,
+      "N": 5323133,
+      "paket": "459_5322",
+      "subkachel": "459_5323"
+    },
+    {
+      "name": "Burg Hohengeroldseck",
+      "lat": 48.3325,
+      "lon": 7.98028,
+      "typ": "burg",
+      "masse": {
+        "hoehe": 30
+      },
+      "parametrisierbar": false,
+      "markant": "ausgedehnte unregelmäßige Ruine am Felsgrat — realistisch nur über LiDAR/LOD2",
+      "E": 424424,
+      "N": 5353760,
+      "paket": "423_5352",
+      "subkachel": "424_5353"
+    },
+    {
+      "name": "Hochburg Emmendingen",
+      "lat": 48.11667,
+      "lon": 7.90056,
+      "typ": "burg",
+      "masse": {
+        "hoehe": 20
+      },
+      "parametrisierbar": false,
+      "markant": "verwinkelte Renaissance-Festung mit Bastionen — nur über LiDAR/LOD2",
+      "E": 418172,
+      "N": 5329852,
+      "paket": "417_5328",
+      "subkachel": "418_5329"
+    }
+  ]
+}

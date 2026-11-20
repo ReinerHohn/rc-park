@@ -7,7 +7,6 @@ modelle/stl/altstadt_lod2.stl
 modelle/stl/altstadt_print.stl
 modelle/stl/tiles_6x6/
 modelle/altstadt_lod2_vorschau.png
-
 modelle/stl/altstadt_preview.stl
 modelle/h0/hofgut_solid_h0*.stl
 modelle/martinstor_fertigung/druck/
@@ -37,3 +36,21 @@ modelle/schwabentor/sfm/*.npy
 modelle/schwabentor/sfm/sparse_modell_*
 modelle/schwabentor/sfm/__pycache__/
 modelle/schwabentor/punktwolke.html
+
+# Große/regenerierbare LiDAR-Rohdaten — nicht ins Repo (Download-Rezept im Memory)
+*.zip
+*.tif
+*.tfw
+*.laz
+daten/hoellental/dgm025_full.npy
+.venv-pc/
+daten/*/dop/
+daten/*/lod2/
+# > 100 MB = GitHub-Limit (regenerierbar aus der Pipeline)
+modelle/martinstor_auto/relief/sv02_relief.stl
+
+# Claude Code: lokal/temporär
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+.claude/worktrees/
+.claude/scheduled_tasks.lock

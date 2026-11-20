@@ -1,0 +1,13 @@
+{
+  "_quelle": "Vermesser-Ensemble aus daten/kaufhaus_freiburg/fotos/kh_jm3289.jpg; n_arch vom User per Zoom-Gegenzählung auf 4 korrigiert (Ensemble streute 5/5/4 — Detektor-Fehler, Grundwahrheit=4).",
+  "n_arch": 4,
+  "n_windows": 10,
+  "n_statues": 4,
+  "n_oriels": 2,
+  "_dormer_quelle": "Gauben-Spreizung aus cmp_photo (untere Reihe x 0.26/0.51/0.77) → span 0.51",
+  "dormer_rows_bottom_to_top": [
+    3,
+    2
+  ],
+  "dormer_width_frac": 0.51
+}

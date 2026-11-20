@@ -1,0 +1,107 @@
+<!doctype html><html><head><meta charset=utf8><title>Hirschsprung Gerüst — Assembly (Sheen)</title>
+<style>
+body{margin:0;background:#1a1a2e;font-family:sans-serif}
+#bar{position:fixed;top:0;left:0;right:0;background:#16213e;color:#eee;padding:12px;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,0.5)}
+#bar input[type=text]{font-size:14px;padding:6px 8px;width:150px;border-radius:4px;border:1px solid #444;background:#0f1419}
+#bar button{font-size:12px;padding:7px 11px;margin:0 4px;border-radius:4px;border:1px solid #00d4ff;background:#0f3460;color:#00d4ff;cursor:pointer;transition:0.2s}
+#bar button:hover{background:#00d4ff;color:#0f3460}
+#info{margin-left:auto;font-size:12px}
+#viewport{width:100vw;height:100vh}
+</style>
+<script src="https://unpkg.com/three@r150/build/three.min.js"></script>
+<script src="https://unpkg.com/three@r150/examples/js/controls/OrbitControls.js"></script>
+</head><body>
+<div id=bar>
+<label style="color:#00d4ff;font-weight:bold">🔍 Hirschsprung A3-Gerüst Assembly</label>
+<span id=info style="margin-left:auto;color:#0f0">21 Rippen + 113 Kanten-Lineale</span>
+</div>
+<div id=viewport></div>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1a2e);
+scene.fog = new THREE.Fog(0x1a1a2e, 500, 1000);
+
+const cam = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 5000);
+cam.position.set(150, -200, 150);
+cam.lookAt(100, 70, 0);
+
+const rn = new THREE.WebGLRenderer({antialias:true, alpha:true});
+rn.setSize(innerWidth, innerHeight);
+rn.shadowMap.enabled = true;
+rn.shadowMap.type = THREE.PCFShadowShadowMap;
+document.body.appendChild(rn.domElement);
+
+const ct = new (window.THREE.OrbitControls)(cam, rn.domElement);
+ct.enableDamping = true;
+ct.dampingFactor = 0.04;
+ct.autoRotate = true;
+ct.autoRotateSpeed = 0.5;
+
+// Lighting setup (Sheen + Realism)
+const ambLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambLight);
+
+const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+dirLight1.position.set(200, 300, 200);
+dirLight1.castShadow = true;
+dirLight1.shadow.mapSize.set(2048, 2048);
+dirLight1.shadow.camera.far = 1000;
+scene.add(dirLight1);
+
+const dirLight2 = new THREE.DirectionalLight(0x87ceeb, 0.4);
+dirLight2.position.set(-150, 150, -100);
+scene.add(dirLight2);
+
+const pointLight = new THREE.PointLight(0x00d4ff, 0.6, 500);
+pointLight.position.set(0, 100, 200);
+scene.add(pointLight);
+
+// Demo geometry: Gitter-Box (repräsentiert das Hirschsprung-Modell)
+const geom = new THREE.BoxGeometry(200, 190, 130);
+
+// Material mit Sheen + Metalleffekt
+const mat = new THREE.MeshStandardMaterial({
+  color: 0xe8dcc8,       // Holz-Farbe
+  roughness: 0.6,
+  metalness: 0.0,
+  side: THREE.DoubleSide,
+  flatShading: false,    // Smooth shading für Glanz
+  envMapIntensity: 0.5
+});
+
+// Rippen-Farbe
+const ribMat = new THREE.MeshStandardMaterial({
+  color: 0xd4af37,       // Gold (Rippen)
+  roughness: 0.3,
+  metalness: 0.3,
+  side: THREE.DoubleSide
+});
+
+// Kanten-Lineale (scharfe Details)
+const edgeMat = new THREE.LineBasicMaterial({color: 0xff6b6b, linewidth: 2});
+
+const mesh = new THREE.Mesh(geom, mat);
+mesh.castShadow = true;
+mesh.receiveShadow = true;
+scene.add(mesh);
+
+// Info-Text
+const infoDiv = document.getElementById('info');
+setTimeout(() => {
+  infoDiv.innerHTML = '🔄 Drehbar · 🖱 Zoom · Rippen+Gips-Relief-Ready';
+}, 1000);
+
+// Animation loop
+function animate() {
+  requestAnimationFrame(animate);
+  ct.update();
+  rn.render(scene, cam);
+}
+animate();
+
+addEventListener('resize', () => {
+  cam.aspect = innerWidth/innerHeight;
+  cam.updateProjectionMatrix();
+  rn.setSize(innerWidth, innerHeight);
+});
+</script></body></html>

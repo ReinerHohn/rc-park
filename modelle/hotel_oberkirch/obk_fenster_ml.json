@@ -1,0 +1,98 @@
+{
+  "building_box_frac": [
+    0.202,
+    0.195,
+    0.795,
+    0.88
+  ],
+  "n_windows": 17,
+  "n_rows": 5,
+  "rows": [
+    {
+      "z_frac": 0.946,
+      "n": 4,
+      "x_fracs": [
+        0.083,
+        0.335,
+        0.665,
+        0.917
+      ],
+      "arched": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.143,
+      "h_frac": 0.095
+    },
+    {
+      "z_frac": 0.754,
+      "n": 4,
+      "x_fracs": [
+        0.083,
+        0.335,
+        0.665,
+        0.917
+      ],
+      "arched": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.143,
+      "h_frac": 0.105
+    },
+    {
+      "z_frac": 0.522,
+      "n": 4,
+      "x_fracs": [
+        0.083,
+        0.335,
+        0.665,
+        0.917
+      ],
+      "arched": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.143,
+      "h_frac": 0.112
+    },
+    {
+      "z_frac": 0.302,
+      "n": 4,
+      "x_fracs": [
+        0.083,
+        0.335,
+        0.665,
+        0.917
+      ],
+      "arched": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "w_frac": 0.143,
+      "h_frac": 0.118
+    },
+    {
+      "z_frac": 0.035,
+      "n": 1,
+      "x_fracs": [
+        0.5
+      ],
+      "arched": [
+        false
+      ],
+      "w_frac": 0.143,
+      "h_frac": 0.07
+    }
+  ],
+  "foto": "daten/hotel_oberkirch/fotos/ob_platz_jm3399.jpg",
+  "modell": "Xpitfire/segformer-finetuned-segments-cmp-facade"
+}

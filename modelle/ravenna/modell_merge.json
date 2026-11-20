@@ -1,0 +1,42 @@
+{
+  "bauwerk": "Ravennaviadukt (Neubau 1926/27)",
+  "prinzip": "3D-Modell = MERGE aller Datenquellen. Jede liefert was sie zuverlaessig kann; Konflikte aufgeloest; eine Wahrheit.",
+  "hauptquelle": "Gasteiger, 'Der Neubau des Ravenna-Uebergangs...', Die Bautechnik 6 (1928) H.38 S.559-577 (Original-Baubericht mit Laengsschnitt+Gewoelbezeichnung, volldigitalisiert delibra.bg.polsl.pl). Plus OSM, LGL-DGM1/DOM1, DOP, Wikimedia-Fotos.",
+  "form_maschinell": {
+    "_kommentar": "Maschinenlesbare KOMPLETTE Form, halb-automatisch aus 'parameter' kuratiert; von tools/ravenna_viadukt.py --merge gelesen. Generisch: jedes Viadukt kann so einen Block haben.",
+    "_bogenform": "HALBKREIS (rise=span/2=10). Fotos (foto_bogen_abgleich: Stich/Span 0.43-0.49 ~= 0.46) zeigen runde Boegen; die Bautechnik-Zahl 'Stich 5.985 / 0.31' bezieht sich auf einen anderen Bezug (Bogenachse/Gewoelbestatik) und ergibt zu flache SICHTbare Boegen -> Foto schlaegt Papier fuer die sichtbare Form.",
+    "L": 224, "H": 36, "n": 9, "span": 20, "deck_w": 5.0,
+    "rise": 10.0, "haunch": 0.5, "batter": 0.05,
+    "ring_scheitel": 1.0, "ring_kaempfer": 1.8,
+    "bogenform_foto_stichspan": 0.46,
+    "bogenform_foto_tol": 0.08,
+    "_bogenform_foto_quelle": "foto_bogen_abgleich.py an rv_bogen_nah/seite_himmel: Kreisfit an echter Leibung 0.43-0.49 (Mittel 0.46; Halbkreis=0.50). GROUND TRUTH fuer sichtbare Form, schlaegt Papier. tools/test_bogenform.py prueft das gebaute Modell dagegen."
+  },
+  "parameter": {
+    "lage_achse":      {"wert": "UTM E430860 N5307525, Azimut 107 Grad", "quelle": "OSM bridge=viaduct + DOP bestaetigt", "konfidenz": "hoch"},
+    "laenge_m":        {"wert": 224, "quelle": "Wikipedia/Infotafel; OSM 219", "konfidenz": "hoch"},
+    "hoehe_m":         {"wert": 36, "quelle": "Infotafel (Film nennt 41); DEM-Dip 40", "konfidenz": "mittel"},
+    "n_gewoelbe":      {"wert": 9, "quelle": "Bautechnik 1928 (+8 Pfeiler, 2 Widerlager); DOP-Schatten", "konfidenz": "hoch"},
+    "spannweite_m":    {"wert": "19,52 (Bogenachse) / 20,0 (lichte Weite zw. Pfeilern) / 17,90 (lichte Leibung)", "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "BOGENFORM":       {"wert": "KORBBOGEN (Innenleibung 6 Kreisboegen, Ruecken 3 Kreisboegen); Modell als Halb-Ellipse genaehert", "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "stich_m":         {"wert": "5,985 (Bogenachse) / 5,88 (innere Leibung)", "pfeilverhaeltnis": "1:3,26 (Stich/Span 0,31)", "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "scheiteldicke_m": {"wert": 1.0, "kaempferdicke_m": 1.80, "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "pfeilerbreite_m": {"wert": "4,50 an der Einschnuerung; Anzug 20:1 laengs / 30:1 quer (nach unten breiter)", "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "gewoelbebreite_m":{"wert": "4,20 zwischen den Stirnen (Oeffnung 9: 4,40)", "quelle": "Bautechnik 1928 — DIES ist die faelschlich als 'Pfeilhoehe 4,20' in Wiki einsortierte Zahl", "konfidenz": "hoch"},
+    "deckbreite_m":    {"wert": "5,0 zwischen Gelaendern; eingleisig, Gleistrog 3,30", "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "pfeilerhoehen":   {"wert": "variabel, Profil aus DGM1 entlang Trasse", "quelle": "LGL-DGM1 1m", "konfidenz": "hoch"},
+    "steigung":        {"wert": "1:19 (52,6 Promille), 12 m Hoehenunterschied", "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "fundament":       {"wert": "Pfeiler 9 ~29 m, Pf.8 ~21 m, Pf.7 ~18 m tief auf Gneis, Stampfbeton", "quelle": "Bautechnik 1928", "konfidenz": "hoch"},
+    "material":        {"wert": "Gewoelbe Forbachgranit-Verkleidung, Pfeilerschaefte Granitschichtmauerwerk + Betonkern", "quelle": "Bautechnik 1928 + Fotos", "konfidenz": "hoch"}
+  },
+  "aufgeloeste_konflikte": [
+    "Wiki 'Pfeilhoehe 4,20 m' = FEHLER: ist Gewoelbebreite (Tiefe quer), nicht Stich. Echter Stich 5,985 m.",
+    "Wiki 'Bogendicke Scheitel 20 m' = FEHLER: 20 m ist die Bogenweite; echte Scheiteldicke 1,0 m.",
+    "Bogenform: weder flacher Segmentbogen (0,21) noch Halbkreis (0,50), sondern KORBBOGEN (0,31) — erklaert 'oben rund, unten aufgeweitet'.",
+    "Alte Bruecke 1887 war Stahlfachwerk (kein Bogen), 144 m, 4 Oeffn. a 35 m — irrelevant fuer heutiges Modell."
+  ],
+  "offen_rest": [
+    "Exakte Korbbogen-Radien (6/3-zentrig) aus Bautechnik-1928-Zeichnung Abb.6 (aktuell Halb-Ellipsen-Naeherung mit Stich 5,985).",
+    "DOM1-Querprofil zur unabhaengigen Bestaetigung Deckbreite/-hoehe (in Arbeit)."
+  ]
+}
