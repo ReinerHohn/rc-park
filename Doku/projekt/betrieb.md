@@ -43,6 +43,7 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 - 18.11. · Umzug auf 2-TB-SSD (`umzug_auslagerung.sh`, Links umbiegen) → ✓ Methode · rsync-Neulauf setzt Links zurück → Schlussdurchgang `--nur_umbiegen` [ZIEL Übergabe 17:40]
 - 10.11. · Git-Packs per `alternates` auf Datenplatte → ✓ Methode · `.git` wuchs 1 GB/h durch Kreis-Commits; ohne Datenplatte kein git [Memory git-objekte-auf-datenplatte]
 - 06.11. · CPU-Limit 25 W (RAPL) → ↺ eigenes hp-wmi-Modul, Profil performance · +50 % Durchsatz; 55/130 W ohne Mehrgewinn [Memory cpu-leistung-limit-25w, hpwmi-modul-pruefen]
+- 20.11. · Gesamtkette ohne `JOB_GPU_MB`/`JOB_CPU=alle` gestartet → ⚠ Falle · `job_start.sh` nagelt sie als „reinen CPU-Job“ auf die 12 langsamen Kerne 16-27 (CPUWeight 20), die 16 schnellen Fäden 0-15 standen leer (gemessen 15:00: P 0 %, alle Arbeit auf E); Kette immer mit `JOB_CPU=alle` starten. Laufend lösen: `taskset -a -cp 0-27` je PID der cgroup [UEBERGABE 20.11.]
 - 15.11. · wiederkehrender Wach-Zeitplan (alle 20 min) → ✗ verworfen · störte, füllte Gespräch mit „nichts Neues“ [NICHTS_GEBRACHT 15.11.]
 
 **SfM-Datenbanken & COLMAP-Bau**
