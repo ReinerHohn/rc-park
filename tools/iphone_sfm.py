@@ -56,6 +56,13 @@ else:
     else:
         pycolmap.match_exhaustive(db, device=pycolmap.Device.cuda); print("Abgleich", time.time() - t, flush=True)
 os.makedirs(f"{w}/sparse", exist_ok=True)
+# 20.11.2026 (Messung Martinstor/Schwabentor, LOGBUCH_KETTENTEST_2026-11-19.md): FlexGlue-Zuordnung der SIFT-bestaetigten Paare VOR dem Mapper - Martinstor +30/+40 % Bilder,
+# Schwabentor +6 %, Lage und Seitentrennung gleich. Zuschaltbar (--flexglue oder RCPARK_FLEXGLUE=1), ~0,2 s je Paar auf der GPU; Mapper rechnen dann auf db_flexglue.db.
+if "--flexglue" in sys.argv or os.environ.get("RCPARK_FLEXGLUE") == "1":
+    _fg = f"{w}/db_flexglue.db"
+    _r = subprocess.run([sys.executable, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "flexglue_zuordnung.py"), "--db", db, "--bilder", img, "--aus", _fg], check=False)
+    if _r.returncode == 0: db = _fg; print("Mapper rechnen auf FlexGlue-Zuordnungen:", db, flush=True)
+    else: print("ACHTUNG FlexGlue nicht vollstaendig (rc", _r.returncode, ") - Mapper rechnen auf SIFT", flush=True)
 # Mapper: COLMAP-Binaerdatei mit CUDA (GPU-Bündelausgleich, BundleAdjustmentCeres.use_gpu). Die pycolmap-Python-Bibliothek hat keine GPU-Ceres.
 COLMAP_BIN = "/media/oem/scan/colmap-build/prefix/bin/colmap"
 _env = dict(os.environ, LD_LIBRARY_PATH=":".join(["/media/oem/scan/cuda-toolkit-combo/lib64", "/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib", "/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib", "/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib"]))
