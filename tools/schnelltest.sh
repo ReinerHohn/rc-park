@@ -110,5 +110,6 @@ k=$($P -I tools/test_wolke_gruppen.py 2>&1); [ $? = 0 ] && ok "Wolken-Gruppen-To
 k=$($P -I tools/test_seiten_erkennen.py 2>&1); [ $? = 0 ] && ok "Seitenerkennung (Gemeinschaften im Paar-Graphen trennen zwei Seiten, Zusammenhangsteile, Urteil-Schwelle)" || { rot "seiten_erkennen: $(echo "$k" | grep FEHLER | head -3)"; }
 k=$($P -I tools/test_seiten_vereinen.py 2>&1); [ $? = 0 ] && ok "Seiten vereinen (Achse aus der Helmstange der dichten Wolke, Lot aus Wandnormalen statt 2,3 Grad verkipptem Kameralot)" || { rot "seiten_vereinen: $(echo "$k" | tail -1)"; }
 k=$($P -I tools/test_schwerkraft_je_bild.py 2>&1); [ $? = 0 ] && ok "Schwerkraft je Bild (Fluchtpunkt der Senkrechten, geneigte+gerollte Kamera synthetisch, 90-Grad-Faelle verworfen)" || { rot "schwerkraft_je_bild: $(echo "$k" | tail -1)"; }
+k=$($P -I tools/test_modell_zerlegen.py 2>&1); [ $? = 0 ] && ok "Modell nach Punkt-Zusammenhang zerlegen (globaler Mapper legt unverbundene Stuecke in ein Modell)" || { rot "modell_zerlegen: $(echo "$k" | tail -1)"; }
 k=$($P -I tools/test_brennweite_waehlen.py 2>&1); [ $? = 0 ] && ok "Brennweite aus EXIF-Pixelgroesse + GPS-Gegenprobe (Martinstor-061-Fall, Seitenverhaeltnis-Regel)" || { rot "brennweite_waehlen: $(echo "$k" | head -2 | tr '\n' ' ')"; }
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
