@@ -22,12 +22,12 @@ Volltext aller Regeln: `modelle/REGELN_AUSFUEHRLICH.md` (nur gezielt per grep le
 
 ## Technik
 - Grosse Daten nie auf Root: `/media/oem/scan/...` (knapp) bzw. `/media/oem/rcdaten` (gross), Symlinks. Ohne /media/oem/scan kein git. Toshiba-Platte nie anfassen.
-- Python: `/media/oem/scan/venv-seg/bin/python -I` (torch/CUDA), `/media/oem/scan/venv-colmap/bin/python -I` (pycolmap), Generator `~/.venvs/rcpark`.
+- Python: `/media/oem/scan/venv-seg/bin/python -I` (torch/CUDA), `/media/oem/scan/venv-colmap/bin/python -I` (pycolmap), Generator `~/.venvs/rcpark` (trimesh). Nackter `python3` hat weder trimesh noch pycolmap (224 Fehler bisher) - nur fuer reine Hilfsskripte.
 - Lange Jobs nur per Skill `langer-job` (`tools/job_start.sh` mit JOB_GPU_MB/JOB_RAM_MB); vorher Dummy-Test; GPU immer nutzen, VRAM-Summe <= 7000 MiB.
 - Nie zwei Optimierer/Generatorlaeufe mit gleicher Zwischendatei parallel. Nie `pkill -f` mit Muster aus der eigenen Befehlszeile.
 - Loeschen nur nach ausdruecklichem "Ja". Kein Push ohne Auftrag. Eigene Aenderungen sofort committen (Skill `logbuch-commit`), Attribution-Zeilen. Hook nur Nutzer.
 - Nie idle, nachts weiterarbeiten; aber KEIN wiederkehrender Cron/Loop fuer Job-/GPU-Checks (einmalige Warter ok).
-- Kontext sparen: Ausgaben kuerzen (cut/head/tail). Bilder (SendUserFile) + 3D-HTML zeigen. Kein Druck ohne Nutzerwunsch.
+- Werkzeug suchen: `grep -i <stichwort> tools/INDEX.md` (nicht tools/ durchlesen). Kontext sparen: Ausgaben kuerzen (cut/head/tail). Bilder (SendUserFile) + 3D-HTML zeigen. Kein Druck ohne Nutzerwunsch.
 
 ## Bei Aufgabe X -> Skill / Dokument
 - Neues Objekt / Kette von null -> `objekt-von-null`. SfM/Mapper -> `modelle/GLOBALER_MAPPER_STABIL.md`.
