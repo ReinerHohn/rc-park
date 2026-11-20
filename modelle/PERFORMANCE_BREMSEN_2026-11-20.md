@@ -101,3 +101,14 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - Netzstufen (netz_fotos 11-20 min, video_suchen 31-81 min): live gemessen 2 % CPU, 0 % GPU - reines Warten auf Antworten, nacheinander, mit Pflichtpausen gegen Ratenlimits (429).
   Hebel: Commons/Openverse und YouTube GLEICHZEITIG abfragen (verschiedene Dienste, Pausen je Dienst bleiben) und diese Stufen fuer das naechste Objekt vorziehen. Nicht umgesetzt.
 - Kein Hebel (gemessen): Kleinschritte der Kette (141 Schritte < 30 s = zusammen 10 min), Python-Start (2,1 s mit torch), Platten (404 MB/s USB, 4,8 GB/s intern).
+
+## Profil mit perf (20.11. 17:55, Nutzer hat `kernel.perf_event_paranoid=1`, `ptrace_scope=0` gesetzt; perf = /usr/lib/linux-tools-6.8.0-78/perf, gilt bis Neustart)
+- Laufender schrittweiser Martinstor-Mapper (25 s Stichprobe, im globalen Ausgleich): **50,3 % `ceres::SchurEliminator<2,3,-1>::ChunkOuterProduct`, 30,7 %
+  `BlockRandomAccessSparseMatrix::GetCell`**, 3,7 % memset, 2,7 % EBlockRowOuterProduct, 2,1 % Residuen. Also 81 % = Aufbau des Schur-Komplements auf der CPU.
+  Der Teil ist in Ceres ueber `num_threads` parallel - und lief mit 1 Faden. Das erklaert die 2,5 x der Faden-Umstellung und warum AVX2 nichts bringt
+  (GetCell ist Tabellensuche/Speicherzugriff, kein Rechnen).
+- NEUER FUND im selben Log: **769 x "Linear solver failure. Failed to compute a step"**, davon 753 in den 46 globalen Ausgleichen (~16 je Ausgleich), 17 in lokalen.
+  Jede gescheiterte Loesung wirft die gerade gerechnete Schur-Elimination weg (Ceres erhoeht die Daempfung und rechnet neu). Auch im Sued-Anhang, der am Mittag "hing": 100 x.
+  Einstellung dabei: `--Mapper.ba_use_gpu 1 --Mapper.ba_max_num_images_direct_dense_gpu_solver 0` = immer duenn besetzter GPU-Loeser (cuDSS).
+  A/B LAEUFT (`tools/versuche/mapper_loeser_ab.sh`, Log `/media/oem/rcdaten/tmp/loeser_ab_1120.log`): heute / dichter GPU-Loeser / CPU / COLMAP-Standard - Zeit, Loeserfehler, Ergebnis.
+- AVX2-Bau, sauber eingeordnet: enthaelt die Befehle (libceres.a 120 877 AVX- / 40 974 FMA-Befehle gegen 525 / 0), bringt beim Buendelausgleich nichts (CPU 165/158/156 s, GPU 41/46/40 s).
