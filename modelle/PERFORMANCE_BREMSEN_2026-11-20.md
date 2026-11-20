@@ -193,3 +193,13 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - Statt die Kette blind zu wiederholen, zwei Mapperlaeufe direkt auf der vorhandenen Datenbank (alle Faeden, parallel, Zeiten daher nur grob vergleichbar), 20:52 gestartet:
   `mt_inkr_alle` = alle 2107 Bilder -> `/media/oem/rcdaten/tmp/martinstor_inkr_1120/std`;
   `mt_inkr_eng2` = 1156 Bilder (direkter Treffer oder Kette <= 2, ohne Zeitfenster; Liste `bilder_eng.txt`) -> `.../eng`. Frage: wie viele Torbilder/Seiten je Variante, wie lange.
+
+## Nachtrag 21:12 - Schwabentor 1120: KORREKTUR der Deutung von 20:50 (Grundriss-Tor)
+- FALSCH war: "90-Grad-Drehung nicht ausschliessbar". Nachgelesen in `audit/wolke_grundriss.json`: Eindeutigkeit OK (Identitaet 0,38 gegen beste Alternative 0,30, keine Warnung),
+  Teile OK (keine Warnung). Rot macht NUR Test A: Haufen auf der Strasse, 44 105 Punkte, Mitte (20,7 / 9,3), 48 x 33 m, nicht am Foto geklaert.
+- Angesehen (`audit/haufen_0.jpg`, `audit/haufen_0_schnitt.jpg` = Draufsicht/Seitenansicht der Punkte z 1,5-9 m oestlich des Turms): keine zweite Turmkopie. Die Ostwand steht in allen Hoehen
+  bei x 3-4 m (Querschnitt y 11-18 m). Auf dem Platz liegen strahlenfoermige Streifen, teils himmelblau = Flugpunkte entlang von Sehstrahlen (Faecher), dazu echte Nachbarfassaden.
+- Folge: kein Eintrag `grundriss_haufen_geklaert` (das waere "echte Umgebung" - ist es nicht). Offen: Herkunft der Faecher je Bildquelle bestimmen (Clip? Kameras unter Gelaende:
+  0P_MuzeClHM bei -6,8 m, eigen__vf_018..031 bei -4 m, einzelne eigene Fotos bis -84 m) und diese Bilder aus der Fusion nehmen; danach Tore neu.
+- Nebenbefund: `tools/kamera_gelaende.py` rechnet mit ebenem Gelaende (ANNAHME im Werkzeug). Nahe Kameras (0-15 m) stehen im Median bei +1,2 m, die tiefen Gruppen liegen 15-60 m entfernt
+  bei -4 bis -7 m - das ist kein Hang, die Gruppen sind falsch verortet.
