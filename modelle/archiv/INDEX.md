@@ -1,0 +1,110 @@
+# Archiv (erzeugt; abgeloeste Staende, Plaene, Rundenlogbuecher, alte Recherchen - nur bei Bedarf)
+- `modelle/archiv/AUFGABENLISTE_2026-11-16.md` (4 kB) Aufgabenliste nach der Bestandsaufnahme 16.11.2026 (Nutzer: "merk die Liste und bearbeite sie ab")
+- `modelle/archiv/AUFTRAG_2026-11-06_TEILE.md` (11 kB) Auftrag 6.11.2026 in Teilen: welches Modell macht was
+- `modelle/archiv/AUFWAND_BEWERTUNG_2026-11-03.md` (5 kB) Aufwand und Nutzen aller Schritte der Sitzung 2026-11-03 (10:55 bis 12:05)
+- `modelle/archiv/BEWEIS_ANSATZ_2026-11-06.md` (37 kB) Beweis Ansatz: Vergleichslauf A Photogrammetrie / B amtlich / C Modell+Restfeld (Sonnet, Stand 2026-11-05 19:3x; Datei nach Spec 2026-11-06)
+- `modelle/archiv/DATA_STRATEGY.md` (6 kB) Freiburg 3D Daten - Strategie & Quellen
+- `modelle/archiv/FERTIGUNG_SPLIT.md` (4 kB) fertigung_split.py - Modell in Lasercut-Platten + 3D-Druckteile aufteilen
+- `modelle/archiv/FINANZMODELL_FREIBURG.md` (4 kB) Finanzmodell „Freiburger Miniatur-Wunderland" — 3 Szenarien + Break-even
+- `modelle/archiv/FINISH_STEINGEBAEUDE.md` (2 kB) Finish historischer Steingebäude (Münster, Petersdom, Altstadt, Burg)
+- `modelle/archiv/FLUGPLAN_LINACHTALSPERRE.md` (4 kB) Flugplan: Linachtalsperre — Drohnen-Fotogrammetrie (DJI Mini 4 Pro)
+- `modelle/archiv/FREIBURG_STRATEGIE.md` (9 kB) Strategie: Freiburger Miniatur-Wunderland — klein starten, wachsen
+- `modelle/archiv/LEITFADEN_NEUES_MODELL.md` (6 kB) Leitfaden: neues Gebaeude von Null (Stand 13.11.2026)
+- `modelle/archiv/LOGBUCH_2026-11-08.md` (12 kB) Logbuch 8.11.2026 (laufend, Nutzerregel "Immer mitloggen")
+- `modelle/archiv/LOGBUCH_2026-11-09.md` (69 kB) 2026-11-09 Kantenverfahren autonom untersucht (Ortho Kaufhaus Ebene 0-3)
+- `modelle/archiv/LOGBUCH_ERKER_UNTERBAU_R1_2026-11-10_225455.md` (1 kB) Logbuch Erker-Unterbau (erker_polygon:1), Kreis 20261110_225455 r1
+- `modelle/archiv/LOGBUCH_FENSTER_EG0_R2_2026-11-10.md` (0 kB) Logbuch Kreis r2: fensterreihe:eg0 (2026-11-10). Befund Beleg 0,875 -> 0,996, Gate (+0,05) erfuellt. Details: audit/kreis_bericht.md
+- `modelle/archiv/LOGBUCH_FENSTER_EG1_R3_2026-11-10.md` (0 kB) Logbuch Kreis r3: fensterreihe:eg1 (2026-11-10). Beleg 0,94 -> 0,998 (Median 0,07 -> 0,03), Details: audit/kreis_bericht.md
+- `modelle/archiv/LOGBUCH_FENSTER_OG_R1_2026-11-10.md` (3 kB) Logbuch Kreis r1: fensterreihe:og (kaufhaus_grob3, 2026-11-10)
+- `modelle/archiv/LOGBUCH_FIGUREN_R2_2026-11-10.md` (2 kB) Logbuch Figuren (stl_teil:figuren -> figurenreihe:figuren), Kreis r2, 2026-11-10
+- `modelle/archiv/LOGBUCH_GAUBEN_OBEN_R2_2026-11-10.md` (2 kB) Logbuch gaubenreihe:oben (Kreis2 r2, 10.11.2026)
+- `modelle/archiv/LOGBUCH_GAUBEN_OBEN_R2b_2026-11-10_053953.md` (1 kB) Logbuch gaubenreihe:oben (Kreis 20261110_053953 r2, 10.11.2026)
+- `modelle/archiv/LOGBUCH_GAUBEN_UNTEN_R3_2026-11-10.md` (2 kB) Logbuch gaubenreihe:unten (Kreis3 r3, 10.11.2026)
+- `modelle/archiv/LOGBUCH_GIEBEL_OST_R1_2026-11-10.md` (4 kB) Logbuch Kreis-Ost r1 (staffelgiebel:ost), 2026-11-10
+- `modelle/archiv/LOGBUCH_HELM_O_R1_2026-11-10.md` (5 kB) Logbuch Kreis r1: helm_geschweift:o (kaufhaus_grob3, 2026-11-10)
+- `modelle/archiv/LOGBUCH_HELM_W_R4_2026-11-10.md` (2 kB) Logbuch Kreis4 helm_geschweift:w (kaufhaus_grob3, 2026-11-10, Lauf 035447a035447 r4)
+- `modelle/archiv/LOG_2026-11-05_FEHLER_UND_STAND.md` (10 kB) Log 5.11.2026: Fehler, Stand, Übergabe (Kaufhaus Freiburg, kaufhaus_null5)
+- `modelle/archiv/LOG_FORMEN_2026-11-09.md` (29 kB) Logbuch Formfits Kantengitter Kaufhaus (Helme, Gauben, Baluster) - 2026-11-09 abends
+- `modelle/archiv/LOG_GITTER_GENERATOR_2026-11-09.md` (44 kB) LOG Kantengitter -> Generator kaufhaus_grob3 (Agent, 2026-11-09, ~90 min)
+- `modelle/archiv/LOG_KAMERA_GUETE_2026-11-09.md` (1 kB) Log Kameraguete + Linien-Feinlage 2026-11-09 (Agent)
+- `modelle/archiv/LOG_KOERPER_2026-11-09.md` (8 kB) LOG Koerper aus Kantengitter – 2026-11-09 (Agent, Werkzeug `tools/gitter_koerper.py`)
+- `modelle/archiv/LOG_KOERPER_V9_2026-11-09.md` (34 kB) LOG Koerper v9: Fenster- und Erkerfamilie aus dem Kantengitter – 2026-11-09 (Agent, Werkzeug `tools/koerper_fenster_erker.py`)
+- `modelle/archiv/LOG_MUSTER_2026-11-09.md` (3 kB) LOG muster_fit / kanten_tor 2026-11-09
+- `modelle/archiv/LOG_ONLINE_DACH_2026-11-09.md` (4 kB) Log: hochliegende Online-Blickwinkel fuer das Kaufhaus-Dach (9.11.2026)
+- `modelle/archiv/LOG_TEILE_SICHT_2026-11-09.md` (14 kB) Log teile_sichtpruefung 2026-11-09 (Agent)
+- `modelle/archiv/LOG_VERFEINERN_2026-11-09.md` (8 kB) Log Gitter-Verfeinerung gegen Stabilitaetskarten (2026-11-09)
+- `modelle/archiv/MASTERPLAN_MINIATURWUNDERLAND.md` (6 kB) Master-Plan: Freiburger Miniatur-Wunderland
+- `modelle/archiv/METHODE_3D_AUS_ALLEN_DATEN.md` (10 kB) Methodik: 3D-Modell eines echten Bauwerks aus ALLEN Datenquellen
+- `modelle/archiv/METHODE_AUTO_PIPELINE.md` (5 kB) METHODE: Vollautomatische Bauwerk-Pipeline (8 Hebel, kein eigener Fotoaufwand)
+- `modelle/archiv/METHODE_BAUWERK_AUS_DATEN.md` (6 kB) Methode: echtes Bauwerk → validiertes Modell im echten Gelände (ohne Scan)
+- `modelle/archiv/METHODE_FOTO_AUFNAHME.md` (4 kB) Fotos aufnehmen fürs automatische Modell-Overlay
+- `modelle/archiv/METHODE_GEBAEUDEGENERATOR.md` (4 kB) Methode: Gebäude-Generator als Basisklasse (konkrete Gebäude = Konfiguration)
+- `modelle/archiv/METHODE_GEBAEUDE_3D.md` (4 kB) METHODE: 3D-Gebäudemodell aus allen Daten (generell, reproduzierbar)
+- `modelle/archiv/METHODE_GPU_SWEEP.md` (2 kB) Methode: Ort parametrischer Bauteile per GPU-Sweep (Nutzer 8.11.: "sehr wichtig, generalisiert, unbedingt umsetzen")
+- `modelle/archiv/METHODE_SCAN_ZU_H0.md` (10 kB) Scan → H0-Druckmodell (Struktur, keine Textur)
+- `modelle/archiv/METHODE_WAHRZEICHEN_AUS_FOTOS.md` (5 kB) Methode: Wahrzeichen-3D aus Fotos (halbautomatisch, schnell wiederholbar)
+- `modelle/archiv/METHODE_WUNSCH_ZU_MODELL.md` (7 kB) Komplette Methode: vom gewünschten Ort zum bemalten Miniatur-Modell
+- `modelle/archiv/METHODIK_KANTEN_STABILITAET.md` (3 kB) Methodik: Kanten-Stabilitätskarte (Sweep + Zählen)
+- `modelle/archiv/METHODIK_KOMPLETT.md` (6 kB) Methodik: echte Orte automatisiert zu Steck-/Druck-Modellen
+- `modelle/archiv/NACHT_BERICHT_schwarzwald.md` (6 kB) Nacht-Bericht — Schwarzwald-Kandidaten + Selbstbewertung (3 Juroren + Voting)
+- `modelle/archiv/PLAN_2026-11-06_H0_DETAIL.md` (22 kB) Plan: aus allen Daten zu sehr gut detaillierten, druckbaren H0-Modellen (Martinstor, Historisches Kaufhaus, jedes weitere Gebaeude)
+- `modelle/archiv/PLAN_DETAILGETREUE.md` (5 kB) Plan Detailgetreue (H0, 1:87) - Stand 2026-11-02
+- `modelle/archiv/PLAN_KANTENGITTER_H0_2026-11-09.md` (7 kB) Plan: Vom Kantengitter zum H0-Kaufhaus (Stand 9.11.2026, 19:00)
+- `modelle/archiv/PLAN_LEAVEOUT_2026-11-08.md` (1 kB) Plan: Leave-out-Test fuer hlo (Stand 2026-11-08, nicht gestartet - wartet auf Nutzer-Freigabe, BS126)
+- `modelle/archiv/PLAN_VERBESSERUNG.md` (16 kB) Plan Verbesserung (Stand 2026-11-03) - was aussteht, nach Nutzen sortiert
+- `modelle/archiv/QUICK_START_FREIBURG.md` (3 kB) 🚀 QUICK START: Freiburg Miniaturwunderland (Heute starten!)
+- `modelle/archiv/RECHERCHE_2026-11-06_BESCHLEUNIGUNG.md` (14 kB) Recherche 2026-11-06: Beschleunigung der Rekonstruktions-/Modellpipeline ("Loopholes")
+- `modelle/archiv/RECHERCHE_2026-11-06_METHODEN.md` (9 kB) Recherche 2026-11-06: Flaechen-/Mesh-Rekonstruktion aus Fotos (Kaufhaus), Stand der Technik
+- `modelle/archiv/RECHERCHE_2026-11-07_FASSADE_KAMERA.md` (0 kB) Recherche 7.11.2026 (Mittag) – Fassadenelemente, Kamerapräzision, 3D-Linien, GS-Mesh
+- `modelle/archiv/RECHERCHE_2026-11-07_FENSTER.md` (8 kB) Recherche 2026-11-07: Fenster in ebenen Fassaden (Historisches Kaufhaus)
+- `modelle/archiv/RECHERCHE_2026-11-07_MESH_KANTEN.md` (7 kB) Recherche 7.11.2026: Mesh mit scharfen Kanten aus Wolke + Fotos (Kaufhaus)
+- `modelle/archiv/RECHERCHE_2026-11-07_WOLKE_ZU_MODELL.md` (5 kB) Recherche 7.11.2026: Wolke -> wasserdichtes, kantenscharfes Modell (neue Ansaetze)
+- `modelle/archiv/RECHERCHE_2026-11-08_BAUTEIL_LAGE.md` (6 kB) Recherche 8.11.2026: Lage parametrischer Bauteile (Wolke + kalibrierte Fotos)
+- `modelle/archiv/RECHERCHE_2026-11-08_RUNDE2.md` (8 kB) Recherche Runde 2 (8.11.2026): Gesamtbreite/-hoehe + Parameter-Inferenz
+- `modelle/archiv/RECHERCHE_DRAHTGITTER_2026-11-09.md` (13 kB) Recherche 3D-Kanten-Drahtgitter aus Fotos + Wolke -> geschlossene Teile (9.11.2026)
+- `modelle/archiv/RECHERCHE_DRAHTGITTER_VERFAHREN_2026-11-09.md` (9 kB) Recherche Drahtgitter-Verfahren (Mehrbild-Liniengruppierung, Ausreisser, Statistik) - 2026-11-09
+- `modelle/archiv/RECHERCHE_FASSADE_FLAECHEN_2026-11-08.md` (11 kB) Recherche Fassaden-Flaechen, Wiederholung, Konturschluss (8.11.2026)
+- `modelle/archiv/RECHERCHE_FUSION_2026-11-09.md` (16 kB) Recherche Fusion mehrerer Quellen zu einem Modell (9.11.2026)
+- `modelle/archiv/RECHERCHE_KANTENERKENNUNG_2026-11-08.md` (15 kB) Recherche Kantenerkennung (Ortho-Ansicht Fotowolke), Stand 2026-11-08
+- `modelle/archiv/RECHERCHE_KANTENGITTER_NEU_2026-11-09.md` (21 kB) Recherche Kantengitter NEU (Verfahren 2023-2026) - 2026-11-09
+- `modelle/archiv/RECHERCHE_KANTEN_2_2026-11-09.md` (15 kB) Recherche Kanten 2: Luecken zu RECHERCHE_KANTEN_MULTIVIEW_2026-11-09.md (Stand 2026-11-09)
+- `modelle/archiv/RECHERCHE_KANTEN_MULTIVIEW_2026-11-09.md` (8 kB) Recherche: Kanten/Linien aus Mehrfachansichten (Fassade Kaufhaus) – Stand 2026-11-09
+- `modelle/archiv/ROADMAP_PIPELINE_ALLGEMEIN.md` (4 kB) Roadmap: Pipeline fuer beliebige Bauwerke aus freien Bildern/Drohnenvideos (Stand 2026-11-02)
+- `modelle/archiv/SPEC_BETRACHTER_NOTE.md` (2 kB) SPEC Betrachter-Note (Nutzer 11.11. ~19:05: "ehrlicheres Mass, das in Prozent angibt, was ein normaler Miniatur-Wunderland-Besucher sehen kann,
+- `modelle/archiv/SPEC_BEWEIS_ANSATZ.md` (5 kB) Spezifikation: Vergleichslauf "Welcher Ansatz ist bei unserer Datenlage der beste?" (Nutzer 5.11. abends: "beweise, generalisiert")
+- `modelle/archiv/SPEC_FEINSUCHE.md` (3 kB) SPEC Automatische Feinsuche (Nutzer 11.11. ~18:00 "automatische Feinsuche auf jeden Fall")
+- `modelle/archiv/SPEC_FLAECHENMASS.md` (4 kB) Spec: Flächenmaß (Formvergleich über Flächen statt Kanten)
+- `modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md` (5 kB) Spec: Formfamilien-Sichtprüfung je Bauteil (`tools/formfamilie_pruefen.py`)
+- `modelle/archiv/SPEC_FORMFUND_TOR.md` (4 kB) Spec: Formfund-Tor (Nutzerentscheid 11.11., 13:25 „Ja“)
+- `modelle/archiv/SPEC_FORMNOTE.md` (4 kB) Spec: Formnote (Realität Teil 2: Form)
+- `modelle/archiv/SPEC_GRAUZONE_TOR.md` (3 kB) Spec: Grauzonen-Tor (Formfund-Tor Stufe 2, Nutzer 11.11. 14:15 "Ja")
+- `modelle/archiv/SPEC_LOKALES_FOTOTOR.md` (4 kB) Spec: Lokales Foto-Tor (Änderungsbereich) im Kreis
+- `modelle/archiv/SPEC_ORNAMENT_FEINMASS.md` (3 kB) SPEC Ornament-Feinmass (Nutzer 11.11. 17:5x: "wie machen wir sowas automatisiert? muss auch bei anderen Modellen gehen")
+- `modelle/archiv/SPEC_S10_KANTEN_ABSTIMMUNG.md` (3 kB) SPEC S10 - Vier Kanten-Pipelines + Abstimmung (Nutzer 6.11. ~07:20)
+- `modelle/archiv/SPEC_S1b_TOR_ELEMENTBUCH.md` (8 kB) Spezifikation S1b: Uebernahmetor streng + Elementbuch im Laeufer (`tools/qualitaetsstufen.py`)
+- `modelle/archiv/SPEC_S2_FOTODIFF_STANDARD.md` (4 kB) Spezifikation S2: foto_diff-Beweis gueltig machen, mehrstufige Kanten als Standard entscheiden
+- `modelle/archiv/SPEC_S3_KONVERGENZ.md` (9 kB) Spezifikation S3: Stufe 4 Konvergenzschleife (Fehlerkarte -> Kandidaten -> Tor -> naechster Lauf)
+- `modelle/archiv/SPEC_S3b_WOLKE_ZUERST.md` (4 kB) Spezifikation S3b: "Wolke zuerst" - Buendelwolke direkt zum druckbaren Solid, Modell nur als Fueller (Nutzer 5.11. 19:45)
+- `modelle/archiv/SPEC_S4_FEHLENDE_BAUTEILE.md` (4 kB) Spezifikation S4: Stufe 3 Luecken - fehlende Bauteile finden (Mindestflaeche aus Aufloesung, Kacheln, Zier-Neuvernetzung)
+- `modelle/archiv/SPEC_S7_BILDWERT.md` (4 kB) Spezifikation S7: Bildwert messen - nur Bilder/Frames verwenden, die Luecken schliessen (Plan Stufe 4c; Nutzer 5.11. 20:00, eigenes Video am 6.11.)
+- `modelle/archiv/SPEC_S8_KANTEN_VEKTOR.md` (2 kB) SPEC S8 - Scharfes Modell aus gemessenen Ebenen und Kanten (Nutzerauftrag 5.11. 23:40)
+- `modelle/archiv/SPEC_S9_ERKENNEN_EINPASSEN.md` (2 kB) SPEC S9 - Erkennen + Einpassen mit freien Parametern + Restpruefung (Nutzer 6.11. 07:05)
+- `modelle/archiv/SPEC_STOERMASKE.md` (3 kB) SPEC Störmaske für die Foto-Metrik (Nutzerfreigabe 11.11. 16:4x „Punkt 1 kannst du einbauen“)
+- `modelle/archiv/STAND_2026-11-05.md` (5 kB) Stand 5.11.2026, 15:45 (Kaufhaus Freiburg, Nullstart null5)
+- `modelle/archiv/STAND_2026-11-06.md` (47 kB) Stand 2026-11-06
+- `modelle/archiv/STAND_2026-11-08_LEAVEOUT.md` (5 kB) Stand 2026-11-08 (Uebergabe): Wolke -> Modell, Foto-Diff, Leave-out
+- `modelle/archiv/STAND_2026-11-08_LOT_SWEEP_LOOP.md` (4 kB) STAND 8.11.2026 abends - nach /clear zuerst lesen (Kaufhaus, Schleife je Bauteil)
+- `modelle/archiv/STAND_2026-11-08_PARAMETER.md` (3 kB) Stand 2026-11-08 (Vormittag): parametrisches Kaufhaus gegen Wolke (Nutzerweg)
+- `modelle/archiv/STAND_2026-11-09_ABEND.md` (5 kB) Stand 9.11.2026, 22:30 – Übergabe vor /clear (Kaufhaus Freiburg)
+- `modelle/archiv/STAND_2026-11-10_MORGEN.md` (5 kB) Stand 10.11.2026 morgens – Kaufhaus, Nachtlauf Konvergenz-Kreis
+- `modelle/archiv/STAND_2026-11-10_NACHMITTAG.md` (10 kB) Stand 10.11.2026 nachmittags (13:45) - Uebergabe vor /clear
+- `modelle/archiv/STAND_2026-11-12_VORMITTAG.md` (13 kB) Stand 12.11.2026 vormittags (nach /clear zuerst lesen)
+- `modelle/archiv/STAND_2026-11-12_VORMITTAG_lang.md` (7 kB) Stand 12.11.2026 vormittags (nach /clear zuerst lesen)
+- `modelle/archiv/STAND_2026-11-14.md` (135 kB) Dach automatisch aus DOM1 (Pipeline, alle Objekte) - 14.11. abends
+- `modelle/archiv/STAND_KURZ_2026-11-06.md` (9 kB) Kurzstand Kaufhaus Freiburg - 6.11.2026, 07:35
+- `modelle/archiv/UEBERGABE_2026-11-03.md` (6 kB) Uebergabe Stand 2026-11-03 (nach Kontext-Clear weiterarbeiten)
+- `modelle/archiv/UEBERGABE_2026-11-03_abend.md` (8 kB) Uebergabe 2026-11-03 (Abend) - Fahrplan zum vollautomatischen Nullstart
+- `modelle/archiv/UEBERGABE_2026-11-03_mittag.md` (12 kB) Uebergabe 2026-11-03 mittags (Stand 12:08, vor Kontext-Leerung)
+- `modelle/archiv/UEBERGABE_2026-11-03_nacht.md` (7 kB) Uebergabe 2026-11-03 (Stand ~10:55, vor Kontext-Leerung) - alle Erkenntnisse
+- `modelle/archiv/UEBERGABE_2026-11-04.md` (31 kB) Übergabe 2026-11-04 (Kaufhaus-Nullstart, Beweispflicht, Kamera-Tor, foto_diff)
+- `modelle/archiv/schwarzwald_kandidaten.md` (5 kB) Schwarzwald-Kandidaten — markante Modelle für 3D-Druck + Lasercut

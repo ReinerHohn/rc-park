@@ -1,0 +1,29 @@
+# Inhalt von modelle/LERNJOURNAL_MARTINSTOR.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Lernjournal Martinstor — Detailschleife (Foto ↔ Modell)
+- Z.9: ## Datenlage (Quellen, alle frei lizenziert, Autor/Lizenz in `daten/martinstor/fotos/manifest.json`)
+- Z.20: ## Eintrag 0 — Ausgangsbefund (Modell `martinstor_detail_gen.py` gegen Fotos 031/043)
+- Z.36: ## Eintrag 1 — Höhe und Breite: drei unabhängige Messungen stimmen überein
+- Z.50: ## Eintrag 2 — Vertikales Layout aus dem Foto (Auswertung `031_…8005.jpg`, Einheit: Uhrdurchmesser)
+- Z.72: ## Eintrag 3 — Neuer Generator `modelle/martinstor_v3_gen.py` (Aufbau nach Foto, Höhe 45,3 m)
+- Z.99: ## Eintrag 4 — Feinstruktur: Bruchstein, unregelmäßige Eckquader, Stehfalze
+- Z.120: ## Eintrag 5 — Hofgut-Fehler (Nebenfund beim Anschauen des Viewers)
+- Z.128: ## Offene Punkte der Detailschleife (nächste Stufen)
+- Z.135: ## Eintrag 6 — Korrektur der Höhe: v4 mit 54 m (Eintrag 1 war zu optimistisch)
+- Z.175: ## Eintrag 7 – Doppeladler vergrößert (v4, Detailschleife)
+- Z.182: ## Eintrag 8 – gröbere Quaderbänder, Zierringe am Erker (v4 final)
+- Z.192: ## Eintrag 9 – Uhr: Relief verschwand (CSG-Reihenfolge)
+- Z.200: ## Eintrag 10 – Dach und Erkertürmchen zu gedrungen (Rückmeldung des Nutzers)
+- Z.207: ## Eintrag 11 – Torbogen breiter und höher
+- Z.213: ## Eintrag 12 – Maßstabs-Nachweis gegen amtliche LiDAR-Daten (großer Umbau)
+- Z.230: ## Eintrag 13 – Unsichtbares messen: Verhältnisse zur laservermessenen Fassade
+- Z.237: ## Eintrag 14 – Höhenlage der Uhr, und eine gescheiterte Kamerabestimmung
+- Z.243: ## Eintrag 15 – LoD2 als zweite Referenz, und was nicht half
+- Z.249: ## Eintrag 16 – Parametersuche: das Modell steht am Optimum
+- Z.255: ## Eintrag 17 – Mehr Fotos, andere Wahrheit: Bogenhöhe und Sockelhöhe
+- Z.262: ## 18. Fenster nach Foto korrigiert
+- Z.268: ## 19. Schwebende Teile an der Front gefunden und beseitigt
+- Z.275: ## 20. Adlerrelief fehlte (CSG-Reihenfolge, zweites Mal)
+- Z.281: ## 21. Optimierer: Wettlauf um cur.stl, Wiederholbarkeit, Luftbild-Test
+- Z.289: ## 22. Foto-Silhouetten-Anpassung (GPU) - Oberteil des Modells gegen 3 Fotos
+- Z.296: ## 23. Dachfirst-Test gegen drei Fotos (Silhouette, GPU)
+- Z.301: ## 24. Tuermchen/Dachreiter: Ursachenanalyse und Pruefstand

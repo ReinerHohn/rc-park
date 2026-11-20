@@ -1,0 +1,13 @@
+# Werkzeuge: kette_einstieg (12)
+- `tools/auto_bauwerk.py` [-] auto_bauwerk.py — ORCHESTRATOR der vollautomatischen Bauwerk-Pipeline. Verkettet die 8 Hebel zu EINEM Befehl; jeder Hebel ist ein austauschbares Modul (Strategy-Pattern). Fehlt ein
+- `tools/bauen_abnehmen.sh` [sh] Bauen UND abnehmen - fuer JEDES Objekt mit modelle/<objekt>/objekt.json. Bricht bei Pruefstand-Fehler ab. tools/bauen_abnehmen.sh martinstor          -> Generator aus objekt.json, 
+- `tools/bauwerk_pipeline.py` [-] bauwerk_pipeline.py — VON NULL zum validierten Bauwerk im echten Gelände.
+- `tools/gesamtkette.py` [-] gesamtkette.py - EINE Kette von den Bildquellen bis zur 3D-Seite, fuer jedes Objekt, mit Toren und Korrekturkreislauf. Lehre Schwabentor 2026-11-14: Bausteine waren allgemein, die 
+- `tools/job_start.sh` [sh] job_start.sh NAME LOGDATEI BEFEHL... - lange Jobs (Nullstart, SfM, Optimierer) als eigener systemd-Benutzerdienst starten. Grund (2026-11-03): Claude Code beendet seine Hintergrund
+- `tools/nullstart.py` [-] nullstart.py - BEWEIS: ein Objekt mit der aktuellen Pipeline von den EINGABEN aus neu erzeugen und mit dem Referenzstand vergleichen.
+- `tools/nullstart_beweis.py` [gen] nullstart_beweis.py - KOMPLETTER Nullstart N-mal und ein Beweis, wie gut er ist (Register BK).
+- `tools/nullstart_serie.py` [-] nullstart_serie.py - wertet modelle/<objekt>/nullstart_serie.json aus (jeder Nullstart haengt einen Lauf an): welche Pruefung scheitert in wie vielen Laeufen? SYSTEMATISCH (fast im
+- `tools/pipeline_objekt.py` [-] pipeline_objekt.py <objekt> <fotos_ordner> <daten_ordner> - Foto-Pipeline in FESTER Reihenfolge, jede Stufe geprueft.
+- `tools/regression.py` [gen] regression.py - BEWEIS, dass eine Werkzeug-/Generatoraenderung nichts veraendert: die Auswertungskette eines Objekts laufen lassen und alle Ergebnisdateien gegen einen Schnappschus
+- `tools/schnelltest.sh` [sh] schnelltest.sh - fester Kurztest nach JEDER Werkzeugaenderung (Aufgabenliste 5, 16.11.2026). Ziel < 2 min, wenig Speicher. Anlass: am 16.11. brach ich mit Aenderungen mehrfach ande
+- `tools/start3d.py` [-] start3d.py - Fragen + Start + Fortschritt fuer EIN Objekt; wird von ../0-3d-modell.sh aufgerufen (Nutzer 19.11.2026: "ein Startskript, mach vom Martinstor in Freiburg ein 3D-Modell

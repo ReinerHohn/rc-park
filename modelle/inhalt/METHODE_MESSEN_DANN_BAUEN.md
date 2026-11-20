@@ -1,0 +1,11 @@
+# Inhalt von modelle/METHODE_MESSEN_DANN_BAUEN.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md)
+- Z.7: ## Grundsatz
+- Z.10: ## Ablauf
+- Z.18: ## Grenzen
+- Z.23: ## Werkzeugkette (Stand 12.11.2026)
+- Z.36: ## Verlauf
+- Z.57: ## Nachtrag 12.11.: tools/kanten_features.py (allgemeine Feature-Erkennung)
+- Z.76: ## Gelernt aus den Erker-Rippen (12.11.2026) - uebertragbar auf andere Stellen / unbekannte Gebaeude
+- Z.85: ## Gelernt 12./13.11.: Erker-Achteck, Nutzerform und blinde Prueffelder
+- Z.92: ## Gelernt 13.11.: Pruefung ueber alle Richtungen, uebertragbare Teile, Fotoabdeckung

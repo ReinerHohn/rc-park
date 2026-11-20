@@ -1,0 +1,47 @@
+# Inhalt von modelle/LOGBUCH_RIPPEN_2026-11-13.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Logbuch Rippen unter dem Erker (13.11.2026) - zum spaeteren Analysieren "wie schneller zum Ziel"
+- Z.6: ## Chronologie (Zeitaufwand grob; Ergebnis; Lehre)
+- Z.23: ## Offene Ursachenhypothese (nicht belegt)
+- Z.26: ## Zeitfresser / was schneller geht
+- Z.33: ## Nachtrag: Diagnose Laubenfehler (14.)
+- Z.36: ## Ergebnis Diagnose Laubenfehler (14.) - GELOEST, war ein Messartefakt
+- Z.42: ## Ergebnis Faecher (15.) - eingebaut, Abnahme gruen, Qualitaet NICHT ausreichend
+- Z.47: ## 16. Rippenbreite am Foto (Zwischenmessung)
+- Z.53: ## 17. Zwei-Foto-Konsens-Fit des Faechers (faecher_fit.py)
+- Z.59: ## 18. FUND: kalibrierte Nahfotos der Rippen existieren (n11_04/05/06)
+- Z.66: ## 19. tools/kameras_am_ziel.py gebaut; Ergebnis
+- Z.71: ## 20. Auswertung der Nahfotos K-n11_06 (625 px/m, Az 96) und K-6130 (597 px/m, Az 167), Erker 0 (West)
+- Z.78: ## 21. Werkzeuge knoten_pruefen.py und knoten_abstimmung.py; Ergebnis Erker 0
+- Z.84: ## 22. tools/rippen_abstimmung.py (Gold-Band-Abstimmung ueber 5 Nahkameras, Erker 0)
+- Z.90: ## 23. DURCHBRUCH (Teil): tools/rippen_skelett_tiefe.py + rippen_ketten3d.py, Erker 0
+- Z.97: ## 24. Vereinigung von 5 Referenzkameras (Erker 0) - KEIN Gewinn
+- Z.105: ## 25. Aeste im Bild (rippen_aeste_bild.py) und Band-Schliessen (--close_m) - kein Gewinn
+- Z.111: ## 26. Modellbasierte Bogenwahl (tools/rippen_bogen_wahl.py) - FEHLSCHLAG
+- Z.118: ## 27. Bandmaske der Rippen in n11_06 (Farbtests) - Zwischenstand
+- Z.124: ## Kap. 28 – Rippenbreite 0,14 m (Nahfotos), Sichtvergleich
+- Z.129: ## Kap. 29 – Rippen aus Handwegpunkten + Goldgrat-Einrasten (Erker 0)
+- Z.137: ## Kap. 30 – Facettennormalen: Zacken weg
+- Z.143: ## Kap. 31 – Erker 1 (Ost) nach gleichem Verfahren
+- Z.149: ## Kap. 32 – Kappenruecksprung (kappe_rueck) 0,07 -> 0,10
+- Z.154: ## Kap. 33 – Westfacette Erker West
+- Z.157: ## Kap. 34 – Erste unabhaengige Messung der Rippenlage (tools/rippen_gegenprobe.py)
+- Z.163: ## Kap. 35 – Fremdfoto-Tor je Pfad (tools/rippen_pfade_tor.py)
+- Z.169: ## Kap. 36 – Tor Erker Ost
+- Z.173: ## Kap. 37 – Sackgasse: Band je Weg nach Fremdfoto waehlen
+- Z.177: ## Kap. 38 – kappe_rueck-Grenze
+- Z.183: ## Kap. 39 – Ursache wasserdicht gefunden: eine Kante (Pfad 3, Erker West)
+- Z.188: ## Kap. 40 – kappe_rueck 0,20
+- Z.192: ## Kap. 41 – Streiflicht-Render, Annahme-Mittelrippe entfernt, Kappenruecksprung durch Wolke begrenzt
+- Z.197: ## Kap. 42 – Sackgasse: zusaetzliche Pfadglaettung gegen Facettenrauheit
+- Z.200: ## Kap. 43 – Querschnitts-Tangente +-3 Punkte (baukasten_gen.py, rippen_pfade)
+- Z.205: ## Kap. 44 – Kegelfuss Erker Ost: Fussbreite gemessen, Modellvergleich offen (und eine Korrektur)
+- Z.210: ## Kap. 45 – Kappenrücksprung je Profilring (kappe_rueck_profil)
+- Z.216: ## Kap. 46 – H0-Aufloesungstest (aktueller Stand e1d9a97a)
+- Z.220: ## Kap. 47 – Zusatzwege Erker West (N3, N7; N9 verworfen)
+- Z.225: ## Kap. 48 – Zusatzwege Erker Ost (Q1, Q2)
+- Z.229: ## Kap. 49 – Sackgasse: Goldfilter gegen Gerade-Kurzschluesse in Wegen (Erker Ost)
+- Z.233: ## Kap. 50 – Erker Ost: Wege G und Q2 neu gesetzt
+- Z.237: ## 51. Viewer v67 + West-Luecken (13.11.)
+- Z.242: ## 52. Untere Boegen West (U1/U2) - Sackgasse (13.11.)
+- Z.247: ## 53. U1/U2 mit freier Tiefe (Band 1,2, Box z 5,5-8,5, +K-6145) - verworfen (13.11.)
+- Z.251: ## 54. Beobachtung Nutzer: Fenster/Bogenfelder unter dem Erker haengen zu stark durch (13.11.)

@@ -1,0 +1,31 @@
+# Inhalt von modelle/PIPELINE_KOMPLETT_2026-11-07.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # RC-Park – Kaufhaus Freiburg: Pipeline-Review und Arbeitsplan
+- Z.4: ## Kurzbewertung
+- Z.21: ## 0. Leitgedanken (Nutzerregeln)
+- Z.29: ## 1. Eingaben [x]
+- Z.35: ## 2. Merkmale, Matching, Bündel (SfM, COLMAP) [x]
+- Z.40: ## 3. Rahmen / Maßstab [x]
+- Z.44: ## 4. Dichte Wolke (MVS) [x]
+- Z.47: ## 5. Wolke → Netz (Wettbewerb) [x]
+- Z.53: ## 6. Kameras prüfen / Ausgleich [~]
+- Z.63: ## 7. Detail aus der Wolke: Bögen / Fenster [~; ältere Versuche, Status durch S9/S10 ergänzt]
+- Z.72: ## 8. Prüfung / Diff [~]
+- Z.78: ## 9. Ausgabe [~]
+- Z.81: ## 10. Ressourcen und Betrieb
+- Z.87: ## 11. Lizenzen (vor Verkauf prüfen; `modelle/LIZENZ_WERKZEUGE.md`)
+- Z.90: ## 12. Fehlschläge / zurückgezogene Aussagen (kurz, Details in `NICHTS_GEBRACHT.md`)
+- Z.94: ## 13. Verbesserte Reihenfolge: Gates statt paralleler Baustellen
+- Z.96: ### Gate 0 – Lauf reproduzierbar machen
+- Z.99: ### Gate 1 – Daten-/Koordinatenbasis einfrieren
+- Z.104: ### Gate 2 – Fairen Modellvergleich herstellen
+- Z.110: ### Gate 3 – Geometrie und Details
+- Z.116: ### Gate 4 – Freigabe für Ausgabe
+- Z.121: ## Reviewentscheidungen
+- Z.128: # NACHTRAG 7.11.2026 Mittag
+- Z.130: ## N1. Reviews (Google, Codex) – Bewertung (Details `NICHTS_GEBRACHT.md`)
+- Z.133: ## N2. Bogenform gemessen (BS15) [x Messung, ~ Einbau/Diff]
+- Z.141: ## N3. Netzwettbewerb (BS11) [x]
+- Z.146: ## N4. Kameraprüfung [~]
+- Z.151: ## N5. Recherche 7.11. (Websuche, nur Titel/Zusammenfassungen gelesen, nichts reproduziert)
+- Z.163: ## N6. Verbesserungen, die sich aus dem heutigen Wissen ergeben (Reihenfolge)
+- Z.172: ## Nachtrag N7 (7.11. nachmittags): Fenster der ebenen Fassade (Ortho-Ablauf, noch NICHT im Diff bewiesen)

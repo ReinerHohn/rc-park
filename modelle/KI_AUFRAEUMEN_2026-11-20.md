@@ -5,7 +5,8 @@ Befunde (zwei Lese-Agenten, nichts verschoben): `modelle/ki_aufraeumen/befund_re
 - CLAUDE.md neu (39 Zeilen statt Regelhaufen): Kernmethode, Pflichtpruefungen, Technik, "Aufgabe X -> Skill". Veralteter Stand-Verweis (STAND_2026-11-14, AUFGABENLISTE_2026-11-16) ersetzt durch ZIEL_PIPELINE_H0; venv-colmap + rcdaten ergaenzt.
 - 12 Projekt-Skills `.claude/skills/`: sitzungsbeginn, abnahme, tools-pruefen, langer-job, wolke-tore, objekt-von-null, foto-vor-ort, bauteil-runde, fassaden, linien-features, druck, logbuch-commit (alle Pfade geprueft).
 - 3 Workflows `.claude/workflows/`: abnahme-objekte (parallel + Gegenprobe), bauteil-runde (Worktree + 3 Pruefer), versuch-messen (Register/Lizenz -> Messplan -> Skeptiker).
-- `tools/INDEX.md` (erzeugt von `tools/index_erzeugen.py`): eine Zeile je Werkzeug mit Umgebung; Suche per grep.
+- Wissensbaum (erzeugt von `tools/baum_erzeugen.py`): modelle/INDEX.md (Aeste nach Thema) -> modelle/inhalt/<name>.md (Ueberschriften mit Zeilennummern fuer 17 grosse Dokumente); tools/INDEX.md -> tools/index/<thema>.md (16 Themen); modelle/archiv/INDEX.md.
+- 109 alte Dokumente nach modelle/archiv (216 Verweise umgebogen), 53 unreferenzierte Alt-Werkzeuge nach tools/archiv, P1S-Zugang nach ~/.config/rcpark/p1s.json, AGENTS.md -> CLAUDE.md.
 
 ## Wartet auf Nutzer-Ja
 1. ARCHIV modelle/: ~90 von 154 MD (alte STAND_*/UEBERGABE_*, Rundenlogbuecher 9./10.11., Recherchen 6.-9.11., Methoden/Plaene Oktober) nach `modelle/archiv/` (git mv, Verweise vorher umbiegen; Liste in befund_regeln.md Abschnitt 4).

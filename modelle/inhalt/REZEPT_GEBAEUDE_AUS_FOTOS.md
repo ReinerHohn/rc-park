@@ -1,0 +1,11 @@
+# Inhalt von modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Rezept: Gebäude aus Fotos zum H0-Modell (Stand 9.11.2026 abends)
+- Z.7: ## Grundidee in einem Satz
+- Z.10: ## Die fünf Säulen
+- Z.17: ## Ablauf (eine Kette, `tools/gitter_kette.sh NAME --vorher BESTES.json`)
+- Z.34: ## Entscheidregel (Nutzerentscheide 9.11.)
+- Z.42: ## Prüfdisziplin (aus Fehlern des 9.11.)
+- Z.50: ## Bewährter Messweg je Element (Laubenrückwand Kaufhaus, 9.11., Nutzer: "gigantischer Schritt")
+- Z.59: ## Lehren-Register (generalisiert; nach JEDER Runde ergänzen, 1 Zeile je Lehre)
+- Z.115: ## Was die Methode heute nicht kann (ehrlich)
+- Z.121: ## Neues Gebäude in Schritten

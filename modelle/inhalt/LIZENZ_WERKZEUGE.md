@@ -1,0 +1,17 @@
+# Inhalt von modelle/LIZENZ_WERKZEUGE.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze)
+- Z.7: ## ⚠ Werkzeuge, bei denen die Lizenz (noch) nicht zu kommerzieller Nutzung passt
+- Z.20: ## Datenquellen (genutzt)
+- Z.37: ## Werkzeuge, die kommerziell unkritisch sind (Stand ungeprüft)
+- Z.42: ## Testmodus (Nutzerfreigabe 2026-10-31)
+- Z.46: ### Benutzt (Test)
+- Z.57: ## Recherche 2026-11-01: Werkzeuge fuer "Foto -> parametrisches Modell" (vor Benutzung selbst nachlesen)
+- Z.80: ## Regel
+- Z.84: ## Nachtrag 2026-11-05 (Qualitaetsstufe 3/4, Recherche-Agent + eigene Pruefung)
+- Z.101: ## Nachtrag 2026-11-05 (G4: Stadt Freiburg, Daten getrennt von Code)
+- Z.114: ## Nachtrag 2026-11-06 (Recherche Gaussian-Splatting-Mesh, noch NICHT eingesetzt)
+- Z.125: ## Nachtrag 2026-11-06 (SegFormer-B4 ADE20K, Handy-Masken)
+- Z.130: ## Nachtrag 2026-11-06 (OWLv2, Handy-Masken v2, Register DI)
+- Z.137: ## Nachtrag 7.11. (Recherche modelle/archiv/RECHERCHE_2026-11-07_MESH_KANTEN.md, Quelle Subagent aus Repo-Seiten/Suchtreffern - vor Verkauf 
+- Z.147: ## 2026-11-08 pymeshfix (GPL) nur Test
+- Z.152: ## 2026-11-11 Relief aus Einzelbild (Beweistest, tools/relief_aus_foto.py)

@@ -1,0 +1,15 @@
+# Inhalt von modelle/RECHERCHE_VERBESSERUNGEN_2026-11-19.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Recherche: neue Verbesserungen fuer Qualitaet und Tempo (Stand 19./20.11.2026)
+- Z.13: ## Rangliste nach Nutzen je Aufwand
+- Z.15: ### 1. Lot je Bild als Schwerkraft-Vorgabe in den globalen Mapper (`GlobalMapper.ra_use_gravity`)
+- Z.26: ### 2. FlexGlue schneller: frueher abbrechen und Paare vorher eindampfen
+- Z.35: ### 3. Lizenz-Weiche LoMa: COLMAP laedt die Gewichte mit nicht-kommerziellen Trainingsdaten
+- Z.43: ### 4. FlexGlue-Treffer auf denselben SIFT-Punkten mit den SIFT-Treffern vereinigen; grosse Bilder im Python-Pfad mit Abschnittsrechnung
+- Z.52: ### 5. BA-Kovarianz je Kamera als Tor fuer die Wandbild-Kameras
+- Z.61: ### 6. Bildsuche nativ in COLMAP (PR #4544: MegaLoc/MixVPR + FAISS) oder eigener Vorlauf; lizenzsaubere Rueckfalloption
+- Z.70: ### 7. PatchMatch-Fehler bei schraeg gesehenen Ebenen beheben (PR #5041)
+- Z.79: ### 8. Videobilder mit starker Drehung erkennen (Rolling-Shutter-Mass aus den eigenen Posen)
+- Z.88: ### 9. Depth Anything 3 Base mit UNSEREN Kameras als Fuelltiefe fuer Putzloecher
+- Z.99: ## Bewusst nicht in der Liste
+- Z.108: ## Zusammenfassung
+- Z.112: ## Ergebnis der Abarbeitung (Nacht 19./20.11.2026, Details LOGBUCH_KETTENTEST_2026-11-19.md)

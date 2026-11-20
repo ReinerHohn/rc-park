@@ -1,0 +1,34 @@
+# Werkzeuge: geometrie_flaechen (33)
+- `tools/arkaden_fit.py` [-] arkaden_fit.py - Arkadenboegen als FORMFAMILIE statt freier Kettenbildung (Koordinator 9.11., Runde 3). Eingabe: Gitter mit "saeulen" [{cx,cy,R,z_fuss,z_kopf}], ein oder mehrere Sw
+- `tools/auto_fit_alle.py` [-] auto_fit_alle.py <objekt> --wolke w.npy --fotos kam.json --bilder dir [--typen a,b,..] [--iter 40] Automatische Annaeherung ALLER parametrischen Bauteile an die Wolke (Nutzerwunsch
+- `tools/autofit.py` [seg] autofit.py — ARCHETYP-AGNOSTISCHER Autofit-Kern.
+- `tools/baluster_fit.py` [-] Balkonbruestung als Reihe gleicher Rotationskoerper (Baluster) aus Wolke + Tiefen-Sweep, Periode per Autokorrelation, Profil aus der gefalteten Musterzelle. Ablauf: (1) Hoehenband 
+- `tools/ebenen_einrasten.py` [-] ebenen_einrasten.py - Familie 'Ebenen': RANSAC-Ebenen aus der Wolke (Modellrahmen, m), dann Netzknoten nahe einer Ebene (Abstand < --tol, Normale < --winkel) auf die Ebene projizie
+- `tools/ebenen_modell.py` [gen] ebenen_modell.py - Scharfes Netz aus gemessenen Ebenen + Carving-Belegung (SPEC S8 Baustein 2+4+5). Keine Vorlagen, kein STL/Generator.
+- `tools/ebenen_zellen_schnitt.py` [-] ebenen_zellen_schnitt.py - Familie 'Ebenenanordnung + Graph-Cut' (eigene Nachbildung des PolyFit/Kinetic-Gedankens, KEIN CGAL-Code, daher lizenzfrei): 1 RANSAC-Ebenen aus der Wolke
+- `tools/element_compare.py` [-] element_compare.py — FORM-Abgleich pro Bauteil: legt Foto-Ausschnitt NEBEN Modell-Ausschnitt.
+- `tools/element_einpassen.py` [gen] element_einpassen.py - SPEC S9: Erkennen + Einpassen von Elementen mit FREIEN PARAMETERN + Restpruefung (6.11.2026). Erster Durchstich: Arkadenboegen.
+- `tools/element_front.py` [-] element_front.py - Frontansicht (orthogonal, Malerverfahren, Lichtschattierung) eines STL (mm, 1:87) auf eine Fassadenebene (fassaden.json) fuer den Sichtvergleich neben dem Ortho/
+- `tools/elementbuch.py` [-] elementbuch.py - Elementbuch der Stufen-Laeufer (S1b, 2026-11-06): jedes neue/geaenderte/entfernte Element eines Kandidaten muss LOKAL bestehen.
+- `tools/flaeche_anpassen.py` [-] flaeche_anpassen.py - Lage/Groesse einer Flaeche (Erker-n-Eck, Zylinder, Rotationsflaeche, Ebene) aus den FOTOS nachziehen (18.11.2026). Prinzip (Photokonsistenz): stimmt die Geome
+- `tools/flaeche_oder_oeffnung.py` [seg] flaeche_oder_oeffnung.py - Regel "Flaeche vs. Oeffnung" (Nutzer 9.11.): je Flaechenhypothese (Erdgeschoss-Front, Stirnwaende, Laubenrueckwand) Raster 0,5 m; je Zelle Wolkenpunkte A
+- `tools/freiraum_schnitzen.py` [-] freiraum_schnitzen.py - PROTOTYP (Stand 5.11.): Modell um den gesehenen Freiraum verkleinern (Space Carving gegen das Generatormodell).
+- `tools/gebaeude_segment.py` [seg] gebaeude_segment.py — Schritt ① der Bau-Pipeline: GEBÄUDE per ML-Szenen-Segmentierung vom Hintergrund (Bäume/Berg/Himmel/Straße) freistellen (SegFormer ADE20K), damit DANACH überha
+- `tools/innenwaende_finden.py` [gen] innenwaende_finden.py <objekt.json> <fassaden-ordner> --arbeit DIR [--aus audit/innenwaende_auto.json] [--schreiben] [--nur f02,..] innenwaende_finden.py <objekt.json> --sicht_stl 
+- `tools/joint_fit_test.py` [-] joint_fit_test.py — ECHTER Steck-Test der Egg-Crate-Rippen (nicht abstrakte Schlitze!).
+- `tools/koerper_kette.sh` [sh] koerper_kette.sh GITTER.json AUSDIR [AUDITDIR] - Stufe 11 der Gitterkette: Gitter -> Rohkoerper -> Fenster/Erker-Analyse -> Flaeche-vs-Oeffnung (Laube) -> Konsolen-Wiederholung -> 
+- `tools/koerper_v10.py` [gen] koerper_v10.py - Kaufhaus-Koerper v10 aus dem Kantengitter: Rohkoerper (gitter_koerper.baue mit korrigierten Enden/Staffelgiebeln) + Fensterfamilie + Erker mit senkrechtem Schaft u
+- `tools/koerper_v11.py` [gen] koerper_v11.py - Kaufhaus-Koerper v11 (druckfertiges Rohteil): wie v10, aber Rumpf + Verlaengerung als EIN Koerper (Fuenfeck ueber die volle Laenge, oberhalb der Traufe hinter den 
+- `tools/kontur_mittel.py` [seg] Konturen mitteln und Boegen anpassen (rein numerisch, ohne Objektbezug). - mittelform(): gleiche Elemente (z. B. 5 Fenster) ausrichten (Verschiebung, Skalierung, zyklische Startpun
+- `tools/muster_fit.py` [seg] muster_fit.py - generisches Wiederholungs-Werkzeug (Verallgemeinerung von baluster_fit.py): Zone aus dem Kantengitter, Periode mehrstufig (GPU), Faltung, Phase per Symmetrie, Muste
+- `tools/objekte_flaechen.py` [-] Oberflaechen je 3D-Objekt direkt aus den Wolkenpunkten (Hoppe-SDF mit orientierten Normalen, GPU): KEIN Fuellen/Glaetten wie bei Voxelhuellen -> echte Kanten, offene Schalen wo nur
+- `tools/objekte_huellen.py` [-] Huellen (Dreiecksnetze) je 3D-Objekt aus sam_mehrfoto_3d.py: Punktmenge -> Voxel (GPU-Zaehlung + Glaettung) -> Schliessen/Fuellen -> Marching Cubes. Aufruf: python -I tools/objekte
+- `tools/objekte_kontur.py` [-] Scharfe Objektkanten aus den SAM-Konturen aller Fotos (Nutzer 9.11.: Kanten im Foto erkennen, auf die Oberflaeche umrechnen, ueber viele Fotos abstimmen). Je Foto und Objekt: Maske
+- `tools/objekte_schliessen.py` [-] Offene Zuschnitt-Schalen je Objekt zu wasserdichten Koerpern schliessen (pymeshfix: Loecher fuellen, Komponenten bereinigen). Aufruf: python -I tools/objekte_schliessen.py ZUSCHNIT
+- `tools/objekte_schnitzen.py` [-] Shape-from-Silhouette je 3D-Objekt (Nutzer 9.11.: aus den SAM-Linien in 3D Objekte bauen): Voxel bleiben, wenn sie in den SAM-Masken der meisten Fotos liegen, die das Objekt sehen;
+- `tools/objekte_zuschnitt.py` [-] Netz-Zuschnitt per SAM-Masken-Abstimmung (robuster als Umrisslinien): je Dreieck (Schwerpunkt) in jedem Foto prufen, ob es innerhalb der SAM-Maske SEINES Objekts liegt (nur wo es s
+- `tools/plane_segment.py` [-] plane_segment.py — SAUBERE Flächen + Geo-Kanten statt Linien-Konfetti. Ansatz (Computer-Vision, library-basiert): Oberflächen-NORMALEN aus dem DEM -> Felzenszwalb- Segmentierung (s
+- `tools/restfeld_ausgleich.py` [-] restfeld_ausgleich.py - Ebene 1 der Konvergenzschleife (5.11.): je beobachteter Ebene (Wand/Dachflaeche) aus dem Restfeld (tools/restfeld_fassade.py) eine robuste lineare Korrektur
+- `tools/saeulen_fit.py` [seg] Pfeiler/Saeulen als Formfamilie (senkrechter Zylinder) aus der dichten Wolke - Kanten runder Pfeiler sind Silhouetten und wandern mit dem Blick, der Tiefen-Sweep verwirft sie zu Re
+- `tools/scan_zu_koerper.py` [seg] scan_zu_koerper.py — beliebiges Objekt aus einer Punktwolke/einem Scan-Mesh -> sauberer Schichtkoerper (STL, Meter).
+- `tools/viadukt_autofit.py` [gen] viadukt_autofit.py — GESCHLOSSENE SCHLEIFE: Foto messen → Modell anpassen → nachmessen → wiederholen bis konvergiert. Die Realität (Foto-Ziele) ist fix; die Generator-Parameter wer

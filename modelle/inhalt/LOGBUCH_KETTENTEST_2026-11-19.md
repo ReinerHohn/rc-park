@@ -1,0 +1,36 @@
+# Inhalt von modelle/LOGBUCH_KETTENTEST_2026-11-19.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte
+- Z.7: ## Was heute geaendert wurde (Commits)
+- Z.14: ## Zeitleiste / Messungen
+- Z.26: ## Befunde
+- Z.35: ## Sackgassen / Zeitfresser
+- Z.41: ## Verbesserungsliste (laufend; G = Geschwindigkeit, Q = Qualitaet)
+- Z.58: ## Plan
+- Z.64: ## 08:47-09:05 Nutzer: 3D-Seite der Martinstor-Wolke "ist Muell" - Ursache: LOT falsch (Modell lag auf der Seite)
+- Z.82: ## 09:05-09:20 Nutzer: "da ist kein Martinstor zu sehen" - zweite Ursache: MASSSTAB der Einpassung um Faktor ~3,6 falsch
+- Z.95: ## 09:17 Kaufhaus: Konsens-Mapper gegen den alten schrittweisen Lauf (gleiche Datenbank, gleiche Kennzahlen `tools/mapper_bewerten.py`)
+- Z.110: ## 09:20-09:35 Ausrichtung Martinstor: Massstab aus Kamerahoehe + Hoehenprobe gegen LoD2 (Ideen 15, neu 21)
+- Z.131: ## 09:57-10:15 Nutzer: "Haeuserzeile im voellig falschen Massstab" + "viel zu grosser Bereich, nur das Martinstor"
+- Z.146: ## 10:15-10:45 Warum fehlt eine Turmwand? + Wolken-Gruppen-Tor (Idee 26) gebaut
+- Z.166: ## 10:20-10:25 Fehlende Turmseite: die Vorpruefung selbst sortiert die Gegenseite aus (Zeitfenster gebaut)
+- Z.183: ## 11:46 Martinstor, Lauf mt_gk3t: Mapper fertig (1990 Bilder, mit Zeitfenster-Bildern)
+- Z.191: ## 12:05 URSACHE der fehlenden Turmseite gefunden: Seitenverwechslung (Doppelgaenger), NICHT fehlende Bilder
+- Z.200: ## 12:20 Nutzerfrage: "Seitenverwechslung hatten wir beim Schwabentor schon - ich dachte, geloest." Untersuchung
+- Z.208: ## 12:45 Seitenerkennung (Nutzer: "Vollgas, jedes Gebaeude hat mehrere Seiten") - Messungen
+- Z.220: ## 13:00 Seitenerkennung: erster voller Lauf, Pruefer allein reicht nicht; Geometrie-Gegenprobe gebaut
+- Z.227: ## 13:45 Geometrie-Gegenprobe gemessen: trennt NICHT (Sackgasse in dieser Form); neue Urteilsregel fuer den Pruefer
+- Z.233: ## 14:05 Schwabentor als Wahrheit + GPS-Anker (Nutzer: "muss auch ohne GPS funktionieren, mit GPS noch sicherer")
+- Z.241: ## 15:00 Mapper auf bereinigter Datenbank (Aufloesung 1.0): NOCH VERKLEBT - Ursache gemischte Gruppe am Tordurchgang
+- Z.250: ## 16:00 DURCHBRUCH: Martinstor mit BEIDEN Turmseiten (duenne Wolke) - strenge Seitenerkennung + Symmetrie-Drehung
+- Z.264: ## 16:50 DURCHSICHT der ganzen Kette (Nutzer: "tief durchgehen, Schwachpunkte, Tempo, Qualitaet")
+- Z.288: ## 16:55 Dichte Wolke BEIDER Seiten (tools/dicht_modell.py, Stufe schnell)
+- Z.294: ## 17:15 Nutzer: "nah an beiden fehlen fast alle Bildpunkte", "am Boden fehlen Punkte" - LEERE PUTZFLAECHEN, Ursache Fusion + Fenster (gemes
+- Z.302: ## 18:15 'Post-its': verlorene Bilder an das Nord-Geruest anhaengen - Pruefung an bekannten Faellen bestanden
+- Z.312: ## 18:45 Nutzer (Seitenansicht der 3D-Seite): "die zwei Seiten verpassen sich, die Turmspitze trifft sich nicht" - richtig, Achse war falsch
+- Z.319: ## 19:30-20:30 Startskript, Selbstbau COLMAP, Bibliotheks-Updates (Nutzer: "ein Bash-Skript", "selber bauen, nicht apt", "Libs auf Updates p
+- Z.333: ## 21:10-21:40 seiten_vereinen.py: Achse und Lot korrigiert (offener Punkt von 18:45)
+- Z.341: ## 21:40 Messung schnell gegen fein (Martinstor Rueckseite, 74 Bilder, sonst gleiche Einstellungen, Fusion beide min_num_pixels 3)
+- Z.349: ## 21:30-22:10 A/B globaler Mapper alt (ce2b5ab, Stand 30.10.) gegen neu (c1b5a967, 18.11.), Schwabentor 504 Bilder, gleiche DB
+- Z.360: ## 22:20-23:00 Suedanhang global (Nutzer: "machen wir das mit dem globalen Mapper") + FlexGlue
+- Z.372: ## 20.11. 00:30-01:10 Recherche-Liste abarbeiten (Nutzer: "die ganze Liste wieder abarbeiten ... Sift und FlexGlue vereinigen") - zuerst Pun
+- Z.415: ## UEBERGABE 20.11.2026 ~09:00 (nach /clear hier weiterlesen)

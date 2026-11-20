@@ -1,0 +1,11 @@
+# Inhalt von modelle/NICHTS_GEBRACHT.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Sackgassen (nicht doppelt versuchen) - Kaufhaus, Wolke -> Netz, Stand 7.11.2026
+- Z.314: ## 2026-11-12: Kanten-NCC-Tiefenscan entlang der Epipolarlinie (tools/epilinie.py --ncc)
+- Z.317: ## 2026-11-12: Erker-Schraegflaechen als gedrehtes Frontnetz (rippen_pfade.drehungen)
+- Z.324: ## 12.11.2026 abends: Rippentiefe aus Fremdfotos per Maske-Distanzkarte (tools/pfade_tiefe_mehrfoto.py)
+- Z.338: ## 15.11.2026 Schwabentor v3 - Sackgassen und Zeitfresser (Nutzer: "lerne mit")
+- Z.350: ## 16.11.2026 Lokale Feinrechnung der Tiefe (tools/tiefe_lokal.py) - was NICHT ging
+- Z.357: ## 16.11.2026 Ungesehene Ostseite: gespiegelt statt gesucht (verworfen)
+- Z.362: ## 16.11.2026 abends: "ein Kern 100 %" - Ursache waren Kameras mit absurdem Standort
+- Z.369: ## 17.11.2026 nachts: Feinausrichtung der Wandbilder / Feinpunkt-Anker / Schattierungsmass (Agent Feinausrichtung)
+- Z.392: ## 18.11.2026 nachts: Rueckwand hinter Oeffnungen / Laubenrueckwand (Agent Rueckwand/Laube)

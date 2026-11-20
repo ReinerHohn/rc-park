@@ -7,5 +7,5 @@ description: Pflichtpruefung nach jeder Aenderung unter tools/ (RC-Park) - Schne
 3. `timeout 400 ~/.venvs/rcpark/bin/python tools/regression.py modelle/martinstor/objekt.json --pruefen 2>&1 | tail -1` - muss "identisch" sein (`--schnappschuss` nur bei gewollter Aenderung, im Logbuch begruenden).
 4. Neues Werkzeug: kurzer Test `tools/test_<name>.py` (synthetisch, < 5 s) und in `tools/schnelltest.sh` eintragen; Docstring mit Aufruf, Zweck, rc-Bedeutung.
 5. Rechenwerkzeug: laeuft es auf der GPU? (nvidia-smi waehrend Lauf; neue Werkzeuge `tools/gpu_knn.py`, ALIKED+LightGlue).
-6. Neues Werkzeug: `python3 tools/index_erzeugen.py` (aktualisiert tools/INDEX.md).
+6. Neues Werkzeug: `python3 tools/baum_erzeugen.py` (aktualisiert Werkzeug- und Dokumentbaum).
 7. Skill `logbuch-commit`.

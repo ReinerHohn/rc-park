@@ -1,0 +1,22 @@
+# Inhalt von modelle/RECHERCHE_VERBESSERUNG_2026-11-17.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Recherche: Verbesserungspotenzial der Methode "Wandbild = Bauplan" gegen den Stand der Technik (17.11.2026)
+- Z.9: ## Kurzfazit
+- Z.21: ## A. Wandbild und Verdeckung (Fusion der Fotos)
+- Z.23: ### A1. Dichte Feinausrichtung nach der Homographie (optischer Fluss / Color-Map-Optimierung)
+- Z.35: ### A2. Verdeckung durch Basislinie statt durch Software (Draehte, Oberleitung)
+- Z.48: ### A3. Gradientenbasiertes Zusammenfuegen von Relief-Feldern (Poisson-Blending)
+- Z.55: ## B. Tiefe je Zelle (Feinrelief)
+- Z.57: ### B1. Gelerntes Multi-View-Stereo statt PatchMatch in tiefe_lokal.py
+- Z.74: ### B2. Mono-Tiefe mit Mehrbild-Skalierung (Detail-Prior)
+- Z.92: ### B3. Feed-forward-Rekonstruktion (VGGT, MapAnything, MASt3R, Pi3)
+- Z.98: ## C. Normalen und Schattierung (Steinrelief)
+- Z.100: ### C1. Normalen aus Einzelfotos, im Wandrahmen ueber die Fotos vereint, dann integriert
+- Z.112: ### C2. Multi-View-Photometric-Stereo / Shape-from-Shading unter Tageslicht
+- Z.124: ## D. Linien und Kurven (Masswerk, Rippen)
+- Z.136: ## E. Freistehende Teile (Saeulen, Bruestung, Figuren)
+- Z.145: ## F. Bewertungsmasse fuer Feinteile
+- Z.160: ## G. Druckaufbereitung kleinster Details
+- Z.170: ## Rangliste: die 5 vielversprechendsten Schritte mit kleinem Test
+- Z.204: ## Wo wir dem Stand der Technik voraus oder gleichauf sind (ehrlich)
+- Z.217: ## Lizenzen der neuen Kandidaten (vor Einsatz in LIZENZ_WERKZEUGE.md eintragen)
+- Z.224: ## Quellen (in dieser Sitzung gefunden)

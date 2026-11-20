@@ -1,7 +1,7 @@
 # RC-Park – Arbeitsregeln (Kurzfassung)
 Fotos -> SfM (COLMAP) -> 3D -> druckbares H0-Modell (1:87), wird verkauft. Deutsch, Anrede "Meister", keine breiten Tabellen.
 Stand zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> dort verlinktes Logbuch (UEBERGABE am Ende). Sitzungsbeginn: Skill `sitzungsbeginn`.
-Volltext aller Regeln: `modelle/REGELN_AUSFUEHRLICH.md` (nur gezielt per grep lesen).
+WISSENSBAUM (nie ganze Ordner/grosse Dateien lesen): Dokumente `modelle/INDEX.md` -> Ast -> grosse Datei ueber `modelle/inhalt/<name>.md` (Zeilennummern, Read offset/limit); Werkzeuge `tools/INDEX.md` -> `tools/index/<thema>.md`; Archiv `modelle/archiv/INDEX.md`. Neu erzeugen: `python3 tools/baum_erzeugen.py`. Volltext Regeln: `modelle/REGELN_AUSFUEHRLICH.md`.
 
 ## KERNMETHODE (nie vergessen)
 - Form = Fotokanten + Triangulation (Kanten-Tiefen-Sweep mit SfM-Kameras). SfM liefert die KAMERAS. Dichte Wolke/LoD2/DOM1 nur Lage-Veto, Hoehe, Gegenprobe.
@@ -27,7 +27,7 @@ Volltext aller Regeln: `modelle/REGELN_AUSFUEHRLICH.md` (nur gezielt per grep le
 - Nie zwei Optimierer/Generatorlaeufe mit gleicher Zwischendatei parallel. Nie `pkill -f` mit Muster aus der eigenen Befehlszeile.
 - Loeschen nur nach ausdruecklichem "Ja". Kein Push ohne Auftrag. Eigene Aenderungen sofort committen (Skill `logbuch-commit`), Attribution-Zeilen. Hook nur Nutzer.
 - Nie idle, nachts weiterarbeiten; aber KEIN wiederkehrender Cron/Loop fuer Job-/GPU-Checks (einmalige Warter ok).
-- Werkzeug suchen: `grep -i <stichwort> tools/INDEX.md` (nicht tools/ durchlesen). Kontext sparen: Ausgaben kuerzen (cut/head/tail). Bilder (SendUserFile) + 3D-HTML zeigen. Kein Druck ohne Nutzerwunsch.
+- Kontext sparen: Ausgaben kuerzen (cut/head/tail). Bilder (SendUserFile) + 3D-HTML zeigen. Kein Druck ohne Nutzerwunsch.
 
 ## Bei Aufgabe X -> Skill / Dokument
 - Neues Objekt / Kette von null -> `objekt-von-null`. SfM/Mapper -> `modelle/GLOBALER_MAPPER_STABIL.md`.

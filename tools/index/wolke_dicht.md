@@ -1,0 +1,88 @@
+# Werkzeuge: wolke_dicht (87)
+- `tools/bauteil_element_wolke.py` [gen] bauteil_element_wolke.py - Elemente, die die AUTOMATISCHE Elementschleife (generator_elemente_schleife.py) aus dem Restfeld der Wolke ableitet.
+- `tools/bauteil_rumpf_wolke.py` [-] bauteil_rumpf_wolke.py - Rumpf + Dach AUS DER DICHTEN PUNKTWOLKE (Spec S3b, Nutzerregel 6.11.: Wolke = erste Wahrheit).
+- `tools/bogen_aus_wolke.py` [-] bogen_aus_wolke.py - Bogenoeffnungen als LOECHER in einer duennen Platte der Wolke um die Fassadenebene messen (3D-Lage, keine Foto-Ebenenannahme). Schritte: Rahmen (Umeyama) -> Ti
+- `tools/dach_wolke_fit.py` [-] dach_wolke_fit.py - Satteldach-Parameter (baukasten 'satteldach') per CMA-ES in die Punktwolke einpassen (nur Wolkenabstand, ohne Foto): schnell, viele Auswertungen. Ziel: Mittel(m
+- `tools/dicht_ausrichten.py` [-] dicht_ausrichten.py <fused.ply> <T.npz> <aus_prefix> [--max N] Dichte COLMAP-Wolke mit der Aehnlichkeitstransformation (R,s,t aus iphone_ausrichten.py) in den Netzrahmen legen: p' 
+- `tools/dicht_bildwahl.py` [-] dicht_bildwahl.py <sparse_ein> <sparse_aus> - Bildauswahl fuer die dichte Wolke (Tiefenkarten = teuerster Schritt). Lehre Schwabentor 2026-11-14 (Nutzer: 'koennen wir nicht weiter 
+- `tools/dicht_fusion.py` [-] dicht_fusion.py <arbeitsordner> <aus.ply> [min_pixel=8] [max_reproj=1.0] [max_tiefenfehler=0.01] Nur die Fusion (CPU) mit STRENGEREN Optionen als iphone_dicht.py (Standard min_num_
+- `tools/dicht_handy.py` [col] dicht_handy.py - dichte Wolke (COLMAP PatchMatch Stereo, GPU) aus den Handybildern des Zusatz-Registrierlaufs (Register DL, 2026-11-06).
+- `tools/dicht_handy_cache.py` [col] dicht_handy_cache.py - Tiefenkarten-Cache fuer dicht_handy.py (Entwurf 2026-11-06, noch NICHT in dicht_handy.py eingehaengt).
+- `tools/dicht_icp_fein.py` [-] dicht_icp_fein.py <netz_pts.npy> <alte_wolke.npy> <aus_T.npz> [--iter 30] Feine Aehnlichkeits-ICP (Umeyama, getrimmt) der dichten Wolke gegen die alte Wolke im Gebaeudebereich (Fas
+- `tools/dicht_masstab_suche.py` [-] dicht_masstab_suche.py <dicht_pts.npy> <alte_wolke.npy> <aus_T.npz> [--von 0.8 --bis 1.2 --schritt 0.02 --iter 20] [Region wie dicht_icp_fein] Maßstab FEST je Kandidat, starre ICP 
+- `tools/dicht_modell.py` [-] dicht_modell.py <sparse-ordner> <bilder-ordner> <aus-ordner> [--ohne unstabil.txt] [--stufe schnell|fein|grob] [--ohne-bildwahl]
+- `tools/dicht_verformen.py` [-] dicht_verformen.py <dicht_pts.npy> <alte_wolke.npy> <aus_prefix> [--iter 15] [--u0 -14 --u1 14 --z0 4 --z1 12] [--ordnung 2] Verformende Ausrichtung (Regel: Wolken verziehen sich u
+- `tools/dicht_vorpruefung.py` [-] dicht_vorpruefung.py - billige Schranke VOR einer teuren dichten Rechnung (Sweetspot-Ziel: viele Modelle in kurzer Zeit; Lehre aus der Bodenwolke 3.11., >1 h GPU).
+- `tools/fassade_tiefe.py` [-] fassade_tiefe.py <objekt.json> <fassaden-ordner> <nr> [--zelle 0.04] [--w -0.8 2.5] [--dw 0.05] [--fotos a,b,...] [--min_m2 0.5] [--min_w 0.25]
+- `tools/foto_punkt_picker.py` [-] foto_punkt_picker.py — erzeugt eine eigenständige HTML-Seite zum PRÄZISEN Markieren von Modell-Passpunkten in einem Foto (Handy/Desktop). Du klickst die bekannten Bauwerks-Punkte (
+- `tools/gruppen_punkt_tor.py` [col] gruppen_punkt_tor.py <sparse> <objekt.json> <picks.json> [--tol 0.3] - TOR: derselbe Objektpunkt, aus verschiedenen FOTOGRUPPEN trianguliert, muss zusammenfallen.
+- `tools/helm_profil_wolke.py` [-] helm_profil_wolke.py - Profil r(z) eines N-eckigen Helms/Turms (Apothem je Hoehe) aus der Fotowolke, mit Achslage und Flaechenphase (generisch, kein Objektname).
+- `tools/iphone_dicht.py` [-] iphone_dicht.py <bilder> <sparse/N> <ausgabeordner> [max_bild] - COLMAP dicht (undistort -> PatchMatch-Stereo CUDA -> Fusion). Nutzer 8.11.: Punktwolke aus iPhone-Fotos ergaenzen.
+- `tools/kanten_fusion.py` [-] Median-Fusion der Kantenquellen je Wolkenpunkt (KEIN Mittelwert): Anteil_i = kan_i / vis; fusioniert = Median ueber die Quellen (bei 3 Quellen: mindestens 2 muessen den Punkt klar 
+- `tools/kanten_tiefe_sweep.py` [-] Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen; je Tiefe zaehlen, in wie vielen Nachbar
+- `tools/kanten_tiefe_sweep_flaeche.py` [gen] Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen; je Tiefe zaehlen, in wie vielen Nachbar
+- `tools/kh_dicht_viewer.py` [gen] kh_dicht_viewer.py - dichte Wolke (tools/dicht_handy.py rechnen) als selbstenthaltene 3D-HTML (three.js Punkte, Fotofarben).
+- `tools/modell_wolke_abstand.py` [-] modell_wolke_abstand.py - Gesamtmodell (STL mm, Massstab) gegen die Wolke: Median/P90 Abstand Wolkenpunkt -> Modellflaeche (Punkte < --rand m), plus Anteil > 0,3 m und die Rueckric
+- `tools/netz_aus_dicht.py` [gen] netz_aus_dicht.py <objekt.json> <dicht-ordner> [--aus ORDNER] [--radius 60] - OpenMVS-Netz aus dem COLMAP-Dichtordner, im MODELLRAHMEN ausgeschnitten.
+- `tools/param_wolke_fit.py` [seg] param_wolke_fit.py - Parameter EINES parametrischen Bauteils (objekt.json['bauteile'][typ]) per CMA-ES gegen die Punktwolke einpassen (Nutzerweg 8.11.: Parameter drehen, immer naeh
+- `tools/pfad_tiefe_dp.py` [seg] pfad_tiefe_dp.py - Tiefe je Pfad per Mehrfoto-Optimierung: 2D-Pixel der Kette in der Referenzkamera sind fest, die Tiefe entlang jedes Strahls wird per Viterbi-DP so gewaehlt, dass
+- `tools/pfade_tiefe_mehrfoto.py` [-] pfade_tiefe_mehrfoto.py - Tiefe der Rippenpfade entlang des 6171-Sehstrahls aus weiteren Fotos (Rippenmaske-Distanzkarten), Pruefbilder zurueckgehalten. Aufruf: pfade_tiefe_mehrfot
+- `tools/punkte_messen.py` [-] UNGUELTIG (2026-11-05, Gegenprobe): Sollpunkt um 0,5 m verschoben wird ebenfalls "gruen 0,07 m" gemessen - die "naechste Ecke zur Projektion" zieht alle Strahlen zum Sollpunkt (Zir
+- `tools/punktwolke_ansicht.py` [-] punktwolke_ansicht.py <dichte_ply> <ausrichtung.json> <ausgabe.html> [--n 250000] - dichte Wolke als 3D-HTML (Farben aus den Fotos).
+- `tools/rippen_skelett_tiefe.py` [-] rippen_skelett_tiefe.py - Rippenbahnen in 3D: Gold-Skelett im besten Nahfoto + Tiefe per Gold-Konsens in den anderen Nahkameras (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/p
+- `tools/rueckwand_tiefe.py` [-] rueckwand_tiefe.py <objekt.json> <oeffnungen_aussen.json> [--schreiben] - LEIBUNGSTIEFE je Objekt fuer bauteile.rueckwaende (Regel A) aus den Fotos. 18.11.2026 (Ziel H0 von null, L
+- `tools/rumpf_wolke_bild.py` [-] rumpf_wolke_bild.py <stl> <aus.jpg> - STL-Kanten (rot) ueber Wolke (grau): Vorder-(x-z), Seiten-(y-z), Draufsicht (x-y). venv-seg.
+- `tools/rumpf_wolke_messen.py` [-] rumpf_wolke_messen.py - Abstand Wolkenpunkte -> STL nach Hoehenband (Messung wie 6.11.): Median, Anteil < 0,3 m, Perzentil 90. rumpf_wolke_messen.py <stl> [--masstab 87] [--kasten 
+- `tools/teil_wolke_fit.py` [-] teil_wolke_fit.py - jede stl_teil-Gruppe (Verschiebung dn/du/dz, Skalierung sn/su/sz um den Anker, wie baukasten_gen.stl_teil) per Gradientenabstieg auf der GPU in die dichte Punkt
+- `tools/teil_wolke_sweep.py` [-] teil_wolke_sweep.py - GENERISCH: jeden Parameter jeder stl_teil-Gruppe (dn,du,dz Verschiebung; sn,su,sz Skalierung, wie baukasten_gen.stl_teil) in einem WEITEN Bereich durchfahren 
+- `tools/teilfusion.py` [-] teilfusion.py <workspace> <aus.ply> [--max_bilder N] [--min_num_pixels 8] [--max_image_size 1600] [--input_type photometric] TEILFUSION (18.11.2026, Kaufhaus gk2: 595 Bilder, Tiefe
+- `tools/tiefe_lokal.py` [col] tiefe_lokal.py <objekt.json> <sparse> <bilder> --name N --a x y --b x y --aussen x y --feld u0 u1 z0 z1 [--k 12] [--max_size 4000] [--px 0.01] [--massstab k x y z] LOKALE FEINRECHN
+- `tools/tiefe_messen.py` [-] tiefe_messen.py — GEBÄUDETIEFE per ANALYSE-DURCH-SYNTHESE am Schrägfoto (generell).
+- `tools/tiefen_messen.py` [-] tiefen_messen.py - Tiefen der Fassadenelemente (Nische, Arkade, Vorsprung) aus der dichten Mehrbild-Wolke statt ANNAHME (Stufe 9 "ohne Handwerte", 2026-11-05).
+- `tools/video_dicht.py` [-] video_dicht.py - dichte Wolke aus dem Video-SfM (video_sfm.py) und Transformation in den Modellrahmen (aus video_ausrichten.py) (Register BQ). /media/oem/scan/venv-colmap/bin/pytho
+- `tools/viewer_stl_wolke.py` [-] viewer_stl_wolke.py - 3D-HTML (three.js r128, Skript statt Modul): STL-Ebenen (mm, Massstab) + Punktwolke mit Fotofarben im SELBEN Rahmen, Ebenen schaltbar. venv-seg/bin/python -I 
+- `tools/wolke_abstand_einseitig.py` [-] wolke_abstand_einseitig.py - EINSEITIGER Abstand Modell -> Punktwolke (Schritt 2 der Methode 'grob zuerst + Wolke als Gegenprobe', Nutzer 6.11.).
+- `tools/wolke_abstand_region.py` [-] wolke_abstand_region.py - Abstand Wolkenpunkte -> Netz in einer Quaderregion (K-Rahmen m), fuer Details, die der Foto-Diff nicht sieht (Fenster-Nischen/Sprossen). venv-seg/bin/pyth
+- `tools/wolke_abweichung_o3d.py` [-] wolke_abweichung_o3d.py - Wolke->Netz-Abstand (Open3D RaycastingScene, speicherschonend; trimesh closest_point lief bei 748k Flaechen in OOM, 7.11.) je Hoehenband und 3-m-Fassadena
+- `tools/wolke_abweichungskarte.py` [-] wolke_abweichungskarte.py - Wolke->Netz-Abstand ueber das ganze Gebaeude, getrennt nach Hoehenband (z) und Fassadenabschnitt (u entlang der Fassade): wo ist das Netz schlecht? venv
+- `tools/wolke_auf_generator.py` [gen] wolke_auf_generator.py - Hybrid: Form vom Generator-STL (LoD2/DOM1/Profile), Farbe + Belegung aus den dichten Bildpunkten (Register BW).
+- `tools/wolke_baender.py` [-] wolke_baender.py - GENERISCH: Hoehenbaender EINES KOERPERS (Ecktuermchen, Zentralkoerper, Anbau) aus der farbigen Fotowolke.
+- `tools/wolke_balkon_messen.py` [-] wolke_balkon_messen.py - Balkon/Galerieband (vor die Wandebene vorspringendes, waagerechtes Band zwischen Erkern, ueber einer Arkade) AUS DER WOLKE messen. Generisch, keine Objektn
+- `tools/wolke_bereinigen.py` [-] wolke_bereinigen.py - Strahl-/Ausreisser-Bereinigung der Dichtwolke (BS41, 7.11.): Foto 043 zeigt Zapfen/Streifen unter Bogen und Traufe (Tiefenfehler entlang der Sehstrahlen). Sta
+- `tools/wolke_bogenreihe_messen.py` [-] wolke_bogenreihe_messen.py - Parameter einer Bogenreihe (Arkade) AUS DER WOLKE messen (Quelle fuer tools/baukasten_gen.py Bauteil 'bogenreihe'). Generisch: keine Objektnamen; Fassa
+- `tools/wolke_carving.py` [-] wolke_carving.py - Koerper NUR aus der Buendelwolke per Sichtbarkeits-Carving (Nutzerentscheid 5.11. 20:10; Koordination 21:45: "Punktwolke ist die EINZIGE Basis").
+- `tools/wolke_dom1_pruefen.py` [-] wolke_dom1_pruefen.py - GENERISCH: unabhaengige Kontrolle einer Fotowolke gegen das DOM1-Laserraster (Kaufhaus 2026-11-04).
+- `tools/wolke_ebenen_ransac.py` [-] wolke_ebenen_ransac.py - BS48 Schritt 1 des Eigenbau-Min-Cut: Ebenen aus der (bereinigten) Wolke per iterativem RANSAC (Open3D). Wolke im Netzrahmen (npy) auf Basis-bbox zuschneide
+- `tools/wolke_entzerren_lod2.py` [-] wolke_entzerren_lod2.py - GENERISCH: verzerrte Fotowolke (SfM aus einseitigen Strassenfotos) affin auf die amtliche Umgebung ziehen.
+- `tools/wolke_erker_messen.py` [-] wolke_erker_messen.py - Erker (vor die Wandebene vorspringende Bauteile) AUS DER WOLKE messen. Generisch, keine Objektnamen; Vorbild wolke_bogenreihe_messen.py. Koordinaten: Netzra
+- `tools/wolke_filter_varianten.py` [col] wolke_filter_varianten.py - S10 Teil C: Wolkenvarianten F0..F3 erzeugen (Register CV). Generisch, keine Objektwerte: alles aus --dicht (COLMAP-Arbeitsordner mit sparse/, images/, s
+- `tools/wolke_filtern.py` [-] wolke_filtern.py - Punkte in der Luft entfernen (Register BW): (1) lokale Dichte: Radius-Ausreisser (zu wenige Nachbarn im Radius), (2) Median-Abstand: Nachbarabstand > Median + k*
+- `tools/wolke_freiraum_pruefen.py` [-] wolke_freiraum_pruefen.py <objekt.json> --wolke punkte_modell.npy [--tief 1.2] [--grenze 0.5] - Stoerpunkte der dichten Wolke messen, BEVOR sie gezeigt wird.
+- `tools/wolke_front.py` [seg] wolke_front.py - FRONTANSICHT der gefaerbten Wolke (Orthokamera, z-Puffer, GPU) + Abdeckung je Pixel (Zahl der Fotos je Punkt aus .vis). Wolke -> Rahmen der K-Dateien per Umeyama a
+- `tools/wolke_gauben_messen.py` [-] wolke_gauben_messen.py - Dachgauben AUS DER WOLKE messen: Wolkenpunkte, die ueber der Dachebene stehen (Abstand > --schwelle), werden in der Dachebene (u, z) zu Haufen gruppiert (R
+- `tools/wolke_grundriss_pruefen.py` [seg] wolke_grundriss_pruefen.py - GENERISCH: Dichte Wolke (Modellrahmen) gegen die amtlichen LoD2-Grundrisse der Umgebung pruefen.
+- `tools/wolke_gruppen_fit.py` [-] wolke_gruppen_fit.py - Generatorgruppen (stl_teil) gegen die WOLKE einpassen (Nutzerwunsch 7.11.: Wolke = Referenz; Foto-Diff nur Tor/Kontrolle). Je Gruppe CMA-ES ueber (dn,du,dz,s
+- `tools/wolke_gruppen_hoehe.py` [-] wolke_gruppen_hoehe.py - Generatorgruppen DIREKT an der Wolke messen (Nutzerwunsch 7.11.: 'Wolke als Referenz'). Je Gruppe (ausgerichtete Teile f_<name>.stl, mm; Netzrahmen m = mm*
+- `tools/wolke_gruppen_pruefen.py` [-] wolke_gruppen_pruefen.py <objekt.json> <SFM-AUSRICHTUNG.json> <sparse-ordner> [--radius 80] [--ueber 6] [--min-anteil 0.25] [--min-punkte 40] [--schreiben]
+- `tools/wolke_kennzahlen.py` [seg] wolke_kennzahlen.py - S10 Teil C: gleiche Kennzahlen fuer jede Wolkenvariante (fused.ply im metrischen Modellsystem, z oben). Referenzebenen EINMAL aus der Referenzvariante (F0) pe
+- `tools/wolke_kennzahlen_tabelle.py` [-] Tabelle aus kennzahlen.json (wolke_kennzahlen.py): je Variante gewichteter Mittelwert ueber die Referenzebenen (Gewicht = Wandpunkte) + Einzelebenen. Aufruf: tabelle.py kennzahlen.
+- `tools/wolke_linienfilter.py` [-] wolke_linienfilter.py - BS42: streicht linienartige Punktnachbarschaften (Tiefenzapfen entlang Sehstrahl). PCA je Punkt (k Nachbarn): Linearitaet L=(l1-l2)/l1 > --lin => weg. Einga
+- `tools/wolke_lot_ausrichten.py` [-] wolke_lot_ausrichten.py <objekt> --wolke w.npy --kameras k.json --wolke_aus w_lot.npy --kameras_aus k_lot.json [--wolke_rgb ...] Starre Drehung (keine Verformung) von Wolke UND Kam
+- `tools/wolke_messen.py` [-] wolke_messen.py <objekt> --wolke w.npy --kameras k.json --foto ip_IMG_6161.jpg --box x0,y0,x1,y1 [--bildbreite 1613] [--tiefe 0.4] [--name tuerm_links] [--aus messungen.json] Direk
+- `tools/wolke_mincut.py` [-] wolke_mincut.py - BS49 Eigenbau: Wolkenebenen -> Zellzerlegung (Vorzeichenvektor, Voxel-Zuordnung) -> Min-Cut (scipy) -> wasserdichtes STL. Nur numpy/scipy/trimesh/manifold3d (perm
+- `tools/wolke_modell_viewer.py` [-] wolke_modell_viewer.py - Punktwolke gegen Modelle in EINER selbstenthaltenen 3D-HTML (three.js r128 via jsDelivr), Ebenen schaltbar. Nutzerregel 8.11.: so schnell wie moeglich ein 
+- `tools/wolke_neu_fusionieren.py` [col] wolke_neu_fusionieren.py <objekt.json> <pipe-ordner> [--stufe schnell|fein] - dichte Wolke OHNE die unplausiblen Kameras neu fusionieren.
+- `tools/wolke_pose_am_generator.py` [-] wolke_pose_am_generator.py - Pose (Roll/Gier/Nick + Versatz) einer Seitenwolke gegen die OBERFLAECHE des Generator-STL (Register BW). Ersetzt Kantenperzentil-Messungen (abdeckungsa
+- `tools/wolke_profile.py` [-] wolke_profile.py - GENERISCH: Formprofile je Hoehenschicht aus der dichten Fotowolke (+ DOM1) -> Profiltabelle fuer den Generator und automatische Pruefzeilen in der Masstabelle (R
+- `tools/wolke_saeubern.py` [col] wolke_saeubern.py <objekt.json> --wolke ein.npy [--farben f.npy] --aus aus.npy [--umkreis 35] [--tief 1.0] - Wolke fuer Anzeige/Veto saeubern (15.11.2026): (1) nur Punkte im --umkr
+- `tools/wolke_solid.py` [gen] wolke_solid.py - "Wolke zuerst" (Spec modelle/archiv/SPEC_S3b_WOLKE_ZUERST.md, Nutzer 5.11. 19:45): Buendelwolke -> druckbarer Solid, das Modell nur als Fueller.
+- `tools/wolke_sparse_abstand.py` [-] Abstand dichter Wolkenpunkte zu den triangulierten Sparse-Punkten (allgemein, je Objekt).
+- `tools/wolke_streiffilter.py` [-] wolke_streiffilter.py - BS43: Punkte streichen, deren PCA-Normale von KEINER Aufnahmeposition aus 'frontal' gesehen wird (max_c |n.v_c| < --schwelle, v_c = Einheitsvektor Punkt->Ka
+- `tools/wolke_ueber_foto.py` [-] wolke_ueber_foto.py - Punktwolke UND Netzkanten mit der festen Kamera K-<nr> ueber das (entzerrte) Foto legen. Frage (Nutzer 7.11.): Liegt die WOLKE auf den Fotokanten, das NETZ ab
+- `tools/wolke_umgebung.py` [seg] wolke_umgebung.py - UMGEBUNGSMASKE und RAUSCHMESSUNG fuer die Elementschleife (generator_elemente_schleife.py). Nichts Objektspezifisches.
+- `tools/wolke_verdeckung.py` [-] wolke_verdeckung.py - FOTOWOLKEN-VERDECKUNG fuer die Sichtbarkeitspruefung (teil_fotoform, L-KR26, Nutzer 10.11. abends).
+- `tools/wolke_verdeckung_karte.py` [-] Diagnose zu wolke_verdeckung: Wolkentiefenkarte je Foto als Bild (Farbe = Tiefe, schwarz = keine gestuetzte Wolke) neben dem Foto. Aufruf: venv-seg/bin/python -W ignore -I tools/wo
+- `tools/wolke_vs_modell.py` [-] wolke_vs_modell.py - GENERISCH: dichte Fotowolke gegen Modell-STL, automatisch, je Fassadenseite (Register AN).
+- `tools/wolke_zu_mesh.py` [-] wolke_zu_mesh.py - farbiges, geschlossenes Netz direkt aus der dichten Punktwolke (Poisson), ohne Handwerte; belegt/geschaetzt getrennt (Register BR).
+- `tools/wolke_zu_netz.py` [-] wolke_zu_netz.py - Kandidaten Punktwolke -> Netz mit VERSCHIEDENEN Algorithmen (open3d), alle im Modellrahmen als STL (mm im Massstab 1:87) fuer tools/modell_wettbewerb.py. /media/
+- `tools/wolken_vergleich.py` [-] wolken_vergleich.py - mehrere Punktwolken derselben Seite MIT GLEICHEM SCHAETZER nebeneinander (Bewertung der Bodenwolke, Nutzerwunsch Sweetspot).

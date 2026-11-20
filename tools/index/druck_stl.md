@@ -1,0 +1,38 @@
+# Werkzeuge: druck_stl (37)
+- `tools/abgeschaltete_teile.py` [-] abgeschaltete_teile.py - listet Schluessel in objekt.json, die ein Teil abgeschaltet/verworfen haben (Muster *_verworfen, deaktiv*, abgeschaltet). Anlass 12.11.: 'stirn_verworfen' 
+- `tools/bambu_slice.py` [-] bambu_slice.py - STL -> .gcode.3mf fuer den Bambu P1S ueber die Kommandozeile von Bambu Studio (Register CB, Lehre 2026-11-03). Loest die Vererbung ('inherits') der System-Profile 
+- `tools/bausatz.sh` [sh] bausatz.sh <objekt> <masken (relief/a_putz.npz,relief/b_putz.npz)> [WAND_MM=2.4] [SPIEL_MM=0.3] [BAUART=tasche|einsatz] [INNEN_MM=1.0] - Bausatz fuer ZWEI Drucker in einem Lauf (17
+- `tools/druck_farben.py` [-] druck_farben.py <objekt> [--eintragen] - je Druckteil (tools/druck_teilung.py) die Druckfarbe vorschlagen: EIN Teil = EINE Farbe, der Rest wird gemalt.
+- `tools/druck_farbteile.py` [gen] druck_farbteile.py <objekt> --masken relief/nord_putz.npz,relief/sued_putz.npz[,...] [--stl PFAD] [--einsatz --wand_mm 1.0 --innen_mm 1.0 --falz_mm 3] [--tief_mm 0.4] [--spiel_mm 0
+- `tools/druck_hohl.py` [seg] druck_hohl.py <ein.stl> <aus.stl> [--wand_mm 1.0] [--schritt_mm 0.5] [--min_mm 3] [--schliess_mm 7] [--dach_grad 45] [--boden zu] [--bild PFAD.png] MASSIVE Bereiche eines Druckmode
+- `tools/druck_klips.py` [gen] druck_klips.py <modell.stl> --mitte x,y,z --normal nx,ny,nz (--radius R | --rechteck B,H) [--name uhr] [--aus ORDNER] [--schicht_mm 0.08] Ein Wanddetail (Uhr, Wappen, Schild, Ziert
+- `tools/druck_luft.py` [gen] druck_luft.py <teil.stl> [--schicht_mm 0.08] [--winkel_grad 45] [--min_mm2 2] [--unterfuettern AUS.stl | --stuetzen AUS.stl [--frei_mm 1.2] [--reich_mm 15]] - Luftinseln je Schicht
+- `tools/druck_teilung.py` [seg] druck_teilung.py <objekt> [--stl PFAD] - generische Druckteilung eines wasserdichten Generator-STL (nichts Objektspezifisches).
+- `tools/druck_vorcheck.py` [-] Slicer-Vorcheck fuer ein Generator-STL (generisch, nichts Objektspezifisches; Vorbild koerper_v11.pruefen).
+- `tools/druck_zeit.py` [-] druck_zeit.py <ordner mit STL-Teilen> [--schicht 0.16] [--duese 0.4] [--fuellung 15] [--stuetzen] [--bett 256 | 250x210x220] [--parallel 4] - Druckzeit und Material je Teil mit dem
+- `tools/druckbar_export.py` [-] druckbar_export.py — druckbare STL aus den Segment-STLs: Feindetail raus (→ Textur/Bemalung), Rest vereinigen/verbinden, auf Druckmaßstab skalieren, Druckbarkeit prüfen (watertight
+- `tools/druckteile_auto.py` [gen] druckteile_auto.py - GENERISCH: H0-Modell (STL in mm) automatisch in Teile schneiden, die in den Bauraum passen, aushoehlen, Stiftbohrungen (2026-11-05).
+- `tools/druckteile_flach.py` [-] druckteile_flach.py — Modell in FLACH druckbare, FARB-getrennte Teile zerlegen (Steck-Bausatz).
+- `tools/fehlteile_finden.py` [seg] fehlteile_finden.py - AUTOMATISCH finden, wo das Foto Struktur zeigt, die das Modell nicht hat (und umgekehrt).
+- `tools/feinteil_tor.py` [-] feinteil_tor.py - FEINTEIL-MASS: sieht, ob das Modell die FEINSTRUKTUR des Fotos dort hat, wo das Foto sie hat (Figuren, Masswerk, Schindeln, Gesimse), und dort glatt ist, wo das F
+- `tools/h0_druckfertig.py` [gen] h0_druckfertig.py — beliebiges Mesh (Scan, LOD2-Bau, Generator-GLB) -> druckfertiges Modell fuer H0 (1:87).
+- `tools/huellen_stl.py` [-] Huellen-npz (objekte_huellen.py / objekte_schnitzen.py) -> STL: Gesamt und je Objekt. Aufruf: python -I tools/huellen_stl.py IN.npz AUSVERZ
+- `tools/llm_urteil_auswerten.py` [-] llm_urteil_auswerten.py - sammelt Urteile unabhaengiger Beurteiler (<lauf>/urteile/<beurteiler>/<Pnn>.json {"urteil":"links|rechts|gleich","grund":..}), entschluesselt mit _schlues
+- `tools/mesh_druckbar.py` [gen] mesh_druckbar.py — beliebiges (auch GEKAUFTES, nicht-druckfertiges) Mesh → druckbarer Solid.
+- `tools/modell_teilen.py` [gen] modell_teilen.py - AUTOMATISCH ein zu hohes Modell in druckbare Segmente teilen (Steckzapfen + Bohrung) und die Nadel durch eine Stabbohrung ersetzen (Plan: Druckvorbereitung).
+- `tools/p1s_print.py` [-] p1s_print.py — Bambu P1S im LAN steuern: Status / Upload+Druckstart (ohne Cloud).
+- `tools/prusa_print.py` [-] prusa_print.py - Prusa MK4S ueber PrusaLink im LAN steuern: Zugang ablegen / Status / Upload + Druckstart (ohne Cloud).
+- `tools/prusa_slice.py` [-] prusa_slice.py - STL -> G-Code fuer Prusa MK4S (0.4) mit den mitgelieferten PrusaSlicer-Profilen (Aufloesung von 'inherits'). python3 tools/prusa_slice.py teil.stl [weitere.stl ...
+- `tools/schleife_teile.py` [gen] schleife_teile.py <objekt> --wolke w.npy --fotos k.json --bilder dir --basis ausrichtung_ganz.json --aus dir [--typen a,b] [--runden 3] [--tol 0.002] Schleife JE BAUTEIL (Nutzer 8.
+- `tools/stl_html_viewer.py` [-] stl_html_viewer.py — GENERISCH: ein/mehrere STL als selbst-enthaltene three.js-HTML.
+- `tools/teil_abstand.py` [-] (kein Docstring)
+- `tools/teil_ansichten.py` [seg] teil_ansichten.py - GUTE ANSICHTEN JE BAUTEIL und fehlende Richtungen (Azimut/Hoehe) - Datenluecken-Messung fuer die Online-Foto-Suche.
+- `tools/teil_tor.py` [-] teil_tor.py <objekt> <typ>[,<typ>..] --wolke w.npy --fotos kam.json --bilder dir [--eps 0.002] [--trocken] ANNAHME-TOR fuer Teilfits (Nutzer 8.11.: 'bist du sicher, dass wir konver
+- `tools/teil_varianten_tor.py` [-] teil_varianten_tor.py - BEST-OF-N MIT TEIL-LOKALEM RAUSCHTOR (Option A der Recherche 11.11., Auftrag Hauptsitzung).
+- `tools/teile_abstand.py` [-] teile_abstand.py - Rangfolge der Bauteile nach Abstand zur Wolke (Sweet Spots zuerst, Nutzerregel): je Bauteil von objekt.json einzeln bauen (NUR_BAUTEIL), dann - Median/P90 Abstan
+- `tools/teile_sichtpruefung.py` [seg] teile_sichtpruefung.py - JEDES aktive Bauteil gegen VIELE Fotos pruefen (nicht nur das Nahfoto, an dem man gerade arbeitet).
+- `tools/teile_testdruck.py` [gen] teile_testdruck.py - Generator-STL in DRUCKBARE, STECKBARE Einzelteile zerlegen (Bambu u.a.). Boolesche Schnitte mit manifold3d (wasserdicht), Zapfen/Bohrung mit Spiel. Teile (Schn
+- `tools/teilmodell_sim3.py` [col] teilmodell_sim3.py - Bildserie, die nicht ans Referenznetz anschliesst (Insel), als eigenes SfM-Teilmodell rekonstruieren und per Sim3 ins Referenzsystem legen (Register DK, 2026-1
+- `tools/testdruck_bauen.py` [-] testdruck_bauen.py - Testdruck fuer die Duese: Pruefplatte + echte Martinstor-Ausschnitte (1:87). /media/oem/scan/venv-seg/bin/python -W ignore -I tools/testdruck_bauen.py [modell.
+- `tools/testdruck_mauerwerk.py` [gen] testdruck_mauerwerk.py - GENERISCH: Mauerwerks-Musterplatte eines Objekts im Massstab (Standard H0 1:87) fuer den Bambu P1S.
+- `tools/tile_stl.py` [-] tile_stl.py — zerlegt ein großes STL in bett-taugliche Druckkacheln (Gitter).

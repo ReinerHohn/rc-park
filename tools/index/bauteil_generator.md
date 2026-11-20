@@ -1,0 +1,59 @@
+# Werkzeuge: bauteil_generator (58)
+- `tools/_test_baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
+- `tools/baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
+- `tools/baum_erzeugen.py` [-] baum_erzeugen.py - Wissensbaum fuer KI-Suche (Nutzer 20.11.2026: "Informationen baumartig, damit der Kontext nicht vollballert"). Erzeugt (nie von Hand pflegen, nach neuen Dateien 
+- `tools/bauteil_erkennen.py` [-] bauteil_erkennen.py - Quader-Relief -> Bauteile mit freien Massen (Schritt 2 'Quader -> Bauteile', Nutzer 6.11.). oeffnungen(): Segmentbogen-Oeffnungen (Rechteck bis Kaempfer zk + 
+- `tools/bauteil_kreis.py` [-] bauteil_kreis.py - der Konvergenz-Kreis OHNE Koordinator (Nutzer 9.11.: "Das soll die Pipeline doch bitte selbst machen").
+- `tools/bauteil_overlay.py` [-] bauteil_overlay.py - Overlay EINES Bauteils (Knick-/Umrisskanten) auf kalibrierte Fotos, leicht (kein Z-Puffer gegen Fremdteile; nur fuer freiliegende Teile wie Gauben). bauteil_ov
+- `tools/bauteil_sichtliste.py` [seg] bauteil_sichtliste.py - Sichtliste je Bauteil (Koordinator/Nutzer 2026-11-09, Pflicht nach jedem Bau): jedes aktive Bauteil bekommt das Foto, auf dem es am besten zu sehen ist (gro
+- `tools/bauteile.py` [gen] bauteile.py - gemeinsame Bausteine fuer Generatoren (herausgezogen aus modelle/schwab_v3_gen.py, 15.11.2026, Nutzer: "so gut muss der Rest auch werden").
+- `tools/bauwerk_generator.py` [gen] bauwerk_generator.py — GENERISCHE Bauwerk-Engine als BIBLIOTHEK VON ELEMENT-GENERATOREN.
+- `tools/beobachtungen_sichten.py` [-] beobachtungen_sichten.py - automatische Beobachtungen BEWERTEN, statt sie einzeln von Hand durchzugehen.
+- `tools/dach_aufbauten_dop.py` [seg] dach_aufbauten_dop.py — Gauben- & Kaminpositionen aus dem DOP-LUFTBILD (20 cm, schärfer als Laser) messen und exakt auf die Fassade mappen. DOP = bestes Dach-PLAN. Transform DOP-px
+- `tools/dach_bauen.py` [gen] dach_bauen.py - Baukoerper je Objekt automatisch aus LoD2-Grundriss + gemessenem Dach (dach.json aus tools/dach_vermessen.py).
+- `tools/dach_dop_check.py` [seg] dach_dop_check.py — GUARD: prüft die Modell-Dachaufsicht gegen das DOP-Luftbild. Das DOP zeigt, wie viele zusammenhängende Dächer es WIRKLICH gibt. Fehler, der mich erwischte: ich 
+- `tools/dach_optimieren.py` [seg] dach_optimieren.py — autonome Varianten-Schleife mit dem OVERLAY-IoU als Zielfunktion. Variiert Dach-Sweep (ROOF_SWEEP) + First-Länge/Spitzigkeit (ROOF_INSET), baut Massing+Hybrid 
+- `tools/dach_params_ndom.py` [seg] dach_params_ndom.py — Dach-FORM-Parameter direkt aus dem LASER (nDOM = DOM1-DGM1) messen: First-Höhe, Trauf-Höhe (Dach-Unterkante am Gebäuderand), First-LÄNGE (→ Walm-Inset/Spitzig
+- `tools/dach_vermessen.py` [-] dach_vermessen.py <objekt.json> [--wolke npy] - Dachform je LoD2-Grundflaeche aus Laser DOM1 (allgemein, je Objekt; Nullstart-Schritt 'dach').
+- `tools/erker_finden.py` [seg] erker_finden.py — ERKER robust lokalisieren über die HELMSPITZEN (ragen über den First).
+- `tools/formen_zusammen.py` [-] Formsegmente (helm_fit/gauben_fit/baluster_fit-Ausgaben) an ein Kantengitter anhaengen: formen_zusammen.py GITTER.json OUT.json FORM1.json [FORM2.json ...] Jede Formdatei traegt 's
+- `tools/formfamilie_pruefen.py` [-] formfamilie_pruefen.py - FORMFAMILIEN-SICHTPRUEFUNG JE BAUTEIL (Spec modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md, Nutzerauftrag 11.11.).
+- `tools/formfund_pruefen.py` [-] formfund_pruefen.py - FORMFUND-PRUEFER (Spec modelle/archiv/SPEC_FORMFUND_TOR.md, Nutzerentscheid 11.11.).
+- `tools/freiraum_oeffnungen.py` [-] freiraum_oeffnungen.py - aus den Freiraum-Tiefenkarten (freiraum_fassaden.py) allgemeine Bauanweisungen machen, OHNE Bauteilregel: 1. Jedes erkannte Fassadenelement (fassade_parsin
+- `tools/gauben_check.py` [-] gauben_check.py — prüft die GAUBEN-REGELMÄSSIGKEIT (gleiche x-Abstände) Modell vs. Foto.
+- `tools/gauben_crop.py` [-] gauben_crop.py - Ausschnitt mit Pixelgitter (Originalpixel) um einen Modellpunkt, zum Ablesen von Bildpunkten (Messprotokoll foto_mass). gauben_crop.py KAM.json BILDDIR FOTO.jpg X 
+- `tools/gauben_fit.py` [-] Dachgauben als Formfamilie (Giebelgaube: waagerechter First vom Giebelscheitel bis in die Hauptdachebene, zwei Ortgaenge, Traufe, zwei senkrechte Frontkanten, zwei Kehlen) aus Tief
+- `tools/gauben_tri.py` [-] Gauben Runde 4 (9.11.): Form aus den Fotos an bekannten Lagen. Eingabe = gauben_r3.json (5 Lagen t0/s0 in Dachebenen-Koordinaten + Dachebene aus gauben_ortho.py). Je Gaube und Foto
+- `tools/gauben_unterscheidung.py` [seg] gauben_unterscheidung.py - Foto entscheidet die Gaubenform (Wolke trennt Schlepp/Satteldach nicht). Unterscheidungskanten: Satteldach hat FIRSTLINIE und GIEBELDREIECK (zwei Schraeg
+- `tools/genauigkeit_ampel.py` [-] genauigkeit_ampel.py - 10-cm-Ampel je Flaeche (Nutzerziel 2026-11-05: <= 0,10 m gruen, <= 0,20 m gelb, sonst rot).
+- `tools/generator_dach_variante.py` [-] Dach-Massing-Variante: z-Skalierung der Dachteile um die Traufhoehe (Beleg: Wolke-RANSAC Dachneigung 55 statt 59 Grad, BS57). Aufruf: generator_dach_variante.py AUS_PREFIX s1,s2,..
+- `tools/generator_elemente_schleife.py` [seg] generator_elemente_schleife.py - AUTOMATISCHE ELEMENTSCHLEIFE fuer den Generator (Nutzerwunsch 6.11.: immer Diff bilden, Diff verkleinern, Elemente automatisch hinzufuegen; keine H
+- `tools/generator_kreislauf.py` [-] generator_kreislauf.py - BS55: selbstverbessernder Kreislauf, Teil-Tor per FOTO-DIFF (nicht nur Wolkenabstand). Schritt 1 'bauen': aus teile/g_*.stl (globale Lage) und teile/f_*.st
+- `tools/generator_optimierer.py` [seg] generator_optimierer.py - Kann der Martinstor-Generator noch besser werden? Oder ist er am Boden? (GPU, wiederholbar)
+- `tools/generator_schleife.py` [seg] generator_schleife.py - die ITERATIVE SCHLEIFE (Nutzerwunsch 6.11.): das GENERIERTE Modell immer wieder ueber ALLE kalibrierten Fotos legen (je Foto die eigene Kamera), Abweichung 
+- `tools/generator_teile_einpassen.py` [-] generator_teile_einpassen.py - BS52: alten Generator BAUTEILWEISE in die Wolke einpassen (Nutzerplan 7.11.: 'Generator + Wolke immer genauer'). Je Teil (Name im GLB): Start = globa
+- `tools/generator_treppengiebel.py` [gen] Treppengiebel-Variante des alten Generators: die beiden Giebelscheiben (Prisma, q +-4 m, Spitze 17.0 m) werden durch Treppengiebel ersetzt (8 Stufen je Flanke am Foto 004/075 gezae
+- `tools/giebelhaus_generator.py` [gen] giebelhaus_generator.py — GENERISCHER Generator für GIEBELSTÄNDIGE Häuser mit TREPPENGIEBEL (Staffelgiebel) — der zweite Gebäudetyp neben dem traufständigen bauwerk_generator.py.
+- `tools/handy_zoom_verdacht.py` [col] handy_zoom_verdacht.py - je Handybild f frei schaetzen (Profil ueber f, PnP bei festem f, robuste Kosten) und Bilder mit f deutlich ausserhalb des Hauptclusters als 'gezoomt' kennz
+- `tools/helm_aus_scan.py` [gen] helm_aus_scan.py — Hybrid: Schaft/Tor aus dem Generator-Modell (H0, mm), Helm aus den gemessenen Scan-Breiten.
+- `tools/helm_fit.py` [-] Turmhelme als Formfamilie (n-eckige Pyramide, Achse lotrecht) aus Tiefen-Sweep-Punkten fitten (GPU-Rastersuche), statt Geraden-RANSAC auf einem Kegel. Ablauf: (1) Kandidaten automa
+- `tools/konvergenz_bericht.py` [seg] konvergenz_bericht.py - Konvergenz je Bau: wird das Modell von Lauf zu Lauf besser? (Nutzerziel 9.11.: 'konvergieren gegen ein druckbares Modell, alle Kanten beschrieben')
+- `tools/kreis_elemente.py` [-] kreis_elemente.py - ELEMENT-MESSREGION fuer das Rauschtor (tools/kreis_rauschtor.py, Auftrag 12.11.).
+- `tools/kreis_nachmessen.py` [-] kreis_nachmessen.py - verworfene Kreisrunden mit dem FOTO-TOR nachmessen (Nutzer 10.11. abends: "Kannst du aus den heutigen Laeufen die Daten weiterhin nutzen? Wenn das Foto gewinn
+- `tools/kreis_rauschtor.py` [-] kreis_rauschtor.py - TEIL-LOKALES RAUSCHTOR fuer den Bauteil-Kreis (Analyse 12.11. 00:05: Annahmen seit 11.11. 14:30 im Rauschen, +0,006 bei Rauschen ~0,03; feste Schwelle MIN_GEWI
+- `tools/kreis_regler.py` [-] Kreis-Regler: startet selbsttaetig weitere Bauteil-Kreis-Spuren (tools/bauteil_kreis.py), solange Ressourcen frei sind und unbelegte Bauteile uebrig sind (Nutzer 10.11.: "GPU maxim
+- `tools/laserdach.py` [gen] laserdach.py - Dach eines Gebaeudeteils als HOEHENFELD direkt aus dem DOM1-Laser (1-m-Raster), statt einer angepassten Dachform.
+- `tools/lg_in_db_anhaengen.py` [col] lg_in_db_anhaengen.py <db.db> <lg.npz> <objekt.json> [--max_az 110] [--mitte x y] [--alt_weg_ab 120] - ALIKED+LightGlue-Zuordnungen (tools/lg_match.py) an eine vorhandene COLMAP-Da
+- `tools/log_warnungen.py` [-] log_warnungen.py LOG_ODER_ORDNER ... [--json AUS.json] [--top 30] - alle Warnungen/Fehler aus COLMAP-/Ketten-Logs sammeln, gleiche zusammenfassen, zaehlen. Lehre 15.11.2026 (Nutzer
+- `tools/mesh_former_kit.py` [gen] mesh_former_kit.py — beliebiges 3D-MESH -> steckbares Laser-SPANTEN-Gerüst + 3D-Druck-Daten.
+- `tools/modellgen.py` [gen] modellgen.py — DIRIGENT: Bauwerk-Name → druck/cutbares Hybrid-Modell.
+- `tools/ndom_dach.py` [seg] ndom_dach.py — nDOM = DOM1 − DGM1 = OBJEKTHÖHE über Boden, aus den amtlichen Laserdaten (LGL). Liefert die ECHTE Dachhaut über dem Gebäude-Grundriss: First-/Traufhöhe über Boden (Q
+- `tools/objekt_anlegen.py` [gen] objekt_anlegen.py - neues Bauwerk in den Pflichtrahmen aufnehmen (modelle/METHODE_MASSTABELLE.md), ohne Abschreiben.
+- `tools/objekte_zu_bauteilen.py` [-] Stufe 2: 3D-Objekte (sam_mehrfoto_3d.py) -> Vorschlag fuer Generator-Bauteile 'quader:sam_<id>' (u,n,z-Rahmen der Hauptfassade, Perzentil 2-98 der Punktmenge). Schreibt NUR einen V
+- `tools/oeffnungen_vergleich.py` [-] oeffnungen_vergleich.py - Segmentbogen-Oeffnungen einer Fassade aus VERSCHIEDENEN Quellen (Wolken, Modell-STL) mit mehreren Methoden messen und gegeneinander legen. Widerspruch zwi
+- `tools/online_dach_overlay.py` [-] online_dach_overlay.py - Dach-Kanten des Gitters (z >= --zmin) auf ein kalibriertes Foto legen, nummeriert, neue Kanten (nicht im Vergleichsgitter) farbig. Aufruf: python -I tools/
+- `tools/passform_check.py` [-] passform_check.py — AUTOMATISCHER Lage-Abgleich Modell-Render ↔ Foto (fängt „Element auf falscher Höhe", z.B. Statuen auf Balkonhöhe). Zweck (User): solche Fehler künftig AUTOMATIS
+- `tools/pfad_gegenprobe.py` [-] pfad_gegenprobe.py - JEDEN 3D-Pfad (Rippe, Leiste ...) gegen unabhaengige Fotos pruefen: Pfadpunkte in die Kameras projizieren, Anteil auf stabilen Kanten (Stabilitaetskarte, 3 px 
+- `tools/realitaet_form.py` [-] realitaet_form.py - FORMNOTE (Realitaet Teil 2: Form). Spec modelle/archiv/SPEC_FORMNOTE.md (Nutzerentscheid 11.11.).
+- `tools/stadttor_generator.py` [-] stadttor_generator.py — TYP-GENERATOR 'Stadttor' (Torturm mit Durchfahrt). Parametrisch, config-getrieben → ein Generator für Martinstor UND Schwabentor (und jedes weitere Torturm-
+- `tools/testdruck_dachziegel.py` [gen] testdruck_dachziegel.py - Testplatte: wie sehen Dachdeckungen im Massstab (Standard H0 1:87) auf dem Bambu P1S (0,4-mm-Duese) aus?

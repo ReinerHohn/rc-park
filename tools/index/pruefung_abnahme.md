@@ -1,0 +1,35 @@
+# Werkzeuge: pruefung_abnahme (34)
+- `tools/breite_quellenvergleich.py` [-] breite_quellenvergleich.py - Helmbreite quer (E-W) je Hoehe aus DERSELBEN Silhouetten-Schaetzung (hybrid_abgleich.silhouette_quer) fuer Strassenwolke, Generator-STL, Drohnenwolke g
+- `tools/diff_parallel.py` [-] diff_parallel.py - Foto-Diff-Auswertung (modell_wettbewerb.py) PARALLEL statt nacheinander (7.11., 'Zeit ist Geld'): je (Glaettung, Modus) ein eigener Job ueber tools/job_start.sh 
+- `tools/editor_draht.py` [-] Draht-Editor (lokal, Port 8767): Kantenkandidaten anklicken, loeschen, vereinigen, als Spline bearbeiten/glaetten, neue Kanten ueber Wolkenpunkte ziehen, Abdeckung gegen die abgest
+- `tools/editor_modell.py` [seg] editor_modell.py <objekt> --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8766] Browser-Editor (Nutzerwunsch 8.11.): Modellkanten je Bauteil ueber das Foto, Teil ank
+- `tools/element_vergleich.py` [-] element_vergleich.py - Foto | Modell je ELEMENT automatisch nebeneinander + Oeffnungs-Abgleich (Register CF: "kleine Boegelchen" dreimal uebersehen).
+- `tools/freiraum_audit.py` [-] freiraum_audit.py - Freiraumkette fuer das aktuelle Objekt-STL (von tools/bauen_abnehmen.sh vor dem Pruefstand aufgerufen; Pruefstand-Messer freiraum_offen liest das Ergebnis). obj
+- `tools/freiraum_pruefen.py` [gen] freiraum_pruefen.py - ALLGEMEINE Pruefung "Modell gegen gesehenen Freiraum" (Nutzer 5.11. 13:53: keine Spezialfaelle wie "Seitenbogen = Durchgang").
+- `tools/gitter_pruefblatt.py` [-] Pruefblatt: Drahtgitter auf VIELEN Fotos aus verschiedenen Richtungen pruefen (Nutzerregel: immer in allen Bildern pruefen, nicht nur IMG_6261). (1) Je Foto Stuetzung = Anteil der 
+- `tools/handy_masken_vergleich.py` [-] handy_masken_vergleich.py - Sichtblaetter v1 | v2 mit Blob-Nummern (Register DI) und Auswertung der Handlabels (Sichtprobe, KEIN unabhaengiger Beleg). blatt: python3 tools/handy_ma
+- `tools/hpwmi_pruefen.sh` [sh] hpwmi_pruefen.sh - ist das selbstgebaute hp-wmi-Modul (Board 8C77, Profil performance) noch da? Kein Root noetig. bash tools/hpwmi_pruefen.sh      Exit 0 = alles ok, 1 = ACHTUNG (T
+- `tools/importe_pruefen.py` [-] importe_pruefen.py - findet Importe lokaler Module (tools/*.py), deren Namen es nicht mehr gibt (18.11.2026). Anlass: der Umbau 497af805 hatte 14 Bausteine aus tools/bauteile.py en
+- `tools/kette_insel_pruefen.py` [col] kette_insel_pruefen.py <objekt.json> <sparse-ordner> [--anteil 0.05] [--gruppe 4] [--anker eigen] - Bildketten OHNE Fremdstuetze finden (Insel-Ketten).
+- `tools/ketten_pruefstand.py` [-] ketten_pruefstand.py ZIEL:QUELLE [ZIEL:QUELLE ...] [--ab fototor] [--bis html] [--nur-lesen] [--aus DATEI.md] - die Gesamtkette an MEHREREN Gebaeuden laufen lassen und vergleichen.
+- `tools/knoten_pruefen.py` [-] knoten_pruefen.py - 3D-Kandidatenpunkte (u n z im Fassadenrahmen) in mehrere Kameras projizieren und die Bildausschnitte als Kontaktbogen zeigen (Gegenprobe der Zuordnung). Aufruf:
+- `tools/main_abnahme.sh` [sh] Abnahme auf main nach einem Kreis-Merge/Revert (10.11.): haelt den Merge-Lock der Kreis-Spuren, damit kein Spur-Merge auf halb geschriebene Erzeugnisse/masstabelle.json trifft (a02
+- `tools/martinstor_bauen.sh` [sh] Weiterleitung: Martinstor bauen + abnehmen laeuft jetzt ueber den generischen Weg (Masstabelle in modelle/martinstor/).
+- `tools/messung_pruefen.py` [-] messung_pruefen.py - prueft, ob eine Messung ueber mehrere Fotos UEBERHAUPT GUELTIG ist, bevor ihr Ergebnis benutzt wird.
+- `tools/modell_pruefstand.py` [-] modell_pruefstand.py - ABGELOEST durch tools/pruefstand.py + modelle/martinstor/masstabelle.json (generisch, kein Code je Objekt). Bleibt als Weiterleitung, damit alte Aufrufe/Doku
+- `tools/modell_validator.py` [seg] modell_validator.py — EINHEITLICHER vollautomatischer Validator Realität gegen Modell.
+- `tools/monitor.py` [-] monitor.py - EINE Ansicht: CPU je Kern wie htop, GPU wie nvtop, dazu Takt, Leistung (Watt), Temperatur. sudo python3 tools/monitor.py (mit sudo: Paketleistung in Watt via RAPL; ohn
+- `tools/muster_regression.py` [-] Regression des Kanten-Tors gegen Handmessungen M-6120-001..005 (+006 Pfosten) auf der Laubenrueckwand (Bogen 3). muster_regression.py bauen OUT.json grobe Rechteck-Hypothese (Ebene
+- `tools/overlay_diff.py` [-] overlay_diff.py — AUTOMATISCH jede Abweichung Modell↔Foto finden, MÜLL-ROBUST + mit SCORE (zum Ratschen).
+- `tools/overlay_diff_proof.py` [-] overlay_diff_proof.py — BEWEIS, dass overlay_diff den Diff Modell↔Foto sauber misst.
+- `tools/platz_pruefen.py` [-] Platzpruefung vor Laeufen: freie GB auf Root- und Datenplatte. Exit 0 = beide ueber Grenze, Exit 3 sonst.
+- `tools/profil_diff.py` [-] profil_diff.py - Lage-/Breitenvergleich Modell gegen Punktwolke ENTLANG einer Fassade (Erker, Pfeiler, Oeffnungen), je Hoehenband. Automatische Fassung der Handmessung 6.11. (Nutze
+- `tools/pruefstand.py` [seg] pruefstand.py - GENERISCHER Abnahme-Pruefstand: misst ein STL gegen die Masstabelle eines Objekts.
+- `tools/realitaet_prozent.py` [-] realitaet_prozent.py - EINE Prozentzahl "wie nah ist das Modell an der Realitaet" fuer den aktuellen main-Stand (Nutzerwunsch 10.11.: "nach jedem neuen Ergebnis eine Prozentzahl").
+- `tools/schatten_tor.py` [-] schatten_tor.py - SCHATTIERUNGS-MASS (Hinweis, KEIN Tor): passt die Schattierung des Modells unter dem Licht DIESES Fotos zum Foto? (Recherche 17.11.2026, Schritt 4 / F1; Vorlage t
+- `tools/seiten_audit.py` [-] seiten_audit.py - PFLICHT-SICHTBLATT nach jedem Bau (Mechanik fuer Lehre F5/F6: vollstaendiger Mehrflaechen-Audit, nie nur eine Seite).
+- `tools/stadtmesh_vergleich.py` [-] stadtmesh_vergleich.py - Stadtmesh (Pruefreferenz, Typ 19) und aktuelles Modell-STL aus derselben Richtung rendern (Auftrag G4, Schritt 5).
+- `tools/tor_verschiebung.py` [-] tor_verschiebung.py - NULLKONTROLLE fuer das Foto-Tor ("F1 nachher > vorher"), Rippen-Befund 11.11. (rippen_diag/BERICHT.md).
+- `tools/umriss_tor.py` [-] umriss_tor.py <objekt.json> [FOTO ...] [--stl a.stl,...] [--tol 0.35] [--breite 0.6] [--eintragen] - UMRISS-TOR: Dachlinie des Modells gegen die Himmelskante im Foto.
+- `tools/viewer_vergleich.py` [gen] viewer_vergleich.py - 3D-Vergleichsseite (three.js, eine HTML) aus DENSELBEN Dateien/Rahmen wie die Pruefwerkzeuge (CLAUDE.md Regel 3, Log-Fehler 4).
+- `tools/zier_pruefen.py` [-] zier_pruefen.py - Zierteile EINZELN gegen das Foto pruefen: Silhouetten-IoU im Ausschnitt (2026-11-05).

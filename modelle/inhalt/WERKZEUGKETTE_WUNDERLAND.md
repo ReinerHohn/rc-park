@@ -1,0 +1,31 @@
+# Inhalt von modelle/WERKZEUGKETTE_WUNDERLAND.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Werkzeugkette Miniaturwunderland Freiburg (H0 1:87) - Bestand, Luecken, neue Werkzeuge (17.11.2026)
+- Z.6: ## Kurzfassung
+- Z.19: ## 1. Bestand je Bereich (was haben wir, Reifegrad)
+- Z.21: ### Gebaeude aus Fotos - Reifegrad HOCH (Kette steht, an 4-5 Bauten geprueft)
+- Z.30: ### Druck - Reifegrad MITTEL-HOCH (Werkzeuge da, ein Demodruck Turmschaft)
+- Z.37: ### Gelaende - Reifegrad MITTEL (in 1:160 gebaut und teils gelasert, nie H0-Stadt)
+- Z.44: ### Laser - Reifegrad MITTEL fuer Gelaende, NULL fuer Gebaeude
+- Z.50: ### Farbe, Licht, Strasse, Baeume, Figuren - Reifegrad NULL
+- Z.53: ## 2. Was die Recherche ergab (knapp, je Thema)
+- Z.55: ### Profis
+- Z.60: ### Gelaende aus DGM
+- Z.67: ### Laser im Gebaeudebau
+- Z.73: ### Fotos -> 3D (Stand der Technik, Lizenz)
+- Z.79: ### Farbe
+- Z.83: ### Strasse, Pflaster, Baeume, Figuren, Licht, Module
+- Z.90: ## 3. Luecken (ehrlich, nach Gewicht)
+- Z.103: ## 4. Vorschlag neue Werkzeuge (priorisiert nach Nutzen / Aufwand)
+- Z.108: ### Prioritaet 1 - `tools/modul_platte.py` (Stadtmodul-Grundplatte)
+- Z.115: ### Prioritaet 2 - `tools/hintergrundhaus.py` (schnelles Haus fuer Massen)
+- Z.122: ### Prioritaet 3 - `tools/fassade_decal.py` (Fassadenbild als Abziehbild/Klebedruck)
+- Z.129: ### Prioritaet 4 - `tools/fassade_laser.py` (Fassade als Laser-Schichtsatz)
+- Z.136: ### Prioritaet 5 - `tools/fenster_licht.py` (Licht hinter Fenstern)
+- Z.143: ### Prioritaet 6 - `tools/strasse_pflaster.py` (Pflaster, Baechle, Bordsteine, Gleise)
+- Z.150: ### Prioritaet 7 - `tools/modul_rahmen.py` (Kasten, Spanten, Verbinder)
+- Z.154: ### Prioritaet 8 - `tools/baeume_aus_ndom.py`
+- Z.158: ### Prioritaet 9 - Druckprofile 0,8 mm + AMS-Zonen (`prusa_slice.py`, `druck_zeit.py`, `druck_farben.py` erweitern)
+- Z.162: ### Bewusst NICHT vorgeschlagen
+- Z.168: ## 5. Durchgehender Ablauf: ein Stadtviertel-Modul vom Foto bis zur fertigen Platte
+- Z.186: ## 6. Fehlerliste und Unsicherheiten dieses Berichts
+- Z.196: ## 7. Quellen

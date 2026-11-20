@@ -1,0 +1,19 @@
+# Inhalt von modelle/PIPELINE_H0.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Pipeline: beliebiges Objekt → druckfertiges H0-Modell (1:87)
+- Z.7: ## 1. Der Weg in einem Bild
+- Z.24: ## 2. Werkzeuge (Referenz)
+- Z.40: ### 2.1 `h0_druckfertig.py` — die Prüfkette
+- Z.56: ### 2.2 `scan_zu_koerper.py` — Schichtkörper aus dem Scan
+- Z.61: ### 2.3 `viewer_bauen.py` — 3D-Seite
+- Z.66: ### 2.4 Mass-Optimierung mit GPU (`hypso_gpu.py`, `generator_optimierer.py`, `optimierung_validieren.py`)
+- Z.74: ### 2.5 Foto-Silhouetten-Pruefung mit GPU (`foto_silhouette_gpu.py`, `foto_dachtest_gpu.py`)
+- Z.81: ### 2.6 Abnahme-Pruefstand (`modell_pruefstand.py`, `martinstor_bauen.sh`) – PFLICHT nach jeder Generatoraenderung
+- Z.87: ## 3. Rezepte
+- Z.103: ## 4. Fehler, die gefunden und behoben wurden (nicht wiederholen)
+- Z.115: ## 5. Stand der Objekte
+- Z.129: ## 6. Offen
+- Z.140: ## 7. Hybrid Generator + Bildpunkte (Stand 2026-11-03, Register BW)
+- Z.148: ## 8. Foto-Overlay-Schleife (Analyse durch Synthese, Register BW, 2026-11-03)
+- Z.156: ### 8b. Iterierender Loop `tools/foto_loop.py` (GPU, 2026-11-03)
+- Z.160: ### 8c. Kanten-Schleife (tools/foto_kanten_loop.py)
+- Z.166: #### 8c-Nulltest (2026-11-03, `foto_kanten_loop.py --versatz / --versatz-tuermchen`)

@@ -1,0 +1,56 @@
+# Werkzeuge: sfm_mapper (55)
+- `tools/ansichten_foto_paare.py` [-] ansichten_foto_paare.py - FUER JEDES MODELL: Kantenbild des Modells aus den kalibrierten Kameras NEBEN dem Foto, ueber alle Blickrichtungen UND Hoehenwinkel (von oben, eben, von un
+- `tools/bildsuche_paare.py` [seg] bildsuche_paare.py <bilder-ordner> --aus <paare.txt> [--k 40] [--liste namen.txt] [--pruefen-db <db>]
+- `tools/colmap_db_schema.py` [-] colmap_db_schema.py <db.db> - KOPIE einer COLMAP-Datenbank auf das Schema von pycolmap 4.2.1 (venv-colmap) zurueckfuehren. 18.11.2026 (Kaufhaus gk2h, Stufe seiten_luecken: "No regi
+- `tools/doppelgaenger_paare.py` [seg] doppelgaenger_paare.py <bilder_ordner> <paare.txt> --aus <ergebnis.json> [--groesse 1024]
+- `tools/flexglue_zuordnung.py` [-] flexglue_zuordnung.py --db <sift-db> --bilder <ordner> --aus <ziel-db> [--stufe2] [--max-merkmale 6000] [--paare-max N]
+- `tools/global_mapper_konsens.py` [-] global_mapper_konsens.py --db <db.db> --bilder <ordner> --ziel <arbeitsordner> [--fotos <ordner>] [--loeschen REGEX] [--ohne-clip] [--svc-start] [--lage 0.10] [--rot 2.0] [--label 
+- `tools/global_mapper_lauf.py` [-] global_mapper_lauf.py --db <db> --bilder <ordner> --ziel <ausgabe> --fotos <fotoordner> --label NAME [--protokoll datei.jsonl] [--ohne-kalib] [--kalib-opt "--max_calibration_error 
+- `tools/iphone_sfm.py` [-] iphone_sfm.py <bilderordner> <arbeitsordner> - COLMAP-SfM (pycolmap, SIFT-GPU, exhaustive, Mapper) fuer die iPhone-Fotos; GPU von Anfang an (Nutzerregel).
+- `tools/kamera_abdeckung.py` [-] Kamera-Abdeckung rund um ein Objekt (allgemein, jedes COLMAP-Sparse-Modell).
+- `tools/kamera_ausgleich.py` [seg] kamera_ausgleich.py - BS3d: GEMEINSAMER Kamera-Ausgleich ueber viele Fotos gegen foto_diff (kosten_lr, kleiner = besser). Generisch.
+- `tools/kamera_bruecke.py` [-] kamera_bruecke.py - Bündelkamera (COLMAP-Export im Objektrahmen, z. B. sfm/kam_lot2.json) als Messkamera K-<nr> fuer foto_mass.py / foto_diff.py.
+- `tools/kamera_bruecke_pruefen.py` [col] kamera_bruecke_pruefen.py - TOR je Kamera (generisch, 2026-11-04): Ist die K-Kamera (K-<foto>.json 'kamera') so gut wie das Buendel, aus dem sie stammt?
+- `tools/kamera_export.py` [col] kamera_export.py <sparse_modell> <ausgabe.json> - Kameras eines COLMAP-Modells in eine JSON-Datei (ohne pycolmap im Rechenschritt).
+- `tools/kamera_feinlage.py` [seg] kamera_feinlage.py - BS3b/BS3c: Kamera-Feinlage je Foto ueber foto_diff (kosten_lr, kleiner = besser).
+- `tools/kamera_fit.py` [-] kamera_fit.py — PERSPEKTIVE AUTOMATISCH TREFFEN (Analyse-durch-Synthese).
+- `tools/kamera_gelaende.py` [-] kamera_gelaende.py (bis 16.11.2026 kamera_plausibel.py; der Name traegt jetzt die Grobregel Standort/Brennweite) <objekt.json> <SFM-AUSRICHTUNG.json> [--unter 1.5] [--gruppe 4] - K
+- `tools/kamera_guete_gegenprobe.py` [-] kamera_guete_gegenprobe.py - Sichtprobe der Kameraguete: je Foto SfM-Beobachtung (gruen), Projektion der LOO-Punkte mit gespeicherter Pose (blau) und mit LOO-Pose (rot), Gitter-v12
+- `tools/kamera_guete_lot2.py` [-] kamera_guete_lot2.py - modellUNABHAENGIGE Kameraguete je Foto aus der gemeinsamen SfM (sparse/0 + kam_lot2.json).
+- `tools/kamera_gueterating.py` [-] kamera_gueterating.py - AUTOMATISCH bewerten, ob die Kamera eines Fotos (messprotokoll/K-<foto>.json, 'kamera') fuer Messungen/Textur taugt (Plan M5).
+- `tools/kamera_invarianz_z3.py` [-] kamera_invarianz_z3.py - Z3: Beweis, dass eine Kameraaenderung einen Modellfehler nicht verschluckt. Kopie eines Bauteil-STL (Scratch, Generator unberuehrt) um DX verschoben (synth
+- `tools/kamera_linienfein.py` [-] kamera_linienfein.py - VERSUCH Linien-Feinlage: Pose je Foto (6 DoF, f/k1 fest) gegen die Kantengitter-v12-Segmente (3D) ausgleichen. Kosten: Tukey-robuster Abstand der projizierte
+- `tools/kamera_lod2_nachfuehren.py` [gen] kamera_lod2_nachfuehren.py - GENERISCH fuer jedes Objekt mit LoD2 (2026-11-04): Kamera (K-<foto>.json 'kamera') an den AMTLICHEN LoD2-Kanten nachfuehren und pruefen. Ersetzt Handpi
+- `tools/kamera_plausibel.py` [seg] kamera_plausibel.py [modelle/<objekt> ...] [--beiseite] [--tief=3] - EINE Regel fuer "kann diese Kamera stimmen?", von allen Werkzeugen benutzt, die K-Dateien schreiben.
+- `tools/kamera_profil.py` [-] kamera_profil.py - eigenes Handy EINMAL kalibrieren (Brennweite, Hauptpunkt, Verzeichnung) per ChArUco-Tafel (OpenCV, Apache-2.0), 2026-11-05.
+- `tools/kamera_sfm_guete.py` [-] kamera_sfm_guete.py - Kamera-Guete JE FOTO aus einer COLMAP-SfM (sparse/0): Reprojektionsfehler und Zahl der Beobachtungen.
+- `tools/kamera_unabhaengig.py` [-] kamera_unabhaengig.py - UNABHAENGIGE Kameraprobe (Leave-One-Out-Registrierung, Gegenstueck zum zirkulaeren Wolke-ueber-Foto, BS10). Foto aus dem Buendel nehmen (Beobachtungen loesc
+- `tools/kamera_verfeinern.py` [seg] kamera_verfeinern.py <objekt.json> <fassaden.json> <FOTO> [--gegen FOTO,FOTO,...] [--n 6] [--schreiben] - Kamera eines (nach)registrierten Fotos am MODELL nachziehen.
+- `tools/kameras_am_ziel.py` [-] kameras_am_ziel.py - ALLE kalibrierten Kameras eines Objekts nach Aufloesung am Ziel sortieren (VOR jeder Aufnahmebitte laufen lassen). Aufruf: /media/oem/scan/venv-seg/bin/python 
+- `tools/kameras_aus_buendel.py` [-] kameras_aus_buendel.py - PIPELINE-BRUECKE (2026-11-04): Kameras des Buendelausgleichs (sfm_lod2_buendel.py, an LoD2/DGM1 verankert, ohne Handpicks) als K-<foto>.json 'kamera' schre
+- `tools/kameras_nachtragen.py` [col] kameras_nachtragen.py <objekt.json> <sparse-neu> [--bilder ORDNER] [--ueberschreiben] - nachregistrierte Fotos als Messkameras K-<foto>.json in den MODELLRAHMEN bringen.
+- `tools/llm_urteil_paare.py` [-] llm_urteil_paare.py - BLIND-Paarbilder aus foto_diff-Overlays fuer einen LLM-Plausibilitaetspruefer (7.11., Nutzerwunsch). NICHT der Diff: kosten_lr bleibt das Mass; der Beurteiler
+- `tools/mapper_bewerten.py` [-] mapper_bewerten.py <sparse-ordner> --fotos <fotoordner> [--label NAME] [--sek N] [--befehl "..."] [--protokoll datei.jsonl] Einheitliche Kennzahlen fuer SfM-Varianten (globaler/sch
+- `tools/mapper_gps_vergleich.py` [col] mapper_gps_vergleich.py FOTOORDNER SPARSE_A SPARSE_B ... - SfM-Modelle ohne LoD2 gegen Foto-GPS vergleichen (15.11.): gemeinsame eigene Fotos, robuste 2D-Aehnlichkeit je Modell, GP
+- `tools/masse_konsens.py` [-] masse_konsens.py - Median-Konsens der automatisch abgeleiteten Masse ueber UNABHAENGIGE Nullstart-Laeufe (Register BR/BS).
+- `tools/modell_zerlegen.py` [col] modell_zerlegen.py <sparse-modell> [--aus <ordner>] [--min-punkte 15] [--min-bilder 3]
+- `tools/online_dach_registrieren.py` [-] online_dach_registrieren.py - Webfotos (verschiedene Kameras, EXIF-Brennweite je Bild) ueber den vorhandenen Weg zusatzfotos_registrieren.py registrieren (2026-11-09, Auftrag Dachl
+- `tools/opensfm_run.py` [-] opensfm_run.py — HEBEL 1-ERSATZ (Google-frei): aus geotaggten Fotos (z.B. aus mapillary_rip.py --raw) via OpenSfM eine dichte, GPS-georeferenzierte 3D-Punktwolke rekonstruieren. Op
+- `tools/sfm_ausrichten.py` [col] sfm_ausrichten.py - COLMAP-Netz (alle Fotos gemeinsam) an die AMTLICHEN BODENANKER ausrichten (7 Parameter: Massstab, Drehung, Lage).
+- `tools/sfm_bundle_anker.py` [col] sfm_bundle_anker.py - Buendelausgleich MIT amtlichen Ankern (Register AI): COLMAP-Netz nicht nachtraeglich aehnlich transformieren, sondern Kameras, 3D-Punkte und (unbekannte) Bren
+- `tools/sfm_db_variante.py` [-] sfm_db_variante.py <quelle.db> <ziel.db> [--kamera-je-clip] [--priors behalten|loeschen|exif --fotos <ordner>] [--bildliste <datei> --nur fotos|video|alle] Kopie einer COLMAP-Daten
+- `tools/sfm_dicht.py` [col] sfm_dicht.py - dichte, farbige Punktwolke (COLMAP PatchMatch, CUDA) aus einem Seitennetz, ins Modellsystem gebracht und auf den Turm beschnitten.
+- `tools/sfm_draufsicht.py` [-] sfm_draufsicht.py <sparse/0> <ausgabe.png> [--nah 3] - Draufsicht eines Sparse-Modells zum ANSEHEN (Regel: Zahlen allein gelten nicht). Ebene = Hauptebene durch den Kamerakern (75 
+- `tools/sfm_html_viewer.py` [-] sfm_html_viewer.py - GENERISCH: ausgerichtetes SfM-Netz (Modellsystem, Meter) als selbst-enthaltene three.js-Seite.
+- `tools/sfm_kameras_export.py` [-] sfm_kameras_export.py <sparse/N> <T.npz> <aus.json> - COLMAP-Kameras in den Netzrahmen legen (Aehnlichkeit R,s,t aus iphone_ausrichten.py): je Bild R (Welt->Kamera), t, C (Zentrum,
+- `tools/sfm_lod2_ausrichten.py` [col] sfm_lod2_ausrichten.py - GENERISCH: SfM-Netz OHNE Handpicks an die amtliche Umgebung ausrichten (LoD2-Gebaeude + DGM1-Gelaende).
+- `tools/sfm_lod2_buendel.py` [col] sfm_lod2_buendel.py - GENERISCH: Buendelausgleich eines SfM-Netzes MIT den amtlichen Flaechen (LoD2-Waende/-Daecher aller Gebaeude im Umkreis + DGM1) als Bedingung, ohne Handpicks 
+- `tools/sfm_netz.py` [col] sfm_netz.py - GENERISCH: SfM-Netz je Fassadenseite bauen, bewerten und reparieren (Lehren aus Martinstor, Register AH/AI).
+- `tools/sfm_registrieren.py` [-] sfm_registrieren.py - ein Foto ueber HANDPICKS in ein metrisch ausgerichtetes Netz einhaengen (Register AJ).
+- `tools/sfm_stabil_schnitt.py` [col] sfm_stabil_schnitt.py <sparse_A/0> <sparse_B/0> --ausgabe <ordner> [--lage 0.10] [--rot 2.0] [--liste unstabil.txt] Konsens zweier Laeufe des globalen Mappers (gleiche Eingabe, and
+- `tools/sfm_verzerrung_test.py` [-] sfm_verzerrung_test.py - Ist ein SfM-Netz METRISCH oder projektiv verbogen? (Lehre Register AI, Suednetz Martinstor)
+- `tools/tiefen_kameras.py` [col] tiefen_kameras.py - GENERISCH: Kameras eines COLMAP-Dichte-Arbeitsordners (sfm_dicht.py, entzerrte PINHOLE-Bilder) als JSON exportieren, damit Werkzeuge ohne pycolmap (venv-seg: te
+- `tools/video_sfm.py` [-] video_sfm.py - SfM aus Video-Frames (Drohnenclips) mit MASKE fuer feste Einblendungen (Wasserzeichen) (Register BQ).
+- `tools/wolke_farbmerkmal.py` [-] wolke_farbmerkmal.py - GENERISCH: Lage eines FARBIGEN Fassadenmerkmals (Zifferblatt, Tafel, Relief) aus der dichten Fotowolke.
+- `tools/zusatz_kameras_lot2.py` [col] zusatz_kameras_lot2.py - Posen nachregistrierter Zusatzbilder (zusatzfotos_registrieren.py, sparse_handy/0) in den lot2-Kamerarahmen bringen und an eine vorhandene Kameradatei (For
+- `tools/zusatzfotos_registrieren.py` [col] zusatzfotos_registrieren.py - Zusatzfotos (Handy, feste Linse) gegen ein VORHANDENES SfM-Netz registrieren, OHNE das Netz zu veraendern (2026-11-06).
