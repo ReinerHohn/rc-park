@@ -154,3 +154,14 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   [n] Kontaktbogen angesehen (`zeigen/bruecke_clip_jEQJGdvZ26U.jpg`): das ist ein SCHWENK ueber Nachbarhaeuser der Kaiser-Joseph-Strasse, nicht das Tor - reine Drehung ohne Standlinie,
   daraus kann der Mapper nichts triangulieren. FOLGERUNG: ein Teil der "fremden Seite" ist Strassenkulisse, keine Torseite; Ziel sollte "Tor von allen Seiten gedeckt" sein,
   nicht "alle 2107 Bilder registriert". Pruefauftrag: die 793 Bilder danach einteilen, ob sie das Tor zeigen (Vorpruefung sagt nur "zeigt Objekt" gegen Referenzfotos EINER Seite).
+
+## Nachtrag 20:45 - wo der schrittweise Mapper WIRKLICH die Zeit laesst (perf am laufenden Lauf)
+- KORREKTUR zur Rangliste Punkt 1 ("Loeserfehler = Hauptzeitfresser"): am laufenden Martinstor-Mapper (610 Bilder, noch mit `num_threads 1` gestartet 14:50)
+  dauert JEDER globale Ausgleich 37-39 min (19:10:36->19:47:49, 19:48:29->20:27:36), mit nur 0-7 Loeserfehlern darin. Die Fehler sind Nebensache.
+- perf (15 s, PID des Mappers): 59,7 % `SchurEliminator<2,3,-1>::ChunkOuterProduct`, 29,4 % `BlockRandomAccessSparseMatrix::GetCell`, 2,6 % `EBlockRowOuterProduct`
+  = 92 % Schur-Elimination auf EINEM Kern; GPU 0 % ausgelastet (cuDSS loest nur das kleine Kamerasystem danach). Kosten ~ Summe(Spurlaenge^2) -> lange Videospuren.
+- Folgen: (a) `num_threads -1` (seit heute Standard, `RCPARK_MAPPER_FAEDEN`) wirkt genau hier - die Elimination laeuft je Punktblock parallel; der laufende Lauf hat es noch nicht.
+  (b) Kandidat `--Mapper.ba_global_ignore_redundant_points3D 1` (COLMAP-Schalter, Standard 0): A/B `tools/versuche/mapper_redundant_ab.sh` am Schwabentor (798 Bilder), Ergebnis unten nachtragen.
+  (c) Ceres-Quelle `cuda_sparse_cholesky.cc` Z. 248: nach einem Zerlegungsfehler wird die Analyse-Stufe wiederholt (cuDSS-0.3-Eigenheit) - Kosten je Fehler, aber klein gegen (a).
+- Kettenfehler behoben: `tools/wolke_grundriss_pruefen.py` stapelte 30 Drehungen * alle Punkte auf der GPU -> bei 7,9 Mio. Punkten (Schwabentor) OOM auf 8 GB, Tor "nicht geprueft",
+  Kette brach 20:22 ab (rc 4). Jetzt Stapelgroesse aus der Punktzahl (2e7 Elemente), Ergebnis unveraendert. Kette ab `tore` neu gestartet 20:38.

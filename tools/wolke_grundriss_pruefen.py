@@ -216,8 +216,9 @@ def main():
     res = []; Pt = torch.as_tensor(Qc, dtype=torch.float32, device=dev); ct = torch.as_tensor(ctr, dtype=torch.float32, device=dev)
     for sp in (0, 1):
         P0 = Pt * torch.tensor([-1.0 if sp else 1.0, 1.0], device=dev)
-        for d0 in range(0, 360, 30):                                         # 30er-Stapel haelt VRAM klein
-            degs = np.arange(d0, d0 + 30); t = torch.as_tensor(np.radians(degs), dtype=torch.float32, device=dev)
+        stapel = max(1, min(30, int(2.0e7 // max(1, len(Pt)))))               # ~40 Byte je Punkt und Drehung: 2e7 Elemente = ca. 0,8 GiB (20.11.: 7,9 Mio. Punkte * 30 = OOM auf 8 GB)
+        for d0 in range(0, 360, stapel):
+            degs = np.arange(d0, min(360, d0 + stapel)); t = torch.as_tensor(np.radians(degs), dtype=torch.float32, device=dev)
             c, s_ = torch.cos(t), torch.sin(t)
             X2 = (P0[None, :, 0] * c[:, None] - P0[None, :, 1] * s_[:, None]) + ct[0]
             Y2 = (P0[None, :, 0] * s_[:, None] + P0[None, :, 1] * c[:, None]) + ct[1]
