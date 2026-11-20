@@ -417,3 +417,6 @@ REIHENFOLGE (Vorschlag): erst 38-41 + 43 (stille Fehler, je < 1 h), dann 47 + 45
 - BEIM KETTENENDE PRUEFEN: tor_zerfall (Stuecke?), Konsens fremde_seite-Zahl (konsens_arbeit/fremde_seite.txt), Seiten getrennt (zerlegen + bewerten.py), audit/seiten.jpg + neben_*.jpg ansehen, Realitaets-%.
 - OFFEN: Seiten automatisch VEREINEN aus globalen Stuecken (Klappung zu schwach, s. 08:31); Rueckfall = jede Seite einzeln an LoD2. FlexGlue in der Kette zuschaltbar (RCPARK_FLEXGLUE=1) - Nutzerentscheid, ob Standard (Martinstor +30/+40 % Bilder, +2,5 h).
 - ERLEDIGT diese Nacht: alle 9 Recherchepunkte (Ergebnis in RECHERCHE_VERBESSERUNGEN_2026-11-19.md), modell_zerlegen, gps_seiten_pruefen, Seitenfilter, flexglue_zuordnung, ONNX-Vorrat-Fix.
+
+## UEBERGABE 20.11.2026 12:55
+- Stand und naechste Schritte: `.claude/UEBERGABE.md` (Skill /uebergabe fortsetzen). Vormittag: Wissensbaum Doku/projekt/ (7 Aeste), Push bereinigt, Skill /uebergabe in claude-mds.
