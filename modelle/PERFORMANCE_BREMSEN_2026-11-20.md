@@ -52,3 +52,24 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 4. Vorpruefung mit "letzter Treffer zuerst" (A4).
 5. Zweistufiger Abgleich (A1): groesster Einzelblock, aber Entwicklungsarbeit.
 6. RAM-Kauf.
+
+## Umsetzung 20.11. ab 16:45 (Nutzer: "setz die Punkte 2 bis 4 auch um")
+- Punkt 2a UMGESETZT (`tools/iphone_sfm.py`): der Ausweichweg uebernimmt Konsens-Lauf 1 als globalen Lauf statt neu zu rechnen (Schalter `RCPARK_GLOBAL_NEU=1` = alter Stand).
+  Beleg der Gleichwertigkeit (martinstor-1120): frischer globaler Lauf 1681 Bilder / 249 Tsd. Punkte / 31 Stuecke, Hauptstueck 817; lauf1 1669 Bilder / 276 Tsd. Punkte, Hauptstueck 825.
+  Gespart: 51 min in diesem Lauf (3039 s, mit Stoerlast durch Tests; ungestoert ~22-26 min). Logik in 4 Faellen getestet (frisch / alt / fehlt / Schalter), echter Kettenlauf steht aus.
+- Punkt 2b NOCH NICHT umgesetzt (bewusst): GPS-Tor fiel wie erwartet durch (17 GPS-Fotos, 94 % > 15 m), seit 16:49 laeuft der schrittweise Mapper (1 Faden, 2107 Bilder).
+  Sein Ergebnis liefert den fehlenden Vergleich global gegen schrittweise an einem Objekt mit unbrauchbaren Geotags -> danach Regel festlegen (nicht raten).
+- Punkt 3 UMGESETZT (`lg_match.py`, `zusatzfotos_lightglue.py`, Schalter `RCPARK_LG_MP=0`): sauberer A/B auf GLEICHEN Merkmalen (`tools/versuche/lg_mp_ab2.py`, 24 Fotos, 86 Paare,
+  1280 px, 4096 Punkte): 31,3 -> 24,5 ms/Paar (-22 %), 37 191 -> 37 180 Treffer, 99,2 % identische Zuordnungen, RANSAC-Inlier 23 549 -> 23 833, 1 von 86 Paaren wechselt die >=60-Entscheidung (58 -> 57).
+  Nicht bitgleich. Am echten Stufenlauf (seiten_luecken) noch nicht gemessen.
+- Punkt 4 UMGESETZT (`video_suchen.treffer(zuerst=...)`, `bilder_vorpruefen.py`, Schalter `RCPARK_VORPRUEFEN_ALLE=1`): A/B an 200 Bildern (ohne Zwischenspeicher, ohne Kette):
+  83 -> 68 s (-18 %), Ja 44 / 44, 0 abweichende Entscheidungen. Weniger als geschaetzt (30-50 %): Nicht-Treffer muessen weiter gegen alle 24 Referenzfotos. Zwischenspeicher-Version unveraendert.
+
+## Wo sonst noch AVX2 fehlt (Nutzerfrage 16:50, gemessen per objdump/Laufzeitabfrage)
+- pycolmap-Rad 4.2.1 (Merkmale, Abgleich, PatchMatch, Fusion): HAT AVX2 + FMA (489 Tsd. ymm-, 184 Tsd. FMA-Befehle) - nur unser Eigenbau der COLMAP-Programme nicht.
+- numpy 2.5.4 (beide Umgebungen), torch, OpenCV: waehlen die Befehle zur Laufzeit selbst (numpy meldet AVX2/FMA3 aktiv). Nichts zu holen.
+- PyTorch3D-Eigenbau `_C.so`: 0 AVX - Rechenlast liegt dort auf der GPU, ANNAHME unwichtig.
+- System-Pakete CHOLMOD/METIS/Referenz-BLAS (apt): ohne AVX; BLAS-Tausch gemessen ohne Gewinn.
+- ANDERER Fund gleicher Art: trimesh rechnet Strahlen mit dem langsamen reinen numpy-Verfahren (`trimesh.ray.ray_triangle`), 58 Werkzeuge nutzen Strahlen (pruefstand 15 Stellen, wolke_solid, fehlerkarte,
+  fassade_ortho ...). Mit `embreex` (Rad fuer Python 3.12 vorhanden, Intel Embree Apache-2.0 - Lizenz vor Einsatz in LIZENZ_WERKZEUGE pruefen) nimmt trimesh automatisch Embree.
+  ACHTUNG: Embree rechnet einfach genau -> Ergebnisse nicht bitgleich (am 1.11. wurde float32 fuer Hoehenkarten deshalb verworfen) -> nur mit Regression/Abnahme-A/B. Nicht umgesetzt, nicht gemessen.

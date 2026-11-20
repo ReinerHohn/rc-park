@@ -19,7 +19,7 @@ def main():
     a = ap.parse_args(); dev = "cuda" if torch.cuda.is_available() else "cpu"
     namen = a.namen or sorted(f for f in os.listdir(a.ordner) if f.lower().endswith((".jpg", ".jpeg", ".png")))
     ext = (ALIKED(max_num_keypoints=a.max_kp) if a.extractor == "aliked" else DISK(max_num_keypoints=a.max_kp)).eval().to(dev)
-    matcher = LightGlue(features=a.extractor).eval().to(dev)
+    matcher = LightGlue(features=a.extractor, mp=os.environ.get("RCPARK_LG_MP", "1") != "0").eval().to(dev)   # 20.11.2026 gemischte Genauigkeit: -22 % Zeit, 99,2 % identische Zuordnungen, RANSAC-Inlier +1 % (tools/versuche/lg_mp_ab2.py); RCPARK_LG_MP=0 = alter Stand
     feats = {}; t0 = time.time()
     for n in namen:
         img = load_image(os.path.join(a.ordner, n)); H, W = img.shape[-2:]

@@ -25,7 +25,7 @@ def paare(a):
     dev = "cuda"; Z = a.ziel; V = json.load(open(os.path.join(Z, "vorbereitet.json"))); lg = os.path.join(Z, "lg"); os.makedirs(lg, exist_ok=True)
     refn = json.load(open(os.path.join(lg, "refnamen.json")))        # Stufe refnamen (venv-colmap; pycolmap fehlt in venv-seg)
     pfad = {n: os.path.join(Z, "bilder", n) for n in V["bilder"]}; pfad.update({n: os.path.join(a.ref_bilder, n) for n in refn})
-    namen = sorted(pfad); ext = ALIKED(max_num_keypoints=a.max_kp).eval().to(dev); mt = LightGlue(features="aliked").eval().to(dev)
+    namen = sorted(pfad); ext = ALIKED(max_num_keypoints=a.max_kp).eval().to(dev); mt = LightGlue(features="aliked", mp=os.environ.get("RCPARK_LG_MP", "1") != "0").eval().to(dev)   # 20.11.2026 wie lg_match.py (tools/versuche/lg_mp_ab2.py)
     F = {}; t0 = time.time()
     for n in namen:
         for _v in range(int(os.environ.get("RCPARK_LG_OOM_RETRY", "0")) + 1):   # geteilte GPU: bei VRAM-Knappheit dieses Bild nach Pause nochmal (Standard 0 = wie bisher)

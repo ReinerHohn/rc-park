@@ -112,7 +112,7 @@ def _gps_tor(modell):
     n = re.search(r"mit GPS: (\d+)", o); a_ = re.search(r"Anteil > 15 m (\d+) %", o); m_ = re.search(r"Median ([\d.]+) m", o)
     return dict(n_gps=int(n.group(1)) if n else 0, anteil_ueber_15m=int(a_.group(1)) if a_ else None, median_m=float(m_.group(1)) if m_ else None)
 sys.path.insert(0, _tools); import gpu_buchung as GB; GB.frei()   # Mapper rechnet fast nur auf der CPU (global ~7 min, schrittweise ~40 min) -> GPU-Budget solange freigeben
-_t0 = time.time(); wahl = dict(mapper=MAPPER)
+_t0 = _t_anfang = time.time(); wahl = dict(mapper=MAPPER)
 _fertig = False
 if MAPPER in ("auto", "konsens"):                                         # 19.11.2026 (Nutzer 'Ja, mach es als Standard'): Konsens-Mapper zuerst
     ok_k = _konsens(f"{w}/sparse_konsens"); wahl["konsens_sek"] = round(time.time() - _t0); ku = _konsens_urteil(ok_k); wahl["konsens"] = ku
@@ -129,6 +129,13 @@ if MAPPER in ("auto", "konsens"):                                         # 19.1
 if _fertig: pass
 elif MAPPER == "inkrementell": _inkrementell(f"{w}/sparse"); wahl["gewaehlt"] = "inkrementell"
 else:
+    # 20.11.2026 (Messung martinstor-1120): der Ausweichweg rechnete nach dem Konsens NOCHMAL einen globalen Lauf (51 min) - gleiches Verfahren wie Konsens-Lauf 1
+    # (1681 Bilder / 31 Stuecke, Hauptstueck 817 gegen lauf1 1669 Bilder / Hauptstueck 825; Unterschied = Streuung des nicht deterministischen Mappers).
+    # Liegt lauf1 aus DIESEM Aufruf vor, wird es als globaler Lauf uebernommen. RCPARK_GLOBAL_NEU=1 erzwingt den eigenen Lauf (alter Stand).
+    _l1 = f"{w}/konsens_arbeit/lauf1/0"
+    if os.environ.get("RCPARK_GLOBAL_NEU") != "1" and os.path.isfile(_l1 + "/images.bin") and os.path.getmtime(_l1 + "/images.bin") >= _t_anfang:
+        shutil.rmtree(f"{w}/sparse_global", ignore_errors=True); os.makedirs(f"{w}/sparse_global"); shutil.copytree(_l1, f"{w}/sparse_global/0")
+        wahl["global_aus"] = "konsens_lauf1"; print("Mapper global: Konsens-Lauf 1 uebernommen (kein dritter globaler Lauf)", flush=True); _global = lambda ziel: True
     ok_g = _global(f"{w}/sparse_global"); wahl["global_sek"] = round(time.time() - _t0); tg = _gps_tor(f"{w}/sparse_global/0") if ok_g else dict(n_gps=0, anteil_ueber_15m=None); wahl["tor_global"] = tg
     print("Mapper global:", "ok" if ok_g else "FEHLGESCHLAGEN", wahl["global_sek"], "s, GPS-Tor", tg, flush=True)
     besteht = ok_g and tg["n_gps"] >= 15 and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] <= 15   # ANNAHME Schwelle 15 % (Einzelmodell-Messung 15.11.: gutes Modell 12 % inkl. Ausreisserkameras, verwechselte 16 % und 26 %); Durchfall kostet nur Zeit (Vergleichslauf)

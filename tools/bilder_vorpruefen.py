@@ -65,14 +65,14 @@ def main():
     for q in a.quellen:
         bilder += [q] if os.path.isfile(q) else sorted(p for p in glob.glob(os.path.join(q, "**", "*"), recursive=True) if p.lower().endswith((".jpg", ".jpeg", ".png", ".webp")))
     print(f"{len(R)} Referenzfotos aus {fd} [{woher}], {len(bilder)} Bilder (GPU {VS.DEV})", flush=True)
-    erg = {}; SP = Speicher([r[0] for r in R], a.min_inlier, not a.ohne_cache)
+    erg = {}; SP = Speicher([r[0] for r in R], a.min_inlier, not a.ohne_cache); ZU = None if os.environ.get("RCPARK_VORPRUEFEN_ALLE") == "1" else {}   # 20.11.2026: letzter Treffer zuerst + Abbruch beim ersten Treffer (VS.treffer); RCPARK_VORPRUEFEN_ALLE=1 = alter Stand (bester Wert ueber alle Referenzfotos)
     for p in bilder:
         bid = bild_id(p); alt = SP.hole("bilder", bid)
         if alt is not None: erg[p] = dict(alt); continue
         g = cv2.imread(p, cv2.IMREAD_GRAYSCALE)
         if g is None: erg[p] = dict(inlier=0, foto=None, fehler="nicht lesbar"); continue
         k = min(1.0, 720 / min(g.shape), 1000 / max(g.shape)); g = cv2.resize(g, None, fx=k, fy=k, interpolation=cv2.INTER_AREA) if k < 1 else g
-        n, ref = VS.treffer(g, R, None, s, a.min_inlier); erg[p] = dict(inlier=int(n), foto=ref); SP.setze("bilder", bid, dict(erg[p]))
+        n, ref = VS.treffer(g, R, None, s, a.min_inlier, ZU); erg[p] = dict(inlier=int(n), foto=ref); SP.setze("bilder", bid, dict(erg[p]))
     n_direkt = SP.treffer; print(f"Zwischenspeicher: {n_direkt} von {len(bilder)} Bildern uebernommen, {len(bilder) - n_direkt} neu gerechnet", flush=True)
     # Kette (Lehre Schwabentor 2026-11-14): Drohnenbilder der Turmspitze (vf_004..007) haben 0 Inlier gegen Strassenfotos, ueberlappen aber
     # stark mit den Nachbarbildern vf_000..003 -> nur 1 von 80 Drohnenbildern kam durch. Stetigkeit im Video = Beleg fuer dasselbe Objekt.

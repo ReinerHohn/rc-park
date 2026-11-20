@@ -68,11 +68,17 @@ def sift_ref(pfade, kante=1000):
     return R
 
 
-def treffer(bild, R, bf, s, min_inlier):
-    """bf ungenutzt (Signatur gleich). LightGlue-Zuordnung auf der GPU, RANSAC (Fundamentalmatrix, 3 px) auf der CPU wie vorher."""
+def treffer(bild, R, bf, s, min_inlier, zuerst=None):
+    """bf ungenutzt (Signatur gleich). LightGlue-Zuordnung auf der GPU, RANSAC (Fundamentalmatrix, 3 px) auf der CPU wie vorher.
+    zuerst (20.11.2026, Profil bilder_vorpruefen: 65 % der Zeit = jedes Bild gegen ALLE Referenzfotos): ein dict, das der Aufrufer ueber die Bilder hinweg
+    weiterreicht. Dann wird das Referenzfoto des letzten Treffers zuerst geprueft (Videobilder treffen meist dasselbe Foto), danach die bisher haeufigsten,
+    und beim ERSTEN Treffer >= min_inlier aufgehoert. Das Ja/Nein bleibt gleich (Treffer = irgendein Foto >= Schwelle); 'inlier'/'foto' sind dann der
+    erste ausreichende Beleg, nicht mehr der beste. Ohne zuerst (video_suchen selbst: braucht den besten Wert fuer die Rangfolge) unveraendert."""
     import torch
     P, d = _merkmale(s, bild); best = (0, None)
     if len(P) < 50: return best
+    if zuerst is not None:
+        z = zuerst.setdefault("zahl", {}); l = zuerst.get("letzter"); R = sorted(R, key=lambda r: (r[0] != l, -z.get(r[0], 0)))
     for nm, Q, dq in R:
         with torch.inference_mode():
             m = _LG["m"]({"image0": d, "image1": dq})["matches"][0].cpu().numpy()
@@ -80,6 +86,7 @@ def treffer(bild, R, bf, s, min_inlier):
         F, msk = cv2.findFundamentalMat(P[m[:, 0]], Q[m[:, 1]], cv2.FM_RANSAC, 3.0, 0.999)
         n = int(msk.sum()) if msk is not None else 0
         if n > best[0]: best = (n, nm)
+        if zuerst is not None and n >= min_inlier: zuerst["letzter"] = nm; z[nm] = z.get(nm, 0) + 1; return best
     return best
 
 
