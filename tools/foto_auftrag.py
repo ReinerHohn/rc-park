@@ -12,6 +12,8 @@ Je Bedarf: alle Messkameras (K-*.json), die den Bereich sehen -> bestes vorhande
   Ausschnitt des besten Fotos mit rot markiertem Zielbereich ("so, aber schaerfer/naeher"). Bereiche ganz ohne Foto: bestes Fremdfoto als Vorbild, falls eines da ist.
 Ausgabe: <aus.html> (eine Seite mit Karte und Karten je Auftrag, Bilder eingebettet) und <aus>.json. Die Seite ist zum Mitnehmen aufs Handy gedacht.
 Grenzen: kennt keine Strassen/Zaeune - Standorte sind Orte, an denen schon einmal fotografiert wurde, oder eine Richtung; Verdeckung nur ueber vorhandene Fotos.
+Weitere Optionen: --min_m2 8, --mit-uneinig. Fotowunschliste ueblich: modelle/<objekt>/fotowuensche.json. Stadtplan: OpenStreetMap-Kacheln (Netz noetig, sonst ohne).
+Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/foto_auftrag.py ... (oder `tools/py seg tools/foto_auftrag.py ...`; ohne 'seg' waehlt tools/py ~/.venvs/rcpark, dort fehlt cv2).
 """
 import sys, os, json, glob, argparse, base64, math, numpy as np, cv2
 from scipy import ndimage as ndi

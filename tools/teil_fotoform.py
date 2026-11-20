@@ -14,6 +14,9 @@ Wangen nicht; Fehlteile kommen nur aus dem Gitter. Hier dagegen direkt am Foto, 
 
 Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/teil_fotoform.py <objekt> [--teile_dir D] [--fotos 6120,6161] [--aus bericht.json] [--bilder]
 Ohne --teile_dir werden die Teile mit dem Generator (BAUTEILE_AUS) in einen Zeitordner exportiert.
+Oder `tools/py tools/teil_fotoform.py ...` (torch/cv2/trimesh -> venv-seg). Weitere Optionen: --nur <teile>, --stl, --schwelle 0.4, --bilder_dir, --wolke.
+Ausgaben: --aus <bericht.json> (Praezision/Recall/F1 je Teil und Foto), mit --bilder Ausschnitte nach modelle/<objekt>/audit/teil_fotoform/.
+Belegt die gemeinsame GPU-Schlange (gpu_slot). Exit 0 = gelaufen (Bericht, kein Urteil; das Tor ist der Vergleich vorher/nachher).
 """
 import sys, os, json, glob, argparse, tempfile, subprocess, time, numpy as np, cv2, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

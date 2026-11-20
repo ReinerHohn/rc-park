@@ -21,6 +21,8 @@ Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/konvergenz_bericht.py <obje
   (Kaufhaus: H0-STL * 0,087 = lot2-Rahmen, wie der Viewer). --trocken: nichts anhaengen.
 Rueckschritt = eine Kennzahl faellt um mehr als --rausch (Standard 0,01) gegen die letzte Zeile (Recall/Praezision je Band mit >= 200 Punkten,
 GRUEN-Anteil, Pruefstand). Exit 3, Grund in der Zeile ('rueckschritt').
+Pflicht: --stl und --gitter (Kantengitter, npy). Weitere: --teile_sicht, --tol 0.10, --winkel 25, --min_kante 0.035, --baender, --rausch, --etikett.
+Oder `tools/py tools/konvergenz_bericht.py ...` (torch/trimesh -> venv-seg). Exit: 0 = kein Rueckschritt, 1 = Aufruf falsch, 3 = Rueckschritt.
 """
 import sys, os, json, time, subprocess
 import numpy as np

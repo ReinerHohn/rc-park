@@ -11,6 +11,9 @@ Gesucht: Aehnlichkeit X_sfm = s * R @ X_modell + t (7 Parameter), Modellsystem =
 Quellen-Blindheit: LoD2 kennt keine Aufbauten/Erker/Arkadentiefe -> Punkte dort sind Ausreisser (Trimmung), nicht Fehler der Ausrichtung.
 Schreibt dasselbe Format wie sfm_ausrichten.py: messprotokoll/SFM-AUSRICHTUNG-<name>.json, sfm/sparse_modell_<name>, sfm/punkte_modell_<name>.npy.
   /media/oem/scan/venv-colmap/bin/python -I tools/sfm_lod2_ausrichten.py modelle/<objekt>/objekt.json --sparse <pfad> --name <name> [--schreiben] [--radius 80]
+Weitere Argumente: --dicht <ply> (Punkte aus dichter Wolke), --kameras <json> (ohne pycolmap), --loesung K (K-te unterscheidbare Loesung,
+  Korrekturkreislauf der Gesamtkette), --fotos <ordner> (GPS-Startmassstab), --kamerahoehe H0 SIGMA. Oder `tools/py tools/sfm_lod2_ausrichten.py ...`.
+Exit: 0 = ausgerichtet, 5 = Loesung K gibt es nicht (alle probiert; mit --schreiben wird Loesung 0 zurueckgeschrieben).
 """
 import sys, os, json, glob, math, argparse, numpy as np
 from scipy.optimize import least_squares

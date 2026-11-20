@@ -4,6 +4,8 @@
 Pflichtbild nach jedem Bau (CLAUDE.md: "Teil neben Referenzfoto ansehen"). Kamera = messprotokoll/K-<FOTO>.json (k1 wird im Foto entzerrt), STL im Rahmen
 (zentrierung 'achse', 1:87). --box = Bildausschnitt in Originalpixeln. Entstanden 15.11.2026 (Nachbarhaus Schwabentor), nutzt den GPU-Renderkern.
   /media/oem/scan/venv-seg/bin/python -I tools/modell_neben_foto.py modelle/schwab_nachbar/objekt.json eigen__IMG_20261106_113033 /tmp/x.jpg --box 600 500 2100 3400
+Ausgabe: AUS.jpg (links Foto, rechts Render; Standard-STL modelle/stl/<objektordner>_1-87.stl). Braucht messprotokoll/K-<FOTO>.json
+(tools/kameras_aus_buendel.py). Automatisch je objekt.json "neben_fotos" -> audit/neben_<foto>.jpg. Umgebung: cv2/trimesh -> venv-seg (`tools/py ...`).
 """
 import sys, os, json, glob, cv2, numpy as np, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

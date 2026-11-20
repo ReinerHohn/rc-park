@@ -14,6 +14,8 @@ Rueckgabe: 0 = passt ODER nicht geprueft (unter 10 GPS-Fotos; Hinweis), 3 = Lage
 17.11.2026 (Durchsicht): "zu wenig GPS" war am rc nicht von "passt" zu unterscheiden. Der rc bleibt 0 (sonst koennte kein Objekt ohne GPS-Fotos - Commons, Video - je die Lage-Tore
 der Kette bestehen), aber: Ausgabezeile "NICHT GEPRUEFT (GPS-Tor)" und in lage_gps.json `geprueft: false`, `ergebnis: "nicht geprueft: ..."`; bei einem Urteil `geprueft: true`.
 Wer den Lagebeleg braucht, liest `geprueft` - rc 0 allein ist KEIN unabhaengiger Beleg der Lage.
+Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/lage_gps_pruefen.py modelle/<objekt>/objekt.json modelle/<objekt>/messprotokoll/SFM-AUSRICHTUNG-<name>.json
+        [--fotos DIR] [--lage modul.py:funktion] [--nah 100] [--max_abstand 15] [--max_dreh 15] [--max_skala 0.15]   (oder `tools/py tools/lage_gps_pruefen.py ...`)
 """
 import math, sys, os, json, glob, argparse, importlib.util
 import numpy as np

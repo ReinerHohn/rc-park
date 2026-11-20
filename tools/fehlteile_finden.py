@@ -14,6 +14,8 @@ GPU (2026-11-10): Flaechenstichprobe, Z-Puffer, Min-/Max-Filter (erode/dilate/cl
 Suche/Gewichtung/Gather laufen auf der GPU. Bewusst CPU (cv2): imread, GaussianBlur(uint8), Canny (Hysterese, bit-genau noetig), imwrite, addWeighted.
 Zellschleifen sind vektorisiert (reshape-Summen); das Overlay wird je Zelle gebaut statt als 12-MP-float64-Heatmap. Normalen wurden nie weiterverwendet (nur render() fuer Fremdaufrufer).
 Zeiten je Abschnitt und VRAM: FEHLTEILE_PROF=1. VRAM-Spitze (12-MP-Foto, Messung 2026-11-10): torch.max_memory_allocated ~800 MiB, reserviert ~0,9-1,0 GiB, nvidia-smi je Prozess ~1000 MiB inkl. CUDA-Kontext (Ziel < 1500 MiB).
+Umgebung: torch/cv2/trimesh -> venv-seg (s.o.) oder `tools/py tools/fehlteile_finden.py ...`. RENDER_CPU=1 erzwingt CPU.
+Exit 0 = gelaufen (Treffer sind Hinweise, kein Urteil); keine Kamera fuer das Foto -> Abbruch mit Text.
 """
 import sys, os, json, glob, math, time, numpy as np, cv2, trimesh
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")

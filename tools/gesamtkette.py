@@ -22,6 +22,9 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
+Umgebung: venv-seg (s.o.) oder `tools/py tools/gesamtkette.py ...`; Teilschritte mit pycolmap ruft die Kette selbst mit venv-colmap.
+Exit: 0 = Kette durchgelaufen, 2 = Datenplatte fehlt / modelle/<ziel>/objekt.json fehlt, 3 = keine Lage besteht alle Tore oder Platz zu knapp,
+      4 = Stufe gescheitert (Fotos sammeln, SfM, Tor/Ausrichtung abgestuerzt) - Grund steht im Bericht (abbruch).
 """
 import sys, os, re, json, glob, shutil, subprocess, time, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

@@ -8,7 +8,10 @@ projiziert. Ausgabe je Ziel: DIR/epi_<name>_<K-B>.jpg mit der Linie, Tiefenmarke
 je 1 m) und Gitter; mit --fenster nur dieser Bildausschnitt (Originalpixel, Gitter in Originalkoordinaten).
 Der gesuchte Objektpunkt liegt IRGENDWO auf der Linie; wo die Kante die Linie schneidet, ist der Pick fuer foto_mass --tri.
 Kameramodell wie foto_mass.py (SIMPLE_RADIAL: u = f*x*(1+k1*r^2)+cx, rvec/t Welt->Kamera). Reine Geometrie, keine GPU noetig.
-Hinweis: Nur Schnitt Strahl x Bild; Verdeckung und Mehrdeutigkeit (Linie laeuft laengs der Kante) prueft der Mensch."""
+Hinweis: Nur Schnitt Strahl x Bild; Verdeckung und Mehrdeutigkeit (Linie laeuft laengs der Kante) prueft der Mensch.
+Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/epilinie.py ... (oder `tools/py tools/epilinie.py ...`); Standard --aus = aktueller Ordner, --name pick.
+Exit 0 = Bilder geschrieben; ohne genug Argumente Hilfe + Exit 1, ohne Zielkamera Abbruch mit Text.
+"""
 import sys, os, json, glob
 import numpy as np, cv2
 

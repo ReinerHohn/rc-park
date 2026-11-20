@@ -13,6 +13,9 @@ scharf. KERNMETHODE: Form aus Fotokanten. Ablauf:
      Putz = Putzniveau. Stellen ohne Fotodaten (verdeckt) = Scan-Relief.
 aus.npz hat das Format der Relief-Einsaetze (px 2 cm, Maske 'fein' = alles) und wird wie ein Feineinsatz vor das grobe Relief gesetzt
 (Generator: relief_koerper(aus, rand_auslauf=False), grobes Relief dort tief_felder). aus.jpg ANSEHEN. Fugentiefe und Bosse sind ANNAHME, die Fugenlage ist echt.
+Weitere Optionen: --ohne u0 u1 z0 z1 (mehrfach), --tor 0.12, --schwelle 2.4, --foto/--objekt/--stl/--streng/--gegenfoto (Feld direkt aus Fotos).
+Ausgaben: <aus.npz> + <aus>.jpg (Fassadenbild | Steinbild). Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/steine_aus_foto.py ... (oder `tools/py seg ...`; ohne 'seg' waehlt tools/py ~/.venvs/rcpark, dort fehlt cv2).
+Exit: 0 = geschrieben, 2 = kaum Stein mit Fotodaten, 3 = kein vertrauenswuerdiges Foto / --streng ohne Ergebnis, 5 = Quader-Tor: kein Fugenraster.
 """
 import sys, os, json, argparse, numpy as np, cv2
 from scipy import ndimage as ndi

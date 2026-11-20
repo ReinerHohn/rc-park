@@ -1,5 +1,9 @@
 """3D-Viewer: Wolke (Fotofarben) + Kantenpunkte + Drahtgitter, Ebenen schaltbar, eigener Canvas-Renderer (kein WebGL noetig).
-Aufruf: viewer_kanten_bauen.py OUT.html [--seg SEGMENTE.json] [--kp KANTENPUNKTE.npy] [--n 120000] [--koerper KOERPER.stl] [--objekt NAME] [--fotos KAM.json --bilder DIR --n_fotos 90] (passendes Foto je Blickrichtung) (Formkanten > 25 Grad + schattierte Flaeche; Front = Fassade von aussen)"""
+Aufruf: viewer_kanten_bauen.py OUT.html [--seg SEGMENTE.json] [--kp KANTENPUNKTE.npy] [--n 120000] [--koerper KOERPER.stl] [--objekt NAME] [--fotos KAM.json --bilder DIR --n_fotos 90] (passendes Foto je Blickrichtung) (Formkanten > 25 Grad + schattierte Flaeche; Front = Fassade von aussen)
+Umgebung: cv2/trimesh -> /media/oem/scan/venv-seg/bin/python -I tools/viewer_kanten_bauen.py OUT.html ... (oder `tools/py ...`).
+Achtung: Standard-Daten (Wolke, Kantenpunkte, Segmente) sind fest auf Kaufhaus (rc-park_daten/kaufhaus_alle, rc-park_null/wolke_gemeinsam/lot2).
+Ausgabe: OUT.html (eine Datei). Ohne Argument: Hilfe + Exit 1.
+"""
 import sys, json, base64, numpy as np
 if len(sys.argv) < 2 or sys.argv[1].startswith("-"): sys.exit(__doc__)
 def opt(n, d, t=str): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.argv else d

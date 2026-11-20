@@ -3,7 +3,9 @@
 tools/job_start.sh mit JOB_GPU_MB (Standard 2500) - der Job-Starter laesst so viele parallel laufen, wie das VRAM-Budget (7000 MiB) erlaubt.
   python3 tools/diff_parallel.py start NAME --objekt modelle/kaufhaus_null5/objekt.json --basis B:pfad.stl --kandidat X:pfad.stl [--kandidat ...] --liste 000,004,.. [--g 0.18,0.05] [--modi global,region --box x0,y0,z0,x1,y1,z1]
   python3 tools/diff_parallel.py tabelle NAME            # Mittel/Median je Kandidat, besser/schlechter je Konfiguration (wartet nicht)
-Ausgabe: /media/oem/scan/rc-park_null/diffpar/NAME/<modus>_<g>/ (ergebnis.json, log)."""
+Ausgabe: /media/oem/scan/rc-park_null/diffpar/NAME/<modus>_<g>/ (ergebnis.json, log).
+Weitere Optionen: --g 0.18,0.05 (Glaettungen), --gpu-mb 2500, --masken DIR. Umgebung: python3 genuegt (Jobs laufen mit venv-seg).
+"""
 import sys, os, json, argparse, subprocess, shutil, glob
 R = "/media/oem/scan/rc-park_null"; REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); PY = "/media/oem/scan/venv-seg/bin/python"
 ap = argparse.ArgumentParser(); ap.add_argument("modus"); ap.add_argument("name"); ap.add_argument("--objekt", default="modelle/kaufhaus_null5/objekt.json"); ap.add_argument("--basis")

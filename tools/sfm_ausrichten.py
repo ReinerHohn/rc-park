@@ -12,6 +12,9 @@ Tuermchen, Kranz, Traufe) aus >= 2 Fotos TRIANGULIERT: Hoehen in Metern mit Sigm
 Pruefungen (keine Zwangsbedingungen): Kamerahoehen der Strassenfotos (~1,7 m), DOM1-Gipfel 54,8 m, Grundrissbreite der Turmpunkte.
   /media/oem/scan/venv-colmap/bin/python -I tools/sfm_ausrichten.py modelle/<objekt>/objekt.json [--sparse <pfad>] [--schreiben]
 Schreibt messprotokoll/SFM-AUSRICHTUNG.json (Transformation, Residuen, Kameras, triangulierte Hoehen) und sfm/sparse_modell/.
+Weitere Optionen: --name <seite> (-> SFM-AUSRICHTUNG-<name>.json, sfm/sparse_modell_<name>), --fotos ..., --kamerahoehe H0 SIGMA, --luftbilder ...,
+  --wand nord|sued|ost|west [--wand-z 12 26]. Oder `tools/py tools/sfm_ausrichten.py ...` (pycolmap -> venv-colmap). Braucht gepickte LoD2-Eckkanten;
+  ohne Picks (neues Objekt) tools/sfm_lod2_ausrichten.py. Exit 0 = ausgerichtet; < 4 Bodenanker oder kein Start konvergiert -> Abbruch mit Text.
 """
 import sys, os, json, glob, math, argparse, numpy as np, cv2
 from scipy.optimize import least_squares

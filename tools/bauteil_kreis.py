@@ -31,6 +31,8 @@ Aufruf:
 Konfiguration aus objekt.json "kreis" (alles optional): {"stl": ..., "skala": 0.087, "gitter": ..., "wolke": ..., "tabu": [...]}
 Grenzen (ehrlich): Wolkenbeleg ist noch kein bewiesenes Gate (Hinweis-Kennzahl, L22); Bauteile ohne Wolkendaten (Rueckseiten, Dach > Wolke)
 waehlt der Kreis nie. Teile-Sichtpruefung fliesst ein, sobald ihre Ausgabe 'gate_bewiesen' traegt.
+Umgebung: python3 genuegt (Steuerung; Messung/Bau laufen als Unterprozesse mit eigener Umgebung), alternativ `tools/py tools/bauteil_kreis.py ...`.
+Exit: 0 = Lauf beendet, 1 = Aufruf ohne Objekt (Hilfe), 4 = main-Abnahme rot (kein Kreis); Abbrueche mit Text (Patch passt nicht, --ziel/--beob unbekannt).
 """
 import glob, sys, os, json, time, subprocess, shutil, re
 sys.stdout.reconfigure(line_buffering=True)   # systemd-Log sofort lesbar

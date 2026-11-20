@@ -9,6 +9,8 @@ Unbekannte: Drehung (3), Lage (3), Brennweite (1; Hauptpunkt = Bildmitte, keine 
 dann gewichtete kleinste Quadrate (scipy). Ausgabe: K-<foto>.json um "kamera" ergaenzt (R, t, f, Standort, Hoehe ueber Gelaende, Residuen).
 Plausibilitaet: Strassenfotos haben Kamerahoehe 1,2-2,5 m; RMS-Residuum < ~0,5 % der Bildhoehe.
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/foto_kalibrieren.py modelle/<objekt>/objekt.json <foto-nr>
+Optionen (nur diese, sonst Abbruch): --silhouette, --sil-gewicht <w>, --stl <pfad>. Oder `tools/py tools/foto_kalibrieren.py ...` (cv2 -> venv-seg).
+Exit 0 = Kamera geschrieben, 3 = keine Picks mit Anker oder Loesung UNPLAUSIBEL (tools/kamera_plausibel.py; dann NICHT geschrieben).
 """
 import sys, os, json, glob, math, numpy as np, cv2, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

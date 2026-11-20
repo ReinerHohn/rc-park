@@ -21,6 +21,8 @@ Verdeckung (Baeume, Leitungen) erzeugt Scheintreffer -> ROI-Blatt ansehen; Treff
 DAS TOR (gut/schlecht) ist seit 17.11.2026 tools/foto_tor_bezug.py: Bezugsstand je Foto, gekappte symmetrische Chamfer-Distanz bei festem dmed, Sitz-Tor, Mittel ueber Fotos
   (Nachweis tools/test_foto_tor_bezug.py: deutliche Faelle 22/24, 0 falsche Richtung, 2-5 cm 'gleich'). Es holt die Rohmasken hier ueber _RUECK = {"nur_masken": True, "dmed_fix": ...}.
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/foto_diff.py modelle/<objekt>/objekt.json <foto> [--tol 0.35] [--laenge 0.8] [--top 10] [--streng]
+Oder `tools/py tools/foto_diff.py ...` (torch/cv2/trimesh -> venv-seg). Weitere Optionen: --stl <pfad>, --glaettung 0.18, --eintragen, --region-box.
+Braucht messprotokoll/K-<foto>.json (tools/kameras_aus_buendel.py).
 """
 import sys, os, json, glob, numpy as np, cv2, trimesh, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

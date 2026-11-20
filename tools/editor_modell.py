@@ -4,7 +4,11 @@ Browser-Editor (Nutzerwunsch 8.11.): Modellkanten je Bauteil ueber das Foto, Tei
 'Kanten-Snap' sucht automatisch die beste Lage an den Fotokanten (Canny + Distanztransformation, +-0,8 m), 'Speichern' schreibt die Verschiebung in die Parameter
 von objekt.json (Sicherung objekt.json.edit_bak, werte_quellen Regel 3b). Eigener Server (127.0.0.1), unabhaengig vom Messserver.
 Grenzen (MVP): nur Verschiebung (kein Skalieren); Teile werden einzeln vom Generator gebaut (Bau schlaegt bei manchen fehl -> in der Liste markiert);
-nach dem Speichern ist das Gesamt-STL NICHT neu gebaut (tools/baukasten_gen.py), nur die Kanten des gespeicherten Teils werden neu geladen."""
+nach dem Speichern ist das Gesamt-STL NICHT neu gebaut (tools/baukasten_gen.py), nur die Kanten des gespeicherten Teils werden neu geladen.
+Weitere Option: --wolke <npy> (Standard /media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2_crop.npy). Seite: http://127.0.0.1:8766 (--port).
+Umgebung: torch/kornia/cv2/trimesh -> /media/oem/scan/venv-seg/bin/python -I tools/editor_modell.py ... (oder `tools/py tools/editor_modell.py ...`);
+Teilbau ueber ~/.venvs/rcpark + tools/baukasten_gen.py (startet das Werkzeug selbst). Laeuft als Server bis zum Abbruch (Strg-C).
+"""
 import sys, os, json, argparse, subprocess, shutil, datetime, threading, urllib.parse
 import numpy as np, cv2, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I entfernt das Skriptverzeichnis; kontur_mittel.py liegt neben diesem Skript

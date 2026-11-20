@@ -13,6 +13,9 @@ Warum ein eigenes Werkzeug statt 'COLMAP ueber alles':
   /media/oem/scan/venv-colmap/bin/python -I tools/sfm_netz.py modelle/<objekt>/objekt.json <seite> [--fotos 001 002 ...]
         [--reparieren] [--maxpx 2000] [--fern-faktor 3.0]
 Danach: tools/sfm_ausrichten.py ... --sparse modelle/<objekt>/sfm/sparse_<seite>/0
+Weitere Optionen: --matcher sift|lightglue|hybrid, --kamera-modell, --kamera-gruppen, --cpu, --ba-gpu, --nur-merkmale, --db-von, --tag <suffix>.
+Ausgaben unter modelle/<objekt>/sfm/: db_<seite>.db, sparse_<seite>/<n>/, netz_<seite>.json (mit --tag je Versuch eigener Suffix).
+Umgebung: pycolmap -> venv-colmap (s.o.; `tools/py tools/sfm_netz.py ...` waehlt sie ebenfalls). Ohne Fotoliste Abbruch mit Text.
 """
 import sys, os, json, time, glob, sqlite3, argparse, shutil, numpy as np
 from PIL import Image, ExifTags

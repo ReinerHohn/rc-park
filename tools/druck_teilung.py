@@ -16,7 +16,12 @@ Ablauf (alles automatisch, Parameter in objekt.json 'druck_teilung', sonst Stand
      vereinigt, dessen Schnitt dann 'aufgehoben' ist). Am fertigen Teil werden die Stuetzen eingebaut; teilung.json je Teil 'luft' (Inseln vorher, gefuellt, Schraegen,
      Stuetzvolumen, verbleibende Inseln, stuetzen_noetig). --schicht_mm = Schichthoehe des Druckers (MK4S 0,8-Duese: 0.4); --ohne_luft = altes Verhalten.
 Ausgabe: modelle/stl/<objekt>_teile/teil_NN.stl (mm, Drucklage, auf z=0), lage/teil_NN.stl (mm, Originallage fuer Overlay/Regel 9b), stifte.stl, teilung.json
-(je Teil Lage, Bettmass, Ueberhang m2/Anteil, Schnitte, Stifte). Die Pruefung 'Ueberhang je Teil' liest teilung.json (pruefstand druck_teile_ueberhang)."""
+(je Teil Lage, Bettmass, Ueberhang m2/Anteil, Schnitte, Stifte). Die Pruefung 'Ueberhang je Teil' liest teilung.json (pruefstand druck_teile_ueberhang).
+Weitere Optionen: --bett_mm, --toleranz_mm, --schicht_mm, --luft_min_teil_mm, --ohne_luft, --aus <ordner>.
+Umgebung: manifold3d + trimesh + cv2 + torch -> /media/oem/scan/venv-seg/bin/python -W ignore -I tools/druck_teilung.py <objekt> (so rufen bauen_abnehmen.sh
+und bausatz.sh; oder `tools/py tools/druck_teilung.py ...`; NICHT ~/.venvs/rcpark, dort fehlt cv2).
+Exit 0 = geteilt; STL nicht wasserdicht -> Abbruch mit Text (Exit 1).
+"""
 import argparse, glob, json, math, os, sys
 import numpy as np, trimesh, cv2
 from manifold3d import Manifold as M, Mesh as MM

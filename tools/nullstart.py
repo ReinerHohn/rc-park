@@ -16,6 +16,9 @@ Kette (jeder Schritt mit Laufzeit und Rueckgabewert in <ziel>/nullstart_bericht.
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/nullstart.py modelle/<objekt>/objekt.json [--ziel <objekt>_null] [--ab <schritt>] [--ohne-sued]
 Ehrlichkeit: masse.json ist Eingabe. Werte darin, die frueher von Hand aus Werkzeugausgaben uebertragen wurden (Historie 'grund'), werden
 NICHT neu abgeleitet - der Bericht listet sie (Stufe C). Automatisch neu entstehen Netze, Wolke, Profile, Baender, Pruefzeilen, Modell (Stufen A+B).
+Weitere Optionen u. a.: --stufe, --mapper, --videos/--nur-video, --streng, --ohne-stufen. Steuerung in venv-seg; Teilschritte laufen selbst mit
+venv-colmap (SfM) bzw. ~/.venvs/rcpark (Generator). Grosse Zielordner nur auf der Datenplatte (echter Ordner auf der Root-Platte -> Abbruch).
+Exit 0 = Kette durch; fehlende Eingabe oder gescheiterter Schritt -> Abbruch mit Text (Exit 1), Stand in nullstart_bericht.json.
 """
 import sys, os, json, glob, shutil, subprocess, time, argparse, resource
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

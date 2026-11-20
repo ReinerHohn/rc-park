@@ -5,6 +5,8 @@
       --stl modelle/stl/schwabentor_1-87.stl --fotos daten/schwabentor/fotos [--hoehe 40 --hoehe-quelle "Wikipedia ..."]
 Legt an: modelle/<objekt>/objekt.json, masstabelle.json (Startzeilen: Gesamthoehe aus Dokument, wasserdicht, ein Koerper; Beobachtung "Quellen sichten"),
 einen Generator-Rumpf mit beleg()-Register (falls die Generatordatei fehlt) und druckt den Pflichtablauf.
+Weitere Optionen: --ort, --fotos-quelle DIR (leeren Fotoordner dorthin verlinken), --generator-erneuern (nur Generator-Rumpf neu, wenn unberuehrt).
+Vorhandene objekt.json/masstabelle.json werden NIE ueberschrieben. Umgebung: python3 genuegt (nur json). Exit 0.
 """
 import sys, os, json
 

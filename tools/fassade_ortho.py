@@ -13,6 +13,8 @@ Ausgabe in --aus: ortho_<id>.png (fusioniert), abdeckung_<id>.png, ortho_<id>_ei
 (je Fassade: Wandlinie a,b (Modell-xy), Normale nach aussen, u/z-Bereich, Zelle, Fotos mit Zellenzahl/Guete).
 
   /media/oem/scan/venv-seg/bin/python -I tools/fassade_ortho.py modelle/kaufhaus_null4/objekt.json --stl <modell.stl> --aus DIR [--zelle 0.05]
+Weitere Argumente: --tol 0.10, --max-winkel 70, --fotos <a,b,..>, --max-fotos 40, --waende-stl, --ohne-gpu, --gpu-mb 2600, --einzeln.
+Umgebung: cv2/trimesh/torch -> venv-seg (s.o.) oder `tools/py tools/fassade_ortho.py ...`. Exit 0 = fertig; Abbruch mit Text (z. B. zentrierung huelle).
 """
 import os, sys, json, glob, math, argparse, time
 import numpy as np, cv2, trimesh

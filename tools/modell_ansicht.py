@@ -3,6 +3,8 @@
 
 Fuer Rueckfragen des Nutzers aus der 3D-Seite ("warum fehlt hier das Dach?"): dieselbe Stelle aus aehnlichem Blickwinkel rendern, optional die dichte Wolke
 als rote Punkte darueber (nur Punkte VOR der Modellflaeche oder ohne Modell dahinter = dort fehlt Modell). Dreiecks-Raster (GPU) wie modell_neben_foto.py.
+Umgebung: cv2/trimesh -> /media/oem/scan/venv-seg/bin/python -I tools/modell_ansicht.py ... (oder `tools/py ...`). STL in mm 1:87, --von/--nach im Modellrahmen (m).
+Ausgabe: AUS.jpg; mit --wolke Zahl der Punkte ohne Modell auf stdout.
 """
 import sys, os, numpy as np, cv2, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

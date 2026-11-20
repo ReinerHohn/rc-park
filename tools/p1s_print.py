@@ -3,6 +3,8 @@
 
   python3 tools/p1s_print.py status
   python3 tools/p1s_print.py print <datei.gcode.3mf> [subtask_name]
+Zugang: ~/.config/rcpark/p1s.json {"ip", "code", "sn"} (fehlt -> Abbruch mit Text). Braucht paho-mqtt (20.11.2026 in keiner Projekt-venv
+gefunden: python3, venv-seg, venv-colmap, ~/.venvs/rcpark).
 """
 import sys, json, ssl, ftplib, time
 import paho.mqtt.client as mqtt

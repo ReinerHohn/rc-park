@@ -4,7 +4,10 @@ Ziel (Nutzer 6.11. /goal): Weg Punktwolke -> 3D-Modell mit moeglichst kleinem Di
   venv-seg/bin/python -I tools/modell_wettbewerb.py modelle/<obj>/objekt.json --aus DIR --kandidat name:pfad.stl ... [--fotos 12] [--kerne 3] [--liste 000,004,...]
 Ablauf: Pass 1 je (Kandidat, Foto) Silhouettenmaske (foto_diff --maske-aus); FESTE Maske je Foto = Vereinigung ALLER Kandidatenmasken (keiner wird durch seine eigene Silhouette
 bevorzugt, erfundene Geometrie ausserhalb zaehlt mit). Pass 2: foto_diff --bewertung-maske -> kosten_lr (kleiner = besser, 'a contrario'), kosten_param.
-Ausgabe: DIR/ergebnis.json + Tabelle (je Kandidat Mittel/Median, Zahl Fotos besser als Basis 'C', pro Foto). CPU (FD_RASTER=0, kein CUDA): geprueftes Mass. Gleicher Foto-Satz, kein Auswaehlen nach Passung."""
+Ausgabe: DIR/ergebnis.json + Tabelle (je Kandidat Mittel/Median, Zahl Fotos besser als Basis 'C', pro Foto). CPU (FD_RASTER=0, kein CUDA): geprueftes Mass. Gleicher Foto-Satz, kein Auswaehlen nach Passung.
+Weitere Optionen: --basis, --batch, --raster, --gpu, --fd-arg=<foto_diff-Option>, --maske-kandidat, --maske-von. Umgebung: venv-seg (s.o.) oder
+`tools/py tools/modell_wettbewerb.py ...`. Exit 0 = vollstaendig, 3 = unvollstaendig (nicht alle Fotos je Kandidat beurteilt).
+"""
 import sys, os, json, glob, subprocess, argparse, numpy as np
 from concurrent.futures import ThreadPoolExecutor
 TOOLS = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, TOOLS)

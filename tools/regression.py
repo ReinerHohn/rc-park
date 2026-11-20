@@ -13,6 +13,8 @@ Konfiguration als DATEN in modelle/<objekt>/objekt.json["regression"]:
 Vergleichsregeln: json = rekursiv, Zahlen |a-b| <= toleranz (relativ 1e-6 zusaetzlich), Listen gleicher Laenge elementweise, ignorierte
 Schluessel ausgelassen; stl = Dreieckszahl exakt, Volumen/Bounding-Box relativ 1e-6; masstabelle = Pruefungen (name, wert, soll) + Messungen;
 pruefbericht = werte (toleranz) + je Pruefung ok-Flag. Ausgabe: je Datei OK/ABWEICHUNG mit den ersten Unterschieden.
+Umgebung: python3 genuegt fuer die Steuerung (Kettenschritte laufen mit {PY}/{RC}), stl-Vergleich braucht trimesh -> `tools/py tools/regression.py ...`.
+Exit: 0 = identisch, 1 = Abweichung oder Kettenschritt fehlgeschlagen, 2 = objekt.json ohne "regression" (nichts geprueft). Pflicht nach jeder tools-Aenderung.
 """
 import sys, os, json, shutil, subprocess, argparse, numpy as np
 

@@ -5,6 +5,8 @@
   wand_ortho.py px   <objekt.json> FOTO d u z [u z ...] --a x y --b x y              Originalpixel der Wandpunkte (fuer foto_mass.py --mess / --tri)
 u laeuft ab Ecke a Richtung b, z ist die Hoehe im Modellrahmen; 'aussen' = Seite, auf der die Kamera steht. FOTO = Name ohne 'K-' (K-<FOTO>.json muss existieren).
 Entstanden 15.11.2026 (Schwabentor Tordurchfahrt): am entzerrten Frontalfoto lassen sich Oeffnungen in Metern ablesen; gemessen wird trotzdem ueber foto_mass.py.
+Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/wand_ortho.py ... (oder `tools/py tools/wand_ortho.py ...`).
+Ausgabe: Modus bild schreibt AUS.jpg (ohne Angabe o.jpg) mit u/z-Gitter; Modus px druckt "x y" je Wandpunkt auf stdout.
 """
 import sys,os,json,glob,cv2,numpy as np
 arg=sys.argv; A=np.array([float(v) for v in arg[arg.index("--a")+1:arg.index("--a")+3]]); B=np.array([float(v) for v in arg[arg.index("--b")+1:arg.index("--b")+3]]); arg=arg[:min(arg.index("--a"),arg.index("--b"))]

@@ -3,6 +3,9 @@ von objekt.json (u, v, z ueber rahmen.gelaende = Modellsystem der Pruefwerkzeuge
 
 Aufruf: python -I tools/modell_3d_html.py <objekt.json> <ausgabe.html> [--wolke npy] [--farben npy] [--n 250000] [--radius 45]
 Ebenen schaltbar: Modell (Flaechen/Draht), Wolke (Fotofarben), DOM1-Laser (1-m-Pixel), LoD2-Waende. Infokasten: dach.json + Belege (ANNAHMEN).
+Weitere Argumente: --netz_raster <m> (Anzeige-Netz vergroebern, automatisch ab 800 000 Dreiecken), --extra <stl ...> (Nachbarobjekte dazu).
+Umgebung: manifold3d (dach_bauen) + trimesh -> ~/.venvs/rcpark/bin/python bzw. `tools/py tools/modell_3d_html.py ...`. Ausgabe: <ausgabe.html> (eine Datei,
+Vorlage tools/modell_3d_html.tpl.html; Grenze fuer Artifacts 16 MB). Exit 0 = geschrieben.
 """
 import sys, os, json, base64, argparse
 import numpy as np

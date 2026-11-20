@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""iphone_sfm.py <bilderordner> <arbeitsordner> - COLMAP-SfM (pycolmap, SIFT-GPU, exhaustive, Mapper) fuer die iPhone-Fotos; GPU von Anfang an (Nutzerregel)."""
+"""iphone_sfm.py <bilderordner> <arbeitsordner> - COLMAP-SfM (pycolmap, SIFT-GPU, exhaustive, Mapper) fuer die iPhone-Fotos; GPU von Anfang an (Nutzerregel).
+  /media/oem/scan/venv-colmap/bin/python -I tools/iphone_sfm.py <bilderordner> <arbeitsordner> [--mapper auto|auto_alt|global|inkrementell|konsens] [--flexglue]
+  (oder `tools/py col tools/iphone_sfm.py ...`; ohne 'col' waehlt tools/py venv-seg, dort fehlt pycolmap). RCPARK_FLEXGLUE=1 wie --flexglue. Defekte Bilder vorher nach quarantaene/ (fotos_pruefen.py).
+Ausgaben in <arbeitsordner>: db.db, paare.txt (ab > 300 Bildern), sparse/<n>/ (COLMAP-Modelle), mapper_wahl.json (Mapperwahl + GPS-Tor).
+Exit 0 = fertig; Abbruch mit Text, wenn der erzwungene Konsens- bzw. der globale Mapper scheitert.
+"""
 import sys, os, pycolmap, time
 
 

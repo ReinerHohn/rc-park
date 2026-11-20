@@ -10,6 +10,8 @@ Vorhandene K-Kameras (handkalibriert, amtliche Picks) werden NICHT ueberschriebe
   /media/oem/scan/venv-colmap/bin/python -I tools/kameras_aus_buendel.py modelle/<objekt>/objekt.json --ausrichtung <SFM-AUSRICHTUNG-buendel.json> [--ueberschreiben] [--trocken]
 GRENZEN: k1 wird gespeichert, aber foto_diff/fehlteile rendern ohne Verzeichnung (|k1| ~0,06 -> Ecken ~1-2 % radial); Kameras gelten fuer den Rahmen T_
 (im Protokoll) - aendert sich die STL-Unterkante, neu schreiben.
+Weitere Optionen: --stl, --sparse <netz> (Guete je Kamera), --min_beob, --fotos <ordner>, --trocken. Oder `tools/py tools/kameras_aus_buendel.py ...`.
+Ausgabe: modelle/<objekt>/messprotokoll/K-<foto>.json je Foto. Exit 0 = Kameras geschrieben/behalten, 2 = keine einzige Kamera (Fotoordner/Ausrichtung pruefen).
 """
 import sys, os, json, glob, struct, argparse, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

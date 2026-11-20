@@ -24,6 +24,9 @@ Aufruf (ueber GPU-Steuerung): JOB_GPU_MB=6000 tools/job_start.sh pipe_<objekt> <
   - Abgleich gescheitert -> rc 5 und KEINE Abnahme (vorher rc 0; an martinstor_gk/kaufhaus_gk lief die Abnahme nach gescheitertem Abgleich).
   - Abnahme: Objekte der Gesamtkette (objekt.json 'gesamtkette') werden hier NICHT gebaut - die Kette baut in ihrer Stufe 'bauen' NACH den Lage-Toren und dem Dach
     (vorher lief bauen_abnehmen.sh schon in der Kettenstufe 'sfm', vor jedem Tor). Auch mit --ohne-abnahme.
+Umgebung: venv-seg (Steuerung); pycolmap-Schritte ruft das Werkzeug selbst mit venv-colmap. Weitere Optionen: --mapper <art>, RCPARK_PIPE_NEU=sfm|dicht.
+Exit: 0 = alle Stufen ok, 1 = keine gueltigen Fotos, 2 = SfM registriert < 50 %, 3 = abgeleitete Staende aelter als das Netz / dichte Wolke fehlt,
+      4 = Fotoordner fehlt, 5 = Abgleich (sfm_lod2_ausrichten) gescheitert.
 """
 import sys, os, json, glob, subprocess, time, re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

@@ -7,6 +7,9 @@ und sich mit beleg(seite, element, quelle, **masse) meldet. Reihenfolge der List
 
   SCALE=87 ~/.venvs/rcpark/bin/python tools/baukasten_gen.py kaufhaus           (OBJ_DIR=<ordner> ueberschreibt, z. B. im Nullstart)
   objekt.json: "bauteile": [{"typ": "rumpf_lod2"}, ...]   (fehlt die Liste: nur rumpf_lod2)
+Ausgaben: modelle/stl/<objekt>_1-<SCALE>.stl (oder objekt.json "stl" / STL_NAME), modelle/<objekt>/elemente.json (Belege; ELEMENTE_AUS
+  ueberschreibt), mit BAUTEILE_AUS=<dir> zusaetzlich Einzelteile + liste.json. Umgebung: ~/.venvs/rcpark (manifold3d/trimesh).
+Exit 0 = gebaut; fehlende Quelle/Masse (Regel 3b) oder LoD2-Gebaeude nicht gefunden -> Abbruch mit Text (Exit 1). Abnahme danach: tools/bauen_abnehmen.sh.
 """
 import os, sys, json, math, numpy as np
 TOOLS = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(TOOLS); sys.path.insert(0, TOOLS)

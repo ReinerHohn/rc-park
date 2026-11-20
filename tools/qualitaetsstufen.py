@@ -17,6 +17,8 @@ Verfahren:
 
   /media/oem/scan/venv-seg/bin/python -I tools/qualitaetsstufen.py modelle/<obj>/objekt.json --plan modelle/<obj>/qualitaetsstufen.json [--fotos 12] [--aus DIR]
 Fortsetzbar: <aus>/stand.json (fertige Stufen und Schritte werden uebersprungen).
+Ausgaben in --aus: index.html (Stufenvergleich), stand.json. Oder `tools/py tools/qualitaetsstufen.py ...` (venv-seg; Generator per objekt.json "generator").
+Exit 0 = alle Stufen fertig; Generator/Pruefstand/Teilwerkzeug fehlgeschlagen -> Abbruch mit Text (Exit 1), fortsetzbar.
 """
 import sys, os, json, argparse, subprocess, time, base64, html, shutil, re, numpy as np, cv2
 from concurrent.futures import ThreadPoolExecutor

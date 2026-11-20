@@ -12,6 +12,8 @@ Startbedingung je Takt (alle muessen gelten):
 Spuren laufen mit den Kreis-Standards (Rauschtor an, Rueckgabe aus, Messbarkeits-Filter an; 12.11.).
 Regeln 2-4 (12.11.): stuendliche Zielwahl-Probe (wahl_probe.json), Freigabe gesperrter Nutzerfunde nach 1 h ohne Runde (freigabe.json), Stundenbericht (stundenbericht.txt).
 Ende: 3 Spuren in Folge melden 'kein Kandidat' -> nichts mehr zu tun. Jede Entscheidung wird geloggt.
+Weitere Optionen: --gpu_ziel 60, --vram_max 5000, --ram_min 6.0, --abstand 180, --runden 4, --max_minuten 35 (Standards aus dem Code; --max Standard 6).
+Umgebung: python3 genuegt (nur Steuerung: systemctl --user, nvidia-smi). Protokolle unter /media/oem/scan/rc-park_kreis/<objekt>/ (wahl_probe.json, freigabe.json).
 """
 import sys, os, time, subprocess, shutil, json, glob
 

@@ -10,6 +10,8 @@ Der Erkenner findet je Fensterfluegel/Oberlicht einen eigenen Kasten (gut, 15.11
      Pfostenlagen (Mitten der senkrechten Luecken) und Kaempferhoehe (Mitte der waagerechten Luecke).
 Ausgabe: je Fassade Wandpunkt o, Richtung d (u-Achse), Normale n und die Fenster - direkt fuer bauteile.fenster_aus_json(koerper, datei).
 Die Anzahl bleibt eine ERKENNUNG (Regel 9: Zaehlung am Foto pruefen, Bild fenster_<id>.jpg ansehen); Rahmen-/Nischentiefen sind ANNAHME.
+Ausgaben: fenster.json im Ortho-Ordner (oder --aus), je Fassade fenster_<id>.jpg im Ortho-Ordner. Weitere Option: --fein <ordner> (1-cm-Bilder, Sprossen).
+Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/fenster_aus_parsing.py ... (oder `tools/py ...`). Exit 0 = geschrieben.
 """
 import sys, os, json, argparse, numpy as np, cv2
 

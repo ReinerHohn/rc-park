@@ -8,6 +8,7 @@ Die Tabelle (masstabelle.json) enthaelt KEINEN Code: nur benannte Messungen (gen
 Sollbereich + Quelle + Quelltyp + Merkmalstyp, offene Beobachtungen. Dieser Pruefstand kennt, was jede Quelle sehen kann
 (QUELLEN). Eine Pruefung, deren Quelle fuer ihr Merkmal blind ist, wird ABGELEHNT (Exit 2) - das war die Wurzel des
 Martinstor-Fehlers (Nadelhoehe aus Laser DOM1). Masse immer in Metern, STL wird auf Massstab/Mitte/Boden normiert.
+Umgebung: trimesh/shapely -> venv-seg wie oben (oder `tools/py tools/pruefstand.py ...`). Ausgabe: Bericht auf stdout (--md als Markdown).
 """
 import sys, os, re, json, numpy as np, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

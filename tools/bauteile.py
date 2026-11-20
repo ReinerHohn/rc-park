@@ -9,6 +9,8 @@ tools/wand_ortho.py. Reihenfolge im Generator: Relief (relief_einsatz.koerper) z
   rumpf = rumpf - W.prisma(spitzbogen(2.3, 4.3, 6.9), u=6.1, w0=-15, w1=1)          # Tordurchfahrt
   rumpf = rumpf - W.prisma(rundbogen(2.1, 24.2, 26.7), u=4.0, w0=-0.15, w1=0.6)      # Blendnische
   rumpf = rumpf + W.kasten(1.9, 10.5, 10.95, 11.3, -0.05, 1.55)                      # Galerieboden
+Kein Kommandozeilenwerkzeug: Bibliothek, nur per import (Generator laeuft mit ~/.venvs/rcpark, braucht manifold3d/trimesh).
+Neue Bauteile nur hier als generische Funktion (Katalog in modelle/PIPELINE_FASSADEN.md); am Generatorende bauteile.aushoehlen (Fenster = Loecher).
 """
 import json, math, os, random
 import numpy as np

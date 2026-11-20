@@ -17,6 +17,9 @@ Ablauf:
 Letzter Skriptschritt: tools/kameras_nachtragen.py (K-Dateien im Modellrahmen). Danach je ungesehener Wand: registrierte Neuzugaenge -> fassade_ortho/fassade_fein neu; bleibt ein Foto unregistriert, das die Wand zeigt (Kontaktbogen
 <audit>/seiten_luecken_kandidaten.jpg ANSEHEN): Kamera aus gemessenen Modellpunkten + tools/fassade_ein_foto.py (modelle/PIPELINE_FASSADEN.md "Ungesehene Seite").
 Grenze: Schritt 1 braucht einen fassade_ortho-Lauf; ob ein Kandidat die Wand wirklich zeigt, entscheidet erst die Registrierung bzw. der Blick auf den Kontaktbogen.
+Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/seiten_luecken.py ... (oder `tools/py tools/seiten_luecken.py ...`); SEITEN_NEU=1 erzwingt
+erneutes Nachholen derselben Kandidaten. Exit: 0 = alle Waende gesehen, 2 = Einrichtungsfehler (Fassadenbild fehlt, keine Wand >= --min_m2, kein Foto),
+3 = Wand ungesehen (Auftrag), 5 = Nachhol-Skript abgebrochen.
 """
 import time
 import sys, os, json, glob, struct, argparse, subprocess, numpy as np, cv2

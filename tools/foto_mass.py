@@ -8,6 +8,9 @@ Masstabelle als Quelle steht (z. B. "M-049-003"), mit Pixelkoordinaten, Massstab
   foto_mass.py OBJEKT.json FOTO-NR  --mess ... --px-pro-m 97 --massstab-von "..."          (Massstab aus frueherem Protokoll)
   [--name "Eckturm Durchmesser"] [--merkmal duennes_bauteil] [--richtung h|v|frei]
 Schreibt modelle/<objekt>/messprotokoll/M-<foto>-<nr>.json + .jpg. Senkrechte Masse in Schraegaufnahmen sind gestaucht -> --richtung v mit --stauchung 0.88.
+Weitere Modi: --tri2d K-A xa ya K-B xb yb ... (Grundrisslage einer senkrechten Kante aus >= 2 Kameras), --tri (3D-Punkt aus >= 2 Kameras).
+Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/foto_mass.py ... (oder `tools/py tools/foto_mass.py ...`). Exit 0 = Protokoll geschrieben,
+Abbruch mit Text (z. B. "--tri braucht >= 2 Kameras"). Einzige zulaessige Quelle fuer Fotomasse (CLAUDE.md).
 """
 import sys, os, json, glob, math, cv2, numpy as np
 
