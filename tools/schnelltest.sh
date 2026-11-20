@@ -113,6 +113,7 @@ k=$($P -I tools/test_schwerkraft_je_bild.py 2>&1); [ $? = 0 ] && ok "Schwerkraft
 k=$($P -I tools/test_modell_zerlegen.py 2>&1); [ $? = 0 ] && ok "Modell nach Punkt-Zusammenhang zerlegen (globaler Mapper legt unverbundene Stuecke in ein Modell)" || { rot "modell_zerlegen: $(echo "$k" | tail -1)"; }
 k=$(python3 tools/pfade.py 2>&1); [ $? = 0 ] && ok "Projektpfade und Python-Umgebungen vorhanden (tools/pfade.py)" || { rot "pfade: $(echo "$k" | grep FEHLT | head -2)"; }
 k=$(tools/py tools/modell_zerlegen.py --help 2>&1); [ $? = 0 ] && ok "Starter tools/py waehlt Umgebung (pycolmap -> venv-colmap)" || { rot "tools/py: $(echo "$k" | tail -1)"; }
+k=$(python3 ~/.claude/skills/doku-pflege/check.py --strict 2>&1); r=$?; [ ! -f ~/.claude/skills/doku-pflege/check.py ] && ok "Doku-Pruefung uebersprungen (claude-mds fehlt: bash ~/git/claude-mds/bootstrap.sh)" || { [ $r = 0 ] && ok "Doku KI-tauglich (doku-pflege check.py --strict)" || rot "Doku: $(echo "$k" | grep '✗' | head -2 | cut -c1-120) -> /doku-pflege"; }
 k=$($P -I tools/test_gps_seiten_pruefen.py 2>&1); [ $? = 0 ] && ok "Seiten per Foto-GPS pruefen (geklappte Rueckseite synthetisch erkannt)" || { rot "gps_seiten_pruefen: $(echo "$k" | tail -1)"; }
 k=$($P -I tools/test_brennweite_waehlen.py 2>&1); [ $? = 0 ] && ok "Brennweite aus EXIF-Pixelgroesse + GPS-Gegenprobe (Martinstor-061-Fall, Seitenverhaeltnis-Regel)" || { rot "brennweite_waehlen: $(echo "$k" | head -2 | tr '\n' ' ')"; }
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
