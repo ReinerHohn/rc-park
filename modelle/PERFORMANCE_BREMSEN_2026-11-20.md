@@ -239,3 +239,10 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - NEBENFUND (Ergebnisfehler, noch nicht am echten Bild bestaetigt): `fassade_ortho.py:424` `np.cumsum(Gk)` in float32 ueber das ganze Raster - ab ~1,7e7 gehen Gewichte verloren;
   Nachbau 5 Mio. Zellen: 24 % der Zellen waehlen einen anderen Wert. Fix `dtype=np.float64`, danach Bitgleich-Test neu eichen. OFFEN, hohe Prioritaet fuer das Wandbild (= Bauplan).
 - Nutzerentscheid 20.11. 09:00 "volle Aufloesung behalten, kein 1200 px" (ZIEL_PIPELINE_H0.md Z.33) -> Punkt "1200 px testen" aus der Rangliste gestrichen.
+
+## Nachtrag 22:35 - Wandbild-Fehler BESTAETIGT und behoben (`tools/fassade_ortho.py:424`, float32-Summe der Gewichte)
+- Die Guete je Probe ist float32 (Z.317/346); `np.cumsum` ueber alle Proben des Rasters blieb float32 -> der gewichtete Median je Zelle rechnete mit verlorenen Gewichten.
+- Gemessen am echten Bild (ober_tvdr f02, 84 m2, 7 Fotos, Zelle 1,5 cm, 391 Tsd. belegte Zellen): 13,3 % der Zellen aendern ihren Farbwert, 6,8 % um mehr als 10 Stufen;
+  nach Rasterviertel 4,6 / 16,0 / 14,8 / 18,8 % (waechst mit der laufenden Summe, wie vorhergesagt). Angesehen: alt = Doppelkanten/Geisterbild im Ueberlappungsband mehrerer Fotos
+  (Ladentuer, Fensterrahmen), neu = sauber. Fix: Gewichte vor der Summe nach float64. Schnelltest 0 Fehler.
+- FOLGE: alle bisherigen Wandbilder (Bauplan!) mit Mehrfoto-Ueberlappung sind betroffen, bei 1 cm und grossen Waenden staerker. Wandbilder der aktiven Objekte neu rechnen, bevor daraus Tiefe/Fenster gelesen werden.

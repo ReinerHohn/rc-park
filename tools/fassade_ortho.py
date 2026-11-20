@@ -421,7 +421,8 @@ def main(argv=None):
             # gewichteter Median je Kanal und Zelle, vektorisiert: Proben je Zelle nach Wert sortieren, kumulierte Gewichte, erster Wert >= halbes Gewicht
             def kanal(k_):
                 key = I.astype(np.float64) * 512 + Cc[:, k_]; o2 = np.argsort(key, kind="stable"); Ik, Vk, Gk = I[o2], Cc[o2, k_], G[o2]
-                cs = np.cumsum(Gk); start = np.r_[0, np.where(np.diff(Ik))[0] + 1]; tot = np.add.reduceat(Gk, start); base = np.r_[0, cs[start[1:] - 1]] if len(start) > 1 else np.array([0.0])
+                Gk = Gk.astype(np.float64); cs = np.cumsum(Gk); start = np.r_[0, np.where(np.diff(Ik))[0] + 1]; tot = np.add.reduceat(Gk, start);   # 20.11.2026: float64 - die float32-Summe ueber das ganze Raster verlor ab ~1,7e7 Gewichte (falscher Median, Zellen ohne Treffer nahmen die letzte Probe)
+                base = np.r_[0, cs[start[1:] - 1]] if len(start) > 1 else np.array([0.0])
                 half = base + tot / 2; grp = np.repeat(np.arange(len(start)), np.diff(np.r_[start, len(Ik)])); ueber = cs >= half[grp]
                 erst = np.full(len(start), -1); pos_ = np.where(ueber)[0]; g_ = grp[pos_]; first = np.r_[True, g_[1:] != g_[:-1]]; erst[g_[first]] = pos_[first]
                 img[Ik[start], k_] = np.clip(Vk[erst], 0, 255).astype(np.uint8)
