@@ -48,8 +48,11 @@ def urteil(kj, n_bilder, n_clips, lief=True):
 
 
 def fremde_seite(ziel, rueckgrat, min_punkte=15):
-    """-> (Pfad der Bildliste fuer Stufe 2 oder '' wenn nichts auszuschliessen, Zahl ausgeschlossener Bilder). Ausgeschlossen = in lauf1 UND lauf2 ausserhalb
-    des Punkt-Stuecks, das die meisten Rueckgrat-Bilder enthaelt. Liste: alle DB-Bilder ohne die fremden (Mapper braucht auch die Rueckgrat-Namen)."""
+    """-> (Datenbank fuer Stufe 2, Zahl ausgeschlossener Bilder, Rueckgrat fuer Stufe 2). Ausgeschlossen = in lauf1 UND lauf2 ausserhalb des Punkt-Stuecks, das die meisten Rueckgrat-Bilder
+    enthaelt. Ihre Bildpaare werden in einer DB-Kopie (stufe2.db) geloescht, so kann der Mapper sie nicht einhaengen. (Erst --Mapper.image_list_path versucht:
+    COLMAP-Mapper mit --input_path stuerzt damit ab, 'key was not found in unordered_node_map', 20.11.2026.) Ohne fremde Bilder: lauf1/db_kalib.db unveraendert.
+    Rueckgrat-Bilder, die danach kein gueltiges Paar (>= 15 Inlier) mehr haben, laedt COLMAP nicht -> derselbe Absturz (Martinstor: commons_037, nur mit der
+    Sued-Seite verbunden). Sie fliegen aus einer Rueckgrat-Kopie (rueckgrat_gefiltert/0) - ein Bild, das nur die fremde Seite sieht, ist selbst verdaechtig."""
     import sqlite3, pycolmap, modell_zerlegen as MZ
     rg = {i.name for i in pycolmap.Reconstruction(rueckgrat).images.values()}; fremd = None
     for s in (1, 2):
@@ -58,11 +61,23 @@ def fremde_seite(ziel, rueckgrat, min_punkte=15):
         fremd = aus if fremd is None else fremd & aus
     fremd -= rg
     open(os.path.join(ziel, "fremde_seite.txt"), "w").write("".join(n + "\n" for n in sorted(fremd)))
-    if not fremd: return "", 0
-    c = sqlite3.connect(f"file:{os.path.join(ziel, 'lauf1', 'db_kalib.db')}?mode=ro", uri=True); alle = [n for (n,) in c.execute("select name from images")]
-    p = os.path.join(ziel, "stufe2_bilder.txt"); open(p, "w").write("".join(n + "\n" for n in alle if n not in fremd))
+    q = os.path.join(ziel, "lauf1", "db_kalib.db")
+    if not fremd: return q, 0, rueckgrat
+    p = os.path.join(ziel, "stufe2.db"); src = sqlite3.connect(f"file:{q}?mode=ro", uri=True); d = sqlite3.connect(p); src.backup(d); src.close()
+    ids = {i for i, n in d.execute("select image_id, name from images") if n in fremd}; M = 2147483647; weg = 0
+    for pid, in d.execute("select pair_id from two_view_geometries").fetchall():
+        j = pid % M; i = (pid - j) // M
+        if i in ids or j in ids: d.execute("delete from two_view_geometries where pair_id = ?", (pid,)); d.execute("delete from matches where pair_id = ?", (pid,)); weg += 1
+    d.commit(); rest = {}
+    for pid, rows, cfg in d.execute("select pair_id, rows, config from two_view_geometries"):
+        if rows >= 15 and cfg not in (0, 1): j = pid % M; i = (pid - j) // M; rest[i] = rest.get(i, 0) + 1; rest[j] = rest.get(j, 0) + 1
+    d.close(); R = pycolmap.Reconstruction(rueckgrat); los = [i for i in R.images if rest.get(i, 0) == 0]
+    if los:
+        for fid in {R.images[i].frame_id for i in los}: R.deregister_frame(fid)
+        rueckgrat = os.path.join(ziel, "rueckgrat_gefiltert", "0"); os.makedirs(rueckgrat, exist_ok=True); R.write(rueckgrat)
+        print(f"FREMDE SEITE: {len(los)} Rueckgrat-Bilder nur mit der fremden Seite verbunden -> aus dem Rueckgrat genommen", flush=True)
     print(f"FREMDE SEITE: {len(fremd)} Bilder liegen in beiden Laeufen in einem anderen Punkt-Stueck als das Rueckgrat -> nicht nachregistriert ({ziel}/fremde_seite.txt)", flush=True)
-    return p, len(fremd)
+    return p, len(fremd), rueckgrat
 
 
 def main():
@@ -89,13 +104,13 @@ def main():
     ber["schnitt"] = json.loads(o.stdout.strip().splitlines()[-1]); ber["zeiten"]["schnitt_s"] = round(time.time() - t)
     # 20.11.2026 (Martinstor-Kettenmodell: 21 Sued-Bilder in Stufe 2 ins Nordmodell gezwungen, 24 % neben ihrer Lage): Bilder, die in BEIDEN globalen Laeufen
     # in einem anderen Punkt-Stueck (tools/modell_zerlegen.py) als das Rueckgrat liegen, = fremde Seite -> nicht nachregistrieren, Liste fremde_seite.txt.
-    bildliste = ("", 0) if a.ohne_seitenfilter else fremde_seite(a.ziel, st); ber["fremde_seite"] = bildliste[1]
+    db2, ber["fremde_seite"], st2 = (os.path.join(a.ziel, "lauf1", "db_kalib.db"), 0, st) if a.ohne_seitenfilter else fremde_seite(a.ziel, st)
     t = time.time(); kz = os.path.join(a.ziel, "konsens", "0"); os.makedirs(kz, exist_ok=True)
     # Schwabentor S8/S8c/S8d (19.11. 03:16): ALLE fernen Kameras ('zum Mond') der Stufe 2 kamen aus dem strukturlosen Registrierungs-Rueckfall
     # (generalisierte Relativpose ohne 3D-Punkte); mit Rueckfall aus: 0 ferne, 0 unplausible Kameras, GPS-Kern 3 %. Inlier-Schwellen (100/0,5) brachten nichts.
-    cmd = [COLMAP_BIN, "mapper", "--database_path", os.path.join(a.ziel, "lauf1", "db_kalib.db"), "--image_path", a.bilder, "--input_path", st, "--output_path", kz,
+    cmd = [COLMAP_BIN, "mapper", "--database_path", db2, "--image_path", a.bilder, "--input_path", st2, "--output_path", kz,
            "--Mapper.fix_existing_frames", "1", "--Mapper.ba_use_gpu", "1", "--Mapper.ba_max_num_images_direct_dense_gpu_solver", "0",
-           "--Mapper.structure_less_registration_fallback", "1" if a.mit_rueckfall else "0"] + (["--Mapper.image_list_path", bildliste[0]] if bildliste[0] else [])
+           "--Mapper.structure_less_registration_fallback", "1" if a.mit_rueckfall else "0"]
     if lauf(cmd, os.path.join(a.ziel, "stufe2.log")) != 0: sys.exit("Stufe 2 (mapper fix_existing_frames) fehlgeschlagen: " + a.ziel + "/stufe2.log")
     ber["zeiten"]["stufe2_s"] = round(time.time() - t); ber["zeiten"]["gesamt_s"] = round(time.time() - t0)
     bw = [PY, "-I", os.path.join(T, "mapper_bewerten.py"), os.path.join(a.ziel, "konsens"), "--fotos", fotos, "--label", a.label, "--sek", str(ber["zeiten"]["gesamt_s"]), "--vergleich", os.path.join(a.ziel, "lauf1"), "--befehl", " ; ".join(c if isinstance(c, str) else c[0] for c in [cmd])]
