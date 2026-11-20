@@ -57,6 +57,12 @@ def main():
     bw = [sys.executable, "-I", os.path.join(T, "mapper_bewerten.py"), a.ziel, "--fotos", a.fotos, "--label", a.label, "--sek", str(zeiten["gesamt_s"]), "--befehl", " ; ".join(befehl)]
     if a.protokoll: bw += ["--protokoll", a.protokoll]
     subprocess.run(bw, check=False); print("FERTIG", a.label, flush=True)
+    # Fund 20.11.2026 (Martinstor): der globale Mapper legt punktlos getrennte Stuecke in EIN Modell (Lage zueinander beliebig, sah aus wie 'Seiten verklebt').
+    # Pruefen; zerfaellt Modell 0, Stuecke zusaetzlich nach <ziel>_stuecke/<k> (Modell 0 bleibt unveraendert) und laut warnen.
+    zs = a.ziel.rstrip("/") + "_stuecke"
+    rz = subprocess.run([sys.executable, "-I", os.path.join(T, "modell_zerlegen.py"), os.path.join(a.ziel, "0"), "--aus", zs, "--min-bilder", "10"], capture_output=True, text=True)
+    print([l for l in rz.stdout.splitlines() if l.startswith("ZERLEGEN")][-1:] or rz.stderr[-300:], flush=True)
+    if rz.returncode == 3: print(f"ACHTUNG ZERFALL: Modell 0 besteht aus mehreren punktlos getrennten Stuecken -> {zs}/ (jedes Stueck einzeln weiter, z. B. seiten_vereinen.py)", flush=True)
     if a.nachregistrieren:
         # Stufe 2 (zweistufig): alle noch nicht registrierten Bilder der DB per PnP in Modell 0 einhaengen (image_registrator), Punkte nachtriangulieren,
         # Buendelausgleich auf der GPU. Globaler Mapper kennt keinen Posen-Start, darum so. Ergebnis in <ziel>_reg/0, eigene Bewertung (Label +_reg).
