@@ -165,3 +165,14 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   (c) Ceres-Quelle `cuda_sparse_cholesky.cc` Z. 248: nach einem Zerlegungsfehler wird die Analyse-Stufe wiederholt (cuDSS-0.3-Eigenheit) - Kosten je Fehler, aber klein gegen (a).
 - Kettenfehler behoben: `tools/wolke_grundriss_pruefen.py` stapelte 30 Drehungen * alle Punkte auf der GPU -> bei 7,9 Mio. Punkten (Schwabentor) OOM auf 8 GB, Tor "nicht geprueft",
   Kette brach 20:22 ab (rc 4). Jetzt Stapelgroesse aus der Punktzahl (2e7 Elemente), Ergebnis unveraendert. Kette ab `tore` neu gestartet 20:38.
+
+## Nachtrag 21:00 - die "fremde Seite" am Martinstor ist ueberwiegend STADTRUNDGANG, nicht Tor (gemessen + angesehen)
+- Stichprobe 70 von 793 Bildern (`martinstor-1120/zeigen/fremde_seite_stichprobe.jpg`, selbst angesehen): Muenster, Rathaus, Historisches Kaufhaus, Bertoldsbrunnen,
+  Strassenbahnen, sogar das Schwabentor. Das Martinstor ist nur auf einem kleinen Teil (v. a. Netzfotos, eigene Fotos, Clips SMpS-YJWpt8 / A_PUR2GXND0).
+- Herkunft je Bild aus `vorpruefung.json` (2107 Bilder im Satz, Anteil in der fremden Seite):
+  direkter Treffer (>= 60 Inlier gegen Referenz) 1041 Bilder -> 24 % fremd; Kette Schritt 1: 67 -> 43 %; Schritt 2: 48 -> 43 %; Kette Schritt >= 3: 387 -> 62 %;
+  Zeitfenster (+-12 Videobilder um einen Treffer, OHNE eigenen Treffer): 495 -> 44 %; unter 60: 69 -> 43 %.
+- Deutung: die Regeln "Kette" (Nachbar vom Nachbarn ...) und "Zeitfenster" in `tools/bilder_vorpruefen.py` laufen bei Stadtrundgang-Videos die Strasse entlang vom Tor weg.
+  882 Bilder (42 % des Satzes) kamen ohne direkten Treffer hinein; 541 der 793 fremden stammen daher. Sie kosten Paarsuche + Mapperzeit (quadratisch) und erzeugen das zweite Teilmodell.
+- OFFEN (messen, nicht blind umstellen - die Regeln sollten Gegenseite/Durchgang retten): Variante "Kette hoechstens 2 Schritte, Zeitfenster nur mit schwachem Treffer (>= 15 Inlier)"
+  -> Satz ~1200 Bilder; Mapper darauf laufen lassen und Abdeckung je Torseite gegen heute vergleichen. Echte Gegenseiten-Kandidaten = die 252 fremden Bilder MIT direktem Treffer.
