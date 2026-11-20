@@ -116,3 +116,7 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   Die Streuung zwischen zwei Laeufen DESSELBEN Baus (272 gegen 402 s) ist groesser als jeder Bau-Unterschied - der Mapper nimmt je Lauf einen anderen Weg (nicht deterministisch),
   dazu wechselnde Nebenlast. ENTSCHEIDUNG: kein Gewinn belegt -> alter Bau bleibt in Betrieb; Testbau bleibt liegen (`/media/oem/rcdaten/colmap-opt`, 8 GB) bis zu einer Wiederholung auf leerem Rechner.
   Lehre fuer alle Mapper-A/Bs: ein Lauf je Variante reicht nicht; mindestens 3 je Variante oder ein deterministischer Teilschritt (Buendelausgleich) als Messgroesse.
+- Loeser-A/B Abschluss (18:33, Schwabentor 203 Bilder, alle Faeden, je 1 Lauf): heutige Einstellung (GPU duenn) 300 s / 38 Loeserfehler / 178 Bilder; GPU dicht 375 s / 221 / 181;
+  nur CPU 501 s / 85 / 180; COLMAP-Standard 367 s / 91 / 173. Die "Linear solver failure"-Meldungen treten bei JEDEM Loeser auf (38-221) -> keine Eigenheit von cuDSS, sondern der
+  Ausgleichsaufgabe selbst (Schritt nicht berechenbar, Ceres daempft staerker). Kein Loeser ist klar besser; heutige Einstellung war die schnellste -> KEINE Aenderung.
+  Offen bleibt, WARUM die Schritte scheitern (Kandidat: schlecht bestimmte Kameras/Punkte); bei 1 Lauf je Variante und 272-402 s Streuung desselben Baus ist die Rangfolge nicht sicher.
