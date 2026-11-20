@@ -3,7 +3,7 @@ Methoden: `modelle/archiv/METHODE_WAHRZEICHEN_AUS_FOTOS.md` · `METHODE_3D_AUS_A
 
 ## Gilt
 - **Kein Hardcoding:** jedes Detail aus dem Foto erkennen → JSON → Generator liest; bei Fehlern den Detektor bauen, nicht den Wert ändern.
-- **Alle öffentlichen Daten mergen:** LOD2 = Massing, Luftbild = Dach, Laser = Form, Foto = Detail — nichts raten, wenn eine Quelle existiert.
+- ↺ (20.11. ersetzt für Gebäude aus Fotos: Fotos → SfM → Form aus Fotokanten, LoD2 nur Abgleich — Ast [foto-sfm](foto-sfm.md)) **Alle öffentlichen Daten mergen:** LOD2 = Massing, Luftbild = Dach, Laser = Form, Foto = Detail — nichts raten, wenn eine Quelle existiert.
 - **Erst die Realität zählen**, dann bauen; die Zählung des Nutzers schlägt den Detektor.
 - **Selbst hinschauen:** Render neben Foto Element für Element; nach jeder Änderung `tools/aenderung_check.py`, sonst git-Revert; nie „verbessert" nur wegen Score.
 - Footprint vor dem Bau gegen Luftbild + nDOM gegenchecken; Wahrzeichen halbautomatisch, Masse-Gebäude vollautomatisch aus LOD2.

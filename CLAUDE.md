@@ -47,4 +47,4 @@ Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> d
 - Parametrisch-gueltig, nie degeneriert: keine freien Multiplikatoren auf gemessene Geometrie; Gueltigkeits-Guard + Fallback.
 - Aenderungs-Waechter `python3 tools/aenderung_check.py` nach Modell-Aenderungen (Heatmap gegen Foto). Harte Tests: `python3 tests/test_quellen_hart.py`, `tests/test_hybrid_hart.py`.
 - Businessplan-Schaetzungen = begruendete Annahmen (oeffentliche Benchmarks), keine testierte Finanzplanung.
-- WIDERSPRUCH, Nutzer klaeren (bis dahin gilt fuer 3D-Modelle die KERNMETHODE oben, weil neuer): (a) dort "Massing aus LOD2 schlaegt Foto-Schaetzung" vs. hier "Fotos -> SfM, LoD2 nur Abgleich"; (b) dort "Feindetail als Textur/Bemalung" vs. hier "Fenster = echte Loecher, Relief aus Wandbild".
+- ENTSCHIEDEN 20.11.2026 (Nutzer: "was neuer ist, ist besser"): fuer Gebaeude gilt die KERNMETHODE oben - Fotos -> SfM -> Form aus Fotokanten, LoD2 nur Abgleich (ersetzt "Massing aus LOD2 schlaegt Foto-Schaetzung", Okt.); Feindetail = echte Loecher/Relief aus dem Wandbild, aber druckbar (Mindestmass 0,8 mm, keine Mikroteile) statt nur Textur/Bemalung.

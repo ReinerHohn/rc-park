@@ -10,6 +10,7 @@
 | 🚜 RC-Attraktionen & Ausstattung | [`Doku/projekt/rc-attraktionen.md`](Doku/projekt/rc-attraktionen.md) | robust hinter Polycarbonat, Getriebe-Bagger 1:14/1:16, schienengeführt |
 | 🖨️ Modellbau & Druck | [`Doku/projekt/modellbau-druck.md`](Doku/projekt/modellbau-druck.md) | Flaches lasern, Körper drucken, Blickfang scannen; Qualität vor Material |
 | 🏛️ 3D-Pipeline & Validierung | [`Doku/projekt/pipeline.md`](Doku/projekt/pipeline.md) | alles erkennen statt hardcoden, alle Daten mergen, selbst hinschauen |
+| 📷 Fotos → SfM → H0-Modell (GPU-PC) | [`Doku/projekt/foto-sfm.md`](Doku/projekt/foto-sfm.md) | Form aus Fotokanten + SfM-Kameras, Wandbild = Bauplan, Wolke nur Lage-Veto |
 
 Jede Ast-Datei: **Gilt** (Vorgaben/Entscheidungen) · **Versucht** (Ansatz → Ergebnis → Lehre) · **Offen**.
 
