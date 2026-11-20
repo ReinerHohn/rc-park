@@ -86,9 +86,9 @@ def dokumente():
 
 
 def umgebung(src):
-    if re.search(r"^\s*(import|from)\s+pycolmap", src, re.M): return "col"
-    if re.search(r"^\s*(import|from)\s+(torch|cv2|kornia|lightglue)", src, re.M): return "seg"
-    if re.search(r"^\s*(import|from)\s+(trimesh|manifold3d|shapely)", src, re.M): return "gen"
+    if re.search(r"^\s*(import\s+([\w.]+(\s+as\s+\w+)?\s*,\s*)*pycolmap\b|from\s+pycolmap\b)", src, re.M): return "col"
+    if re.search(r"^\s*(import\s+([\w.]+(\s+as\s+\w+)?\s*,\s*)*(torch|cv2|kornia|lightglue)\b|from\s+(torch|cv2|kornia|lightglue)\b)", src, re.M): return "seg"
+    if re.search(r"^\s*(import\s+([\w.]+(\s+as\s+\w+)?\s*,\s*)*(trimesh|manifold3d|shapely)\b|from\s+(trimesh|manifold3d|shapely)\b)", src, re.M): return "gen"
     return "-"
 
 

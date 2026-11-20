@@ -2,27 +2,27 @@
 - `tools/abdeckung.py` [col] abdeckung.py - Wo fehlen Fotos? Aufnahme-Assistent aus den vorhandenen Netzen (Register BI).
 - `tools/abdeckung_quellen.py` [col] abdeckung_quellen.py - AUTOMATISCH zaehlen, aus welchen Richtungen/Hoehen/Abstaenden jede Quelle das Objekt sieht, und Luecken je Seite melden (Plan 3.7).
 - `tools/aenderung_check.py` [seg] aenderung_check.py — ÄNDERUNGS-WÄCHTER gegen Regressionen.
-- `tools/beweis_anker.py` [-] beweis_anker.py - SICHTBEWEIS je Kamera (generisch, 2026-11-04): amtliche Anker (anker3d.json: LoD2-Ecken, First, Traufe) mit der Kamera aus K-<foto>.json ins Foto projizieren. Lie
+- `tools/beweis_anker.py` [seg] beweis_anker.py - SICHTBEWEIS je Kamera (generisch, 2026-11-04): amtliche Anker (anker3d.json: LoD2-Ecken, First, Traufe) mit der Kamera aus K-<foto>.json ins Foto projizieren. Lie
 - `tools/beweis_ansatz.py` [seg] beweis_ansatz.py - Vergleichslauf "Welcher Ansatz ist bei unserer Datenlage der beste?" (modelle/archiv/SPEC_BEWEIS_ANSATZ.md, 2026-11-06).
 - `tools/beweis_ansatz_bericht.py` [-] beweis_ansatz_bericht.py - Tabellen und Kriterium aus den ergebnisse.json von tools/beweis_ansatz.py (keine Nachjustierung; Regeln stehen in SPEC_BEWEIS_ANSATZ.md). Kriterium: C >=
-- `tools/beweis_ansatz_synth.py` [gen] beweis_ansatz_synth.py - synthetischer Teil von tools/beweis_ansatz.py (Wahrheit bekannt, Metrik 1 dazu).
+- `tools/beweis_ansatz_synth.py` [seg] beweis_ansatz_synth.py - synthetischer Teil von tools/beweis_ansatz.py (Wahrheit bekannt, Metrik 1 dazu).
 - `tools/bewerter_common.py` [gen] bewerter_common.py — gemeinsame Basis für die drei Modell-Juroren + Voting.
 - `tools/bewerter_fertigung.py` [-] Juror 2 — FERTIGBARKEIT. Frage: Lässt sich das Modell auf UNSEREN Maschinen sauber bauen — oder fliegt es beim Entgittern auseinander / passt nicht aufs Bett / wird ein Materialgra
 - `tools/bewerter_markanz.py` [-] Juror 3 — MARKANZ (Wiedererkennbarkeit & Wow). Frage: Ist die Szene überhaupt markant genug, dass sich das Modell lohnt — oder ist es ein flacher, austauschbarer Hügel, den niemand
 - `tools/bewerter_panel.py` [-] bewerter_panel.py — PANELS statt Einzel-Juroren.
 - `tools/bewerter_voting.py` [-] VOTING — die drei Juroren (Geometrie-Treue · Fertigbarkeit · Markanz) stimmen ab.
-- `tools/duese_check.py` [-] duese_check.py - Welche Teile sind mit Duese X druckbar? Dicke (Strahl nach innen) und Spalt (Strahl nach aussen). python tools/duese_check.py ORDNER_MIT_STL [--duese 0.2] [--probe
-- `tools/elementcheck.py` [-] elementcheck.py — ELEMENT-FÜR-ELEMENT Foto↔Modell, inkl. der BLINDEN FLECKEN die selfcheck nie zeigte (Dach-SEITE/Rand, Erker-FENSTER, Helm-PROFIL, Statuen-FUSS, Gesims-LINIENZAHL,
+- `tools/duese_check.py` [gen] duese_check.py - Welche Teile sind mit Duese X druckbar? Dicke (Strahl nach innen) und Spalt (Strahl nach aussen). python tools/duese_check.py ORDNER_MIT_STL [--duese 0.2] [--probe
+- `tools/elementcheck.py` [gen] elementcheck.py — ELEMENT-FÜR-ELEMENT Foto↔Modell, inkl. der BLINDEN FLECKEN die selfcheck nie zeigte (Dach-SEITE/Rand, Erker-FENSTER, Helm-PROFIL, Statuen-FUSS, Gesims-LINIENZAHL,
 - `tools/footprint_check.py` [seg] footprint_check.py — PFLICHT-Gegenprüfung: stimmt der verwendete Grundriss (LOD2-Teile / aus Foto freigestelltes Gebäude) mit DOP + Laser-nDOM überein, oder ist versehentlich ein F
 - `tools/juror_ensemble.py` [-] juror_ensemble.py — GENERISCH: mehrere Vision-Juror-Urteile (JSON) zu einem STABILEN Konsens aggregieren. Median der Zählungen, Mehrheit der Bool-Flags, häufigkeits-gerankte Fixes 
-- `tools/kandidaten.py` [-] kandidaten.py - Kandidaten aus den Clustern der Fehlerkarte (SPEC_S3_KONVERGENZ Abschnitt 2, deterministisch, KEINE Suche und KEIN Bau hier, 2026-11-05).
+- `tools/kandidaten.py` [seg] kandidaten.py - Kandidaten aus den Clustern der Fehlerkarte (SPEC_S3_KONVERGENZ Abschnitt 2, deterministisch, KEINE Suche und KEIN Bau hier, 2026-11-05).
 - `tools/kaufhaus_check_alle.py` [gen] kaufhaus_check_alle.py — EIN Lauf, alle Checks → konsolidierte Ratsche für die nächste Loop.
 - `tools/modell_bewerter.py` [seg] modell_bewerter.py — OBJEKTIVE Bewertung: Modell-Render vs. echtes Foto → Score 0..1.
 - `tools/modell_wettbewerb.py` [seg] modell_wettbewerb.py - WETTBEWERB: viele Modelle (STL, aus verschiedenen Algorithmen) gegen dieselben Fotos mit der jeweiligen Kamera (foto_diff), gleiche Bedingungen. Ziel (Nutzer
-- `tools/optimierung_validieren.py` [-] optimierung_validieren.py - Prueft, ob eine 'Verbesserung' echt ist oder nur Anpassung ans Raster (Ueberanpassung). Bewertet zwei STL (alt, neu) mit vier Massstaeben, die NICHT zur
-- `tools/param_suche.py` [-] param_suche.py - GENERISCH: einen Generator-Parameter gegen die Fotos einstellen (Plan 4.11.: automatische Korrektur, Punkt 6a).
+- `tools/optimierung_validieren.py` [gen] optimierung_validieren.py - Prueft, ob eine 'Verbesserung' echt ist oder nur Anpassung ans Raster (Ueberanpassung). Bewertet zwei STL (alt, neu) mit vier Massstaeben, die NICHT zur
+- `tools/param_suche.py` [seg] param_suche.py - GENERISCH: einen Generator-Parameter gegen die Fotos einstellen (Plan 4.11.: automatische Korrektur, Punkt 6a).
 - `tools/parameter_raum_weit.py` [-] parameter_raum_weit.py <objekt> <typ[,typ..]> <aus.json> [lage=1.2] [mass=0.5] Breite Fit-Grenzen (Regel 9c(a): Grenzen > erwarteter Fehler). Je Parameter um den Startwert (objekt.
-- `tools/perspektive_beweis.py` [-] perspektive_beweis.py — BEWEIS, dass das Validierungstool unter PERSPEKTIVE funktioniert.
+- `tools/perspektive_beweis.py` [gen] perspektive_beweis.py — BEWEIS, dass das Validierungstool unter PERSPEKTIVE funktioniert.
 - `tools/proportion_check.py` [-] proportion_check.py — AUTOMATISCHER Proportions-Abgleich Modell↔Foto, MIT BELEG-BILD.
-- `tools/qualitaetsstufen.py` [-] qualitaetsstufen.py - Modellqualitaet in STUFEN, jede Stufe sichtbar (2026-11-04, Nutzerauftrag: "Treppenstufen: verschiedene Verfahren probieren, mehrere Iterationen, ich schaue m
-- `tools/selfcheck.py` [-] selfcheck.py — EIN Befehl, EIN Beleg: nach jedem Build alle Prüfebenen auf einen Blick. Zweck (User): schnellere Iterationen durch bessere Fehler-ERKENNUNG — statt viele Mini-Loops
+- `tools/qualitaetsstufen.py` [seg] qualitaetsstufen.py - Modellqualitaet in STUFEN, jede Stufe sichtbar (2026-11-04, Nutzerauftrag: "Treppenstufen: verschiedene Verfahren probieren, mehrere Iterationen, ich schaue m
+- `tools/selfcheck.py` [gen] selfcheck.py — EIN Befehl, EIN Beleg: nach jedem Build alle Prüfebenen auf einen Blick. Zweck (User): schnellere Iterationen durch bessere Fehler-ERKENNUNG — statt viele Mini-Loops

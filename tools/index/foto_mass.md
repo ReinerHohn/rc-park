@@ -3,108 +3,108 @@
 - `tools/bilder_einsortieren.py` [-] bilder_einsortieren.py - PIPELINE-SCHRITT nach bilder_holen.py: geerntete Fotos (fotos_eingang) in den Fotoordner des Objekts einsortieren.
 - `tools/bilder_holen.py` [seg] bilder_holen.py - PIPELINE-SCHRITT: Fotos einer Attraktion aus freien Quellen holen - nur die mit MEHRWERT fuer die Fotowolke.
 - `tools/bilder_schleife.py` [-] bilder_schleife.py - Bilder in STUFEN holen, nur wenn sie eine GEMESSENE Luecke schliessen (Plan M9/M10, Nutzerbeschluss 3.11.).
-- `tools/bilder_vorpruefen.py` [-] bilder_vorpruefen.py - Fremdbilder (Commons, Web, Videobilder) vor der SfM pruefen: zeigt das Bild das Objekt? GPU (ALIKED+LightGlue, gleiche Funktionen wie tools/video_suchen.py) 
-- `tools/bildschaerfe.py` [-] bildschaerfe.py - robustes Schaerfemass fuer Handy-/Eingangsfotos (2026-11-06, Register-Eintrag siehe VERSUCHSREGISTER).
-- `tools/bildwert.py` [gen] bildwert.py - Bildwert messen: nur Bilder/Frames verwenden, die LUECKEN schliessen (SPEC_S7_BILDWERT, Plan Stufe 4c; 2026-11-06).
+- `tools/bilder_vorpruefen.py` [seg] bilder_vorpruefen.py - Fremdbilder (Commons, Web, Videobilder) vor der SfM pruefen: zeigt das Bild das Objekt? GPU (ALIKED+LightGlue, gleiche Funktionen wie tools/video_suchen.py) 
+- `tools/bildschaerfe.py` [seg] bildschaerfe.py - robustes Schaerfemass fuer Handy-/Eingangsfotos (2026-11-06, Register-Eintrag siehe VERSUCHSREGISTER).
+- `tools/bildwert.py` [seg] bildwert.py - Bildwert messen: nur Bilder/Frames verwenden, die LUECKEN schliessen (SPEC_S7_BILDWERT, Plan Stufe 4c; 2026-11-06).
 - `tools/clips_waehlen.py` [-] clips_waehlen.py <video_kandidaten.json> [--max 12] - Clips fuer die SfM automatisch waehlen (ersetzt die Sichtpruefung von Hand). Lehre Schwabentor 2026-11-14: Auswahl nach Kontak
 - `tools/commons_harvest.py` [-] commons_harvest.py — Wikimedia-Commons-Foto-Ernte für datenreiche Wahrzeichen. Für den "Internet-Foto-Photogrammetrie"-Ansatz: ein weltberühmtes Gebäude hat hunderte/tausende FREI 
 - `tools/dach_aus_fotos.py` [seg] dach_aus_fotos.py <objekt.json> [--teil N] [--voxel 0.15] [--rand 3.5] [--schreiben] [--neu] - DACH AUS DEN FOTOS: Hoehe und Umriss des Dachs aus der Himmelskante vieler Fotos.
 - `tools/dach_aus_luftbild.py` [seg] dach_aus_luftbild.py — HARTES MODUL: Dachstruktur direkt aus dem DOP-LUFTBILD ableiten (generell). Idee: die Dachfläche (DOP) in den Modell-Frame warpen → DISTANZTRANSFORMATION zum
-- `tools/flaechen_gegen_netz.py` [-] flaechen_gegen_netz.py - "Geraffel"-Melder (Nutzeridee 2026-11-07): Im FOTO sind Fenster-/Wandflaechen einfarbig, im 3D-Netz sind dort Beulen. Ablauf je Foto (K-Kamera wie foto_dif
+- `tools/flaechen_gegen_netz.py` [seg] flaechen_gegen_netz.py - "Geraffel"-Melder (Nutzeridee 2026-11-07): Im FOTO sind Fenster-/Wandflaechen einfarbig, im 3D-Netz sind dort Beulen. Ablauf je Foto (K-Kamera wie foto_dif
 - `tools/flaechen_mass.py` [seg] flaechen_mass.py - FLAECHENMASS (Spec modelle/archiv/SPEC_FLAECHENMASS.md, Nutzerentscheid 11.11.): Formvergleich ueber FLAECHEN statt Kanten.
-- `tools/foto_auftrag.py` [gen] foto_auftrag.py <objekt.json> <fassaden-ordner> <aus.html> [--wunsch wuensche.json] [--mpp 0.01] [--extra-umriss x0 y0 x1 y1 ...]
+- `tools/foto_auftrag.py` [seg] foto_auftrag.py <objekt.json> <fassaden-ordner> <aus.html> [--wunsch wuensche.json] [--mpp 0.01] [--extra-umriss x0 y0 x1 y1 ...]
 - `tools/foto_auswahl.py` [col] foto_auswahl.py - Automatische Bildauswahl: Kennzahlen je Foto VOR dem Netz + Pruefung, welche davon die Registrierung wirklich vorhersagen (Register BK).
-- `tools/foto_auto_pose.py` [-] foto_auto_pose.py — VOLLAUTOMATISCH die Kamera-Pose eines bekannten 3D-Modells in einem Foto finden (keine Hand-Korrespondenzen, kein Klicken).
-- `tools/foto_breitenprofil.py` [-] foto_breitenprofil.py - BREITE JE HOEHE IN METERN, automatisch aus Foto und Modell (kalibrierte Kamera, keine Handpicks).
-- `tools/foto_bundle.py` [-] foto_bundle.py - MEHRERE Fotos gemeinsam gegen amtliche Anker loesen und dabei UNSICHERE HOEHEN mitschaetzen (Buendelausgleich).
+- `tools/foto_auto_pose.py` [seg] foto_auto_pose.py — VOLLAUTOMATISCH die Kamera-Pose eines bekannten 3D-Modells in einem Foto finden (keine Hand-Korrespondenzen, kein Klicken).
+- `tools/foto_breitenprofil.py` [seg] foto_breitenprofil.py - BREITE JE HOEHE IN METERN, automatisch aus Foto und Modell (kalibrierte Kamera, keine Handpicks).
+- `tools/foto_bundle.py` [seg] foto_bundle.py - MEHRERE Fotos gemeinsam gegen amtliche Anker loesen und dabei UNSICHERE HOEHEN mitschaetzen (Buendelausgleich).
 - `tools/foto_check.sh` [sh] foto_check.sh <objekt> <fotodatei> [auftrag-nr] - Sofort-Urteil fuer ein vor Ort hochgeladenes Foto (Nutzer 16.11.2026: "ja, passt oder passt nicht"). Braucht: modelle/<objekt>/aud
-- `tools/foto_dach_gemeinsam.py` [-] foto_dach_gemeinsam.py - GEMEINSAME Anpassung ueber viele Fotos: eine Dachform fuer alle, je Foto eine eigene Kamera.
-- `tools/foto_dachreihen.py` [-] foto_dachreihen.py - Reihenabstand der Dachdeckung (Biberschwanz-Reihen) aus kalibrierten Fotos (2026-11-12, kreis1 r1). Hang-Ebene (aus Traufe/First in (u,n,z)) wird je Foto metri
-- `tools/foto_dachtest_gpu.py` [-] (kein Docstring)
+- `tools/foto_dach_gemeinsam.py` [seg] foto_dach_gemeinsam.py - GEMEINSAME Anpassung ueber viele Fotos: eine Dachform fuer alle, je Foto eine eigene Kamera.
+- `tools/foto_dachreihen.py` [seg] foto_dachreihen.py - Reihenabstand der Dachdeckung (Biberschwanz-Reihen) aus kalibrierten Fotos (2026-11-12, kreis1 r1). Hang-Ebene (aus Traufe/First in (u,n,z)) wird je Foto metri
+- `tools/foto_dachtest_gpu.py` [seg] (kein Docstring)
 - `tools/foto_diff.py` [seg] foto_diff.py - Modell gegen Foto: KONTUR-Abweichungen automatisch MERKEN (falscher Torbogen, falsche Bogenzahl, fehlende/erfundene Kanten).
 - `tools/foto_diff_batch.py` [seg] foto_diff_batch.py - foto_diff fuer MEHRERE Fotos (und optional mehrere Kameravarianten / Netze) in EINEM Prozess (Register BS8). venv-seg/bin/python -I tools/foto_diff_batch.py mo
 - `tools/foto_displacement.py` [seg] foto_displacement.py — HEBEL 6+7 verzahnt: aus einem fassaden-geraden Foto (z.B. sv_*.jpg aus streetview_rip.py) ein DRUCKBARES Relief erzeugen.
-- `tools/foto_element_hoehe.py` [-] foto_element_hoehe.py - Hoehe und Groesse markanter Fassadenelemente automatisch aus dem Foto (kalibrierte Kamera, keine Handpicks).
+- `tools/foto_element_hoehe.py` [seg] foto_element_hoehe.py - Hoehe und Groesse markanter Fassadenelemente automatisch aus dem Foto (kalibrierte Kamera, keine Handpicks).
 - `tools/foto_fehlteile.py` [seg] foto_fehlteile.py - fehlende Bauteile DIREKT aus den Fotokanten finden (11.11., Regel 9e "Fotokanten entscheiden").
 - `tools/foto_feinsuche.py` [seg] foto_feinsuche.py - FEHLENDE FEINFORM automatisch finden (modelle/archiv/SPEC_FEINSUCHE.md, Nutzer 11.11. "automatische Feinsuche auf jeden Fall").
 - `tools/foto_form_kalibrieren.py` [-] foto_form_kalibrieren.py — Bauwerk-Form aus MEHREREN Fotos kalibriert bestimmen.
-- `tools/foto_kalibrieren.py` [-] foto_kalibrieren.py - Kamera eines Fotos gegen AMTLICHE 3D-Punkte loesen (LoD2-Ecken, DOM1-Spitzen, Dokumenthoehe) -> echte Meter aus dem Foto.
+- `tools/foto_kalibrieren.py` [seg] foto_kalibrieren.py - Kamera eines Fotos gegen AMTLICHE 3D-Punkte loesen (LoD2-Ecken, DOM1-Spitzen, Dokumenthoehe) -> echte Meter aus dem Foto.
 - `tools/foto_lokal.py` [seg] foto_lokal.py - LOKALES FOTO-TOR (modelle/archiv/SPEC_LOKALES_FOTOTOR.md): F1 eines Teils im AENDERUNGSBEREICH, vorher vs. nachher, plus F1 ganz (Festbereich).
 - `tools/foto_lokal_rueckblick.py` [-] Rueckblick-Test des lokalen Foto-Tors an verworfenen Kreis-Runden: <lauf>:<runde> ... -> foto_lokal.py je Runde, Ergebnis nach /media/oem/scan/rc-park_tmp/foto_lokal/rb_<lauf>_r<n>
-- `tools/foto_loop.py` [-] foto_loop.py - iterierende, selbstverbessernde Foto-Schleife (Analyse durch Synthese, GPU; Register BW, PIPELINE_H0.md Abschnitt 8).
+- `tools/foto_loop.py` [seg] foto_loop.py - iterierende, selbstverbessernde Foto-Schleife (Analyse durch Synthese, GPU; Register BW, PIPELINE_H0.md Abschnitt 8).
 - `tools/foto_luecken.py` [seg] foto_luecken.py - WO MUSS ICH VOR ORT NOCH FOTOS MACHEN? (Nutzerwunsch 10.11.: "Ich stehe am Gebaeude und will sehen, wo ich noch Fotos machen muss.")
 - `tools/foto_luecken_3d.py` [-] foto_luecken_3d.py <objekt.json> <sparse_modell> [--schritt 2] [--min 3] - neutrales 3D-HTML: Wandfelder nach Anzahl Fotos.
 - `tools/foto_luecken_plan.py` [col] foto_luecken_plan.py <objekt.json> <sparse_modell> [--schritt 1.5] [--min 3] - Welche Turmseite / Hoehe hat zu wenig Ansichten?
 - `tools/foto_mass.py` [seg] foto_mass.py - REPRODUZIERBARE Fotomessung: zwei Bildpunkte + Massstabskette -> Meter, als Protokoll (JSON + markierter Ausschnitt).
 - `tools/foto_metrologie.py` [seg] foto_metrologie.py — Bauwerk-Geometrie aus einem Foto MESSEN und gegen das Modell prüfen.
 - `tools/foto_modell_homografie.py` [seg] foto_modell_homografie.py — PERSPEKTIV-GENAUER Bewerter Realität gegen Modell für (nahezu) planare Fassaden OHNE EXIF-Intrinsics.
-- `tools/foto_modell_overlay.py` [-] foto_modell_overlay.py — das ECHTE 3D-Modell halbtransparent & perspektivisch ins Foto.
+- `tools/foto_modell_overlay.py` [seg] foto_modell_overlay.py — das ECHTE 3D-Modell halbtransparent & perspektivisch ins Foto.
 - `tools/foto_modell_vergleich.py` [-] foto_modell_vergleich.py — FAIRER Foto↔Modell-Vergleich (generisch).
-- `tools/foto_overlay.py` [-] foto_overlay.py - scharfe STL-Kanten (Winkel > 25 Grad) mit der kalibrierten Kamera K-<nr>.json (rvec,t,f_px,cx,cy; R*X+t wie foto_kalibrieren.py) ueber das echte Foto legen (Regis
-- `tools/foto_pick.py` [-] foto_pick.py - Ankerpunkte im VOLLBILD auf +-2 px: automatische Spitzen/Kugeln + Lupenblatt fuer Handpicks.
-- `tools/foto_pick_pruefen.py` [-] foto_pick_pruefen.py - PFLICHT vor jedem Buendel: Picks (gruen) und projizierte Anker (blau, aus der Einzelkamera) ins Foto zeichnen, mit Namen. foto_pick_pruefen.py modelle/<objek
-- `tools/foto_profil_gpu.py` [-] foto_profil_gpu.py - ALLGEMEINES Abweichungsprofil Modell <-> Fotos ueber die Hoehe (kein Bauteil vorab bekannt).
-- `tools/foto_rektifizieren.py` [-] foto_rektifizieren.py — Perspektive aus einem Fassaden-Foto entzerren (2 Fluchtpunkte).
-- `tools/foto_render_seite.py` [-] foto_render_seite.py - Foto | schattierter Modell-Render nebeneinander (Kamera aus kameras.json der gemeinsamen Anpassung). /media/oem/scan/venv-seg/bin/python -W ignore -I tools/f
+- `tools/foto_overlay.py` [seg] foto_overlay.py - scharfe STL-Kanten (Winkel > 25 Grad) mit der kalibrierten Kamera K-<nr>.json (rvec,t,f_px,cx,cy; R*X+t wie foto_kalibrieren.py) ueber das echte Foto legen (Regis
+- `tools/foto_pick.py` [seg] foto_pick.py - Ankerpunkte im VOLLBILD auf +-2 px: automatische Spitzen/Kugeln + Lupenblatt fuer Handpicks.
+- `tools/foto_pick_pruefen.py` [seg] foto_pick_pruefen.py - PFLICHT vor jedem Buendel: Picks (gruen) und projizierte Anker (blau, aus der Einzelkamera) ins Foto zeichnen, mit Namen. foto_pick_pruefen.py modelle/<objek
+- `tools/foto_profil_gpu.py` [seg] foto_profil_gpu.py - ALLGEMEINES Abweichungsprofil Modell <-> Fotos ueber die Hoehe (kein Bauteil vorab bekannt).
+- `tools/foto_rektifizieren.py` [seg] foto_rektifizieren.py — Perspektive aus einem Fassaden-Foto entzerren (2 Fluchtpunkte).
+- `tools/foto_render_seite.py` [seg] foto_render_seite.py - Foto | schattierter Modell-Render nebeneinander (Kamera aus kameras.json der gemeinsamen Anpassung). /media/oem/scan/venv-seg/bin/python -W ignore -I tools/f
 - `tools/foto_schnellcheck.py` [seg] foto_schnellcheck.py <objekt.json> <fassaden-ordner> <auftrag.json> <FOTODATEI> [--auftrag NR] [--stl a.stl,...] [--aus bild.jpg]
-- `tools/foto_silhouette_gpu.py` [-] foto_silhouette_gpu.py - Silhouettenvergleich Modell gegen Foto (Himmelsmaske), Kameralage per GPU-Suche (Zufall + CEM). Aufruf: foto_silhouette_gpu.py 044 [seed] [out.png]. Grenze
+- `tools/foto_silhouette_gpu.py` [seg] foto_silhouette_gpu.py - Silhouettenvergleich Modell gegen Foto (Himmelsmaske), Kameralage per GPU-Suche (Zufall + CEM). Aufruf: foto_silhouette_gpu.py 044 [seed] [out.png]. Grenze
 - `tools/foto_silhouette_profil.py` [-] foto_silhouette_profil.py - GENERISCH: Breitenprofil eines Dachhelms/Turmkopfs aus einem FERNEN Seitenfoto (nahezu orthografisch).
-- `tools/foto_skyline_orient.py` [-] foto_skyline_orient.py — GENERISCH & automatisch: die wahre Kamera-Orientierung (Blickrichtung + Pitch) aus dem Abgleich der Foto-SKYLINE mit dem aus dem DEM gerenderten Horizont b
-- `tools/foto_spitze_vollbild.py` [-] foto_spitze_vollbild.py - Spitzenlaenge ueber dem Dach aus Vollbild-Silhouetten (Himmelsmaske), ohne Kamerafit. Je Foto: Spitze (hoechster Nicht-Himmel-Punkt nahe Mitte), Dach-Ober
+- `tools/foto_skyline_orient.py` [seg] foto_skyline_orient.py — GENERISCH & automatisch: die wahre Kamera-Orientierung (Blickrichtung + Pitch) aus dem Abgleich der Foto-SKYLINE mit dem aus dem DEM gerenderten Horizont b
+- `tools/foto_spitze_vollbild.py` [seg] foto_spitze_vollbild.py - Spitzenlaenge ueber dem Dach aus Vollbild-Silhouetten (Himmelsmaske), ohne Kamerafit. Je Foto: Spitze (hoechster Nicht-Himmel-Punkt nahe Mitte), Dach-Ober
 - `tools/foto_stoermaske.py` [seg] foto_stoermaske.py - STOERMASKE JE KALIBRIERTEM FOTO fuer die Foto-Metrik (SPEC_STOERMASKE.md, Nutzerfreigabe 11.11.).
-- `tools/foto_tor_bezug.py` [-] foto_tor_bezug.py - FOTO-TOR MIT BEZUGSSTAND: entscheidet je Foto und je Fassade "besser / schlechter / gleich als der zuletzt abgenommene Stand".
+- `tools/foto_tor_bezug.py` [seg] foto_tor_bezug.py - FOTO-TOR MIT BEZUGSSTAND: entscheidet je Foto und je Fassade "besser / schlechter / gleich als der zuletzt abgenommene Stand".
 - `tools/foto_verhaeltnis.py` [-] foto_verhaeltnis.py - massstabsfreie HOEHENVERHAELTNISSE aus einem WEIT ENTFERNTEN Foto.
-- `tools/foto_vggt_test.py` [-] foto_vggt_test.py - NUR TEST (VGGT-1B ist CC BY-NC 4.0, siehe modelle/LIZENZ_WERKZEUGE.md). Rekonstruiert aus mehreren Martinstor-Fotos mit VGGT Kameras + Punktwolke, legt die Wolk
-- `tools/foto_vorpruefung.py` [-] foto_vorpruefung.py - Metadaten-Vorpruefung VOR dem Netz (Register BI): taugt ein Foto, und von welcher Seite/Entfernung wurde es gemacht?
-- `tools/foto_wichtigkeit.py` [-] foto_wichtigkeit.py - Wichtigkeit je Foto aus einem COLMAP-Buendel (Sweet-Spot-Frage, Nutzer 7.11.). Nur Lesen. /media/oem/scan/venv-colmap/bin/python -I tools/foto_wichtigkeit.py 
-- `tools/foto_zaehlung.py` [-] foto_zaehlung.py - Zaehlprotokoll fuer STRUKTURMERKMALE am Foto (Anzahl Oeffnungen/Fenster/Zinnen je Flaeche ...), Register CB.
-- `tools/foto_zu_config.py` [-] foto_zu_config.py — HALBAUTOMATISCHER VERMESSER: aus Foto-Ordner + LOD2 eine bauwerke/<name>.json erzeugen, die bauwerk_generator.py direkt liest. Das fehlende Bindeglied, das die 
+- `tools/foto_vggt_test.py` [seg] foto_vggt_test.py - NUR TEST (VGGT-1B ist CC BY-NC 4.0, siehe modelle/LIZENZ_WERKZEUGE.md). Rekonstruiert aus mehreren Martinstor-Fotos mit VGGT Kameras + Punktwolke, legt die Wolk
+- `tools/foto_vorpruefung.py` [seg] foto_vorpruefung.py - Metadaten-Vorpruefung VOR dem Netz (Register BI): taugt ein Foto, und von welcher Seite/Entfernung wurde es gemacht?
+- `tools/foto_wichtigkeit.py` [col] foto_wichtigkeit.py - Wichtigkeit je Foto aus einem COLMAP-Buendel (Sweet-Spot-Frage, Nutzer 7.11.). Nur Lesen. /media/oem/scan/venv-colmap/bin/python -I tools/foto_wichtigkeit.py 
+- `tools/foto_zaehlung.py` [seg] foto_zaehlung.py - Zaehlprotokoll fuer STRUKTURMERKMALE am Foto (Anzahl Oeffnungen/Fenster/Zinnen je Flaeche ...), Register CB.
+- `tools/foto_zu_config.py` [seg] foto_zu_config.py — HALBAUTOMATISCHER VERMESSER: aus Foto-Ordner + LOD2 eine bauwerke/<name>.json erzeugen, die bauwerk_generator.py direkt liest. Das fehlende Bindeglied, das die 
 - `tools/fotoform_auffrischen.sh` [sh] Formliste je Teil (teil_fotoform ueber alle kalibrierten Fotos) fuer den aktuellen main-Stand, in einem eigenen Worktree (main bleibt unberuehrt). Vom kreis_regler gestartet, wenn 
 - `tools/fotoliste.py` [-] fotoliste.py - Fotoeingang festschreiben und pruefen (Nullstart-Ehrlichkeit, Register BZ). Der Nullstart liest die Fotos aus fotos_dir; er laedt nichts herunter. Damit der Lauf tro
 - `tools/fotoquellen.py` [-] fotoquellen.py - ALLE Fotoordner eines Objekts finden (fuer die Gesamtkette: Fremdquellen -> bilder_vorpruefen -> fotos_sammeln). python3 -I tools/fotoquellen.py <fotos_dir> [--zie
 - `tools/fotos_eingang.py` [-] fotos_eingang.py - AUTOMATISCHER Fotoeingang (11.11., Nutzer: "muss ohne mich gehen"): neue, noch nicht registrierte Fotoordner eines Objekts finden, gegen die gemeinsame SfM regis
 - `tools/fotos_einsortieren.py` [-] fotos_einsortieren.py - PIPELINE-SCHRITT (2026-11-04): Bilder aus einem Eingangsordner (mapillary_rip.py: manifest 'views'; bilder_holen.py: manifest 'images') ins Objekt uebernehm
 - `tools/fotos_pruefen.py` [-] fotos_pruefen.py <ordner> [--quarantaene DIR] [--nur-liste] - jede Datei oeffnen; nur gueltige Bilder bleiben im Ordner.
-- `tools/fotos_sammeln.py` [-] fotos_sammeln.py - EIN SfM-Fotoordner aus allen Quellen (eigene Fotos + vorgepruefte Fremdbilder/Videobilder), Symlinks, ohne Dubletten. Lehre Schwabentor 2026-11-14: Die dichte Wo
-- `tools/giebel_stufen_zaehlen.py` [-] giebel_stufen_zaehlen.py - Stufen eines Treppengiebels AUTOMATISCH am Foto zaehlen (Regel 9, Register CB), 2026-11-05.
-- `tools/haufen_am_foto.py` [-] haufen_am_foto.py - Wolkenhaufen aus dem Grundriss-Tor AM FOTO klaeren (Regel: Haufen auf der Strasse nicht modellieren, erst am Foto ansehen).
-- `tools/helm_silhouette_foto.py` [-] helm_silhouette_foto.py - Silhouettenabweichung eines Rotations-/Polygonhelms (Typ helm_geschweift) gegen Himmel in kalibrierten Fotos.
-- `tools/luftbild_messen.py` [-] luftbild_messen.py - Dachgeometrie aus dem Orthofoto (DOP20) messen: die einzige Quelle, die die Ost- und Westseite zeigt.
+- `tools/fotos_sammeln.py` [seg] fotos_sammeln.py - EIN SfM-Fotoordner aus allen Quellen (eigene Fotos + vorgepruefte Fremdbilder/Videobilder), Symlinks, ohne Dubletten. Lehre Schwabentor 2026-11-14: Die dichte Wo
+- `tools/giebel_stufen_zaehlen.py` [seg] giebel_stufen_zaehlen.py - Stufen eines Treppengiebels AUTOMATISCH am Foto zaehlen (Regel 9, Register CB), 2026-11-05.
+- `tools/haufen_am_foto.py` [seg] haufen_am_foto.py - Wolkenhaufen aus dem Grundriss-Tor AM FOTO klaeren (Regel: Haufen auf der Strasse nicht modellieren, erst am Foto ansehen).
+- `tools/helm_silhouette_foto.py` [seg] helm_silhouette_foto.py - Silhouettenabweichung eines Rotations-/Polygonhelms (Typ helm_geschweift) gegen Himmel in kalibrierten Fotos.
+- `tools/luftbild_messen.py` [seg] luftbild_messen.py - Dachgeometrie aus dem Orthofoto (DOP20) messen: die einzige Quelle, die die Ost- und Westseite zeigt.
 - `tools/masse_aus_profilen.py` [-] masse_aus_profilen.py - STUFE C: Masse, die bisher von Hand aus Werkzeugausgaben in masse.json uebertragen wurden, schreibt das Werkzeug selbst - nach REGELN, die als Daten in obje
 - `tools/masse_bootstrap.py` [-] masse_bootstrap.py - Streuung der AUTOMATISCH abgeleiteten Masse (Baender -> masse_aus_profilen) innerhalb EINES Laufs messen (Register BO).
-- `tools/masspruefung.py` [-] masspruefung.py - Massstabs-Beweis fuer Martinstor: Hoehenkarte des Modells gegen amtliches LiDAR-DOM (LGL BW, 1 m, Genauigkeit 0,15 m). Nutzung: python3 tools/masspruefung.py mode
-- `tools/masspruefung_dach.py` [-] Punktweiser Dachvergleich: nur Zellen im 6-m-Umkreis der Spitze (Dach+Spitze), Lage frei gesucht. Nutzung: python masspruefung_dach.py a.stl b.stl ...
+- `tools/masspruefung.py` [gen] masspruefung.py - Massstabs-Beweis fuer Martinstor: Hoehenkarte des Modells gegen amtliches LiDAR-DOM (LGL BW, 1 m, Genauigkeit 0,15 m). Nutzung: python3 tools/masspruefung.py mode
+- `tools/masspruefung_dach.py` [gen] Punktweiser Dachvergleich: nur Zellen im 6-m-Umkreis der Spitze (Dach+Spitze), Lage frei gesucht. Nutzung: python masspruefung_dach.py a.stl b.stl ...
 - `tools/masspruefung_daten.py` [-] masspruefung_daten.py - holt die amtlichen LiDAR-Daten (LGL BW, DOM1 + DGM1, 1 m, Genauigkeit 0,15 m) fuer das Martinstor und legt das 60x60-m-Fenster als /media/oem/scan/tmp/mt_do
 - `tools/masspruefung_fit.py` [-] masspruefung_fit.py - Parameter des Martinstors an amtliches LiDAR-DOM anpassen (Proxy-Modell aus Quadern/Kegelstuempfen). Gibt die besten Parameter, die Flaechenkurve und die Rest
-- `tools/masspruefung_tabelle.py` [-] Tabelle Laser gegen Modell (Gesamtflaeche im 9-m-Umkreis um die Spitze, gleiches 1-m-Raster wie das amtliche DOM). Nutzung: python3 tools/masspruefung_tabelle.py [stl]
-- `tools/masspruefung_vergleich.py` [-] Vergleich Laser (DOM) gegen Modell auf gleichem 1-m-Raster: Flaeche + Mindestrechteck der Turmkomponente je Hoehenschwelle. Nutzung: python3 tools/masspruefung_vergleich.py [stl] (
+- `tools/masspruefung_tabelle.py` [gen] Tabelle Laser gegen Modell (Gesamtflaeche im 9-m-Umkreis um die Spitze, gleiches 1-m-Raster wie das amtliche DOM). Nutzung: python3 tools/masspruefung_tabelle.py [stl]
+- `tools/masspruefung_vergleich.py` [seg] Vergleich Laser (DOM) gegen Modell auf gleichem 1-m-Raster: Flaeche + Mindestrechteck der Turmkomponente je Hoehenschwelle. Nutzung: python3 tools/masspruefung_vergleich.py [stl] (
 - `tools/massstab_quelle_normobjekte.py` [seg] massstab_quelle_normobjekte.py - Massstabsquelle "Normobjekte in Fotos": Personen als Laengennormal (ANNAHME Erwachsene Median 1,70 m).
 - `tools/massstab_schwarm.py` [-] massstab_schwarm.py - Massstab aus MEHREREN unabhaengigen Quellen sammeln, auf Verträglichkeit pruefen, offen ausweisen (Register BP).
 - `tools/masstabelle_io.py` [-] masstabelle_io.py - Masstabelle nebenlaeufig sicher aendern (Dateisperre). Mehrere Werkzeuge (foto_breitenprofil, fehlteile_finden, ...) laufen in tools/bauen_abnehmen.sh parallel 
 - `tools/modell_foto_overlay.py` [seg] modell_foto_overlay.py --stl x.stl --fotos kameras_netz.json --bilder dir --foto name.jpg [--wolke w.npy] --out jpg [--verdeckt aus|gestrichelt|alle] [--winkel 0.6] Ganzes Modell (
-- `tools/modell_fotofarbe.py` [-] modell_fotofarbe.py - Modelloberflaeche mit echten Fotofarben einfaerben (Viewer, Nutzer 10.11.: "Echtheitseindruck").
-- `tools/modell_neben_foto.py` [-] modell_neben_foto.py <objekt.json> FOTO AUS.jpg [--stl a.stl,b.stl] [--box x0 y0 x1 y1] [--breite 900] - schattiertes Modell aus der Fotokamera NEBEN dem Foto.
-- `tools/neben_fotos_waehlen.py` [-] neben_fotos_waehlen.py <objekt.json> [--eintragen] [--je 1] - je Gebaeudeseite das beste Vergleichsfoto fuer 'Modell neben Foto' und das Umriss-Tor waehlen.
+- `tools/modell_fotofarbe.py` [seg] modell_fotofarbe.py - Modelloberflaeche mit echten Fotofarben einfaerben (Viewer, Nutzer 10.11.: "Echtheitseindruck").
+- `tools/modell_neben_foto.py` [seg] modell_neben_foto.py <objekt.json> FOTO AUS.jpg [--stl a.stl,b.stl] [--box x0 y0 x1 y1] [--breite 900] - schattiertes Modell aus der Fotokamera NEBEN dem Foto.
+- `tools/neben_fotos_waehlen.py` [seg] neben_fotos_waehlen.py <objekt.json> [--eintragen] [--je 1] - je Gebaeudeseite das beste Vergleichsfoto fuer 'Modell neben Foto' und das Umriss-Tor waehlen.
 - `tools/netz_decimieren.py` [-] Je Objekt quadratisch vereinfachen (fast_simplification) auf ein Dreiecksbudget; kleine Objekte bleiben unveraendert. Aufruf: python -I tools/netz_decimieren.py IN.npz OUT.npz [--b
 - `tools/netz_fotos_holen.py` [-] netz_fotos_holen.py <objekt.json> --aus DIR [--tage 7] [--neu] [--max-openverse 300] [--max-commons 250] [--max-hochblick 40] [--bekannt-wurzel DIR ...]
-- `tools/netz_hybrid_luecken.py` [-] netz_hybrid_luecken.py - BS46: Hybrid Wolkennetz + Generator-/LoD2-Flaechen NUR in Wolkenluecken. Basis (Wolkennetz) bleibt unveraendert; Flaechen des Zusatznetzes (Generator) werd
-- `tools/netz_render.py` [-] Eigenpruefung 3D-Netze: Painter-Rasterung (orthografisch) mit Lambert-Schattierung aus mehreren Richtungen. Aufruf: python -I netz_render.py IN.npz OBJEKT.json OUT_PREFIX [--farbe 
-- `tools/netz_verfeinern.py` [-] netz_verfeinern.py - Netz REGIONWEISE gegen Fotokanten verfeinern (differenzierbares Rendern, PyTorch3D 0.7.9, BSD-3). venv-seg/bin/python -W ignore -I tools/netz_verfeinern.py obj
+- `tools/netz_hybrid_luecken.py` [gen] netz_hybrid_luecken.py - BS46: Hybrid Wolkennetz + Generator-/LoD2-Flaechen NUR in Wolkenluecken. Basis (Wolkennetz) bleibt unveraendert; Flaechen des Zusatznetzes (Generator) werd
+- `tools/netz_render.py` [seg] Eigenpruefung 3D-Netze: Painter-Rasterung (orthografisch) mit Lambert-Schattierung aus mehreren Richtungen. Aufruf: python -I netz_render.py IN.npz OBJEKT.json OUT_PREFIX [--farbe 
+- `tools/netz_verfeinern.py` [seg] netz_verfeinern.py - Netz REGIONWEISE gegen Fotokanten verfeinern (differenzierbares Rendern, PyTorch3D 0.7.9, BSD-3). venv-seg/bin/python -W ignore -I tools/netz_verfeinern.py obj
 - `tools/netz_vergleich.py` [col] netz_vergleich.py - GENERISCH: zwei Ausrichtungen DESSELBEN SfM-Netzes im Modellsystem vergleichen (gleiche Bildnamen, gleiche Punkt-IDs).
-- `tools/netz_winding.py` [-] netz_winding.py - Netz mit Luecken/Selbstdurchdringung -> wasserdicht per Generalized Winding Number + Marching Cubes. Test BS40 (7.11.): behaelt die Form des besten Diff-Netzes (m
-- `tools/reproj_je_foto.py` [-] reproj_je_foto.py - Reprojektionsfehler JE FOTO aus einem COLMAP-Modell (Kamera-Qualitaet; Nutzerauftrag 7.11.). /media/oem/scan/venv-colmap/bin/python -I tools/reproj_je_foto.py S
+- `tools/netz_winding.py` [gen] netz_winding.py - Netz mit Luecken/Selbstdurchdringung -> wasserdicht per Generalized Winding Number + Marching Cubes. Test BS40 (7.11.): behaelt die Form des besten Diff-Netzes (m
+- `tools/reproj_je_foto.py` [col] reproj_je_foto.py - Reprojektionsfehler JE FOTO aus einem COLMAP-Modell (Kamera-Qualitaet; Nutzerauftrag 7.11.). /media/oem/scan/venv-colmap/bin/python -I tools/reproj_je_foto.py S
 - `tools/sam_mehrfoto_3d.py` [seg] 3D-Objekte aus der Wolke per SAM auf vielen kalibrierten Fotos (Nutzer 9.11.: 'das reale 3D-Objekt so wie es die Wolke darstellt'). Je Foto SAM-Masken (grob->fein, kleinere uebersc
 - `tools/schwerkraft_je_bild.py` [col] schwerkraft_je_bild.py - Schwerkraft (Richtung 'unten') JE BILD aus den senkrechten Kanten, fuer den globalen Mapper (GlobalMapper.ra_use_gravity 1).
 - `tools/sonne_fotos.py` [-] sonne_fotos.py - Sonnenstand + Sonnenschein je Foto (2026-11-05, Nutzeridee: Schattenkarte aus Datum/Zeit, mit Wetter abgleichen).
-- `tools/teil_foto_overlay.py` [-] teil_foto_overlay.py <objekt> <typ> --fotos kameras_netz.json --bilder dir --shift du,dn,dz [--mit carrier] [--n 3] --out png Kanten (Knickkanten) des Bauteils (um shift verschoben
+- `tools/teil_foto_overlay.py` [seg] teil_foto_overlay.py <objekt> <typ> --fotos kameras_netz.json --bilder dir --shift du,dn,dz [--mit carrier] [--n 3] --out png Kanten (Knickkanten) des Bauteils (um shift verschoben
 - `tools/teil_fotoform.py` [seg] teil_fotoform.py - FORMPRUEFUNG JE BAUTEIL GEGEN DIE EINZELFOTOS (Regel 9d b, L-KR24).
-- `tools/teil_render_foto.py` [-] teil_render_foto.py - schattiertes Teil-Render aus der kalibrierten Fotokamera NEBEN dem Fotoausschnitt (Pruefbild fuer Agenten/Pruefer). Warum (11.11., modelle/archiv/SPEC_ORNAMEN
-- `tools/tsdf_netz.py` [-] tsdf_netz.py - TSDF-Fusion aus COLMAP-Tiefenkarten (geometric.bin) + Posen -> Netz (open3d), Modellrahmen, STL mm. Kandidat fuer tools/modell_wettbewerb.py. venv-o3d/bin/python -I 
-- `tools/video_frames.py` [-] video_frames.py — Fotos AUS VIDEOS für Photogrammetrie/Fassadenmessung. Ein Touristen-Video, das um ein Wahrzeichen schwenkt, liefert dutzende Blickwinkel in Sekunden — ideal für S
-- `tools/video_frames_waehlen.py` [-] video_frames_waehlen.py - aus einem Handyvideo die brauchbaren Einzelbilder waehlen (Schaerfe + Verdeckung), CPU, ohne GPU.
-- `tools/video_kaufhaus_pruefen.py` [-] video_kaufhaus_pruefen.py - Zeigt ein Video-Clip das Objekt? (Vorab-Filter fuer fremde Videos; Nutzer 7.11.) /media/oem/scan/venv-seg/bin/python -I tools/video_kaufhaus_pruefen.py 
+- `tools/teil_render_foto.py` [seg] teil_render_foto.py - schattiertes Teil-Render aus der kalibrierten Fotokamera NEBEN dem Fotoausschnitt (Pruefbild fuer Agenten/Pruefer). Warum (11.11., modelle/archiv/SPEC_ORNAMEN
+- `tools/tsdf_netz.py` [seg] tsdf_netz.py - TSDF-Fusion aus COLMAP-Tiefenkarten (geometric.bin) + Posen -> Netz (open3d), Modellrahmen, STL mm. Kandidat fuer tools/modell_wettbewerb.py. venv-o3d/bin/python -I 
+- `tools/video_frames.py` [seg] video_frames.py — Fotos AUS VIDEOS für Photogrammetrie/Fassadenmessung. Ein Touristen-Video, das um ein Wahrzeichen schwenkt, liefert dutzende Blickwinkel in Sekunden — ideal für S
+- `tools/video_frames_waehlen.py` [seg] video_frames_waehlen.py - aus einem Handyvideo die brauchbaren Einzelbilder waehlen (Schaerfe + Verdeckung), CPU, ohne GPU.
+- `tools/video_kaufhaus_pruefen.py` [seg] video_kaufhaus_pruefen.py - Zeigt ein Video-Clip das Objekt? (Vorab-Filter fuer fremde Videos; Nutzer 7.11.) /media/oem/scan/venv-seg/bin/python -I tools/video_kaufhaus_pruefen.py 
 - `tools/video_masken.py` [seg] video_masken.py - Masken fuer BEWEGTE Dinge (Personen, Fahrzeuge, Strassenbahn, Fahrraeder, Tiere) in Video-Frames, damit SfM nur auf der festen Szene rechnet (Plan M-Quelle Sued, 
-- `tools/video_match_gpu.py` [-] video_match_gpu.py - Deskriptor-Matching Videoframes x Strassenfotos auf der GPU (torch), zu video_ausrichten.py --modus dump/fit. /media/oem/scan/venv-seg/bin/python -I tools/vide
+- `tools/video_match_gpu.py` [seg] video_match_gpu.py - Deskriptor-Matching Videoframes x Strassenfotos auf der GPU (torch), zu video_ausrichten.py --modus dump/fit. /media/oem/scan/venv-seg/bin/python -I tools/vide
 - `tools/video_merge.py` [col] video_merge.py - obere Turmhaelfte aus der dichten Videowolke (video_dicht.py) in die Nordwolke einfuegen (Register BQ).
 - `tools/video_netz.py` [-] video_netz.py - objektunabhaengige Pfadaufloesung der Video-Stufe (Register CR). Netzname: objekt.json video_stufe.netz, sonst sfm.netz, sonst "alle" wenn sfm/sparse_alle existiert
 - `tools/video_seite_pruefen.py` [gen] video_seite_pruefen.py - UNABHAENGIGE Pruefung, ob die Seitenzuordnung (Spiegelung Nord/Sued bzw. Ost/West) der Video-/Wolken-Ausrichtung stimmt (Plan M8, Register AH).
@@ -112,4 +112,4 @@
 - `tools/videobilder_ausduennen.py` [-] videobilder_ausduennen.py <video_frames_ordner> [fenster=3] Je Clip aus jeweils <fenster> aufeinanderfolgenden Bildern das schaerfste behalten (manifest.json von videos_zu_bildern.
 - `tools/videos_zu_bildern.py` [seg] videos_zu_bildern.py <videoordner> <ausordner> [fps=2] [min_schaerfe=60] Alle Videos eines Ordners -> scharfe Einzelbilder vid_<clip>_<nn>.jpg (ffmpeg dreht nach Metadaten selbst).
 - `tools/zusatzfotos_lightglue.py` [col] zusatzfotos_lightglue.py - Zusatzfotos, die mit SIFT nicht registrierten, mit ALIKED+LightGlue nachmatchen und neu registrieren (2026-11-06, Register CY).
-- `tools/zylinder_mass.py` [-] zylinder_mass.py <objekt.json> --achse x y --radius r --mess FOTO u v [--mess FOTO u v ...] [--tri FOTO u v FOTO u v] - Punkte auf einem RUNDEN Bauteil messen.
+- `tools/zylinder_mass.py` [seg] zylinder_mass.py <objekt.json> --achse x y --radius r --mess FOTO u v [--mess FOTO u v ...] [--tri FOTO u v FOTO u v] - Punkte auf einem RUNDEN Bauteil messen.

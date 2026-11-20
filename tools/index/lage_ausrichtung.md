@@ -1,18 +1,18 @@
 # Werkzeuge: lage_ausrichtung (44)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
-- `tools/ausrichtung_lot_korrigieren.py` [-] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
-- `tools/ausrichtung_massstab_korrigieren.py` [-] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
+- `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
+- `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
 - `tools/ausrichtung_uebertragen.py` [col] ausrichtung_uebertragen.py - Ausrichtung eines schon ausgerichteten SfM-Modells auf ein NEUES SfM-Modell uebertragen (gemeinsame Kameras).
-- `tools/bewerter_bauwerk_geom.py` [-] Harter GEOMETRIE-Test für BAUWERKE (Viadukt / Bogen-Staumauer / Gewichtsmauer).
+- `tools/bewerter_bauwerk_geom.py` [gen] Harter GEOMETRIE-Test für BAUWERKE (Viadukt / Bogen-Staumauer / Gewichtsmauer).
 - `tools/bewerter_geometrie.py` [-] Juror 1 — GEOMETRIE-TREUE. Frage: Bildet das Modell den ECHTEN Ort geometrisch treu ab, oder frisst Glättung/Auflösung die markanten Kanten weg?
 - `tools/dgm_xyz_to_npy.py` [-] dgm_xyz_to_npy.py — LGL-DGM1 XYZ-Subkacheln -> ein north-up Höhenfeld (.npy).
 - `tools/dom1_kachel.py` [-] dom1_kachel.py - GENERISCH: DOM1-/DGM1-Hoehe an UTM-Lagen direkt aus den amtlichen LGL-Kacheln (GeoTIFF + .tfw = Mitte des Pixels links oben).
-- `tools/foto_georef_overlay.py` [-] foto_georef_overlay.py — GENERISCH & georef: ein in Weltkoordinaten (UTM) stehendes Modell aus Kamera-Metadaten (GPS/Höhe/Kompass) in ein Foto projizieren — struktur-agnostisch (Vi
+- `tools/foto_georef_overlay.py` [seg] foto_georef_overlay.py — GENERISCH & georef: ein in Weltkoordinaten (UTM) stehendes Modell aus Kamera-Metadaten (GPS/Höhe/Kompass) in ein Foto projizieren — struktur-agnostisch (Vi
 - `tools/foto_lod2_zuordnen.py` [-] foto_lod2_zuordnen.py - GENERISCH: Was ist das Ding im Foto? LoD2-Gebaeude der Umgebung in die kalibrierte Kamera eines Fotos projizieren und fuer eine Bildstelle (u, v) sagen, wel
-- `tools/generator_ausrichten.py` [-] generator_ausrichten.py - BS51: alten Generator-Kaufhaus (kaufhaus_measured.glb, Meter, eigener Rahmen) in den Wolkenrahmen (Netzrahmen, m) legen. Global: FPFH+RANSAC (Open3D, Mass
-- `tools/generator_ausrichten2.py` [-] generator_ausrichten2.py - BS51b: alten Generator (Meter) in den Wolkenrahmen legen per Gittersuche (Gieren um Fassadenrichtung +-, Verschiebung u/w/z), Score = Anteil Generatorpun
-- `tools/generator_ausrichten3.py` [-] generator_ausrichten3.py - BS51c: Generator->Wolke Ausrichtung auf GPU: Wolken-Distanzfeld (EDT, 5 cm), 1,5 Mio Kandidaten (Gieren/u/w/z) per grid_sample parallel, Top-k per Adam (
-- `tools/generator_feinlage.py` [-] Feinlage des Generators direkt gegen den Foto-Diff (statt gegen die Wolke): globale Kandidaten +-Schritt je Freiheitsgrad. Aufruf: generator_feinlage.py BASIS.stl AUS_PREFIX (mm-ST
+- `tools/generator_ausrichten.py` [gen] generator_ausrichten.py - BS51: alten Generator-Kaufhaus (kaufhaus_measured.glb, Meter, eigener Rahmen) in den Wolkenrahmen (Netzrahmen, m) legen. Global: FPFH+RANSAC (Open3D, Mass
+- `tools/generator_ausrichten2.py` [gen] generator_ausrichten2.py - BS51b: alten Generator (Meter) in den Wolkenrahmen legen per Gittersuche (Gieren um Fassadenrichtung +-, Verschiebung u/w/z), Score = Anteil Generatorpun
+- `tools/generator_ausrichten3.py` [seg] generator_ausrichten3.py - BS51c: Generator->Wolke Ausrichtung auf GPU: Wolken-Distanzfeld (EDT, 5 cm), 1,5 Mio Kandidaten (Gieren/u/w/z) per grid_sample parallel, Top-k per Adam (
+- `tools/generator_feinlage.py` [gen] Feinlage des Generators direkt gegen den Foto-Diff (statt gegen die Wolke): globale Kandidaten +-Schritt je Freiheitsgrad. Aufruf: generator_feinlage.py BASIS.stl AUS_PREFIX (mm-ST
 - `tools/git_packs_auslagern.sh` [sh] Git-Objekte verlustfrei von der Root-Platte auf die Datenplatte (10.11.: .git wuchs nachts ~1 GB/h durch Kreis-Zweige mit STL/Audit-Bildern). Mechanismus: .git/objects/info/alterna
 - `tools/gps_ausrichtung.py` [-] gps_ausrichtung.py <objekt.json> <kameras.json> <fotos_eigen_ordner> <dicht_ply> - Ausrichtung ueber GPS der eigenen Fotos (Exif).
 - `tools/gps_seiten_pruefen.py` [col] gps_seiten_pruefen.py <sparse-modell> --bilder <ordner> [--grenze 12]
@@ -26,12 +26,12 @@
 - `tools/lod2_textured.py` [seg] lod2_textured.py — GENERISCH: echtes LOD2-Gebäude mit ECHTER TEXTUR. Dach <- DOP-Orthofoto (geometrisch exakt: gleiche UTM-Koordinaten, planar-UV) Front <- rektifiziertes Fassadenf
 - `tools/lod2_to_blender.py` [gen] lod2_to_blender.py — GENERISCH: echtes LOD2-Gebäude (+ Detail) → selbst-enthaltenes Blender-Skript. Die echte Geometrie (Grundriss/L-Form/Vorbau/Dach) wird als Vertices/Faces EINGE
 - `tools/lod2_winkel_abgleich.py` [seg] lod2_winkel_abgleich.py <objekt> --wolke w.npy [--synth] [--k 24] [--aus out.json] Winkelabgleich Wolke <-> LoD2 OHNE Georeferenz (Nutzer 8.11.: LoD2 nur fuer Richtung/Winkel, nich
-- `tools/lot_aus_fotos.py` [-] lot_aus_fotos.py --fotos k.json --bilder dir [--n 40] [--aus lot.json] Lotrichtung im Wolkenrahmen AUS DEN FOTOS (Manhattan-Welt): je Foto Linienstuecke (LSD), nahezu senkrechte Li
+- `tools/lot_aus_fotos.py` [seg] lot_aus_fotos.py --fotos k.json --bilder dir [--n 40] [--aus lot.json] Lotrichtung im Wolkenrahmen AUS DEN FOTOS (Manhattan-Welt): je Foto Linienstuecke (LSD), nahezu senkrechte Li
 - `tools/lotpruefung.py` [gen] lotpruefung.py - Lot-/Neigungspruefung der Wandflaechen einer Punktwolke OHNE den Generator (Plan 2.3).
 - `tools/massstab_quelle_gps.py` [-] massstab_quelle_gps.py - Massstabsquelle GPS der FOTOS (horizontal, unabhaengig von den Bodenankern) (Register BP).
 - `tools/massstab_quelle_lod2.py` [-] massstab_quelle_lod2.py - Massstabsquelle 'LoD2-Nachbargebaeude als Hoehenschwarm' (vertikal).
 - `tools/modell_ausrichten_gpu.py` [seg] modell_ausrichten_gpu.py <objekt> --wolke w.npy [--typ bauteil|ganz] [--sichtbar] [--stl_aus out.stl] GPU-Sweep ueber ALLE Freiheitsgrade eines Modells/Bauteils (Nutzer 8.11.: 'Ele
-- `tools/nachbarn_modellrahmen.py` [-] nachbarn_modellrahmen.py - LoD2-Nachbargebaeude (ohne das Objekt selbst) als Netz im Modell-/SfM-Rahmen (Nutzer 10.11.: "wo ein anderes Haus steht, kann ich keine Fotos machen" -> 
+- `tools/nachbarn_modellrahmen.py` [gen] nachbarn_modellrahmen.py - LoD2-Nachbargebaeude (ohne das Objekt selbst) als Netz im Modell-/SfM-Rahmen (Nutzer 10.11.: "wo ein anderes Haus steht, kann ich keine Fotos machen" -> 
 - `tools/objekt_rahmen.py` [-] objekt_rahmen.py - GENERISCH: fehlende Pflichtangaben 'rahmen' und 'lod2' eines Objekts ergaenzen (Lernregister 3, 2026-11-04).
 - `tools/rahmen_aus_lod2.py` [-] rahmen_aus_lod2.py <objekt.json> [--name NAME] [--schreiben] - lod2 {gml,id}, koordinate_utm und rahmen fuer ein Objekt OHNE diese Angaben, ueber das GML-Namensattribut (Lehre Schw
 - `tools/rahmen_lot_foto.py` [-] rahmen_lot_foto.py <objekt> --wolke_voll w.npy --kameras k.json --up lot_fotos.json --wolke_aus w.npy --kameras_aus k.json [--rgb rgb.npy --rgb_aus rgb_crop.npy] [--crop u0,u1,n0,n
@@ -39,7 +39,7 @@
 - `tools/seiten_geometrie.py` [-] STAND 19.11.2026: NICHT IN DER KETTE - Messung am Martinstor trennt nicht (siehe unten ERGEBNIS). Nur als Messwerkzeug behalten. ERGEBNIS Martinstor (25 gemessene Verbindungen): Si
 - `tools/seiten_vereinen.py` [col] seiten_vereinen.py <modell_A> <modell_B> <db.db> --aus <ordner> [--min-paare 60] [--rel 0.02]
 - `tools/stadt_lod2_schneiden.py` [gen] stadt_lod2_schneiden.py - Stadt-Freiburg-LoD2 (Quellentyp 18, STADT_LOD2) auf ein Objekt zuschneiden (Auftrag G4).
-- `tools/teile_lage_pruefen.py` [-] teile_lage_pruefen.py <objekt> [wolke.npy] - je aktivem Bauteil (NUR_BAUTEIL) Median-Abstand Wolke->Teil und Hoehe/Lage; markiert Teile ohne Wolkenstuetzung und Doppelungen. Sichtf
+- `tools/teile_lage_pruefen.py` [gen] teile_lage_pruefen.py <objekt> [wolke.npy] - je aktivem Bauteil (NUR_BAUTEIL) Median-Abstand Wolke->Teil und Hoehe/Lage; markiert Teile ohne Wolkenstuetzung und Doppelungen. Sichtf
 - `tools/umzug_auslagerung.sh` [sh] umzug_auslagerung.sh QUELLE ZIEL [--trocken | --nur_umbiegen]   (--nur_umbiegen: nichts kopieren, nur Verknuepfungen QUELLE -> ZIEL umbiegen - Schlussdurchgang nach allen Umzuegen)
-- `tools/video_ausrichten.py` [-] video_ausrichten.py - Drohnen-/Video-SfM (video_sfm.py) per 3D-3D-Punktkorrespondenzen am Nordnetz ausrichten (Aehnlichkeitstransformation, RANSAC) (Register BQ).
+- `tools/video_ausrichten.py` [col] video_ausrichten.py - Drohnen-/Video-SfM (video_sfm.py) per 3D-3D-Punktkorrespondenzen am Nordnetz ausrichten (Aehnlichkeitstransformation, RANSAC) (Register BQ).
 - `tools/wand_feinausrichtung.py` [seg] wand_feinausrichtung.py - Feinausrichtung mehrerer entzerrter Wandbilder (gleiches Wandraster) gegeneinander, NACH Homographie/Kameraprojektion.

@@ -1,58 +1,58 @@
 # Werkzeuge: fassade_relief (57)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
-- `tools/bogen_anpassen.py` [-] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
+- `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
 - `tools/bogen_kontur.py` [seg] bogen_kontur.py - KONTUR zuerst messen, dann benennen (Nutzerwunsch 7.11.2026, Pilot Arkadenboegen). Kein Familien-Raten. Stufen (Unterbefehle): ortho : je kalibriertem Foto metris
-- `tools/bogen_kontur_robust.py` [-] bogen_kontur_robust.py - Laibungslinie der Bogenoeffnungen aus dem Belegungsbild (bogen_aus_wolke.py: platte_loecher.png, weiss = Wolke, schwarz = leer). Gegenueber bogen_unterkant
+- `tools/bogen_kontur_robust.py` [seg] bogen_kontur_robust.py - Laibungslinie der Bogenoeffnungen aus dem Belegungsbild (bogen_aus_wolke.py: platte_loecher.png, weiss = Wolke, schwarz = leer). Gegenueber bogen_unterkant
 - `tools/bogen_ratsche.py` [-] bogen_ratsche.py — ARC_BW so setzen, dass die Gold-Archivolte die Bogen-ÖFFNUNG genau rahmt.
-- `tools/bogen_unterkante.py` [-] bogen_unterkante.py - Untere Kante des Bogenbandes aus der Wolkenplatte (bogen_aus_wolke.py liefert die Belegung): je Spalte von oben das erste zusammenhaengende belegte Band, Unte
-- `tools/fachwerk_aus_ortho.py` [-] fachwerk_aus_ortho.py <ortho-ordner> <aus-ordner> ID [ID ...] [--px 0.025] [--hoehe 0.035] [--v 0.42] - Fachwerkbalken einer Geschossflaeche als flaches Relief aus dem MEHRFOTO-Fas
-- `tools/fassade_diagnose.py` [-] fassade_diagnose.py <objekt.json> --stl <modell.stl> [--aus diagnose.json] [--schritt 0.2] [--max-winkel 70] [--max-mpp 0.06] [--tol 0.10] - WARUM hat eine Fassade keine Bilddaten?
-- `tools/fassade_ein_foto.py` [gen] fassade_ein_foto.py <fassaden.json> <nr> <objekt.json> <FOTO|auto> <aus.png> [--stl a.stl,b.stl] [--z z0 z1] [--u u0 u1] - entzerrtes Fassadenbild einer Wand aus EINEM kalibrierten
+- `tools/bogen_unterkante.py` [seg] bogen_unterkante.py - Untere Kante des Bogenbandes aus der Wolkenplatte (bogen_aus_wolke.py liefert die Belegung): je Spalte von oben das erste zusammenhaengende belegte Band, Unte
+- `tools/fachwerk_aus_ortho.py` [seg] fachwerk_aus_ortho.py <ortho-ordner> <aus-ordner> ID [ID ...] [--px 0.025] [--hoehe 0.035] [--v 0.42] - Fachwerkbalken einer Geschossflaeche als flaches Relief aus dem MEHRFOTO-Fas
+- `tools/fassade_diagnose.py` [seg] fassade_diagnose.py <objekt.json> --stl <modell.stl> [--aus diagnose.json] [--schritt 0.2] [--max-winkel 70] [--max-mpp 0.06] [--tol 0.10] - WARUM hat eine Fassade keine Bilddaten?
+- `tools/fassade_ein_foto.py` [seg] fassade_ein_foto.py <fassaden.json> <nr> <objekt.json> <FOTO|auto> <aus.png> [--stl a.stl,b.stl] [--z z0 z1] [--u u0 u1] - entzerrtes Fassadenbild einer Wand aus EINEM kalibrierten
 - `tools/fassade_entzerren.py` [seg] fassade_entzerren.py — robuste fronto-parallele Entzerrung einer Fassade.
-- `tools/fassade_fein.py` [-] fassade_fein.py <ortho-ordner> [--nur f02,e17] [--k 6] - FEINES, nahtfreies Fassadenbild aus den Einzelfoto-Orthos (fassade_ortho.py --einzeln --zelle 0.01).
+- `tools/fassade_fein.py` [seg] fassade_fein.py <ortho-ordner> [--nur f02,e17] [--k 6] - FEINES, nahtfreies Fassadenbild aus den Einzelfoto-Orthos (fassade_ortho.py --einzeln --zelle 0.01).
 - `tools/fassade_gitter.py` [seg] fassade_gitter.py — Fassade GENERELL in Regionen zerlegen (KEINE hardcodierten Crops).
 - `tools/fassade_messen.py` [seg] fassade_messen.py — GENERISCHE Fassaden-Vermessung per Kantenerkennung (kein Augenmaß!).
 - `tools/fassade_messen_masked.py` [seg] fassade_messen_masked.py — Kaufhaus-Methode: Fassade aus dem FREIGESTELLTEN Gebäude (ML-Maske) + MASSSTAB (LOD2) per Bildverarbeitung messen. Kanten NUR im Gebäude (Clutter weg) → 
-- `tools/fassade_ortho.py` [-] fassade_ortho.py - Fassaden-Orthobilder (Meterraster) aus ALLEN kalibrierten Fotos, vollautomatisch (Qualitaetsstufe 3, 2026-11-04).
+- `tools/fassade_ortho.py` [seg] fassade_ortho.py - Fassaden-Orthobilder (Meterraster) aus ALLEN kalibrierten Fotos, vollautomatisch (Qualitaetsstufe 3, 2026-11-04).
 - `tools/fassade_parsing.py` [seg] fassade_parsing.py - Fassadenelemente vollautomatisch aus den Einzelfoto-Orthobildern von fassade_ortho.py (Qualitaetsstufe 3, 2026-11-04).
-- `tools/fassade_relief.py` [-] fassade_relief.py - Fassadenrelief (Vorspruenge/Ruecksprunge) je LoD2-Fassade aus der DICHTEN SfM-Wolke, vollautomatisch (Qualitaetsstufe 3, 2026-11-05).
-- `tools/fassade_relief_solid.py` [-] Frontfassade als druckbarer Reliefkoerper: Hoehenkarte (Abstand zur Wandebene) aus dem zugeschnittenen Objektnetz (Painter-Rasterung in (u,z)), Rueckplatte, wasserdicht gebaut (Spa
+- `tools/fassade_relief.py` [seg] fassade_relief.py - Fassadenrelief (Vorspruenge/Ruecksprunge) je LoD2-Fassade aus der DICHTEN SfM-Wolke, vollautomatisch (Qualitaetsstufe 3, 2026-11-05).
+- `tools/fassade_relief_solid.py` [seg] Frontfassade als druckbarer Reliefkoerper: Hoehenkarte (Abstand zur Wandebene) aus dem zugeschnittenen Objektnetz (Painter-Rasterung in (u,z)), Rueckplatte, wasserdicht gebaut (Spa
 - `tools/fassade_vermessen.py` [-] fassade_vermessen.py — ERST MESSEN, DANN BAUEN (Methode die der User fordert: „alle Kanten erkennen, Abstände messen, dann entscheiden welche Objekte man reinsetzt").
-- `tools/fassade_zylinder.py` [gen] fassade_zylinder.py <objekt.json> <aus.png> --achse x y --radius r --z z0 z1 [--fotos a,b|auto] [--stl a.stl,...] [--zelle 0.01] - ABWICKLUNG eines runden Bauteils als Fassadenbild
+- `tools/fassade_zylinder.py` [seg] fassade_zylinder.py <objekt.json> <aus.png> --achse x y --radius r --z z0 z1 [--fotos a,b|auto] [--stl a.stl,...] [--zelle 0.01] - ABWICKLUNG eines runden Bauteils als Fassadenbild
 - `tools/fassaden_kette.py` [seg] fassaden_kette.py <objekt.json> --netz <mesh.npz> [--wand NAME ax ay bx by aussen_x aussen_y z1 ...] [--min_laenge 3] [--px 0.05] - Fassaden-Kette AUTOMATISCH je Wand.
-- `tools/fenster_aus_parsing.py` [-] fenster_aus_parsing.py <ortho-ordner> [--aus fenster.json] [--stimmen 3] - aus den OWLv2-Kaesten (fassade_parsing.py) BAUBARE Fenster machen.
+- `tools/fenster_aus_parsing.py` [seg] fenster_aus_parsing.py <ortho-ordner> [--aus fenster.json] [--stimmen 3] - aus den OWLv2-Kaesten (fassade_parsing.py) BAUBARE Fenster machen.
 - `tools/fenster_check.py` [-] fenster_check.py — prüft das FENSTER-SEITENVERHÄLTNIS (Höhe:Breite) Modell vs. Foto.
 - `tools/fenster_detail_check.py` [seg] fenster_detail_check.py — FEINE interne Kanten eines Fensters Foto↔Modell (Pfosten/Kämpfer/Bogenkopf).
-- `tools/fenster_einbauen.py` [-] fenster_einbauen.py - Typfenster (fenster_fit.py, Ortho-Pixel) als 3D-Koerper ins Netz einbauen (manifold3d): Glasnische (Laibungstiefe aus Wolke) + Sprossen/Riegel. venv-seg/bin/p
-- `tools/fenster_fit.py` [-] fenster_fit.py - parametrisches Fenster (Fassadenebene, 2 cm/px) per CMA-ES an ausgerichtete Wolken-Ortho-Ausschnitte fitten. venv-seg/bin/python -I tools/fenster_fit.py <fenster_a
+- `tools/fenster_einbauen.py` [gen] fenster_einbauen.py - Typfenster (fenster_fit.py, Ortho-Pixel) als 3D-Koerper ins Netz einbauen (manifold3d): Glasnische (Laibungstiefe aus Wolke) + Sprossen/Riegel. venv-seg/bin/p
+- `tools/fenster_fit.py` [seg] fenster_fit.py - parametrisches Fenster (Fassadenebene, 2 cm/px) per CMA-ES an ausgerichtete Wolken-Ortho-Ausschnitte fitten. venv-seg/bin/python -I tools/fenster_fit.py <fenster_a
 - `tools/fenster_ml.py` [seg] fenster_ml.py — ML-basierte Fenster-Erkennung per Fassaden-SEGMENTIERUNG (SegFormer, CMP- Facade-Datensatz). Robuster als heuristische Dunkel-/Gewände-Blobs: ein neuronales Netz, t
 - `tools/fenster_struktur.py` [-] fenster_struktur.py — STRUKTUR-REGULARISIERUNG von Fenster-Erkennungen (Abstands-/Formen-Fix).
 - `tools/fenster_zaehler.py` [seg] fenster_zaehler.py — VOLLAUTOMATISCHE Fenster-Erkennung & -Zählung aus einem Frontalfoto.
-- `tools/flaeche_ortho.py` [gen] flaeche_ortho.py - Wandbild fuer BELIEBIGE Flaechen: ebene Flaeche in jeder Lage (Erker-Teilflaechen), Vieleck-Erker (n-Eck), Zylinder, Rotationsflaeche (Kegel, Helm, Turm). 18.11.
+- `tools/flaeche_ortho.py` [seg] flaeche_ortho.py - Wandbild fuer BELIEBIGE Flaechen: ebene Flaeche in jeder Lage (Erker-Teilflaechen), Vieleck-Erker (n-Eck), Zylinder, Rotationsflaeche (Kegel, Helm, Turm). 18.11.
 - `tools/form_aus_wandbild.py` [seg] form_aus_wandbild.py - GESTALT einer Wandzone aus Wandbild + Tiefe NACHBILDEN (Grundsatz "Wandbild = Bauplan", Nutzer 17.11.2026: "nicht sagen das ist eine Tuer und irgendeine Tuer
 - `tools/foto_bogen_abgleich.py` [-] foto_bogen_abgleich.py — beweist die BOGENFORM aus einem Foto.
 - `tools/foto_fassade_raster.py` [seg] foto_fassade_raster.py — GENERISCH & AUTOMATISCH: Fenster-RASTER aus einem Foto.
 - `tools/foto_fassade_vermessen.py` [seg] foto_fassade_vermessen.py — GENERISCH: Fassade aus einem Foto vermessen.
 - `tools/freiraum_fassaden.py` [gen] freiraum_fassaden.py - gesehenen Freiraum HINTER jeder Fassadenebene als 2D-Tiefenkarte (u, z) -> wie tief darf/muss das Modell dort offen sein.
-- `tools/gauben_ortho.py` [-] Gauben Runde 3 (9.11.): Form aus dem FOTO, Lage aus der Dachebene. (1) Hauptdachebene aus dem Kantengitter (Traufe + First, wie gauben_fit --gitter), Dachviereck = Traufe..First ue
-- `tools/generator_wandvarianten.py` [-] Wand-/Giebel-/Laubentiefe-Varianten des alten Generators (Teile mm, Netzrahmen m = mm*0.087; Fassadennormale (0.344,0.939,0)). Je Gruppe +-Schritt: Laube (Arkaden) und Wand/Fassade
+- `tools/gauben_ortho.py` [seg] Gauben Runde 3 (9.11.): Form aus dem FOTO, Lage aus der Dachebene. (1) Hauptdachebene aus dem Kantengitter (Traufe + First, wie gauben_fit --gitter), Dachviereck = Traufe..First ue
+- `tools/generator_wandvarianten.py` [gen] Wand-/Giebel-/Laubentiefe-Varianten des alten Generators (Teile mm, Netzrahmen m = mm*0.087; Fassadennormale (0.344,0.939,0)). Je Gruppe +-Schritt: Laube (Arkaden) und Wand/Fassade
 - `tools/koerper_fenster_erker.py` [seg] koerper_fenster_erker.py - Fenster- und Erkerfamilie als parametrische Koerper AUS dem Kantengitter, zusammengebaut mit dem Rohkoerper. Keine Objektkonstanten: Fassadenrahmen (u, n
-- `tools/oeffnungen_bogen.py` [-] oeffnungen_bogen.py <ortho-ordner> --objekt <objekt.json> [--aus audit/oeffnungen_auto.json] - BOGENOEFFNUNGEN / TORDURCHFAHRTEN automatisch (17.11.2026, Kettenstufe 'fenster').
-- `tools/oeffnungen_wandbild.py` [-] oeffnungen_wandbild.py - OEFFNUNGEN einer Wand aus ihrem Wandbild: Zone (Erkenner), TIEFE (Parallaxe der Einzelfoto-Orthos), UMRISS (Bildsegmentierung). 18.11.2026 (Agent Rueckwand
+- `tools/oeffnungen_bogen.py` [seg] oeffnungen_bogen.py <ortho-ordner> --objekt <objekt.json> [--aus audit/oeffnungen_auto.json] - BOGENOEFFNUNGEN / TORDURCHFAHRTEN automatisch (17.11.2026, Kettenstufe 'fenster').
+- `tools/oeffnungen_wandbild.py` [seg] oeffnungen_wandbild.py - OEFFNUNGEN einer Wand aus ihrem Wandbild: Zone (Erkenner), TIEFE (Parallaxe der Einzelfoto-Orthos), UMRISS (Bildsegmentierung). 18.11.2026 (Agent Rueckwand
 - `tools/ortho_drape.py` [seg] ortho_drape.py — Oberfläche aus Daten: LGL-Orthophoto (DOP20) deckungsgleich zum Gelände-Modell zuschneiden und als MASSSTABSgenauer Druck-Bogen ausgeben. Über die Gips-Haut gelegt
 - `tools/quader_relief.py` [-] quader_relief.py - Fassade als ADAPTIVER QUADERBAUM aus der Punktwolke (Nutzeridee 6.11.: 'Modell aus Quadern, Diff gegen Wolke, je genauer es passt, desto feiner die Quader'). Rah
-- `tools/quader_relief_bauen.py` [-] quader_relief_bauen.py - Quaderbaum-Relief einer Fassade aus der Wolke -> STL (Modellrahmen, mm im Massstab) + Kennzahlen. Nichts objektbezogen. venv-seg/bin/python -I tools/quader
+- `tools/quader_relief_bauen.py` [gen] quader_relief_bauen.py - Quaderbaum-Relief einer Fassade aus der Wolke -> STL (Modellrahmen, mm im Massstab) + Kennzahlen. Nichts objektbezogen. venv-seg/bin/python -I tools/quader
 - `tools/relief.py` [gen] relief.py — SCHNELL von DEM-Crop zu 3D-Relief: druckbares STL + drehbare HTML + Hillshade.
 - `tools/relief_aus_foto.py` [seg] relief_aus_foto.py - Relief auf einer Traegerflaeche aus EINEM Foto per monokularer Tiefe (Depth Anything V2 SMALL, Apache-2.0). Beweistest Option B (11.11.): Hoehenfeld relativ (H
 - `tools/relief_aus_fotos_mono.py` [seg] relief_aus_fotos_mono.py <relief.npz> <objekt.json> <aus.npz> --feld u0 u1 z0 z1 --stl <stl> [--n 5] [--px 0.02] [--trenn 0.25] [--massstab k x y z]
 - `tools/relief_einsatz.py` [seg] relief_einsatz.py - Relief-Einsatz aus dem Scan-Netz fuer eine Generatorwand (Nutzerentscheidung 15.11.2026 nach tools/relief_test.py).
-- `tools/relief_mischen.py` [-] relief_mischen.py <fein.npz> <grob_voll.npz> <aus.npz> [--px 0.02] - feines Hoehenbild (tools/tiefe_lokal.py) mit dem groben Relief derselben Wand zu EINEM Einsatz mischen.
-- `tools/relief_putz.py` [-] relief_putz.py <relief.npz> <aus.npz> <objekt.json> FOTO [FOTO ...] [--feld u0 u1 z0 z1] [--massstab k x y z] [--s 0.22] [--v 0.45] - Putzflaechen eines Relief-Einsatzes glaetten.
-- `tools/relief_quader_eben.py` [-] relief_quader_eben.py <relief.npz> <aus.npz> --feld u0 u1 z0 z1 [--feld ...] - glatt behauene Eckquader: Steinzellen eines Feldes auf EINE Hoehe.
-- `tools/relief_test.py` [-] relief_test.py <objekt.json> <netz.npz> --ecke_a x y --ecke_b x y --feld u0 u1 z0 z1 --fotos K-A K-B ... [--px 0.01] [--aus PREFIX]
-- `tools/restfeld_fassade.py` [gen] restfeld_fassade.py - Restfeld je Fassade: Tiefe der Daten d*(u,z) gegen Tiefe des Modells, Zelle fuer Zelle (Konvergenzschleife, Nutzer 5.11. 17:00).
-- `tools/rippen_bogen_wahl.py` [-] rippen_bogen_wahl.py - Rippen als Bogenkandidaten auf der Kegelflaeche testen und per Mehrfoto-Gold-Konsens auswaehlen (13.11.2026, modellbasiert statt Skelett). Aufruf: /media/oem
-- `tools/steine_aus_foto.py` [gen] steine_aus_foto.py <relief.npz> <aus.npz> <fassaden.json> <nr> <ortho_fein.png> --feld u0 u1 z0 z1 [--px 0.02] [--fuge 0.03] [--massstab k x y z]
-- `tools/steine_generieren.py` [-] steine_generieren.py <relief.npz> <aus.npz> --zone u0 u1 z0 z1 [--zone ...] [--unten 0.0] [--seed 1] - Loecher eines Relief-Einsatzes mit GENERIERTEN Quadern fuellen.
-- `tools/wand_ortho.py` [-] wand_ortho.py - Foto auf eine senkrechte Wandebene entzerren (u/z-Raster) und Wandpunkte zurueck in Originalpixel rechnen (Hilfe fuer foto_mass.py-Picks).
+- `tools/relief_mischen.py` [seg] relief_mischen.py <fein.npz> <grob_voll.npz> <aus.npz> [--px 0.02] - feines Hoehenbild (tools/tiefe_lokal.py) mit dem groben Relief derselben Wand zu EINEM Einsatz mischen.
+- `tools/relief_putz.py` [seg] relief_putz.py <relief.npz> <aus.npz> <objekt.json> FOTO [FOTO ...] [--feld u0 u1 z0 z1] [--massstab k x y z] [--s 0.22] [--v 0.45] - Putzflaechen eines Relief-Einsatzes glaetten.
+- `tools/relief_quader_eben.py` [seg] relief_quader_eben.py <relief.npz> <aus.npz> --feld u0 u1 z0 z1 [--feld ...] - glatt behauene Eckquader: Steinzellen eines Feldes auf EINE Hoehe.
+- `tools/relief_test.py` [seg] relief_test.py <objekt.json> <netz.npz> --ecke_a x y --ecke_b x y --feld u0 u1 z0 z1 --fotos K-A K-B ... [--px 0.01] [--aus PREFIX]
+- `tools/restfeld_fassade.py` [seg] restfeld_fassade.py - Restfeld je Fassade: Tiefe der Daten d*(u,z) gegen Tiefe des Modells, Zelle fuer Zelle (Konvergenzschleife, Nutzer 5.11. 17:00).
+- `tools/rippen_bogen_wahl.py` [seg] rippen_bogen_wahl.py - Rippen als Bogenkandidaten auf der Kegelflaeche testen und per Mehrfoto-Gold-Konsens auswaehlen (13.11.2026, modellbasiert statt Skelett). Aufruf: /media/oem
+- `tools/steine_aus_foto.py` [seg] steine_aus_foto.py <relief.npz> <aus.npz> <fassaden.json> <nr> <ortho_fein.png> --feld u0 u1 z0 z1 [--px 0.02] [--fuge 0.03] [--massstab k x y z]
+- `tools/steine_generieren.py` [seg] steine_generieren.py <relief.npz> <aus.npz> --zone u0 u1 z0 z1 [--zone ...] [--unten 0.0] [--seed 1] - Loecher eines Relief-Einsatzes mit GENERIERTEN Quadern fuellen.
+- `tools/wand_ortho.py` [seg] wand_ortho.py - Foto auf eine senkrechte Wandebene entzerren (u/z-Raster) und Wandpunkte zurueck in Originalpixel rechnen (Hilfe fuer foto_mass.py-Picks).

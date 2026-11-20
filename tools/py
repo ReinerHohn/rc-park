@@ -1,17 +1,19 @@
 #!/bin/bash
 # tools/py [seg|col|gen] <werkzeug.py> [argumente...] - startet ein Werkzeug mit der RICHTIGEN Python-Umgebung (20.11.2026: 224 ModuleNotFoundError
 # durch nacktes python3). Ohne Angabe entscheidet der Import: pycolmap -> col (venv-colmap), torch/cv2/kornia/lightglue -> seg (venv-seg),
-# trimesh/manifold3d/shapely -> gen (~/.venvs/rcpark), sonst seg. Immer mit -I. Beispiel: tools/py tools/modell_zerlegen.py <sparse>
+# trimesh/manifold3d/shapely -> gen (~/.venvs/rcpark), sonst seg; p1s_print.py -> ~/.venvs/strom (paho-mqtt). Immer mit -I. Beispiel: tools/py tools/modell_zerlegen.py <sparse>
 set -u
 declare -A U=([seg]=/media/oem/scan/venv-seg/bin/python [col]=/media/oem/scan/venv-colmap/bin/python [gen]="$HOME/.venvs/rcpark/bin/python")
 if [ -n "${1:-}" ] && [ -n "${U[$1]:-}" ]; then W=$1; shift; else W=""; fi
 [ -n "${1:-}" ] || { sed -n 2,4p "$0"; exit 2; }
 T=$1; [ -f "$T" ] || { [ -f "$(dirname "$0")/$T" ] && T="$(dirname "$0")/$T"; }
 [ -f "$T" ] || { echo "tools/py: $1 nicht gefunden" >&2; exit 2; }
+if [ -z "$W" ] && [ "$(basename "$T")" = "p1s_print.py" ]; then [ -n "${PY_ZEIGEN:-}" ] && { echo strom; exit 0; }; shift; exec "$HOME/.venvs/strom/bin/python" -I "$T" "$@"; fi
 if [ -z "$W" ]; then
-  if grep -qE '^\s*(import|from)\s+pycolmap' "$T"; then W=col
-  elif grep -qE '^\s*(import|from)\s+(torch|cv2|kornia|lightglue)' "$T"; then W=seg
-  elif grep -qE '^\s*(import|from)\s+(trimesh|manifold3d|shapely)' "$T"; then W=gen
+  if grep -qE '^\s*(import\s+([A-Za-z0-9_.]+(\s+as\s+[A-Za-z0-9_]+)?\s*,\s*)*pycolmap\b|from\s+pycolmap\b)' "$T"; then W=col
+  elif grep -qE '^\s*(import\s+([A-Za-z0-9_.]+(\s+as\s+[A-Za-z0-9_]+)?\s*,\s*)*(torch|cv2|kornia|lightglue)\b|from\s+(torch|cv2|kornia|lightglue)\b)' "$T"; then W=seg
+  elif grep -qE '^\s*(import\s+([A-Za-z0-9_.]+(\s+as\s+[A-Za-z0-9_]+)?\s*,\s*)*(trimesh|manifold3d|shapely)\b|from\s+(trimesh|manifold3d|shapely)\b)' "$T"; then W=gen
   else W=seg; fi
 fi
+[ -n "${PY_ZEIGEN:-}" ] && { echo "$W"; exit 0; }   # PY_ZEIGEN=1: nur die gewaehlte Umgebung zeigen
 shift; exec "${U[$W]}" -I "$T" "$@"

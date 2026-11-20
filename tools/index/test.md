@@ -1,73 +1,73 @@
 # Werkzeuge: test (80)
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
-- `tools/test_bildschaerfe.py` [-] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
+- `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
-- `tools/test_bogen_kontur.py` [-] test_bogen_kontur.py - synthetischer Beweis fuer tools/bogen_kontur.py (Exit 0 = ALLE BESTANDEN). Testfassade: Rotwand, Bogenoeffnung mit BEKANNTER Kontur (Goldlinie 3 cm, innen du
+- `tools/test_bogen_kontur.py` [seg] test_bogen_kontur.py - synthetischer Beweis fuer tools/bogen_kontur.py (Exit 0 = ALLE BESTANDEN). Testfassade: Rotwand, Bogenoeffnung mit BEKANNTER Kontur (Goldlinie 3 cm, innen du
 - `tools/test_bogenform.py` [gen] test_bogenform.py — Regression + Methodik-Schutz: die GEBAUTE Bogenform muss der FOTO-gemessenen Form entsprechen. Soll den Fehler "Bögen zu flach" dauerhaft verhindern.
 - `tools/test_brennweite_waehlen.py` [-] Test brennweite_waehlen: Martinstor-061-Fall (Canon A650, 3601x2757 aus 4000x3000, EXIF 9,855 mm, 541,17 Pixel/mm), Seitenverhaeltnis-Regel, GPS-Abstand. Aufruf: python3 tools/test
 - `tools/test_buendel_synthetisch.py` [-] test_buendel_synthetisch.py - BEWEIS mit bekannter Wahrheit: alte gegen neue Kamera-/Buendelkette (Kaufhaus 2026-11-04, Nutzerauftrag "beweise, dass es bei einem neuen Objekt besse
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
-- `tools/test_ebenen_modell.py` [gen] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
-- `tools/test_element_einpassen.py` [-] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
-- `tools/test_farbteile_neigung.py` [-] test_farbteile_neigung.py - Schnelltest fuer tools/druck_farbteile.py: Plattentiefe folgt der OERTLICHEN Wand (18.11.2026). Synthetisch: Quader 12 x 8 x 10 m, um 2 Grad gegen die M
-- `tools/test_feinmass.py` [-] test_feinmass.py - SYNTHETISCHER BEWEIS fuer f1_fein (modelle/archiv/SPEC_ORNAMENT_FEINMASS.md). Testflaeche mit aufgesetzten Rippen (bekannte Lage, Metrik in m) wird mit der echte
-- `tools/test_feinsuche.py` [-] test_feinsuche.py - SYNTHETISCHER BEWEIS fuer foto_feinsuche (modelle/archiv/SPEC_FEINSUCHE.md, Beweis 1). Eine Testplatte mit aufgesetzten Rippen (bekannte Lage in Weltmetern) wir
-- `tools/test_flaeche_ortho.py` [-] test_flaeche_ortho.py - synthetische Pruefung von flaeche_ortho.py (18.11.2026): Zylinder, Kegel und n-Eck-Erker mit BEKANNTER Textur werden von Kameras ringsum analytisch gerender
-- `tools/test_flaechen_gegen_netz.py` [-] test_flaechen_gegen_netz.py - synthetischer BEWEIS (bekannte Wahrheit) fuer flaechen_gegen_netz.py. Gate vor dem Kaufhaus (Nutzerregel Beweis zuerst). Szene (Meter): Wand 16 x 9 m,
+- `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
+- `tools/test_element_einpassen.py` [seg] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
+- `tools/test_farbteile_neigung.py` [gen] test_farbteile_neigung.py - Schnelltest fuer tools/druck_farbteile.py: Plattentiefe folgt der OERTLICHEN Wand (18.11.2026). Synthetisch: Quader 12 x 8 x 10 m, um 2 Grad gegen die M
+- `tools/test_feinmass.py` [seg] test_feinmass.py - SYNTHETISCHER BEWEIS fuer f1_fein (modelle/archiv/SPEC_ORNAMENT_FEINMASS.md). Testflaeche mit aufgesetzten Rippen (bekannte Lage, Metrik in m) wird mit der echte
+- `tools/test_feinsuche.py` [seg] test_feinsuche.py - SYNTHETISCHER BEWEIS fuer foto_feinsuche (modelle/archiv/SPEC_FEINSUCHE.md, Beweis 1). Eine Testplatte mit aufgesetzten Rippen (bekannte Lage in Weltmetern) wir
+- `tools/test_flaeche_ortho.py` [seg] test_flaeche_ortho.py - synthetische Pruefung von flaeche_ortho.py (18.11.2026): Zylinder, Kegel und n-Eck-Erker mit BEKANNTER Textur werden von Kameras ringsum analytisch gerender
+- `tools/test_flaechen_gegen_netz.py` [seg] test_flaechen_gegen_netz.py - synthetischer BEWEIS (bekannte Wahrheit) fuer flaechen_gegen_netz.py. Gate vor dem Kaufhaus (Nutzerregel Beweis zuerst). Szene (Meter): Wand 16 x 9 m,
 - `tools/test_flat_plates.py` [gen] test_flat_plates.py — Regression: die FLÄCHEN-Platten sind WIRKLICH EBEN (plan-gefittet) und damit laser-cutbar + in die Rippen integrierbar, und ihre Kontur folgt der Bruchkante (
 - `tools/test_formfamilie_nutzerfunde.py` [-] test_formfamilie_nutzerfunde.py - Beweistest fuer tools/formfamilie_pruefen.py (Regel 3e, Spec modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md).
-- `tools/test_formfund_tor.py` [-] test_formfund_tor.py - BEWEIS des Formfund-Pruefers (Spec modelle/archiv/SPEC_FORMFUND_TOR.md): positive Faelle muessen bestehen, negative durchfallen.
+- `tools/test_formfund_tor.py` [gen] test_formfund_tor.py - BEWEIS des Formfund-Pruefers (Spec modelle/archiv/SPEC_FORMFUND_TOR.md): positive Faelle muessen bestehen, negative durchfallen.
 - `tools/test_foto_diff.py` [seg] test_foto_diff.py - BEWEIS (bekannte Wahrheit) fuer foto_diff.py, generisch fuer jedes Objekt mit K-Kamera (2026-11-04). Das "Foto" ist ein Render des Modells mit derselben Kamera 
 - `tools/test_foto_diff_batch.py` [-] Test foto_diff_batch.py (Register BS8): Ergebnisgleichheit zum Original-foto_diff (je Foto eigener Prozess). /media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_foto_diff_b
 - `tools/test_foto_luecken.py` [gen] test_foto_luecken.py - Beweistest fuer tools/foto_luecken.py (synthetisch, GPU). Ausgabe BESTANDEN / DURCHGEFALLEN, Exit 0/1.
-- `tools/test_foto_tor_bezug.py` [-] Nachweis tools/foto_tor_bezug.py an Paaren mit BEKANNTEM Ausgang (Auftrag 17.11.2026). Bezug = schwab_v3 (eingefrorene Kopie /media/oem/scan/rc-park_tmp/fototor_bezug/v3_frei.stl) 
+- `tools/test_foto_tor_bezug.py` [gen] Nachweis tools/foto_tor_bezug.py an Paaren mit BEKANNTEM Ausgang (Auftrag 17.11.2026). Bezug = schwab_v3 (eingefrorene Kopie /media/oem/scan/rc-park_tmp/fototor_bezug/v3_frei.stl) 
 - `tools/test_generator_elemente_schleife.py` [gen] test_generator_elemente_schleife.py - BEWEIS (bekannte Wahrheit) fuer generator_elemente_schleife.py. Synthetisch, ohne Fotos (Foto-Tor = eigener Lauf auf Kaufhaus). A Wahrheit = H
-- `tools/test_generator_schleife.py` [gen] test_generator_schleife.py - BEWEIS (bekannte Wahrheit, OHNE echte Fotos) fuer generator_schleife.py (2026-11-06).
+- `tools/test_generator_schleife.py` [seg] test_generator_schleife.py - BEWEIS (bekannte Wahrheit, OHNE echte Fotos) fuer generator_schleife.py (2026-11-06).
 - `tools/test_gitter_kurven.py` [-] Beweistest gitter_kurven.py (synthetisch): Gerade, Kreisbogen (R 1,9 m, 150 Grad), kubische Bezier, Bogen in 2 Fragmenten (Luecke 33 cm) und Gerade in 2 Fragmenten (Luecke 20 cm) -
 - `tools/test_gps_seiten_pruefen.py` [-] Fester Test gps_seiten_pruefen.urteil_2d: Kameras im Halbkreis vor und hinter einem Turm (GPS mit 4 m Rauschen), Modell gedreht+skaliert. Richtig -> GPS-STIMMIG; Rueckseite durch d
 - `tools/test_gpu_gleichwertig.py` [-] test_gpu_gleichwertig.py - BEWEIS: Ist die GPU-Fassung von foto_diff gleichwertig zur CPU-Fassung? (2026-11-04, Nutzerauftrag)
 - `tools/test_gpu_knn.py` [-] test_gpu_knn.py - GPU-Nachbarsuche gleich CPU-KD-Baum? (min_abstand, naechster, ball_anzahl) auf Zufallsdaten und auf der echten Kaufhaus-Wolke. Exit 1 bei Abweichung. /media/oem/s
 - `tools/test_gpu_slot.py` [-] (kein Docstring)
-- `tools/test_grauzone_tor.py` [-] test_grauzone_tor.py - BEWEIS des Grauzonen-Tors (Spec modelle/archiv/SPEC_GRAUZONE_TOR.md).
+- `tools/test_grauzone_tor.py` [gen] test_grauzone_tor.py - BEWEIS des Grauzonen-Tors (Spec modelle/archiv/SPEC_GRAUZONE_TOR.md).
 - `tools/test_handy_kalibrieren.py` [-] Synthetischer Test fuer handy_kalibrieren.py / handy_zoom_verdacht.py: /media/oem/scan/venv-colmap/bin/python -I tools/test_handy_kalibrieren.py Beweis: (1) f_orig + k1 werden aus 
 - `tools/test_handy_masken.py` [seg] Test handy_masken: (1) Klassenableitung exakt (kein 'carpet' fuer 'car'), (2) Maskenlogik, (3) 3 Bilder echt durch GPU, Format/Konvention pruefen.
 - `tools/test_handy_masken_v2.py` [-] Test handy_masken_v2 (ohne GPU): Statue haengt an Fassade -> frei; Person am Boden -> maskiert; Box ohne Boden -> frei; Fleck im Pflaster -> verworfen; Fahrzeug immer.
 - `tools/test_kamera_ausgleich.py` [seg] test_kamera_ausgleich.py - BS3d synthetischer Beweis: Kameras absichtlich verschieben (Kamerazentrum 3/5/10 cm, Rotation 0,3/0,5/1 Grad), pruefen ob der Ausgleich (kamera_ausgleich
-- `tools/test_kamera_lod2.py` [-] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
-- `tools/test_kanten_feld3d.py` [-] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
-- `tools/test_kanten_pipelines.py` [-] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
-- `tools/test_kette_stabil.py` [-] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
+- `tools/test_kamera_lod2.py` [seg] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
+- `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
+- `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
+- `tools/test_kette_stabil.py` [seg] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
 - `tools/test_konsens_urteil.py` [-] Test der Konsens-Annahme (global_mapper_konsens.urteil, 19.11.2026): gutes Modell traegt; duennes Rueckgrat / wenig Bilder / kein Clip -> Gruende + Ursache + Abhilfe.
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
 - `tools/test_konvergenz_logik.py` [-] test_konvergenz_logik.py - Trockenlauf der Konvergenzschleife OHNE GPU und OHNE Generatorbau (S3 Phase A, 2026-11-05). Prueft die STEUERUNG von qualitaetsstufen.v_konvergenz mit vo
-- `tools/test_lokales_fototor.py` [-] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
+- `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
 - `tools/test_nullstart_schritte.py` [-] test_nullstart_schritte.py - BEWEIS, dass jede gelernte Erkenntnis ein fester Nullstart-Schritt mit Tor ist (2026-11-04, Nutzerregel beweis-pflicht-nullstart). Quelle der Pflicht: 
-- `tools/test_ortho_vergleich.py` [-] test_ortho_vergleich.py - zwei Ausgabeordner von fassade_ortho.py bildweise vergleichen (17.11.2026, fuer Beschleunigungen "bei gleichem Ergebnis").
+- `tools/test_ortho_vergleich.py` [seg] test_ortho_vergleich.py - zwei Ausgabeordner von fassade_ortho.py bildweise vergleichen (17.11.2026, fuer Beschleunigungen "bei gleichem Ergebnis").
 - `tools/test_paarvorwahl.py` [-] Test paarvorwahl.py (synthetisch): (1) Abstand stimmt (0,001 Grad Breite = 111,2 m), (2) ohne GPS bleibt jedes Paar, (3) Radius 0 = unveraendert, (4) Wahrheitspaare (Abstand < Radi
-- `tools/test_param_suche.py` [-] test_param_suche.py - BEWEIS (bekannte Wahrheit) fuer param_suche.py (2026-11-04). Je Wahrheit w*: Generator mit <param> = w* -> Pruefbilder (Render mit der echten Kamera inkl. k1,
+- `tools/test_param_suche.py` [seg] test_param_suche.py - BEWEIS (bekannte Wahrheit) fuer param_suche.py (2026-11-04). Je Wahrheit w*: Generator mit <param> = w* -> Pruefbilder (Render mit der echten Kamera inkl. k1,
 - `tools/test_pose_vertrauen.py` [-] Synthetischer Test fuer pose_vertrauen.py: /media/oem/scan/venv-colmap/bin/python -I tools/test_pose_vertrauen.py
 - `tools/test_profil_diff.py` [-] Beweis profil_diff: synthetische Wand + 2 Erker; Modell = Wahrheit -> 0 Abweichungen; rechter Erker um 0,8 m verschoben -> Abweichung erkannt (Exit-Logik, nicht Zufall).
 - `tools/test_quader_relief.py` [-] Beweis quader_relief an KUENSTLICHER SZENE (Wahrheit bekannt): Wand s=0, 2 Erker (0,8 m vor der Wand, z 5-11), 4 Segmentbogen-Arkaden (3,3 m breit, 3,9 m tief), Treppengiebel-Oberk
-- `tools/test_raster_block.py` [-] (kein Docstring)
+- `tools/test_raster_block.py` [gen] (kein Docstring)
 - `tools/test_realitaet_form.py` [-] test_realitaet_form.py - Beweis zu tools/realitaet_form.py (Spec modelle/archiv/SPEC_FORMNOTE.md). 1. Fallen fallen alle durch (form < 0,5). 2. Bekannte Paare: besseres Teil hat ho
 - `tools/test_regeln_cb.py` [-] test_regeln_cb.py - Gegenbeweis zu Register CB (2026-11-03): der Fehler 'zwei Boegen + Zwischenpfeiler je Flaeche' darf sich nicht wiederholen.
 - `tools/test_rumpf_wolke.py` [gen] test_rumpf_wolke.py - synthetischer Beweis fuer bauteil_rumpf_wolke (bekanntes Haus: Quader + Satteldach, gedreht 15 Grad; Rauschen 3 cm, Ausreisser, Luecken, Sims; Szenario A = al
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
-- `tools/test_schwerkraft_je_bild.py` [-] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
+- `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_erkennen.py` [-] test_seiten_erkennen.py - feste Erwartungen fuer tools/seiten_erkennen.py (ohne GPU, ohne Bilder): Gemeinschaften, Zusammenhangsteile, Urteil.
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
 - `tools/test_spitze_hoehe.py` [-] test_spitze_hoehe.py - synthetischer Beweis der Spitzen-Triangulation (2026-11-05): 12 Kameras im Kreis sehen eine Spitze bei (1, 2, 16); 5 davon liefern Fehlspuren (Giebelstufe/Ka
 - `tools/test_stabil_schnitt.py` [-] test_stabil_schnitt.py - Schnelltest fuer tools/sfm_stabil_schnitt.schnitt(): synthetische Kameras entlang einer Strasse (fast kollinear, wie Martinstor), Lauf B = Aehnlichkeitstra
-- `tools/test_stoermaske.py` [-] test_stoermaske.py - SYNTHETISCHER BEWEIS fuer teil_fotoform --stoermaske (SPEC_STOERMASKE). Foto t1 = echtes Foto, t2 = dasselbe mit eingesetztem 'Stoerer' (Schachbrett-Rechteck m
+- `tools/test_stoermaske.py` [seg] test_stoermaske.py - SYNTHETISCHER BEWEIS fuer teil_fotoform --stoermaske (SPEC_STOERMASKE). Foto t1 = echtes Foto, t2 = dasselbe mit eingesetztem 'Stoerer' (Schachbrett-Rechteck m
 - `tools/test_sweep_synth.py` [-] test_sweep_synth.py <objekt> --wolke w.npy: Beweistest der GPU-Sweep-Methode fuer ALLE aktiven Bauteile (modelle/archiv/METHODE_GPU_SWEEP.md). Wolke = Modellflaeche um bekannten Ve
 - `tools/test_teil_fotoform.sh` [sh] Beweis (L-KR25): Varianten per Generator; bestanden 10.11. 11:20: OG-Fenster F1 0,891 -> 0,860 (u+0,3 m) / 0,826 (1 statt 3 Lichter), rumpf_og 0,750 -> 0,711 / 0,715. Gegenprobe te
-- `tools/test_teile_sichtpruefung.py` [-] test_teile_sichtpruefung.py - BEWEIS, dass tools/teile_sichtpruefung.py die Fehler der Runde 5 (Kaufhaus) automatisch findet.
+- `tools/test_teile_sichtpruefung.py` [seg] test_teile_sichtpruefung.py - BEWEIS, dass tools/teile_sichtpruefung.py die Fehler der Runde 5 (Kaufhaus) automatisch findet.
 - `tools/test_teilmodell_sim3.py` [-] Test teilmodell_sim3: synthetische Sim3 (mit Ausreissern, Rauschen, fast ebene Anker), Rotationsvariante, Entartungsmass.
 - `tools/test_tor_elementbuch.py` [-] test_tor_elementbuch.py - Beweise fuer Uebernahmetor + Elementbuch (SPEC_S1b_TOR_ELEMENTBUCH Abschnitt 4, 2026-11-06).
 - `tools/test_tor_gemeinsame_fotos.py` [-] Test Torluecke 3 (11.11.): Foto-Gewinn nur auf GEMEINSAMEN Fotos (bauteil_kreis.angleichen). 1) synthetisch: Nachher verliert ein schlechtes Foto -> scheinbarer Gewinn muss verschw
-- `tools/test_tor_verschiebung.py` [-] test_tor_verschiebung.py - BEWEIS fuer tools/tor_verschiebung.py (Nullkontrolle des Foto-Tors) auf synthetischer Wahrheit.
+- `tools/test_tor_verschiebung.py` [seg] test_tor_verschiebung.py - BEWEIS fuer tools/tor_verschiebung.py (Nullkontrolle des Foto-Tors) auf synthetischer Wahrheit.
 - `tools/test_versuch_log.py` [-] Test versuch_log: Eintrag, Identitaetswarnung (BS7-Fall), Fehlschlag, Liste. Exit 0 = ALLE BESTANDEN.
 - `tools/test_vis_mapping.py` [-] test_vis_mapping.py - Beweis und Dauerwaechter fuer die Zuordnung vis-Index -> Bild (Register CV/CW).
 - `tools/test_vorpruefen_cache.py` [-] Test Zwischenspeicher der Bildvorpruefung (bilder_vorpruefen.Speicher, 19.11.2026): Ergebnis bleibt ueber Neustart, geaenderte Datei = neue Kennung, anderer Referenzsatz = anderer 

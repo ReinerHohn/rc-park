@@ -1,19 +1,19 @@
 # Werkzeuge: sonstige (98)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
-- `tools/aufloesung_karte.py` [-] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
+- `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
 - `tools/bauplan_sheet.py` [seg] bauplan_sheet.py — UNGEFÄHRER BAUPLAN aus vorhandenen Daten: GRUNDRISS (LOD2-Footprint, amtlich) + AUFRISS (LOD2-Höhen Traufe/First + foto-gemessene Fensterachsen + Fassadenbänder)
 - `tools/betrachter_note.py` [-] betrachter_note.py - Betrachter-Note (SPEC_BETRACHTER_NOTE, Nutzer 11.11.): Prozent der fuer das Auge SICHTBAREN Merkmale, die stimmen. Zwei Stufen: Besucher (Sichtschwelle 0,25 m 
 - `tools/brennweite_waehlen.py` [-] brennweite_waehlen.py - Pixel-Brennweite eines Einzelfotos aus EXIF herleiten und durch das Foto-GPS absichern (18.11.2026). Anlass Martinstor K-061: EXIF 9,855 mm, Bild 3601x2757 
 - `tools/buendel_stuetz.py` [seg] buendel_stuetz.py - GENERISCH: Buendelausgleich eines COLMAP-Netzes MIT STUETZTERMEN (LoD2-Gebaeudekanten im Foto, Foto-GPS, robuste Verluste), GPU (torch).
 - `tools/dom_full_prep.py` [-] dom_full_prep.py — baut dom025_full.npy EXAKT auf dem Raster von dgm025_full.npy (4000x4000, 0.25 m), aus den georeferenzierten DOM1-Kacheln (bilinear resampled). Damit kann terrai
 - `tools/doppelschicht.py` [-] doppelschicht.py - Doppelschicht-Detektor (Plan 2.4): enthaelt eine Wandflaeche der Punktwolke ZWEI Ebenen (Doppeldach = Clip-Versatz/Doming) statt einer?
-- `tools/edge_diag.py` [-] edge_diag.py — DIAGNOSE (Draufsicht): der EINSCHNITT als EINE Platte mit GERADEN Kanten. Signal ist NICHT Canny/Hough (Rauschen auf Natur), sondern die Grenze flach<->steil: - flac
+- `tools/edge_diag.py` [seg] edge_diag.py — DIAGNOSE (Draufsicht): der EINSCHNITT als EINE Platte mit GERADEN Kanten. Signal ist NICHT Canny/Hough (Rauschen auf Natur), sondern die Grenze flach<->steil: - flac
 - `tools/exif_brennweite.py` [-] exif_brennweite.py - GENERISCH: Brennweite eines Fotos in Pixeln aus EXIF (Prior fuer den Buendelausgleich, Kaufhaus 2026-11-04).
-- `tools/fehlerkarte.py` [gen] fehlerkarte.py - Fehlerkarte je Flaeche (Wand, Vorbau, Dach) fuer die Konvergenzschleife (SPEC_S3_KONVERGENZ Abschnitt 1, nur MESSUNG, 2026-11-05).
+- `tools/fehlerkarte.py` [seg] fehlerkarte.py - Fehlerkarte je Flaeche (Wand, Vorbau, Dach) fuer die Konvergenzschleife (SPEC_S3_KONVERGENZ Abschnitt 1, nur MESSUNG, 2026-11-05).
 - `tools/fehlstellen_3d.py` [seg] fehlstellen_3d.py - FEHLENDE Elemente eines Modells aus dem Foto-Diff als 3D-Kandidatenregionen (2026-11-08).
 - `tools/fertigung_split.py` [gen] fertigung_split.py - beliebiges Modell (STL, mm) in LASERCUT-Platten + 3D-DRUCK-Teile aufteilen.
-- `tools/filigran.py` [-] filigran.py - zu filigrane Strukturen eines H0-Modells finden und als Einsteck-Teile (Stab/Nadel/Kugel) vorschlagen (Register BU, Phase 1: Erkennung + Bericht).
+- `tools/filigran.py` [gen] filigran.py - zu filigrane Strukturen eines H0-Modells finden und als Einsteck-Teile (Stab/Nadel/Kugel) vorschlagen (Register BU, Phase 1: Erkennung + Bericht).
 - `tools/gebaeude_detailer.py` [gen] gebaeude_detailer.py — GENERISCH: beliebiges LOD2-Gebäude → echte Geometrie + Details.
 - `tools/handy_kalibrieren.py` [col] handy_kalibrieren.py - Brennweite f (und k1) der Handykamera je Formatgruppe unabhaengig bestimmen, mit Unsicherheit (Register DB).
 - `tools/handy_masken.py` [seg] handy_masken.py - GPU-Masken fuer bewegte/nicht zum Bauwerk gehoerende Dinge in Handyfotos (Personen, Fahrzeuge, Fahrraeder, Marktstaende/Zelte, Kisten). Wie video_masken.py (nicht
@@ -25,25 +25,25 @@
 - `tools/insert_plates_auto.py` [seg] insert_plates_auto.py — schneidet die Flächen, die das grobe Egg-Crate vertreppt, als flache Einhäng-Platten auf die ECHTE Kontur (keine Rechtecke), in zwei Kategorien:
 - `tools/kaufhaus_bauplan.py` [-] kaufhaus_bauplan.py — bemaßter Bauplan Historisches Kaufhaus Freiburg, aus dem Frontalfoto vermessen (Referenz Traufe 9,7 / First 21,4 m = LOD2 amtlich). Front-Ansicht + Querschnit
 - `tools/kaufhaus_measured.py` [gen] kaufhaus_measured.py — Historisches Kaufhaus Freiburg, FEIN vermessen aus den hochauflösenden Frontalen/Detailfotos (kh_front2025b, kh_fenster, kh_erker) gegen Referenz Traufe 9,7 
-- `tools/ketten_match.py` [-] ketten_match.py - Linienzuege (Rippen) per Mehrfoto-Zuordnung triangulieren: Ketten werden in JEDEM Foto aus der Stabilitaetskarte extrahiert (Skelett, Lueckenschluss, Kreuzungen g
-- `tools/knoten_abstimmung.py` [-] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
+- `tools/ketten_match.py` [seg] ketten_match.py - Linienzuege (Rippen) per Mehrfoto-Zuordnung triangulieren: Ketten werden in JEDEM Foto aus der Stabilitaetskarte extrahiert (Skelett, Lueckenschluss, Kreuzungen g
+- `tools/knoten_abstimmung.py` [seg] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
 - `tools/konsolen_zelle.py` [seg] konsolen_zelle.py - Konsolenform aus der GEFALTETEN Musterzelle (wie baluster_fit: Profil aus der Faltung), danach Phase je Quelle, Entscheidregel.
 - `tools/lg_match.py` [seg] lg_match.py - Merkmale + Zuordnungen mit ALIKED + LightGlue (gelernter Matcher) fuer grosse Blickwinkel (Luftbild gegen Strasse).
-- `tools/light_prep.py` [-] light_prep.py — schneidet automatisch LICHT-GEOMETRIE in ein Druckmodell: - LED-Taschen (Durchmesser/Tiefe) MIT Ausrichtung (Lichtkegel zeigt in dir) - Kabelkanäle von der Tasche z
+- `tools/light_prep.py` [gen] light_prep.py — schneidet automatisch LICHT-GEOMETRIE in ein Druckmodell: - LED-Taschen (Durchmesser/Tiefe) MIT Ausrichtung (Lichtkegel zeigt in dir) - Kabelkanäle von der Tasche z
 - `tools/lizenz_register.py` [-] lizenz_register.py - JEDES Bild nach Lizenzklasse ordnen, damit spaeter (Veroeffentlichung/Verkauf) sichtbar ist, was erlaubt ist und was nicht. Zentrales Modul der Pipeline.
-- `tools/lsd_edges.py` [-] lsd_edges.py — GERADE menschgemachte Kanten im DEM robust finden (Recherche-Ergebnis): Line Segment Detector (LSD, cv2) auf MULTI-AZIMUT-STREIFLICHT-Hillshade (0-10° Höhe hebt scha
-- `tools/luecken_seite_bauen.py` [-] luecken_seite_bauen.py - Handy-Seite fuer den Vor-Ort-Termin aus tools/foto_luecken.py (Nutzer 10.11.: "vor Ort sehen, wo ich noch fotografieren muss").
+- `tools/lsd_edges.py` [seg] lsd_edges.py — GERADE menschgemachte Kanten im DEM robust finden (Recherche-Ergebnis): Line Segment Detector (LSD, cv2) auf MULTI-AZIMUT-STREIFLICHT-Hillshade (0-10° Höhe hebt scha
+- `tools/luecken_seite_bauen.py` [seg] luecken_seite_bauen.py - Handy-Seite fuer den Vor-Ort-Termin aus tools/foto_luecken.py (Nutzer 10.11.: "vor Ort sehen, wo ich noch fotografieren muss").
 - `tools/malwerkzeug.py` [gen] malwerkzeug.py [--aus ORDNER] [teil ...] - druckbare Malhilfen fuer das Bemalen der Modellteile (17.11.2026, Nutzer: "Werkzeug ausdrucken, das Geiles zum Anmalen"). Teile (ohne Ang
 - `tools/manmade3d.py` [-] manmade3d.py — 3D: menschgemachte Objekte (scharfe Kanten + Flächen darin) auf neutralem Gelände. Farbige ebene Platten = die erkannten Flächen (plan-gefittet), rote Linien = die g
-- `tools/manmade_edges.py` [-] manmade_edges.py — menschgemachte Objekte über SCHARFE Kanten erkennen (+ Flächen darin). Idee: natürliches Gelände ist GLATT (Normale dreht langsam), menschgemachtes (Einschnitt, 
-- `tools/messen_interaktiv.py` [gen] messen_interaktiv.py <objekt> --wolke w.npy --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8765] Interaktives Messen AUS DER WOLKE (Nutzerwunsch 8.11.): lokaler Web
+- `tools/manmade_edges.py` [seg] manmade_edges.py — menschgemachte Objekte über SCHARFE Kanten erkennen (+ Flächen darin). Idee: natürliches Gelände ist GLATT (Normale dreht langsam), menschgemachtes (Einschnitt, 
+- `tools/messen_interaktiv.py` [seg] messen_interaktiv.py <objekt> --wolke w.npy --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8765] Interaktives Messen AUS DER WOLKE (Nutzerwunsch 8.11.): lokaler Web
 - `tools/messung_uebernehmen.py` [gen] messung_uebernehmen.py <objekt> [--anwenden] Uebernimmt die BESTAETIGTEN Direktmessungen aus <objekt>/messungen_wolke.json (tools/messen_interaktiv.py) in die Parameter von objekt.
 - `tools/model3d_textured.py` [seg] (kein Docstring)
 - `tools/objekt_daten.py` [-] objekt_daten.py - GENERISCH: amtliche Grunddaten eines neuen Objekts holen und daraus Modellrahmen + 3D-Anker bauen (Nullstart-Stufe 0).
 - `tools/openbuildings_fallback.py` [gen] openbuildings_fallback.py — HEBEL 5: Weltklasse-Fallback-Geometrie, wenn weder Google 3D Tiles (Hebel 1) noch lokales LOD2 (Hebel 3) ein Mesh liefern.
 - `tools/openverse_holen.py` [-] openverse_holen.py --aus DIR --suche "Schwabentor Freiburg" ["Freiburg Luftbild" ...] [--max 150] [--min-breite 900] [--bekannt herkunft.json ...]
 - `tools/paarvorwahl.py` [-] paarvorwahl.py - GPS-Vorwahl fuer Bildpaare (2026-11-06). Reine Funktionen, nur numpy/PIL, kein torch/pycolmap.
-- `tools/pack_beds.py` [-] pack_beds.py — viele kleine STL-Teile auf möglichst wenige Druckbetten packen.
+- `tools/pack_beds.py` [gen] pack_beds.py — viele kleine STL-Teile auf möglichst wenige Druckbetten packen.
 - `tools/pointcloud_overhang.py` [-] pointcloud_overhang.py — ÜBERHÄNGENDE man-made Strukturen (Tunnelausgang-Überdachung/Galerie, Brücke, Vordach) aus der rohen LiDAR-PUNKTWOLKE (LAS/LAZ) erfassen — das, was 2.5D-Ras
 - `tools/polygnn_auswahl.py` [seg] polygnn_auswahl.py - BS63: Zellauswahl durch vortrainiertes PolyGNN (MIT, Munich-Checkpoint) statt Min-Cut. Zellzerlegung wie tools/wolke_mincut.py (Voxel-Vorzeichenvektor, 0,1 m);
 - `tools/pose_vertrauen.py` [col] pose_vertrauen.py - Vertrauensmass je registriertem Zusatzfoto (Handyfotos) aus Daten abgeleitet.
@@ -54,29 +54,29 @@
 - `tools/saeulen_schliessen.py` [gen] saeulen_schliessen.py - GENERISCH: schwebende Saeulen/Pfeiler/Stuetzen eines Netzes bis zum Boden verlaengern (Nutzerfund 6.11.: Saeulen abgeschnitten). Regel (Statik, kein Objektw
 - `tools/sam_arches.py` [seg] sam_arches.py — saubere Bogen-Masken via SAM (Segment Anything), dann measure_arch auf ALLE Bögen → volle Geometrie (Bogenzahl, Stich:Spann, Pfeiler:Spann, Feldteilung, absolute Me
 - `tools/schatten.py` [seg] schatten.py - Schlagschatten des Modells (+ Nachbarn) fuer ein kalibriertes Foto vorhersagen (2026-11-05, Nutzer-Sichtbeobachtung Foto 018: Gaubenschatten auf dem Dach erzeugen Fot
-- `tools/schluchsee_modell.py` [-] schluchsee_modell.py — texturiertes 3D der Schluchsee-Staumauer (Seebrugg) aus LGL-Daten. DGM025 (0,25m) + DOP20-Luftbild, Original-Proportion. Mauer bei UTM E438867 N5294465.
+- `tools/schluchsee_modell.py` [seg] schluchsee_modell.py — texturiertes 3D der Schluchsee-Staumauer (Seebrugg) aus LGL-Daten. DGM025 (0,25m) + DOP20-Luftbild, Original-Proportion. Mauer bei UTM E438867 N5294465.
 - `tools/schwarzwald_katalog.py` [-] schwarzwald_katalog.py — Katalog markanter, schwarzwaldtypischer Modelle. Verifizierte Koordinaten (WebSearch), berechnet LGL-2km-Kachel je Ort, schreibt JSON (maschinell) + MD (le
 - `tools/seg3d.py` [-] seg3d.py — NUR der Tunnel-Einschnitt als Platten, sauber. Keine Facetten-Segmentierung. Aus der erkannten Einschnitt-Kontur (grow-to-rim): DECKPLATTE = ebener Boden auf Gleis-Nivea
 - `tools/seiten_erkennen.py` [-] seiten_erkennen.py <db.db> <bilder_ordner> --aus <seiten.json> [--db-aus <kopie.db>] [--min-bilder 12] [--min-paare 20] [--stichprobe 24] [--schwelle 0.45] [--referenz eigen__] [--
-- `tools/seiten_luecken.py` [-] seiten_luecken.py <objekt.json> <fassaden-ordner> --sparse <SfM-Ordner mit images.bin> --ref-db <db.db> [--schwelle 0.2] [--min_m2 40] [--holen] [--download]
+- `tools/seiten_luecken.py` [seg] seiten_luecken.py <objekt.json> <fassaden-ordner> --sparse <SfM-Ordner mit images.bin> --ref-db <db.db> [--schwelle 0.2] [--min_m2 40] [--holen] [--download]
 - `tools/shape_extract.py` [-] shape_extract.py — FORM AUTOMATISCH AUS DEM FOTO MESSEN (statt Augenmaß).
 - `tools/sichtrichtung_kohaerenz.py` [-] Sichtrichtungs-Kohaerenz je Wolkenpunkt (allgemein, fuer jedes Objekt mit Dichte-Wolke + vis + Kameras).
 - `tools/skin_smart_split.py` [gen] skin_smart_split.py — teilt die 3D-Haut KLUG in druckoptimierte Stücke.
 - `tools/snap_in_objekt.py` [-] snap_in_objekt.py - wege3d.json (rippen_pfad_snap.py) -> rippen_pfade.pfade_ohne_spiegel eines erker_polygon (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/snap
-- `tools/sp_crown_demo.py` [-] sp_crown_demo.py — DEMO-Kranz zum 3-mm-LED-Fit-Test: sauberer Ring (wasserdicht), groß genug, Wand dick genug, mit N senkrechten (radialen) selbst-zentrierenden Ø-Löchern. Runde 3-
-- `tools/sp_lantern_leds.py` [-] sp_lantern_leds.py — druckfertiges LATERNENTEIL (alles oberhalb der Kuppel) mit SENKRECHTEN Löchern nach oben für 3-mm-LEDs, platziert in den LÜCKEN zwischen den Kolonnaden-Säulen.
-- `tools/sp_led_dome.py` [-] sp_led_dome.py — rüstet die Petersdom-KUPPEL (sp-dome.stl) für 0402-LEDs auf:
-- `tools/sp_led_dome_bores.py` [-] sp_led_dome_bores.py — Petersdom-KUPPEL mit ECHTEN Ø3,5-DURCHBOHRUNGEN statt flacher Mini-Schlitze. Jedes Loch bricht komplett in den Hohlraum durch → im Druck klar sichtbares rund
-- `tools/sp_led_facade.py` [-] sp_led_facade.py — rüstet die Petersdom-FASSADE (sp-facade.stl) für 0402-LEDs auf.
-- `tools/spitze_hoehe.py` [gen] spitze_hoehe.py - Hoehe von Helm-/Nadelspitzen AUTOMATISCH aus der Himmelssilhouette aller kalibrierten Fotos (2026-11-05).
-- `tools/stabil_alle.py` [-] Stabilitaetskarten fuer alle kalibrierten Fotos (GPU, sequentiell) -> OUTDIR/<foto>.png (uint8 = Laufanteil*255, Breite 1500). Aufruf: stabil_alle.py KAM.json BILDER OUTDIR
+- `tools/sp_crown_demo.py` [gen] sp_crown_demo.py — DEMO-Kranz zum 3-mm-LED-Fit-Test: sauberer Ring (wasserdicht), groß genug, Wand dick genug, mit N senkrechten (radialen) selbst-zentrierenden Ø-Löchern. Runde 3-
+- `tools/sp_lantern_leds.py` [gen] sp_lantern_leds.py — druckfertiges LATERNENTEIL (alles oberhalb der Kuppel) mit SENKRECHTEN Löchern nach oben für 3-mm-LEDs, platziert in den LÜCKEN zwischen den Kolonnaden-Säulen.
+- `tools/sp_led_dome.py` [gen] sp_led_dome.py — rüstet die Petersdom-KUPPEL (sp-dome.stl) für 0402-LEDs auf:
+- `tools/sp_led_dome_bores.py` [gen] sp_led_dome_bores.py — Petersdom-KUPPEL mit ECHTEN Ø3,5-DURCHBOHRUNGEN statt flacher Mini-Schlitze. Jedes Loch bricht komplett in den Hohlraum durch → im Druck klar sichtbares rund
+- `tools/sp_led_facade.py` [gen] sp_led_facade.py — rüstet die Petersdom-FASSADE (sp-facade.stl) für 0402-LEDs auf.
+- `tools/spitze_hoehe.py` [seg] spitze_hoehe.py - Hoehe von Helm-/Nadelspitzen AUTOMATISCH aus der Himmelssilhouette aller kalibrierten Fotos (2026-11-05).
+- `tools/stabil_alle.py` [seg] Stabilitaetskarten fuer alle kalibrierten Fotos (GPU, sequentiell) -> OUTDIR/<foto>.png (uint8 = Laufanteil*255, Breite 1500). Aufruf: stabil_alle.py KAM.json BILDER OUTDIR
 - `tools/stadtmesh_laden.py` [gen] stadtmesh_laden.py - Stadtmesh Freiburg 2025 (Quellentyp 19, STADT_MESH) fuer ein Objekt laden (Auftrag G4).
 - `tools/stoermaske_auffrischen.sh` [sh] Nebenzahl prozent_foto_maskiert zum main-STL: Stoermasken (tools/foto_stoermaske.py, Cache rc-park_tmp/stoermaske) + Formliste mit --stoermaske an, in eigenem Worktree wie fotoform
 - `tools/struktur_abgleich.py` [seg] struktur_abgleich.py — HARTER 3D-STRUKTUR-Abgleich (nicht Farbe!). Vergleicht die FORM des Modells gegen die LASER-Grundwahrheit (hofgut_struktur.obj aus nDOM): dominiert das Dach 
 - `tools/stufenversuch.py` [-] stufenversuch.py - Stufenmodell grob -> fein: gleiches Netz (Nullstart ab 'dicht'), nur die dichte Stufe variiert (Register BK).
 - `tools/sweetspot.py` [-] sweetspot.py - Sweet Spot der dichten Stufe (Bildauflösung für PatchMatch) für EIN Objekt MESSEN statt behaupten (Register BM).
-- `tools/template_match_3d.py` [-] template_match_3d.py - GLOBALES 3D-Template-Matching auf der GPU (Nutzer 8.11.: Formen ueber die ganze Wolke suchen). Wolke -> binaeres Voxelgitter (aufgeblaeht um --dil Voxel), Vo
-- `tools/terrain_skin_panels.py` [-] terrain_skin_panels.py — Höhenfeld -> 3D-DRUCK-OBERFLÄCHENPLATTEN (Haut) fürs Gerüst.
+- `tools/template_match_3d.py` [seg] template_match_3d.py - GLOBALES 3D-Template-Matching auf der GPU (Nutzer 8.11.: Formen ueber die ganze Wolke suchen). Wolke -> binaeres Voxelgitter (aufgeblaeht um --dil Voxel), Vo
+- `tools/terrain_skin_panels.py` [gen] terrain_skin_panels.py — Höhenfeld -> 3D-DRUCK-OBERFLÄCHENPLATTEN (Haut) fürs Gerüst.
 - `tools/terrain_spanten.py` [gen] terrain_spanten.py — Gelände als STECK-SPANTEN-Gerüst (egg-crate) statt Waffelgitter.
 - `tools/terrain_stack_tiles.py` [gen] terrain_stack_tiles.py — zerlegt ein hohes Gelände-STL in STECKBARE Kacheln.
 - `tools/textur_projektion.py` [seg] textur_projektion.py - Fotofarbe auf die Modelloberflaeche projizieren und AUTOMATISCH messen, wie viel Prozent je Seite/Hoehenband wirklich Farbe haben.
@@ -84,13 +84,13 @@
 - `tools/todtnau_wasserfall.py` [gen] ECHTER Todtnauer Wasserfall — LGL-1m-LiDAR (Kachel 421/5298) + Wasserkreislauf.
 - `tools/toshiba_inventar.sh` [sh] toshiba_inventar.sh [MOUNT] - schreibt modelle/TOSHIBA_INVENTAR_roh.txt (Groessen, nur Lesen). NTFS/HDD langsam: im Hintergrund starten.
 - `tools/treppe.py` [-] treppe.py - mehrstufige Treppe: grob rechnen, Guete messen, entscheiden ob die naechste Stufe sich lohnt (Register BU, Plan 3.6).
-- `tools/triberg_wasserfall.py` [-] Triberg-Wasserfall — ECHTER LASERSCAN (LGL-1m-LiDAR) als Basis, nur fuers Wasser leicht eingefraest. KEINE gestaltete Geometrie.
+- `tools/triberg_wasserfall.py` [gen] Triberg-Wasserfall — ECHTER LASERSCAN (LGL-1m-LiDAR) als Basis, nur fuers Wasser leicht eingefraest. KEINE gestaltete Geometrie.
 - `tools/truss_kit.py` [gen] truss_kit.py — ZWEI-LAGEN-Gerüst: tragende 4mm-BALKEN (grob, voll) + dichte 2mm-STREBEN (Band).
 - `tools/tunnel_floor_portal.py` [-] tunnel_floor_portal.py — GLEISBETT (ganze Trasse) + PORTAL-GALERIE (Eingang) als Laser-Teile.
-- `tools/validate_bauwerk.py` [-] validate_bauwerk.py — validiert ein BAUWERK-Modell gegen die Realität.
+- `tools/validate_bauwerk.py` [gen] validate_bauwerk.py — validiert ein BAUWERK-Modell gegen die Realität.
 - `tools/validate_modell.py` [gen] validate_modell.py — VALIDIERUNG: wie nah ist das erzeugte Modell an der Realität, und ist es ohne viel Nacharbeit lasercut-/druckbar?
 - `tools/variante_bauen.sh` [sh] variante_bauen.sh - Generator-Variante bauen UND PRUEFEN, DASS SIE SICH UNTERSCHEIDET. Falle (2026-11-01): sed-Muster griff nicht ("TWs = 2.6" statt "TWs, T0, T1 = 2.6,") -> drei "
-- `tools/verify_gorge.py` [-] verify_gorge.py — MESSBARE Prüfung der Einschnitt/Schlucht-Kantenerkennung. Rendert Hillshade (Draufsicht) + erkannte Platte + ihre Kanten, und MISST objektiv: wall_frac = Anteil d
+- `tools/verify_gorge.py` [seg] verify_gorge.py — MESSBARE Prüfung der Einschnitt/Schlucht-Kantenerkennung. Rendert Hillshade (Draufsicht) + erkannte Platte + ihre Kanten, und MISST objektiv: wall_frac = Anteil d
 - `tools/versuch_log.py` [-] versuch_log.py - AUTOMATISCHES Versuchslog (Nutzerauftrag 7.11.: nichts doppelt versuchen, Fehlschlaege mitschreiben). Bibliothek (von Werkzeugen am Ende eines Laufs aufgerufen) + 
 - `tools/viadukt_gelaende.py` [gen] viadukt_gelaende.py — Viadukt, der der ECHTEN Trasse + dem GELÄNDE folgt.
 - `tools/vorwissen_empfindlichkeit.py` [-] vorwissen_empfindlichkeit.py - Wie viel Vorwissen steckt im Nullstart? (Register BI)

@@ -3,14 +3,14 @@
 - `tools/dust3r_run.py` [seg] dust3r_run.py — pose-freie 3D-Rekonstruktion aus WENIGEN unkalibrierten Fotos (DUSt3R, CPU). Repliziert mini_dust3r.api.inferece_dust3r OHNE rerun (das bricht an numpy 1.26). Gibt 
 - `tools/fabrik_split.py` [gen] (kein Docstring)
 - `tools/gewichtsstaumauer.py` [gen] gewichtsstaumauer.py — parametrische GERADE/gekrümmte Gewichtsstaumauer als STL. Für Schluchsee-Staumauer (Seebrugg): Trapez-Querschnitt (vertikale Wasserseite, geneigte Luftseite)
-- `tools/google3d_to_obj.py` [-] google3d_to_obj.py — Google Photorealistic 3D Tiles (echte Städte/Orte) → OBJ.
+- `tools/google3d_to_obj.py` [gen] google3d_to_obj.py — Google Photorealistic 3D Tiles (echte Städte/Orte) → OBJ.
 - `tools/gs_kaufhaus_train.py` [seg] gs_kaufhaus_train.py - 3D Gaussian Splatting (gsplat 1.5.3, DefaultStrategy) fuer das Kaufhaus, Start aus der dichten Wolke (Modellrahmen, Meter). Kameras/Bilder aus tools/gs_kaufh
 - `tools/hirschsprung_osm.py` [gen] hirschsprung_osm.py — Hirschsprung true 1:160 mit der ECHTEN Bahntrasse + Tunnel an den ECHTEN Portalen (aus OpenStreetMap, gegen LGL-DGM1 verifiziert).
 - `tools/hofgut_hybrid.py` [gen] hofgut_hybrid.py — der gewählte Weg: LOD2-Grundriss-MASSING (8 Teile) + parametrische DETAIL- FASSADE (Lauben/Fenster/Fresko) auf dem HAUPTFLÜGEL + gemessene Farben. (DOP-Dachtextu
 - `tools/hofgut_massing.py` [gen] hofgut_massing.py — MASSING aus dem ECHTEN LOD2-Grundriss (nichts geraten): liest modelle/hofgut_sternen/footprint.json (8 Teile, je Ring + Traufe + First), extrudiert JEDEN Teil z
 - `tools/hofgut_sternen.py` [gen] hofgut_sternen.py — Detail-3D des Hofgut Sternen (Höllsteig/Ravennaschlucht) aus der Vermesser-Pipeline: LOD2 liefert Grundriss+Höhen (belegt), die FOTOS (g1–g4) die Fassade.
 - `tools/hypso_gpu.py` [seg] hypso_gpu.py - Hypsometrie-Vergleich Modell gegen LiDAR-DOM, GPU (PyTorch/CUDA) mit identischem CPU-Weg.
-- `tools/hypso_profil.py` [-] hypso_profil.py - DIAGNOSE statt Gesamtnote: Flaeche je Hoehenstufe, Laser (DOM1) gegen Modell(e), Stufe fuer Stufe.
+- `tools/hypso_profil.py` [gen] hypso_profil.py - DIAGNOSE statt Gesamtnote: Flaeche je Hoehenstufe, Laser (DOM1) gegen Modell(e), Stufe fuer Stufe.
 - `tools/laser_blank_cut.py` [-] laser_blank_cut.py — Weg 1: pro BETT-ROHLING (S9 410x400) eine fertige Schnitt-Datei.
 - `tools/laser_calib.py` [-] laser_calib.py — Kalibrier-Gcode fuer neues Material am S9.
 - `tools/laser_nest.py` [gen] laser_nest.py — Laser-Teile (SVGs) auf Platten nesten + Plattenzahl/Verschnitt.
@@ -19,8 +19,8 @@
 - `tools/laser_setup.sh` [sh] laser_setup.sh — EIN Script für den Sculpfun S9: installiert bei Bedarf alles Nötige (pyserial, wxPython via apt, MeerK40t) und startet dann direkt die Laser-UI (MeerK40t). Aufruf:
 - `tools/laser_zone_nest.py` [gen] laser_zone_nest.py — FLEXIBLER Zonen-Nester: beliebige Blattgröße auf kleinem Cutter.
 - `tools/linach_bogenmauer.py` [gen] linach_bogenmauer.py — Linachtalsperre als ECHTE Gewölbereihen-Staumauer.
-- `tools/linachtalsperre.py` [-] linachtalsperre.py — ECHTES LGL-Tal (DGM1) + PARAMETRISCHE Gewölbereihen-Staumauer.
-- `tools/mapillary_rip.py` [-] mapillary_rip.py — HEBEL 2 (Google-frei): fassaden-ausgerichtete Fotos aus MAPILLARY statt Google Street View. Crowdgesourcte Straßenbilder, georeferenziert + mit Blickrichtung, fr
+- `tools/linachtalsperre.py` [gen] linachtalsperre.py — ECHTES LGL-Tal (DGM1) + PARAMETRISCHE Gewölbereihen-Staumauer.
+- `tools/mapillary_rip.py` [seg] mapillary_rip.py — HEBEL 2 (Google-frei): fassaden-ausgerichtete Fotos aus MAPILLARY statt Google Street View. Crowdgesourcte Straßenbilder, georeferenziert + mit Blickrichtung, fr
 - `tools/osm_zu_h0.py` [gen] osm_zu_h0.py — beliebiges Bauwerk aus OpenStreetMap-3D-Daten -> wasserdichter Baukoerper (STL, mm, Massstab 1:N, Standard H0 = 1:87).
 - `tools/ravenna_viadukt.py` [gen] ravenna_viadukt.py — Ravennaviadukt (Höllentalbahn) OHNE Scan, rein datengetrieben.
 - `tools/s8_kaufhaus.py` [-] s8_kaufhaus.py - Beweislauf SPEC S8 am Kaufhaus: Ebenen-Modell (voll + Holdout), STL 1:87, Pruefstand, foto_diff auf 6 Holdout-Fotos gegen Generator C und Carving (Holdout). Aufruf

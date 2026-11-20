@@ -1,58 +1,58 @@
 # Werkzeuge: kanten_linien (58)
 - `tools/belichtung_sweep.py` [col] BS2: Belichtungs-/Kontrast-Sweep. Stufen: auswahl | varianten | merkmale | tri. Arbeitsordner (gross) nur unter /media/oem/scan/rc-park_null/belichtung_kh. Buendel nur gelesen, Kam
 - `tools/druck_rippen.py` [seg] druck_rippen.py <ein.stl> <aus.stl> [--abstand_mm 60] [--dicke_mm 0.9] [--tiefe_mm 6] [--schritt_mm 0.8] [--ecke_mm 0 (aus)] [--dick_mm 2.4] [--bild PFAD.png] Duenne Gebaeudewaende
-- `tools/epilinie.py` [-] epilinie.py - Epipolarlinie eines Pixelpicks in weiteren Kameras (Hilfe fuer foto_mass.py --tri).
+- `tools/epilinie.py` [seg] epilinie.py - Epipolarlinie eines Pixelpicks in weiteren Kameras (Hilfe fuer foto_mass.py --tri).
 - `tools/features_in_objekt.py` [-] features_in_objekt.py - Features aus kanten_features.py (Sweep-gestuetzt) als Pfade in ein Generator-Bauteil uebernehmen (allgemein, nicht rippenspezifisch). Aufruf: features_in_ob
-- `tools/foto_kante_fit.py` [-] foto_kante_fit.py - senkrechte Bauwerkskante (LoD2-Eckkante) im Vollbild aus einer GROBEN Vorgabe praezise anpassen.
-- `tools/foto_kanten_loop.py` [-] foto_kanten_loop.py - Kanten-Schleife (Chamfer, Gradientenabstieg, GPU): STL-Kanten gegen Fotokanten, je Foto Kamera verfeinern, Abweichung je Bauteil messen.
+- `tools/foto_kante_fit.py` [seg] foto_kante_fit.py - senkrechte Bauwerkskante (LoD2-Eckkante) im Vollbild aus einer GROBEN Vorgabe praezise anpassen.
+- `tools/foto_kanten_loop.py` [seg] foto_kanten_loop.py - Kanten-Schleife (Chamfer, Gradientenabstieg, GPU): STL-Kanten gegen Fotokanten, je Foto Kamera verfeinern, Abweichung je Bauteil messen.
 - `tools/foto_kanten_messen.py` [seg] foto_kanten_messen.py — KANTENERKENNUNG (OpenCV Canny + Hough) + ENTFERNUNGSMESSUNG.
 - `tools/foto_sweep.py` [-] foto_sweep.py - GENERISCH: einen Parameter eines Bauteils in einem Bereich durchfahren und jeden Wert mit dem Foto-Diff bewerten (Peak = bester Wert). Baut je Wert ein STL (baukast
 - `tools/kaempfer_sweep.py` [seg] kaempfer_sweep.py - Kaempferhoehe und Pfostenlagen der Fenstergruppen per Sweep ueber ALLE Gruppen gemeinsam, zwei getrennte Quellen (nie gemischt): foto : Kantenstuetzung (Stabili
-- `tools/kante_3d.py` [-] kante_3d.py - Linienhafte Kante (Rippe, Bogen, Gesimslinie, Rahmen) aus 2 kalibrierten Fotos als 3D-Kurve messen (Glied 2+4 der Methode MESSEN_DANN_BAUEN).
-- `tools/kante_auf_flaeche.py` [-] kante_auf_flaeche.py - Kante aus EINEM Foto auf eine bekannte Flaeche (STL-Teilnetz) projizieren (Alternative zu kante_3d.py ohne Bildzuordnung).
-- `tools/kanten_3d.py` [-] kanten_3d.py - 3D-Linien aus kalibrierten Fotos (SPEC S8 Baustein 3). Eigenbau (LIMAP nicht installierbar, siehe Register).
-- `tools/kanten_3d_vote.py` [-] 3D-Kanten per Mehrfoto-Abstimmung: SAM-Grenzen jedes Fotos (Labelbild aus sam_mehrfoto_3d --kachel) auf die Wolke projizieren, je Punkt zaehlen: in wie vielen Fotos, die den Punkt 
+- `tools/kante_3d.py` [seg] kante_3d.py - Linienhafte Kante (Rippe, Bogen, Gesimslinie, Rahmen) aus 2 kalibrierten Fotos als 3D-Kurve messen (Glied 2+4 der Methode MESSEN_DANN_BAUEN).
+- `tools/kante_auf_flaeche.py` [seg] kante_auf_flaeche.py - Kante aus EINEM Foto auf eine bekannte Flaeche (STL-Teilnetz) projizieren (Alternative zu kante_3d.py ohne Bildzuordnung).
+- `tools/kanten_3d.py` [seg] kanten_3d.py - 3D-Linien aus kalibrierten Fotos (SPEC S8 Baustein 3). Eigenbau (LIMAP nicht installierbar, siehe Register).
+- `tools/kanten_3d_vote.py` [seg] 3D-Kanten per Mehrfoto-Abstimmung: SAM-Grenzen jedes Fotos (Labelbild aus sam_mehrfoto_3d --kachel) auf die Wolke projizieren, je Punkt zaehlen: in wie vielen Fotos, die den Punkt 
 - `tools/kanten_abgleich.py` [-] kanten_abgleich.py — ZENTRALE automatische Kanten-Gate: Struktur-Kanten Foto↔Modell je Region.
-- `tools/kanten_blatt.py` [-] kanten_blatt.py - Sichtblatt S10: Foto-Ausschnitt | P1 | P2 | P3 | P4 | weiches Mittel | Abstimmung k=2,3,4 (Skelette) nebeneinander. Aufruf: kanten_blatt.py --bild FOTO.jpg --kart
+- `tools/kanten_blatt.py` [seg] kanten_blatt.py - Sichtblatt S10: Foto-Ausschnitt | P1 | P2 | P3 | P4 | weiches Mittel | Abstimmung k=2,3,4 (Skelette) nebeneinander. Aufruf: kanten_blatt.py --bild FOTO.jpg --kart
 - `tools/kanten_buendel.py` [-] Buendel zusammenfassen + Streuer entfernen. Aufruf: python -I tools/kanten_buendel.py SEG_IN.json KANTEN.npz OUT.json [--wink 4] [--dist 0.06] [--rand 1.0] Fast parallele, dicht li
-- `tools/kanten_features.py` [-] kanten_features.py - Linienhafte Features (Rippen, Baender, Leisten, Fensterstaebe, Dachkanten ...) in EINEM Foto automatisch finden, klassifizieren und auf die Modellflaeche legen
-- `tools/kanten_feld3d.py` [-] kanten_feld3d.py - S10 Teil B: gemeinsames 3D-Kantenfeld aus weichen Mehrsicht-Kantenkarten (EMAP-Prinzip, Eigenbau) + Geraden/Kurven.
-- `tools/kanten_feld3d_pruefen.py` [-] kanten_feld3d_pruefen.py - S10 Teil B Bewertung (2)+(3): Holdout-Kreuzansicht des 3D-Kantenfelds und Bogen-Test.
-- `tools/kanten_ketten.py` [-] kanten_ketten.py - DURCHGEHENDE Linienzuege (Bogenrippen, Baender, Staebe) automatisch aus einem Foto: Skelett der Kantenkarte, an Kreuzungen GERADEAUS weiter (kleinste Richtungsae
-- `tools/kanten_lib.py` [-] Gemeinsame GPU-Bausteine fuer die Kanten-Schleife: sequentielles RANSAC fuer 3D-Geradensegmente.
+- `tools/kanten_features.py` [seg] kanten_features.py - Linienhafte Features (Rippen, Baender, Leisten, Fensterstaebe, Dachkanten ...) in EINEM Foto automatisch finden, klassifizieren und auf die Modellflaeche legen
+- `tools/kanten_feld3d.py` [seg] kanten_feld3d.py - S10 Teil B: gemeinsames 3D-Kantenfeld aus weichen Mehrsicht-Kantenkarten (EMAP-Prinzip, Eigenbau) + Geraden/Kurven.
+- `tools/kanten_feld3d_pruefen.py` [seg] kanten_feld3d_pruefen.py - S10 Teil B Bewertung (2)+(3): Holdout-Kreuzansicht des 3D-Kantenfelds und Bogen-Test.
+- `tools/kanten_ketten.py` [seg] kanten_ketten.py - DURCHGEHENDE Linienzuege (Bogenrippen, Baender, Staebe) automatisch aus einem Foto: Skelett der Kantenkarte, an Kreuzungen GERADEAUS weiter (kleinste Richtungsae
+- `tools/kanten_lib.py` [seg] Gemeinsame GPU-Bausteine fuer die Kanten-Schleife: sequentielles RANSAC fuer 3D-Geradensegmente.
 - `tools/kanten_nulltest.py` [-] kanten_nulltest.py - BEWEIS, dass die Kanten-Schleife (foto_kanten_loop.py) einen Teilfehler findet - und keinen erfindet (Register BX, PIPELINE_H0.md 8c). Ablauf (je Objekt, mit k
 - `tools/kanten_pipelines.py` [seg] kanten_pipelines.py - S10 Teil A: vier Kantenkarten-Pipelines je Foto (weiche Karten, 0..1 je Pixel, Bildraster unveraendert).
-- `tools/kanten_render.py` [-] kanten_render.py - Modell (STL/PLY in Metern, Modellrahmen) aus der Pose eines kalibrierten Fotos rendern, neben das Foto legen. kanten_render.py modell.stl dicht_dir ausrichtung f
-- `tools/kanten_richtung.py` [-] kanten_richtung.py - VORZEICHENBEHAFTETER Versatz Modellkante -> naechste Fotokante je Bauteil (Register BY). Nach der Kameraanpassung (foto_kanten_loop.verfeinern): fuer jede sich
-- `tools/kanten_schleife.py` [-] Kanten-Schleife: Drahtgitter <-> echte Fotos, iterativ. Je Durchgang: (1) Segmente in alle Fotos projizieren (Z-Puffer-Sichtbarkeit), Unterstuetzung = Anteil der sichtbaren Fotos m
-- `tools/kanten_segmente.py` [-] Kantenpunkte (kanten_3d_vote) -> 3D-Geradensegmente per GPU-RANSAC (sequentiell, Inlier entfernen). Aufruf: python -I tools/kanten_segmente.py KANTEN.npz OUT.json [--sicht 6] [--an
-- `tools/kanten_stabil.py` [-] Kanten-Stabilitaet je Foto (GPU): viele Vorverarbeitungen x Masstaebe x Schwellen, jede Kante bekommt den Anteil der Laeufe, in denen sie steht (Peak = stabil). Vorverarbeitung: Ka
-- `tools/kanten_subpixel.py` [-] Subpixel-Canny (Gradient-Parabel quer zur Kante) und Test, ob Kanten dadurch GERADER werden. Test: LSD-Linien auf dem entzerrten Bild; je Linie Kantenpunkte (ganzzahliger Canny vs 
+- `tools/kanten_render.py` [seg] kanten_render.py - Modell (STL/PLY in Metern, Modellrahmen) aus der Pose eines kalibrierten Fotos rendern, neben das Foto legen. kanten_render.py modell.stl dicht_dir ausrichtung f
+- `tools/kanten_richtung.py` [seg] kanten_richtung.py - VORZEICHENBEHAFTETER Versatz Modellkante -> naechste Fotokante je Bauteil (Register BY). Nach der Kameraanpassung (foto_kanten_loop.verfeinern): fuer jede sich
+- `tools/kanten_schleife.py` [seg] Kanten-Schleife: Drahtgitter <-> echte Fotos, iterativ. Je Durchgang: (1) Segmente in alle Fotos projizieren (Z-Puffer-Sichtbarkeit), Unterstuetzung = Anteil der sichtbaren Fotos m
+- `tools/kanten_segmente.py` [seg] Kantenpunkte (kanten_3d_vote) -> 3D-Geradensegmente per GPU-RANSAC (sequentiell, Inlier entfernen). Aufruf: python -I tools/kanten_segmente.py KANTEN.npz OUT.json [--sicht 6] [--an
+- `tools/kanten_stabil.py` [seg] Kanten-Stabilitaet je Foto (GPU): viele Vorverarbeitungen x Masstaebe x Schwellen, jede Kante bekommt den Anteil der Laeufe, in denen sie steht (Peak = stabil). Vorverarbeitung: Ka
+- `tools/kanten_subpixel.py` [seg] Subpixel-Canny (Gradient-Parabel quer zur Kante) und Test, ob Kanten dadurch GERADER werden. Test: LSD-Linien auf dem entzerrten Bild; je Linie Kantenpunkte (ganzzahliger Canny vs 
 - `tools/kanten_tor.py` [seg] kanten_tor.py - Beleg-Tor auf KANTEN (neutral, keine Bauteiltypen): jede 3D-Kante einer Wiederholung wird getrennt gegen (a) nur die Wolke (Wolke + Tiefen-Sweep, Kantenpunkte im Sc
-- `tools/kanten_triangulation.py` [-] 3D-Linien direkt aus den Fotos (ohne Wolkenpunkte als Voraussetzung): 2D-Linien (LSD auf Grau, Lab-a, Lab-b) je Foto; je Fotopaar spannt jede 2D-Linie eine Ebene durch die Kamera a
-- `tools/kanten_vote_quellen.py` [-] Kantenabstimmung mit GETRENNTEN Quellen (SAM-Grenze, Grau-Canny, Farb-Sweep) fuer die Median-Fusion (kanten_fusion.py). CPU: Kantenbilder je Foto parallel (ProcessPool, Fenster von
-- `tools/kanten_zeigen.py` [-] kanten_zeigen.py - 3D-Linien (kanten_3d.json) ueber ein Foto projizieren. Aufruf: kanten_zeigen.py kanten_3d.json dicht_dir ausrichtung foto out.jpg
+- `tools/kanten_triangulation.py` [seg] 3D-Linien direkt aus den Fotos (ohne Wolkenpunkte als Voraussetzung): 2D-Linien (LSD auf Grau, Lab-a, Lab-b) je Foto; je Fotopaar spannt jede 2D-Linie eine Ebene durch die Kamera a
+- `tools/kanten_vote_quellen.py` [seg] Kantenabstimmung mit GETRENNTEN Quellen (SAM-Grenze, Grau-Canny, Farb-Sweep) fuer die Median-Fusion (kanten_fusion.py). CPU: Kantenbilder je Foto parallel (ProcessPool, Fenster von
+- `tools/kanten_zeigen.py` [seg] kanten_zeigen.py - 3D-Linien (kanten_3d.json) ueber ein Foto projizieren. Aufruf: kanten_zeigen.py kanten_3d.json dicht_dir ausrichtung foto out.jpg
 - `tools/kantenstufe.py` [gen] kantenstufe.py - KANTENSTUFE der Gesamtkette (KERNMETHODE, Nutzer 15.11.2026): Fotokanten + SfM-Kameras -> 3D-Kanten um die Modellflaeche -> Bewertung. Allgemein fuer jedes Objekt 
 - `tools/koerper_kantenliste.py` [-] koerper_kantenliste.py - Koerper (v11) als Kantenliste mit Kopplungsgruppen fuer das kantenneutrale Tor (tools/kanten_tor.py) und Rueckweg der Korrekturen.
 - `tools/konsolen_sweep.py` [seg] konsolen_sweep.py - Konsolen-Phase und -Form per GPU-Sweep gegen die Stabilitaetskarten ALLER Fotos, die die Konsolenzone sehen (Wiederholungsprior).
-- `tools/limap_auswerten.py` [-] LIMAP-Linien -> Netzrahmen exportieren und gegen Fotokanten messen (Kontrolle: gleiche Linien um 1,5 m verschoben). venv-limap: limap_auswerten.py <out_dir/geometry_guided_final_mo
-- `tools/limap_kantenzwang.py` [-] LIMAP-Linien als Zusatzkanten am Wolkennetz: duenne Stege (4-Eck-Prismen) entlang netzferner Linien, Rahmen Wolke->STL mm = m/0.087. Aufruf: limap_kantenzwang.py NETZ.stl LINIEN.np
-- `tools/limap_lauf.py` [-] LIMAP (BSD-3) 3D-Liniensegmente aus dem dichten COLMAP-Ergebnis (entzerrte Fotos 1600 px + MVS-Tiefenkarten). Aufruf (venv-limap): limap_lauf.py <dicht_dir> <out_dir> [detektor=lsd
+- `tools/limap_auswerten.py` [seg] LIMAP-Linien -> Netzrahmen exportieren und gegen Fotokanten messen (Kontrolle: gleiche Linien um 1,5 m verschoben). venv-limap: limap_auswerten.py <out_dir/geometry_guided_final_mo
+- `tools/limap_kantenzwang.py` [gen] LIMAP-Linien als Zusatzkanten am Wolkennetz: duenne Stege (4-Eck-Prismen) entlang netzferner Linien, Rahmen Wolke->STL mm = m/0.087. Aufruf: limap_kantenzwang.py NETZ.stl LINIEN.np
+- `tools/limap_lauf.py` [col] LIMAP (BSD-3) 3D-Liniensegmente aus dem dichten COLMAP-Ergebnis (entzerrte Fotos 1600 px + MVS-Tiefenkarten). Aufruf (venv-limap): limap_lauf.py <dicht_dir> <out_dir> [detektor=lsd
 - `tools/limap_proto.py` [col] LIMAP-Prototyp Stufe 2 (venv-limap): limap_proto.py OUTDIR [--detektor lsd] (nach limap_proto_vor.py)
-- `tools/limap_proto_vor.py` [-] LIMAP-Prototyp Stufe 1 (venv-seg, GPU): Vorbereitung fuer einen kleinen Ausschnitt (Minuten statt Stunden): Ausschnitt = Kugel um ein Zentrum, Fotos = die am besten sehenden, versc
-- `tools/limap_proto_zeigen.py` [-] LIMAP-Prototyp auswerten (venv-limap): limap_proto_zeigen.py OUTDIR PREFIX [--spur 3]. Schreibt Linien (npy) + Overlay auf 2 Fotos (gruen = Spurlaenge >= 5, gelb >= 3) + Frontansic
-- `tools/luecken_rippen.py` [-] luecken_rippen.py - Rippen, die im Foto da sind (Rippenmaske-Skelett, siehe kanten_ketten --farbe band), aber von keinem Modellpfad gedeckt sind, als neue Pfade vorschlagen. Aufruf
-- `tools/rippen_abdeckung.py` [-] rippen_abdeckung.py - Wie viel der sichtbaren Goldrippen eines Bauteils steckt im Modell? (Mass fuer feine Kanten, Nutzer 12.11.: foto_diff/Wolke sind fuer Rippen blind)
-- `tools/rippen_abstimmung.py` [-] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
-- `tools/rippen_aeste_bild.py` [-] rippen_aeste_bild.py - Rippenaeste im BILD des Referenzfotos bilden (Skelett zerlegt an Kreuzungen), Tiefe je Ast aus den guten Punkten robust interpoliert (13.11.2026). Aufruf: /m
-- `tools/rippen_f1.py` [-] rippen_f1.py - FEINES Foto-Mass fuer Rippen/Leisten (Wolke und foto_diff sind dafuer blind): Modellkanten (Tiefenkanten des exakten Renders) gegen Fotokanten (Stabilitaetskarte) in
-- `tools/rippen_gegenprobe.py` [-] rippen_gegenprobe.py - unabhaengige Messung: liegen die Modell-Rippenbahnen im Foto auf Gold? (13.11.2026) Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/rippen_geg
+- `tools/limap_proto_vor.py` [seg] LIMAP-Prototyp Stufe 1 (venv-seg, GPU): Vorbereitung fuer einen kleinen Ausschnitt (Minuten statt Stunden): Ausschnitt = Kugel um ein Zentrum, Fotos = die am besten sehenden, versc
+- `tools/limap_proto_zeigen.py` [col] LIMAP-Prototyp auswerten (venv-limap): limap_proto_zeigen.py OUTDIR PREFIX [--spur 3]. Schreibt Linien (npy) + Overlay auf 2 Fotos (gruen = Spurlaenge >= 5, gelb >= 3) + Frontansic
+- `tools/luecken_rippen.py` [seg] luecken_rippen.py - Rippen, die im Foto da sind (Rippenmaske-Skelett, siehe kanten_ketten --farbe band), aber von keinem Modellpfad gedeckt sind, als neue Pfade vorschlagen. Aufruf
+- `tools/rippen_abdeckung.py` [seg] rippen_abdeckung.py - Wie viel der sichtbaren Goldrippen eines Bauteils steckt im Modell? (Mass fuer feine Kanten, Nutzer 12.11.: foto_diff/Wolke sind fuer Rippen blind)
+- `tools/rippen_abstimmung.py` [seg] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
+- `tools/rippen_aeste_bild.py` [seg] rippen_aeste_bild.py - Rippenaeste im BILD des Referenzfotos bilden (Skelett zerlegt an Kreuzungen), Tiefe je Ast aus den guten Punkten robust interpoliert (13.11.2026). Aufruf: /m
+- `tools/rippen_f1.py` [seg] rippen_f1.py - FEINES Foto-Mass fuer Rippen/Leisten (Wolke und foto_diff sind dafuer blind): Modellkanten (Tiefenkanten des exakten Renders) gegen Fotokanten (Stabilitaetskarte) in
+- `tools/rippen_gegenprobe.py` [seg] rippen_gegenprobe.py - unabhaengige Messung: liegen die Modell-Rippenbahnen im Foto auf Gold? (13.11.2026) Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/rippen_geg
 - `tools/rippen_greedy.py` [-] rippen_greedy.py - Rippen automatisch auswaehlen: Kandidatenpfade (kanten_ketten/pfad_tiefe_dp) werden EINZELN ins Objekt gebaut und bleiben nur, wenn (1) Abnahme besteht und (2) d
-- `tools/rippen_ketten3d.py` [-] rippen_ketten3d.py - aus den 3D-Punkten von rippen_skelett_tiefe.py durchgehende Rippenketten bilden (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/ri
-- `tools/rippen_pfad_snap.py` [-] rippen_pfad_snap.py - handgesetzte Wegpunkte (Ref-Foto, Vollbild-px) auf Goldgrat einrasten + Tiefe per Mehrfoto-Gold-Konsens (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/pyt
-- `tools/rippen_pfade_tor.py` [-] rippen_pfade_tor.py - Rippenpfade per Fremdfoto-Treffer aussortieren (13.11.2026, Tor statt Augenmass). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/rippen_pfade_
-- `tools/rippenbreite_pruefen.py` [-] rippenbreite_pruefen.py - Misst die SICHTBARE Breite jeder Modell-Rippe im Render quer zur Rippe und meldet zu dicke ('Platten').
-- `tools/rundum_kanten.py` [-] rundum_kanten.py - Modell als KANTENBILD aus mehreren Blickrichtungen um ein Objekt (Kontaktbogen), damit Koerper (Erker, Tuerme) nie nur von vorn bewertet werden. Anlass 12./13.11
+- `tools/rippen_ketten3d.py` [seg] rippen_ketten3d.py - aus den 3D-Punkten von rippen_skelett_tiefe.py durchgehende Rippenketten bilden (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/ri
+- `tools/rippen_pfad_snap.py` [seg] rippen_pfad_snap.py - handgesetzte Wegpunkte (Ref-Foto, Vollbild-px) auf Goldgrat einrasten + Tiefe per Mehrfoto-Gold-Konsens (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/pyt
+- `tools/rippen_pfade_tor.py` [seg] rippen_pfade_tor.py - Rippenpfade per Fremdfoto-Treffer aussortieren (13.11.2026, Tor statt Augenmass). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/rippen_pfade_
+- `tools/rippenbreite_pruefen.py` [seg] rippenbreite_pruefen.py - Misst die SICHTBARE Breite jeder Modell-Rippe im Render quer zur Rippe und meldet zu dicke ('Platten').
+- `tools/rundum_kanten.py` [seg] rundum_kanten.py - Modell als KANTENBILD aus mehreren Blickrichtungen um ein Objekt (Kontaktbogen), damit Koerper (Erker, Tuerme) nie nur von vorn bewertet werden. Anlass 12./13.11
 - `tools/sweep_alle.py` [-] sweep_alle.py <objekt> --wolke w.npy [--bereich 2.5] [--typen a,b,..] Fuehrt tools/teil_sweep_gpu.py (GPU-Pyramide grob->fein) fuer ALLE Bauteile des Objekts aus (Nutzer 8.11.: "ic
 - `tools/teil_sweep_gpu.py` [seg] teil_sweep_gpu.py <objekt> <typ> --wolke w.npy [--mit satteldach:haupt] [--bereich 1.5] [--schritt 0.04] [--raum_aus raum.json] GPU-Peaksuche (Nutzer 8.11.: "beim Durchsweepen den 
 - `tools/viewer_kanten_bauen.py` [seg] 3D-Viewer: Wolke (Fotofarben) + Kantenpunkte + Drahtgitter, Ebenen schaltbar, eigener Canvas-Renderer (kein WebGL noetig). Aufruf: viewer_kanten_bauen.py OUT.html [--seg SEGMENTE.j

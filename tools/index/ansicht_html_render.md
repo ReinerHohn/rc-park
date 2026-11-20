@@ -3,22 +3,22 @@
 - `tools/beobachtung_aus_viewer.py` [-] Viewer-Klick -> Beobachtung in der Masstabelle (Regel 2, Lehre L48/L48b: Fund per GEOMETRIE dem Teil zuordnen, nicht raten). Eingabe: der JSON-Text aus dem Viewer ("Alle kopieren")
 - `tools/combined_view.py` [-] combined_view.py — KOMBINIERTE Vorschau: Rippen-Skelett + HAUT + Einhäng-Platte.
 - `tools/fertig_view.py` [-] fertig_view.py — EIN interaktives 3D des FERTIGEN Modells: die HAUT in voller Detailtiefe (solide = der sichtbare Berg) + die Einhäng-Platten farbig obenauf. KEINE nackten Rippen —
-- `tools/gesims_overlay.py` [-] gesims_overlay.py - Profil-Leiste (Querschnitt n,z, entlang u) in Fotos projizieren: Schnittkanten an u0/u1 + Laengskanten (rot) und optional Wolkenscheibe (gelb). gesims_overlay.p
+- `tools/gesims_overlay.py` [seg] gesims_overlay.py - Profil-Leiste (Querschnitt n,z, entlang u) in Fotos projizieren: Schnittkanten an u0/u1 + Laengskanten (rot) und optional Wolkenscheibe (gelb). gesims_overlay.p
 - `tools/glb_html_viewer.py` [-] glb_html_viewer.py — GENERISCH: ein texturiertes glb → selbst-enthaltenes three.js-HTML. glb wird base64 eingebettet (kein Server/kein CORS), GLTFLoader + OrbitControls. Mit --ref 
-- `tools/glb_render.py` [-] glb_render.py — echtes texturiertes Offscreen-Rendering (pyrender/EGL). Mit venv-Python ausführen: /tmp/rv/bin/python tools/glb_render.py <glb> <out_prefix> [az,el ...]
+- `tools/glb_render.py` [gen] glb_render.py — echtes texturiertes Offscreen-Rendering (pyrender/EGL). Mit venv-Python ausführen: /tmp/rv/bin/python tools/glb_render.py <glb> <out_prefix> [az,el ...]
 - `tools/goal_overlay.py` [-] goal_overlay.py — saubere 3D-Ansicht: tan Gelände + ALLE automatisch erkannten Kanten obenauf: ROT = Einschnitt-Rimse (grow-to-rim, kurvenfolgend), CYAN = die Deckplatte (drapiert)
 - `tools/haut_bauplan_html.py` [-] haut_bauplan_html.py — interaktiver Bauplan (HTML) mit SUCHFELD.
 - `tools/huellen_html.py` [-] (kein Docstring)
-- `tools/inject_thumbnail.py` [-] Bettet ein gerendertes Vorschaubild als PNG-Thumbnail ins Gcode ein, damit das MK4S-Display + PrusaLink zeigen, WAS gedruckt wird. Noetig, weil headless CLI-Slicing kein Thumbnail 
+- `tools/inject_thumbnail.py` [gen] Bettet ein gerendertes Vorschaubild als PNG-Thumbnail ins Gcode ein, damit das MK4S-Display + PrusaLink zeigen, WAS gedruckt wird. Noetig, weil headless CLI-Slicing kein Thumbnail 
 - `tools/modell_3d_html.py` [gen] modell_3d_html.py - 3D-Seite (three.js) je Objekt: Modell aus tools/dach_bauen.py + dichte Wolke + DOM1 + LoD2-Waende, alles im Rahmen von objekt.json (u, v, z ueber rahmen.gelaend
 - `tools/modell_ansehen.py` [seg] modell_ansehen.py - schattierter Dreiecks-Render (Painter-Algorithmus, Rueckseiten weg) eines STL zum ANSEHEN nach jedem Bau (CLAUDE.md Regel 3: Zahlen allein gelten nicht). Warum:
-- `tools/modell_ansicht.py` [-] modell_ansicht.py AUS.jpg --stl a.stl[,b.stl] --von x y z --nach x y z [--f 900] [--groesse 1000 1300] [--wolke punkte.npy] - schattiertes Modell aus einer FREIEN Kamera (Modellrah
+- `tools/modell_ansicht.py` [seg] modell_ansicht.py AUS.jpg --stl a.stl[,b.stl] --von x y z --nach x y z [--f 900] [--groesse 1000 1300] [--wolke punkte.npy] - schattiertes Modell aus einer FREIEN Kamera (Modellrah
 - `tools/online_ansichten_holen.py` [-] online_ansichten_holen.py - hochliegende Webfotos (Turm-/Dach-/Luftansichten) zu einem Objekt von Wikimedia Commons holen, mit Herkunft+Lizenz je Bild. Generisch: Ort/Objekt nur al
 - `tools/overlay_bewerter.py` [seg] overlay_bewerter.py — PERSPEKTIV-GENAUER Overlay-Bewerter: legt das 3D-Modell aus der Kamera- Perspektive des Fotos halbtransparent drüber und bewertet die Übereinstimmung.
 - `tools/render_kern.py` [seg] render_kern.py - EIN gemeinsamer Renderkern fuer alle Messwerkzeuge: Punktwolke projizieren + Z-Puffer rastern, auf GPU wenn vorhanden.
-- `tools/sp_dome_viewer.py` [-] sp_dome_viewer.py — baut einen self-contained HTML-3D-Viewer der Petersdom-KUPPEL (sp-dome-led.stl) mit MARKIERTEN LED-Löchern: - rote Kugel an jedem 0805-Steckschlitz - oranger Pf
-- `tools/streetview_rip.py` [-] streetview_rip.py — HEBEL 2: aus Google Street View automatisch dutzende fassaden-ausgerichtete Einzelfotos rund um ein Gebäude erzeugen — ohne eigenen Fotoaufwand. Speist die Kauf
+- `tools/sp_dome_viewer.py` [gen] sp_dome_viewer.py — baut einen self-contained HTML-3D-Viewer der Petersdom-KUPPEL (sp-dome-led.stl) mit MARKIERTEN LED-Löchern: - rote Kugel an jedem 0805-Steckschlitz - oranger Pf
+- `tools/streetview_rip.py` [seg] streetview_rip.py — HEBEL 2: aus Google Street View automatisch dutzende fassaden-ausgerichtete Einzelfotos rund um ein Gebäude erzeugen — ohne eigenen Fotoaufwand. Speist die Kauf
 - `tools/truss_preview.py` [gen] truss_preview.py — KONZEPT-3D: 4mm-Balken (Rahmen) + 2mm-Streben (Detail) über echtem Relief. Zeigt das Dachstuhl-Prinzip, BEVOR die präzisen Einhängeschlitze gebaut werden.
 - `tools/tunnel_preview3d.py` [gen] tunnel_preview3d.py — drehbarer 3D-Viewer: Gelände-Gitter + GLEISBETT + Portal-Galerie.
-- `tools/viewer_bauen.py` [-] viewer_bauen.py — H0-Modelle (STL) in EINE selbstenthaltene 3D-HTML packen (three.js, Drehen/Zoomen/Gitter/H0-Figur).
+- `tools/viewer_bauen.py` [gen] viewer_bauen.py — H0-Modelle (STL) in EINE selbstenthaltene 3D-HTML packen (three.js, Drehen/Zoomen/Gitter/H0-Figur).
 - `tools/viewer_bauen.sh` [sh] viewer_bauen.sh <objekt> [ausgabe.html] - 3D-Viewer in EINEM Befehl: Modell-STL (Referenz), Nullstart-/Vergleichs-STL, Nebengebaeude, rohe + entzerrte Fotowolke (mit Farben). Einhe
