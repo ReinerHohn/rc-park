@@ -176,3 +176,12 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   882 Bilder (42 % des Satzes) kamen ohne direkten Treffer hinein; 541 der 793 fremden stammen daher. Sie kosten Paarsuche + Mapperzeit (quadratisch) und erzeugen das zweite Teilmodell.
 - OFFEN (messen, nicht blind umstellen - die Regeln sollten Gegenseite/Durchgang retten): Variante "Kette hoechstens 2 Schritte, Zeitfenster nur mit schwachem Treffer (>= 15 Inlier)"
   -> Satz ~1200 Bilder; Mapper darauf laufen lassen und Abdeckung je Torseite gegen heute vergleichen. Echte Gegenseiten-Kandidaten = die 252 fremden Bilder MIT direktem Treffer.
+
+## Nachtrag 20:50 - Schwabentor-Kette 1120: Tore gerechnet, Lage NICHT bestanden (rc 3, Abbruch vor dem Modellieren - so gewollt)
+- Lauf c (ab `tore`, nach dem OOM-Fix): beste Loesung 0: kamera 0, gps 0 (Drehung 0,0 Grad, Massstab 0,994, Rest Median 4,4 m; Fernfotos Richtungsfehler 0 Grad), zerfall 0 (1 Stueck, 613 Bilder),
+  gps_seiten 0 (GPS-STIMMIG); ROT: grundriss 3 (Turm 141 m2: Wolke deckt 78 % des Randes, "um 90 Grad gedreht passt besser" F1 0,76), kamera_gelaende 3 (7 von 36 Commons-Netzfotos unter Gelaende, bis -16 m),
+  insel 3 (Clip Laxl3ULfqEI 13 von 26 ohne Fremdstuetze), gruppen 3 (6,6 % Punkte > 6 m daneben, 7 Commons-Einzelfotos).
+- Bild `modelle/schwabentor-1120/audit/wolke_grundriss.png` angesehen: Wandpunkte liegen auf der Ost-/Stadtseite des LoD2-Turms und an den Nachbarfluchten - Lage sieht richtig aus;
+  die Westseite des Turms hat keine Punkte (Kameras fast nur Sektor 180-210 Grad: 405 von 623).
+- Deutung (ANNAHME bis gemessen): kein Lagefehler, sondern (a) einseitige Abdeckung -> das Grundriss-Tor kann beim fast quadratischen Turm die 90-Grad-Drehung nicht ausschliessen,
+  (b) rund 20 falsch eingebaute Bilder (7 Commons, 1 Clip). Naechster Schritt: diese Bilder aus Modell/Fusion nehmen und Tore neu; Tore NICHT lockern.
