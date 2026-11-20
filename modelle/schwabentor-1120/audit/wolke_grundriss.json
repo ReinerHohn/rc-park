@@ -1,0 +1,197 @@
+{
+ "werkzeug": "wolke_grundriss_pruefen.py",
+ "wolke": "modelle/schwabentor-1120/sfm/punkte_modell_schwabentor-1120.npy",
+ "lod2_gebaeude": 36,
+ "wandpunkte": 3326493,
+ "geprueft": true,
+ "strasse": {
+  "anteil": 0.0141,
+  "haufen": [
+   {
+    "punkte": 44105,
+    "mitte": [
+     20.7,
+     9.3
+    ],
+    "ausdehnung_m": [
+     48,
+     33
+    ],
+    "geklaert": null
+   },
+   {
+    "punkte": 863,
+    "mitte": [
+     -12.5,
+     7.3
+    ],
+    "ausdehnung_m": [
+     13,
+     27
+    ],
+    "geklaert": null
+   },
+   {
+    "punkte": 592,
+    "mitte": [
+     39.5,
+     -10.1
+    ],
+    "ausdehnung_m": [
+     5,
+     5
+    ],
+    "geklaert": null
+   },
+   {
+    "punkte": 466,
+    "mitte": [
+     -7.3,
+     -14.7
+    ],
+    "ausdehnung_m": [
+     16,
+     16
+    ],
+    "geklaert": null
+   },
+   {
+    "punkte": 242,
+    "mitte": [
+     7.2,
+     -11.9
+    ],
+    "ausdehnung_m": [
+     5,
+     11
+    ],
+    "geklaert": null
+   },
+   {
+    "punkte": 208,
+    "mitte": [
+     -27.4,
+     5.7
+    ],
+    "ausdehnung_m": [
+     11,
+     6
+    ],
+    "geklaert": null
+   }
+  ],
+  "warnung": true
+ },
+ "teile": {
+  "ziel": "DEBW_001000hPLcp",
+  "teile": [
+   {
+    "teil": 0,
+    "flaeche_m2": 141.4,
+    "randproben": 306,
+    "deckung": 0.784,
+    "gedreht": {
+     "f1": 0.764,
+     "drehung_grad": 90,
+     "versatz_m": [
+      -0.75,
+      -0.5
+     ],
+     "randdeckung": 0.621,
+     "auf_rand": 0.993
+    },
+    "hinweis": false,
+    "warnung": false
+   },
+   {
+    "teil": 1,
+    "flaeche_m2": 6.9,
+    "randproben": 84,
+    "deckung": 0.881,
+    "gedreht": {
+     "f1": 0.942,
+     "drehung_grad": 128,
+     "versatz_m": [
+      0.0,
+      -0.75
+     ],
+     "randdeckung": 1.0,
+     "auf_rand": 0.89
+    },
+    "hinweis": false,
+    "warnung": false
+   }
+  ],
+  "warnung": false
+ },
+ "eindeutigkeit": {
+  "identitaet_anteil": 0.3596,
+  "beste_nahe_identitaet": {
+   "anteil": 0.38119450211524963,
+   "spiegel": 0,
+   "drehung": 1,
+   "verschiebung": [
+    -0.75,
+    0.0
+   ]
+  },
+  "beste_alternative": {
+   "anteil": 0.29567834734916687,
+   "spiegel": 1,
+   "drehung": 186,
+   "verschiebung": [
+    -0.5,
+    0.25
+   ]
+  },
+  "abstand_relativ": 0.224,
+  "warnung": false,
+  "top5": [
+   {
+    "anteil": 0.38119450211524963,
+    "spiegel": 0,
+    "drehung": 1,
+    "verschiebung": [
+     -0.75,
+     0.0
+    ]
+   },
+   {
+    "anteil": 0.3807828426361084,
+    "spiegel": 0,
+    "drehung": 0,
+    "verschiebung": [
+     -0.75,
+     0.25
+    ]
+   },
+   {
+    "anteil": 0.37005844712257385,
+    "spiegel": 0,
+    "drehung": 2,
+    "verschiebung": [
+     -0.5,
+     -0.25
+    ]
+   },
+   {
+    "anteil": 0.36929604411125183,
+    "spiegel": 0,
+    "drehung": 359,
+    "verschiebung": [
+     -0.5,
+     0.5
+    ]
+   },
+   {
+    "anteil": 0.35660597681999207,
+    "spiegel": 0,
+    "drehung": 358,
+    "verschiebung": [
+     -0.75,
+     1.25
+    ]
+   }
+  ]
+ }
+}

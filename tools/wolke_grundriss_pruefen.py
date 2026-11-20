@@ -192,6 +192,10 @@ def main():
                                ausdehnung_m=[int(np.ptp(xx) + 1), int(np.ptp(yy) + 1)]))
         haufen.sort(key=lambda h: -h["punkte"])
     anteil = float(strasse.mean())
+    try:                                                                     # 20.11.2026: die Strassenpunkte selbst ablegen (hoechstens 300 000) - haufen_herkunft.py/haufen_am_foto.py brauchen GENAU diese Punkte, nicht den Kasten um den Haufen (der enthaelt auch echte Waende)
+        _S = X[band][strasse]; _S = _S[np.random.default_rng(0).choice(len(_S), min(len(_S), 300000), replace=False)]
+        os.makedirs(os.path.join(od, "audit"), exist_ok=True); np.save(os.path.join(od, "audit", "wolke_grundriss_strasse.npy"), _S.astype(np.float32))
+    except Exception as e_: print("Strassenpunkte nicht abgelegt:", e_)
     # --- C: LoD2-Teile des Zielgebaeudes ohne Wolke / gedrehtes Teilnetz (Formvergleich auf GPU)
     teile_c = []; warn_c = False
     zid = obj["lod2"].get("id") if isinstance(obj.get("lod2"), dict) else None

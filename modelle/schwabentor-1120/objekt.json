@@ -1,0 +1,90 @@
+{
+ "name": "Schwabentor",
+ "ort": "Freiburg im Breisgau",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/schwabentor-1120_gen.py",
+ "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/schwabentor-1120/masstabelle.json",
+ "elemente": "modelle/schwabentor-1120/elemente.json",
+ "audit": "modelle/schwabentor-1120/audit",
+ "ueberwacht": [
+  "modelle/schwabentor-1120_gen.py",
+  "modelle/stl/schwabentor-1120_1-87.stl",
+  "modelle/schwabentor-1120/masstabelle.json",
+  "modelle/schwabentor-1120/elemente.json"
+ ],
+ "fotos_dir": "daten/schwabentor-1120/fotos",
+ "seiten_konvention": {
+  "+x": "Nord",
+  "-x": "Sued",
+  "+y": "West",
+  "-y": "Ost",
+  "quelle": "rahmen xhat_utm (-0,24/0,97) = Nord 14 Grad West, yhat_utm (-0,97/-0,24) = West (2026-11-14)"
+ },
+ "fotos": {},
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_001000hPLcp",
+  "id_stadtmodell": "DEBWL001000hPLcp",
+  "gml_stadtmodell_fehlt": "/media/oem/scan/rc-park_daten/freiburg_stadt/lod2/20261007_Freiburg_LoD2.gml",
+  "hinweis": "2026-11-14 umgestellt von Tvdv (Nachbarhaus) auf PLcp: GML-Attribut name='Schwabentor'; Rundanbau = Treppentuermchen (Foto IMG_20261106_113545_1); dichte Wolke Variante J passt nur hier (Massstab x1,8, Muenster-Entfernung 312/310 m, EXIF-GPS 5 m). Alt: Tvdv per First-Kandidat ohne Namenspruefung."
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414525.9,
+   5316153.75
+  ],
+  "xhat_utm": [
+   -0.2426,
+   0.9701
+  ],
+  "yhat_utm": [
+   -0.9701,
+   -0.2426
+  ],
+  "gelaende": 282.16,
+  "quelle": "Koordinatenrahmen bleibt (urspruenglich aus LOD2 Tvdv abgeleitet, alle Wolken-npy liegen darin); Objekt ist PLcp (siehe lod2.hinweis)"
+ },
+ "rahmen_wand": {
+  "u0": -8.21,
+  "u1": 3.92,
+  "v0": 8.93,
+  "v1": 21.43,
+  "quelle": "LGL GroundSurface PLcp (ohne Rundanbau)"
+ },
+ "koordinate_utm": [
+  414505.5,
+  5316149.2
+ ],
+ "hoehe_m": 50.8,
+ "gesamtkette": {
+  "quelle": "schwab_auto",
+  "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
+ },
+ "fotos_dir_quelle": "daten/schwab_auto/fotos",
+ "hoehen_tor": true,
+ "grundriss_haufen_geklaert": [
+  {
+   "mitte": [
+    20.7,
+    9.3
+   ],
+   "radius_m": 6.0,
+   "befund": "echte Umgebung auf dem Platz vor der Stadtseite (Laterne, Schildermast, Oberleitung, Fahrzeuge/Passanten, auskragender Bilderker), kein versetztes Teilnetz",
+   "quelle": "20.11.2026: audit/haufen_0.jpg + audit/haufen_0_schnitt.jpg angesehen; Querschnitt: Ostwand in allen Hoehen einfach bei x 3-4 m; tools/haufen_herkunft.py: 99 % der Punkte von im Mittel 7 Tiefenkarten aus 8 Quellen getragen (64 % eigene Fotos); Hoehen 51 % in 1,5-3,5 m; GPS-Tor und Eindeutigkeit bestanden",
+   "datum": "2026-11-20",
+   "wer": "Claude",
+   "unsicher": "Anteil Flugpunkte am Himmelrand nicht getrennt bestimmt"
+  }
+ ]
+}
