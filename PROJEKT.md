@@ -17,4 +17,4 @@ Jede Ast-Datei: **Gilt** (Vorgaben/Entscheidungen) · **Versucht** (Ansatz → E
 - **Vor einem neuen Lösungsansatz:** im Ast unter „Versucht" nachsehen — ✗ nicht erneut probieren (außer die Lage hat sich belegbar geändert).
 - **Nach einem Versuch:** EINE Zeile `TT.MM. · Ansatz → ✓ | ✗ | ↺ ersetzt | ⚠ Falle | ⏸ · Lehre [Quelle/Commit]`.
 - Neue Vorgabe → „Gilt"; Erledigtes aus „Offen" löschen. Details gehören in `Doku/<thema>/` oder `modelle/METHODE_*.md`.
-- Weitere Fallen-Sammlungen: `modelle/METHODIK_KOMPLETT.md` §3, `modelle/METHODE_3D_AUS_ALLEN_DATEN.md` §7, `modelle/PROTOKOLL_VALIDATOR.md`.
+- Weitere Fallen-Sammlungen: `modelle/archiv/METHODIK_KOMPLETT.md` §3, `modelle/archiv/METHODE_3D_AUS_ALLEN_DATEN.md` §7, `modelle/PROTOKOLL_VALIDATOR.md`.

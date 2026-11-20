@@ -45,7 +45,7 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 
 ## Technik
 - **Sitzungsbeginn / nach Neustart / nach Kernel-Update: `bash tools/hpwmi_pruefen.sh` laufen lassen** (Nutzerwunsch 6.11.). Das selbstgebaute hp-wmi-Modul (Board 8C77, Profil `performance` = CPU 55 W statt ~38 W) gilt nur fuer EINEN Kernel und verschwindet beim Kernel-Update. Meldet das Skript `ACHTUNG KERNEL-MODUL`, dem Nutzer SOFORT sagen (bauen/signieren/laden = sudo durch ihn); meldet es `HINWEIS ... kennt das Board 8C77 schon`, ist eine Mainline-Version da und das Eigenbau-Modul kann weg. Details `modelle/CPU_LEISTUNG.md` Abschnitt 6.
-- Neuer/anderer Rechner: `EINRICHTUNG_RECHNER.md` abarbeiten (Luefterregler-Dienst, Datenplatte, venvs, Mapillary-Token, GPU-Regeln).
+- Neuer/anderer Rechner: `Doku/modellbau/EINRICHTUNG_RECHNER.md` abarbeiten (Luefterregler-Dienst, Datenplatte, venvs, Mapillary-Token, GPU-Regeln).
 - Grosse Daten (Fotos, Foto-Eingang, SfM-Netze, Wolken, Caches, Nullstart-Objekte) NIE auf der Root-Platte: immer unter `/media/oem/scan/rc-park_daten/<objekt>/` bzw. `/media/oem/scan/rc-park_null/`, im Repo Symlinks (Nutzerregel 2026-11-01; Root war bei 99 %).
 - Python-Umgebungen: `/media/oem/scan/venv-seg/bin/python -I` (trimesh, torch, CUDA), `~/.venvs/rcpark` (manifold3d fuer den Generator).
 - Lange Jobs (Nullstart, SfM, Optimierer) nur ueber `tools/job_start.sh NAME LOG BEFEHL...` (systemd-Benutzerdienst): Claude-Code-Hintergrundshells werden bei Speicherknappheit beendet (2026-11-03).
