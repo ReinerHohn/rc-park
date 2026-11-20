@@ -435,7 +435,7 @@ def main():
                 vb_[f"f{i_:02d}"] = lauf(B, f"bauplan_sweep_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
             fa_ = os.path.join(Z, "audit", "fenster_auto.json")      # 21.11.2026: Fensterliste am Sweep pruefen (Konsolenfelder als 'Fenster' verworfen, Nischen unter der Stimmenschwelle ergaenzt)
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
-            erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo], log, ok=(0, 3))[0]
+            erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo] + (["--fein", ffn] if os.path.isdir(ffn) else []), log, ok=(0, 3))[0]
             if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"

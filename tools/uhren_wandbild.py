@@ -24,7 +24,7 @@ def stuetze(kanten, cx, cy, r, tol=2):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fein"); ap.add_argument("--elemente", required=True); ap.add_argument("--aus")
-    ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--min_stuetze", type=float, default=0.45); a = ap.parse_args()
+    ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--min_stuetze", type=float, default=0.85, help="21.11.: echte Uhr 98-100 %%, Scheinkreis im Erkerbild 77 %%"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); aus = a.aus or os.path.join(od, "audit", "uhren_auto.json")
     E = json.load(open(a.elemente))["fassaden"]; FF = {f["id"]: f for f in json.load(open(os.path.join(a.fein, "fassaden.json")))["fassaden"]}; erg = {}; bilder = []; n_uhr = 0
     for fid, F in E.items():

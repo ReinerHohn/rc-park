@@ -295,6 +295,19 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
         o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0)); w0 = min(0.0, ww) - einbinden
         P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
         for g in F["gruppen"]:
+            G_ = g.get("galerie")
+            if G_ and os.environ.get("OHNE_GALERIE") != "1":      # 21.11.2026: Masse gemessen (vorbauten_bauplan.galerie_messen), Gestalt = bewaehrtes Bauteil Wand.galerie wie schwab_v3
+                WG = Wand(o, o + d, aussen=o + n); pf_ = G_["pfosten"]; z_fu = G_.get("z_fuss")
+                teile.append(WG.galerie(G_["u0"], G_["u1"], G_["z_boden"], G_["z_holm"], G_["z_dach"] + 0.1, G_["w"], pfosten=pf_ if len(pf_) >= 2 else 3, streben=int(G_.get("streben") or 0),
+                                        z_fuss=z_fu, tafeln=False, w_wand=G_["w_wand"]))
+                V_ = G_.get("vordach")
+                if V_:
+                    ua, ub, dk = G_["u0"] - 0.1, G_["u1"] + 0.1, 0.15
+                    teile.append(WG.huelle([(u, z, w) for u in (ua, ub) for z, w in ((V_["z_anschluss"], G_["w_wand"]), (V_["z_anschluss"] - dk, G_["w_wand"]), (V_["z_traufe"] + dk, V_["w_traufe"]), (V_["z_traufe"], V_["w_traufe"]))]))
+                belege.append(dict(seite="wand", element=f"Galerie {F.get('id', '')} u {G_['u0']:.2f}..{G_['u1']:.2f} (Bruestung {G_['z_boden']:.2f}-{G_['z_holm']:.2f} m, {len(pf_)} Pfosten, {G_.get('streben')} Streben)" + (" mit Vordach" if V_ else ""),
+                                   quelle="Masse aus Ebenen-Sweep + feinem Wandbild (tools/vorbauten_bauplan.py galerie_messen), Gestalt bauteile.Wand.galerie", ausladung=G_["w"], traufe=(V_ or {}).get("z_traufe"),
+                                   streben_quelle=G_.get("streben_quelle"), hinweis="ANNAHME: Querschnitte (Pfosten/Riegel 0,22 m), Knaggen, Bodenplatte 0,35 m (Bauteil-Standard); " + ((V_ or {}).get("annahme") or "")))
+                continue
             W_ = np.round(np.array(g["w"], float) / stufe) * stufe; r_ = float(g["raster"]); nk = 0
             for r in range(W_.shape[0]):
                 za, zb = g["z1"] - (r + 1) * r_, g["z1"] - r * r_; s = 0
