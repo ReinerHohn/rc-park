@@ -74,3 +74,7 @@ Quelle der Speicherdaten: `sudo dmidecode -t memory` / `-t slot` (Nutzer, 20.11.
 - Externer Luefter seit ca. 16:13 dran: Wirkung NICHT sauber belegt (Kettenlast wechselt). Sauberer Vergleich = `vollgas_test2.sh` erneut (Bezug ohne Luefter 15:43: 63/70/79/93 C bei 55/70/90/110 W).
 - OpenBLAS-A/B: kein Gewinn (158 -> 148 s CPU, GPU-Loeser 33 s), siehe Ast betrieb. Globaler Mapper: Gesamtausgleich je Runde ~2,5 min statt 6,5 min (alle Kerne + mehr Leistung).
 - zswap an (zstd). Grosse Speicherseiten (THP always): noch nicht getestet.
+- Vollgas-Test 2 MIT externem Luefter (16:17, Log `vollgas_test2_1120_1617.log`): Spitzen 87 / 80 / 88 / 96 C bei 55 / 70 / 90 / 110 W, 0 % Drosselung -
+  also 3-10 C WAERMER als der Lauf ohne Luefter um 15:43 (63 / 70 / 79 / 93 C). Ursache benannt: Geraet war durchgewaermt (seit 15:55 Betrieb mit 60-100 W statt 55 W,
+  dazu Kette + Mapper), der erste Lauf startete aus dem 55-W-Zustand. Luefterwirkung damit NICHT belegt und sicher klein gegen den Waermestau. Sauber nur: gleiche Stufe (90 W),
+  je 3 min direkt nacheinander mit und ohne Luefter. Realistische Dauerleistung durchgewaermt: 80-90 W (88 C Spitze bei 90 W).

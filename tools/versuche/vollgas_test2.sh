@@ -20,7 +20,8 @@ messen(){   # Volllast alle Faeden; Watt je 15-s-Abschnitt + letzte 30 s, Hoechs
   t0=$(cat $TH); ea=$(cat $E)
   for i in $(seq $((dauer/15))); do
     for t in 1 2 3 4 5; do sleep 3; t=$(( $(cat "$TZ_")/1000 )); [ "$t" -gt "$tmax" ] && tmax=$t; done
-    eb=$(cat $E); reihe="$reihe $(( (eb-ea)/15000000 ))"; [ "$i" = $((dauer/15-2)) ] && e0=$eb; ea=$eb
+    eb=$(cat $E); [ "$eb" -lt "$ea" ] && ea=$(( ea - $(cat $MSR/max_energy_range_uj) ))   # Zaehlerueberlauf (20.11.: -17406 W im Verlauf)
+    reihe="$reihe $(( (eb-ea)/15000000 ))"; [ "$i" = $((dauer/15-2)) ] && e0=$eb; ea=$eb
   done
   e1=$eb; t1=$(cat $TH); wait $pids 2>/dev/null
   WATT=$(( (e1-e0)/30000000 )); TMAX=$tmax; DROSSEL=$(( (t1-t0)*100/(dauer*1000) ))
@@ -49,5 +50,5 @@ done
 sag "== ERGEBNIS: Bezug $W0 W; hoechste gute Stufe $GUT W (gemessen ${WGUT:-$W0} W)"
 alle_setzen 0 0 >/dev/null 2>&1; echo 55000000 > $MSR/constraint_0_power_limit_uw; echo 130000000 > $MSR/constraint_1_power_limit_uw
 echo 55000000 > $MMIO/constraint_0_power_limit_uw 2>/dev/null; echo 130000000 > $MMIO/constraint_1_power_limit_uw 2>/dev/null
-[ "$REGLER" = active ] && systemctl start cpu_leistung_regler && sag "   Regler laeuft wieder (Grenze vorerst wie vorher, max 55 W)"
+[ "$REGLER" = active ] && systemctl start cpu_leistung_regler && sag "   Regler laeuft wieder (Start 55 W, steigt temperaturgefuehrt bis zu seinem MAX)"
 stand; sag "   Log: $LOG"
