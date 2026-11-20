@@ -193,10 +193,13 @@ def ply_punkte(p, max_n=3000000):
     return d[np.random.default_rng(0).permutation(len(d))[:max_n]] if len(d) > max_n else d
 
 
-def punktpaare(db, PA, PB, min_inlier=15):
-    """Gemeinsame 3D-Punkte zweier Modelle ueber die bestaetigten Bildpaare der Datenbank: Liste (Punkt-ID B, Punkt-ID A), je B-Punkt der haeufigste A-Punkt."""
+def punktpaare(db, PA, PB, min_inlier=15, roh=False):
+    """Gemeinsame 3D-Punkte zweier Modelle ueber die bestaetigten Bildpaare der Datenbank: Liste (Punkt-ID B, Punkt-ID A), je B-Punkt der haeufigste A-Punkt.
+    roh=True (20.11.2026): ROHE Zuordnungen (Tabelle matches, auch von der Geometriepruefung abgewiesene Paare) - globale Seitenstuecke haben kaum bestaetigte
+    Querpaare (Martinstor FlexGlue-Stuecke: 53 tragende Punktpaare); der RANSAC der Klappung filtert die Ausreisser."""
     d = sqlite3.connect(f"file:{db}?mode=ro", uri=True); nm = dict(d.execute("select image_id, name from images")); kor = {}; n = 0
-    for pid, data in d.execute("select pair_id, data from two_view_geometries where rows >= ?", (min_inlier,)):
+    q = "select pair_id, data from matches where rows >= ?" if roh else "select pair_id, data from two_view_geometries where rows >= ?"
+    for pid, data in d.execute(q, (min_inlier,)):
         x, y = nm[pid // MAXID], nm[pid % MAXID]; m = np.frombuffer(data, np.uint32).reshape(-1, 2)
         if x in PB and y in PA and x not in PA: x, y, m = y, x, m[:, ::-1]
         if not (x in PA and y in PB) or y in PA or x in PB: continue
@@ -207,9 +210,9 @@ def punktpaare(db, PA, PB, min_inlier=15):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(); ap.add_argument("a"); ap.add_argument("b"); ap.add_argument("db"); ap.add_argument("--aus", required=True); ap.add_argument("--min-paare", type=int, default=60); ap.add_argument("--rel", type=float, default=0.02)
+    ap = argparse.ArgumentParser(); ap.add_argument("a"); ap.add_argument("b"); ap.add_argument("db"); ap.add_argument("--roh", action="store_true", help="rohe Zuordnungen inkl. abgewiesener Paare fuer die Klappung (globale Stuecke)"); ap.add_argument("--aus", required=True); ap.add_argument("--min-paare", type=int, default=60); ap.add_argument("--rel", type=float, default=0.02)
     ap.add_argument("--dicht-a", help="dichte Wolke von A (fused.ply im System von Modell A): Achse, Dach- und Flankenprobe daraus (genauer als die duenne Wolke)"); ap.add_argument("--dicht-b", help="dichte Wolke von B (im System von Modell B)")
-    a = ap.parse_args(argv); os.makedirs(a.aus, exist_ok=True); PA, XA, CA, RA = lies(a.a); PB, XB, CB, RB = lies(a.b); kor, n = punktpaare(a.db, PA, PB)
+    a = ap.parse_args(argv); os.makedirs(a.aus, exist_ok=True); PA, XA, CA, RA = lies(a.a); PB, XB, CB, RB = lies(a.b); kor, n = punktpaare(a.db, PA, PB, roh=a.roh)
     print(f"A {len(PA)} Bilder, {len(XA)} Punkte | B {len(PB)} Bilder, {len(XB)} Punkte | Bildpaare A-B {n}, gemeinsame Punkte {len(kor)}", flush=True)
     if len(kor) < a.min_paare:
         json.dump(dict(ok=False, urteil=f"nur {len(kor)} gemeinsame Punkte (unter {a.min_paare}) - Seiten einzeln ausrichten"), open(os.path.join(a.aus, "vereinen.json"), "w"), indent=1); print("WARNUNG: zu wenige Verbindungen zwischen den Seitenmodellen"); return 2
