@@ -20,8 +20,5 @@ elif [ -z "$(find "$STAMP" -mmin -360 2>/dev/null)" ]; then
     || echo "⚠ claude-mds: git pull in $D ging nicht (offline oder lokale Änderungen) — es gilt der vorhandene Stand."
 fi
 touch "$STAMP"
-# Uebergabe der letzten Sitzung melden (Skill /uebergabe): erste Zeilen zeigen, damit nach /clear nichts verloren geht
-U="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/UEBERGABE.md"
-if [ -f "$U" ]; then echo "📋 Übergabe der letzten Sitzung vorhanden: $U — zuerst lesen bzw. /uebergabe fortsetzen."; sed -n '1,12p' "$U"; fi
 if [ -x "$D/bootstrap.sh" ]; then "$D/bootstrap.sh"; else echo "⚠ claude-mds: $D/bootstrap.sh fehlt (alter Stand?) — globale Regeln/Skills nicht eingerichtet."; fi
 exit 0
