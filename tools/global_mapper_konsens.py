@@ -98,6 +98,14 @@ def main():
         if a.protokoll: cmd += ["--protokoll", a.protokoll]
         if lauf(cmd, os.path.join(a.ziel, f"lauf{s}.log")) != 0 or not os.path.isfile(os.path.join(z, "0", "cameras.bin")): sys.exit(f"globaler Lauf {s} fehlgeschlagen: {a.ziel}/lauf{s}.log")
         ber["zeiten"][f"lauf{s}_s"] = round(time.time() - t)
+        if s == 1:   # 20.11.2026 (Nutzer: "werde ich mal irgendwas Brauchbares sehen?"; Regel Schnellversion zuerst): sofort nach dem ERSTEN globalen Lauf Bild + 3D-HTML
+            try:     # des Hauptstuecks nach <ziel>/vorschau/ - laeuft nebenher (nice, eigene Sitzung), darf den Mapper NIE aufhalten oder abbrechen.
+                vs = os.path.join(a.ziel, "vorschau"); os.makedirs(vs, exist_ok=True); q = os.path.join(a.ziel, "lauf1_stuecke", "0")
+                q = q if os.path.isfile(os.path.join(q, "images.bin")) else os.path.join(z, "0")
+                subprocess.Popen(["nice", "-n", "15", os.path.join(T, "py"), os.path.join(T, "sparse_zeigen.py"), q, "--png", os.path.join(vs, "kameramodell.png"), "--html", os.path.join(vs, "kameramodell.html"),
+                                  "--titel", f"{a.label}: erster globaler Lauf, Hauptstueck (Vorschau)"], stdout=open(os.path.join(vs, "vorschau.log"), "w"), stderr=subprocess.STDOUT, start_new_session=True)
+                print("VORSCHAU gestartet ->", vs, flush=True)
+            except Exception as e_: print("Vorschau nicht gestartet (unkritisch):", e_, flush=True)
     t = time.time(); st = os.path.join(a.ziel, "rueckgrat", "0"); liste = os.path.join(a.ziel, "unstabil.txt")
     o = subprocess.run([PY, "-I", os.path.join(T, "sfm_stabil_schnitt.py"), os.path.join(a.ziel, "lauf1", "0"), os.path.join(a.ziel, "lauf2", "0"), "--ausgabe", st, "--liste", liste, "--lage", str(a.lage), "--rot", str(a.rot)], capture_output=True, text=True)
     if o.returncode != 0: sys.exit("Schnitt fehlgeschlagen: " + o.stdout[-300:] + o.stderr[-300:])
