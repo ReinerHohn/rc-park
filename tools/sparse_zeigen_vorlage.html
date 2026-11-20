@@ -1,0 +1,88 @@
+<title>Kameramodell 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: ein Bildschirm - schmale Kopfzeile mit Kennzahlen, darunter die 3D-Flaeche ueber die ganze Breite, Legende und Schalter schwebend unten links. */
+:root {
+  color-scheme: dark;
+  --grund: #0f1215; --flaeche: #181d22; --linie: #2b333b; --text: #e6e9ec; --leise: #8d98a3; --akzent: #ffb347;
+  --schrift: "IBM Plex Sans", system-ui, sans-serif; --zahl: "IBM Plex Mono", ui-monospace, monospace;
+}
+html, body { height: 100%; }
+body { background: var(--grund); color: var(--text); font-family: var(--schrift); display: flex; flex-direction: column; overflow: hidden; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; padding-block: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--linie); }
+h1 { font-size: 17px; font-weight: 600; margin: 0; text-wrap: balance; }
+.kenn { font-family: var(--zahl); font-size: 12.5px; color: var(--leise); font-variant-numeric: tabular-nums; }
+.kenn b { color: var(--text); font-weight: 500; }
+#buehne { position: relative; flex: 1; min-height: 0; }
+#buehne canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+#tafel { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 8px;
+  background: color-mix(in srgb, var(--flaeche) 88%, transparent); border: 1px solid var(--linie); border-radius: 6px; padding: 10px 12px; font-size: 12.5px; max-width: calc(100% - 32px); }
+.leg { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.leg span { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.leg i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.schalter { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: inherit; color: var(--text); background: var(--grund); border: 1px solid var(--linie); border-radius: 4px; padding: 4px 9px; cursor: pointer; }
+button[aria-pressed="true"] { border-color: var(--akzent); color: var(--akzent); }
+button:focus-visible { outline: 2px solid var(--akzent); outline-offset: 2px; }
+.hinweis { color: var(--leise); }
+#fehler { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--leise); }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<header>
+  <h1 id="titel">Kameramodell</h1>
+  <span class="kenn"><b id="nk">0</b> Kameras · <b id="np">0</b> Punkte · nicht ausgerichtet, Modell-Einheiten</span>
+</header>
+<div id="buehne">
+  <div id="fehler" hidden>3D-Ansicht konnte nicht starten (WebGL fehlt).</div>
+  <div id="tafel">
+    <div class="leg" id="leg"></div>
+    <div class="schalter">
+      <button id="b_kam" aria-pressed="true">Kameras</button>
+      <button id="b_ri" aria-pressed="true">Blickrichtung</button>
+      <button id="b_gr">Punkte groesser</button>
+      <button id="b_oben">Von oben</button>
+    </div>
+    <div class="hinweis">Ziehen dreht · Rad oder zwei Finger zoomen · Rechtsklick verschiebt</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D = /*DATEN*/null;
+(function () {
+  const $ = id => document.getElementById(id);
+  if (!D) { $("fehler").hidden = false; $("fehler").textContent = "Keine Daten eingebettet."; return; }
+  document.title = D.titel; $("titel").textContent = D.titel;
+  $("nk").textContent = D.n_kam.toLocaleString("de-DE"); $("np").textContent = D.n_pkt.toLocaleString("de-DE");
+  for (const g in D.gruppen) { const s = document.createElement("span"); const i = document.createElement("i"); i.style.background = D.farben[g]; s.append(i, g + " " + D.gruppen[g]); $("leg").append(s); }
+  const roh = (b, T) => { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return new T(u.buffer); };
+  const P = roh(D.P, Float32Array), F = roh(D.F, Uint8Array), K = roh(D.K, Float32Array), KV = roh(D.KV, Float32Array), KF = roh(D.KF, Uint8Array);
+  const yoben = (A) => { const o = new Float32Array(A.length); for (let i = 0; i < A.length; i += 3) { o[i] = A[i]; o[i + 1] = A[i + 2]; o[i + 2] = -A[i + 1]; } return o; };   // Hochachse z -> y
+  const buehne = $("buehne"); let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true }); } catch (e) { $("fehler").hidden = false; return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.setClearColor(0x0f1215); buehne.prepend(renderer.domElement);
+  const szene = new THREE.Scene(), kam = new THREE.PerspectiveCamera(50, 1, 0.01, 500);
+  const farb = (U) => { const o = new Float32Array(U.length); for (let i = 0; i < U.length; i++) o[i] = U[i] / 255; return o; };
+  const gp = new THREE.BufferGeometry(); gp.setAttribute("position", new THREE.BufferAttribute(yoben(P), 3)); gp.setAttribute("color", new THREE.BufferAttribute(farb(F), 3));
+  const mp = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, sizeAttenuation: true }); szene.add(new THREE.Points(gp, mp));
+  const Ky = yoben(K), Vy = yoben(KV), kfarb = farb(KF);
+  const gk = new THREE.BufferGeometry(); gk.setAttribute("position", new THREE.BufferAttribute(Ky, 3)); gk.setAttribute("color", new THREE.BufferAttribute(kfarb, 3));
+  const pk = new THREE.Points(gk, new THREE.PointsMaterial({ size: 5, vertexColors: true, sizeAttenuation: false })); szene.add(pk);
+  const L = 0.35, lp = new Float32Array(Ky.length * 2), lf = new Float32Array(Ky.length * 2);
+  for (let i = 0; i < Ky.length; i += 3) for (let j = 0; j < 3; j++) { lp[2 * i + j] = Ky[i + j]; lp[2 * i + 3 + j] = Ky[i + j] + L * Vy[i + j]; lf[2 * i + j] = lf[2 * i + 3 + j] = kfarb[i + j]; }
+  const gl = new THREE.BufferGeometry(); gl.setAttribute("position", new THREE.BufferAttribute(lp, 3)); gl.setAttribute("color", new THREE.BufferAttribute(lf, 3));
+  const li = new THREE.LineSegments(gl, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.55 })); szene.add(li);
+  const steuer = new THREE.OrbitControls(kam, renderer.domElement); steuer.enableDamping = true; steuer.target.set(0, 0.8, 0);
+  const schraeg = () => { kam.position.set(9, 7, 12); steuer.update(); }, oben = () => { kam.position.set(0, 24, 0.01); steuer.update(); };
+  schraeg();
+  const mass = () => { const w = buehne.clientWidth, h = buehne.clientHeight; renderer.setSize(w, h, false); kam.aspect = w / Math.max(h, 1); kam.updateProjectionMatrix(); };
+  new ResizeObserver(mass).observe(buehne); mass();
+  const um = (b, f) => b.addEventListener("click", () => { const an = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", an); f(an); });
+  um($("b_kam"), an => { pk.visible = an; li.visible = an && $("b_ri").getAttribute("aria-pressed") === "true"; });
+  um($("b_ri"), an => { li.visible = an && pk.visible; });
+  um($("b_gr"), an => { mp.size = an ? 0.045 : 0.02; });
+  let vonoben = false; $("b_oben").addEventListener("click", () => { vonoben = !vonoben; $("b_oben").textContent = vonoben ? "Schraeg" : "Von oben"; (vonoben ? oben : schraeg)(); });
+  (function bild() { steuer.update(); renderer.render(szene, kam); requestAnimationFrame(bild); })();
+})();
+</script>
