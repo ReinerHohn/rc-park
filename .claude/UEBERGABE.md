@@ -1,4 +1,4 @@
-# Übergabe 20.11.2026 12:45
+# Übergabe 20.11.2026 12:55
 Weiter mit: /uebergabe fortsetzen
 
 ## Auftrag
@@ -6,7 +6,7 @@ Weiter mit: /uebergabe fortsetzen
 - „Kannst du mal das Projekt KI-konform aufräumen … Skills und Workflows bauen … wie können wir das Projekt weiter verbessern?“ → erledigt
 - „von dieser Liste … alles abarbeiten, was du selber abarbeiten kannst … Informationen baumartig strukturieren“ → erledigt
 - „musst pushen … mach die sensiblen Daten raus“ / „Hook, der in jedem Commit guckt“ → erledigt
-- „nichts Gelerntes und keine neue Methode darf verloren“ → läuft (Nachtragen in den Wissensbaum, s. Nächste Schritte 1)
+- „nichts Gelerntes und keine neue Methode darf verloren“ → erledigt (Wissensbaum Doku/projekt/, 7 Äste)
 - Widersprüche: „das, was neuer ist, ist besser“ → entschieden (CLAUDE.md, ENTSCHIEDEN 20.11.)
 
 ## Erledigt und geprüft
@@ -21,12 +21,12 @@ Weiter mit: /uebergabe fortsetzen
 ## Läuft gerade
 - `rcpark-kette-martinstor-1120` · Log `/media/oem/scan/rc-park_daten/job_logs/kette-martinstor-1120.log` · Prüfen: `grep -E '^\[[0-9:]+\] [a-z_]+:' LOG | tail -1; grep -c Traceback LOG` · seit 10:27 Stufe sfm · danach Skill `wolke-tore`, Konsens `fremde_seite.txt`, audit/seiten.jpg ansehen
 - Warter `tools/versuche/flexglue_stufe2_nach_kette_1120.sh` startet nach JOB_ENDE die FlexGlue-Stufe 2 (~20 h, Log `flexglue-stufe2c.log`)
-- Regression Schwabentor `regr-schwab` wartet auf RAM-Buchung (Log `regr-schwab.log`), danach Ergebnis prüfen und committen
-- `rcpark-mt_anh_sued3` (seit 19.11. 17:02, colmap mapper Süd-Anhang) — Nutzen prüfen, ggf. stoppen
+- Regression Schwabentor `regr-schwab` wartet (12:50) weiter auf RAM-Buchung (Kette bucht 11000 MB), startet danach selbst; Ergebnis prüfen + committen
+- `rcpark-mt_anh_sued3` (seit 19.11. 17:02, inkrementeller Mapper Süd-Anhang, Log `mt_anh_sued3.log`): 12:50 = 985/1990 Bilder, Gesamtausgleich seit 11:59 — weiterlaufen lassen, Ergebnis mit Skill wolke-tore prüfen
 - (Lese-Agenten fertig, Ergebnisse gesichert)
 
 ## Nächste Schritte
-1. Lehren in den Baum: Scratchpad `baum/sfm.md` (148 Z.) + `baum/bauteile_betrieb.md` (174 Z.) + `baum/fassade.md` zusammenführen → Äste `Doku/projekt/foto-sfm.md` (Kameras/Lage), neu `Doku/projekt/fassade-wolke.md`, neu `Doku/projekt/bauteile-betrieb.md` (je ≤ 110 Zeilen, Doppeltes verschmelzen), Zeilen in `PROJEKT.md`; `check.py --strict`; commit + push. Kopien liegen in `/media/oem/rcdaten/tmp/baum_sicherung/` (alle drei fertig).
+1. (erledigt 20.11.: Lehren in 6 Äste + Druck, Verlustprüfung 0 fehlend, gepusht)
 2. Kettenende Martinstor auswerten (Skill objekt-von-null Schritt 5), Realitäts-%.
 3. Regression für kaufhaus_gk2 (Ordner bisher unversioniert) und martinstor-1120 anlegen.
 
