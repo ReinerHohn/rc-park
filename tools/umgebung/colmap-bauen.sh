@@ -15,6 +15,9 @@
 set -euo pipefail
 D=/media/oem/scan
 ZIEL=$D/colmap-build/prefix; COLMAP_REF=ce2b5ab; CERES_REF=07a9526; PRUEFEN=0; JOBS=${JOBS:-6}
+# 20.11.2026 (Befund: der Bau vom 13.11. ist reines x86-64/SSE2 - libcolmap_sfm.a 0 AVX-Befehle, libceres.a 0 FMA, obwohl die CPU AVX2+FMA kann):
+# BAU_FLAGS="-O3 -march=native" baut Ceres UND COLMAP (samt geholter FAISS/PoseLib/Boost) fuer genau diese CPU. Nur als Testbau mit --ziel, erst A/B, dann umstellen.
+OPT_FLAGS=(); [ -n "${BAU_FLAGS:-}" ] && OPT_FLAGS=(-DCMAKE_CXX_FLAGS="$BAU_FLAGS" -DCMAKE_C_FLAGS="$BAU_FLAGS")
 while [ $# -gt 0 ]; do case "$1" in
   --pruefen) PRUEFEN=1;; --ziel) ZIEL=$2; shift;; --colmap) COLMAP_REF=$2; shift;; --ceres) CERES_REF=$2; shift;;
   *) echo "unbekannt: $1"; exit 2;; esac; shift; done
@@ -81,7 +84,7 @@ holen https://github.com/colmap/colmap.git "$QUELLE/colmap" "$COLMAP_REF"
 # 3) Ceres mit CUDA + cuDSS
 cmake -S "$QUELLE/ceres" -B "$QUELLE/ceres/bau" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$ZIEL" -DUSE_CUDA=ON \
   -DCMAKE_CUDA_ARCHITECTURES=89 -DCMAKE_CUDA_COMPILER="$KOMBI/bin/nvcc" -DCUDAToolkit_ROOT="$KOMBI" -Dcudss_DIR="$CUDA_DIR/cudss-cmake" \
-  -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF > "$QUELLE/ceres-cmake.log"
+  -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF "${OPT_FLAGS[@]}" > "$QUELLE/ceres-cmake.log"
 ninja -C "$QUELLE/ceres/bau" -j "$JOBS" install > "$QUELLE/ceres-bau.log" && ok "Ceres gebaut"
 
 # 4) COLMAP (Schalter wie build-cuda vom 13.11.)
@@ -99,7 +102,7 @@ else echo "${Y}kein ONNX-Vorrat fuer $ONNX_VERSION ($ONNX_VORRAT) - Download kan
 cmake -S "$QUELLE/colmap" -B "$QUELLE/colmap/bau" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$ZIEL" \
   -DCUDA_ENABLED=ON -DCMAKE_CUDA_ARCHITECTURES=89 -DCMAKE_CUDA_COMPILER="$KOMBI/bin/nvcc" -DCUDAToolkit_ROOT="$KOMBI" \
   -DCeres_DIR="$ZIEL/lib/cmake/Ceres" -Dcudss_DIR="$CUDA_DIR/cudss-cmake" -DCASPAR_ENABLED=ON -DONNX_ENABLED=ON -DCGAL_ENABLED=ON \
-  -DOPENGL_ENABLED=ON -DGUI_ENABLED=OFF -DTESTS_ENABLED=OFF -DFETCH_BOOST=ON -DFETCH_FAISS=ON -DFETCH_ONNX=ON -DFETCH_POSELIB=ON $ONNX_OPT > "$QUELLE/colmap-cmake.log"
+  -DOPENGL_ENABLED=ON -DGUI_ENABLED=OFF -DTESTS_ENABLED=OFF -DFETCH_BOOST=ON -DFETCH_FAISS=ON -DFETCH_ONNX=ON -DFETCH_POSELIB=ON $ONNX_OPT "${OPT_FLAGS[@]}" > "$QUELLE/colmap-cmake.log"
 ninja -C "$QUELLE/colmap/bau" -j "$JOBS" install > "$QUELLE/colmap-bau.log" && ok "COLMAP gebaut"
 
 # 5) Startumgebung + Probe
