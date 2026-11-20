@@ -51,3 +51,8 @@ Wirkung je Aufwand: 2 (Mono, klein) -> 6 (bauteile_foto in die Vorlage, klein) -
 - Nr. 9, Uhr: ERLEDIGT 21.11. Erkennerklasse `uhr` in `fassade_parsing.py`, Messung mit `tools/uhren_wandbild.py` (Kreis im 1-cm-Wandbild), Bau mit `bauteile.uhren_aus_json`. Schwabentor f00: 5,10 / 3,47 m, Kantenstütze 98 %. Handmaß in der Maßtabelle: 4,95 m.
 - Neu, Sackgassen-Tor in `gesamtkette.py` vor 'html': Ein Kettenergebnis, das kein Generator verbaut, ergibt jetzt `ok: False` statt still „in Ordnung“.
 - Torbogen-Befund: Er IST gebaut (`oeffnungen_bogen.py`, spitz, 4,79 m breit, Scheitel 6,20 m), aber nur 0,6 m tief, weil die Gegenseite f01 nur 4 Fotos hat (18 % Abdeckung). Datenlücke, keine Werkzeuglücke.
+- Neu, Fenster-Tiefen-Tor (21.11. 00:30): `tools/fenster_tiefe_tor.py` in der Stufe bauplan, nach dem Sweep.
+  - Am Schwabentor f00 verwirft es die Konsolenfelder unter dem Erker. OWLv2 hatte sie mit 10 von 10 Stimmen als „Fenster“ gemeldet; im Sweep liegen 0–1 % der Zellen dahinter und 23–39 % davor.
+  - Es ergänzt das linke Rundbogenfenster (3 von 7 Stimmen, 58 % der Zellen hinter der Wand).
+  - Auf f03 urteilt es nicht, weil der Sweep im Ring unsicher ist (33–58 % < 70 %).
+  - OFFEN: Das rechte Rundbogenfenster findet der Erkenner gar nicht (kein Kasten).
