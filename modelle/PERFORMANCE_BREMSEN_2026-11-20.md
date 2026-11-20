@@ -246,3 +246,9 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   nach Rasterviertel 4,6 / 16,0 / 14,8 / 18,8 % (waechst mit der laufenden Summe, wie vorhergesagt). Angesehen: alt = Doppelkanten/Geisterbild im Ueberlappungsband mehrerer Fotos
   (Ladentuer, Fensterrahmen), neu = sauber. Fix: Gewichte vor der Summe nach float64. Schnelltest 0 Fehler.
 - FOLGE: alle bisherigen Wandbilder (Bauplan!) mit Mehrfoto-Ueberlappung sind betroffen, bei 1 cm und grossen Waenden staerker. Wandbilder der aktiven Objekte neu rechnen, bevor daraus Tiefe/Fenster gelesen werden.
+
+## Nachtrag 22:33 - Schwabentor-Kette 1120d zu Ende (rc 4, 54 Stufen, 5 nicht in Ordnung), 3D-Seite https://claude.ai/artifact/Fw3Dvs6XdwqqR1E9BpNZ5n
+- Lage bestanden, Koerper gebaut (Quader + Zeltdach, ~10 %), HTML 22:31. Nicht in Ordnung: fassaden_kette (Netz deckt die Wand nicht, 2 Teilwerkzeug-Abstuerze), fenster_ortho_fein (von mir beendet, Speicher),
+  bauplan_oeffnungen_aussen (Folgefehler: fassade_fein/fassaden.json fehlt), seiten_luecken (56 min Netzfotos holen + LightGlue, dann Absturz beim Einbau:
+  `ValueError: [reconstruction.cc:327] Check failed: existing_frame.RigId() == frame.RigId()` - 56 min verloren, Werkzeugfehler OFFEN), seiten (Folge).
+- Fotoauftrag: Suedseite 347 m2 und Ostseite 258 m2 ohne Fotodaten (`fotoauftrag_schwabentor-1120.html`).
