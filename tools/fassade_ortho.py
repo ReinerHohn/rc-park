@@ -391,11 +391,10 @@ def main(argv=None):
         F["fotos"] = {nr: dict(zellen=int(len(x[0])), guete_median=round(float(np.median(x[2])), 1)) for nr, x in beitr}
         img = np.zeros((N, 3), np.uint8); cnt = np.zeros(N, np.int32)
         if beitr:
-            I = np.concatenate([x[0] for _, x in beitr]); Cc = np.concatenate([x[1] for _, x in beitr]).astype(np.float32); G = np.concatenate([x[2] for _, x in beitr])
+            I = np.concatenate([x[0] for _, x in beitr]); Cc = np.concatenate([x[1] for _, x in beitr]); G = np.concatenate([x[2] for _, x in beitr])   # 20.11.2026 Speicher: Farben bleiben im Quelltyp bis NACH der Auswahl der besten k (1 cm, Turm: > 11,7 GB)
             med_ = [float(np.median(x[1].mean(1))) for _, x in beitr]; Mz = float(np.median(med_)) if med_ else 1.0      # 16.11.2026: Belichtung je Foto angleichen (Nachtaufnahme, Sonne/Schatten, s/w), sonst ist die
-            Gr = np.concatenate([x[1].mean(1) * float(np.clip(Mz / max(m_, 1.0), 0.4, 2.5)) for (_, x), m_ in zip(beitr, med_)]).astype(np.float64)      # 'Uneinigkeit' nur Helligkeitsunterschied (Turm: 33-46 trotz sauberem Bild)
-            o_ = np.lexsort((-G, I)); I, Cc, G = I[o_], Cc[o_], G[o_]; Gr = Gr[o_]; st = np.r_[0, np.where(np.diff(I))[0] + 1, len(I)]
-            cnt[I[st[:-1]]] = np.diff(st)
+            o_ = np.lexsort((-G, I)); Is = I[o_]; st = np.r_[0, np.where(np.diff(Is))[0] + 1, len(Is)]      # nur die Reihenfolge merken, keine sortierten Kopien aller Proben
+            cnt[Is[st[:-1]]] = np.diff(st)
             # UNEINIGKEIT (16.11.2026, zweite Fassung): Streuung ueber die Fotos auf GROBEN Bloecken (~0,3 m), Belichtung je Foto angeglichen. Erste Fassung (je Zelle) schlug am Turm ueberall an
             # (25-31 Fotos je Zelle, cm-Versatz an Steinkanten = hohe Streuung) und war bei < 3 Fotos per Definition 0. Grob = "zeigen die Fotos dort dasselbe Ding" (Wand gegen Baum/Nachbarhaus).
             kb = max(1, int(round(0.3 / r["zelle"]))); nbz, nbu = -(-r["nz"] // kb), -(-r["nu"] // kb); Mb = np.full((len(beitr), nbz * nbu), np.nan, np.float32)
@@ -417,7 +416,7 @@ def main(argv=None):
             st_ = np.where(np.isfinite(Ns).sum(0) >= 3, np.nan_to_num(st_), 0); st_ = cv2.blur(st_.astype(np.float32), (3, 3)); del Ns
             cv2.imwrite(os.path.join(a.aus, f"struktur_{F['_id']}.png"), cv2.resize(np.clip(st_ * 100, 0, 255).astype(np.uint8), (r["nu"], r["nz"]), interpolation=cv2.INTER_NEAREST))
             cv2.imwrite(os.path.join(a.aus, f"uneinig_{F['_id']}.png"), cv2.resize(np.clip(ub, 0, 255).astype(np.uint8), (r["nu"], r["nz"]), interpolation=cv2.INTER_NEAREST))
-            rang = np.arange(len(I)) - np.repeat(st[:-1], np.diff(st)); w_ = rang < a.beste; I, Cc, G = I[w_], Cc[w_], G[w_]   # je Zelle die besten k
+            rang = np.arange(len(Is), dtype=np.int32) - np.repeat(st[:-1].astype(np.int32), np.diff(st)); sel = o_[rang < a.beste]; del o_, rang, Is; I, Cc, G = I[sel], Cc[sel].astype(np.float32), G[sel]; del sel   # je Zelle die besten k (gleiche Reihenfolge wie vorher)
             # gewichteter Median je Kanal und Zelle, vektorisiert: Proben je Zelle nach Wert sortieren, kumulierte Gewichte, erster Wert >= halbes Gewicht
             def kanal(k_):
                 key = I.astype(np.float64) * 512 + Cc[:, k_]; o2 = np.argsort(key, kind="stable"); Ik, Vk, Gk = I[o2], Cc[o2, k_], G[o2]
@@ -436,8 +435,12 @@ def main(argv=None):
         F["id"] = tag; F["abdeckung_anteil"] = round(float((cnt > 0).mean()), 3); F["fotos_median_je_zelle"] = float(np.median(cnt[cnt > 0])) if (cnt > 0).any() else 0
         rl = F["_rel"].reshape(r["nz"], r["nu"]); cv2.imwrite(os.path.join(a.aus, f"relief_{tag}.png"), np.where(np.isfinite(rl), np.clip((rl + 10) * 1000, 1, 65535), 0).astype(np.uint16))   # mm + 10 m, 0 = kein Modell
         F["relief_png"] = f"relief_{tag}.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+        for _, e_ in alle:                                                     # 20.11.2026 Speicher: Proben dieser Fassade freigeben, sobald sie verschmolzen ist
+            if e_: e_.pop(i, None)
         del F["_X"], F["_S"], F["_rel"], F["_loch"]; F.pop("_Sg", None); F.pop("_wahl", None); F.pop("_id", None); return (f"  {tag}: {F['flaeche_m2']:6.1f} m2, n=({F['n'][0]:+.2f},{F['n'][1]:+.2f}), {len(beitr):2d} Fotos, Abdeckung {F['abdeckung_anteil']:.0%}, Median {F['fotos_median_je_zelle']:.0f} Fotos/Zelle")
-    with ThreadPoolExecutor(max(1, min(len(fas), 3))) as ex: bericht = list(ex.map(verschmelzen, enumerate(fas)))      # 17.11.2026 (2): bis zu 3 Fassaden nebeneinander (mehr = Arbeitsspeicher: je Fassade alle Proben aller Fotos)
+    _proben = [sum(len(e[i][0]) for _, e in alle if e and i in e) for i in range(len(fas))]; _neben = 3 if max(_proben, default=0) * 60 < 3e9 else 1   # ~60 Byte je Probe in der Spitze: ueber ~3 GB je Fassade nacheinander statt 3 nebeneinander
+    if _neben == 1: print(f"Verschmelzen nacheinander (groesste Fassade {max(_proben) / 1e6:.0f} Mio. Proben)", flush=True)
+    with ThreadPoolExecutor(max(1, min(len(fas), _neben))) as ex: bericht = list(ex.map(verschmelzen, enumerate(fas)))      # 17.11.2026 (2): bis zu 3 Fassaden nebeneinander (mehr = Arbeitsspeicher: je Fassade alle Proben aller Fotos)
     zeit("verschmelzen_schreiben"); GPU["weg"] = ("GPU" if GPU["an"] else "CPU") if not GPU["cpu_paare"] or not GPU["paare"] else "GPU, dann CPU"
     if GPU["paare"]: GPU["gpu_mb_spitze"] = round(torch.cuda.max_memory_reserved() / 2 ** 20)
     print(f"Zellrechnung: {GPU['weg']} ({GPU['paare']} Foto-Fassaden-Paare GPU, {GPU['cpu_paare']} CPU" + (f", {GPU['strahlen'] / 1e6:.0f} Mio. Sichtstrahlen, GPU-Rechenzeit {GPU['gpu_s']:.1f} s, GPU-Speicher Spitze {GPU['gpu_mb_spitze']} MiB" if GPU["paare"] else "") + (f"; Grund CPU: {GPU['grund']}" if GPU["grund"] else "") + ")", flush=True)
