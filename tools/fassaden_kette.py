@@ -274,6 +274,12 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
         Z = np.load(f); n = Z["n"]; hu = basis + basis.translate((0.8 * n[0], 0.8 * n[1], 0.0)); koerper.num_tri();      # num_tri: Zwischenergebnis ausrechnen, damit der Rechenbaum nicht ueber alle Waende waechst
         fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
         ff = os.path.join(od, "relief", w["name"] + "_foto.npz"); hat_foto = bool(w.get("foto_feld")) and os.path.exists(ff)
+        # 21.11.2026 (Kettenluecke 2, Nutzer: "was wir damals manuell gemacht haben, muss jetzt automatisch laufen"): Stufe 'mono' rechnet <wand>_mono.npz, gebaut wurde es nur von
+        # Hand (schwab_v3_gen Z.85-95). Wie dort: Feld der Mono-Datei = tief_feld des groben Reliefs, Mono-Relief mit trend=True, rand_auslauf=False; die Feinrechnung (_misch)
+        # steckt im Tiefpass der Mono-Datei und entfaellt dann. OHNE_MONO=1 schaltet ab.
+        fmo = os.path.join(od, "relief", w["name"] + "_mono.npz"); mono_ = (w.get("mono") or {}).get("datei") and os.path.exists(fmo) and os.environ.get("OHNE_MONO") != "1"
+        if mono_:
+            zm_ = np.load(fmo); hm_, wm_ = zm_["rel"].shape; pm_ = float(zm_["px"]); feld_mo = (float(zm_["u0"]), float(zm_["u0"]) + wm_ * pm_, float(zm_["z0"]), float(zm_["z0"]) + hm_ * pm_); tf = [feld_mo]
         def offen(pl):                                                   # Fensterrechtecke dieser Wandrichtung aus der Platte nehmen
             for nf_, k_ in frei:
                 if nf_ @ n[:2] > 0.9: pl = pl - k_
@@ -296,7 +302,11 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
                                            hinweis=f"ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg {info['brei_weg'] * 100:.0f} %, durch Fotobauteile ersetzt {info['ersetzt'] * 100:.0f} %, {info['linienhaft_behalten']} linienhafte Stuecke behalten; Bild relief/{w['name']}_rein.jpg"))
         if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
         if hat_foto: koerper = koerper + offen(relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
-        if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
+        if mono_:
+            koerper = koerper + offen(relief_koerper(fmo, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu)
+            belege.append(dict(seite="wand", element=f"Feinrelief Fassade {w['name']} aus Einzelfotos (Feld u {feld_mo[0]:.1f}..{feld_mo[1]:.1f}, z {feld_mo[2]:.1f}..{feld_mo[3]:.1f})", quelle="Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",
+                               korrelation=(w.get("mono") or {}).get("korrelation"), hinweis="relief/<wand>_mono.jpg ansehen"))
+        elif tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle=("Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt" if w.get("quader") is False else "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert"),
                            generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + (f"; ANNAHME: Relief {w.get('vorstand', 0) * 100:.0f} cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung" + (f"; ANNAHME: {w['putz_eben'] * 100:.0f} % der Wand naeher als {w.get('putz_band', 0.05) * 100:.0f} cm am Wandniveau = glatter Putz (Netzrauschen weg)" if w.get("putz_eben") else "") if w.get("quader") is False else "; generierte Steine = ANNAHME")))
     return koerper, belege

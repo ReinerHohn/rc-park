@@ -266,6 +266,24 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
     return koerper, belege
 
 
+def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=True):
+    """Turmuhren aus tools/uhren_wandbild.py (audit/uhren_auto.json, Kettenstufe 'bauplan', 21.11.2026; vorher nur Hand-Generator schwab_v3/martinstor_v4).
+    Gemessen: Mitte, Aussen- und (falls belegt) Innendurchmesser im feinen Wandbild. Ring bis w_ring vor der Wandebene, Innenfeld bis w_feld (ANNAHME 10 / 6 cm wie schwab_v3);
+    details=True: Wand.zifferblatt (Wulste, 12 Ziffern, Zeiger) - Ziffernform/Zeit = ANNAHME. Ohne Innenkreis: Innenfeld = 0,66 x Aussen (ANNAHME, schwab_v3 3,52/5,36)."""
+    if not os.path.exists(datei): return koerper, []
+    belege = []
+    for fid, F in json.load(open(datei)).items():
+        o = np.array(F["o"], float); W_ = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
+        for U in F.get("uhren", []):
+            da = float(U["d_aussen"]); di = float(U["d_innen"]) if U.get("d_innen") else 0.66 * da
+            ring = W_.scheibe(U["u"], U["z"], da, -0.05, w_ring) - W_.scheibe(U["u"], U["z"], di, w_feld, w_ring + 0.05)
+            koerper = koerper + ring
+            if details: koerper = koerper + W_.zifferblatt(U["u"], U["z"], da, di)
+            belege.append(dict(seite="wand", element=f"Uhr {fid} (Durchmesser {da:.2f} m)", quelle=U.get("quelle", "tools/uhren_wandbild.py"), mitte_u=U["u"], mitte_z=U["z"], d_aussen=da, d_innen=di,
+                               hinweis="ANNAHME: Ringtiefe 10 cm, Feld 6 cm" + ("" if U.get("d_innen") else ", Innendurchmesser 0,66 x Aussen (nicht gemessen)") + ("; Ziffern/Zeiger/Zeit generisch (Wand.zifferblatt)" if details else "")))
+    return koerper, belege
+
+
 def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
     """Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep an die Wand bauen (20.11.2026, GENERISCH; Liste: tools/vorbauten_bauplan.py
     -> audit/vorbauten_auto.json, Kettenstufe 'bauplan'). Je Gruppe ein Hoehenfeld w[zeile][spalte] (m vor der gemessenen Wand, Raster 'raster', Zeile 0 = oben):

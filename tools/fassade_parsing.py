@@ -29,6 +29,7 @@ KLASSEN = {
     "figur": ["a statue"],
     "gaube": ["a dormer", "a roof window"],
     "balkon": ["a balcony", "a balustrade"],
+    "uhr": ["a clock", "a clock face"],          # 21.11.2026: Turmuhr (Kettenluecke 9) - Zone fuer tools/uhren_wandbild.py, Mass aus dem feinen Wandbild
 }
 # Gegenbegriffe (aus zier_ausschnitt.GEGEN + S4-Spec): Dinge, die Fensterkasten/Figurkasten vortaeuschen. Eine Box, deren bester Begriff ein Gegenbegriff ist, wird verworfen.
 GEGEN = ["a wrought iron sign", "a shop sign", "a lamp", "an awning", "a canopy", "a coat of arms", "a half-timbered wall panel", "a wooden beam", "a carved wooden ornament"]   # 15.11.2026: Fachwerkfelder/Balken/Schnitzfelder wurden am Schwabentor-Nachbarhaus als Fenster gemeldet
@@ -258,7 +259,7 @@ def main(argv=None):
             except Exception as ex: print(f"  {fid}: Z-Protokoll fehlgeschlagen ({type(ex).__name__}: {ex})", flush=True)
         # Sichtbild
         fus = cv2.imread(os.path.join(a.ortho, f"ortho_{fid}.png")); fus = cv2.resize(fus, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST)
-        farbe = dict(fenster=(0, 255, 255), tuer=(255, 0, 255), bogen=(0, 255, 0), figur=(255, 128, 0), gaube=(255, 255, 0), balkon=(0, 0, 255))
+        farbe = dict(fenster=(0, 255, 255), tuer=(255, 0, 255), bogen=(0, 255, 0), figur=(255, 128, 0), gaube=(255, 255, 0), balkon=(0, 0, 255), uhr=(255, 255, 255))
         for e in elemente:
             p0 = (int((e["u0"] - r["u0"]) / z_ * 3), int((r["z1"] - e["z1"]) / z_ * 3)); p1 = (int((e["u1"] - r["u0"]) / z_ * 3), int((r["z1"] - e["z0"]) / z_ * 3))
             cv2.rectangle(fus, p0, p1, farbe[e["klasse"]], 2); cv2.putText(fus, f"{e['klasse'][:4]} {e['stimmen']}/{e['gesehen']}", (p0[0] + 2, p0[1] + 14), 0, 0.45, farbe[e["klasse"]], 1)

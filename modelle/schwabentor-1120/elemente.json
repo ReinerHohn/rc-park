@@ -45,6 +45,20 @@
  },
  {
   "seite": "wand",
+  "element": "Feinrelief Fassade w00 aus Einzelfotos (Feld u 0.1..7.6, z 0.0..10.0)",
+  "quelle": "Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",
+  "korrelation": [
+   0.201,
+   0.212,
+   0.227,
+   0.237,
+   0.213
+  ],
+  "hinweis": "relief/<wand>_mono.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Fassade w00 (Fassaden-Kette)",
   "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_114133, eigen__IMG_20261106_114023, eigen__IMG_20261106_114050); Loecher generiert",
   "generiert_anteil": 0.032,
@@ -61,10 +75,34 @@
  },
  {
   "seite": "wand",
+  "element": "Feinrelief Fassade w01 aus Einzelfotos (Feld u 0.1..3.6, z 0.0..10.0)",
+  "quelle": "Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",
+  "korrelation": [
+   0.274,
+   0.241
+  ],
+  "hinweis": "relief/<wand>_mono.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Fassade w01 (Fassaden-Kette)",
   "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113429, eigen__IMG_20261106_113441, eigen__IMG_20261106_113532); Loecher generiert",
   "generiert_anteil": 0.141,
   "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Feinrelief Fassade w02 aus Einzelfotos (Feld u 0.1..4.9, z 0.0..10.0)",
+  "quelle": "Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",
+  "korrelation": [
+   0.377,
+   0.526,
+   0.241,
+   0.222
+  ],
+  "hinweis": "relief/<wand>_mono.jpg ansehen",
   "seite_name": "wand"
  },
  {
@@ -81,6 +119,19 @@
   "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
   "steine": 231,
   "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Feinrelief Fassade w03 aus Einzelfotos (Feld u 0.1..3.4, z 0.0..10.0)",
+  "quelle": "Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",
+  "korrelation": [
+   0.363,
+   0.429,
+   0.355,
+   0.222
+  ],
+  "hinweis": "relief/<wand>_mono.jpg ansehen",
   "seite_name": "wand"
  },
  {
@@ -190,7 +241,7 @@
  },
  {
   "seite": "wand",
-  "element": "141 Null-Volumen-Splitter entfernt",
+  "element": "142 Null-Volumen-Splitter entfernt",
   "quelle": "Generator (decompose, Volumen < 1e-5 m3)",
   "seite_name": "wand"
  }

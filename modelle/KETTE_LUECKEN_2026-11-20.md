@@ -44,3 +44,10 @@ Rangliste nach dem, was man am Ende im Modell sieht, dann nach Aufwand.
 
 ## Empfohlene Reihenfolge
 Wirkung je Aufwand: 2 (Mono, klein) -> 6 (bauteile_foto in die Vorlage, klein) -> 1 (Aussenfenster aus dem Wandbild, mittel) -> 10/9 (Fachwerk/Uhr) -> 4 (Beobachtungen rot) -> 13 (Tor) -> 7/8 (Rundkoerper, Laterne) -> 3 (Kanten bauen) -> 5 (Gauben).
+
+## Stand der Abarbeitung (21.11.2026)
+- Vorbauten (Erker, Galerie, Vordach): ERLEDIGT 20.11. ~00:00. Werkzeuge `tools/vorbauten_bauplan.py` und `bauteile.vorbauten_aus_json`, Stufe bauplan. Beweis: Am Schwabentor liegen 95 % der Erker-Fotokanten am Modell (vorher 22 %).
+- Nr. 2, Mono-Feinrelief: ERLEDIGT 21.11. `fassaden_kette.anbauen` baut `<wand>_mono.npz` ein. Schwabentor: 4 Wände. Kantenmaß neutral (60,4 % → 59,6 % der Punkte ≤ 5 cm), die Steine sind sichtbar einzeln.
+- Nr. 9, Uhr: ERLEDIGT 21.11. Erkennerklasse `uhr` in `fassade_parsing.py`, Messung mit `tools/uhren_wandbild.py` (Kreis im 1-cm-Wandbild), Bau mit `bauteile.uhren_aus_json`. Schwabentor f00: 5,10 / 3,47 m, Kantenstütze 98 %. Handmaß in der Maßtabelle: 4,95 m.
+- Neu, Sackgassen-Tor in `gesamtkette.py` vor 'html': Ein Kettenergebnis, das kein Generator verbaut, ergibt jetzt `ok: False` statt still „in Ordnung“.
+- Torbogen-Befund: Er IST gebaut (`oeffnungen_bogen.py`, spitz, 4,79 m breit, Scheitel 6,20 m), aber nur 0,6 m tief, weil die Gegenseite f01 nur 4 Fotos hat (18 % Abdeckung). Datenlücke, keine Werkzeuglücke.

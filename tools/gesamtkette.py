@@ -375,7 +375,7 @@ def main():
             w_["mono"] = dict(rc=rc_, feld=[0.1, round(L_ - 0.1, 2), 0.0, z1m], korrelation=kor, fugen_f1=(Jm.get("fugenabgleich") or {}).get("feld"), datei=os.path.basename(mo) if rc_ == 0 and os.path.exists(mo) else None)
             if w_["mono"]["datei"]: mono_w.append(w_["name"])
         json.dump(FK, open(fkj, "w"), indent=1, ensure_ascii=False)
-        notiz(B, "mono", True, waende=mono_w, hinweis="ANSEHEN: relief/<wand>_mono.jpg (Foto | Scan | neu); fassaden_kette.anbauen setzt <wand>_mono.npz noch NICHT ein (Generator von Hand: relief_koerper(..., trend=True, rand_auslauf=False), grobes Relief mit dem Feld als tief_felder)")
+        notiz(B, "mono", True, waende=mono_w, hinweis="ANSEHEN: relief/<wand>_mono.jpg (Foto | Scan | neu); fassaden_kette.anbauen baut <wand>_mono.npz ein (seit 21.11.2026; OHNE_MONO=1 schaltet ab)")
     if dran("fenster") and os.path.exists(AU):                          # 15.11.2026: Fenster automatisch (Mehrfoto-Ortho -> OWLv2 -> Scheiben gruppieren); Probe Nordgiebel Schwabentor-Nachbarhaus: 6 von 6 sichtbaren Fenstern, 1-4 cm
         fo = os.path.join(D, "fassade"); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); fa = os.path.join(Z, "audit", "fenster_auto.json")
         if lauf(B, "fenster_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo, "--einzeln", "--min-flaeche", "6"], log)[0] == 0:
@@ -402,7 +402,7 @@ def main():
     # Von Hand eingetragene Werte (ohne "auto") bleiben unberuehrt (die Werkzeuge melden rc 3).
     if dran("bauplan") and os.path.exists(AU):
         fo = os.path.join(D, "fassade"); ffn = fo + "_fein"; bp_ = os.path.join(D, "bauplan"); os.makedirs(bp_, exist_ok=True); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); erg_ = {}
-        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
+        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
         if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
         else:
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
@@ -434,6 +434,7 @@ def main():
             for i_ in range(len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])):
                 vb_[f"f{i_:02d}"] = lauf(B, f"bauplan_sweep_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
             erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo], log, ok=(0, 3))[0]
+            if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
             if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
@@ -461,6 +462,23 @@ def main():
             wj = os.path.join(Z, "fotowuensche.json"); lauf(B, "foto_auftrag", [PY, "-W", "ignore", "-I", "tools/foto_auftrag.py", ZR, fo, os.path.join(D, f"fotoauftrag_{a.ziel}.html")] + (["--wunsch", wj] if os.path.exists(wj) else []), log)   # 16.11.2026: dem Nutzer zeigen, welche Fotos fehlen (Lageplan, Standorte, markierte Ziele)
             notiz(B, "seiten", not ung, ungesehen=ung, hinweis="" if not ung else "nach dem Nachregistrieren fassade_ortho/fassade_fein neu; bleibt die Wand leer: Kontaktbogen audit/seiten_luecken_kandidaten.jpg ansehen, Kamera aus Modellpunkten + tools/fassade_ein_foto.py (PIPELINE_FASSADEN.md 'Ungesehene Seite')")
         else: notiz(B, "seiten", False, fehler="kein fassaden.json (Stufe fenster) oder kein SfM-Netz/Datenbank")
+    # 21.11.2026 SACKGASSEN-TOR (Nutzer: "Warum wurde das nicht bemerkt? ... die fliessen nicht in die Kette ein"): der Ebenen-Sweep schrieb vier Tage lang Vorbau-'Vorschlaege',
+    # die kein Generator las, und die Stufe stand als 'in Ordnung' im Bericht. Hier je Kettenergebnis: liegt die Datei vor und hat Inhalt, MUSS der Generator (oder das von ihm
+    # gerufene Werkzeug) sie verbauen - sonst 'ok: False' mit Namen. Liste der bekannten offenen Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md.
+    if os.path.exists(gp_) and (dran("bauplan") or dran("fassaden") or dran("seiten")):
+        gtxt = open(gp_).read(); fk_txt = open(os.path.join(ROOT, "tools", "fassaden_kette.py")).read(); sg_ = []
+        def hat(f_, schl_=None):
+            if not os.path.exists(f_): return False
+            try: j_ = json.load(open(f_)); return bool(j_.get(schl_)) if schl_ else bool(j_)
+            except Exception: return os.path.getsize(f_) > 0
+        if hat(os.path.join(Z, "audit", "vorbauten_auto.json"), "fassaden") and "vorbauten_aus_json" not in gtxt: sg_.append("audit/vorbauten_auto.json (Vorbauten) - Generator ruft bauteile.vorbauten_aus_json nicht")
+        if glob.glob(os.path.join(Z, "relief", "*_mono.npz")) and not ("anbauen" in gtxt and "_mono.npz" in fk_txt): sg_.append("relief/*_mono.npz (Feinrelief) - fassaden_kette.anbauen baut es nicht ein")
+        if hat(os.path.join(Z, "audit", "oeffnungen_auto.json")) and "oeffnungen_aus_json" not in gtxt: sg_.append("audit/oeffnungen_auto.json (Boegen/Durchfahrten) - Generator ruft oeffnungen_aus_json nicht")
+        if hat(os.path.join(Z, "audit", "uhren_auto.json")) and any(v.get("uhren") for v in json.load(open(os.path.join(Z, "audit", "uhren_auto.json"))).values()) and "uhren_aus_json" not in gtxt: sg_.append("audit/uhren_auto.json (Uhren) - Generator ruft bauteile.uhren_aus_json nicht")
+        if hat(os.path.join(Z, "audit", "fenster_auto.json")) and "fenster_aus_json" not in gtxt: sg_.append("audit/fenster_auto.json (Fenster) - Generator ruft fenster_aus_json nicht")
+        fv_ = glob.glob(os.path.join(D, "fassade", "vorbauten_f*.json"))
+        if any(json.load(open(f_)).get("kandidaten") for f_ in fv_) and not os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")): sg_.append("fassade/vorbauten_fNN.json mit Kandidaten, aber keine Bauliste (tools/vorbauten_bauplan.py lief nicht)")
+        notiz(B, "sackgassen", not sg_, offen=sg_, hinweis="Kettenergebnisse ohne Verbraucher im Generator; bekannte, noch nicht verbaute Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md")
     if dran("html"):
         args = [PY, "-I", "tools/modell_3d_html.py", ZR, os.path.join(D, f"{a.ziel}_3d.html")]
         if os.path.exists(W): args += ["--wolke", W] + (["--farben", W.replace("punkte_modell_", "punkte_farben_")] if os.path.exists(W.replace("punkte_modell_", "punkte_farben_")) else [])
