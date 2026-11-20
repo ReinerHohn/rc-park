@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_formfund_tor.py - BEWEIS des Formfund-Pruefers (Spec modelle/SPEC_FORMFUND_TOR.md): positive Faelle muessen bestehen, negative durchfallen.
+"""test_formfund_tor.py - BEWEIS des Formfund-Pruefers (Spec modelle/archiv/SPEC_FORMFUND_TOR.md): positive Faelle muessen bestehen, negative durchfallen.
 
 Faelle (Teile-Ordner aus den Laufordnern des Kreises): Kennung -> (Lauf, vorher, nachher, Befund, Soll).
   positiv: Pruefer muss "besteht" (verbessert, nicht erfunden, sicher >= mittel) liefern.

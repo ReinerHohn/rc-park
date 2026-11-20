@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_feinsuche.py - SYNTHETISCHER BEWEIS fuer foto_feinsuche (modelle/SPEC_FEINSUCHE.md, Beweis 1).
+"""test_feinsuche.py - SYNTHETISCHER BEWEIS fuer foto_feinsuche (modelle/archiv/SPEC_FEINSUCHE.md, Beweis 1).
 Eine Testplatte mit aufgesetzten Rippen (bekannte Lage in Weltmetern) wird mit den ECHTEN Kameras von >= 4 kalibrierten Fotos (Blickwinkel >= 15 Grad auseinander) exakt
 gerastert und undurchsichtig in die echten Fotos kopiert. Modell A = glatte Platte OHNE Rippen (Rippen fehlen), Modell B = Platte MIT Rippen (nichts fehlt).
 Kette wie im echten Lauf: feinkanten_foto / feinkanten_modell / fein_gelb / flecken (teil_fotoform) -> beobachtungen -> GPU-Cluster -> Richtungstor (foto_feinsuche).

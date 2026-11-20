@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_formfamilie_nutzerfunde.py - Beweistest fuer tools/formfamilie_pruefen.py (Regel 3e, Spec modelle/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md).
+"""test_formfamilie_nutzerfunde.py - Beweistest fuer tools/formfamilie_pruefen.py (Regel 3e, Spec modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md).
 
 Die Testfaelle stehen NICHT im Code, sondern in modelle/<objekt>/masstabelle.json: jede Eintrag in `beobachtungen_offen` mit
   - 'nutzer' (klein geschrieben) im Feld `wer`,

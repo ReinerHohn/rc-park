@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """elementbuch.py - Elementbuch der Stufen-Laeufer (S1b, 2026-11-06): jedes neue/geaenderte/entfernte Element eines Kandidaten muss LOKAL bestehen.
 
-Hintergrund (modelle/LOG_2026-11-05_FEHLER_UND_STAND.md, Fehler 5): ein Kandidat war im Mittel ueber alle Fotos besser, hat aber ein gutes Altelement
+Hintergrund (modelle/archiv/LOG_2026-11-05_FEHLER_UND_STAND.md, Fehler 5): ein Kandidat war im Mittel ueber alle Fotos besser, hat aber ein gutes Altelement
 (4 Boegen der Hauptfassade) verloren; der globale Gewinn kam aus anderen Elementen. Der Mittelwert sieht das nicht.
 
 Daten: Elementdatei des Baus (ELEMENTE_AUS; Beleg-Felder `geo_elemente` + `rahmen` + `fassade` aus baukasten_gen.fassade_auto / bloecke_wolke) und je Foto

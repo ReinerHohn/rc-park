@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""realitaet_form.py - FORMNOTE (Realitaet Teil 2: Form). Spec modelle/SPEC_FORMNOTE.md (Nutzerentscheid 11.11.).
+"""realitaet_form.py - FORMNOTE (Realitaet Teil 2: Form). Spec modelle/archiv/SPEC_FORMNOTE.md (Nutzerentscheid 11.11.).
 
 Foto-F1 misst nur LAGE der Kanten und ist blind fuer die Form. Hier urteilt ein Bildpruefer (claude -p, opus) je Bauteil ueber die FORM:
 Je Teil feste Wahl von 3-4 Fotos (+ 1 Kontur-Kachel), je Foto ein Zweierbild Fotoausschnitt | Render (Teil orange, Rest grau).

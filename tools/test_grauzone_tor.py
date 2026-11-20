@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_grauzone_tor.py - BEWEIS des Grauzonen-Tors (Spec modelle/SPEC_GRAUZONE_TOR.md).
+"""test_grauzone_tor.py - BEWEIS des Grauzonen-Tors (Spec modelle/archiv/SPEC_GRAUZONE_TOR.md).
 
 Der Grauzonen-Pruefer ist der Formfund-Pruefer OHNE Befundtext und ohne Absicht (`formfund_pruefen --ohne_befund`): nur Teilname und Dreierbilder.
 Bestanden = verbessert true, erfunden false, sicher hoch (strenger als das Formfund-Tor).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_wolke_solid.py - Beweise T1-T4' der Spec S3b (vorab festgelegt, modelle/SPEC_S3b_WOLKE_ZUERST.md + Nutzerentscheid 5.11. 20:10/20:15).
+"""test_wolke_solid.py - Beweise T1-T4' der Spec S3b (vorab festgelegt, modelle/archiv/SPEC_S3b_WOLKE_ZUERST.md + Nutzerentscheid 5.11. 20:10/20:15).
 
 Unterbefehle (jeder einzeln aufrufbar; foto_diff ist GPU-Arbeit -> per tools/job_start.sh, GPU-Sperre):
   fotodiff  OBJEKT.json STL AUSORDNER FOTOS(Komma) MASKENORDNER   foto_diff mit --bewertung-maske (kosten_lr) wie der lr-Nachtest (Register CM)

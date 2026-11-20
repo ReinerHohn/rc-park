@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""wolke_solid.py - "Wolke zuerst" (Spec modelle/SPEC_S3b_WOLKE_ZUERST.md, Nutzer 5.11. 19:45): Buendelwolke -> druckbarer Solid, das Modell nur als Fueller.
+"""wolke_solid.py - "Wolke zuerst" (Spec modelle/archiv/SPEC_S3b_WOLKE_ZUERST.md, Nutzer 5.11. 19:45): Buendelwolke -> druckbarer Solid, das Modell nur als Fueller.
 
 Kette (nur Bausteine der vorhandenen Werkzeuge, nichts nachgebaut):
   1 Flaechen   fassaden.json (fassade_ortho)                      - Tiefenfeld je Flaeche: restfeld_fassade.main (Daten q 0,8, >= 3 Kameras, Band -4..+2 m, Modell per Strahl)

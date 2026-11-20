@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synthetischer Beweis des lokalen Foto-Tors (modelle/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs):
+"""Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs):
  1. erfundenes Detail (Kasten 0,4 m an der Bruestung) -> lokaler F1 darf nicht um >= 0,05 steigen
  2. echtes Detail (Teil entfernt = vorher, vorhanden = nachher) -> lokal >= +0,05
  3. dasselbe Teil 0,3 m versetzt (nachher) gegen richtig liegend (vorher) -> lokal muss FALLEN

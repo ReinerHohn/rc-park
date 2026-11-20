@@ -1,5 +1,5 @@
 """gitter_kurven.py - Kettenbildung von 3D-Kantenpunkten (Tiefen-Sweep) zu geordneten Zuegen mit Modellwahl Gerade / Kreisbogen / kubische Bezier
-(Idee: 3D Curvix / 3D Edge Sketch, Brown/Kimia; Eigenbau, modelle/RECHERCHE_KANTENGITTER_NEU_2026-11-09.md Eintrag 2).
+(Idee: 3D Curvix / 3D Edge Sketch, Brown/Kimia; Eigenbau, modelle/archiv/RECHERCHE_KANTENGITTER_NEU_2026-11-09.md Eintrag 2).
 Aufruf: gitter_kurven.py SWEEP.npz[,SWEEP2.npz,...] GITTER_IN.json OUT.json [--kam kam_lot2.json --stabil STABILDIR [--wolke KANTEN.npz --ztol 0.5]] [--ohne_verbinden] [--vox 0.06] [--kmin 3] [--tol 0.03] [--minlen 0.3] [--minpkt 8] [--rlink 0.10] [--winkel 30]
         [--k 12] [--lin 0.5] [--maxabw 0.10] [--rand 2.0] [--abtast 0.10] [--kref 0]
 Schritte: (1) Konsens: Voxel `vox`, nur Voxel mit >= kmin verschiedenen Referenzfotos (`ref`), Mittelpunkt je Voxel (GPU).

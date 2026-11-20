@@ -66,7 +66,7 @@ def richtungen(maske, winkel=30.0):
     return maske & (np.abs(np.cos(th)) < sw), maske & (np.abs(np.sin(th)) < sw)
 
 
-# FEINMASS (11.11., modelle/SPEC_ORNAMENT_FEINMASS.md): Nebenzahl f1_fein, Hauptzahl F1 unveraendert (eigenes Etikett METRIK_FEIN, METRIK bleibt -> Kreis-Caches bleiben gueltig).
+# FEINMASS (11.11., modelle/archiv/SPEC_ORNAMENT_FEINMASS.md): Nebenzahl f1_fein, Hauptzahl F1 unveraendert (eigenes Etikett METRIK_FEIN, METRIK bleibt -> Kreis-Caches bleiben gueltig).
 # Grund: die Hauptzahl glaettet Kanten auf 0,18 m und ist blind fuer Rippen/Sprossen/Masswerk (Erker-Varianten: F1 0,574/0,570/0,574 bei klar verschiedenen Renderbildern).
 METRIK_FEIN = "fein_v1"
 FEIN_TOL_M = 0.03      # Toleranz in Metern (Kamera -> Pixel ueber die Teiltiefe)

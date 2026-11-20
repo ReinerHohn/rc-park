@@ -1,7 +1,7 @@
 # Fassaden-Pipeline (Stand 15.11.2026)
 
 Was nach den Kameras (SfM, Tore) automatisch aus einer Fassade wird. Entstanden am Schwabentor (Turm + Nachbarhaus),
-gegengeprueft am Historischen Kaufhaus. Verlauf, Zahlen und Sackgassen: `modelle/STAND_2026-11-14.md` ab "12:40 PIPELINE-AUTOMATISIERUNG".
+gegengeprueft am Historischen Kaufhaus. Verlauf, Zahlen und Sackgassen: `modelle/archiv/STAND_2026-11-14.md` ab "12:40 PIPELINE-AUTOMATISIERUNG".
 Grundsatz (CLAUDE.md, KERNMETHODE): Form aus Fotokanten und Fotomassen; Netz/Wolke liefern Lage und Bruchstein-Relief; alles Generierte heisst ANNAHME.
 
 ## GRUNDSATZ: Wandbild = Bauplan (Nutzer 17.11.2026: "ein gigantischer Schritt")

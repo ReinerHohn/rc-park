@@ -112,7 +112,7 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 | 2026-11-06 S10 Teil B Kandidat EMAP (cvg/EMAP) / NEF | EMAP: README nennt MIT fuer die Mehrheit, Basis NeuS/NeuralUDF/MeshUDF nicht einzeln geprueft; NEF nicht geprueft. NICHT eingebaut; Eigenbau tools/kanten_feld3d.py (eigener Code) | (MIT, unvollstaendig) | nicht verwendet |
 
 ## Nachtrag 2026-11-06 (Recherche Gaussian-Splatting-Mesh, noch NICHT eingesetzt)
-| Werkzeug | Lizenz (laut Recherche, Quellen in `modelle/RECHERCHE_2026-11-06_METHODEN.md`) | Status |
+| Werkzeug | Lizenz (laut Recherche, Quellen in `modelle/archiv/RECHERCHE_2026-11-06_METHODEN.md`) | Status |
 |---|---|---|
 | 2DGS Original (hbb1), PGSR (zju3dv), MILo, GOF, 3DGS Inria | Forschungs-/Nicht-kommerzielle Lizenz (PGSR nur ueber Index "other" gesehen, LICENSE.md vor Einsatz lesen) | ⚠ NUR Test (Stufe A), nie in die Verkaufs-Pipeline |
 | gsplat (nerfstudio) | Apache-2.0 | ✓ fuer Stufe B (Eigenbau); 2DGS-Training/Mesh-Extraktion dort nicht dokumentiert |
@@ -134,13 +134,13 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 | `tools/handy_masken_v2.py`, `tools/handy_masken_vergleich.py`, `tools/test_handy_masken_v2.py` | eigener Code; opencv, numpy, torch, torchvision (NMS) | ✓ unkritisch | - | - |
 | SAM2 | Apache-2.0 laut Recherche, aber Gewichte NICHT im Cache und NICHT geladen (Datenplatte ~10 GB frei) | nicht eingesetzt | - | - |
 
-## Nachtrag 7.11. (Recherche modelle/RECHERCHE_2026-11-07_MESH_KANTEN.md, Quelle Subagent aus Repo-Seiten/Suchtreffern - vor Verkauf LICENSE-Dateien selbst lesen)
+## Nachtrag 7.11. (Recherche modelle/archiv/RECHERCHE_2026-11-07_MESH_KANTEN.md, Quelle Subagent aus Repo-Seiten/Suchtreffern - vor Verkauf LICENSE-Dateien selbst lesen)
 - OpenMVS (unser Netz-Sieger Delaunay+GraphCut, RefineMesh): AGPL-3.0 -> fuer Verkauf kritisch, nur Testwerkzeug.
 - CGAL Alpha_wrap_3 / KSR / PolyFit: GPL-3.0+ oder kommerziell (GeometryFactory); City3D GPL-3 -> nur Test.
 - 2DGS / MILo / GOF: nicht-kommerzielle Gaussian-Splatting-Lizenz (2DGS unklar); nvdiffrast: NVIDIA Source Code License. PyTorch3D vermutlich BSD-3 (ungeprueft).
 - Frei: LIMAP (BSD-3), manifold3d (Apache-2.0), fTetWild (MPL-2.0 laut Index; Original-TetWild GPL). Ungeprueft: Line3D++, Instant Meshes, PlanarSplatting-Codestand.
 - 7.11. Nutzerfreigabe: Web-Bilder inkl. Google Maps/Earth/Street View nur fuer privaten Machbarkeitstest; vor Veroeffentlichung/Verkauf jede Bildlizenz (LIZENZ_BILDER.json) pruefen, Google-Inhalte voraussichtlich nicht freigebbar.
-- 7.11. Fenster-Recherche (Agent, Quelle modelle/RECHERCHE_2026-11-07_FENSTER.md): pycma BSD-3 (geprueft), PyTorch3D BSD-3 (geprueft), scipy BSD-3; nvdiffrast NUR nicht-kommerziell (geprueft) -> nicht fuer Verkauf; Optuna/nevergrad aus Gedaechtnis, vor Einsatz pruefen.
+- 7.11. Fenster-Recherche (Agent, Quelle modelle/archiv/RECHERCHE_2026-11-07_FENSTER.md): pycma BSD-3 (geprueft), PyTorch3D BSD-3 (geprueft), scipy BSD-3; nvdiffrast NUR nicht-kommerziell (geprueft) -> nicht fuer Verkauf; Optuna/nevergrad aus Gedaechtnis, vor Einsatz pruefen.
 - 7.11. abends: CGAL 6.0.1 (Release-Tarball, GitHub) in /media/oem/scan/cgal_ksr gebaut, Kinetic_surface_reconstruction_3 (KSR) als Testwerkzeug (`/media/oem/scan/cgal_ksr/work/ksr_run`, header-only, GPL-3.0+ / kommerziell GeometryFactory) -> NUR TEST, nicht in ein verkauftes Produkt. Abhaengigkeiten System (Boost, GMP, MPFR, Eigen3), kein sudo.
 - 7.11. PolyGNN (chenzhaiyu/polygnn): MIT (LICENSE-Datei im Klon gelesen). Vortrainierter Checkpoint (Munich, ~42 MB, Google-Drive-Link in conf/dataset/munich.yaml) - Gewichtslizenz/Trainingsdaten (Munich-LoD2/Luftbild-Punktwolken, Zenodo) NICHT geprueft -> vor Verkauf klaeren. abspy 0.2.6 (Zellkomplex) braucht SageMath, nicht installiert; torch_scatter durch eigenen Shim ersetzt (/media/oem/scan/polygnn_test/shim). tools/polygnn_auswahl.py nutzt nur Modell + Checkpoint.
 

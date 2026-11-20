@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_realitaet_form.py - Beweis zu tools/realitaet_form.py (Spec modelle/SPEC_FORMNOTE.md).
+"""test_realitaet_form.py - Beweis zu tools/realitaet_form.py (Spec modelle/archiv/SPEC_FORMNOTE.md).
   1. Fallen fallen alle durch (form < 0,5).   2. Bekannte Paare: besseres Teil hat hoehere Formnote (a125135, a095328, a091923 r2).
   3. --wiederholung: zwei Laeufe ohne Cache auf dem aktuellen Modell, Abweichung je Teil (darf bei hoechstens 10 % der Teile 0,5 betragen).
 Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/test_realitaet_form.py <objekt> --teile_dir D [--paare] [--wiederholung] [--cache_dir C]

@@ -1,4 +1,4 @@
-"""foto_feinsuche.py - FEHLENDE FEINFORM automatisch finden (modelle/SPEC_FEINSUCHE.md, Nutzer 11.11. "automatische Feinsuche auf jeden Fall").
+"""foto_feinsuche.py - FEHLENDE FEINFORM automatisch finden (modelle/archiv/SPEC_FEINSUCHE.md, Nutzer 11.11. "automatische Feinsuche auf jeden Fall").
 
 Grobe Variante: foto_fehlteile.py (gelbe Flecken >= 2000 px, 0,18-m-Glaettung). Hier dieselbe Kette fuer die FEINEN Fotokanten:
 teil_fotoform liefert je Teil und Foto 'flecken_fein' = die groessten zusammenhaengenden Feinkanten des Fotos (voll aufgeloest, Canny sigma 1), zu denen es

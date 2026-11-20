@@ -54,8 +54,8 @@ Abk.: CL=CLAUDE.md, RA=modelle/REGELN_AUSFUEHRLICH.md, M:=memory/<datei>.md
 42. Kontext sparen: Ausgaben kuerzen (cut/head/tail), CLAUDE.md/MEMORY.md klein. (CL, M:feedback-kontext-sparen)
 
 ### VERALTET / WIDERSPRUECHLICH (ausdruecklich)
-- CL "Aktueller Stand: modelle/STAND_2026-11-14.md (UEBERGABE am Ende)" und M:stand-2026-11-15 -> VERALTET. Aktuell: modelle/ZIEL_PIPELINE_H0.md (UEBERGABE 18.11. 17:40 + NACHTRAG 20.11.) -> modelle/LOGBUCH_KETTENTEST_2026-11-19.md (UEBERGABE 20.11. ~09:00). M:project-ziel-h0-von-null ist richtig, die beiden anderen widersprechen ihm.
-- CL "Offene Arbeit: modelle/AUFGABENLISTE_2026-11-16.md" + M:project-aufgabenliste-1611: groesstenteils ERLEDIGT (1a,1c,1e,2,3,5); offen nur 1b,1d,4,6 – in ZIEL_PIPELINE_H0 aufgehen lassen, nicht mehr als Sitzungsstart-Pflicht.
+- CL "Aktueller Stand: modelle/archiv/STAND_2026-11-14.md (UEBERGABE am Ende)" und M:stand-2026-11-15 -> VERALTET. Aktuell: modelle/ZIEL_PIPELINE_H0.md (UEBERGABE 18.11. 17:40 + NACHTRAG 20.11.) -> modelle/LOGBUCH_KETTENTEST_2026-11-19.md (UEBERGABE 20.11. ~09:00). M:project-ziel-h0-von-null ist richtig, die beiden anderen widersprechen ihm.
+- CL "Offene Arbeit: modelle/archiv/AUFGABENLISTE_2026-11-16.md" + M:project-aufgabenliste-1611: groesstenteils ERLEDIGT (1a,1c,1e,2,3,5); offen nur 1b,1d,4,6 – in ZIEL_PIPELINE_H0 aufgehen lassen, nicht mehr als Sitzungsstart-Pflicht.
 - RA 9d(b) "param_wolke_fit.py --fotos ... Status: noch NICHT gebaut" -> VERALTET: `tools/param_wolke_fit.py` hat `--fotos` (Zeile 17).
 - RA 9c(d) Status-Satz (GPU-Sweep, FFT offen) = Stand 8.11., Arbeitsnotiz, keine Regel.
 - RA "Vor neuen Versuchen lesen": LERNJOURNAL_MARTINSTOR, PIPELINE_H0 (Stand 31.10.), PROTOKOLL_VALIDATOR – alt (Oktober), nicht mehr Pflichtlektuere.

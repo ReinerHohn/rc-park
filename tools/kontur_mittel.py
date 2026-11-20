@@ -1,7 +1,7 @@
 """Konturen mitteln und Boegen anpassen (rein numerisch, ohne Objektbezug).
  - mittelform(): gleiche Elemente (z. B. 5 Fenster) ausrichten (Verschiebung, Skalierung, zyklische Startpunkt-Verschiebung) und per Median/Mittel zu EINER Form zusammenfassen.
  - kreis_fit()/boegen_finden(): Kreisbogen-RANSAC auf Kantenpunkten (GPU wenn vorhanden), liefert Mittelpunkt, Radius, Oeffnungswinkel.
-Quelle der Methoden: modelle/RECHERCHE_FASSADE_FLAECHEN_2026-11-08.md (Procrustes-Mittelung, Kreis-RANSAC); Eigenentwurf des Medians je Punkt (kein fertiges Verfahren belegt).
+Quelle der Methoden: modelle/archiv/RECHERCHE_FASSADE_FLAECHEN_2026-11-08.md (Procrustes-Mittelung, Kreis-RANSAC); Eigenentwurf des Medians je Punkt (kein fertiges Verfahren belegt).
 Beweis: tools/test_kontur_mittel.py --synth"""
 import numpy as np
 

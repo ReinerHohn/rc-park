@@ -21,7 +21,7 @@ if len(a) < 5: print(__doc__); sys.exit(2)
 GIN, KAMF, SD, OUT = a[1], a[2], a[3], a[4]
 SCHRITTE, MAXSHIFT, LR, MAXWINKEL, MAXDIST = g("--schritte", 60, int), g("--maxshift", 0.05), g("--lr", 0.01), g("--maxwinkel", 5.0), g("--maxdist", 40.0)
 # maxshift-Standard 0,05 (nicht 0,15): gemessen 9.11. am Kaufhaus v7 - 15 cm: Abdeckung Wolkenkanten z<12 0,90->0,86, 12-15 0,82->0,75 (Doppellinien rasten auf EINE Kante);
-# 8 cm: 0,88/0,78; 5 cm: 0,89/0,80 (Tor: nicht > 2 Punkte schlechter) bei Stuetzung 0,469->0,50. Siehe modelle/LOG_VERFEINERN_2026-11-09.md.
+# 8 cm: 0,88/0,78; 5 cm: 0,89/0,80 (Tor: nicht > 2 Punkte schlechter) bei Stuetzung 0,469->0,50. Siehe modelle/archiv/LOG_VERFEINERN_2026-11-09.md.
 MERGE, KOLL, KOLLW, STUETZ_PX, LOESCH, NUR = g("--merge", 0.06), g("--kollinear", 0.04), g("--kollwinkel", 3.0), g("--stuetz_px", 4.0), g("--loesch", 0.70), g("--nur", 0, int)
 THR, NS, MINSICHT, DECKEL, Q = 0.3, 24, 12, 20.0, 10.0   # Kantenschwelle, Abtastpunkte je Segment, Mindestzahl sichtbarer Punkte, DT-Deckel px, DT-Quantisierung (1/Q px)
 SCHUTZ = {4, 7}                                             # Quellen, die (c) nie loescht (Helm-/Pfeiler-Formen)

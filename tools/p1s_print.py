@@ -7,7 +7,11 @@
 import sys, json, ssl, ftplib, time
 import paho.mqtt.client as mqtt
 
-IP = "192.168.178.125"; CODE = "<P1S_CODE>"; SN = "<P1S_SN>"
+import os as _os
+_ZUG = _os.path.expanduser("~/.config/rcpark/p1s.json")   # Zugang nicht im Repo (20.11.2026): {"ip": ..., "code": ..., "sn": ...}
+try: _z = json.load(open(_ZUG))
+except FileNotFoundError: sys.exit(f"Zugangsdatei fehlt: {_ZUG} mit ip/code/sn des P1S anlegen (chmod 600)")
+IP, CODE, SN = _z["ip"], _z["code"], _z["sn"]
 
 
 class _FTPI(ftplib.FTP_TLS):

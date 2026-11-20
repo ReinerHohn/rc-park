@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_sweep_synth.py <objekt> --wolke w.npy: Beweistest der GPU-Sweep-Methode fuer ALLE aktiven Bauteile (modelle/METHODE_GPU_SWEEP.md).
+"""test_sweep_synth.py <objekt> --wolke w.npy: Beweistest der GPU-Sweep-Methode fuer ALLE aktiven Bauteile (modelle/archiv/METHODE_GPU_SWEEP.md).
 Wolke = Modellflaeche um bekannten Versatz verschoben; der Sweep muss ihn auf < 3 cm zurueckfinden. Exit 1, wenn ein Bauteil durchfaellt."""
 import sys, os, json, re, subprocess, argparse
 ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--wolke", required=True); ap.add_argument("--versatz", default="0.8,-1.2,0.5;-1.5,1.0,-0.7"); a = ap.parse_args()

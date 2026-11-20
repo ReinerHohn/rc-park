@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """teil_render_foto.py - schattiertes Teil-Render aus der kalibrierten Fotokamera NEBEN dem Fotoausschnitt (Pruefbild fuer Agenten/Pruefer).
-Warum (11.11., modelle/SPEC_ORNAMENT_FEINMASS.md): die Foto-Metrik (teil_fotoform, 0,18-m-Glaettung) ist blind fuer Rippen/Sprossen/Masswerk/Schuppen; im schattierten
+Warum (11.11., modelle/archiv/SPEC_ORNAMENT_FEINMASS.md): die Foto-Metrik (teil_fotoform, 0,18-m-Glaettung) ist blind fuer Rippen/Sprossen/Masswerk/Schuppen; im schattierten
 Render sieht man sie sofort. Foto wird wie in foto_diff um k1 entzerrt (Renderer = Lochkamera); Teilpixel hinter dem GANZEN Modell (Verdeckung) werden schraffiert
 statt gezeigt; GPU-Raster render_kern.
 

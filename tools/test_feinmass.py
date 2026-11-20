@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_feinmass.py - SYNTHETISCHER BEWEIS fuer f1_fein (modelle/SPEC_ORNAMENT_FEINMASS.md).
+"""test_feinmass.py - SYNTHETISCHER BEWEIS fuer f1_fein (modelle/archiv/SPEC_ORNAMENT_FEINMASS.md).
 Testflaeche mit aufgesetzten Rippen (bekannte Lage, Metrik in m) wird mit der echten Kamera eines kalibrierten Fotos exakt gerastert und als undurchsichtiges Paneel in das
 ECHTE Foto kopiert (Foto = Wahrheit mit Rippen an bekannter Stelle). Modelle: (a) Rippen richtig, (b) Rippen um 0,15 m versetzt, (c) glatte Flaeche ohne Rippen.
 Erwartung: f1_fein (a) deutlich > (b), (c); die Grobzahl (Analog zur Hauptzahl: dieselben Kanten, Toleranz 0,14 m, Foto-Kanten nach 0,18-m-Glaettung) trennt (a) von (b)/(c)

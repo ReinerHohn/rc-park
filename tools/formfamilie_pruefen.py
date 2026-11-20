@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""formfamilie_pruefen.py - FORMFAMILIEN-SICHTPRUEFUNG JE BAUTEIL (Spec modelle/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md, Nutzerauftrag 11.11.).
+"""formfamilie_pruefen.py - FORMFAMILIEN-SICHTPRUEFUNG JE BAUTEIL (Spec modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md, Nutzerauftrag 11.11.).
 
 Warum: Die Kantenmessung (Foto-F1) misst Kantendichte, keine Formfamilie (Lehren L46/L47): Saegezahn statt Treppe, spitz statt rund, Rechteck statt Bogen,
 zu niedriger Sockel, fehlende Aufsaetze/Gelaender blieben im Kreis unbemerkt. Hier tut das Werkzeug, was der Nutzer tut: Foto und Modell-Render

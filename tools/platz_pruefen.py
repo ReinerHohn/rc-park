@@ -20,7 +20,7 @@ def main():
         print(f"{name:5s} {pfad}: {frei:6.1f} GB frei (Grenze {grenze:g} GB) {'ZU WENIG' if zu else 'ok'}")
         ok = ok and not zu
     if not ok:
-        print("PLATZ ZU KNAPP - Lauf abgebrochen (Exit 3). Platz schaffen, siehe modelle/STAND_2026-11-06.md G1.", file=sys.stderr)
+        print("PLATZ ZU KNAPP - Lauf abgebrochen (Exit 3). Platz schaffen, siehe modelle/archiv/STAND_2026-11-06.md G1.", file=sys.stderr)
         return 3
     return 0
 

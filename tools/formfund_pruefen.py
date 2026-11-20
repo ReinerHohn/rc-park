@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""formfund_pruefen.py - FORMFUND-PRUEFER (Spec modelle/SPEC_FORMFUND_TOR.md, Nutzerentscheid 11.11.).
+"""formfund_pruefen.py - FORMFUND-PRUEFER (Spec modelle/archiv/SPEC_FORMFUND_TOR.md, Nutzerentscheid 11.11.).
 
 Warum: Bei Formfunden des Nutzers (Treppe statt Saegezahn, Balkon-Stirnen) ist die Kantenmessung blind (Foto-F1 -0,002 / +0,004).
 Gebraucht wird, was der Nutzer tut: Foto, Modell VORHER und Modell NACHHER nebeneinander ansehen.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""beweis_ansatz.py - Vergleichslauf "Welcher Ansatz ist bei unserer Datenlage der beste?" (modelle/SPEC_BEWEIS_ANSATZ.md, 2026-11-06).
+"""beweis_ansatz.py - Vergleichslauf "Welcher Ansatz ist bei unserer Datenlage der beste?" (modelle/archiv/SPEC_BEWEIS_ANSATZ.md, 2026-11-06).
 
 Verfahren je Objekt, gleiche Eingaben, gleiche Metriken, alles skriptiert (Handarbeit = 0):
   A Photogrammetrie : dichte Wolke (fused.ply + Ausrichtung -> Modellrahmen) -> Normalen schaetzen -> Poisson (Open3D, venv-mesh) -> groesste Komponente

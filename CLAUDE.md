@@ -1,5 +1,5 @@
 # RC-Park – Arbeitsregeln (Kurzfassung)
-Fotos -> SfM (COLMAP) -> 3D -> druckbares H0-Modell (1:87), wird verkauft. Deutsch, Anrede "mein grosser Meister", keine breiten Tabellen.
+Fotos -> SfM (COLMAP) -> 3D -> druckbares H0-Modell (1:87), wird verkauft. Deutsch, Anrede "Meister", keine breiten Tabellen.
 Stand zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> dort verlinktes Logbuch (UEBERGABE am Ende). Sitzungsbeginn: Skill `sitzungsbeginn`.
 Volltext aller Regeln: `modelle/REGELN_AUSFUEHRLICH.md` (nur gezielt per grep lesen).
 

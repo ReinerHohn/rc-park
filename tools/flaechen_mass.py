@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""flaechen_mass.py - FLAECHENMASS (Spec modelle/SPEC_FLAECHENMASS.md, Nutzerentscheid 11.11.): Formvergleich ueber FLAECHEN statt Kanten.
+"""flaechen_mass.py - FLAECHENMASS (Spec modelle/archiv/SPEC_FLAECHENMASS.md, Nutzerentscheid 11.11.): Formvergleich ueber FLAECHEN statt Kanten.
 
 Warum: der Foto-F1 (teil_fotoform.py) zaehlt Kanten und ist blind fuer Formfamilien (Treppe gegen Saegezahn -0,002, Rechteck gegen Bogen).
 Hier: je Foto und Teil zerlegt SAM (facebook/sam-vit-large, Apache-2.0, transformers mask-generation) den Teilausschnitt in Flaechen; das Modell

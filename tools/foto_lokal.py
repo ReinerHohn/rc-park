@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""foto_lokal.py - LOKALES FOTO-TOR (modelle/SPEC_LOKALES_FOTOTOR.md): F1 eines Teils im AENDERUNGSBEREICH, vorher vs. nachher, plus F1 ganz (Festbereich).
+"""foto_lokal.py - LOKALES FOTO-TOR (modelle/archiv/SPEC_LOKALES_FOTOTOR.md): F1 eines Teils im AENDERUNGSBEREICH, vorher vs. nachher, plus F1 ganz (Festbereich).
 
 Fuer ein Teil (oder alle geaenderten) zwei Teile-Ordner (vorher/nachher) und Fotos. Je Foto:
   Aenderungsmaske = Silhouette-XOR | Tiefe >0,05 m | Normale >20 Grad (Teil vorher gegen nachher), um schwelle x Kappe (0,14 m) erweitert.
