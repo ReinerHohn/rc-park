@@ -100,5 +100,29 @@
   "eigen__IMG_20261106_113029 1300 900 2700 3900",
   "eigen__IMG_20261106_113602 500 800 3000 3400",
   "dl_commons__010_Freiburg_im_Breisgau-_Schwabentor_-_51733735810"
- ]
+ ],
+ "regression": {
+  "hinweis": "20.11.2026: Generator + Pruefstand (kein SfM, kein GPU); Beweis fuer Werkzeug-/Generatoraenderungen (tools/regression.py).",
+  "kette": [
+   "SCALE=87 MINMM=0.8 {RC} modelle/schwab_v3_gen.py",
+   "{PY} -W ignore -I tools/pruefstand.py {OBJ}"
+  ],
+  "dateien": {
+   "stl": {
+    "pfad": "../stl/schwab_v3_1-87.stl",
+    "art": "stl",
+    "toleranz": 0.001
+   },
+   "masstabelle": {
+    "pfad": "masstabelle.json",
+    "art": "masstabelle",
+    "toleranz": 0.005
+   },
+   "pruefbericht": {
+    "pfad": "pruefbericht.json",
+    "art": "pruefbericht",
+    "toleranz": 0.02
+   }
+  }
+ }
 }

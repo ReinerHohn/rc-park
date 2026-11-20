@@ -22,7 +22,7 @@ WISSENSBAUM (nie ganze Ordner/grosse Dateien lesen): Dokumente `modelle/INDEX.md
 
 ## Technik
 - Grosse Daten nie auf Root: `/media/oem/scan/...` (knapp) bzw. `/media/oem/rcdaten` (gross), Symlinks. Ohne /media/oem/scan kein git. Toshiba-Platte nie anfassen.
-- Python: `/media/oem/scan/venv-seg/bin/python -I` (torch/CUDA), `/media/oem/scan/venv-colmap/bin/python -I` (pycolmap), Generator `~/.venvs/rcpark` (trimesh). Nackter `python3` hat weder trimesh noch pycolmap (224 Fehler bisher) - nur fuer reine Hilfsskripte.
+- Python: `/media/oem/scan/venv-seg/bin/python -I` (torch/CUDA), `/media/oem/scan/venv-colmap/bin/python -I` (pycolmap), Generator `~/.venvs/rcpark` (trimesh). Einfachster Weg: `tools/py <werkzeug.py> ...` (waehlt die Umgebung nach Importen). Nackter `python3` hat weder trimesh noch pycolmap (224 Fehler bisher).
 - Lange Jobs nur per Skill `langer-job` (`tools/job_start.sh` mit JOB_GPU_MB/JOB_RAM_MB); vorher Dummy-Test; GPU immer nutzen, VRAM-Summe <= 7000 MiB.
 - Nie zwei Optimierer/Generatorlaeufe mit gleicher Zwischendatei parallel. Nie `pkill -f` mit Muster aus der eigenen Befehlszeile.
 - Loeschen nur nach ausdruecklichem "Ja". Kein Push ohne Auftrag. Eigene Aenderungen sofort committen (Skill `logbuch-commit`), Attribution-Zeilen. Hook nur Nutzer.

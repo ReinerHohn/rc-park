@@ -3,6 +3,11 @@
 #   tools/bauen_abnehmen.sh martinstor          -> Generator aus objekt.json, dann tools/pruefstand.py, dann tools/seiten_audit.py (Sichtblatt)
 #   tools/bauen_abnehmen.sh martinstor --nur-pruefen
 # Danach zeigen/committen/Viewer NUR bei "alle Pruefungen bestanden" UND nachdem das Sichtblatt angesehen wurde (Lehre F5/F6).
+# RCPARK_KURZ=1 (20.11.2026, Kontext sparen): volle Ausgabe ins Log, auf dem Bildschirm nur Befunde + Summenzeile "ABNAHME <obj> rc=.. log=..".
+if [ "${RCPARK_KURZ:-0}" = "1" ] && [ -z "${_BA_INNEN:-}" ]; then
+  L=/media/oem/scan/rc-park_daten/job_logs/abnahme_$1.log; _BA_INNEN=1 RCPARK_KURZ=0 bash "$0" "$@" > "$L" 2>&1; R=$?
+  grep -E 'bestanden|ACHTUNG|FEHLGESCHLAGEN|ABBRUCH|FEHLER|nicht erfuellt' "$L" | tail -10 | cut -c1-200; echo "ABNAHME $1 rc=$R log=$L"; exit $R
+fi
 set -e
 cd "$(dirname "$0")/.."
 python3 tools/platz_pruefen.py || exit 3   # Platztor (G1)
@@ -80,4 +85,5 @@ PYE
 NF=$(grep -c -E "Traceback \(most recent|out of memory|OutOfMemory|Foto\): FEHLER |Killed|Getoetet" "$MIT" || true)
 if [ "$NF" != "0" ]; then echo "ACHTUNG: $NF Zeile(n) mit Absturz/Fehler in den Nebenpruefungen (Modell neben Foto, Umriss-Tor, Diagnosen) - 'bestanden' gilt nur fuer den Pruefstand:"; grep -E "Traceback \(most recent|out of memory|OutOfMemory|Foto\): FEHLER |Killed|Getoetet" "$MIT" | cut -c1-160 | sort | uniq -c | head -5; fi
 rm -f "$MIT"; sleep 0.2
+echo "ABNAHME $1 rc=$RC (0 = alle Pruefungen bestanden; Sichtblatt modelle/$1/audit/seiten.jpg ansehen)"
 exit $RC

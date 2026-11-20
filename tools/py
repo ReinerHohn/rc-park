@@ -1,0 +1,17 @@
+#!/bin/bash
+# tools/py [seg|col|gen] <werkzeug.py> [argumente...] - startet ein Werkzeug mit der RICHTIGEN Python-Umgebung (20.11.2026: 224 ModuleNotFoundError
+# durch nacktes python3). Ohne Angabe entscheidet der Import: pycolmap -> col (venv-colmap), torch/cv2/kornia/lightglue -> seg (venv-seg),
+# trimesh/manifold3d/shapely -> gen (~/.venvs/rcpark), sonst seg. Immer mit -I. Beispiel: tools/py tools/modell_zerlegen.py <sparse>
+set -u
+declare -A U=([seg]=/media/oem/scan/venv-seg/bin/python [col]=/media/oem/scan/venv-colmap/bin/python [gen]="$HOME/.venvs/rcpark/bin/python")
+if [ -n "${1:-}" ] && [ -n "${U[$1]:-}" ]; then W=$1; shift; else W=""; fi
+[ -n "${1:-}" ] || { sed -n 2,4p "$0"; exit 2; }
+T=$1; [ -f "$T" ] || { [ -f "$(dirname "$0")/$T" ] && T="$(dirname "$0")/$T"; }
+[ -f "$T" ] || { echo "tools/py: $1 nicht gefunden" >&2; exit 2; }
+if [ -z "$W" ]; then
+  if grep -qE '^\s*(import|from)\s+pycolmap' "$T"; then W=col
+  elif grep -qE '^\s*(import|from)\s+(torch|cv2|kornia|lightglue)' "$T"; then W=seg
+  elif grep -qE '^\s*(import|from)\s+(trimesh|manifold3d|shapely)' "$T"; then W=gen
+  else W=seg; fi
+fi
+shift; exec "${U[$W]}" -I "$T" "$@"

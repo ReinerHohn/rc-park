@@ -9,7 +9,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/METHODE_MESSEN_DANN_BAUEN.md` (26 kB) Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md) -> Inhalt `modelle/inhalt/METHODE_MESSEN_DANN_BAUEN.md` (10 Abschnitte)
 - `modelle/REGELN_AUSFUEHRLICH.md` (10 kB) RC-Park – Arbeitsregeln (gelten für jede Sitzung, jedes Objekt)
 - `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (70 kB) Rezept: Gebäude aus Fotos zum H0-Modell (Stand 9.11.2026 abends) -> Inhalt `modelle/inhalt/REZEPT_GEBAEUDE_AUS_FOTOS.md` (10 Abschnitte)
-- `modelle/VORLAGE_BAUTEIL_RUNDE.md` (8 kB) Vorlage: Bauteil-Runde (ein Bauteil neu oder richtig bauen)
+- `modelle/VORLAGE_BAUTEIL_RUNDE.md` (9 kB) Vorlage: Bauteil-Runde (ein Bauteil neu oder richtig bauen)
 
 ## Ziel, Stand, Aufgaben
 - `modelle/ZIEL_PIPELINE_H0.md` (23 kB) ZIEL: Pipeline von null -> H0-druckbares Modell fuer beliebiges Ziel (Nutzer-/goal 18.11.2026) -> Inhalt `modelle/inhalt/ZIEL_PIPELINE_H0.md` (7 Abschnitte)

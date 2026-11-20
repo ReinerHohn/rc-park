@@ -22,7 +22,7 @@ Platzhalter: `<OBJEKT>` (z. B. kaufhaus_grob3), `<BAUTEIL>` (z. B. erker:0, erke
 
 Repo /home/oem/git/rc-park, Objekt `<OBJEKT>`. Sprache Deutsch. Auftrag: Bauteil(e) `<BAUTEIL>` nach Foto belegen und im Generator richtig bauen. Befund: „`<BEFUND>`“.
 
-ZUERST LESEN: `CLAUDE.md` (Regeln 2, 3b, 3c, 8b, 9, 9b, 9c, 9d), `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Messweg und Lehren-Register), `modelle/NICHTS_GEBRACHT.md`, das Logbuch der letzten Generatorrunde von `<OBJEKT>`.
+ZUERST LESEN: `CLAUDE.md` (Kurzregeln) und in `modelle/REGELN_AUSFUEHRLICH.md` die Regeln 2, 3b, 3c, 8b, 9, 9b, 9c, 9d (gezielt per grep), `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Messweg und Lehren-Register), `modelle/NICHTS_GEBRACHT.md`, das Logbuch der letzten Generatorrunde von `<OBJEKT>`.
 
 ### Stufe 0: Formbeschreibung (Pflicht, vor jeder Messung)
 1. Fotos je Bauteil wählen:
@@ -36,10 +36,11 @@ ZUERST LESEN: `CLAUDE.md` (Regeln 2, 3b, 3c, 8b, 9, 9b, 9c, 9d), `modelle/REZEPT
    - **Anschlüsse** an Nachbarteile (Helm sitzt auf der Traufe, Konsole unter dem Unterbau). Gleiche Achse und gleiche Maße müssen zusammenpassen.
    - **Was am aktuellen Modell anders ist**: Overlay oder Detailrender neben dem Fotoausschnitt (Regel 9b).
 3. Formfamilie festlegen:
-   - Gibt es sie schon in `tools/baukasten_gen.py`, die vorhandene nehmen.
-   - Fehlt sie, eine neue GENERISCHE Familie mit freien Parametern bauen, ohne Objektnamen oder Festwerte im Code.
+   - Gestalt aus dem Wandbild nachbilden (Skill `fassaden`, `tools/form_aus_wandbild.py`), nie ein Musterteil aus dem Katalog.
+   - Gibt es die Funktion schon in `tools/bauteile.py` (Altbestand: `tools/baukasten_gen.py`), die vorhandene nehmen und nur mit Fotomassen fuettern.
+   - Fehlt sie, eine neue GENERISCHE Funktion in `tools/bauteile.py` mit freien Parametern bauen, ohne Objektnamen oder Festwerte im Code.
    - Begründung ins Logbuch.
-4. Unsicherheiten als Frage notieren, z. B. „Rückseite nicht sichtbar → ANNAHME Spiegelung“.
+4. Unsicherheiten als Frage notieren, z. B. „Rückseite nicht sichtbar → Fotos suchen (`tools/seiten_luecken.py`), NIE spiegeln“.
 
 ### Stufe 1: Zählen (nur am Foto)
 - Mit `tools/foto_zaehlung.py` (Protokoll Z-*.json mit markiertem Bild) zählen: Flächen des Grundrisses, Elemente je Fläche, Elemente je Zone.

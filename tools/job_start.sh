@@ -26,6 +26,11 @@ if [ "${JOB_OHNE_GPU_SPERRE:-0}" != "1" ]; then
       break;; esac
   done < "$(dirname "$0")/gpu_werkzeuge.txt"
 fi
+# 20.11.2026 (Auswertung 43 Sitzungen: 234 "Killed", 103 CUDA-OOM): laut warnen, wenn ein vermutlicher GPU-Job ohne Buchung startet.
+if [ -z "${JOB_GPU_MB:-}" ] && [ "${BUDGET:-0}" = "0" ] && [ "$GPUJOB" = "0" ]; then
+  case "$*" in *venv-seg*|*venv-colmap*|*colmap*|*flexglue*|*cuda*) echo "WARNUNG job_start: Befehl sieht nach GPU aus, aber ohne JOB_GPU_MB und ohne Eintrag in tools/gpu_budget.txt - laeuft UNGEBUCHT neben anderen GPU-Jobs (OOM-Gefahr). JOB_GPU_MB=<MiB> setzen oder JOB_GPU_MB=0 fuer reine CPU." >&2;; esac
+fi
+[ -z "${JOB_RAM_MB:-}" ] && echo "HINWEIS job_start: ohne JOB_RAM_MB (Standard 2000 MiB Buchung); grosse Jobs mit JOB_RAM_MB=11000." >&2
 # BUCHUNG statt Messung (15.11.2026, Nutzer "macht das"): bisher (a) griff die Sperre nur bei Werkzeugnamen aus gpu_werkzeuge.txt - Skriptjobs mit JOB_GPU_MB
 # liefen ungebremst - und (b) wurde der freie VRAM nur GEMESSEN: zwei fast gleichzeitige Starts sahen beide "frei" (3x CUDA out of memory am 15.11.).
 # Jetzt: JOB_GPU_MB > 0 macht jeden Job zum GPU-Job; das Budget wird unter flock in $BUCH (NAME MiB ZEIT) gebucht. Start nur, wenn
