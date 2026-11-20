@@ -63,3 +63,4 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 - CPU-Leistungsabfall nach 35–40 s (EC/geteiltes Budget?) ungeklärt [Memory cpu-leistung-limit-25w]
 - Prüfstand-Commit-Sperre (`RCPARK_PRUEFSTAND_HOOK`) aus; aktiv nur Geheimnis-/Größen-Hooks – Aktivierung nur durch Nutzer (Stand 20.11.) [tools/git_hooks/installieren.sh, REGELN 8]
 - (20.11.) Altdateien auf GitHub (~160 MB, v. a. HTML-Ansichten/STL Hirschsprung/Höllental, Okt.) bleiben: Force-Push ändert alle Commit-Nummern, bricht Baum-Verweise, löscht Dateien beim Pull auf dem anderen Rechner; Wachstum ist per Sperre gestoppt. Falls nötig: geplante LFS-Umstellung
+- (20.11.) Cloud-Rechnen auf vast.ai vorbereitet, NICHT erprobt: 4090+64 GB RAM ab 0,42 $/h (Median 0,66), Kettenlauf ≈ 1–1,50 $, Nachtbetrieb ≈ 150 $/Monat (ANNAHME halbe Laufzeit). Erster Schritt: Konto + API-Schlüssel durch Nutzer, dann Probelauf kleines Objekt [tools/cloud/CLOUD_VAST.md]
