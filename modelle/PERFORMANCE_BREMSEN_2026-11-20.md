@@ -252,3 +252,14 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   bauplan_oeffnungen_aussen (Folgefehler: fassade_fein/fassaden.json fehlt), seiten_luecken (56 min Netzfotos holen + LightGlue, dann Absturz beim Einbau:
   `ValueError: [reconstruction.cc:327] Check failed: existing_frame.RigId() == frame.RigId()` - 56 min verloren, Werkzeugfehler OFFEN), seiten (Folge).
 - Fotoauftrag: Suedseite 347 m2 und Ostseite 258 m2 ohne Fotodaten (`fotoauftrag_schwabentor-1120.html`).
+
+## Nachtrag 23:36 - Schwabentor von null: Bauplan-Stufen zum ersten Mal durchgelaufen (Kette 1120e `--ab fenster --bis bauplan`, 14 Stufen ok, 23:00) - Koerper bleibt Quader. WO ES HAKT:
+- Feines Wandbild steht (fassade_ortho nach Speicherfix: 6,1 GB Spitze, 2:38 min; f00 Stadtseite 92 %, f03 Nord 55 %, f02 Sued 22 %, f01 West 4 %). Uhr, Nischen, Bilderker, Torbogen im Bild klar sichtbar.
+- `audit/oeffnungen_aussen.json` f00: die Tordurchfahrt IST als Kasten gefunden (u -2,57..-0,23, z 0..5,18 m, Klasse faelschlich 'fenster'), aber Tiefe 0,00 -> Urteil "FLACH (keine Oeffnung)".
+  ANNAHME zur Ursache: durch eine Durchfahrt sieht man Hintergrund in > 50 m / dunkle Leibung - der Tiefen-Sweep findet im Suchbereich kein Maximum und meldet 0. Durchblick muesste als Oeffnung zaehlen.
+- Weitere Kaesten auf f00 sind falsch: drei 'fenster' bei z 8,3-10,3 m = die hellen Felder zwischen den Erker-Konsolen; 'fenster' 0,55 x 4,4 m am Rand = Eckquader; 'tuer' ueber die ganze Turmhoehe (z 0..25,5);
+  'bogen' bei z 23-25,5 mit Tiefe 3,2 m (Uhr? ungeprueft). Die zwei echten Fensternischen (z ~17 m) und die Uhr fehlen in der Liste.
+- Nutzerbeobachtung 22:55 (Bildmarkierung, in masstabelle beobachtungen_offen): Konsolen unter dem Erker schraeg verzerrt; Nordseite Loch + Schmierstreifen am Treppentuermchen. Beides = Bauteil VOR der Wandebene,
+  das der Koerper (noch) nicht kennt -> Parallaxe/keine Verdeckung im Wandbild. Erwartung: verschwindet, wenn Vorbau/Erker im Koerper sind (zweiter Durchgang) - zu pruefen.
+- Naechste Schritte (Reihenfolge): (1) oeffnungen_wandbild: Durchblick erkennen (Tiefe ausserhalb des Suchbereichs / Himmel-Strasse hinter der Wand) und am Schwabentor-Torbogen pruefen;
+  (2) Kaesten-Klassen am feinen Wandbild pruefen (fassade_parsing auf fassade_fein statt grob?); (3) Erker als Vorbau aus der Tiefe (Stufe vorbauten fand f04-f07, aber kein Erker auf f00).
