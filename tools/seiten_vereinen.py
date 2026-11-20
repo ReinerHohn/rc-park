@@ -200,6 +200,7 @@ def punktpaare(db, PA, PB, min_inlier=15):
         x, y = nm[pid // MAXID], nm[pid % MAXID]; m = np.frombuffer(data, np.uint32).reshape(-1, 2)
         if x in PB and y in PA and x not in PA: x, y, m = y, x, m[:, ::-1]
         if not (x in PA and y in PB) or y in PA or x in PB: continue
+        m = m[(m[:, 0] < len(PA[x])) & (m[:, 1] < len(PB[y]))]          # 20.11.: Modelle aus gekuerzter Merkmals-DB (FlexGlue, 6000 je Bild) - Nummern gleich, Rest fehlt
         qa, qb = PA[x][m[:, 0]], PB[y][m[:, 1]]; ok = (qa >= 0) & (qb >= 0); n += 1
         for u, w in zip(qb[ok], qa[ok]): kor.setdefault(int(u), collections.Counter())[int(w)] += 1
     return [(u, c.most_common(1)[0][0]) for u, c in kor.items()], n
