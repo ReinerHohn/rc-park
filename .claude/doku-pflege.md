@@ -3,7 +3,7 @@ Ergänzt den allgemeinen Skill `~/.claude/skills/doku-pflege/` (Quelle: `~/git/c
 
 - **Arbeitsbranch = `kaufhaus-freiburg`** (weit vor `main`). Auf diesem Branch liegt oft viel UNCOMMITTETE Modell-Arbeit (STL/GLB/PNG,
   tools/, daten/) — Doku-Commits NUR mit gezielt gestagten Pfaden (`git add <pfad>`), nie `git add -A`/`-u`.
-- **Root:** nur `README.md` (Index-Tabelle aller Dokumente — bei jedem Verschieben Links nachziehen), `CLAUDE.md`, `PROJEKT.md`, `KONZEPT.md` (Vision).
+- **Root:** nur `HANDOFF.md` (Einstieg der Claude-Instanz auf dem GPU-PC — nicht verschieben), `README.md` (Index-Tabelle aller Dokumente — bei jedem Verschieben Links nachziehen), `CLAUDE.md`, `PROJEKT.md`, `KONZEPT.md` (Vision).
   Neue Konzept-Kapitel nach Thema in `Doku/<thema>/` und eine Zeile in die README-Tabelle.
 - **`modelle/*.md`** (METHODE_*, PROTOKOLL_*, QUELLEN_REGISTER, STAND) gehören zu den Modellen und werden von Tools/Tests gelesen
   (`tests/test_quellen_hart.py` → `QUELLEN_REGISTER.md`, `tools/quellen_inventar.py` → `QUELLEN.md`) — NICHT verschieben.

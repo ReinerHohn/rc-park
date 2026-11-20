@@ -11,7 +11,7 @@ als druckbare Modelle erzeugt. Vision: **`KONZEPT.md`** · Inhaltsübersicht: **
 ## Aufbau
 | Ort | Inhalt |
 |---|---|
-| `KONZEPT.md`, `README.md` | Vision · Index aller Dokumente |
+| `KONZEPT.md`, `README.md`, `HANDOFF.md` | Vision · Index aller Dokumente · Übergabe-Kontext für die Claude-Instanz auf dem GPU-PC |
 | `Doku/konzept/` · `Doku/markt-kalkulation/` · `Doku/standort/` · `Doku/rc-attraktionen/` · `Doku/modellbau/` | Konzept-/Businessplan-Kapitel nach Thema |
 | `annahmen.json`, `attraktionen/*.json` → `build.py` → `businessplan.html` | Finanzmodell (Daten → generierte Seite); `mvp-rechner.html` = FPV-Pop-up-Rechner |
 | `tools/*.py` (~210) | 3D-Pipeline: Daten holen (LOD2/DOP/Laser/Fotos), Generatoren, Vermesser, Validatoren/Juroren, Export STL/HTML |

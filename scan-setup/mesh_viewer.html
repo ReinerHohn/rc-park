@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>Mesh-Ansicht</title>
+<style>html,body{margin:0;height:100%;background:#111;color:#ddd;font:14px sans-serif;overflow:hidden}
+#info{position:absolute;top:10px;left:10px;background:#000a;padding:8px 12px;border-radius:6px;max-width:340px}
+select,input{font:inherit}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script></head>
+<body><div id="info">Mesh-Ansicht (ohne Textur)<br>
+<select id="f"></select><br><span id="n">lädt …</span><br>
+Maus: links drehen · rechts verschieben · Rad zoomen<br>
+<label><input type="checkbox" id="wire"> Drahtgitter</label>
+<div id="box" style="margin-top:6px"></div>
+<div style="margin-top:6px">Zuschnitt (nur Ansicht):<br><code id="cmd" style="user-select:all;font-size:12px"></code></div></div>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {PLYLoader} from 'three/addons/loaders/PLYLoader.js';
+// Meshes aus dem Ordner: ?datei=name.ply waehlt eines, sonst das erste vorhandene
+const KANDIDATEN = ['scene_dense_mesh.ply', 'scene_dense_mesh_refine.ply', 'scene_dense_mesh_refine_gpu_r1.ply', 'zuschnitt.ply'];
+const vorhanden = [];
+for (const k of KANDIDATEN) if ((await fetch(k, {method: 'HEAD'})).ok) vorhanden.push(k);
+const sel = document.getElementById('f');
+for (const k of vorhanden) sel.add(new Option(k, k));
+sel.value = new URLSearchParams(location.search).get('datei') || vorhanden[vorhanden.length - 1];
+sel.onchange = () => location.search = '?datei=' + sel.value;
+const r = new THREE.WebGLRenderer({antialias:true}); r.setSize(innerWidth, innerHeight);
+document.body.appendChild(r.domElement);
+const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.01, 1e5);
+const ctl = new OrbitControls(cam, r.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.2); scene.add(sun);
+const g = await new PLYLoader().loadAsync(sel.value);
+g.computeVertexNormals();
+const mat = new THREE.MeshStandardMaterial({color: 0xcfcfcf, roughness: .9, metalness: 0, side: THREE.DoubleSide});
+const mesh = new THREE.Mesh(g, mat); scene.add(mesh);
+// Ausreisser ignorieren: Mittelpunkt/Groesse aus dem Median statt der Huelle
+const p = g.attributes.position.array, n = p.length/3, ax = [[],[],[]];
+for (let i = 0; i < n; i += 7) for (let k = 0; k < 3; k++) ax[k].push(p[3*i+k]);
+const q = (a, f) => (a.sort((x,y)=>x-y), a[Math.floor(f*(a.length-1))]);
+const mid = new THREE.Vector3(...ax.map(a => q(a,.5)));
+const size = Math.max(...ax.map(a => q(a,.95)-q(a,.05)));
+document.getElementById('n').textContent = `${n.toLocaleString('de')} Punkte · ${(g.index.count/3).toLocaleString('de')} Flächen`;
+// COLMAP: y zeigt nach unten -> Kamera "oben" = -y
+cam.up.set(0, -1, 0); ctl.target.copy(mid);
+cam.position.copy(mid).add(new THREE.Vector3(0, -size*0.4, -size*1.2)); ctl.update();
+// Zuschnitt-Quader: Regler je Achse, schneidet nur die Anzeige; Befehl unten kopieren und mir geben
+r.localClippingEnabled = true; mat.clippingPlanes = [];
+const lo = [], hi = [], ext = [];
+for (let k = 0; k < 3; k++) { lo.push(q(ax[k], .02) - size*.3); hi.push(q(ax[k], .98) + size*.3); }
+const wert = [lo.slice(), hi.slice()], N = 'xyz';
+for (let k = 0; k < 3; k++) for (const e of [0, 1]) {
+  const pl = new THREE.Plane(new THREE.Vector3(...[0,1,2].map(j => j === k ? (e ? -1 : 1) : 0)), 0);
+  mat.clippingPlanes.push(pl);
+  const d = document.createElement('div');
+  d.innerHTML = `${N[k]} ${e ? 'max' : 'min'} <input type="range" min="0" max="1000" value="${e ? 1000 : 0}" style="width:200px">`;
+  d.querySelector('input').oninput = ev => { wert[e][k] = lo[k] + (hi[k]-lo[k]) * ev.target.value / 1000; aktualisiere(); };
+  document.getElementById('box').appendChild(d);
+  pl.k = k; pl.e = e;
+}
+function aktualisiere() {
+  for (const pl of mat.clippingPlanes) pl.constant = pl.e ? wert[1][pl.k] : -wert[0][pl.k];
+  document.getElementById('cmd').textContent = 'mesh_crop.py ' + sel.value + ' zuschnitt.ply ' +
+    [0,1,2].map(k => wert[0][k].toPrecision(5) + ' ' + wert[1][k].toPrecision(5)).join(' ');
+}
+aktualisiere();
+document.getElementById('wire').onchange = e => mat.wireframe = e.target.checked;
+addEventListener('resize', () => { cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix(); r.setSize(innerWidth, innerHeight); });
+r.setAnimationLoop(() => { sun.position.copy(cam.position); ctl.update(); r.render(scene, cam); });
+</script></body></html>

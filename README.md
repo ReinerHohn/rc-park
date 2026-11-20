@@ -9,7 +9,7 @@ selbst steuern.
 
 ## Inhalt
 
-> Für Claude/Mitarbeit: Regeln + Aufbau in [`CLAUDE.md`](CLAUDE.md), Entscheidungen und **was schon versucht wurde** in [`PROJEKT.md`](PROJEKT.md).
+> Für Claude/Mitarbeit: Regeln + Aufbau in [`CLAUDE.md`](CLAUDE.md), Entscheidungen und **was schon versucht wurde** in [`PROJEKT.md`](PROJEKT.md). Übergabe an die GPU-PC-Instanz: [`HANDOFF.md`](HANDOFF.md).
 
 | Datei | Inhalt |
 |---|---|
@@ -18,6 +18,7 @@ selbst steuern.
 | [`plan-schnellstes-modell.md`](Doku/modellbau/plan-schnellstes-modell.md) | **Schnellster Weg zum Detailmodell**: Hybrid Druck (Körper) + Laser (Flächen), parallel, 36 Kacheln |
 | [`plan-wahrzeichen-drucken.md`](Doku/modellbau/plan-wahrzeichen-drucken.md) | **Wahrzeichen in Top-Qualität drucken**: scannen → aufbereiten → FDM/Resin → Finish |
 | [`datenquellen.md`](Doku/modellbau/datenquellen.md) | **3D-Daten „aus allen Rohren"**: Android-Scan-Apps, Drohne, Fusion, offene Meshes, Kitbash |
+| [`web-scan-erkenntnisse.md`](Doku/modellbau/web-scan-erkenntnisse.md) | **Web-Scan ohne Hingehen**: YouTube-Drohnenclips + Commons → Meshroom auf GPU (`scan-setup/webfotos.py`) |
 | [`sweet-spot-fertigung.md`](Doku/modellbau/sweet-spot-fertigung.md) | **Sweet Spot HW+SW**: gut scannen + schnell drucken, 3 Budget-Stufen, Produktlogik |
 | [`prototyp-konzept.md`](Doku/konzept/prototyp-konzept.md) | **Schneller Prototyp**: eBay-Gear reparieren + Druckmodule + Personal-Konzept |
 | [`standort.md`](Doku/standort/standort.md) | Anforderungsprofil & Standortlogik Freiburg |
@@ -53,7 +54,7 @@ selbst steuern.
 | [`max-detail-scan.md`](Doku/modellbau/max-detail-scan.md) | Detail-Obergrenze via echtem 3D-Scan (Photogrammetrie) + Lizenz |
 | [`diy-scan.md`](Doku/modellbau/diy-scan.md) | Selbst scannen (Kamera+Drohne+RealityCapture) + Drohnen-Recht |
 | [`annahmen.json`](annahmen.json) | **Alle editierbaren Finanz-Annahmen** |
-| [`attraktionen/*.json`](attraktionen) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
+| [`attraktionen/*.json`](attraktionen/) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
 | `start.sh` | **Baut + oeffnet beide Dashboards** (businessplan.html + mvp-rechner.html) |
 | `build.py` | Erzeugt `businessplan.html` aus den Daten |
 | `businessplan.html` | Interaktiver Businessplan mit Live-Reglern & Charts (generiert) |
