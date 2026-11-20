@@ -23,6 +23,15 @@ Marktpreise schwanken stündlich; `vast.sh suchen` zeigt den aktuellen Stand.
 - Rund um die Uhr: 720 h ≈ 360 $/Monat (+ ca. 40 $ Speicher).
 Lokale Auslastung zum Vergleich (Journal, nur über job_start.sh gestartete Jobs): 17.–19.11. je 6–10 Jobstunden am Tag.
 
+## Datenmengen und Upload (gemessen 20.11.2026)
+- Upload zu Hause: 18–20 Mbit/s (≈ 8,5 GB/h; Cloudflare-Messung, 2 × 50 MB). Download nicht messbar (Messdienst lehnte ab, 403).
+- Hoch je Objekt: Code (git ls-files) 0,6 GB + Fotos (Martinstor 1,1 GB) ≈ 12 min; mit Videobildern (+4,3 GB) ≈ 40 min.
+- Nicht hochladen: Python-Pakete (~13 GB), COLMAP, KI-Modelle (3 GB) – lädt die Mietmaschine selbst.
+- Zurück nur Ergebnisse: fused.ply (34 MB), sparse + kameras.json (~0,3 GB), optional db.db (2,5 GB). Tiefenkarten (7 GB) und
+  Konsens-Zwischenstände (8 GB) bleiben dort.
+- Plan, damit nichts wiederholt hochgeht: Umgebung als Docker-Image (einmal bauen), Fotos einmal in billigen Objektspeicher
+  (z. B. Backblaze B2, ANNAHME ~6–7 $/TB/Monat), kein dauerhafter vast-Speicher (hängt an einem Vermieter-Rechner).
+
 ## Ablauf
 1. Einmalig: Konto auf cloud.vast.ai, Guthaben aufladen (Vorkasse, kein Abo), API-Schlüssel erzeugen,
    `~/.venvs/vast/bin/vastai set api-key <SCHLÜSSEL>`, `vastai create ssh-key "$(cat ~/.ssh/id_ed25519.pub)"`, dann `vast.sh pruefen`.
