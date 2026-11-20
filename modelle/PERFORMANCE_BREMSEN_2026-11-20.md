@@ -155,7 +155,7 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   daraus kann der Mapper nichts triangulieren. FOLGERUNG: ein Teil der "fremden Seite" ist Strassenkulisse, keine Torseite; Ziel sollte "Tor von allen Seiten gedeckt" sein,
   nicht "alle 2107 Bilder registriert". Pruefauftrag: die 793 Bilder danach einteilen, ob sie das Tor zeigen (Vorpruefung sagt nur "zeigt Objekt" gegen Referenzfotos EINER Seite).
 
-## Nachtrag 20:45 - wo der schrittweise Mapper WIRKLICH die Zeit laesst (perf am laufenden Lauf)
+## Nachtrag 20:40 - wo der schrittweise Mapper WIRKLICH die Zeit laesst (perf am laufenden Lauf)
 - KORREKTUR zur Rangliste Punkt 1 ("Loeserfehler = Hauptzeitfresser"): am laufenden Martinstor-Mapper (610 Bilder, noch mit `num_threads 1` gestartet 14:50)
   dauert JEDER globale Ausgleich 37-39 min (19:10:36->19:47:49, 19:48:29->20:27:36), mit nur 0-7 Loeserfehlern darin. Die Fehler sind Nebensache.
 - perf (15 s, PID des Mappers): 59,7 % `SchurEliminator<2,3,-1>::ChunkOuterProduct`, 29,4 % `BlockRandomAccessSparseMatrix::GetCell`, 2,6 % `EBlockRowOuterProduct`
@@ -166,7 +166,7 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - Kettenfehler behoben: `tools/wolke_grundriss_pruefen.py` stapelte 30 Drehungen * alle Punkte auf der GPU -> bei 7,9 Mio. Punkten (Schwabentor) OOM auf 8 GB, Tor "nicht geprueft",
   Kette brach 20:22 ab (rc 4). Jetzt Stapelgroesse aus der Punktzahl (2e7 Elemente), Ergebnis unveraendert. Kette ab `tore` neu gestartet 20:38.
 
-## Nachtrag 21:00 - die "fremde Seite" am Martinstor ist ueberwiegend STADTRUNDGANG, nicht Tor (gemessen + angesehen)
+## Nachtrag 20:44 - die "fremde Seite" am Martinstor ist ueberwiegend STADTRUNDGANG, nicht Tor (gemessen + angesehen)
 - Stichprobe 70 von 793 Bildern (`martinstor-1120/zeigen/fremde_seite_stichprobe.jpg`, selbst angesehen): Muenster, Rathaus, Historisches Kaufhaus, Bertoldsbrunnen,
   Strassenbahnen, sogar das Schwabentor. Das Martinstor ist nur auf einem kleinen Teil (v. a. Netzfotos, eigene Fotos, Clips SMpS-YJWpt8 / A_PUR2GXND0).
 - Herkunft je Bild aus `vorpruefung.json` (2107 Bilder im Satz, Anteil in der fremden Seite):
