@@ -40,7 +40,14 @@ Lokale Auslastung zum Vergleich (Journal, nur über job_start.sh gestartete Jobs
 4. Daten hoch: `vast.sh hoch <INST> /media/oem/rcdaten/.../martinstor/lokal/fotos` (landet am selben absoluten Pfad, Symlinks aufgelöst).
 5. Job: `vast.sh job <INST> mt1120 "taskset -c 0-15 /media/oem/scan/venv-seg/bin/python -u -I tools/gesamtkette.py ..."`, `vast.sh log <INST> mt1120`.
 6. Ergebnis zurück: `vast.sh holen <INST> /media/oem/scan/rc-park_daten/martinstor-1120`, lokal Tore/Abnahme wie immer.
-7. `vast.sh kosten`, danach `vast.sh ende <INST>`. Nie Instanzen vergessen: sie kosten weiter.
+6b. Normalfall statt 6.: `vast.sh fertig <INST> <ergebnispfade>` = holen und NUR bei Erfolg zerstören.
+7. `vast.sh kosten`; zum Schluss `vast.sh aufraeumen` (löscht ALLE Instanzen, auch gestoppte, und Volumes → 0 $ laufende Kosten).
+
+## Kostenbremse (eingebaut 20.11., ungetestet mit echtem Konto)
+- `vast.sh mieten <ID> <STUNDEN>` prüft vorher: Guthaben ≥ Preis × Stunden × 1,1 + Speicher, sonst Abbruch.
+- Danach zerstört ein einmaliger Zeitgeber (systemd-run, kein Dauer-Check) die Instanz nach STUNDEN; `vast.sh verlaengern <INST> <STUNDEN>`.
+- Grenze: Der Zeitgeber läuft auf dem Laptop. Ist er aus, bleibt als Bremse das Guthaben (bei 0 $ stoppt vast.ai; Speicher kann das
+  Konto leicht ins Minus ziehen, ohne Kreditkarte wird nichts abgebucht). Konto ohne Kreditkarte/Auto-Aufladen führen.
 
 ## Grenzen und offene Punkte
 - Ungeprüft: Bild-Tag `nvidia/cuda:13.0.1-cudnn-devel-ubuntu24.04` (sonst `VAST_IMAGE=...`), COLMAP-Bau aus ce2b5ab mit Ubuntu-Ceres,
