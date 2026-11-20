@@ -133,3 +133,6 @@ KAUFHAUS gk2 (Stand 17:00): Laube 4 Boegen (4. als ANNAHME angrenzendes Joch, ba
   aktualisieren (kaufhaus_gk2_3d.html aus Kette). kanten_fertig F1 0,138 (vorher 0,01). Nachholen der Seiten: Fix 'schon registriert' (86/381 neu registriert, 1,19 px) -
   Kette --ab seiten noch NICHT wiederholt (LightGlue ~90 min) -> danach fassade_ortho der Seiten f03/f04/f05/f07 pruefen.
 OFFEN: Bogenumriss Kreis-Naeherung (Spannweiten 3,4-4,25 m, ~5 % breiter als Handmodell); Druckplatten 9 mehrteilig (meist 2); COLMAP 4.3 A/B (Memory project-colmap-versionen).
+
+## NACHTRAG 20.11.2026 morgens
+Nacht 19./20.11. siehe modelle/LOGBUCH_KETTENTEST_2026-11-19.md (Abschnitt UEBERGABE 20.11. ~09:00 am Ende): Seitenverkleben-Ursache gefunden und behoben (Konsens-Seitenfilter, modell_zerlegen, gps_seiten_pruefen), FlexGlue zuschaltbar, Martinstor-Kettenlauf VON NULL (martinstor-1120) laeuft.
