@@ -35,10 +35,10 @@ Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
 
 ## Entscheidungen des Nutzers
 - ✓ Push nach jedem Arbeitsblock · ✓ „neuer ist besser“ · ✓ Archivieren · ✓ 1-MB-Grenze · ✓ doku-pflege regelmäßig
-- ? Force-Push, um 23 alte Dateien > 1 MB (~160 MB) aus der GitHub-Historie zu entfernen
+- ✓ kein Force-Push für die ~160 MB Altdateien (20.11., Empfehlung angenommen vorbehaltlich Nutzer): Wachstum per Sperre gestoppt; später ggf. geplante LFS-Umstellung, beide Rechner vorher gepusht
 - ? FlexGlue als Standard (+30/+40 % Bilder Martinstor, +2,5 h)
 - ? Bambu-Zugangscode am Drucker neu setzen (alter seit 30.10. auf GitHub), neuen in `~/.config/rcpark/p1s.json`
-- ? Datei `sys` (36 MB PostScript, Wurzel des Repos, aus ImageMagick `import`) löschen? (ungeprüft, ob noch da)
+- ✓ Datei `sys` gelöscht (20.11., Nutzer „Ja“)
 
 ## Fehler und Lehren dieser Sitzung
 - 1159 Commits nie gepusht → Memory feedback-push-je-arbeitsblock, CLAUDE.md

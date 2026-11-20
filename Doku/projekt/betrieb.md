@@ -62,4 +62,4 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 - GPU-Budget für 3–4 gleichzeitige Pipeline-Jobs (PatchMatch, LightGlue, Masken) nicht gemessen [GPU_PARALLEL_UNTERSUCHUNG Offen]
 - CPU-Leistungsabfall nach 35–40 s (EC/geteiltes Budget?) ungeklärt [Memory cpu-leistung-limit-25w]
 - Prüfstand-Commit-Sperre (`RCPARK_PRUEFSTAND_HOOK`) aus; aktiv nur Geheimnis-/Größen-Hooks – Aktivierung nur durch Nutzer (Stand 20.11.) [tools/git_hooks/installieren.sh, REGELN 8]
-- Große Binärdateien schon auf GitHub (23 Pfade, 160 MB) entfernen? braucht Force-Push (Nutzer)
+- (20.11.) Altdateien auf GitHub (~160 MB, v. a. HTML-Ansichten/STL Hirschsprung/Höllental, Okt.) bleiben: Force-Push ändert alle Commit-Nummern, bricht Baum-Verweise, löscht Dateien beim Pull auf dem anderen Rechner; Wachstum ist per Sperre gestoppt. Falls nötig: geplante LFS-Umstellung
