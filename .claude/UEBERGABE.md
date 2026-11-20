@@ -25,9 +25,11 @@ Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
 - `rcpark-mt_anh_sued3` · Log `job_logs/mt_anh_sued3.log` · 985/1990 Bilder, Gesamtausgleich seit 11:59 · Prüfen: `grep JOB_ENDE LOG; grep -o 'num_reg_frames=[0-9]*' LOG | tail -1` · danach Skill `wolke-tore`
 - `regr-schwab` wartet in `job_start.sh` auf RAM-Buchung (Kette bucht 11000 MB); Log `job_logs/regr-schwab.log` entsteht beim Start · danach Ergebnis prüfen + `modelle/schwab_v3/` regression committen
 
+- 3 Lese-Agenten (Lehren Runde 2, gestartet 12:58): Register, Archiv, Memory → `/media/oem/rcdaten/tmp/baum_sicherung/runde2/{register,archiv,memory}.md` · Prüfen: `ls -la` dort + Zeile „NICHT GESCHAFFT“ am Dateiende · fehlt eine Datei nach /clear: diesen Agenten neu starten (Auftrag = Nächste Schritte 2)
+
 ## Nächste Schritte
 1. Jobs oben prüfen (`systemctl --user list-units 'rcpark-*' --no-legend`); Kettenende auswerten (Skill objekt-von-null Schritt 5)
-2. Zweiter Lehren-Durchgang über ungelesene Quellen: Versuchsregister BH–BK/BR/DG–DL/ab Z.1864, `modelle/archiv/UEBERGABE_*`, `RECHERCHE_*`, `STAND_2026-11-05..12`, `LOG_FORMEN/KOERPER/VERFEINERN`, Memory `archiv_index.md` → je Ast nachtragen (Rohsammlung `/media/oem/rcdaten/tmp/baum_sicherung/`, Skript-Muster dort)
+2. Zweiter Lehren-Durchgang (Agenten laufen, s. oben) zusammenführen: Zeilen je `## AST:` in den Ast eintragen, Ast > 110 Zeilen ⇒ teilen, `check.py --strict`, Verlustprüfung, commit + push. Quellen: Versuchsregister BH–BK/BR/DG–DL/ab Z.1864, `modelle/archiv/UEBERGABE_*`, `RECHERCHE_*`, `STAND_2026-11-05..12`, `LOG_FORMEN/KOERPER/VERFEINERN`, Memory `archiv_index.md` → je Ast nachtragen (Rohsammlung `/media/oem/rcdaten/tmp/baum_sicherung/`, Skript-Muster dort)
 3. „Offen“-Punkte mit „(ungeprüft)“ in den Ästen gegen Code prüfen
 4. Regression für kaufhaus_gk2 (Ordner bisher unversioniert) und martinstor-1120 anlegen
 
