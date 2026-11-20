@@ -5,5 +5,5 @@ set -e; [ "$(id -u)" -ne 0 ] && { echo "bitte: sudo $0"; exit 1; }
 cd "$(dirname "$0")"
 bash -n cpu_leistung_regler.sh
 cp cpu_leistung_regler.service /etc/systemd/system/cpu_leistung_regler.service
-systemctl daemon-reload && systemctl enable --now cpu_leistung_regler && sleep 2 && systemctl --no-pager status cpu_leistung_regler | head -5
+systemctl daemon-reload && systemctl enable cpu_leistung_regler && systemctl restart cpu_leistung_regler && sleep 2 && systemctl --no-pager status cpu_leistung_regler | head -5
 echo; echo "Beobachten: journalctl -fu cpu_leistung_regler    Zustand: cat /run/cpu_leistung_regler.state"

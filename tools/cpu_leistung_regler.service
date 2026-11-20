@@ -5,7 +5,8 @@ After=multi-user.target thermald.service
 [Service]
 Type=simple
 ExecStart=/bin/bash /home/oem/git/rc-park/tools/cpu_leistung_regler.sh
-Environment=START=35 MAX=55 SCHRITT=5 TOK=80 THOCH=88 TNOT=92 GOK=83 T=10 PL2=130
+# 20.11.2026: MAX 55 -> 100, START 35 -> 55 (Messung vollgas_test2: 70 W 70 C, 90 W 79 C, 110 W 93 C, je 90 s Volllast, 0 % Drosselung; modelle/HARDWARE_STAND_2026-11-20.md)
+Environment=START=55 MAX=100 SCHRITT=5 TOK=80 THOCH=88 TNOT=94 GOK=83 T=10 PL2=130
 Restart=always
 RestartSec=5
 

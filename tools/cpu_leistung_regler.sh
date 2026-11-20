@@ -26,12 +26,17 @@ entscheiden() {
 
 [ "$(id -u)" -eq 0 ] || { echo "bitte mit sudo starten"; exit 1; }
 [ -w $RAPL/constraint_0_power_limit_uw ] || { echo "$RAPL nicht beschreibbar (intel_rapl?)"; exit 1; }
+MMIO=${MMIO:-/sys/class/powercap/intel-rapl-mmio:0}; WMI=${WMI:-/sys/module/hp_wmi/parameters}; M1_0=$(cat $MMIO/constraint_0_power_limit_uw 2>/dev/null); M2_0=$(cat $MMIO/constraint_1_power_limit_uw 2>/dev/null)
 PL1_0=$(cat $RAPL/constraint_0_power_limit_uw); PL2_0=$(cat $RAPL/constraint_1_power_limit_uw); TAU_0=$(cat $RAPL/constraint_0_time_window_us)
 setzen() {  # pl1_W
   local p1=$1 p2=$PL2; [ "$p2" -lt "$p1" ] && p2=$p1
   echo $(( p1 * 1000000 )) > $RAPL/constraint_0_power_limit_uw; echo $(( p2 * 1000000 )) > $RAPL/constraint_1_power_limit_uw; [ -n "$TAU_US" ] && echo $TAU_US > $RAPL/constraint_0_time_window_us 2>/dev/null
+  # 20.11.2026 (tools/versuche/vollgas_test2.sh, gemessen 70/90/110 W ohne Drosselung): ueber 55 W kommt das Paket nur, wenn ALLE DREI Stellen angehoben sind -
+  # MSR (oben), MMIO-Grenze der Firmware und der WMI-Befehl des Eigenbau-hp-wmi (rcpark_pl*). Fehlt eine Stelle (altes Modul, Sperre), bleibt es beim alten Verhalten.
+  if [ -w $MMIO/constraint_0_power_limit_uw ]; then echo $(( p1 * 1000000 )) > $MMIO/constraint_0_power_limit_uw 2>/dev/null; echo $(( p2 * 1000000 )) > $MMIO/constraint_1_power_limit_uw 2>/dev/null; fi
+  if [ -e $WMI/rcpark_pl_anwenden ]; then echo $p1 > $WMI/rcpark_pl1; echo $p2 > $WMI/rcpark_pl2; echo 1 > $WMI/rcpark_pl_anwenden 2>/dev/null; fi
 }
-beenden() { echo $PL1_0 > $RAPL/constraint_0_power_limit_uw; echo $PL2_0 > $RAPL/constraint_1_power_limit_uw; echo $TAU_0 > $RAPL/constraint_0_time_window_us 2>/dev/null; echo "Ausgangswerte wiederhergestellt ($((PL1_0/1000000))/$((PL2_0/1000000)) W)"; exit 0; }
+beenden() { [ -n "$M1_0" ] && { echo $M1_0 > $MMIO/constraint_0_power_limit_uw; echo $M2_0 > $MMIO/constraint_1_power_limit_uw; } 2>/dev/null; [ -e $WMI/rcpark_pl_anwenden ] && { echo 0 > $WMI/rcpark_pl1; echo 0 > $WMI/rcpark_pl2; echo 1 > $WMI/rcpark_pl_anwenden; } 2>/dev/null; echo $PL1_0 > $RAPL/constraint_0_power_limit_uw; echo $PL2_0 > $RAPL/constraint_1_power_limit_uw; echo $TAU_0 > $RAPL/constraint_0_time_window_us 2>/dev/null; echo "Ausgangswerte wiederhergestellt ($((PL1_0/1000000))/$((PL2_0/1000000)) W)"; exit 0; }
 trap beenden INT TERM
 ptemp() { for z in /sys/class/thermal/thermal_zone*; do [ "$(cat $z/type 2>/dev/null)" = x86_pkg_temp ] && { echo $(( $(cat $z/temp)/1000 )); return; }; done; echo 0; }
 gtemp() { nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -dc 0-9; }

@@ -55,3 +55,14 @@ Quelle der Speicherdaten: `sudo dmidecode -t memory` / `-t slot` (Nutzer, 20.11.
   3. Messen unter Volllast (Paketleistung aus `energy_uj`, Temperatur, Drosselzaehler) - erst 70 W, dann 90 W. Zurueck: 0 / 0 / anwenden.
 - Abbruchregel: Temperatur dauerhaft > 95 C oder Drosselanteil > 5 % -> eine Stufe zurueck. Dann (und nur dann) lohnt ein externer Luefter.
 - Unbekannt: ob die Firmware von 8C77 die Abfrage 0x29 annimmt (Victus-S-Befehl; Rueckgabewert steht im Kernellog `rcpark: PL1=... -> <rc>`). Nimmt sie sie nicht an, bleibt der Windows-Test.
+
+## ERGEBNIS Vollgas-Test (20.11.2026 15:37-15:48, Nutzer mit sudo, Logs `job_logs/vollgas_test_1120_1537.log`, `vollgas_test2_1120_1542.log`)
+- Test 1 (nur WMI-Befehl 70 W, neues Modul): Firmware nimmt an (rc 0), Paket bleibt 55 W. URSACHE (uebersehen): unser eigener Dienst `cpu_leistung_regler` (MAX=55, MSR) und die MMIO-Grenze standen beide auf 55 W.
+- Test 2 (Regler angehalten; WMI + MSR + MMIO gemeinsam gesetzt; Volllast 28 Faeden, je 90 s, Watt = Paketleistung aus energy_uj):
+  55 W -> 63 C · **70 W -> 70 C · 90 W -> 79 C · 110 W -> 93 C (gemessen 109 W)**, ueberall 0 % Drosselzeit, Verlauf je 15 s konstant (kein Einbruch nach 30-40 s).
+- Damit BEWIESEN: das Geraet kann unter Linux das Doppelte der bisherigen Dauerleistung; die 55-W-Grenze war eine Einstellung (Firmware-MMIO + eigener Regler), keine Hardware-Grenze.
+  Der Windows-Test ist dafuer nicht mehr noetig. Offen: welche der drei Stellen wirklich noetig ist (WMI allein reicht nicht; MSR+MMIO ohne WMI nicht getrennt geprueft).
+- NICHT gemessen: Dauerbetrieb ueber Stunden (Waermestau), gleichzeitige GPU-Last (gemeinsame Kuehlung), Durchsatzgewinn der Kette (Watt != Tempo; ANNAHME +25-40 % bei Stufen mit vielen Faeden).
+- Dauerloesung: `tools/cpu_leistung_regler.sh` setzt jetzt alle drei Stellen; Dienst MAX=100, START=55, hoch bei < 80 C, runter ab 88 C, Notfall 94 C -> 55 W.
+  Einspielen: `sudo bash tools/cpu_leistung_installieren.sh`. Gilt nur mit dem neuen hp-wmi-Modul (nach Kernel-Update neu bauen/signieren).
+- Kuehlung: ab ~90 W ist die Temperatur die Grenze (79 C bei 90 W, 93 C bei 110 W) -> externer Luefter/Unterlage lohnt JETZT (verschiebt, wo der Regler stehen bleibt). Vorher/nachher am Regler-Zustand `/run/cpu_leistung_regler.state` messbar.
