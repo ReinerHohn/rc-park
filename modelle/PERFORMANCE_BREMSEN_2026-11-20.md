@@ -214,7 +214,7 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - perf am Mapper mit allen Faeden (21:25, 36 Faeden, 370 % CPU bei drei parallelen Jobs): ChunkOuterProduct 43 %, GetCell 19,5 %, pthread_mutex_lock/unlock 13,5 % -> Kandidat dichte Kameramatrix.
   Varianten-Skript `tools/versuche/mt_eng_varianten_1120.sh` (redundant, dicht, eng allein) - Einreihung ging mit den Wartern verloren, neu starten wenn die Mapper fertig sind.
 
-## Nachtrag 22:20 - Agent Mapper-Skalierung (Bericht `/media/oem/rcdaten/tmp/hebel_1120/10_mapper_skalierung.md`, Quelltextstellen dort)
+## Nachtrag 22:17 - Agent Mapper-Skalierung (Bericht `/media/oem/rcdaten/tmp/hebel_1120/10_mapper_skalierung.md`, Quelltextstellen dort)
 - AUSGEZAEHLT (Modell 1681 Kameras, 152 471 Punkte): Spurlaenge Median 5, p99 91, Maximum 684. 0,9 % der Punkte (L > 100) tragen 65 % von Summe(L^2), 2,2 % (L > 50) 78 %.
   Der Engpass sind wenige sehr lange Videospuren. Ein Spurlaengen-Deckel 50 im Ausgleich (Patch ~30 Zeilen, bundle_adjustment_ceres.cc:693-730) spart 67 % bei 13 % weniger Beobachtungen (ANNAHME zur Zeit).
 - Hebel 1 (nur Schalter): globale Ausgleiche seltener/kuerzer - `ba_global_frames_ratio/points_ratio 1.4`, `max_refinements 2`, `max_num_iterations 25` = Video-Voreinstellung der Entwickler
@@ -225,7 +225,7 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - `ba_global_ignore_redundant_points3D`: laut Quelltext werden lange Spuren zuerst BEHALTEN -> wenig Gewinn erwartet, aus dem Messplan genommen.
 - Eingereiht 22:20 (`mt_eng_varianten`): startet erst, wenn der enge Mapper UND die Schwabentor-Kette fertig sind; rechnet `selten`, dann `dicht` allein am engen Satz.
 
-## Nachtrag 22:25 - Agent Bildwahl/Dichte Wolke/Speicher (Bericht `/media/oem/rcdaten/tmp/hebel_1120/11_dicht_bildwahl_speicher.md`, Simulation `11_skripte/sim_vorpruefung.py`)
+## Nachtrag 22:19 - Agent Bildwahl/Dichte Wolke/Speicher (Bericht `/media/oem/rcdaten/tmp/hebel_1120/11_dicht_bildwahl_speicher.md`, Simulation `11_skripte/sim_vorpruefung.py`)
 - Bildwahl A1 "Klammer": Videobild ohne eigenen Treffer bleibt nur, wenn im selben Clip davor UND danach ein direkter Treffer liegt (je <= 40 Bilder) oder einseitig <= 2 Bilder.
   Simuliert am vorpruefung.json: 2107 -> 1597 Bilder, vom heutigen Hauptmodell bleiben 809 von 815 (mein enger Satz von 20:52: 1156 Bilder, verliert laut Agent deutlich mehr Hauptmodell-Bilder
   - "nur direkte Treffer" 1110 Bilder / 118 verloren). Stelle `tools/bilder_vorpruefen.py:89-127`. Noch nicht umgesetzt (erst Mapperlauf auf dem 1597er-Satz).
@@ -240,7 +240,7 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   Nachbau 5 Mio. Zellen: 24 % der Zellen waehlen einen anderen Wert. Fix `dtype=np.float64`, danach Bitgleich-Test neu eichen. OFFEN, hohe Prioritaet fuer das Wandbild (= Bauplan).
 - Nutzerentscheid 20.11. 09:00 "volle Aufloesung behalten, kein 1200 px" (ZIEL_PIPELINE_H0.md Z.33) -> Punkt "1200 px testen" aus der Rangliste gestrichen.
 
-## Nachtrag 22:35 - Wandbild-Fehler BESTAETIGT und behoben (`tools/fassade_ortho.py:424`, float32-Summe der Gewichte)
+## Nachtrag 22:27 - Wandbild-Fehler BESTAETIGT und behoben (`tools/fassade_ortho.py:424`, float32-Summe der Gewichte)
 - Die Guete je Probe ist float32 (Z.317/346); `np.cumsum` ueber alle Proben des Rasters blieb float32 -> der gewichtete Median je Zelle rechnete mit verlorenen Gewichten.
 - Gemessen am echten Bild (ober_tvdr f02, 84 m2, 7 Fotos, Zelle 1,5 cm, 391 Tsd. belegte Zellen): 13,3 % der Zellen aendern ihren Farbwert, 6,8 % um mehr als 10 Stufen;
   nach Rasterviertel 4,6 / 16,0 / 14,8 / 18,8 % (waechst mit der laufenden Summe, wie vorhergesagt). Angesehen: alt = Doppelkanten/Geisterbild im Ueberlappungsband mehrerer Fotos
