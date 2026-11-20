@@ -20,10 +20,10 @@ Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
 - Archiv: 109 Altdokumente `modelle/archiv/`, 53 Werkzeuge `tools/archiv/` (nichts gelöscht)
 
 ## Läuft gerade
-- `rcpark-kette-martinstor-1120` · Log `/media/oem/scan/rc-park_daten/job_logs/kette-martinstor-1120.log` · Prüfen: `grep -E '^\[[0-9:]+\] [a-z_]+:' LOG | tail -1; grep -c Traceback LOG; grep JOB_ENDE LOG` · 12:54 Stufe sfm, Konsens-Mapper Lauf 2, 0 Fehler · danach Skill `wolke-tore`, `konsens_arbeit/fremde_seite.txt`, audit/seiten.jpg ansehen, Realitäts-%
-- Warter `tools/versuche/flexglue_stufe2_nach_kette_1120.sh` startet nach Kettenende FlexGlue-Stufe 2 (~20 h, Log `flexglue-stufe2c.log`)
-- `rcpark-mt_anh_sued3` · Log `job_logs/mt_anh_sued3.log` · 985/1990 Bilder, Gesamtausgleich seit 11:59 · Prüfen: `grep JOB_ENDE LOG; grep -o 'num_reg_frames=[0-9]*' LOG | tail -1` · danach Skill `wolke-tore`
-- `regr-schwab` wartet in `job_start.sh` auf RAM-Buchung (Kette bucht 11000 MB); Log `job_logs/regr-schwab.log` entsteht beim Start · danach Ergebnis prüfen + `modelle/schwab_v3/` regression committen
+- NACHTRAG 14:55: Erste Kette `kette-martinstor-1120` brach 13:27 ab (SfM-Zeitlimit 3 h im globalen Mapper, rc 124; Konsens 843/2107 Bilder, 774 fremde Seite). Neu: `rcpark-kette-martinstor-1120b` (ab sfm, RCPARK_STUFE_MAX_S=21600, Merkmale/Paare aus Cache) · Log `job_logs/kette-martinstor-1120b.log` · danach Skill `wolke-tore`, `konsens_arbeit/fremde_seite.txt`, audit/seiten.jpg, Realitäts-%
+- FlexGlue-Stufe 2 und `mt_anh_sued3` (seit 11:59 im Gesamtausgleich hängend, 1 Kern) auf Nutzerwunsch GESTOPPT 14:48 (RAM für Kette). Nach Kettenende neu starten; Süd-Anhang mit mehr Kernen. Warter-Lehre: startete FlexGlue auch nach GESCHEITERTER Kette (rc prüfen!)
+- yt-dlp 2026.08.19 veraltet (2 Videos fehlen); Update braucht root: `sudo yt-dlp -U`
+- `regr-schwab` FERTIG: „identisch - nichts verloren“
 
 - Lehren Runde 2: alle 3 Agenten FERTIG (13:07), nichts läuft mehr · Ergebnis `/media/oem/rcdaten/tmp/baum_sicherung/runde2/` register.md (244 Z.), memory.md (276), archiv.md (439, inkl. neuer Ast lizenzen-werkzeuge) = 1161 Zeilen, gruppiert `## AST: <ast>[ / GILT| / OFFEN]` · Lücken je Datei am Ende (NICHT GESCHAFFT); Abgleich gegen Baum nur per Stichwort ⇒ beim Zusammenführen Doppeltes verschmelzen
 
