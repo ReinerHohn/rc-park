@@ -16,7 +16,7 @@ while [ $# -ge 2 ]; do
   mkdir -p "$Z" || { rc=1; continue; }
   vor=$(du -sm "$Q" | cut -f1)
   ionice -c3 nice rsync -aH ${RSYNC_EXTRA:-} "$Q/" "$Z/" || { echo "FEHLER rsync $Q"; rc=1; continue; }
-  diff_=$(ionice -c3 nice rsync -rnc --no-links --itemize-changes "$Q/" "$Z/" | grep -v '^\.d' | head -20)
+  diff_=$(ionice -c3 nice rsync -rnc --no-links --itemize-changes "$Q/" "$Z/" | grep -v '^\.d' | grep -v '^skipping non-regular' | head -20)
   if [ -n "$diff_" ]; then echo "ABWEICHUNG - nichts geloescht:"; echo "$diff_"; rc=1; continue; fi
   links=$(for w in $LINKWURZELN; do find "$w" -xdev -type l -lname "$Q/*" 2>/dev/null; done | head -5)
   if [ -n "$links" ]; then echo "VERKNUEPFUNGEN zeigen noch in die Quelle - nichts geloescht:"; echo "$links"; rc=1; continue; fi
