@@ -11,8 +11,9 @@ C=/media/oem/scan/colmap-build/prefix/bin/colmap
 export LD_LIBRARY_PATH=/media/oem/scan/cuda-toolkit-combo/lib64:/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib:/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib:/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib
 mkdir -p "$A"
 for v in $V; do
-  case $v in std) X="";; eng) X="--Mapper.image_list_path ${BILDLISTE:?BILDLISTE fehlt}";; redundant) X="--Mapper.ba_global_ignore_redundant_points3D 1";; dicht) X="--Mapper.ba_max_num_images_direct_dense_gpu_solver 1200";; *) echo "unbekannt: $v"; continue;; esac
+  case $v in std|eng) X="";; redundant) X="--Mapper.ba_global_ignore_redundant_points3D 1";; dicht) X="--Mapper.ba_max_num_images_direct_dense_gpu_solver 1200";; *) echo "unbekannt: $v"; continue;; esac
   D0="--Mapper.ba_max_num_images_direct_dense_gpu_solver 0"; [ "$v" = dicht ] && D0=""
+  [ -n "${BILDLISTE:-}" ] && X="$X --Mapper.image_list_path $BILDLISTE"      # gilt fuer jede Variante (21:25: eng/redundant/dicht am selben engen Satz vergleichbar)
   z="$A/$v"; rm -rf "$z"; mkdir -p "$z"; cp "$DB" "$z/db.db"; t0=$(date +%s)
   $C mapper --database_path "$z/db.db" --image_path "$IMG" --output_path "$z" --Mapper.num_threads -1 --Mapper.ba_use_gpu 1 --Mapper.ba_gpu_index 0 $D0 $X > "$z/log.txt" 2>&1; rc=$?; t1=$(date +%s)
   gr=$(ls -d "$z"/[0-9]* 2>/dev/null | while read m; do echo "$(stat -c %s "$m/images.bin") $m"; done | sort -rn | head -1 | cut -d' ' -f2)
