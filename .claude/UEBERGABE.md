@@ -25,6 +25,8 @@ Weiter mit: „weiter“ (oder /uebergabe fortsetzen; vorher Skill `sitzungsbegi
 ## Läuft gerade
 - `rcpark-kette-martinstor-1120b` (Start 14:50, ab sfm) · Log `job_logs/kette-martinstor-1120b.log` · Prüfen: `grep -E '^\[[0-9:]+\] [a-z_]+:' LOG | tail -1; grep -c Traceback LOG; grep JOB_ENDE LOG` · 16:28: globaler Mapper seit 16:01, Gesamtausgleich 16:13 fertig, seitdem „iterative retriangulation and refinement“ (`pipe/sfm/global.log`), 0 Fehler. Konsens-Zwischenstand: 815/2107 Bilder, 793 „fremde Seite“, GPS-Median 8,7 m · danach Schritt 1
 - `rcpark-warter_schwab` (einmalig): startet nach Ende von 1120b `kette-schwabentor-1120` (schwab_auto → schwabentor-1120, Log `job_logs/kette-schwabentor-1120.log`)
+- `rcpark-colmap_opt_bau` (seit 16:36, Stunden, JOBS=2): Testbau COLMAP+Ceres mit `-O3 -march=native` nach `/media/oem/rcdaten/colmap-opt/prefix` · Log `/media/oem/rcdaten/tmp/colmap_opt_bau_1120.log` · danach A/B Bündelausgleich (Muster `tools/versuche/blas_ab_1120.sh`, Endkosten gleich?) + GPU-Löser prüfen; Produktions-Bau NICHT anfassen
+- ACHTUNG Zeitplan: nach dem globalen Lauf kommt bei durchgefallenem GPS-Tor (am Martinstor zu erwarten) noch der schrittweise Mapper mit 1 Faden über 2107 Bilder (`iphone_sfm.py` Z.136) → Kameramodell eher 18:30–20:00; Rangliste aller Bremsen `modelle/PERFORMANCE_BREMSEN_2026-11-20.md`
 - GESTOPPT 14:48, später neu starten: FlexGlue-Stufe 2 (`/media/oem/rcdaten/tmp/flexglue/stufe2.sh`, ~20 h) und Süd-Anhang `mt_anh_sued3` (hing seit 11:59; mit mehr Kernen)
 
 ## Nächste Schritte
