@@ -28,7 +28,7 @@ Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> d
 - Python: `/media/oem/scan/venv-seg/bin/python -I` (torch/CUDA), `/media/oem/scan/venv-colmap/bin/python -I` (pycolmap), Generator `~/.venvs/rcpark` (trimesh). Einfachster Weg: `tools/py <werkzeug.py> ...` (waehlt die Umgebung nach Importen). Nackter `python3` hat weder trimesh noch pycolmap (224 Fehler bisher).
 - Lange Jobs nur per Skill `langer-job` (`tools/job_start.sh` mit JOB_GPU_MB/JOB_RAM_MB); vorher Dummy-Test; GPU immer nutzen, VRAM-Summe <= 7000 MiB.
 - Nie zwei Optimierer/Generatorlaeufe mit gleicher Zwischendatei parallel. Nie `pkill -f` mit Muster aus der eigenen Befehlszeile.
-- Loeschen nur nach ausdruecklichem "Ja". Eigene Aenderungen sofort committen UND nach jedem Arbeitsblock pushen (Nutzer 20.11.: lokal 1157 Commits ungepusht = Katastrophe; zwei Rechner arbeiten am Repo) - vorher `git fetch` + zusammenfuehren. Attribution-Zeilen. Hook nur Nutzer.
+- Git-Hooks (Geheimnisse, Dateien > 95 MB) einmal je Rechner: `bash tools/git_hooks/installieren.sh`. Loeschen nur nach ausdruecklichem "Ja". Eigene Aenderungen sofort committen UND nach jedem Arbeitsblock pushen (Nutzer 20.11.: lokal 1157 Commits ungepusht = Katastrophe; zwei Rechner arbeiten am Repo) - vorher `git fetch` + zusammenfuehren. Attribution-Zeilen. Hook nur Nutzer.
 - Nie idle, nachts weiterarbeiten; aber KEIN wiederkehrender Cron/Loop fuer Job-/GPU-Checks (einmalige Warter ok).
 - Kontext sparen: Ausgaben kuerzen (cut/head/tail). Bilder (SendUserFile) + 3D-HTML zeigen. Kein Druck ohne Nutzerwunsch.
 
