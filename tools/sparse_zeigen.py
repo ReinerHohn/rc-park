@@ -40,6 +40,21 @@ def lies_punkte(p):
     return X, F, S
 
 
+def lies_ply(p):
+    """Dichte Wolke (COLMAP fused.ply, binaer): -> xyz (n,3 float64), rgb (n,3 uint8). Kopf wird gelesen, Felder x/y/z und red/green/blue nach Namen."""
+    f = open(p, "rb"); kopf = []; n = 0; typ = {"float": "f4", "float32": "f4", "double": "f8", "uchar": "u1", "uint8": "u1", "int": "i4", "uint": "u4", "short": "i2", "ushort": "u2", "char": "i1"}
+    while True:
+        z = f.readline().decode("ascii", "replace").strip()
+        if z.startswith("element vertex"): n = int(z.split()[-1])
+        elif z.startswith("property") and len(z.split()) == 3 and not kopf.__contains__(None): kopf.append((z.split()[2], "<" + typ[z.split()[1]]))
+        elif z.startswith("element") and n: kopf.append(None)                # weitere Elemente (Flaechen) nicht lesen
+        if z == "end_header": break
+    felder = [k for k in kopf if k]; d = np.frombuffer(f.read(n * np.dtype(felder).itemsize), dtype=np.dtype(felder), count=n)
+    X = np.stack([d["x"], d["y"], d["z"]], 1).astype(np.float64)
+    F = np.stack([d["red"], d["green"], d["blue"]], 1).astype(np.uint8) if "red" in d.dtype.names else np.full((n, 3), 200, np.uint8)
+    return X, F
+
+
 def herkunft(name):
     """Gruppe eines Bildes aus dem Dateinamen der Kette (tools/fotos_sammeln.py): Videobild, Netzfoto oder eigenes Foto."""
     n = name.lower()
@@ -60,8 +75,10 @@ def lot_rahmen(C, U, Rt):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("sparse"); ap.add_argument("--png"); ap.add_argument("--html"); ap.add_argument("--titel", default="")
-    ap.add_argument("--max-punkte", type=int, default=150000); a = ap.parse_args()
+    ap.add_argument("--max-punkte", type=int, default=150000)
+    ap.add_argument("--ply", help="dichte Wolke (fused.ply im Rahmen DIESES Modells) statt der duennen Modellpunkte zeigen"); a = ap.parse_args()
     namen, C, V, U, Rt = lies_bilder(a.sparse); X, F, S = lies_punkte(a.sparse)
+    if a.ply: X, F = lies_ply(a.ply); S = np.full(len(X), 99)
     up, e1, e2 = lot_rahmen(C, U, Rt); m = np.median(C, 0)
     def lokal(P): P = P - m; return np.stack([P @ e1, P @ e2, P @ up], 1)
     Cl, Xl = lokal(C), lokal(X); Vl = np.stack([V @ e1, V @ e2, V @ up], 1)
