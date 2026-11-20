@@ -38,10 +38,14 @@ rsync_hin() {  # INST QUELLE... (gleiche absolute Pfade; -L loest Symlinks auf, 
   rsync -aLR --info=progress2 --partial -e "ssh -o StrictHostKeyChecking=accept-new -p $p" "$@" "$z:/"
 }
 
+konto() {  # gibt Guthaben aus; Exit 1 ohne gueltigen API-Schluessel (vastai liefert dann rc 0 + {"error": true})
+  "$V" show user --raw 2>/dev/null | python3 -c "import json,sys;u=json.load(sys.stdin);sys.exit(1) if u.get('error') or 'credit' not in u else print(u['credit'])" 2>/dev/null
+}
+
 cmd="${1:-}"; shift || true
 case "$cmd" in
   pruefen)
-    "$V" show user --raw 2>/dev/null | python3 -c "import json,sys;u=json.load(sys.stdin);print('Konto ok, Guthaben $%.2f'%u.get('credit',0))" \
+    G=$(konto) && echo "Konto ok, Guthaben \$$G" \
       || echo "Kein API-Schluessel: auf cloud.vast.ai -> Account -> API Keys erzeugen, dann: $V set api-key <SCHLUESSEL>"
     ls ~/.ssh/id_*.pub >/dev/null 2>&1 && echo "SSH-Schluessel vorhanden (einmalig: $V create ssh-key \"\$(cat ~/.ssh/id_ed25519.pub)\")" \
       || echo "kein SSH-Schluessel: ssh-keygen -t ed25519";;
@@ -58,7 +62,7 @@ case "$cmd" in
     read -r PREIS SPEICHER < <(curl -s -m 30 -G "https://console.vast.ai/api/v0/bundles/" --data-urlencode "q={\"ask_contract_id\":{\"eq\":$ID}}" \
       | python3 -c "import json,sys;o=json.load(sys.stdin).get('offers',[]);o=o[0] if o else {};print(o.get('dph_total',0),o.get('storage_cost') or 0.3)")
     [ "$PREIS" != 0 ] || { echo "Angebot $ID nicht (mehr) verfuegbar"; exit 2; }
-    GUTHABEN=$("$V" show user --raw 2>/dev/null | python3 -c "import json,sys;print(json.load(sys.stdin).get('credit',0))" 2>/dev/null) \
+    GUTHABEN=$(konto) \
       || { echo "Preis $PREIS \$/h - aber kein API-Schluessel/Guthaben lesbar (vast.sh pruefen). Abbruch."; exit 4; }
     BEDARF=$(python3 -c "print(round($PREIS*$H*1.1 + $DISK*$SPEICHER/730*$H, 2))")
     echo "Preis $PREIS \$/h, Speicher $SPEICHER \$/GB/Monat, $H h => Bedarf ~$BEDARF \$, Guthaben $GUTHABEN \$"
@@ -112,7 +116,7 @@ for i in json.load(sys.stdin):
     "$0" holen "$I" "$@" && "$0" ende "$I" --ja || { echo "Holen fehlgeschlagen - Instanz $I bleibt bestehen (Daten sicher), Fehler pruefen"; exit 5; };;
   aufraeumen)
     # Alles, was noch Geld kostet: Instanzen (laufend ODER gestoppt = Speicherkosten) und Volumes. Zeigt erst, dann eine Rueckfrage (--ja: ohne).
-    "$V" show user --raw >/dev/null 2>&1 || { echo "kein API-Schluessel (vast.sh pruefen) - kann nicht aufraeumen"; exit 4; }
+    konto >/dev/null || { echo "kein API-Schluessel (vast.sh pruefen) - kann nicht aufraeumen"; exit 4; }
     "$V" show instances --raw | python3 -c "
 import json,sys
 for i in json.load(sys.stdin): print('Instanz',i['id'],i.get('actual_status'),i.get('label') or '','%.3f \$/h'%(i.get('dph_total') or 0))" | tee /tmp/vast_reste.$$
