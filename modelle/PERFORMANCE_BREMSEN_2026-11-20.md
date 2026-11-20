@@ -143,3 +143,14 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
 - Agent 07 (Kette parallel): Zweig `ram-je-stufe-1120` (Commit 105727c7b, Worktree .claude/worktrees/agent-a1b159488c8983a24), RAM-Buchung je Stufe + Netzstufen parallel hinter Schaltern
   (Standard AUS), nur synthetisch getestet, NICHT zusammengefuehrt. Offen: GPU-Buchung je Stufe, Dienst-Sperre fuer zwei Ketten am selben Netzdienst.
 - Agent 04 (Paarschema): laeuft noch.
+- Agent 04 (Paarschema, offline an der DB gemessen; Bericht 04_paarschema.md, Skripte 04_paare/): Kern wie heute + bewertete Erweiterung in 3-4 Runden
+  (ungepruefte Paare bewerten nach bestaetigten Clipnachbarn +-2 und gemeinsamen Partnern, je Runde nur die besten abgleichen, Schluss unter 10 % Trefferanteil):
+  an den 937 Bildern mit vollstaendiger Wahrheit 39-40 % der Paare -> 97,7-99,5 % der bestaetigten Paare (Kern allein 55,7-58,8 %); alle 2107 Bilder 60-69 % der heutigen Paare -> 97,4-99,3 %
+  (untere Schranke), dazu ANNAHME ~50 000 neue echte Paare, die heute nie geprueft werden. Tempogewinn maessig (25-40 statt 40-60 min), Nutzen eher Qualitaet. Wirkung auf den Mapper ungemessen.
+  Groesster denkbarer Tempohebel (nur Naeherung): Erstabgleich mit den 2000 groessten Merkmalen, Schwelle >= 3 Treffer -> 21,8 % der Paare enthalten 94,5 % der bestaetigten.
+  Roh-Treffer sagen die Bestaetigung vorher (>= 30 Roh-Treffer: 13,5 % der Paare, 91,1 % der bestaetigten).
+- Bruecken (Agent 04 + Sichtpruefung): der Paar-Graph ist bei >= 15 Inliern EIN Stueck (1969 Bilder); fremde Seite x Hauptstueck 14 218 bestaetigte Paare, aber Median nur 20 Inlier
+  (>= 100: 299, >= 300: 37); 499 der 793 fremden Bilder haben keine Kante ins Hauptstueck. 22 der 30 staerksten Bruecken liegen im Clip jEQJGdvZ26U (Bilder 39-43), Art "eben/Panorama".
+  [n] Kontaktbogen angesehen (`zeigen/bruecke_clip_jEQJGdvZ26U.jpg`): das ist ein SCHWENK ueber Nachbarhaeuser der Kaiser-Joseph-Strasse, nicht das Tor - reine Drehung ohne Standlinie,
+  daraus kann der Mapper nichts triangulieren. FOLGERUNG: ein Teil der "fremden Seite" ist Strassenkulisse, keine Torseite; Ziel sollte "Tor von allen Seiten gedeckt" sein,
+  nicht "alle 2107 Bilder registriert". Pruefauftrag: die 793 Bilder danach einteilen, ob sie das Tor zeigen (Vorpruefung sagt nur "zeigt Objekt" gegen Referenzfotos EINER Seite).
