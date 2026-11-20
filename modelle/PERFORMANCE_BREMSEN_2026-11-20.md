@@ -81,3 +81,23 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   Trefferentfernung 0,000 mm. Also kein zusaetzlicher Gewinn zu holen - er ist schon da.
 - Nebenfund (Fehler, keine Bremse): `tools/py` schickte 14 Werkzeuge mit Strahlen (druck_klips, h0_druckfertig, fertigung_split, filigran, duese_check ...) in die Generator-Umgebung,
   wo sie beim ersten Strahl abstuerzen wuerden. Behoben: Werkzeuge mit `.ray.`/`intersects_*` gehen nach venv-seg.
+
+## Weitere Hebel (20.11. 17:20-18:00)
+- UMGESETZT, gemessen: schrittweiser Mapper `--Mapper.num_threads 1 -> -1` (seit 14.11. ohne Grund 1). A/B Schwabentor 203 Bilder (`tools/versuche/mapper_faeden_ab.sh`):
+  179 Bilder registriert nach 540 s gegen 217 s = 2,5 x; 181 Bilder / 65 019 Punkte / 1,239 px gegen 180 / 63 519 / 1,236 px (1-Faden-Lauf kurz vor Ende abgebrochen).
+- UMGESETZT (Nutzer "Ja tu das", 17:42): zweite Kette parallel, solange die erste im Mapper nur 1 Kern / 2,5 GB braucht (RAM-Buchung von Hand 11000 -> 5500).
+  Strukturelle Loesung offen: RAM-Buchung JE STUFE statt je Lauf (Logbuch Punkt 5) - dann startet die naechste Kette von selbst, wenn Netz-/GPU-Stufen frei sind.
+- AVX2-Bau: Zwischenstand Buendelausgleich CPU alt 165 s / neu 158 s / alt 156 s, Endkosten identisch -> KEIN messbarer Gewinn beim Buendelausgleich (Rest des A/B laeuft:
+  GPU-Loeser, Mapper-Lauf; Log `/media/oem/rcdaten/tmp/avx_ab_1120.log`). Die Erwartung 10-30 % ist damit fuer diesen Teil widerlegt.
+- PAARLISTE - Befund mit Qualitaetsfolge (martinstor-1120, 769 478 Paare, 71 488 bestaetigt):
+  Foto x Foto 438 516 Paare (7,2 % bestaetigt), Foto x Videobild 280 163 (9,1 %), Video gleicher Clip 10 731 (72,4 %; Abstand <= 3: 85 %, 4-10: 69 %, > 10: 55 %), Video x anderer Clip 40 068 (16,7 %).
+  Ursache der vielen "Foto"-Paare: 596 Videobilder heissen `fotos__vf_000_2.jpg` (aus einem alten Sammelordner uebernommen, Clipname verloren, fotos_sammeln haengt _2/_3 an) und gelten
+  in `paarliste()` als Fotos -> voll gegeneinander. Schon am 19.11. notiert (Logbuch Punkt 50), nicht behoben.
+  VERSUCHT und ZURUECKGENOMMEN: Namen als Clip erkennen -> 321 342 statt 769 478 Paare (42 %), aber nur 71,5 % der heute bestaetigten Paare bleiben (20 401 verloren:
+  13 461 Videobild x Videobild, 6 940 Videobild x Foto). Der "Fehler" liefert also echte Verbindungen, die das Schema (jedes 4. Bild als Schluesselbild) nicht findet.
+  Zweistufig (bestaetigte Paare um +-2 / +-4 Nachbarbilder erweitern): 67 % / 78 % der Paare, findet 87,4 % / 91,5 % - auch nicht verlustfrei.
+  FOLGERUNG: Das Schluesselbild-Schema verschenkt vermutlich bei ALLEN Clips rund ein Viertel der echten Paare. Fuer das Martinstor-Problem (fremde Seite nicht angebunden) ist das
+  eher ein QUALITAETS-Hebel als ein Tempo-Hebel: Versuch "Schluesselbild-Abstand 4 -> 2 bzw. Erweiterung um bestaetigte Paare" gegen Zahl registrierter Bilder / Stuecke messen (offen).
+- Netzstufen (netz_fotos 11-20 min, video_suchen 31-81 min): live gemessen 2 % CPU, 0 % GPU - reines Warten auf Antworten, nacheinander, mit Pflichtpausen gegen Ratenlimits (429).
+  Hebel: Commons/Openverse und YouTube GLEICHZEITIG abfragen (verschiedene Dienste, Pausen je Dienst bleiben) und diese Stufen fuer das naechste Objekt vorziehen. Nicht umgesetzt.
+- Kein Hebel (gemessen): Kleinschritte der Kette (141 Schritte < 30 s = zusammen 10 min), Python-Start (2,1 s mit torch), Platten (404 MB/s USB, 4,8 GB/s intern).
