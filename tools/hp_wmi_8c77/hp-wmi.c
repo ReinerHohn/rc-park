@@ -1734,6 +1734,31 @@ static int victus_s_set_cpu_pl1_pl2(u8 pl1, u8 pl2)
 	return ret;
 }
 
+/*
+ * RC-Park (EIGENER ZUSATZ 20.11.2026, Versuch): CPU-Leistungsgrenzen von Hand an die Firmware geben (WMI 0x29),
+ * um zu pruefen, ob das Geraet mehr als die 55 W Dauer des Profils performance zulaesst (Kernel-Bug 219125: Windows 90 W auf Board 8C77).
+ *   echo 90  | sudo tee /sys/module/hp_wmi/parameters/rcpark_pl1
+ *   echo 130 | sudo tee /sys/module/hp_wmi/parameters/rcpark_pl2
+ *   echo 1   | sudo tee /sys/module/hp_wmi/parameters/rcpark_pl_anwenden     (0/0 = Firmware-Standard)
+ */
+static u8 rcpark_pl1;
+static u8 rcpark_pl2;
+module_param(rcpark_pl1, byte, 0644);
+module_param(rcpark_pl2, byte, 0644);
+
+static int rcpark_pl_anwenden_set(const char *val, const struct kernel_param *kp)
+{
+	int ret = victus_s_set_cpu_pl1_pl2(rcpark_pl1, rcpark_pl2);
+
+	pr_info("rcpark: PL1=%u W PL2=%u W an Firmware -> %d\n", rcpark_pl1, rcpark_pl2, ret);
+	return ret;
+}
+
+static const struct kernel_param_ops rcpark_pl_ops = {
+	.set = rcpark_pl_anwenden_set,
+};
+module_param_cb(rcpark_pl_anwenden, &rcpark_pl_ops, NULL, 0200);
+
 static int platform_profile_victus_s_set_ec(enum platform_profile_option profile)
 {
 	struct thermal_profile_params *params;

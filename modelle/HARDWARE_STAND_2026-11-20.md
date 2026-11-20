@@ -37,3 +37,21 @@ Quelle der Speicherdaten: `sudo dmidecode -t memory` / `-t slot` (Nutzer, 20.11.
 2. Interner Arbeitsplatz: Volume leeren und als ext4 nutzen bzw. zweite M.2 (nur nach Nutzer-Ja).
 3. Windows-Test der Dauerleistung.
 4. Cloud ohne Kreditkarte (Trooper.ai PayPal/SEPA, vast.ai Krypto) - `tools/cloud/CLOUD_VAST.md`.
+
+## Was kann das Geraet unter Windows? (Recherche 20.11. 15:40)
+- Kernel-Bugzilla 219125 "Low performance in a 8C77 HP Omen laptop" (UNSER Board 8C77, dort mit i9-14900HX): Windows Leistungsmodus **PL1 90 W**, ausbalanciert 50 W;
+  Ubuntu im Profil performance nur 45 W Dauer. Quelle nur als Suchtreffer-Auszug gelesen (Seite selbst verweigert den Abruf, 403) -> Zahl gilt als HINWEIS, nicht als Messung an unserem Geraet.
+- Testberichte mit Dauer-Watt fuer genau die i7-14700HX-Ausfuehrung: keine gefunden.
+- hp-wmi-Patch Januar 2026 (Schwesterboard 8C78, ebenfalls 16-wf1xxx): Profilwerte 0x30/0x31 (Omen V1) statt Victus-S - unser Eigenbau nutzt fuer 8C77 schon omen_v1 (README). Der Patch nennt keine Watt-Zahlen
+  und meldet "keine sichtbare Aenderung" der Spitzenleistung.
+- Grafikkarte: bei OMEN Max 16 ist "GPU haengt bei 80 W unter Linux" bekannt (Nvidia-Forum; dort hilft ein Zusatzmodul omen_wmi_boost) - anderes Board, fuer 8C77 ungeprueft. Bei uns wirkt performance schon (+47 %, CPU_LEISTUNG.md Z.112).
+
+## Test OHNE Windows vorbereitet: Leistungsgrenze per WMI anheben
+- Das Modul hat die Firmware-Abfrage 0x29 (`victus_s_set_cpu_pl1_pl2`), ruft sie aber nur mit "Standard" auf. NEU (Eigenzusatz in `tools/hp_wmi_8c77/hp-wmi.c`): Parameter
+  `rcpark_pl1`, `rcpark_pl2` (Watt) + `rcpark_pl_anwenden`. Gebaut 20.11. (unsigniert, `/media/oem/scan/rc-park_null/hpwmi_bau/build/hp-wmi.ko`; alter Stand daneben als `hp-wmi.ko.stand_0611`). NOCH NICHT GELADEN.
+- Ablauf (Nutzer, sudo; laufende Jobs bleiben am Leben, waehrend des Modulwechsels kurz Standardprofil):
+  1. `sudo bash tools/hp_wmi_installieren.sh signieren && sudo bash tools/hp_wmi_installieren.sh laden`, danach `bash tools/hpwmi_pruefen.sh` (muss OK melden, Profil performance).
+  2. `echo 70 | sudo tee /sys/module/hp_wmi/parameters/rcpark_pl1; echo 130 | sudo tee /sys/module/hp_wmi/parameters/rcpark_pl2; echo 1 | sudo tee /sys/module/hp_wmi/parameters/rcpark_pl_anwenden`
+  3. Messen unter Volllast (Paketleistung aus `energy_uj`, Temperatur, Drosselzaehler) - erst 70 W, dann 90 W. Zurueck: 0 / 0 / anwenden.
+- Abbruchregel: Temperatur dauerhaft > 95 C oder Drosselanteil > 5 % -> eine Stufe zurueck. Dann (und nur dann) lohnt ein externer Luefter.
+- Unbekannt: ob die Firmware von 8C77 die Abfrage 0x29 annimmt (Victus-S-Befehl; Rueckgabewert steht im Kernellog `rcpark: PL1=... -> <rc>`). Nimmt sie sie nicht an, bleibt der Windows-Test.

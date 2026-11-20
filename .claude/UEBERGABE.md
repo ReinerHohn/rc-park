@@ -22,6 +22,9 @@ Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
 ## Läuft gerade
 - NACHTRAG 14:55: Erste Kette `kette-martinstor-1120` brach 13:27 ab (SfM-Zeitlimit 3 h im globalen Mapper, rc 124; Konsens 843/2107 Bilder, 774 fremde Seite). Neu: `rcpark-kette-martinstor-1120b` (ab sfm, RCPARK_STUFE_MAX_S=21600, Merkmale/Paare aus Cache) · Log `job_logs/kette-martinstor-1120b.log` · danach Skill `wolke-tore`, `konsens_arbeit/fremde_seite.txt`, audit/seiten.jpg, Realitäts-%
 - FlexGlue-Stufe 2 und `mt_anh_sued3` (seit 11:59 im Gesamtausgleich hängend, 1 Kern) auf Nutzerwunsch GESTOPPT 14:48 (RAM für Kette). Nach Kettenende neu starten; Süd-Anhang mit mehr Kernen. Warter-Lehre: startete FlexGlue auch nach GESCHEITERTER Kette (rc prüfen!)
+- NACHTRAG 15:45: Nutzer unterwegs, "Lauf nicht stoppen, durchlaufen lassen" -> Warter `rcpark-warter_schwab` startet nach Ende von 1120b automatisch `kette-schwabentor-1120` (schwab_auto -> schwabentor-1120, Log job_logs/kette-schwabentor-1120.log). KEIN Windows-Neustart heute. Danach FlexGlue-Stufe 2 + Sued-Anhang neu starten
+- Interne SSD freigeraeumt (Regel CLAUDE.md Technik): scan 40 GB frei, Volume-Altarchive auf rcdaten/auslagern_Volume_archiv; Nachlaeufe `intern_frei2/3` (Logs /media/oem/rcdaten/tmp/intern_frei*_1120.log) pruefen
+- Hardware: `modelle/HARDWARE_STAND_2026-11-20.md` (RAM-Kauf 2x32 GB DDR5-5600 empfohlen; CPU 55 W; hp-wmi mit PL-Parametern GEBAUT, nicht geladen - Nutzer muss signieren/laden)
 - yt-dlp: sudo geht aus der Sitzung nicht (kein Terminal) -> aktuelle 2026.10.26 nach ~/.local/bin (steht in PATH vor /usr/local/bin, auch systemd); h6nO14cZSqE löst wieder auf (1080p). Die 2 Videos fehlen im laufenden Lauf noch
 - `regr-schwab` FERTIG: „identisch - nichts verloren“
 
