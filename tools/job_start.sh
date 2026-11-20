@@ -96,6 +96,9 @@ systemctl --user reset-failed "rcpark-$NAME" 2>/dev/null || true
 CMD=$(printf '%q ' "$@")
 # 15.11.2026 (Recherche Durchsatz + Messung: SIFT 14 min statt < 1 min, weil CPU-Ausrichtungen alle Kerne belegten): GPU-Jobs bekommen CPU-Vorrang
 # (CPUWeight 1000, alle Kerne); reine CPU-Jobs (JOB_GPU_MB=0) laufen mit CPUWeight 20 auf den 12 langsamen Kernen 16-27 (JOB_CPU=alle hebt das auf).
+# 20.11.2026: Orchestratoren (Gesamtkette, SfM, Mapper, dichte Wolke) sind KEINE Nebenjobs - ohne GPU-Buchung landeten sie auf den 12 langsamen Kernen
+# (Kette martinstor-1120: SfM > 3 h statt 110 min, Abbruch am Zeitlimit; die 16 schnellen Faeden standen leer). Sie bekommen immer alle Kerne.
+case "$*" in *gesamtkette.py*|*pipeline_objekt.py*|*iphone_sfm.py*|*global_mapper*|*"colmap mapper"*|*patch_match_stereo*|*stereo_fusion*|*flexglue*) JOB_CPU=alle;; esac
 if [ "${BUDGET:-0}" -gt 0 ] 2>/dev/null || [ "${JOB_CPU:-}" = "alle" ]; then CPUW=1000; PIN=""; else CPUW=20; PIN="taskset -c ${JOB_CPU_KERNE:-16-27} "; fi
 systemd-run --user --unit "rcpark-$NAME" --collect -p MemoryHigh="${JOB_MEMORY_HIGH:-11G}" -p CPUWeight="$CPUW" --setenv=RCPARK_JOB="$NAME" --setenv=RCPARK_GPU_MB="${BUDGET:-0}" -p WorkingDirectory="$(pwd)" \
   /bin/bash -c "$PIN$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; ( flock 9; sed -i '/^$NAME /d' '$BUCH' 2>/dev/null ) 9>>'$BUCH.lock'; ( flock 8; sed -i '/^$NAME /d' '$RBUCH' 2>/dev/null ) 8>>'$RBUCH.lock'; [ \$rc -ne 0 ] && echo \"\$(date +%FT%T) $NAME rc=\$rc log=$LOG | \$(grep -v JOB_ENDE '$LOG' | tail -2 | tr '\\n' ' ' | cut -c1-300)\" >> /media/oem/scan/rc-park_daten/job_fehler.log; exit \$rc"

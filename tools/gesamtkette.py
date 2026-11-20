@@ -236,7 +236,7 @@ def main():
                 except Exception as e_: print("HINWEIS Fotosatz des alten SfM-Laufs nicht lesbar (wird wiederverwendet):", e_, flush=True)
             if alt_ and alt_.get("sha") != sha_:
                 neu_sfm = ["--neu", "sfm"]; notiz(B, "sfm_neu", True, hinweis=f"Fotosatz geaendert ({alt_.get('n')} -> {len(namen_)} Bilder): SfM und dichte Wolke werden neu gerechnet, alter Stand beiseite (pipe/*.alt_<zeit>, nicht geloescht)")
-        t_s = time.time(); rc_s = lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe] + (["--mapper", a.mapper] if a.mapper else []) + neu_sfm, log, platz=[P])[0]
+        t_s = time.time(); rc_s = lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe] + (["--mapper", a.mapper] if a.mapper else []) + neu_sfm, log, platz=[P], timeout=max(21600.0, float(os.environ.get("RCPARK_STUFE_MAX_S", "0"))))[0]   # 20.11.2026: SfM mind. 6 h - das 3-h-Standardlimit brach den globalen Mapper bei 2107 Bildern ab (rc 124)
         if rc_s == 0: json.dump(dict(n=len(namen_), sha=sha_, zeit=time.strftime("%Y-%m-%d %H:%M")), open(fsj, "w"))
         B["lage"] = dict(bestanden=None, hinweis="neue SfM - Lage-Tore noch nicht gelaufen (Stufe 'tore')")
         mwj = os.path.join(P, "sfm", "mapper_wahl.json")                         # 19.11.2026 (Nutzer): trug der Konsens-Mapper nicht, steht der DATENMANGEL als eigene rote Zeile im Bericht (nie still die langsamere/schlechtere Methode)
