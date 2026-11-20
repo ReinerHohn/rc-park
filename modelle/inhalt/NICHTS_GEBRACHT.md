@@ -1,10 +1,297 @@
 # Inhalt von modelle/NICHTS_GEBRACHT.md (erzeugt; lesen mit Read offset=Zeile)
 - Z.1: # Sackgassen (nicht doppelt versuchen) - Kaufhaus, Wolke -> Netz, Stand 7.11.2026
+  - Z.30: - BS9 (7.11.) Bogenkontur aus Foto-Median (bogen_kontur.py, f02-Homographie): Median-Ortho ist zerschmiert/ver
+  - Z.31: - BS3d-ERGEBNIS (7.11.) Kamera-Ausgleich (Pose je Foto an Netz mvs_d03_pl30): 12 gueltige Fotos bestehen die G
+  - Z.32: - BS10 (7.11.) tools/wolke_ueber_foto.py: Wolke (Rahmen per Umeyama aus Kamerazentren, Rest 0,05 cm; SFM-AUSRI
+  - Z.34: - BS12 (7.11.) tools/kamera_unabhaengig.py (Leave-One-Out-Neuregistrierung, 1. Version mit Eichfehler: Gesamts
+  - Z.36: - BS13 (7.11.) tools/bogen_fit.py (RANSAC-Kreis an Laibungslinie aus Wolkenplatte): NICHT belastbar. Version 1
+  - Z.37: - BS16 (7.11. 12:10) BOGEN-BAUTEIL IM DIFF VERWORFEN: Raster, 22 Fotos (ohne 073), Basis mvs_d03_fix (B) vs S9
+  - Z.39: - BS18 (7.11.) Bogen-Einbau auf mvs_default-Basis BLOCKIERT: mvs_default.stl ist nicht wasserdicht (748 143 Fl
+  - Z.40: - BS19 (7.11.) 5 "nicht beurteilbare" Fotos (005, 074, 089, 106, 107) GEPRUEFT: Wolke (Rahmen per Umeyama) in 
+  - Z.41: - BS20 (7.11.) Wasserdicht-Reparatur mvs_default: trimesh fill_holes keine Wirkung; Open3D 0.20 t.geometry fil
+  - Z.42: - BS20b (7.11.) Reparatur mvs_default GELUNGEN (wasserdicht, Volumen 1,06e6): Pinch-Knoten aufgespalten (1 Kno
+  - Z.43: - BS20c (7.11.) KORREKTUR BS20b: Fan-Deckel ist KEINE echte Reparatur. Die 669er-Randschleife spannt das ganze
+  - Z.44: - BS20d (7.11.) Open3D fill_holes auf entflochtenem mvs_default: fuellt 651 Flaechen (Boden ~348x196 mm, plaus
+  - Z.45: - BS20e (7.11.) Poisson depth 11 aus mvs_default_fix (3 Mio. Punkte, 1 %-Dichteschnitt + remove_non_manifold):
+  - Z.46: - BS20f (7.11.) Poisson depth 9 (720k Fl.) / 10 (2,8 Mio. Fl.) aus 2 Mio. Mesh-Punkten, ohne Dichteschnitt: be
+  - Z.47: - BS20g (7.11.) Diff kh26wd (Raster g0.18, 88 gueltige Fotos, 6 fuer alle nicht beurteilbar: 005 068 074 089 1
+  - Z.48: - BS21 (7.11.) URSACHE Bogen-Diff-Verlust (Sichtung foto_diff_043 B gegen W, Region): Verlust liegt nur in Fro
+  - Z.49: - BS21b (7.11.) Varianten fuer Bogen-Test gebaut (auf mvs_d03_fix): K1 zb=2,9 t_back -3,7 (wasserdicht), K2 zb
+  - Z.50: - BS21c (7.11.) Diff diff3 (22 Fotos, Raster g0.18): Region B -0,0445 / W -0,0321 / K1 -0,0307 / K2 -0,0322 (b
+  - Z.51: - BS22 (7.11.) Stabilitaetstest Glaettung: Job rcpark-kh27 (default / d03_fix / saeule, alle gueltigen Fotos, 
+  - Z.52: - BS21d (7.11.) Kamera-Versatz-Hypothese fuer Bogenverlust NICHT gestuetzt: foto_diff-'versatz' je Frontfoto B
+  - Z.53: - BS23 (7.11.) Offset-Schale (Abstandsfeld 0,6 mm Raster, Isoflaeche 0,45 mm, Marching Cubes, Job rcpark-schal
+  - Z.54: - BS24 (7.11.) Recherche Mesh/Kanten (Agent): Top 5 zum Testen: 1 LIMAP 3D-Linien (BSD), 2 PyTorch3D-Verfeiner
+  - Z.55: - BS22-Ergebnis g=0,05 (88 Fotos, Raster): saeule -0,1138 (Median -0,0884) < default -0,1049 (-0,0879) < d03_f
+  - Z.59: - BS25 (7.11.) Fenster-Recherche fertig: eigenes Fenstermodell 9-12 Parameter (Segmentbogen als Stichhoehe), S
+  - Z.60: - BS25b (7.11.) Fenster-Ortho (rcpark-fensterfront, 2 cm/px, z 5-15): Dunkelsegmentierung findet 5 Fenster ~2,
+  - Z.61: - BS26 (7.11.) tools/fenster_fit.py (CMA-ES, 10 Parameter, Stab hell/Glas dunkel) auf Median von 5 per Kreuzko
+  - Z.62: - BS27 (7.11.) Dichte an den Fenstern (Front-Ortho 2 cm, front_farbe_roh.png ohne Auffuellung): 66-77 % der 2-
+  - Z.63: - BS28 (7.11.) Wiederholungssuche per Template Matching (Median-Fenster, NCC im gesamten Ortho, Schwelle 0,35)
+  - Z.64: - BS29 (7.11.) Autokorrelation ohne Vorlage (Ortho Hauptfassade x150-870, y215-480, nur belegte Zellen maskier
+  - Z.66: - BS23-Ergebnis (kh28, 7.11., Raster g0.18): default -0,0934 (88 Fotos) vs Offset-Schale -0,0925 (86 Fotos; Sc
+  - Z.67: - BS23b (7.11.) Schale gegen default auf den 86 gemeinsamen Fotos: -0,0931 vs -0,0925, Differenz +0,0006 (Medi
+  - Z.68: - BS22-Ergebnis g=0,10 (88 Fotos, Raster): default -0,1643 (Median -0,1440, besser als d03_fix 64/88) < saeule
+  - Z.69: - BS30 (7.11.) tools/fenster_einbauen.py (manifold3d): Typfenster als Nische (Wand-Glas 4-10 cm aus Wolke, w_w
+  - Z.70: - BS31 (7.11.) Web-Fotos Runde 2 (Agent, Wikimedia Commons, 23 Suchbegriffe, 37 neue Bilder 130 MB nach fotos_
+  - Z.72: - BS32 (7.11.) FENSTER-DIFF (22 Fotos, Raster g0.18, B=d03_fix vs F=d03_fix+5 Fenster aus Wolke): Region B -0,
+  - Z.73: - BS32b (7.11.) FENSTER-DIFF g0,05 (22 Fotos): Region B -0,0625 / F -0,0647 (F-B -0,0022, 95% -0,0070..+0,0024
+  - Z.74: - BS33 (7.11.) Test "nur Nische ohne Sprossen": d03_fix_nische.stl (151266 Fl.) - auch OHNE Staebe NICHT wasse
+  - Z.75: - BS33b (7.11.) Nische ohne Sprossen g0,18 (22 Fotos): Region F-B -0,0012 (95% -0,0056..+0,0031, schlechter 8/
+  - Z.76: - BS34 (7.11.) tools/fenster_einbauen.py repariert: Prisma jetzt mit mapbox_earcut direkt (kein Schlusspunkt-D
+  - Z.77: - BS33c (7.11.) Nische ohne Sprossen g0,05 (22 Fotos): Region B -0,0625 / F -0,0601 (F schlechter +0,0024, bes
+  - Z.78: - BS35 (7.11.) WOLKEN-ABSTAND (tools/wolke_abstand_region.py, neu; 150k Wolkenpunkte im Fensterquader z 6,4-9,
+  - Z.79: - BS36 (7.11.) Neue Pipelines gestartet: (a) tools/wolke_abweichungskarte.py (Job rcpark-abwkarte: Wolke->Netz
+  - Z.80: - BS36b (7.11.) rcpark-ftw: Tetraedrisierung gelang (417 432 Tetraeder, 155 s) aber Skript brach an fehlendem 
+  - Z.81: - BS36c (7.11.) fTetWild (pytetwild, edge_length_fac 0,01, epsilon 2e-4, 154 s) auf mvs_default_fix: Oberflaec
+  - Z.82: - BS37 (7.11.) PyTorch3D-Bau aus Quelle (git clone --depth 1, venv-seg torch 2.15+cu132, nvcc-Wheel unter /med
+  - Z.83: - BS37-Ergebnis (7.11.): PyTorch3D 0.7.9 KOMPILIERT (Versuch 3, c++20 + CPATH nvidia/cu13), installiert in /me
+  - Z.84: - BS38 (7.11.) tools/netz_verfeinern.py (neu): Region-Verfeinerung mit PyTorch3D (weiche Raster-Tiefe SoftRas,
+  - Z.85: - BS36d (7.11.) Abweichungskarte (Open3D, wolke_abweichung_o3d.py) ERSTER LAUF UNGUELTIG: Wolke ungefiltert (B
+  - Z.86: - BS36e (7.11.) ABWEICHUNGSKARTE gueltig (Wolke auf Netzhuelle+1 m, 300k Punkte, Abstand Wolke->Netz): Median/
+  - Z.87: - BS38b (7.11.) ERSTES ZEICHEN (vf1, abgebrochen nach Schritt 25, 1074 s = 43 s/Schritt, Aufloesung 1200, fpp 
+  - Z.88: - BS39 (7.11.) ZAEHLUNG Hauptfassade OG zwischen den Erkern: 5 Fenstergruppen (je dreiteilig) am Foto 043, Pro
+  - Z.89: - BS38c (7.11.) PyTorch3D-Regionsverfeinerung vf2 (Fensterbox, 60 Schritte): Proxy-Train 0.1336->0.1285 (-4 %)
+  - Z.91: - BS40 (7.11.) Winding Number (libigl fast_winding_number, 5 cm, Iso 0.5) + Marching Cubes auf mvs_default: NI
+  - Z.92: - BS38d (7.11.) Echter Foto-Diff vf2 (PyTorch3D-Fensterverfeinerung) V gegen Basis B (d03_fix), 22 Fotos, Rast
+  - Z.93: - BS41 (7.11.) Wolkenbereinigung (tools/wolke_bereinigen.py, Open3D SOR nb30 std1.2 + Radius 0.12 m/15 Pkt): 9
+  - Z.94: - BS42 (7.11.) Linienfilter (PCA-Linearitaet >0.85, k25) auf bereinigter Wolke: streicht nur 0,2 % (805k->803k
+  - Z.95: - BS43 (7.11.) Streiffilter (max|n.v_Kamera|<0.35): streicht 0,1 % (Median 0.97, P10 0.70) => fast jeder Punkt
+  - Z.96: - BS38e (7.11.) vf3a/vf3b (5 cm max, 20 Schritte, 114 im Training, Holdout 016/043/054; Proxy-Holdout fiel gle
+  - Z.97: - BS44 (7.11.) Foto-Diff MARTINSTOR (Generator martinstor_v4_1-87.stl, 17 kalibrierte Fotos, 11 beurteilbar; 0
+  - Z.98: - BS45 (7.11.) Foto-Diff aller vorhandenen Kaufhaus-STLs gegen Basis B=d03_fix (22 Fotos, global, Raster): g0.
+  - Z.99: - BS46 (7.11.) HYBRID d03_fix (Wolkennetz) + Generator(LoD2-Rumpf)-Flaechen NUR in Wolkenluecken (tools/netz_h
+  - Z.100: - BS46b (7.11.) Hybrid L=3/4/6 m (whyb2_*): g0.18 Mittel B -0.0855 | L2 -0.0910 | L3 -0.0886 | L4 -0.0883 | L6
+  - Z.103: - BS47 (7.11.) Wolke-gegen-LoD2-Test (Generator kaufhaus_null5 = LoD2-Rumpf, in Basis-bbox +-0,5 m, 121k Oberf
+  - Z.104: - BS48 (7.11.) Eigenbau-Min-Cut Schritt 1: tools/wolke_ebenen_ransac.py (Open3D iterativ, 4 cm, >=3000 Pkt) au
+  - Z.105: - BS49 (7.11., Nutzer 'Ja, Schale') DRUCKKANDIDAT 1: netze5/schale2_fenster_dicht.stl = Offset-Schale (netze4/
+  - Z.106: - BS50 (7.11.) Foto-Diff Druckkandidat 1 (schale2_fenster_dicht = Offset-Schale + 5 Fenster mit Glasnische+Sta
+  - Z.107: - BS49 (7.11.) Eigenbau-Min-Cut komplett (tools/wolke_mincut.py, nur numpy/scipy/trimesh/manifold3d, scipy-max
+  - Z.110: - BS51d (7.11.) Ausrichtung alter Generator (kaufhaus_measured.glb, 12 Hauptteile) -> Wolke, GPU-Distanzfeld +
+  - Z.111: - BS52 (7.11.) Bauteilweise Einpassung alter Generator (tools/generator_teile_einpassen.py, GPU, Verschiebung+
+  - Z.112: - BS53 (7.11.) Foto-Diff alter Generator (22 Fotos, global): T = bauteilweise eingepasst (17 Teile, 5 uebernom
+  - Z.113: - BS54 (7.11.) Generator mit ALLEN 41 Teilen bauteilweise eingepasst und alle Fits uebernommen (216 s GPU): Fo
+  - Z.114: - BS55 (7.11.) KREISLAUF-Tor per Foto-Diff (tools/generator_kreislauf.py, 8 Gruppen je eingepasst gegen A0 = a
+  - Z.115: - BS56 (7.11.) Generator A0 ohne Feinteile (22 Fotos): g0.18 Mittel A0 -0.0320 | ohne Dachziegel -0.0316 (+-0)
+  - Z.116: - BS57 (7.11.) Massing-Messung Dach: Generator (T3d) Vorderdachflaeche n=(0.29,0.80,0.52) d=17.35 vs Wolke-RAN
+  - Z.117: - BS58 (7.11.) Dach z-Skalierung um Traufe (0.87 / 0.93, Neigung wie Wolke) am Generator A0, 22 Fotos: g0.18 B
+  - Z.118: - BS59 (7.11.) Overlay Foto 043 (A0 und Dach s0.87, g0.18, diffpar/dachv/.../p2/B|S87/043/foto_diff_043.jpg): 
+  - Z.119: - BS60 (7.11.) Leave-one-out je Generatorteil (22 Fotos, Mittel gg A0, g0.18 | g0.05): ohne Bogen -0.0007|+0.0
+  - Z.120: - BS61 (7.11.) LIMAP real gelaufen (venv-limap, tools/limap_lauf.py + limap_auswerten.py, Job rcpark-limap1, 3
+  - Z.121: - BS62 (7.11.) CGAL 6.0.1 Kinetic Surface Reconstruction (GPL, nur Test; Build /media/oem/scan/cgal_ksr/work/k
+  - Z.122: - BS63 (7.11.) PolyGNN (MIT, vortrainierter Munich-Checkpoint, venv /media/oem/scan/venv-polygnn, torch_scatte
+  - Z.123: - BS64 (7.11.) Feinlage direkt gegen Foto-Diff (A0 +-0.4 m Fassadennormale, +-0.3 m Hoehe, +-1 Grad Drehung, +
+  - Z.124: - BS65 (7.11.) LIMAP-Kantenzwang: 114 netzferne 3D-Linien (>25 cm vom Netz, tools/limap_kantenzwang.py, 4-cm-S
+  - Z.125: - BS66 (7.11.) Druckkandidaten Schale+Fenster gg d03_fix (22 Fotos): dicht g0.18 -0.1003 (-0.0147, 14 besser/8
+  - Z.126: - BS67 (7.11.) Regel 9b/3f Overlay Foto 043 g0.05 (druck/p2/Offen vs B): Fensterlage der Schale sitzt auf den 
+  - Z.127: - BS68 (7.11.) Hybrid d03_fix + schale2_fenster_offen (konkateniert, hyb_d03_offen.stl), 22 Fotos: g0.18 -0.09
+  - Z.128: - BS69 (7.11.) Wolkennetz d03_fix mit eingeschnittenen Fenstern (Boolean, fenster_einbauen): d03_fix_fenster3 
+  - Z.129: - BS70 (7.11.) Netzglaettung + glatte Schale (22 Fotos, Mittel, g0.18 | g0.05): d03_fix Taubin 5 Iter -0.0786 
+  - Z.130: - BS71 (7.11.) Formvergleich schale2 vs d03_fix: schale2 duenne Huelle (78 m3, 1984 m2, 2.13 M Fl., ~4 cm Wand
+  - Z.131: - BS72 (7.11.) DICHTE OpenMVS-NETZE im Foto-Diff (netze4, 22 Fotos, Mittel g0.18 | g0.05; d03_fix -0.0855 | -0
+  - Z.132: - BS72 (7.11.) Grobgenerator Kaufhaus (modelle/kaufhaus_grob, neuer Bauteiltyp stl_teil in tools/baukasten_gen
+  - Z.133: - BS73 (7.11.) Grobgenerator Befund: Gesamthoehe 16.45 m (z 1.48..17.93) vs Wolkennetz 19.33 m (P99.5 16.9 vs 
+  - Z.134: - BS74 (7.11.) kaufhaus_grob parameter_raum: dz/sz fuer dach/staffelgiebel/helme/gauben auf dz -0.5..+3.5 m, s
+  - Z.135: - BS75 (7.11.) Varianten mvs_default (22 Fotos, Mittel g0.18 | g0.05; d03_fix -0.0855 | -0.0848): default (Wie
+  - Z.136: - BS76 (7.11.) Direktmessung Generator (ausgerichtet, Netzrahmen m) gegen Wolke (z 99.5-Perzentil im Gruppen-G
+  - Z.137: - BS77 (7.11.) Wand/Giebel/Laube +-0.3 m bzw. Giebelbreite +-3 % am alten Generator (22 Fotos, Mittel gg A0 g0
+  - Z.138: - BS78 (7.11.) tools/wolke_gruppen_hoehe.py (Wolke als Referenz, GPU-Distanzfeld 5 cm; Scan dz -1..+4 m, sz 0.
+  - Z.139: - BS79 (7.11.) tools/wolke_gruppen_fit.py (Wolke als Referenz, CMA je stl_teil-Gruppe ueber dn,du,dz,sn,su,sz;
+  - Z.140: - BS80 (7.11.) Staffelgiebel hoeher (nur Giebelteile; 22 Fotos, Mittel gg A0 g0.18 | g0.05): dz +2 m +0.0013|+
+  - Z.141: - BS81 (7.11.) Overlay Foto 004 (gh/dz3.0, g0.18): +3 m ueberschiesst - die roten Giebelflanken (Zone 2 und 8)
+  - Z.142: - BS82 (7.11.) Treppengiebel-Variante (tools/generator_treppengiebel.py; 8 Stufen/Flanke, Spitze 20.24, Halbbr
+  - Z.143: - BS83 (7.11.) Giebelposition aus Wolke: einzige vertikale Ebene mit Normale ~ Firstachse r: n=(0.93,-0.36,0.0
+  - Z.144: - BS84 (7.11.) Nutzer-Featureliste Kaufhaus (Memory kaufhaus-features-parametrisch-2026-11-07): Boegen, Fenste
+  - Z.145: - BS85 (8.11.) Feature 1 Arkade: neuer Bauteil-Typ 'bogenreihe' (tools/baukasten_gen.py, wasserdicht/1 Koerper
+  - Z.146: - BS85b (7.11. 0 Uhr) Nutzer: Offset-Schale als Sichtbasis verworfen ('viel zu verwaschen'); Abkuerzung 'Schal
+  - Z.147: - BS87 (7.11.) Treppengiebel (tools/generator_treppengiebel.py, 8 Stufen/Flanke, OHNE Dachmuster/-rauten/-zieg
+  - Z.148: - BS86 (7.11.) Bogenreihe (bauteil 'bogenreihe', Wolke-Messung: 5 Pfeiler/4 Boegen, pitch 4.329, Pfeiler 0.76x
+  - Z.149: - BS88 (8.11. 0 Uhr) Schale unten + Generator-Dach oben (netze4/mvs_default_schale2 bei z 10.5/12.0 m abgeschn
+  - Z.150: - BS89a (8.11.): Erker aus Wolke gemessen (tools/wolke_erker_messen.py, modelle/kaufhaus_grob/erker_messung.js
+  - Z.151: - BS89b (8.11.): Balkonband aus Wolke (tools/wolke_balkon_messen.py, modelle/kaufhaus_grob/balkon_messung.json
+  - Z.152: BS90 (2026-11-08): Bogenreihe-CMA-Feintuning (10 Parameter, parameter_raum_bogen.json, 4 Gen CPU + 2 GPU): J -
+  - Z.153: BS91 (2026-11-08): Foto-Diff unabhaengig (22 Fotos, g0.18|g0.05, gegen d03_fix -0,0855|-0,0848): grob -0,0324|
+  - Z.154: BS92 (2026-11-08): Dach-Region (Box -7.74,2.38,10.53,13.5,16.74,17.13, 22 Fotos): d03_fix -0,198|-0,161 (g0.05
+  - Z.155: BS93 (2026-11-08): fenster2 (netz_verfeinern.py, PyTorch3D, d03_fix + Box Fensterband, 60 Iter, 12 Train-/3 Ho
+  - Z.156: BS94 (2026-11-08): Dach-Schleife grob3 (Satteldach + Ziegelreihen, 11 Parameter, Koordinatenabstieg, Region Da
+  - Z.157: BS95 (2026-11-08): Wolken-Einpassung fester Teile (tools/teil_wolke_fit.py Gradient / teil_wolke_sweep.py Peak
+  - Z.158: BS96 (2026-11-08): ERSTER Gewinn: Dach per Peak-Sweep in der Wolke (stl_teil:dach dn +0,25 dz -1,66 sn 1,054 s
+  - Z.159: BS97 (2026-11-08): Erker-Sweep im Foto (stl_teil:erker, Region Erker-Box, 8 Fotos): dn -0,2 m best bei BEIDEN 
+  - Z.160: - BS98 (2026-11-08) Dach-dz-Sweep Foto-Diff (grobD, 10 Fotos, global): dz -2.0 bester Mittelwert bei beiden Gl
+  - Z.161: - BS99 (2026-11-08) 22 Fotos global: grobD -0.0349|-0.0458, grobDT (Dach+Boegen) -0.0420|-0.0423, grobT (Boege
+  - Z.162: - BS100 (2026-11-08) Erker dn=-0.2 + dz-Sweep (-0.4..0), Region, 8 Fotos: dz 0 bester (g0.05 -0.0286, g0.18 -0
+  - Z.163: - BS101 (2026-11-08) Dach-dz 22 Fotos global: dz-1.661 -0.0407|-0.0382, -0.9 -0.0369|-0.0396, -1.3 -0.0398|-0.
+  - Z.164: - BS102 (2026-11-08) Kombination Boegen(getunt)+Dach(dz-1.661)+Erker dn-0.2, 22 Fotos global: ref (ohne Erker-
+  - Z.165: - BS103 (2026-11-08) Hybrid per ERSETZEN (Dreiecke mit Schwerpunkt in Box aus d03_fix entfernt, grobDT-Dreieck
+  - Z.166: - BS104 (2026-11-08) Hybrid-Ersetzen Erker-Teilboxen (22 Fotos global, g0.05|g0.18): Ehi -0.0788|-0.0715, El -
+  - Z.167: - BS105 (2026-11-08) Formen-Katalog (Quader/Zylinder/Pyramide, 5.-95.-Perzentil-Box der Wolkenpunkte in Fehlst
+  - Z.168: - BS106 (2026-11-08) Taubin-Glaettung d03_fix (lamb 0.5, nu -0.53), 22 Fotos global (g0.05|g0.18) vs d03_fix -
+  - Z.169: - BS107 (2026-11-08) Unsharp d03_fix (v+k*(v-Laplace3(v))), 22 Fotos global: k0.3 -0.0901|-0.0816 (g0.05|g0.18
+  - Z.170: - BS108 (2026-11-08) Unsharp klein, 22 Fotos global (g0.05|g0.18 vs d03_fix -0.0848|-0.0855): i1k1 -0.0907|-0.
+  - Z.171: - BS109 (2026-11-08) Unsharp mit Verschiebungs-Deckel (i2k2, Clamp 0.3/0.6/1.0 mm), 22 Fotos global (g0.05|g0.
+  - Z.172: - BS110 (2026-11-08) Taubin mit vertauschten Vorzeichen (lamb -0.53, nu 0.5) = Schaerfen, 22 Fotos global (g0.
+  - Z.173: - BS111 (2026-11-08) Schaerfen c10 regionsweise (11 Fotos, Region-Diff, Delta d03_fix gg c10; positiv = c10 be
+  - Z.174: - BS112 (2026-11-08) Schaerfen NUR Dach (z>=10 m, Clamp 0.3/1.0/2.0 mm), 22 Fotos global (g0.05|g0.18 vs d03_f
+  - Z.175: - BS113 (2026-11-08) netz_verfeinern auf ganzem Gebaeude (Box Fassade+Dach, 13 Train/3 Holdout, 40 Iter, max 5
+  - Z.176: - BS114 (2026-11-08) netz_verfeinern ganzes Gebaeude staerker (200 Iter, lr 0.05, max 15 cm, w-lap 3), 22 Foto
+  - Z.177: - BS115 (2026-11-08) Ableitungsfreie Suche gegen echten Foto-Diff: Dach-Schaerfen-Raster (it 1/3 x k 0.5/1.0 x
+  - Z.178: - BS116 (2026-11-08) KORREKTUR der Sitzungs-Aussage "d03_fix bester Kandidat": d03_fix ist die DRUCKBARE Refer
+  - Z.179: - BS117 (2026-11-08) Schaerfen auf dichtem mvs_default_fix (Unsharp i2k2, Clamp 0.3 / 1.0 mm), 22 Fotos global
+  - Z.180: - BS118 (2026-11-08) Hybrid dfs03 + d03_fix in Erker-Box (hyb_dfs_erker.stl, Ersetzen per Dreiecksschwerpunkt)
+  - Z.181: - BS119 (2026-11-08) **ERSTER TOR-SIEGER**: hlo = d03_fix unten (z < 6 m) + geschaerftes dichtes mvs_default_f
+  - Z.182: - BS120 (2026-11-08) Absicherung hlo (BS119): Zonengrenze z 4/5/6/7/8 m, 22 Fotos global, Delta vs d03_fix (g0
+  - Z.183: - BS121 (2026-11-08) HOLDOUT mit 21 neuen kalibrierten Fotos (001,003,005,011,014,017,020,023,025,027,029,031,
+  - Z.184: - BS122 (2026-11-08) Obere Zone andere dichte OpenMVS-Netze (Unsharp c0.3, z<6 m d03_fix), 22 Fotos global, ab
+  - Z.185: - BS123 (2026-11-08) Poisson-Rekonstruktion von hlo (Open3D venv-o3d, Punkte+Normalen = hlo-Eckpunkte 1,7 Mio,
+  - Z.186: - BS124 (2026-11-08) Wasserdichte Ableitung hlo_pois_wd.stl (hlo_pois10n zugeschnitten auf hlo-Bounds +2 mm, g
+  - Z.187: - BS125 (2026-11-08) Enger Zuschnitt der Poisson-hlo (Dreiecke > 0.6 / 1.5 mm Abstand zur hlo-Eckpunktwolke we
+  - Z.188: - BS126 (2026-11-08) KORREKTUR/Einschraenkung zu BS119-BS122: Die OpenMVS-Szene (mvs_refine.log: "94 images (9
+  - Z.189: - BS127 (2026-11-08) Leave-out-Plan geschrieben: modelle/archiv/PLAN_LEAVEOUT_2026-11-08.md (nicht gestartet, 
+  - Z.190: - BS128 (2026-11-08) Unabhaengiger Test ueber Fotos AUSSERHALB der MVS-Szene (16 K-kalibrierte Nummern ohne Ei
+  - Z.191: - BS129 (2026-11-08) Leave-out Teil 1 fertig: modelle/kaufhaus_null5/sfm/dicht_alle_lo (86 Fotos statt 94; Tes
+  - Z.192: - BS130 (2026-11-08) Leave-out Teil 2: OpenMVS (InterfaceCOLMAP + ReconstructMesh -p scene.ply, /media/oem/sca
+  - Z.193: - BS131 (2026-11-08) **LEAVE-OUT-ERGEBNIS** (7 auswertbare der 8 weggelassenen Fotos 001,005,014,020,025,042,0
+  - Z.194: - BS132 (2026-11-08) Leave-out-Kandidaten auf UNBEKANNTEN Fotos (7 der 8 Fotos, Basis lo_default -0.0914|-0.05
+  - Z.195: - BS133 (2026-11-08) Wasserdichte Netze aus lo_d30 (90k Fl.) per Generalized Winding Number (tools/netz_windin
+  - Z.196: - BS134 (2026-11-08) lo4 Tiefenfilter-Fusionsvarianten auf Leave-out-Wolke (7 unbekannte Fotos, Delta vs lo_de
+  - Z.197: - BS135 (2026-11-08) Gesamtmodell-Fit (param_wolke_fit --gesamt, GPU-KNN) auf grob3: parametrische Fassadentei
+  - Z.198: BS136 (8.11.) quader:ost gegen Wolke (Ostende u 9-15, 73000 Punkte >0,3 m): Fit schrumpft Quader zu 0,43 m due
+  - Z.199: BS136-Nachtrag (8.11.): Ostwand u 9-24 (n 9,4->12,2 schraeg, Fensterraster z 2-13) ist NACHBARHAUS, nicht Kauf
+  - Z.200: BS137 (8.11.) balkonband:haupt Fit mit geweiteten Grenzen (auskragung bis 1,3, wand_n 13,2-13,7, gesamt, z 3,5
+  - Z.201: BS138 (8.11.) Wandquader (og/west_w/ost_w/hinten/gesims) statt stl_teil:fassade+waende: Startwerte p9 >0,3 m 1
+  - Z.202: BS139 (8.11.) bogenreihe:laube mit weiten Pfeilergrenzen (breite 0,6-1,4): Fit breite 1,09 / tiefe 0,64, pitch
+  - Z.203: - BS140 8.11.: stl_teil:helme abgeschaltet (p18) -> Nutzer: Erker 'Schrott', vorher gut. Zurueck auf p17. Erst
+  - Z.206: - BS141 8.11.: Gauben-Fit (weite Grenzen, zmin 10) J 0,579->0,621 schlechter, nicht uebernommen; Dach-Fit Medi
+  - Z.207: - BS142 (8.11., 13:5x): iPhone-Wolke (eigene SfM) in die alte Wolke per verformendem Polynomfeld (`tools/dicht
+  - Z.208: - BS143 (8.11. 15:2x): Punktwolken-ICP mit freiem Maßstab (iphone_ausrichten.py, dicht_icp_fein.py) fuer die g
+  - Z.209: BS144 (8.11.) Reiner Verschiebungs-Sweep auf echter Wolke: bester Abstand 0,17-0,56 m, Orte wandern (Gauben dz
+  - Z.210: BS145 (8.11.) Rueckrichtung (Wolke->Modell) mit Box des verschobenen/skalierten Modells: Optimierer SCHRUMPFT 
+  - Z.211: BS146 (8.11.) Wolke aus gemeinsamer SfM war gegen Netzrahmen GEKIPPT (Boden 1,6 Grad quer, Wand-Gier -1,2..-2,
+  - Z.212: BS147 (8.11.) Fotoauswahl nach Abstand zur Kamera: nahste Fotos = Nahaufnahmen aus der Laube, unbrauchbar. Aus
+  - Z.213: BS148 (8.11.) Pfeilerfuss-Pixel von Hand + Bodenebene (z=1,66) -> Pfeilerabstand 6,6 m, Reihe 7 Grad schraeg: 
+  - Z.214: BS149 (8.11.) Histogramm der Wolke in u fuer Pfeiler-Kamm: Wolke hat in Pfeilerhoehe (z 2,3-3,4) an Modell-Pfe
+  - Z.215: BS150 (8.11. abends) **Boden-/Wand-Ebenen-Fit mit z-Fenster-Auswahl ist verzerrt (Selektion auf der abhaengige
+  - Z.216: - BS151 (8.11.): Teilfit bogenreihe:laube im lot2-Rahmen entartet (scheitel_z, oeffnung_breite, oberkante_z an
+  - Z.217: - BS152 (8.11.): Teilfit erker:0 findet linken Erkerturm (Foto x~290, Modell x~540) nicht: Teilbox = Startmode
+  - Z.218: - BS153 (8.11.): Score-Rauschen 0,02 durch unseeded sample_surface (modell_ausrichten_gpu); mit seed=0 + --ns 
+  - Z.219: - BS154 (8.11.): GPU-Sweep erker:0 und erker:1 (+-8 m, lot2, Foto-Term, je 6 min) fuer seitliche Lage (du) unb
+  - Z.220: - 2026-11-09 SAM3D-Koerper aus Einzel-Flaeche (Median-Tiefe je Flaeche): Nutzer 'keine echte Tiefe'; echte 3D 
+  - Z.221: - 2026-11-09 Relief-Kachel kachel5 (Foto-Umriss + Ebene/Plateau, nur 89/756 Flaechen gefittet, Rest Wolkenhoeh
+  - Z.222: - 2026-11-09 objekte_schliessen.py (pymeshfix auf Zuschnitt-Schalen): 238/240 wasserdicht, aber Lochfuellung b
+  - Z.223: - 2026-11-09 Canny-Kantenabstimmung + Schleife (--sicht 8 --anteil 0.85): nur 224 Segmente/132 m (SAM-Version 
+  - Z.224: - 2026-11-09 LIMAP-Prototyp (limap_proto_vor.py + limap_proto.py, 16 Fotos, Ausschnitt r=3 m, LSD, Tiefenkarte
+  - Z.225: - 2026-11-09 Triangulation Hochlauf (--zmin 14 --r1 0.35 --r2 0.4 --tol 4, 24 Refs): 171 130 Segmente / 422 km
+  - Z.226: - 2026-11-09 Statistik-Kontrastfilter auf Drahtgitter: verwirft echte Kanten (Wolken-Gegenprobe Abdeckung 0.87
+  - Z.227: - 2026-11-09 Dachband tol_o 0,20 (o3): Abdeckung >15 m 0,52, Treffer 0,41 - grobe Toleranz oben bringt nichts,
+  - Z.228: - 2026-11-09 Gauben-Formfit (4 Runden, Agent): (a) Sweep-Inlier-Raster -> Keile 0,3-0,5 m versetzt; (b) + Foto
+  - Z.229: - 2026-11-09 muster_fit (Agent): (a) Mehrharmonik-Periodogramm fuer Feinperiode: Hauptkeule ~1 m breit bei wen
+  - Z.230: - 2026-11-09 Baluster-Beleg-Tor (Agent): Wolke (b 3,0 MAD, Einigkeit 28 %) und Fotos (2,3 MAD) auf 1500-px-Sta
+  - Z.232: - 2026-11-09 Erker R7 (Agent): (a) Sockelblock-Oberkanten per 3D-Triangulation (M-6124-001/002) Strahlabstand 
+  - Z.233: - 2026-11-09 Linien-Feinlage Pose gegen Gitter-v12 (Agent, tools/kamera_linienfein.py, BS3e): (a) Synth Rueckh
+  - Z.234: - 2026-11-09 teile_sichtpruefung R2 (Agent): (a) Endelement-Test (erstes/letztes Element der Fensterreihe) tre
+  - Z.235: - 2026-11-10 Figuren (Kreis r2, Agent): (a) max_z_im_bereich (Flaechenpunkte) im Fenster um die Figurachse lie
+  - Z.236: - BS156 (10.11., Kreis s6 r2) laube_rueck: Teilepruefung teile_lage_pruefen liefert fuer laube_rueck/rumpf_eg 
+  - Z.237: - 2026-11-10 Kreis r1 helm_geschweift:o: Zwei-Kamera-Triangulation der Traufspitzen (nu3b + 6132, Strahlabstan
+  - Z.238: - 2026-11-10 `tools/teile_lage_pruefen.py` stuerzt bei fensterreihe:og ab (trimesh.load gibt Scene, apply_scal
+  - Z.239: - 2026-11-10 Kreis r1 Fehlteil fk_-8_+10_+6 (2170 Gitterpunkte, Recall 0,0): KEIN fehlendes Bauteil. Kasten = 
+  - Z.240: - 2026-11-10 gaubenreihe:oben (Kreis2 r2): (a) Triangulation nur mit 2 Handyfotos c12+6259 (Schnittwinkel 9 Gr
+  - Z.241: - 2026-11-10 Kreis1 fk_+16_+0_+26 (Ostgiebel): (a) Kantengitter-Diagonalen (Neigung -1,2, 0,3-0,6 m unter den 
+  - Z.242: - 2026-11-10 Kreis a021633 r4 helm_geschweift:o: Verwerfung des R1-Profils durch Prueferlauf nho ('Traufring 1
+  - Z.244: - 2026-11-10 Kreis a033946 r2 (fk_+16_+0_+26): Rumpf EG/OG/Gesims Ost u1 17,15 -> 15,85 mit dem Giebel verscho
+  - Z.245: - 2026-11-10 Kreis helm_geschweift:w (035748a035747): Vorversuche 001608s3 r1 (Mitte/Knauf per Silhouettenfit,
+  - Z.246: - 2026-11-10 Kreis a040948 r1 quader:gesims: (a) Profil mit Rueckseite n 12,58 (hinter der Wand, r3-Entwurf) h
+  - Z.247: - 2026-11-10 Laube (Kreis2 r2, Agent): (a) Sockel-Nachmessung (3 Vorversuche s8/a021332) = Gewinn 0,012 (Tor 0
+  - Z.249: - 2026-11-10 Kreis3 helm_geschweift:o: (a) N-Sweep (6-16) und Drehung-Sweep der Grate: Guete nur 0,427-0,448 (
+  - Z.250: - 2026-11-10 Kreis4 helm_geschweift:w: schnitt_reichweite in Flaechennormale (+n) misst bei z 16,5-18,3 den St
+  - Z.251: - 2026-11-10 Kreis a053353 r1 quader:gesims: (a) Fuss z 14,40/14,45 (Gitter-Kanten) brachte Praezision 0,54 ab
+  - Z.252: - 2026-11-10 Kreis-Ost r1 (staffelgiebel:ost): (a) Wandneigung allein bei u_aussen 15,85 senkt den Beleg (0,22
+  - Z.253: - 2026-11-10 gaubenreihe:oben (Kreis 20261110_053953 r1, verworfen): Rueckkante auf gemessene z 22,747 gesetzt
+  - Z.254: - 2026-11-10 Kreis r1 fensterreihe:og: (a) Tiefe der Rahmenfront aus 2-Kamera-Triangulation mit nur 30 Grad Sc
+  - Z.255: - 2026-11-10 Kreis a062358 r2 erker_polygon:1 (Vorversuch a060555 r1 neu angewendet): verworfen im Vorversuch 
+  - Z.256: - 2026-11-10 Kreis r2 fensterreihe:og: R1-Patch (Pruefer annehmen=true mit 4 Einwaenden) als Basis uebernommen
+  - Z.257: - 2026-11-10 Kreis r3 fensterreihe:eg1_tuer: (a) 3-Kamera-Triangulation "Fuss des Goldschafts" (M-6243-001 ver
+  - Z.258: - 2026-11-10 Kreis r2 fensterreihe:eg0: (a) erste Fassung mit tiefe 0,01 hinter der Wand scheiterte: der Quade
+  - Z.259: - 2026-11-10 gaubenreihe:unten (Kreis3 r3): (a) teile_lage_pruefen.py stuerzt mit KeyError 'world' bei leerer 
+  - Z.260: - 2026-11-10 gaubenreihe:unten (Kreis 20261110_101552 r1): R3-Zweig (f194866a, angenommen aber nicht in main, 
+  - Z.261: - 2026-11-10 Kreis r3 fensterreihe:eg1: kein Fehlschlag; Ursache (tiefe 0,16 -> Front 7,40 statt 7,26; kontur 
+  - Z.262: - 2026-11-10 BT-LUECKEN (Datenluecken-Agent): 65 freie Commons-Kandidaten (CC BY/BY-SA/PD, >= 1500x1100) gelad
+  - Z.263: - 2026-11-10 Kreis-Tor "Option A" (Gewinn aus Wolkenbeleg + Gitter-F1, Foto-F1 nur Veto): 29 Annahmen / 123 Ve
+  - Z.264: - 2026-11-10 abends Beschleunigung teil_fotoform: (a) Schnellweg (Raster+Kostenkarte im Speicher, foto_diff ho
+  - Z.265: - 2026-11-10 Kreis 20261110_173101 eg1_tuer: Schaefte zuerst als 'anbau'-Quader (0 gezaehlt, vom Fluegel-Aussc
+  - Z.266: - 2026-11-10 abends Westgiebel-Spur 172801: Agent meldete Foto-F1 0,73-0,81, gemessen auf SELBST GEWAEHLTEN 6 
+  - Z.267: - 2026-11-10 abends Facade-Ausgleich Prototyp Helm O (tools/facade_ausgleich.py, Worktree-Commit 901b726f, nic
+  - Z.268: - 2026-11-10 21:40 Balkonband-Rettung (Patch r173902): Foto-F1 0,613->0,824 vom Pruefer VERWORFEN - Gewinn tei
+  - Z.269: - 2026-11-10 23:00 Kreis a205314 r2 fensterreihe__eg2: Foto-F1 0,685->0,768 (+0,11, Abnahme+Konvergenz gruen) 
+  - Z.271: - 2026-11-10 Kreis2 r2 staffelgiebel:west: (a) R1-Parameter allein (10 Stufen, kappe -0,9, z_traufe 17,22) = F
+  - Z.272: - 2026-11-11 giebel_stufen_zaehlen.py Stufenhoehe (rise_m) West 0,83 m: FALSCH - Wolkenschnitt j_voll_lot2 + M
+  - Z.273: - 2026-11-11 Beobachtung mit teil 'NEU: laubengewoelbe' war fuer den Kreis unsichtbar (beob_ziele nimmt nur Te
+  - Z.274: - 2026-11-10 Kreis 225455 r1 erker_polygon:1 (Unterbau Profilform): (a) Zuwachs-Profil per Quadratfit aus Grat
+  - Z.275: - 2026-11-11 Fehlteil-Tor nur Kantengitter (Recall Kasten +0,25) VERWARF Baldachine 234159 r1 (Gitter 0,465->0
+  - Z.276: - 11.11. 01:2x Kreis a004523 Fehlteil aus Foto-Cluster (Erker 1 Unterseite): Agent baute nichts (Befund 'vorha
+  - Z.277: - 11.11. 01:4x Nachpruefen (--nachpruefen) der Gewoelberunde a002122 nach Tor-Fix: Modus misst kein Foto-Tor, 
+  - Z.278: - 2026-11-11 Kreis ff_+14_+8_+12 r1: Baldachin-Patch (69fdfaa2, verworfen 234159 r1) per git diff der Quelldat
+  - Z.279: - 11.11. Westgiebel 4 leere Runden in einer Nacht (Agent aendert nichts, Rueckseite ohne Foto) - jede Nachbar-
+  - Z.280: - 2026-11-11 Kreis1 laube_rueck Gewoelbe: (a) Spitzbogen aus zwei Kreisboegen ist fuer Anstieg h < halbe Spann
+  - Z.281: - 2026-11-11 Kreis laube_sockel_w r1: kein Fehlschlag; teil_fotoform schreibt mit RCPARK_FOTO_SKALA=0.5 und --
+  - Z.282: - 2026-11-11 Kreis3 ff_+9_+5_+3 Dienste Laubenrueckwand: Dienst bei u 9,745 gemessen (Peilung 6120+6117), u -2
+  - Z.283: - 11.11. 07:xx Kreis-Agenten warten im Hintergrund (Monitor/job_start) unter `claude -p`: Zug endet mit 'ich w
+  - Z.284: - 2026-11-11 Kreis r2 laube_sockel_o: kein Fehlschlag; teil_fotoform schreibt Overlays nur mit --bilder (nicht
+  - Z.285: - 2026-11-11 Kreis 045306 r2 baldachine: Masswerk-Rippen (2 Spitzbogenfelder, Rippe 0,07, Relief 0,04) als Gen
+  - Z.286: - 11.11. 08:40 Nutzer-Sichtfunde (Balkon-Seitengelaender, Baldachin-Aufsatz, Staffelgiebel-Treppe) nie vom Kre
+  - Z.287: - 2026-11-11 Kreis r1 ff_+11_+6_+8 (Gewoelberippen): Rippenvorsprung 0,1-0,2 m nur als Sichtschaetzung (Rippen
+  - Z.289: - 11.11. 104829: teil_fotoform ohne --teile_dir exportiert Teile als teil_NN (Namen passen nicht zu --nur) -> 
+  - Z.290: - 11.11. Viewer/Fehlerkarte r10-r11 zeigten das Modell von 10.11. 23:59: Exportzeile per 'sed -n 6,11p' abgesc
+  - Z.291: - 11.11. 12:51 Kreis a125135: Treppen-Fund des Nutzers stand an staffelgiebel:ost (von mir zugeordnet), Saegez
+  - Z.292: - 11.11. 14:40 Flaechenmass SAM (SPEC_FLAECHENMASS, tools/flaechen_mass.py): Beweis NICHT bestanden - Westgieb
+  - Z.293: - 11.11. 14:20 Lokales Foto-Tor (SPEC_LOKALES_FOTOTOR, tools/foto_lokal.py): Beweis nur teilweise - Versatz 0,
+  - Z.294: - 2026-11-11 Kreis2 105629 r2 bruestung:balkon: Drehprofil+Endpfosten+Stirn-Gelaender gebaut (Abnahme gruen), 
+  - Z.295: - 2026-11-11 Kreis2 r2 bruestung:balkon Vorpruefung: Stirn-Gelaender (3 Baluster, n_wand 12,66 ANNAHME) senkt 
+  - Z.296: - 2026-11-11 Kreis1 152551 bogenreihe:laube Stirnboegen: Torfotos sehen das Laubenende kaum (Foto-F1 halb nur 
+  - Z.297: - 2026-11-11 Kreis 153352 r1 staffelgiebel:west: spitze_als_stufe (Patch 152051 r1 uebernommen) Foto-F1 halb 0
+  - Z.298: - 2026-11-11 Kreis2 r2 laube_sockel (Saeulensockel): Hoehen aus 6117+6115 (Pfeiler 3) gemessen, Modell 0,55/0,
+  - Z.299: - 2026-11-11 Kreis2 164909 r2 satteldach:haupt Traufspeier: Vorversuch 161725 hatte Fuss-u aus EINEM Foto (616
+  - Z.300: - 2026-11-11 Kreis2 baldachine "Krone nicht mittig": Mittelfiale und Statuenkopf in 6120 (Figur) vs 6161+6145 
+  - Z.301: - 2026-11-11 Relief aus Einzelbild (Depth Anything V2 Small, tools/relief_aus_foto.py, d38ee229) als metrische
+  - Z.302: - 2026-11-11 Kreis1 Dienste Laubenrueckwand: (a) M-6130-007 (6130+6145, Schnittwinkel 7 Grad, +-0,25 m) unbrau
+  - Z.303: - 2026-11-11 Best-of-N Varianten-Tor (tools/teil_varianten_tor.py, e87095b2): Erker-Konsole: Kanten-F1/f1_h/f1
+  - Z.304: - 2026-11-11 Kreis eckfig r1 erker_polygon:0 Eckfiguren: Erste Form (Keil nach aussen/unten, Spitze am Kopfend
+  - Z.305: - 2026-11-12 Kreis1 laube_sockel_o r1: kein Fehlschlag. Profilvarianten (halbe Aufl., 10 Torfotos): Altprofil 
+  - Z.307: - 2026-11-12 kreis1 040618 r1 (satteldach:haupt Ziegel): Leisten 0,18 m mit Tiefe 0,07 liessen Druckreparatur 
+  - Z.308: - 12.11. kreis3 laube_sockel_w: Aussparung ohne n_front (Huellmaximum Band 7,8 statt Front 7,73) schnitt nicht
+  - Z.309: - 12.11. kreis4 laube_sockel_w: kein Fehlschlag; Fugen u -4,55/-6,43 als Aussparung f1_fein 0,618->0,636; obje
+  - Z.310: - 12.11. Nachtlauf 00:30-07:45 (Rauschtor neu): 34 Laeufe, nur Mini-Annahmen (Laubensockel, Satteldach-Beleg);
+  - Z.311: - 2026-11-12 Kreis r1 konsolenreihe:balkon: Fund (kein Fehlschlag): Vorgaengerversuche (Rosette, Sweep) bracht
+  - Z.312: - 2026-11-12 Element-Messregion fuer das Rauschtor (tools/kreis_elemente.py, kreis_rauschtor.elemente_*, baute
 - Z.314: ## 2026-11-12: Kanten-NCC-Tiefenscan entlang der Epipolarlinie (tools/epilinie.py --ncc)
 - Z.317: ## 2026-11-12: Erker-Schraegflaechen als gedrehtes Frontnetz (rippen_pfade.drehungen)
+  - Z.319: - 2026-11-12 Rippe S1 (linke Schraegflaeche, Knoten->Fuss, kante_3d 6259+6171, Tiefenrest 1 cm, 6 viaA-Handpun
+  - Z.320: - 2026-11-12 4 Rippen der linken Schraegflaeche (kante_auf_flaeche aus 6171, L_R1..R4, mit Spiegelung) in ripp
+  - Z.321: - 2026-11-12 Rippenbreite b 0,10 -> 0,07 m (am Foto 6171 gemessen: Aussenkante Gold-Gold 0,05 m, mit Schattenf
+  - Z.322: - 2026-11-12 Rippe R4 (linke Schraegflaeche, untere Bogen, aus 6171 mit kante_auf_flaeche): Gegenprobe 6259 (l
 - Z.324: ## 12.11.2026 abends: Rippentiefe aus Fremdfotos per Maske-Distanzkarte (tools/pfade_tiefe_mehrfoto.py)
+  - Z.330: - 2026-11-14 Schwabentor, 10 Commons-Schlossberg-Fotos (online2_orig, fuer Turmluecke > 22 m): COLMAP-CLI (SIF
+  - Z.331: - 2026-11-14 Schwabentor, Lagepruefung gegen LoD2 per FFT-Wandlinien-Ueberlapp (Drehung 0-359 x Spiegel, tools
+  - Z.332: - 2026-11-14 Schwabentor, Flugel-Lage per Silhouetten-IoU (Ansicht u x z gegen jede LoD2-Wandflaeche): nicht t
+  - Z.334: - 2026-11-14 Test C in tools/wolke_grundriss_pruefen.py als TOR (LoD2-Teil leer + gedrehte Wolke fuellt ihn): 
+  - Z.335: - 15.11.2026 SfM "eine gemeinsame Kamera je Geraet/Videoclip" (PER_FOLDER, 84 statt 504 Kameras) + view_graph_
+  - Z.336: - 15.11.2026 PatchMatch 10 statt 20 Quellbilder (`__auto__, 10`), Schwabentor 40 Referenzbilder: nur 19 % schn
 - Z.338: ## 15.11.2026 Schwabentor v3 - Sackgassen und Zeitfresser (Nutzer: "lerne mit")
+  - Z.339: - **Dachmessung mit Bodenfotos ohne SfM-Punkte in Dachhoehe:** Strahlabstaende 0,3-0,9 m, zwei Fotogruppen 5 m
+  - Z.340: - **"Passt zum LoD2-Grundriss" als Massstabsbeleg:** falsch - LoD2 war der Sockelumring, das Modell 7 % zu gro
+  - Z.341: - **Entzerrtes Einzelfoto als "SfM-freie" Massstabsprobe:** die Entzerrung nutzt die SfM-Kamera, ist also nich
+  - Z.342: - **Einfache Aehnlichkeit (Massstab um einen Punkt) fuer das Sued-Teilmodell:** Knauf und Wandlage zugleich ni
+  - Z.343: - **Abschliessender Buendelausgleich auf dem neuen SfM (pycolmap, 89 s, nicht konvergiert):** Bildfehler 1,24 
+  - Z.344: - **Alle Paare ALIKED+LightGlue ungefiltert uebernehmen:** 12 780 Paare gegenueberliegender Turmseiten mit >= 
+  - Z.345: - **Foto-Diagnose der Abnahme ueber alle 569 Buendelkameras:** 282 Auto-Beobachtungen, 240 MB auf der Root-Pla
+  - Z.346: - **Wandebene aus zwei gepeilten Ecken:** lag 0,17 m neben der Wolke; Wandanzug beim Relief abgezogen. Immer S
+  - Z.347: - **foto_diff-Quote fuer flache, scharfe Bauteile (Fensternischen 0,15 m):** erkennt sie aus 83 m nicht als Mo
+  - Z.348: - **Wiederkehrender Wach-Zeitplan (alle 20 min):** hat den Nutzer gestoert und das Gespraech mit "nichts Neues
 - Z.350: ## 16.11.2026 Lokale Feinrechnung der Tiefe (tools/tiefe_lokal.py) - was NICHT ging
+  - Z.351: - **Figur ueber dem Schwabentor-Nordtor als eigenes 5-mm-Feld (1,7 x 2 m, 14 Fotos, 4000 px, 930 s):** 11 272 
+  - Z.352: - **Suedwand des Turms (14 Fotos, davon nur 3 scharfe eigene):** feines Relief pockennarbig, nicht besser als 
+  - Z.353: - **Zwei 4000-px-Laeufe parallel + OWLv2 + Kontrollbild auf 8 GB:** CUDA out of memory (rc 134), je 590 MB Spe
+  - Z.354: - **Zwischendaten liegen lassen:** 2-4 GB je Feld (stereo/, images/), 13,6 GB nach 5 Feldern - Datenplatte vol
+  - Z.355: - **Zwei Generatorlaeufe desselben Objekts gleichzeitig (16.11., mein Fehler: zweiten Bau gestartet, waehrend 
 - Z.357: ## 16.11.2026 Ungesehene Ostseite: gespiegelt statt gesucht (verworfen)
 - Z.362: ## 16.11.2026 abends: "ein Kern 100 %" - Ursache waren Kameras mit absurdem Standort
 - Z.369: ## 17.11.2026 nachts: Feinausrichtung der Wandbilder / Feinpunkt-Anker / Schattierungsmass (Agent Feinausrichtung)

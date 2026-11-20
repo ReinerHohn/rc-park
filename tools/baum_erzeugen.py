@@ -49,9 +49,11 @@ def erste_zeile(p):
 
 
 def inhalt(p, name):
-    zeilen = []
-    for i, l in enumerate(open(p, errors="replace"), 1):
+    zeilen = []; alle = open(p, errors="replace").read().splitlines()
+    n_ueb = sum(bool(re.match(r"^#{1,4} ", l)) for l in alle); duenn = os.path.getsize(p) / max(n_ueb, 1) > 5000   # wenig Ueberschriften: Eintragszeilen mit aufnehmen
+    for i, l in enumerate(alle, 1):
         if re.match(r"^#{1,4} ", l): zeilen.append(f"- Z.{i}: {l.rstrip()[:140]}")
+        elif duenn and re.match(r"^(- |\d+\. )?(\*\*|BS\d+|V\d+|L\d+|20\d\d-\d\d-\d\d|\d{1,2}\.\d{1,2}\.)", l): zeilen.append(f"  - Z.{i}: {l.strip()[:110]}")
     os.makedirs(os.path.join(M, "inhalt"), exist_ok=True)
     open(os.path.join(M, "inhalt", name), "w").write(f"# Inhalt von modelle/{name} (erzeugt; lesen mit Read offset=Zeile)\n" + "\n".join(zeilen or ["(keine Ueberschriften - per grep suchen)"]) + "\n")
     return len(zeilen)

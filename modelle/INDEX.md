@@ -8,7 +8,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/METHODE_MASSTABELLE.md` (13 kB) METHODE: Masstabelle + generischer Pruefstand (das Rueckgrat jeder Modellerzeugung aus Daten)
 - `modelle/METHODE_MESSEN_DANN_BAUEN.md` (26 kB) Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md) -> Inhalt `modelle/inhalt/METHODE_MESSEN_DANN_BAUEN.md` (10 Abschnitte)
 - `modelle/REGELN_AUSFUEHRLICH.md` (10 kB) RC-Park – Arbeitsregeln (gelten für jede Sitzung, jedes Objekt)
-- `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (70 kB) Rezept: Gebäude aus Fotos zum H0-Modell (Stand 9.11.2026 abends) -> Inhalt `modelle/inhalt/REZEPT_GEBAEUDE_AUS_FOTOS.md` (10 Abschnitte)
+- `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (70 kB) Rezept: Gebäude aus Fotos zum H0-Modell (Stand 9.11.2026 abends) -> Inhalt `modelle/inhalt/REZEPT_GEBAEUDE_AUS_FOTOS.md` (91 Abschnitte)
 - `modelle/VORLAGE_BAUTEIL_RUNDE.md` (9 kB) Vorlage: Bauteil-Runde (ein Bauteil neu oder richtig bauen)
 
 ## Ziel, Stand, Aufgaben
@@ -28,7 +28,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/PIPELINE_HYBRID_WOLKE_KANTEN.md` (4 kB) Pipeline Hybrid: Wolke-Körper + 3D-Kanten + Diff gegen Wolke (3D) und JEDES Foto (Perspektive)
 
 ## Versuche, Sackgassen
-- `modelle/NICHTS_GEBRACHT.md` (166 kB) Sackgassen (nicht doppelt versuchen) - Kaufhaus, Wolke -> Netz, Stand 7.11.2026 -> Inhalt `modelle/inhalt/NICHTS_GEBRACHT.md` (10 Abschnitte)
+- `modelle/NICHTS_GEBRACHT.md` (166 kB) Sackgassen (nicht doppelt versuchen) - Kaufhaus, Wolke -> Netz, Stand 7.11.2026 -> Inhalt `modelle/inhalt/NICHTS_GEBRACHT.md` (297 Abschnitte)
 - `modelle/VERSUCHSREGISTER_MARTINSTOR.md` (340 kB) Versuchsregister Martinstor – was schon probiert wurde (nicht wiederholen) -> Inhalt `modelle/inhalt/VERSUCHSREGISTER_MARTINSTOR.md` (143 Abschnitte)
 
 ## Recherchen

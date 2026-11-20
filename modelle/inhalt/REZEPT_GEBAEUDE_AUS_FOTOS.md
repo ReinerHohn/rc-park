@@ -1,11 +1,92 @@
 # Inhalt von modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md (erzeugt; lesen mit Read offset=Zeile)
 - Z.1: # Rezept: Gebäude aus Fotos zum H0-Modell (Stand 9.11.2026 abends)
 - Z.7: ## Grundidee in einem Satz
+  - Z.8: **Kanten finden, Wiederholungen falten, jede Kante gegen Fotos UND Wolke prüfen, Formen aus dem Generator, Maß
 - Z.10: ## Die fünf Säulen
+  - Z.11: 1. **Kantengitter** (rein aus Daten): Tiefen-Sweep auf Stabilitätskarten, RANSAC-Aufbau, Foto-Schleife, Verein
+  - Z.12: 2. **Wiederholung und Spiegelung** (Musterzelle): Zone aus dem Gitter, Periode per Autokorrelation (mehrstufig
+  - Z.13: 3. **Kanten-Tor** (kantenneutral, `kanten_tor.py`, im Bau): Jede Kante, egal aus welchem Bauteil, wird quer ve
+  - Z.14: 4. **Generator** (`baukasten_gen.py` + Masstabelle): Formfamilien (Satteldach, Staffelgiebel, Bogenreihe, Rund
+  - Z.15: 5. **Abnahme am Foto**: foto_diff, fehlteile, Sichtblatt aller Seiten, Fehlerliste je kleinstem Teil.
 - Z.17: ## Ablauf (eine Kette, `tools/gitter_kette.sh NAME --vorher BESTES.json`)
 - Z.34: ## Entscheidregel (Nutzerentscheide 9.11.)
+  - Z.35: - **Fotos UND Wolke**, getrennt geprüft, nie gemittelt.
+  - Z.36: - **Nur mit genug Daten**: Wolke Mindestpunkte im Prüfschlauch und signifikante Spitze (>= 3 MAD); Fotos >= 3 
+  - Z.37: - **GRÜN**: beide genug, beide Optima beim Wert.
+  - Z.38: - **ENTSCHIEDEN(Quelle)**: Die Quelle mit den besseren Daten gewinnt (Menge, Signifikanz, Plateau, Einigkeit d
+  - Z.39: - **OFFEN**: keine Quelle ausreichend oder kein klarer Sieger. Der Wert bleibt `ANNAHME:`.
+  - Z.40: - **Kopplung nur auf Probe**: Wiederholte/gespiegelte Kanten werden gemeinsam geprüft. Will eine Untergruppe s
 - Z.42: ## Prüfdisziplin (aus Fehlern des 9.11.)
 - Z.50: ## Bewährter Messweg je Element (Laubenrückwand Kaufhaus, 9.11., Nutzer: "gigantischer Schritt")
 - Z.59: ## Lehren-Register (generalisiert; nach JEDER Runde ergänzen, 1 Zeile je Lehre)
+  - Z.61: - L1 Wiederholung: Abstände zuerst auf Konstanz prüfen. Starr falten nur bei konstantem Abstand, sonst jede In
+  - Z.62: - L2 Unterelemente einer Musterzelle haben eigene Parameter. Die Kopplung gilt nur auf Probe, das Tor trennt a
+  - Z.63: - L3 Prüfen kantenneutral: Bauteile liefern Kanten plus Kopplungen, das Tor prüft je Kante gegen Fotos UND Wol
+  - Z.64: - L4 Zone gezielt aus dem Gitter suchen, nie blind in feste Höhenbänder schneiden | gitter_wiederholung verfeh
+  - Z.65: - L5 Altteile mit falscher Lage verfälschen globale Diff-Suchen (dichte Kanten ziehen den Versatz) | traufzone
+  - Z.66: - L6 Druckbarkeit ist eine Prüfung mit Sollwert (1 Teilnetz, wasserdicht, Wandstärke), nicht ein Endschritt. S
+  - Z.67: - L7 Overlays brauchen Verdeckung (Z-Puffer), sonst entstehen Scheinfehler durch Wände | schiefer „Pfeiler“ = 
+  - Z.68: - L8 Kantenwolken können blanke Flächen nicht entscheiden (Wand oder Öffnung). Dafür braucht es dichte Wolke o
+  - Z.69: - L9 Fehlerliste je kleinstem Unterelement, nie je durchgehender Linie. Agenten-„ok“ immer selbst nachprüfen |
+  - Z.70: - L10 Webfotos von Aussichtspunkten (Kirchturm, Turmaussicht) sind die beste freie Dachquelle | Commons Münste
+  - Z.71: - L11 Fotoauswahl fuer eine Pruefung erst NACH der Sichtbarkeitspruefung auf die Zahl begrenzen (nicht davor),
+  - Z.72: - L12 Bei Quellenwiderspruch nie nach 'Signifikanz in MAD' entscheiden (saturiert, MAD des flachen Untergrunds
+  - Z.73: - L13 Handmasse gelten nur auf ihrer Messebene: Handpixel auf die in der Wolke gefundene Ebene umrechnen, bevo
+  - Z.74: - L14 Jedes Pruefwerkzeug braucht eine Mindest-Pixelgroesse je Pruefstruktur und meldet darunter UNGEPRUEFT st
+  - Z.75: - L15 Ein Foto-Test auf Unterscheidungskanten ist erst gueltig, wenn seine Empfindlichkeit an einer sicher vor
+  - Z.76: - L11 Jede Kamera nennt ihren Rahmen ausdrücklich (rahmen_verschiebung, auch [0,0,0]). Eine fehlende Angabe da
+  - Z.77: - L12 Druckteilung folgt aus der Geometrie: Schnitt genau in waagerechte Unterseiten (Decke wird Bettfläche), 
+  - Z.78: - L13 Wiederholte Anbauteile ohne Raster: Lagen je Instanz aus der Messdatei, im Quellrahmen umgerechnet. Zähl
+  - Z.80: - L16 Eine Messebene nie ungemessen aus einem Grobkoerper uebernehmen: zuerst Ebene aus Wolke (Histogramm) UND
+  - Z.81: - L17 Steile/schlanke Aufbauten: Form r(z) aus Fotosilhouetten auf der Ebene durch die Bauteilachse quer zur B
+  - Z.82: - L18 Vor jeder Messung pruefen, welches Bauteil im Foto wirklich wo liegt (Modellpunkt ins Foto projizieren),
+  - Z.83: - L19 Bei Fotowiderspruch ein drittes, nahes und frontales Foto holen; das ferne/schraege Foto verliert, wenn 
+  - Z.84: - L20 Jedes Bauteil braucht sein bestes Pruef-Foto (groesste unverdeckte Flaeche) und einen eigenen Overlay-Au
+  - Z.85: - L21 Ein ROT, das keine Arbeit erzeugt, ist verloren: Die Staffelgiebel standen auf Runde 5 schon ROT (Himmel
+  - Z.86: - L22 Wolkenbeleg je Bauteil als zweiter, modellfremder Fehlerfinder: Anteil der Modellfläche mit Daten in < 1
+  - Z.87: - L23 Arbeitsdateien dürfen Daten nicht still abschneiden: Die Standardwolke `j_voll_lot2_crop.npy` endet bei 
+  - Z.88: - L24 Konvergenz nur rückwirkend mit festem Maßstab belegen: R4->R5->R6 gegen dasselbe Gitter gemessen. Recall
+  - Z.89: - L25 Fehlen die Pfosten-Punkte fuer 3D-Triangulation, peile senkrechte Kanten (Pfosten, Ecken) nur waagerecht
+  - Z.90: - L26 Vieleck-Grundriss erst raten, dann ins Foto projizieren: regelmaessiges Achteck aus 3 Pfostenpaaren, Pfo
+  - Z.91: - L27 Anbauten mit Rippen/Ridges in Manifold: Beruehrflaeche statt Einbindung gibt Henkel (Genus) und scheiter
+  - Z.92: - L28 teile_lage_pruefen braucht die Wolke im Rahmen des Objekts (lot2); Standardwolke im alten Rahmen markier
+  - Z.98: - L31 Silhouettenmessung 'Ebene durch die Achse quer zum Blick' gilt nur fuer Punkte IN dieser Ebene: ein ausk
+  - Z.99: - L32 Ein ANNAHME-Bauteil, das eine unpassende Messung ueberbrueckt (senkrechter Kranz unter der falschen Trau
+  - Z.100: - L33 Silhouettenspitzen (Kanten, die von der Ansicht abhaengen) sind keine Punkte: Zwei-Kamera-Triangulation 
+  - Z.101: - L34 Wird ein Tor auf eine neue Quelle umgestellt, ALLE Pfade aufzaehlen (bestehendes Teil, neues Teil/Fehlte
+  - Z.102: - L35 Eine abgeleitete Quelle (Kantengitter aus Fotos) ist nie alleiniges Tor und nie alleiniger Zielfinder: w
+  - Z.103: - L36 Ein Befund muss an ein waehlbares Ziel gebunden sein, sonst ist er fuer die Automatik unsichtbar; Fehlte
+  - Z.104: - L37 Identische Je-Foto-Werte zweier Teile = gleicher Bildbereich: beide werden vom selben fehlenden Element 
+  - Z.105: - L38 Vorher/nachher nur auf GEMEINSAMEN Beurteilungen vergleichen (Fotos, Bereich); faellt nachher ein schlec
+  - Z.106: - L39 Eine Gesamtkennzahl darf durch HINZUFUEGEN richtiger Teile nicht fallen: Teilmittel faellt bei jedem neu
+  - Z.107: - L40 Vorrangregeln brauchen eine Hoechstwartezeit: 'Tore zuerst' liess die Formliste 2 h verhungern (bei 6 Sp
+  - Z.108: - L41 Nebengroessen eines Werkzeugs (Stufenhoehe des Stufenzaehlers) vor Uebernahme gegen eine unabhaengige Qu
+  - Z.109: - L42 Verwandte Ornamente als EINE Formfamilie mit Traegerflaeche planen (Rippen als Kurven auf Flaeche: Erker
+  - Z.110: - L43 Maschinell geschriebene Datendateien im Originalformat zurueckschreiben (masstabelle indent=1), sonst 10
+  - Z.111: - L44 Aufraeumen gehoert in den Regelkreis, nicht nur ans Rundenende: abgebrochene Spuren (OOM, Zeitlimit, 'Co
+  - Z.112: - L45 Messung vor Bauteil pruefen, wenn Detail-Runden systematisch VERLIEREN: Foto-F1-Modellkanten arbeiten au
+  - Z.113: - L46 NULLKONTROLLE FUER JEDE KENNZAHL: Foto-F1 (Toleranz 0,14 m, 9-cm-Zellen) misst auf ornamentreichen Flaec
 - Z.115: ## Was die Methode heute nicht kann (ehrlich)
 - Z.121: ## Neues Gebäude in Schritten
+  - Z.143: - L29 Freistehende Figuren/Aufbauten: Achse (u, s) und Hoehenmarken (Scheitel, Spitze, Sohle) je Instanz mit Z
+  - Z.144: - L30 Eine Pruefzeile auf ein freistehendes Teil darf nicht ueber Flaechenpunkte im Achsenfenster messen: die 
+  - Z.151: - L31 Ein Bauteil mit schlechtem Wolkenbeleg kann in der Lage stimmen und nur in der FORM falsch sein (Stirn d
+  - Z.152: - L32 Zwei Kameras nahe beieinander (Schnittwinkel 9 Grad) liefern +-0,27 m; erst die dritte Kamera mit >= 20 
+  - Z.153: - L33 Pruefzeilen auf Teile mit Vordach/Ueberstand als Schnitt in 2 Hoehen + Reichweite in n und +-u (Mitte de
+  - Z.195: - L32 Schwesterreihe gleichen Typs: Form (Breite, Vordach, Wandhoehe) uebertragbar, Lage/Hoehe NICHT (0,5-0,8 
+  - Z.220: - **L47 (11.11., Nutzer-Sichtfunde)**: Zielfinder-Schwellen nach BELEG (Anzahl Fotos), nicht nach Pixelsumme -
+  - Z.221: - **L48 (11.11., Nutzer-Sichtfunde generalisieren)**: (a) JEDER Nutzer-Sichtfund wird automatisch Testfall: Be
+  - Z.226: - **L49 (11.11., Formfund Westgiebel, Nutzerauftrag "Lerne aus heute")**: Ein Nutzer-Formfund kann richtig UND
+  - Z.227: - **L50 (11.11., Kennzahl fuer Form)**: Kantendichte (Foto-F1) ist blind fuer Formfamilien (Treppe/Saegezahn -
+  - Z.228: - **L51 (11.11., Torwerkzeug-Ausgaben)**: Prueferurteil per gierigem Regex gelesen -> "Extra data" -> zwei ANG
+  - Z.229: - **L52 (11.11., gezeigte Ergebnisse)**: Viewer zeigte den Modellstand vom Vorabend (sed-Zeilenbereich liess d
+  - Z.230: - **L53 (11.11., Laufzeit)**: Laufzeitaussagen ("45-90 min, nicht aenderbar") nur gemessen machen: Messung erg
+  - Z.231: - **L54 (11.11., Reihenfolge Kreis)**: Nutzerfunde vor Fehlteilen und vor "schwaechstes Teil"; innerhalb Form 
+  - Z.232: - **L55 (12.11., Konsolen)**: Eine konvexe Huelle ueber ein konkaves gemessenes Profil fuellt die Sehne (rote 
+  - Z.233: - **L55 (11.11., Kennzahl-Kopplung)**: Eine Teilnote darf nur vom Teil und vom Foto abhaengen. Foto-F1 hing ue
+  - Z.234: - **L56 (11.11., LLM-Pruefer)**: Ein Bildpruefer am Dreierbild sieht FORM (Kasten, Formfamilie 6/6 gefangen), 
+  - Z.235: - **L57 (11.11., Leerlauf-Ursache)**: 24 von 30 verworfenen Grauzonen-Runden hatten unveraenderte Teile - Mech
+  - Z.237: - **L55 (11.11., Formkorrektur ohne F1-Gewinn)**: Eine Formkorrektur an kleinem Bauteilanteil (ein Block, ~1 m
+  - Z.240: - L55 (2026-11-11, Kreis2 Baldachin-Mitte): Relative Lage zweier Teile (Krone ueber Figur) nur in DEMSELBEN Ka
+  - Z.242: - **L58 (11.11., Eckfiguren Erker)**: Ein Modell-Eckpunkt (Polygonvertex bei Gesimshoehe) in mehrere kalibrier
+  - Z.246: - L55 (12.11.): Aussparungen eines Profilteils an die lokale Front (n_front) binden; nach Aenderung Teilvolume
