@@ -85,7 +85,10 @@ MAPPER = sys.argv[sys.argv.index("--mapper") + 1] if "--mapper" in sys.argv else
 def _inkrementell(ziel):
     os.makedirs(ziel, exist_ok=True)
     subprocess.run([COLMAP_BIN, "mapper", "--database_path", db, "--image_path", img, "--output_path", ziel,
-                    "--Mapper.num_threads", "1", "--Mapper.ba_use_gpu", "1", "--Mapper.ba_gpu_index", "0", "--Mapper.ba_max_num_images_direct_dense_gpu_solver", "0"], env=_env, check=True)
+                    "--Mapper.num_threads", os.environ.get("RCPARK_MAPPER_FAEDEN", "-1"), "--Mapper.ba_use_gpu", "1", "--Mapper.ba_gpu_index", "0", "--Mapper.ba_max_num_images_direct_dense_gpu_solver", "0"], env=_env, check=True)
+    # 20.11.2026: Faeden 1 -> -1 (alle). Der Wert steuert laut COLMAP-Quelltext Ceres-Ableitungen und RANSAC der Lageschaetzung; "1" stand seit 14.11. ohne Grund da.
+    # A/B Schwabentor 203 Bilder (tools/versuche/mapper_faeden_ab.sh): 179 Bilder nach 540 s gegen 217 s (2,5 x), Ergebnis gleichwertig (181 Bilder / 65 019 Punkte / 1,239 px
+    # gegen 180 / 63 519 / 1,236 px beim Abbruch des 1-Faden-Laufs). RCPARK_MAPPER_FAEDEN=1 = alter Stand.
 def _konsens(ziel):
     """--mapper konsens (19.11.2026, modelle/GLOBALER_MAPPER_STABIL.md): DB bereinigen (EXIF-Prioren weg, Kamera je Clip, Panoramen raus) -> zwei globale Laeufe ->
     Konsens-Rueckgrat (nur in beiden Laeufen gleich stehende Kameras) -> Rest per `mapper --fix_existing_frames 1` ohne strukturlosen Rueckfall. Standard bleibt 'auto'."""

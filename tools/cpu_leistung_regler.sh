@@ -52,7 +52,7 @@ while true; do
   watt=$(awk -v a="$e1" -v b="$e2" -v x="$t1" -v y="$t2" 'BEGIN{d=b-a; if(d<0)d=0; printf "%d", d/1e6/(y-x)}'); e1=$e2; t1=$t2
   temp=$(( tsum / T )); gpu=$(gtemp); gpu=${gpu:-0}
   ist=$(( $(cat $RAPL/constraint_0_power_limit_uw) / 1000000 ))
-  if [ "$ist" -ne "$pl1" ]; then korr=$((korr+1)); setzen $pl1; fi            # fremde Aenderung (thermald/Firmware) zurueckschreiben
+  if [ "$ist" -ne "$pl1" ]; then korr=$((korr+1)); echo $(( pl1 * 1000000 )) > $RAPL/constraint_0_power_limit_uw; fi   # 20.11.2026: NUR den MSR-Wert zurueckschreiben - setzen() rief hier alle 10 s auch den WMI-Befehl (441 Aufrufe in 100 min), und der WMI-Befehl selbst stellt den MSR-Wert um (Schleife)            # fremde Aenderung (thermald/Firmware) zurueckschreiben
   neu=$(entscheiden $pl1 $temp $watt $gpu)
   if [ "$neu" -ne "$pl1" ]; then echo "$(date +%H:%M:%S) CPU ${temp}C GPU ${gpu}C Paket ${watt}W: PL1 $pl1 -> $neu W (Korrekturen durch Fremdaenderung: $korr)"; pl1=$neu; setzen $pl1; fi
   echo "pl1=$pl1 temp=$temp gpu=$gpu watt=$watt korrekturen=$korr" > "$STATE"
