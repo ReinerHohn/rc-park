@@ -22,7 +22,7 @@ Weiter mit: /uebergabe fortsetzen (vorher Skill `sitzungsbeginn`)
 ## Läuft gerade
 - NACHTRAG 14:55: Erste Kette `kette-martinstor-1120` brach 13:27 ab (SfM-Zeitlimit 3 h im globalen Mapper, rc 124; Konsens 843/2107 Bilder, 774 fremde Seite). Neu: `rcpark-kette-martinstor-1120b` (ab sfm, RCPARK_STUFE_MAX_S=21600, Merkmale/Paare aus Cache) · Log `job_logs/kette-martinstor-1120b.log` · danach Skill `wolke-tore`, `konsens_arbeit/fremde_seite.txt`, audit/seiten.jpg, Realitäts-%
 - FlexGlue-Stufe 2 und `mt_anh_sued3` (seit 11:59 im Gesamtausgleich hängend, 1 Kern) auf Nutzerwunsch GESTOPPT 14:48 (RAM für Kette). Nach Kettenende neu starten; Süd-Anhang mit mehr Kernen. Warter-Lehre: startete FlexGlue auch nach GESCHEITERTER Kette (rc prüfen!)
-- yt-dlp 2026.08.19 veraltet (2 Videos fehlen); Update braucht root: `sudo yt-dlp -U`
+- yt-dlp: sudo geht aus der Sitzung nicht (kein Terminal) -> aktuelle 2026.10.26 nach ~/.local/bin (steht in PATH vor /usr/local/bin, auch systemd); h6nO14cZSqE löst wieder auf (1080p). Die 2 Videos fehlen im laufenden Lauf noch
 - `regr-schwab` FERTIG: „identisch - nichts verloren“
 
 - Lehren Runde 2: alle 3 Agenten FERTIG (13:07), nichts läuft mehr · Ergebnis `/media/oem/rcdaten/tmp/baum_sicherung/runde2/` register.md (244 Z.), memory.md (276), archiv.md (439, inkl. neuer Ast lizenzen-werkzeuge) = 1161 Zeilen, gruppiert `## AST: <ast>[ / GILT| / OFFEN]` · Lücken je Datei am Ende (NICHT GESCHAFFT); Abgleich gegen Baum nur per Stichwort ⇒ beim Zusammenführen Doppeltes verschmelzen
