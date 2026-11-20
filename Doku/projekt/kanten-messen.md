@@ -1,0 +1,77 @@
+# 📐 Kanten, Linien-Features, Foto-Tore & Messen am Foto  ← [PROJEKT.md](../../PROJEKT.md)
+Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-11-13.md` · `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Lehren L1–L57) · Skill `linien-features`
+
+## Gilt
+- Linienhafte Features (Rippen, Bänder, Leisten) nie per Farbschwelle/Wolke: Mehrfoto-Sweep mit Stabilitätskarten → `kanten_features --farbe stabil --sweep` → `features_in_objekt` [CLAUDE.md; METHODE_MESSEN_DANN_BAUEN Nachtrag 12.11.]
+- Foto-Tor: Gewinn = Foto-F1 (`teil_fotoform`), Wolke nur Veto und nur wo Daten; vor „Daten fehlen“ Fotos je Teil zählen (10.11.) [memory feedback-foto-tor-statt-wolke]
+- Fotomaße nur über `foto_mass.py` (Ebene oder `--tri`); Triangulation braucht dritte Kamera als Gegenprobe, kleiner Strahlabstand beweist nichts [CLAUDE.md; METHODE_MESSEN Ablauf 3]
+- Bewährter Messweg: Ebene des Elements (Gitter/Wolke) → Anzahl am Foto → Pixel × Ebene = Meter (±6 cm) → Bauteil mit `beleg` → Overlay (Nutzer 9.11. „gigantischer Schritt“) [REZEPT Messweg; memory methode-ebene-zaehlen-strahl]
+- Ein Maß erst glauben, wenn ≥ 3 Fotos aus verschiedenen Blickwinkeln übereinstimmen; am selben Foto, in einer Ebene, als Verhältnis messen [LERNJOURNAL_MARTINSTOR 13, 17]
+- Messwerkzeug schreibt nichts, bevor `plausibel()` (möglich?) und `pruefe()` (Streuung ≤ Unsicherheit) bestanden sind [VERSUCHSREGISTER AC/AD]
+- Jede Kennzahl braucht Nullkontrolle (gedreht/verschoben) und Positivkontrolle an sicherer Kante [REZEPT L15, L46]
+- Vorher/nachher nur auf gemeinsamen Fotos und gleichem Bereich vergleichen [REZEPT L38]
+- Wiederholungs-Prior: Periode, Instanzen falten, jede Kopie am Foto abnehmen; zuerst Konstanz der Abstände prüfen (Nutzer 9.11.) [memory feedback-wiederholungs-prior; REZEPT L1]
+- Nie eine fotobelegte Kante verlieren: Gitter über Läufe vereinigen (`gitter_zurueck.py`) (Nutzer 9.11.) [memory feedback-nie-belegte-kanten-verlieren]
+
+## Versucht
+**Kanten-Drahtgitter & Linien-Features**
+- 9.11. · Canny, Phasenkongruenz, Subpixel, gleichgewichtete Fusion → ✗ verworfen · Textur, keine Trennung; korrelierte Stimmen verwässern [archiv/LOGBUCH_2026-11-09; LAGEBILD_KANTENGITTER]
+- 9.11. · schärfstes frontales Foto liefert Geometrie, andere stimmen ab → ✓ Methode · Posenfehler bis 8 cm ändert nichts [archiv/LOGBUCH_2026-11-09]
+- 9.11. · SAM-Flächen (vit-large, Kacheln) statt Linien → ✓ Methode · nach 2 schwachen Versuchen Aufgabe umformulieren [ebd.]
+- 9.11. · Stabilitätskarten `kanten_stabil` (261 Läufe/Foto) → ✓ Methode [ebd.]
+- 9.11. · Tiefen-Sweep mit fester Basis → ↺ Basis aus Tiefenauflösung (`--dz 0.08`) · Sprossen fehlten; Median 15 → 4 cm [ebd. Runde 5]
+- 9.11. · Triangulation mit gelockerten Schwellen → ✗ verworfen · 422 km Segmente = reines Rauschen [NICHTS_GEBRACHT 9.11.]
+- 9.11. · Streuer-/Kontrastfilter → ✗ verworfen · warfen echte Dachkanten weg; Filter an zweiter Referenz prüfen [archiv/LOGBUCH_2026-11-09 Runde 3]
+- 9.11. · LIMAP mit Wolkentiefe → ✗ verworfen · 91 Linien, meist nicht auf Fotokanten [NICHTS_GEBRACHT 9.11.]
+- 12.11. · Kanten-NCC-Tiefenscan / Goldwert-Tiefe (2-3 Kameras) → ✗ verworfen · kein Gipfel; parallele Rippen sind mehrdeutig [NICHTS_GEBRACHT 12.11.; METHODE_MESSEN Verlauf]
+- 12.11. · automatische Skelett-Ketten (`kanten_ketten`, `pfad_tiefe_dp`, `ketten_match`) → ✗ verworfen · Klumpen im Render, Tiefe 0,4-1,7 m daneben [METHODE_MESSEN Nachtrag]
+- 12.11. · erst 2D im besten Foto, dann Strahl × bekannte Fläche → ✓ Methode · Lage gut, Tiefe nur so gut wie Fläche [METHODE_MESSEN Gelernt 1]
+- 13.11. · Mehrkamera-Gold-Konsens je Skelettpunkt → ✓ Teilerfolg · Fremdfoto-Gegenprobe bestanden, aber nur 9 m Ketten [LOGBUCH_RIPPEN Kap. 23]
+- 13.11. · fünf Referenzkameras vereinigt / Bogenwahl auf Kegelmodell → ✗ verworfen · Flächenmodell ungenauer als Rippenbreite [LOGBUCH_RIPPEN Kap. 24, 26]
+- 13.11. · Handwegpunkte + Goldgrat-Einrasten + Flächenband ±0,12 m → ✓ Methode · 25 min je Erker statt Tage [LOGBUCH_RIPPEN Kap. 29, 31]
+- 13.11. · freie Tiefe ohne Flächenband → ✗ · Punkte laufen entlang Sehstrahl; Score allein kein Beleg [LOGBUCH_RIPPEN Kap. 53]
+- 13.11. · Fremdfoto-Tor je Pfad (≥ 0,45) → ✓ Methode · Lage bestätigt, Länge −24 % [LOGBUCH_RIPPEN Kap. 35]
+- 13.11. · Tiefenband je Weg nach Fremdfoto wählen → ✗ · Auswahl und Kontrolle nie mit ähnlichen Kameras [LOGBUCH_RIPPEN Kap. 37]
+- 13.11. · Pfadglättung gegen Facettenrauheit → ↺ Facettennormalen + Tangente ±3 · Rauheit kam vom Querschnitt, nicht der Mittellinie [LOGBUCH_RIPPEN Kap. 30, 42, 43]
+- 13.11. · Wolken-Sollwert trug Annahme-Mittelrippe → ⚠ Falle · Sollwert und Modell gegen das Foto lesen [LOGBUCH_RIPPEN Kap. 41]
+- 12.11. · Rippen-Druckfehler „Konsolen“ vermutet → ⚠ Falle · Ursache Mini-Splitter; `druck.splitter_verwerfen` [METHODE_MESSEN Nachtrag 12.11.]
+- 1.11. · Bänder/Öffnungen aus farbiger Wolke (HSV, `wolke_baender`) → ↺ Mehrfoto-Sweep · Linien-Features nie aus Farbe/Wolke [VERSUCHSREGISTER AU, AX; CLAUDE.md]
+
+**Foto-Tore (Foto-F1, foto_diff)**
+- 7.11. · Foto-Diff (`kosten_lr`) als Feinoptimierungsziel → ✗ verworfen · Rauschboden ±0,005; sieht 4-10-cm-Nischen nicht [memory diff-rauschboden-2026-11-07]
+- 7.-8.11. · PyTorch3D-Netzverfeinerung gegen Canny-DT → ✗ verworfen · Proxy sinkt, echter Diff nicht (Überanpassung) [NICHTS_GEBRACHT BS38, BS114]
+- 10.11. · Kreis-Tor „Option A“ (Wolkenbeleg + Gitter-F1) → ↺ Foto-F1-Tor · Quellen blind an steilen Flächen, 123 Verwerfungen [NICHTS_GEBRACHT 10.11.]
+- 11.11. · Kantengitter als alleiniges Fehlteil-Tor → ✗ · verwarf Baldachine mit Foto-F1 +0,25 [NICHTS_GEBRACHT 11.11.; REZEPT L35]
+- 10.11. · Agent misst Foto-F1 auf selbst gewählten Fotos → ⚠ Falle · Rückschritt auf allen Torfotos [NICHTS_GEBRACHT 10.11.]
+- 10.11. · Gewinn durch Kürzen eines Teils → ⚠ Falle · Schrumpf-Artefakt: Fotos fallen aus der Wertung [NICHTS_GEBRACHT 10.11.]
+- 11.11. · Foto-F1 für Ornament/Formfamilie → ✗ blind · gedrehte Nullkontrolle schlug echte Form; `f1_fein` trennt [REZEPT L46, L50; NICHTS_GEBRACHT Best-of-N]
+- 11.11. · Parameter per F1-Sweep wählen (`daechlein_h`) → ✗ · Sägezahn statt Treppe; Form am Foto lesen [NICHTS_GEBRACHT 11.11.]
+- 11.11. · Flächenmaß (SAM) / lokales Foto-Tor → ✗ Beweis nicht bestanden · Treppe = Sägezahn; Versatz gewinnt lokal [NICHTS_GEBRACHT 11.11.]
+- 15.11./17.11. · `foto_diff` für flache Nischen bzw. Fensterinnenleben → ✗ · erkennt sie nicht; Beleg = Umriss im Foto [NICHTS_GEBRACHT 15.11., 17.11.]
+- 17.11. · `feinteil_tor` (Strukturtensor 2-12 cm) → ⏸ nur Hinweis · trennt 9/9, aber Brei punktet bei Figuren [PIPELINE_FASSADEN Runde 3]
+- 17.11. · Fugen-F1 gegen Holdout-Foto mit Zufallsversatz → ✓ Messmethode [PIPELINE_FASSADEN Z.505]
+- 7.11./11.11. · LLM-Bildprüfer → ⚠ begrenzt · sieht Formfamilie, nicht 0,5-1° Kamera; Eichsatz = Nullkontrolle [NICHTS_GEBRACHT BU-LLM; REZEPT L56]
+- 9.11. · synthetischer Rundlauf als Kantenmetrik → ✗ verworfen · Metrik trennt die Verfahren nicht [archiv/LOGBUCH_2026-11-09]
+
+**Messen und Zählen am Foto**
+- 10.11. · Triangulation mit 7-9° Schnittwinkel → ✗ · ±0,25-0,33 m; dritte Kamera mit ≥ 20° [NICHTS_GEBRACHT 11.11.; REZEPT L32]
+- 10.11. · Silhouettenspitzen triangulieren → ✗ · Scheinpunkte; nur echte Punktmerkmale (Ecke, Grat-Fuß) [REZEPT L33]
+- 10.11. · per Auge „gleiche“ Punkte in drei Fotos → ⚠ Falle · waren verschiedene Schäfte; scharf abgegrenzte Punkte nehmen [NICHTS_GEBRACHT 10.11.]
+- 11.11. · Maß aus EINEM Foto (Strahl auf Frontebene) → ✗ · Fuß 0,9 m daneben; Zwei-Foto-Triangulation [NICHTS_GEBRACHT 11.11.]
+- 11.11. · relative Lage aus verschiedenen Kamerasätzen → ⚠ Falle · Scheinversatz 0,09 m; gleicher Kamerasatz [NICHTS_GEBRACHT 11.11.]
+- 11.11. · Nebengröße des Zählers (Stufenhöhe) übernommen → ✗ · 0,83 statt 1,21 m; nur die Anzahl gilt [REZEPT L41]
+- 1.11. · Mittel über uneinige Fotos als Befund → ↺ `messung_pruefen` · derselbe Fehler sechsmal trotz aufgeschriebener Lehre [VERSUCHSREGISTER AC, AD]
+- 1.11. · Augenvergleich zweier Bilder aus verschiedenen Blickwinkeln → ✗ · misst nichts [LERNJOURNAL_MARTINSTOR 13]
+- 1.11. · Höhe aus schräger Aufnahme → ✗ · Bogenscheitel 1,5 m zu hoch; nur Breite am Fuß stimmt [LERNJOURNAL_MARTINSTOR 17]
+- 1.11. · PnP aus Handankern mit kleinem Restfehler → ⚠ Falle · Kamerahöhe physikalisch unmöglich; Rest beweist nichts [LERNJOURNAL_MARTINSTOR 14]
+- 1.11. · Picks aus dem Netz projizieren statt Handpick → ✗ nur Vorschlag · p90 80 px daneben [VERSUCHSREGISTER BB]
+- 31.10. · Silhouetten-IoU an 400-px-Fotos für dünne Teile → ✗ · Nadel nur 2-5 px; Vollbilder nehmen [LERNJOURNAL_MARTINSTOR 24]
+- 9.11. · Handmaße auf ungemessener Ebene → ⚠ Falle · 0,75 m Ebenenfehler; Ebene aus Wolke UND Triangulation zuerst [REZEPT L13, L16]
+- 15.11. · Wandebene aus zwei gepeilten Ecken → ✗ · 0,17 m neben Wolke; Schnitt ansehen [NICHTS_GEBRACHT 15.11.]
+- 9.11. · Fotowahl vor Sichtbarkeitsprüfung begrenzt → ⚠ Falle · verdeckte Nahfotos füllten die Plätze [REZEPT L11]
+- 13.11. · Kameras am Ziel nach px/m sortieren, Tiefenbereich aus Abstand → ✓ Methode · größter Zeitgewinn bei Rippen [LOGBUCH_RIPPEN Kap. 19, 23, 24]
+- 13.11. · Fotoabdeckung zuerst messen (Azimut × Höhe) → ✓ Methode · 19 von 24 Bins ohne Foto [METHODE_MESSEN 13.11.]
+- 16.11. · `zylinder_mass` (Sehstrahl × Zylinder) für Rundtürme → ✓ Methode [PIPELINE_FASSADEN Z.272]
+
+## Offen
+- Rippen: Vollständigkeit (West 15,7 von > 20 m), Kappentiefe ANNAHME, Nahfotos nach AUFNAHMEPLAN; Nutzerbeobachtung „Bogenfelder hängen durch“ ungemessen (13.11.)

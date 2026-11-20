@@ -10,7 +10,12 @@
 | 🚜 RC-Attraktionen & Ausstattung | [`Doku/projekt/rc-attraktionen.md`](Doku/projekt/rc-attraktionen.md) | robust hinter Polycarbonat, Getriebe-Bagger 1:14/1:16, schienengeführt |
 | 🖨️ Modellbau & Druck | [`Doku/projekt/modellbau-druck.md`](Doku/projekt/modellbau-druck.md) | Flaches lasern, Körper drucken, Blickfang scannen; Qualität vor Material |
 | 🏛️ 3D-Pipeline & Validierung | [`Doku/projekt/pipeline.md`](Doku/projekt/pipeline.md) | alles erkennen statt hardcoden, alle Daten mergen, selbst hinschauen |
-| 📷 Fotos → SfM → H0-Modell (GPU-PC) | [`Doku/projekt/foto-sfm.md`](Doku/projekt/foto-sfm.md) | Form aus Fotokanten + SfM-Kameras, Wandbild = Bauplan, Wolke nur Lage-Veto |
+| 📷 Fotos → SfM: Zuordnung, Mapper, Kameras | [`Doku/projekt/foto-sfm.md`](Doku/projekt/foto-sfm.md) | Form aus Fotokanten + SfM-Kameras; Konsens zweier globaler Läufe, Kalibrator, FlexGlue |
+| 🧭 Lage, Maßstab, Seiten & Bildquellen | [`Doku/projekt/lage-seiten.md`](Doku/projekt/lage-seiten.md) | Fit ≠ Beweis: GPS/Lot/DOM1/Gruppen-Punkt; Seiten per Louvain + Prüfer, nie spiegeln |
+| 🧱 Dichte Wolke, Wandbild, Relief & Öffnungen | [`Doku/projekt/wolke-wandbild.md`](Doku/projekt/wolke-wandbild.md) | Wolke nur Lage-Veto; 1-cm-Wandbild + Tiefe = Bauplan; Fenster = echte Löcher |
+| 📐 Kanten, Foto-Tore & Messen am Foto | [`Doku/projekt/kanten-messen.md`](Doku/projekt/kanten-messen.md) | Linien nur per Mehrfoto-Sweep; Gewinn = Foto-F1; Maß erst ab 3 Fotos |
+| 🏗️ Bauteile, Generator, Kreis & Abnahme | [`Doku/projekt/bauteile-kreis.md`](Doku/projekt/bauteile-kreis.md) | Maße sind Daten, Bauteile generisch, rote Prüfung vor Generator, Sollwerte nie lockern |
+| ⚙️ Betrieb: GPU, Jobs, Platten, Git | [`Doku/projekt/betrieb.md`](Doku/projekt/betrieb.md) | systemd + VRAM/RAM-Buchung, GPU immer, Datenplatte, Push je Block |
 
 Jede Ast-Datei: **Gilt** (Vorgaben/Entscheidungen) · **Versucht** (Ansatz → Ergebnis → Lehre) · **Offen**.
 
