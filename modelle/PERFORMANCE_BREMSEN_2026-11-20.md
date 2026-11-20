@@ -224,3 +224,18 @@ gemessen oder im Quelltext nachgelesen; was NICHT gemessen ist, steht als ANNAHM
   (Ergebnis dann OHNE /0). Im A/B-Skript jetzt immer an (alle 100 Bilder); in `iphone_sfm.py` noch NICHT (erst nach dem ersten echten Schnappschuss + Fortsetzungstest).
 - `ba_global_ignore_redundant_points3D`: laut Quelltext werden lange Spuren zuerst BEHALTEN -> wenig Gewinn erwartet, aus dem Messplan genommen.
 - Eingereiht 22:20 (`mt_eng_varianten`): startet erst, wenn der enge Mapper UND die Schwabentor-Kette fertig sind; rechnet `selten`, dann `dicht` allein am engen Satz.
+
+## Nachtrag 22:25 - Agent Bildwahl/Dichte Wolke/Speicher (Bericht `/media/oem/rcdaten/tmp/hebel_1120/11_dicht_bildwahl_speicher.md`, Simulation `11_skripte/sim_vorpruefung.py`)
+- Bildwahl A1 "Klammer": Videobild ohne eigenen Treffer bleibt nur, wenn im selben Clip davor UND danach ein direkter Treffer liegt (je <= 40 Bilder) oder einseitig <= 2 Bilder.
+  Simuliert am vorpruefung.json: 2107 -> 1597 Bilder, vom heutigen Hauptmodell bleiben 809 von 815 (mein enger Satz von 20:52: 1156 Bilder, verliert laut Agent deutlich mehr Hauptmodell-Bilder
+  - "nur direkte Treffer" 1110 Bilder / 118 verloren). Stelle `tools/bilder_vorpruefen.py:89-127`. Noch nicht umgesetzt (erst Mapperlauf auf dem 1597er-Satz).
+- Bildwahl A2, zwei Regelfehler (belegt): Z.107 setzt bei Kettenbildern inlier = min_inlier, Z.119 nimmt sie deshalb als ANKER fuers Zeitfenster (241 der 495 Fensterbilder haengen an einem Kettenbild);
+  Z.81-82 bildet die Kette auch bei Nicht-Videobildern (alphabetische Nachbarn). Beide Fixes allein: 2107 -> 1855, Hauptmodell 809 von 815.
+- Dichte Wolke B1 (gemessen an Zeitstempeln): zwei PatchMatch-Laeufe parallel brachten keinen Durchsatz (Martinstor 4,0 s je Karte allein, 5,9-8,5 s neben Schwabentor) -> dichte Laeufe nacheinander.
+- B2: beim Martinstor-Hauptstueck bekamen 817 von 817 Bildern eine Karte; `tools/dicht_bildwahl.py:48` erkennt Videobilder nur am Namen `__vf_NNN.` (nicht `fotos__vf_NNN_K`). Nach Kameralage blieben 509.
+  (Mein Lauf `dicht_hauptstueck` hat die Bildwahl evtl. gar nicht aufgerufen - ungeprueft.)
+- B3: Fusion 20 min wegen RAM-Not (teilfusion max_bilder 63 statt 132).
+- Speicher fassade_ortho bei 1 cm: Hauptposten `verschmelzen` Z.394-397 (~75 Byte je Probe, 3 Fassaden parallel), `alle` Z.386 haelt alle Proben; Vorschlaege C1-C4 (bitgleich, ~6-10 Zeilen) -> ~6 GB bzw. 4,5 GB (gerechnet).
+- NEBENFUND (Ergebnisfehler, noch nicht am echten Bild bestaetigt): `fassade_ortho.py:424` `np.cumsum(Gk)` in float32 ueber das ganze Raster - ab ~1,7e7 gehen Gewichte verloren;
+  Nachbau 5 Mio. Zellen: 24 % der Zellen waehlen einen anderen Wert. Fix `dtype=np.float64`, danach Bitgleich-Test neu eichen. OFFEN, hohe Prioritaet fuer das Wandbild (= Bauplan).
+- Nutzerentscheid 20.11. 09:00 "volle Aufloesung behalten, kein 1200 px" (ZIEL_PIPELINE_H0.md Z.33) -> Punkt "1200 px testen" aus der Rangliste gestrichen.
