@@ -24,7 +24,7 @@ Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> d
 - Zahlen allein gelten nicht: `audit/seiten.jpg` + `audit/neben_*.jpg` ansehen. Fehlerliste vor Lob, Realitaets-% melden. Annahmen heissen `ANNAHME: ...`.
 
 ## Technik
-- Grosse Daten nie auf Root: `/media/oem/scan/...` (knapp) bzw. `/media/oem/rcdaten` (gross), Symlinks. Ohne /media/oem/scan kein git. Toshiba-Platte nie anfassen.
+- Grosse Daten nie auf Root: `/media/oem/scan/...` (knapp) bzw. `/media/oem/rcdaten` (gross), Symlinks. HART (Nutzer 20.11.): intern (Root, scan, Volume) nur was laufend gebraucht wird - Abgeloestes/Altes sofort nach `/media/oem/rcdaten` auslagern (`tools/auslagern.sh`, Pruefsumme), wirklich Kaltes dort packen (tar+zstd, nicht JPG/Video). Ohne /media/oem/scan kein git. Toshiba-Platte nie anfassen.
 - Python: `/media/oem/scan/venv-seg/bin/python -I` (torch/CUDA), `/media/oem/scan/venv-colmap/bin/python -I` (pycolmap), Generator `~/.venvs/rcpark` (trimesh). Einfachster Weg: `tools/py <werkzeug.py> ...` (waehlt die Umgebung nach Importen). Nackter `python3` hat weder trimesh noch pycolmap (224 Fehler bisher).
 - Lange Jobs nur per Skill `langer-job` (`tools/job_start.sh` mit JOB_GPU_MB/JOB_RAM_MB); vorher Dummy-Test; GPU immer nutzen, VRAM-Summe <= 7000 MiB.
 - Nie zwei Optimierer/Generatorlaeufe mit gleicher Zwischendatei parallel. Nie `pkill -f` mit Muster aus der eigenen Befehlszeile.
