@@ -5,7 +5,7 @@
 # Vergleich am selben Bestand, beide mit allen Faeden: Standard gegen redundante Punkte im globalen Ausgleich weglassen.
 # Messgroessen: Wandzeit, registrierte Bilder, Punkte, Rueckprojektionsfehler, Zahl der Loeserfehler, Zeit in globalen Ausgleichen.
 # Aufruf: mapper_redundant_ab.sh <db.db> <bilderordner> [arbeitsordner] [varianten...]   (DB wird je Lauf kopiert)
-set -u; DB=$1; IMG=$2; A=${3:-/media/oem/rcdaten/tmp/mapper_redundant_ab}; shift 3 2>/dev/null; V=${*:-"std redundant"}
+set -u; DB=$1; IMG=$2; A=${3:-/media/oem/rcdaten/tmp/mapper_redundant_ab}; [ $# -ge 3 ] && shift 3 || shift $#; V=${*:-"std redundant"}
 C=/media/oem/scan/colmap-build/prefix/bin/colmap
 export LD_LIBRARY_PATH=/media/oem/scan/cuda-toolkit-combo/lib64:/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib:/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib:/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib
 mkdir -p "$A"
