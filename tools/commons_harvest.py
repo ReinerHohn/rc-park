@@ -42,6 +42,19 @@ def geosearch(lat, lon, radius, limit):
     return out[:limit]
 
 
+def search_files(query, limit):
+    """Volltext-Suche in Datei-Namespace (robuster als Kategorie/Geosearch)."""
+    out, off = [], 0
+    while len(out) < limit:
+        d = api({"action": "query", "list": "search", "srsearch": query,
+                 "srnamespace": 6, "srlimit": 50, "sroffset": off})
+        hits = d.get("query", {}).get("search", [])
+        out += [h["title"] for h in hits]
+        off = d.get("continue", {}).get("sroffset")
+        if not off: break
+    return out[:limit]
+
+
 def category_files(cat, limit):
     """alle Datei-Mitglieder einer Kategorie (rekursiv 1 Ebene)."""
     cat = cat if cat.lower().startswith("category:") else f"Category:{cat}"
@@ -87,6 +100,7 @@ def main():
     ap.add_argument("--lat", type=float); ap.add_argument("--lon", type=float)
     ap.add_argument("--radius", type=float, default=150, help="Geosearch-Radius [m]")
     ap.add_argument("--category", default="", help="Commons-Kategorie")
+    ap.add_argument("--search", default="", help="Volltext-Suche (robustester Weg)")
     ap.add_argument("--max", type=int, default=300)
     ap.add_argument("--width", type=int, default=2048, help="Zielbreite [px]")
     ap.add_argument("--out", required=True)
@@ -94,6 +108,9 @@ def main():
     os.makedirs(a.out, exist_ok=True)
 
     titles = []
+    if a.search:
+        titles += search_files(a.search, a.max)
+        print(f"  Suche '{a.search}': {len(titles)} Dateien")
     if a.category:
         titles += category_files(a.category, a.max)
         print(f"  Kategorie '{a.category}': {len(titles)} Dateien")

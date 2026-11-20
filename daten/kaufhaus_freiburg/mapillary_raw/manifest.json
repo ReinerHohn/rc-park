@@ -1,0 +1,69 @@
+{
+  "target": [
+    47.99506,
+    7.85278
+  ],
+  "source": "mapillary",
+  "views": [
+    {
+      "file": "img_000.jpg",
+      "mapillary_id": "155407999774124",
+      "lat": 47.995396318199,
+      "lon": 7.8533313798072,
+      "alt": null,
+      "heading": 227.7,
+      "cam_angle": 235.35013314672,
+      "camera_type": "perspective",
+      "tag": "perspective",
+      "captured_at": 1470422278851
+    },
+    {
+      "file": "img_001.jpg",
+      "mapillary_id": "1305045211452029",
+      "lat": 47.995410971359,
+      "lon": 7.8534729644821,
+      "alt": null,
+      "heading": 232.9,
+      "cam_angle": 347.762020781,
+      "camera_type": "spherical",
+      "tag": "spherical",
+      "captured_at": 1771330753000
+    },
+    {
+      "file": "img_002.jpg",
+      "mapillary_id": "2928253897418959",
+      "lat": 47.995404606975,
+      "lon": 7.853359634626,
+      "alt": null,
+      "heading": 228.4,
+      "cam_angle": 242.30400470873,
+      "camera_type": "perspective",
+      "tag": "perspective",
+      "captured_at": 1470422276503
+    },
+    {
+      "file": "img_003.jpg",
+      "mapillary_id": "295020228993452",
+      "lat": 47.995382226071,
+      "lon": 7.8532873787194,
+      "alt": null,
+      "heading": 226.5,
+      "cam_angle": 234.09209926458,
+      "camera_type": "perspective",
+      "tag": "perspective",
+      "captured_at": 1470422282420
+    },
+    {
+      "file": "img_004.jpg",
+      "mapillary_id": "1563283431592317",
+      "lat": 47.995400207897,
+      "lon": 7.8533899267812,
+      "alt": null,
+      "heading": 230.2,
+      "cam_angle": 347.30923637661,
+      "camera_type": "spherical",
+      "tag": "spherical",
+      "captured_at": 1771330749000
+    }
+  ]
+}

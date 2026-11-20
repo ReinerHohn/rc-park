@@ -1,0 +1,605 @@
+{
+  "source": "wikimedia_commons",
+  "query": {
+    "lat": 47.99556,
+    "lon": 7.8525,
+    "radius": 180.0,
+    "category": "Freiburg Minster"
+  },
+  "images": [
+    {
+      "file": "000_2024-10-26_MPM-Days_Freiburg_BR_032.jpg",
+      "title": "File:2024-10-26 MPM-Days Freiburg BR 032.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/2024-10-26_MPM-Days_Freiburg_BR_032.jpg/1920px-2024-10-26_MPM-Days_Freiburg_BR_032.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1067,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ahmet_D%C3%BCz\" title=\"User:Ahmet Düz\">Ahmet Düz, Dreiländer- &amp; Oberrhein"
+    },
+    {
+      "file": "001_Ansicht_des_Freiburger_Münsters_von_Südosten.jpg",
+      "title": "File:Ansicht des Freiburger Münsters von Südosten.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Ansicht_des_Freiburger_M%C3%BCnsters_von_S%C3%BCdosten.jpg/1920px-Ansicht_des_Freiburger_M%C3%BCnsters_von_S%C3%BCdosten.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2115,
+      "license": "Public domain",
+      "artist": "<bdi><a href=\"https://www.wikidata.org/wiki/Q53501216\" class=\"extiw\" title=\"d:Q53501216\"><span title=\"German photographe"
+    },
+    {
+      "file": "002_Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr",
+      "title": "File:Aufnahmen von Freiburg im Breisgau - LABW - Hauptstaatsarchiv Stuttgart J 314 Nr 3 -10.jpeg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr_3_-10.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1900,
+      "license": "CC BY 4.0",
+      "artist": "unbekannt"
+    },
+    {
+      "file": "003_Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr",
+      "title": "File:Aufnahmen von Freiburg im Breisgau - LABW - Hauptstaatsarchiv Stuttgart J 314 Nr 3 -15.jpeg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/05/Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr_3_-15.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1339,
+      "license": "CC BY 4.0",
+      "artist": "unbekannt"
+    },
+    {
+      "file": "004_Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr",
+      "title": "File:Aufnahmen von Freiburg im Breisgau - LABW - Hauptstaatsarchiv Stuttgart J 314 Nr 3 -2.jpeg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr_3_-2.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1356,
+      "license": "CC BY 4.0",
+      "artist": "unbekannt"
+    },
+    {
+      "file": "005_Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr",
+      "title": "File:Aufnahmen von Freiburg im Breisgau - LABW - Hauptstaatsarchiv Stuttgart J 314 Nr 3 -7.jpeg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Aufnahmen_von_Freiburg_im_Breisgau_-_LABW_-_Hauptstaatsarchiv_Stuttgart_J_314_Nr_3_-7.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1961,
+      "license": "CC BY 4.0",
+      "artist": "unbekannt"
+    },
+    {
+      "file": "006_Blick_Richtung_Freiburger_Münster_vom_Stadtgarten_aus.jpg",
+      "title": "File:Blick Richtung Freiburger Münster vom Stadtgarten aus.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Blick_Richtung_Freiburger_M%C3%BCnster_vom_Stadtgarten_aus.jpg/1920px-Blick_Richtung_Freiburger_M%C3%BCnster_vom_Stadtgarten_aus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1067,
+      "license": "CC BY 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Wikiolo\" title=\"User:Wikiolo\">Wikiolo</a>"
+    },
+    {
+      "file": "007_Blick_auf_den_Platz_neben_dem_Freiburger_Münster_im_Dezember_2022.jpg",
+      "title": "File:Blick auf den Platz neben dem Freiburger Münster im Dezember 2022.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Blick_auf_den_Platz_neben_dem_Freiburger_M%C3%BCnster_im_Dezember_2022.jpg/1920px-Blick_auf_den_Platz_neben_dem_Freiburger_M%C3%BCnster_im_Dezember_2022.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1067,
+      "license": "CC BY 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Wikiolo\" title=\"User:Wikiolo\">Wikiolo</a>"
+    },
+    {
+      "file": "008_CH-NB_Photoglob-Wehrli_EAD-WEHR-23717-B.tif",
+      "title": "File:CH-NB Photoglob-Wehrli EAD-WEHR-23717-B.tif",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/CH-NB_Photoglob-Wehrli_EAD-WEHR-23717-B.tif/lossy-page1-1920px-CH-NB_Photoglob-Wehrli_EAD-WEHR-23717-B.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2123,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nArtur Wehrli</div>"
+    },
+    {
+      "file": "009_CH-NB_Photoglob-Wehrli_EAD-WEHR-23718-B.tif",
+      "title": "File:CH-NB Photoglob-Wehrli EAD-WEHR-23718-B.tif",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/CH-NB_Photoglob-Wehrli_EAD-WEHR-23718-B.tif/lossy-page1-1920px-CH-NB_Photoglob-Wehrli_EAD-WEHR-23718-B.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2123,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nArtur Wehrli</div>"
+    },
+    {
+      "file": "010_Catedral_de_Friburgo_de_Brisgovia_Freiburger_Münster.jpg",
+      "title": "File:Catedral de Friburgo de Brisgovia (Freiburger Münster).jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Catedral_de_Friburgo_de_Brisgovia_%28Freiburger_M%C3%BCnster%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Pamdelinaza&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Us"
+    },
+    {
+      "file": "011_Catedral_de_Friburgo_de_Brisgovia_Freiburger_Münster_en_Alemania.jpg",
+      "title": "File:Catedral de Friburgo de Brisgovia (Freiburger Münster) en Alemania.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Catedral_de_Friburgo_de_Brisgovia_%28Freiburger_M%C3%BCnster%29_en_Alemania.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Pamdelinaza&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Us"
+    },
+    {
+      "file": "012_Cathédrale_de_Fribourg.jpg",
+      "title": "File:Cathédrale de Fribourg.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Cath%C3%A9drale_de_Fribourg.jpg/1280px-Cath%C3%A9drale_de_Fribourg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2667,
+      "license": "CC BY 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Sarra1310&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User"
+    },
+    {
+      "file": "013_Denkmäler_deutscher_Renaissance_-_Band2_-_0042.jpg",
+      "title": "File:Denkmäler deutscher Renaissance - Band2 - 0042.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Denkm%C3%A4ler_deutscher_Renaissance_-_Band2_-_0042.jpg/1920px-Denkm%C3%A4ler_deutscher_Renaissance_-_Band2_-_0042.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2449,
+      "license": "Public domain",
+      "artist": "Karl Emil Otto Fritsch"
+    },
+    {
+      "file": "014_Der_Munster_in_Freiburg_RP-F-F14056.jpg",
+      "title": "File:Der Munster in Freiburg, RP-F-F14056.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/Der_Munster_in_Freiburg%2C_RP-F-F14056.jpg/1920px-Der_Munster_in_Freiburg%2C_RP-F-F14056.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 765,
+      "license": "CC0",
+      "artist": "Rijksmuseum"
+    },
+    {
+      "file": "015_Dreharbeiten_für_die_ARD-Serie_Lauter_Glückspilze_-_LABW_-_Staatsarchiv_Freiburg",
+      "title": "File:Dreharbeiten für die ARD-Serie \"Lauter Glückspilze\" - LABW - Staatsarchiv Freiburg W 140 Nr. 06648.jpeg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Dreharbeiten_f%C3%BCr_die_ARD-Serie_%22Lauter_Gl%C3%BCckspilze%22_-_LABW_-_Staatsarchiv_Freiburg_W_140_Nr._06648.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1129,
+      "license": "CC BY 4.0",
+      "artist": "Marlis Decker"
+    },
+    {
+      "file": "016_Erinnerungstafel_am_Freiburger_Münster_für_den_Bombenangriff_1944.jpg",
+      "title": "File:Erinnerungstafel am Freiburger Münster für den Bombenangriff 1944.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Erinnerungstafel_am_Freiburger_M%C3%BCnster_f%C3%BCr_den_Bombenangriff_1944.jpg/1920px-Erinnerungstafel_am_Freiburger_M%C3%BCnster_f%C3%BCr_den_Bombenangriff_1944.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1200,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Chattus\" title=\"User:Chattus\">Chattus</a>"
+    },
+    {
+      "file": "017_Erzbischof.Robert.Zollitsch.jpg",
+      "title": "File:Erzbischof.Robert.Zollitsch.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Erzbischof.Robert.Zollitsch.jpg/1920px-Erzbischof.Robert.Zollitsch.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1441,
+      "license": "CC0",
+      "artist": "Wici"
+    },
+    {
+      "file": "018_Freiburg_Münster.png",
+      "title": "File:Freiburg (Münster).png",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Freiburg_%28M%C3%BCnster%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 870,
+      "license": "Public domain",
+      "artist": "Hans Rudolf Manuel Deutsch"
+    },
+    {
+      "file": "019_Freiburg_Bauten_b_289.jpg",
+      "title": "File:Freiburg Bauten b 289.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Freiburg_Bauten_b_289.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2258,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "020_Freiburg_Bauten_b_290.jpg",
+      "title": "File:Freiburg Bauten b 290.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/33/Freiburg_Bauten_b_290.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2393,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "021_Freiburg_Bauten_b_291.jpg",
+      "title": "File:Freiburg Bauten b 291.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/Freiburg_Bauten_b_291.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2233,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "022_Freiburg_Bauten_b_292.jpg",
+      "title": "File:Freiburg Bauten b 292.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/Freiburg_Bauten_b_292.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2388,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "023_Freiburg_Bauten_b_294.jpg",
+      "title": "File:Freiburg Bauten b 294.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/19/Freiburg_Bauten_b_294.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2742,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "024_Freiburg_Bauten_b_296.jpg",
+      "title": "File:Freiburg Bauten b 296.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/85/Freiburg_Bauten_b_296.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2619,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "025_Freiburg_Bauten_b_298.jpg",
+      "title": "File:Freiburg Bauten b 298.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Freiburg_Bauten_b_298.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 3663,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "026_Freiburg_Bauten_b_299.jpg",
+      "title": "File:Freiburg Bauten b 299.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/64/Freiburg_Bauten_b_299.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2213,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "027_Freiburg_Bauten_b_301.jpg",
+      "title": "File:Freiburg Bauten b 301.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/23/Freiburg_Bauten_b_301.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1725,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "028_Freiburg_Bauten_b_302.jpg",
+      "title": "File:Freiburg Bauten b 302.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Freiburg_Bauten_b_302.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1145,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "029_Freiburg_Bauten_b_342.jpg",
+      "title": "File:Freiburg Bauten b 342.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Freiburg_Bauten_b_342.jpg/1920px-Freiburg_Bauten_b_342.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2267,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nVarious authors</div>"
+    },
+    {
+      "file": "030_Freiburg_I.B._Das_Münster_LCCN2017660060.jpg",
+      "title": "File:Freiburg I.B. Das Münster LCCN2017660060.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Freiburg_I.B._Das_M%C3%BCnster_LCCN2017660060.jpg/1920px-Freiburg_I.B._Das_M%C3%BCnster_LCCN2017660060.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2155,
+      "license": "Public domain",
+      "artist": "Photoglob Co., publisher."
+    },
+    {
+      "file": "031_Freiburg_I.B._Das_Münster_LCCN2017660060.tif",
+      "title": "File:Freiburg I.B. Das Münster LCCN2017660060.tif",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Freiburg_I.B._Das_M%C3%BCnster_LCCN2017660060.tif/lossy-page1-1920px-Freiburg_I.B._Das_M%C3%BCnster_LCCN2017660060.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2155,
+      "license": "Public domain",
+      "artist": "Photoglob Co., publisher."
+    },
+    {
+      "file": "032_Freiburg_Münster_DSC02065_z.jpg",
+      "title": "File:Freiburg Münster DSC02065 z.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Freiburg_M%C3%BCnster_DSC02065_z.jpg/1920px-Freiburg_M%C3%BCnster_DSC02065_z.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 3312,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Luccio1973&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Use"
+    },
+    {
+      "file": "033_Freiburg_Münster_Südseite.jpg",
+      "title": "File:Freiburg Münster Südseite.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Freiburg_M%C3%BCnster_S%C3%BCdseite.jpg/1920px-Freiburg_M%C3%BCnster_S%C3%BCdseite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1066,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:D.W.Germann\" title=\"User:D.W.Germann\">D.W.Germann</a>"
+    },
+    {
+      "file": "034_Freiburg_Münster_im_Novembernebel_-_W134Nr.027208a_-_Willy_Pragher.jpg",
+      "title": "File:Freiburg Münster im Novembernebel - W134Nr.027208a - Willy Pragher.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/39/Freiburg_M%C3%BCnster_im_Novembernebel_-_W134Nr.027208a_-_Willy_Pragher.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2477,
+      "license": "CC BY 3.0 de",
+      "artist": "<bdi><a href=\"https://www.wikidata.org/wiki/Q2571685\" class=\"extiw\" title=\"d:Q2571685\"><span title=\"German photographer "
+    },
+    {
+      "file": "035_FreiburgerMünster_Turm_20210629_c.jpg",
+      "title": "File:FreiburgerMünster Turm 20210629 c.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/FreiburgerM%C3%BCnster_Turm_20210629_c.jpg/1920px-FreiburgerM%C3%BCnster_Turm_20210629_c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1067,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:FbrG&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FbrG"
+    },
+    {
+      "file": "036_FreiburgerMünster_Turm_20210629_d.jpg",
+      "title": "File:FreiburgerMünster Turm 20210629 d.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/FreiburgerM%C3%BCnster_Turm_20210629_d.jpg/1920px-FreiburgerM%C3%BCnster_Turm_20210629_d.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:FbrG&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FbrG"
+    },
+    {
+      "file": "037_Freiburger_Münster_-_51732844331.jpg",
+      "title": "File:Freiburger Münster - 51732844331.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Freiburger_M%C3%BCnster_-_51732844331.jpg/1920px-Freiburger_M%C3%BCnster_-_51732844331.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 960,
+      "license": "CC BY 2.0",
+      "artist": "Jorge Franganillo"
+    },
+    {
+      "file": "038_Freiburger_Münster_-_FaB.jpg",
+      "title": "File:Freiburger Münster - FaB.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Freiburger_M%C3%BCnster_-_FaB.jpg/1920px-Freiburger_M%C3%BCnster_-_FaB.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:AskerovMi&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User"
+    },
+    {
+      "file": "039_Freiburger_Münster_-_Flickr_-_Mondo79_2.jpg",
+      "title": "File:Freiburger Münster - Flickr - Mondo79 (2).jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Freiburger_M%C3%BCnster_-_Flickr_-_Mondo79_%282%29.jpg/1920px-Freiburger_M%C3%BCnster_-_Flickr_-_Mondo79_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1068,
+      "license": "CC BY 2.0",
+      "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/50417570@N06\">Mondo79</a>"
+    },
+    {
+      "file": "040_Freiburger_Münster_Westportal_01.jpg",
+      "title": "File:Freiburger Münster Westportal 01.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Freiburger_M%C3%BCnster_Westportal_01.jpg/1920px-Freiburger_M%C3%BCnster_Westportal_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>"
+    },
+    {
+      "file": "041_Freiburger_Münster_Westportal_02.jpg",
+      "title": "File:Freiburger Münster Westportal 02.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Freiburger_M%C3%BCnster_Westportal_02.jpg/1920px-Freiburger_M%C3%BCnster_Westportal_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>"
+    },
+    {
+      "file": "042_Freiburger_Münster_Westportal_03.jpg",
+      "title": "File:Freiburger Münster Westportal 03.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Freiburger_M%C3%BCnster_Westportal_03.jpg/1920px-Freiburger_M%C3%BCnster_Westportal_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>"
+    },
+    {
+      "file": "043_Freiburger_Münster_exterior_80.jpg",
+      "title": "File:Freiburger Münster exterior 80.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Freiburger_M%C3%BCnster_exterior_80.jpg/1920px-Freiburger_M%C3%BCnster_exterior_80.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 4.0",
+      "artist": "Giftzwerg 88"
+    },
+    {
+      "file": "044_Freiburger_Münster_exterior_81.jpg",
+      "title": "File:Freiburger Münster exterior 81.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Freiburger_M%C3%BCnster_exterior_81.jpg/1920px-Freiburger_M%C3%BCnster_exterior_81.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 4.0",
+      "artist": "Giftzwerg 88"
+    },
+    {
+      "file": "045_Freiburger_Münster_exterior_82.jpg",
+      "title": "File:Freiburger Münster exterior 82.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Freiburger_M%C3%BCnster_exterior_82.jpg/1920px-Freiburger_M%C3%BCnster_exterior_82.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 4.0",
+      "artist": "Giftzwerg 88"
+    },
+    {
+      "file": "046_Freiburger_Münster_exterior_83.jpg",
+      "title": "File:Freiburger Münster exterior 83.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Freiburger_M%C3%BCnster_exterior_83.jpg/1920px-Freiburger_M%C3%BCnster_exterior_83.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1067,
+      "license": "CC BY-SA 4.0",
+      "artist": "Giftzwerg 88"
+    },
+    {
+      "file": "047_Freiburger_Münster_oben.jpg",
+      "title": "File:Freiburger Münster oben.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Freiburger_M%C3%BCnster_oben.jpg/1920px-Freiburger_M%C3%BCnster_oben.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1600,
+      "license": "CC0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Fheinimann96fh&amp;action=edit&amp;redlink=1\" class=\"new\" title="
+    },
+    {
+      "file": "048_Freiburger_Münster_von_Herrenstraße_01.jpg",
+      "title": "File:Freiburger Münster von Herrenstraße 01.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Freiburger_M%C3%BCnster_von_Herrenstra%C3%9Fe_01.jpg/1920px-Freiburger_M%C3%BCnster_von_Herrenstra%C3%9Fe_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1067,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>"
+    },
+    {
+      "file": "049_Freiburger_münster_von_obern.jpg",
+      "title": "File:Freiburger münster von obern.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Freiburger_m%C3%BCnster_von_obern.jpg/1920px-Freiburger_m%C3%BCnster_von_obern.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1067,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Ploh70&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Pl"
+    },
+    {
+      "file": "050_Freiburgs_Münster.jpg",
+      "title": "File:Freiburgs Münster.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Freiburgs_M%C3%BCnster.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1600,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Alixurb&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:A"
+    },
+    {
+      "file": "051_GarGOyle_Projektbild.png",
+      "title": "File:GarGOyle̠ Projektbild.png",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/GarGOyle%CC%A0_Projektbild.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1638,
+      "license": "CC BY-SA 3.0",
+      "artist": "Regina Rullmann"
+    },
+    {
+      "file": "052_Gargoyles_Tower_Defense_Projektbild.jpg",
+      "title": "File:Gargoyles Tower Defense (Projektbild).jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Gargoyles_Tower_Defense_%28Projektbild%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1200,
+      "license": "CC0",
+      "artist": "Sabine Schleise, Daniel Wagner, Moreli Andrea Paredes Gonzalez, Matthias Roming"
+    },
+    {
+      "file": "053_Gezicht_op_de_Munster_van_Freiburg_BI-B-SCHOLEN-1761-2.jpg",
+      "title": "File:Gezicht op de Munster van Freiburg, BI-B-SCHOLEN-1761-2.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Gezicht_op_de_Munster_van_Freiburg%2C_BI-B-SCHOLEN-1761-2.jpg/1920px-Gezicht_op_de_Munster_van_Freiburg%2C_BI-B-SCHOLEN-1761-2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2240,
+      "license": "CC0",
+      "artist": "Rijksmuseum"
+    },
+    {
+      "file": "054_Inschrift_am_Freiburger_Schlossberg_beim_Dattler.jpg",
+      "title": "File:Inschrift am Freiburger Schlossberg beim Dattler.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Inschrift_am_Freiburger_Schlossberg_beim_Dattler.jpg/1920px-Inschrift_am_Freiburger_Schlossberg_beim_Dattler.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1017,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>"
+    },
+    {
+      "file": "055_Munster_van_Freiburg.jpg",
+      "title": "File:Munster van Freiburg.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/Munster_van_Freiburg.jpg/1920px-Munster_van_Freiburg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1200,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Rkoster\" title=\"User:Rkoster\">Rob Koster</a>"
+    },
+    {
+      "file": "056_Münster_Sickinger_1589.jpg",
+      "title": "File:Münster (Sickinger 1589).jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/M%C3%BCnster_%28Sickinger_1589%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2090,
+      "license": "CC0",
+      "artist": "<a href=\"https://en.wikipedia.org/wiki/de:Gregorius_Sickinger\" class=\"extiw\" title=\"w:de:Gregorius Sickinger\">Gregorius "
+    },
+    {
+      "file": "057_Papstbesuch.Freiburg.Münster-Stempel.jpg",
+      "title": "File:Papstbesuch.Freiburg.Münster-Stempel.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Papstbesuch.Freiburg.M%C3%BCnster-Stempel.jpg/1920px-Papstbesuch.Freiburg.M%C3%BCnster-Stempel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1605,
+      "license": "CC BY-SA 3.0",
+      "artist": "Wici"
+    },
+    {
+      "file": "058_Spitze_des_Freiburger_Münsters_vom_Fuß_des_Freiburger_Hausbergs.jpg",
+      "title": "File:Spitze des Freiburger Münsters vom Fuß des Freiburger Hausbergs.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Spitze_des_Freiburger_M%C3%BCnsters_vom_Fu%C3%9F_des_Freiburger_Hausbergs.jpg/1920px-Spitze_des_Freiburger_M%C3%BCnsters_vom_Fu%C3%9F_des_Freiburger_Hausbergs.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Wikiolo\" title=\"User:Wikiolo\">Wikiolo</a>"
+    },
+    {
+      "file": "059_Sternenkleidmadonna_im_Freiburger_Münster.jpg",
+      "title": "File:Sternenkleidmadonna im Freiburger Münster.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Sternenkleidmadonna_im_Freiburger_M%C3%BCnster.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 3913,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Triptychon&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Use"
+    },
+    {
+      "file": "060_The_Munster_Freiburg_Baden_Germany-LCCN2002713577.tif",
+      "title": "File:The Munster, Freiburg, Baden, Germany-LCCN2002713577.tif",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/The_Munster%2C_Freiburg%2C_Baden%2C_Germany-LCCN2002713577.tif/lossy-page1-1920px-The_Munster%2C_Freiburg%2C_Baden%2C_Germany-LCCN2002713577.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2106,
+      "license": "Public domain",
+      "artist": "<div class=\"fn value\">\nPhotochrom Print Collection</div>"
+    },
+    {
+      "file": "061_Turm_des_Freiburger_Münster_2022.jpg",
+      "title": "File:Turm des Freiburger Münster 2022.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Turm_des_Freiburger_M%C3%BCnster_2022.jpg/1920px-Turm_des_Freiburger_M%C3%BCnster_2022.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Wikiolo\" title=\"User:Wikiolo\">Wikiolo</a>"
+    },
+    {
+      "file": "062_Vorderseite_Dom_Munsterplatz_Freiburg_im_Breisgau_2.jpg",
+      "title": "File:Vorderseite Dom Munsterplatz Freiburg im Breisgau 2.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Vorderseite_Dom_Munsterplatz_Freiburg_im_Breisgau_2.jpg/1920px-Vorderseite_Dom_Munsterplatz_Freiburg_im_Breisgau_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2844,
+      "license": "CC BY 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Datsofelija&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Us"
+    },
+    {
+      "file": "063_Wimperg_aus_der_Vorhalle_des_Freiburger_Münsters.jpg",
+      "title": "File:Wimperg aus der Vorhalle des Freiburger Münsters.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Wimperg_aus_der_Vorhalle_des_Freiburger_M%C3%BCnsters.jpg/1920px-Wimperg_aus_der_Vorhalle_des_Freiburger_M%C3%BCnsters.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2272,
+      "license": "Public domain",
+      "artist": "<bdi><a href=\"https://www.wikidata.org/wiki/Q1466335\" class=\"extiw\" title=\"d:Q1466335\"><span title=\"German painter and r"
+    },
+    {
+      "file": "064_Zentralbibliothek_Zürich_-_Münster_zu_Freyburg_im_Breisgau._...tur_am_südl._Eing",
+      "title": "File:Zentralbibliothek Zürich - Münster zu Freyburg im Breisgau. ...tur am südl. Eingang zum Chorumgang - 991062745239705501.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Zentralbibliothek_Z%C3%BCrich_-_M%C3%BCnster_zu_Freyburg_im_Breisgau._...tur_am_s%C3%BCdl._Eingang_zum_Chorumgang_-_991062745239705501.jpg/1920px-Zentralbibliothek_Z%C3%BCrich_-_M%C3%BCnster_zu_Freyburg_im_Breisgau._...tur_am_s%C3%BCdl._Eingang_zum_Chorumgang_-_991062745239705501.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1744,
+      "license": "Public domain",
+      "artist": "<a href=\"https://www.wikidata.org/wiki/Q125202\" class=\"extiw\" title=\"d:Q125202\"><span title=\"Swiss art historian (1841-1"
+    },
+    {
+      "file": "065_Zentralbibliothek_Zürich_-_Relief_am_Eingangs_Thor_west._Münster_z._Freiburg_i_B",
+      "title": "File:Zentralbibliothek Zürich - Relief am Eingangs Thor (west). Münster z. Freiburg i B - 991062502899705501.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Zentralbibliothek_Z%C3%BCrich_-_Relief_am_Eingangs_Thor_%28west%29._M%C3%BCnster_z._Freiburg_i_B_-_991062502899705501.jpg/1920px-Zentralbibliothek_Z%C3%BCrich_-_Relief_am_Eingangs_Thor_%28west%29._M%C3%BCnster_z._Freiburg_i_B_-_991062502899705501.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1485,
+      "license": "Public domain",
+      "artist": "<a href=\"https://www.wikidata.org/wiki/Q125202\" class=\"extiw\" title=\"d:Q125202\"><span title=\"Swiss art historian (1841-1"
+    }
+  ]
+}

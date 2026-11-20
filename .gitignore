@@ -16,8 +16,10 @@ modelle/stl/altstadt_preview.stl
 *.laz
 daten/hoellental/dgm025_full.npy
 .venv-pc/
-daten/kaufhaus_freiburg/dop/
-daten/kaufhaus_freiburg/lod2/
+daten/*/dop/
+daten/*/lod2/
+# > 100 MB = GitHub-Limit (regenerierbar aus der Pipeline)
+modelle/martinstor_auto/relief/sv02_relief.stl
 
 # Claude Code: lokal/temporär
 .claude/settings.local.json

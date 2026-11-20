@@ -1,0 +1,209 @@
+{
+  "source": "wikimedia_commons",
+  "query": {
+    "lat": null,
+    "lon": null,
+    "radius": 150,
+    "category": ""
+  },
+  "images": [
+    {
+      "file": "000_1995-Martinstor-Freiburg.jpg",
+      "title": "File:1995-Martinstor-Freiburg.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/1995-Martinstor-Freiburg.jpg/1920px-1995-Martinstor-Freiburg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2459,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Gunnar_Klack\" title=\"User:Gunnar Klack\">Gunnar Klack</a>"
+    },
+    {
+      "file": "001_Freiburg-Martinstor-01ASD.jpg",
+      "title": "File:Freiburg-Martinstor-01ASD.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Freiburg-Martinstor-01ASD.jpg/1920px-Freiburg-Martinstor-01ASD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>"
+    },
+    {
+      "file": "002_Freiburg-Martinstor-01ESD.jpg",
+      "title": "File:Freiburg-Martinstor-01ESD.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Freiburg-Martinstor-01ESD.jpg/1920px-Freiburg-Martinstor-01ESD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1200,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Rikki_Mitterer\" title=\"User:Rikki Mitterer\">Rikki Mitterer</a>"
+    },
+    {
+      "file": "003_Freiburg-Martinstor-Mc_Donalds-01ASD.jpg",
+      "title": "File:Freiburg-Martinstor-Mc Donalds-01ASD.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Freiburg-Martinstor-Mc_Donalds-01ASD.jpg/1920px-Freiburg-Martinstor-Mc_Donalds-01ASD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>"
+    },
+    {
+      "file": "004_Freiburg-Martinstor-Mc_Donalds-01ESD.jpg",
+      "title": "File:Freiburg-Martinstor-Mc Donalds-01ESD.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Freiburg-Martinstor-Mc_Donalds-01ESD.jpg/1920px-Freiburg-Martinstor-Mc_Donalds-01ESD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Rikki_Mitterer\" title=\"User:Rikki Mitterer\">Rikki Mitterer</a>"
+    },
+    {
+      "file": "005_Freiburg_Martinstor_Muenster_225_PICT0085_19930415_1023.jpg",
+      "title": "File:Freiburg Martinstor Muenster 225 PICT0085 19930415 1023.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Freiburg_Martinstor_Muenster_225_PICT0085_19930415_1023.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Karlunun\" title=\"User:Karlunun\">Karlunun</a>"
+    },
+    {
+      "file": "006_Freiburg_im_Breisgau_Martinstor_Gedenktafel_--_2025_--_8003.jpg",
+      "title": "File:Freiburg im Breisgau, Martinstor, Gedenktafel -- 2025 -- 8003.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Freiburg_im_Breisgau%2C_Martinstor%2C_Gedenktafel_--_2025_--_8003.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor%2C_Gedenktafel_--_2025_--_8003.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 1152,
+      "license": "CC BY-SA 4.0",
+      "artist": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe"
+    },
+    {
+      "file": "007_Freiburg_im_Breisgau_Martinstor_Wappen_--_2025_--_8001.jpg",
+      "title": "File:Freiburg im Breisgau, Martinstor, Wappen -- 2025 -- 8001.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Freiburg_im_Breisgau%2C_Martinstor%2C_Wappen_--_2025_--_8001.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor%2C_Wappen_--_2025_--_8001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC BY-SA 4.0",
+      "artist": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe"
+    },
+    {
+      "file": "008_Freiburg_im_Breisgau_Martinstor_--_2025_--_7999.jpg",
+      "title": "File:Freiburg im Breisgau, Martinstor -- 2025 -- 7999.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_7999.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_7999.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 4.0",
+      "artist": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe"
+    },
+    {
+      "file": "009_Freiburg_im_Breisgau_Martinstor_--_2025_--_8005.jpg",
+      "title": "File:Freiburg im Breisgau, Martinstor -- 2025 -- 8005.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_8005.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_8005.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 4.0",
+      "artist": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe"
+    },
+    {
+      "file": "010_Kaiser-Joseph-Strasse_mit_Martinstor_in_Freiburg_im_Breisgau_2025.jpg",
+      "title": "File:Kaiser-Joseph-Strasse mit Martinstor in Freiburg im Breisgau (2025).jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Kaiser-Joseph-Strasse_mit_Martinstor_in_Freiburg_im_Breisgau_%282025%29.jpg/1920px-Kaiser-Joseph-Strasse_mit_Martinstor_in_Freiburg_im_Breisgau_%282025%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2000,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>"
+    },
+    {
+      "file": "011_Martinstor_Freiburg_-_panoramio.jpg",
+      "title": "File:Martinstor, Freiburg - panoramio.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Martinstor%2C_Freiburg_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2133,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161011231941/http://www.panoramio.com/user/7"
+    },
+    {
+      "file": "012_Martinstor_Freiburg_2795.jpg",
+      "title": "File:Martinstor (Freiburg) 2795.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Martinstor_%28Freiburg%29_2795.jpg/1920px-Martinstor_%28Freiburg%29_2795.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2723,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/Joergens.mi\" class=\"mw-redirect\" title=\"Joergens.mi\">joergens.mi</a>"
+    },
+    {
+      "file": "013_Martinstor_Freiburg_im_Breisgau_jm33958.jpg",
+      "title": "File:Martinstor (Freiburg im Breisgau) jm33958.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Martinstor_%28Freiburg_im_Breisgau%29_jm33958.jpg/1920px-Martinstor_%28Freiburg_im_Breisgau%29_jm33958.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2755,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>"
+    },
+    {
+      "file": "014_Martinstor_Ak139.jpg",
+      "title": "File:Martinstor Ak139.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Martinstor_Ak139.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1024,
+      "license": "Public domain",
+      "artist": "Unknown author<span style=\"display: none;\">Unknown author</span>"
+    },
+    {
+      "file": "015_Martinstor_Freiburg_01.jpg",
+      "title": "File:Martinstor Freiburg 01.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Martinstor_Freiburg_01.jpg/1920px-Martinstor_Freiburg_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>"
+    },
+    {
+      "file": "016_Martinstor_Freiburg_02.jpg",
+      "title": "File:Martinstor Freiburg 02.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Martinstor_Freiburg_02.jpg/1920px-Martinstor_Freiburg_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2400,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>"
+    },
+    {
+      "file": "017_Martinstor_Freiburg_stadtseitig_7918003428.jpg",
+      "title": "File:Martinstor Freiburg stadtseitig (7918003428).jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Martinstor_Freiburg_stadtseitig_%287918003428%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2120,
+      "license": "CC BY 2.0",
+      "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/85547423@N04\">George Pankewytch</a>"
+    },
+    {
+      "file": "018_Martinstor_Freiburg_stadtseitig_7918003428_cropped.jpg",
+      "title": "File:Martinstor Freiburg stadtseitig (7918003428) (cropped).jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Martinstor_Freiburg_stadtseitig_%287918003428%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 2844,
+      "license": "CC BY 2.0",
+      "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/85547423@N04\">George Pankewytch</a>"
+    },
+    {
+      "file": "019_Martinstor_ak160z.jpg",
+      "title": "File:Martinstor ak160z.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Martinstor_ak160z.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "w": 1600,
+      "h": 1901,
+      "license": "Public domain",
+      "artist": "unbekannt"
+    },
+    {
+      "file": "020_Martinstor_in_Freiburg_im_Breisgau_2025.jpg",
+      "title": "File:Martinstor in Freiburg im Breisgau (2025).jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Martinstor_in_Freiburg_im_Breisgau_%282025%29.jpg/1920px-Martinstor_in_Freiburg_im_Breisgau_%282025%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2844,
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>"
+    },
+    {
+      "file": "021_St_Martin_Freiburg_3034_cropped.jpg",
+      "title": "File:St Martin (Freiburg) 3034 (cropped).jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/St_Martin_%28Freiburg%29_3034_%28cropped%29.jpg/1920px-St_Martin_%28Freiburg%29_3034_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "w": 1600,
+      "h": 2843,
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/Joergens.mi\" class=\"mw-redirect\" title=\"Joergens.mi\">joergens.mi</a>"
+    }
+  ]
+}
