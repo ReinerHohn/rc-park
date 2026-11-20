@@ -14,7 +14,7 @@ Suche: Thema waehlen und nur diese Datei lesen, oder `grep -ih <stichwort> tools
 - bauteil_generator (58) -> `tools/index/bauteil_generator.md`
 - druck_stl (37) -> `tools/index/druck_stl.md`
 - pruefung_abnahme (34) -> `tools/index/pruefung_abnahme.md`
-- betrieb_job_gpu (47) -> `tools/index/betrieb_job_gpu.md`
+- betrieb_job_gpu (48) -> `tools/index/betrieb_job_gpu.md`
 - ansicht_html_render (23) -> `tools/index/ansicht_html_render.md`
 - bewertung_beweis (27) -> `tools/index/bewertung_beweis.md`
 - geometrie_flaechen (33) -> `tools/index/geometrie_flaechen.md`

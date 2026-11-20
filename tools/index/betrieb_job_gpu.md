@@ -1,4 +1,4 @@
-# Werkzeuge: betrieb_job_gpu (47)
+# Werkzeuge: betrieb_job_gpu (48)
 - `tools/aufraeumen_2026-11-10.sh` [sh] Aufraeumen Root-Platte 10.11.2026 (vom Koordinator geprueft, Ausfuehren durch den Nutzer: Loeschen nur per Nutzer-Skript). Aufruf im eigenen Terminal:  sudo bash tools/aufraeumen_2
 - `tools/aufraeumen_datenplatte.sh` [sh] aufraeumen_datenplatte.sh - gibt Platz auf /media/oem/scan frei, OHNE Ergebnisse zu loeschen (Stand 2026-11-03, Platte 99 % voll). Loescht NUR regenerierbare Zwischenprodukte der d
 - `tools/backup_rcdaten.sh` [sh] backup_rcdaten.sh ZIEL [--los] [--pruefen] [--spiegeln] [--nur rcdaten|daten|repo]       (18.11.2026, Nutzerauftrag "Backup vorbereiten") Sichert ALLES, was nach dem Umzug nur noch
@@ -36,6 +36,7 @@
 - `tools/luefter_installieren.sh` [sh] luefter_installieren.sh - Luefterregler dauerhaft (systemd) einrichten. Einmal: sudo tools/luefter_installieren.sh
 - `tools/modell_ansehen_cpu.py` [-] modell_ansehen.py - schattierter Dreiecks-Render (Painter-Algorithmus, Rueckseiten weg) eines STL zum ANSEHEN nach jedem Bau (CLAUDE.md Regel 3: Zahlen allein gelten nicht). Warum:
 - `tools/optimierer_mehrfachstart.py` [-] optimierer_mehrfachstart.py - Konvergenztest: K Startpunkte (Basis + zufaellig, feste Seeds), Koordinatenabstieg OHNE Rauschschwelle auf f = e_train + e_holdout + ept/20 (ept in m)
+- `tools/pfade.py` [-] pfade.py - EINE Stelle fuer Projektpfade und Python-Umgebungen (20.11.2026; bisher 179 Werkzeuge mit hart eingetragenen Objektnamen, 57 mit Datenpfad). Neue Werkzeuge: `from pfade 
 - `tools/pfade_haken_kuerzen.py` [-] pfade_haken_kuerzen.py - Haken/U-Schlaufen an Pfadenden von Rippenpfaden abschneiden (Skelett-Artefakte an Kreuzungen/Fuessen). Aufruf: pfade_haken_kuerzen.py OBJ.json --pfad baute
 - `tools/pfade_nachfuehren.py` [-] pfade_nachfuehren.py - vorhandene Rippenpfade (rippen_pfade.pfade_ohne_spiegel) im Foto auf die gemessene Rippenmitte nachfuehren. Aufruf: pfade_nachfuehren.py OBJ.json --kam K-617
 - `tools/platz_aufraeumen_2026-11-06.sh` [sh] Vom Nutzer auszufuehren. Loescht nur Regenerierbares/Veraltetes (~2,6 GB). NICHT geloescht: kaufhaus_null4 (null5 liest sfm/dicht_alle daraus), martinstor_*.
