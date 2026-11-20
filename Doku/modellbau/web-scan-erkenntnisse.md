@@ -5,7 +5,7 @@
 > liefert 50–100 scharfe Einzelbilder **aus einer Kamera, mit gleichmäßigem Versatz rundherum
 > und von oben** (Dach, Türmchen, Spitze). Genau das, was zusammengewürfelte Internetfotos nie haben.
 
-Werkzeug: [`scan-setup/webfotos.py`](scan-setup/webfotos.py) — sammelt, filtert, lädt und
+Werkzeug: [`scan-setup/webfotos.py`](../../scan-setup/webfotos.py) — sammelt, filtert, lädt und
 startet Meshroom auf der GPU. Ein Befehl.
 
 ```bash
@@ -27,8 +27,8 @@ python3 scan-setup/webfotos.py --name Martinstor --lat 47.99345 --lon 7.84912 \
 
 `<work>` ist standardmäßig `/dev/shm/webscan/<name>` (RAM, nach Neustart weg) → Ergebnisse
 sichern, oder `--work /media/oem/Volume/webscan/<name>` nehmen. GPU-Einrichtung auf neuem
-Rechner: [`scan-setup/gpu-setup.sh`](scan-setup/gpu-setup.sh), Doku
-[`scan-setup/GPU-PIPELINE.md`](scan-setup/GPU-PIPELINE.md).
+Rechner: [`scan-setup/gpu-setup.sh`](../../scan-setup/gpu-setup.sh), Doku
+[`scan-setup/GPU-PIPELINE.md`](../../scan-setup/GPU-PIPELINE.md).
 
 ## Was funktioniert hat / was nicht
 
@@ -79,6 +79,6 @@ veröffentlichen. Für verkaufbare Modelle: eigene Fotos/Drohne (siehe [`datenqu
 
 ## Kombination mit Mass-Modell
 Der Web-Scan ist weich und lückig; die **Maße** kommen aus OSM/LoD2
-([`modelle/martinstor_osm_gen.py`](modelle/martinstor_osm_gen.py)), die **scharfe Druckgeometrie** aus
-dem parametrischen Detailmodell ([`modelle/martinstor_detail_gen.py`](modelle/martinstor_detail_gen.py)).
+([`modelle/martinstor_osm_gen.py`](../../modelle/martinstor_osm_gen.py)), die **scharfe Druckgeometrie** aus
+dem parametrischen Detailmodell ([`modelle/martinstor_detail_gen.py`](../../modelle/martinstor_detail_gen.py)).
 Der Scan dient als Textur-/Proportions-Referenz.
