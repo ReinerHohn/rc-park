@@ -253,6 +253,9 @@ def main():
         if os.path.isdir(sp): erg["kamera"] = lauf(B, f"tor_kamera{tag}", [PY, "-I", "tools/kamera_abdeckung.py", sp], log, ok=(0, 2))[0]
         erg["gps"] = lauf(B, f"tor_gps{tag}", [PY, "-I", "tools/lage_gps_pruefen.py", ZR, os.path.relpath(AU, ROOT), "--fotos", FV], log)[0] if os.path.exists(AU) else None
         if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT)], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende
+        if os.path.isdir(sp):                                              # 20.11.2026 (Martinstor FlexGlue-Nacht): Hinweis-Tore Seitenverkleben - Modell aus punktlos getrennten Stuecken? Kameras gegen Foto-GPS auf der falschen Turmseite?
+            erg["zerfall"] = lauf(B, f"tor_zerfall{tag}", [PYC, "-I", "tools/modell_zerlegen.py", sp, "--min-bilder", "10"], log, ok=(0, 3))[0]
+            erg["gps_seiten"] = lauf(B, f"tor_gps_seiten{tag}", [PYC, "-I", "tools/gps_seiten_pruefen.py", sp, "--bilder", FV], log, ok=(0, 2, 3))[0]
         if os.path.isdir(sp): erg["insel"] = lauf(B, f"tor_insel{tag}", [PYC, "-I", "tools/kette_insel_pruefen.py", ZR, sp], log, ok=(0, 3))[0]   # 15.11. (Schwabentor): Bildketten ohne Fremdstuetze (Videoclip) = Faecher/Geisterwolke; schreibt audit/kette_insel.json
         erg["grundriss"] = lauf(B, f"tor_grundriss{tag}", [PY, "-I", "tools/wolke_grundriss_pruefen.py", ZR, "--wolke", W], log)[0] if os.path.exists(W) else None
         if os.path.isdir(sp) and os.path.exists(AU):                       # 19.11.2026 (Martinstor, schiefe uebergrosse Haeuserzeile aus einem Fernclip): setzt eine Bildgruppe Punkte hoch ueber die LoD2-Hoehe? -> audit/wolke_gruppen.json

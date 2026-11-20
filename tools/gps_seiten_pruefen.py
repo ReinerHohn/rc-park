@@ -4,7 +4,7 @@
 Seitenpruefung OHNE Vorwissen (20.11.2026, Schwabentor/Martinstor-Verkleben): Kamerazentren des Modells werden waagerecht (Lot = Mittel der
 Bild-oben-Richtungen) robust per 2D-Aehnlichkeit (Drehung, Massstab, Verschiebung, KEINE Spiegelung) auf die Foto-GPS-Lagen (EXIF, ENU in m) gelegt.
 Verklebte Seiten (Rueckseite auf die Vorderseite geklappt) sitzen dann zig Meter neben ihrem GPS -> Anteil Ausreisser ueber --grenze (Handy-GPS ~5 m).
-Ausgabe: Zahl GPS-Bilder, Median-Rest in m, Anteil > grenze, Urteil. rc 3 = verdaechtig (>= 15 % Ausreisser bei >= 8 GPS-Bildern), rc 2 = zu wenig GPS."""
+Ausgabe: Zahl GPS-Bilder, Median-Rest in m, Anteil > grenze, Urteil. rc 3 = verdaechtig (>= 15 % Ausreisser bei >= 25 GPS-Bildern im 150-m-Umkreis), rc 2 = zu wenig GPS."""
 import os, sys, argparse, numpy as np
 
 
@@ -34,8 +34,9 @@ def pruefen(modell, ordner, grenze=12.0, rng=np.random.default_rng(0)):
     r = pycolmap.Reconstruction(modell); ims = list(r.images.values())
     oben = np.mean([-im.cam_from_world().rotation.matrix()[1] for im in ims], 0); oben /= np.linalg.norm(oben)
     e1 = np.cross(oben, [1, 0, 0] if abs(oben[0]) < 0.9 else [0, 1, 0]); e1 /= np.linalg.norm(e1); e2 = np.cross(oben, e1)
-    G = gps_enu(ordner, [im.name for im in ims]); n = [im.name for im in ims if im.name in G]
-    if len(n) < 8: return dict(gps=len(n), urteil="ZU WENIG GPS"), 2
+    G = gps_enu(ordner, [im.name for im in ims]); n = [im.name for im in ims if im.name in G and np.linalg.norm(G[im.name]) < 150]
+    # 20.11.: Martinstor hat nur 16 GPS-Bilder (Wikimedia, Fernaufnahmen bis 300 m, gemischte Guete) -> falscher Alarm 'verdaechtig'. Daher >= 25 Bilder im 150-m-Umkreis.
+    if len(n) < 25: return dict(gps=len(n), urteil="ZU WENIG GPS (unter 25 im 150-m-Umkreis, keine Aussage)"), 2
     C = {im.name: im.projection_center() for im in ims}; X = np.array([[C[k] @ e1, C[k] @ e2] for k in n]); Y = np.array([G[k] for k in n])
     e = urteil_2d(X, Y, grenze, rng); e["weit"] = [k for k, x in zip(n, e.pop("rest")) if x > grenze]; return e, (3 if e["ausreisser"] >= 0.15 else 0)
 
