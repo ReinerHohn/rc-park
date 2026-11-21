@@ -39,6 +39,7 @@ with tempfile.TemporaryDirectory() as td:
     # 2. Uneinigkeitskarte: Dachflaeche vor der Wand uneinig bis z 19,4
     fein = os.path.join(td, "fein"); os.makedirs(fein); R = dict(u0=-6.0, z1=25.0, nu=1200, nz=2500, zelle=0.01)
     un = np.full((R["nz"], R["nu"]), 5, np.uint8); un[int((25 - 19.4) / 0.01):int((25 - 16.0) / 0.01), :] = 100; cv2.imwrite(os.path.join(fein, "uneinig_f00.png"), un)
+    ob = np.full((R["nz"], R["nu"], 3), 225, np.uint8); ob[int((25 - 19.4) / 0.01):int((25 - 16.0) / 0.01), :] = (60, 120, 70); cv2.imwrite(os.path.join(fein, "ortho_f00.png"), ob)   # 21.11.: Anschluss = Fotokante im Wandbild (anschluss_aus_uneinig)
     for zust, soll in (("entfernt", True), (None, True), ("im_modell", False)):
         fj = dict(fassaden=[dict(id="f00", raster=R)]); fj.update(dict(verdecker_selbstbau=dict(zustand=zust)) if zust else {}); json.dump(fj, open(os.path.join(fein, "fassaden.json"), "w"))
         z, q = vb.anschluss_aus_uneinig(fein, "f00", 16.0, -3.9, 4.58)
