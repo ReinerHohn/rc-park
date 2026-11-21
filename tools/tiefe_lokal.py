@@ -137,7 +137,8 @@ def main():
     # 21.11.2026 (w01: Sockel +25..40 cm kippte die Kleinste-Quadrate-Ebene, Hoehenbild oben +5 / Mitte -8 / unten +15 cm): Ebene nur aus der Wandflaeche
     from relief_trend import robuste_ebene
     yy, xx = np.mgrid[0:Hn, 0:Wn]; ko, _, eb_info = robuste_ebene(xx[~loch], yy[~loch], hm[~loch]); ko = np.array(ko, np.float64)
-    rel = hm - (ko[0] * xx + ko[1] * yy + ko[2]); m_ = float(np.nanmedian(rel[~loch])); rel -= m_; ko[2] += m_; rel[loch] = 0.0;      # Median in die Ebene (rel + Ebene = Messung; vorher fehlte er im ebene_abstand_m) q5, q95 = np.percentile(rel[~loch], [5, 95]); rel = np.clip(rel, -0.30, 0.40)
+    rel = hm - (ko[0] * xx + ko[1] * yy + ko[2]); m_ = float(np.nanmedian(rel[~loch])); rel -= m_; ko[2] += m_; rel[loch] = 0.0;
+    q5, q95 = np.percentile(rel[~loch], [5, 95]); rel = np.clip(rel, -0.30, 0.40)      # Median in die Ebene (rel + Ebene = Messung; vorher fehlte er im ebene_abstand_m). 21.11. 22:40: diese Zeile war in den Kommentar gerutscht -> NameError q95 im Lauf 1121t
     os.makedirs(os.path.dirname(aus), exist_ok=True)
     np.savez_compressed(aus, rel=rel.astype(np.float32), a=A, t=t, n=n, u0=u0, z0=z0, px=px, lochanteil=float(loch.mean()), lochanteil_roh=roh, hub_p5_p95=float(q95 - q5), ebene_abstand_m=float(ko[2]), trend_je_m=np.array([ko[0] / px, -ko[1] / px]),
                         oeffnung=np.zeros_like(loch), punkte_je_zelle_median=float(np.median(cnt[cnt > 0])) if (cnt > 0).any() else 0.0)
