@@ -1,4 +1,4 @@
-# Werkzeuge: test (87)
+# Werkzeuge: test (88)
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
@@ -45,6 +45,7 @@
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
+- `tools/test_nischen_fenster.py` [seg] test_nischen_fenster.py - fester synthetischer Test fuer tools/nischen_fenster.py (+ Bau in bauteile.fenster_aus_json), < 10 s, nur CPU.
 - `tools/test_nullstart_schritte.py` [-] test_nullstart_schritte.py - BEWEIS, dass jede gelernte Erkenntnis ein fester Nullstart-Schritt mit Tor ist (2026-11-04, Nutzerregel beweis-pflicht-nullstart). Quelle der Pflicht: 
 - `tools/test_oeffnungen_aus_kanten.py` [-] test_oeffnungen_aus_kanten.py - fester Test (ohne GPU, ohne Daten) fuer tools/oeffnungen_aus_kanten.py.
 - `tools/test_ortho_vergleich.py` [seg] test_ortho_vergleich.py - zwei Ausgabeordner von fassade_ortho.py bildweise vergleichen (17.11.2026, fuer Beschleunigungen "bei gleichem Ergebnis").

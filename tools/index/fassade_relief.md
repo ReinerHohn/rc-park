@@ -1,4 +1,4 @@
-# Werkzeuge: fassade_relief (58)
+# Werkzeuge: fassade_relief (59)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
 - `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
@@ -38,6 +38,7 @@
 - `tools/gauben_ortho.py` [seg] Gauben Runde 3 (9.11.): Form aus dem FOTO, Lage aus der Dachebene. (1) Hauptdachebene aus dem Kantengitter (Traufe + First, wie gauben_fit --gitter), Dachviereck = Traufe..First ue
 - `tools/generator_wandvarianten.py` [gen] Wand-/Giebel-/Laubentiefe-Varianten des alten Generators (Teile mm, Netzrahmen m = mm*0.087; Fassadennormale (0.344,0.939,0)). Je Gruppe +-Schritt: Laube (Arkaden) und Wand/Fassade
 - `tools/koerper_fenster_erker.py` [seg] koerper_fenster_erker.py - Fenster- und Erkerfamilie als parametrische Koerper AUS dem Kantengitter, zusammengebaut mit dem Rohkoerper. Keine Objektkonstanten: Fassadenrahmen (u, n
+- `tools/nischen_fenster.py` [seg] nischen_fenster.py - FENSTER IN NISCHEN als zwei Ebenen aus dem feinen Wandbild + Ebenen-Sweep (21.11.2026, Kettenstufe 'bauplan' nach fenster_tiefe_tor.py).
 - `tools/oeffnungen_bogen.py` [seg] oeffnungen_bogen.py <ortho-ordner> --objekt <objekt.json> [--aus audit/oeffnungen_auto.json] - BOGENOEFFNUNGEN / TORDURCHFAHRTEN automatisch (17.11.2026, Kettenstufe 'fenster').
 - `tools/oeffnungen_wandbild.py` [seg] oeffnungen_wandbild.py - OEFFNUNGEN einer Wand aus ihrem Wandbild: Zone (Erkenner), TIEFE (Parallaxe der Einzelfoto-Orthos), UMRISS (Bildsegmentierung). 18.11.2026 (Agent Rueckwand
 - `tools/ortho_drape.py` [seg] ortho_drape.py — Oberfläche aus Daten: LGL-Orthophoto (DOP20) deckungsgleich zum Gelände-Modell zuschneiden und als MASSSTABSgenauer Druck-Bogen ausgeben. Über die Gips-Haut gelegt

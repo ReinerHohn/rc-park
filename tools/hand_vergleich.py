@@ -40,7 +40,8 @@ def main():
         if r["bauteil"] == "rundbogenfenster":
             fid_ = next((k for k, F in UH.items() if isinstance(F, dict) and F.get("uhren")), None)       # Seite der Uhr = Stadtseite (Referenz)
             z_ = r["masse"]["sohlbank_z"]; fz = [q for k, F in FE.items() if isinstance(F, dict) and (fid_ is None or k == fid_) for q in F.get("fenster", []) if abs(q["z0"] - z_) < 2.0]
-            if fz: ist["rundbogenfenster"] = dict(anzahl=len(fz), sohlbank_z=round(sum(q["z0"] for q in fz) / len(fz), 2), nische_breite=round(max(q["u1"] - q["u0"] for q in fz), 2))
+            nb_ = lambda q: q.get("nische") or q          # 21.11.2026 tools/nischen_fenster.py: Nische als eigene Ebene - vorher galt die Fensteroeffnung (0,59 m) als 'Nische'
+            if fz: ist["rundbogenfenster"] = dict(anzahl=len(fz), sohlbank_z=round(sum(nb_(q)["z0"] for q in fz) / len(fz), 2), nische_breite=round(max(nb_(q)["u1"] - nb_(q)["u0"] for q in fz), 2))
     # 21.11.2026: Bauteile aus der Wolke (Kettenstufen wolke_rest -> koerper_auto.json, dach_profil_wolke -> dach_profil.json) - vorher nur Stichwort in elemente.json,
     # darum standen Treppenturm/Laterne/Ueberstand immer auf FEHLT, obwohl die Kette sie baut. Hier mit ihren gemessenen Massen.
     KA = lade(os.path.join(A, "koerper_auto.json")) or {}
