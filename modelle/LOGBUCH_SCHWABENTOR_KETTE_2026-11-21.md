@@ -370,3 +370,17 @@ Stand in `.claude/UEBERGABE.md`, Nachtplan `modelle/PLAN_NACHT_2026-11-21.md` (e
   Vorbau-Raum nur z 8-10 m. rund_aus_umriss: 3014/6720 Umrissbeobachtungen verdeckt; der eigene Rundkoerper verdeckt die Tangentenpunkte (r0*1,08+0,05) nur, wenn der gebaute Radius
   > 8 % zu gross waere - geometrisch nicht zirkulaer, ohne Lauf. dach_profil_wolke: Achse aus dem gebauten Modell (inkl. eigenem Dachprofil) - schwach zirkulaer, nicht gemessen.
   umriss_tor/ebenen_abweichung/foto_diff: Modell ist der Pruefling (Tor), gewollt.
+
+## 21.11. Agent Anschluss-Stufe (Vordach f00: ANNAHME 16,74 -> gemessen 19,67-19,73)
+- URSACHE: anschluss_aus_uneinig setzte voraus "Dachflaeche uneinig, Wand einig". Die echte Karte (fein_fix/ohne/wt/mit + Kettenkarte) hat Dachflaeche
+  und Wand beide 25-36; hell ist nur die Anschlusslinie selbst (Balken 43-45 bei z 19,5-20) + eine senkrechte Stange (255) im u-Mittel -> 40 % der Spitze
+  wird nie unterschritten -> "keine Stufe" -> ANNAHME. Messgroesse war falsch gewaehlt, nicht die Karte.
+- FIX generisch (tools/vorbauten_bauplan.py): stufe_je_spalte = Zwei-Niveau-Zerlegung (kleinste SSE) des Lab-Wandbilds ortho_<fid>.png je 0,2-m-Spalte
+  (Fotokante Dachdeckung -> Putz), stufenkante = Guard: zusammenhaengender Spaltenlauf >= 50 % der Spalten mit Bild, z-Band 0,5 m, Gewinn >= 0,5,
+  Kontrast >= 30; dann Gegenprobe Uneinigkeit (Gipfel +-0,4 m >= 1,15 x Median ODER Niveauwechsel >= 15 %). Sonst None -> ANNAHME bleibt.
+- GEMESSEN f00 (z_traufe 16,02, u -3,9..4,58): fein_fix 19,72, fein_ohne 19,73, fein_wt 19,71, fein_mit/Kettenkarte 19,68; voller vorbauten_bauplan-Lauf
+  auf Kettendaten (Ausgabe Scratchpad) 19,67. Handstand 19,43 +- 0,4 (nur Pruefung): +0,24..+0,30, innerhalb. Geschweifte Dachseiten fallen aus dem Lauf.
+- FEHLER/OFFEN: rechter Teil (u ~+0,9..+2,8) aus anderem Foto liegt bei 20,04 (Naht im Wandbild, +0,35 gegen links 19,60-19,73); Verdacht: Oberkante
+  steht etwas vor der Wand -> in Untersicht-Fotos zu hoch projiziert (systematisch +). Nicht korrigiert (keine freien Faktoren).
+- GEGENPROBE keine erfundene Stufe: f00 bei fuenf anderen Hoehenbaendern (Fenster, Leitungsschatten, Traufunterseite 42 %) und f02-f07 -> alle None.
+  Test tools/test_anschluss_stufe.py (Schnelltest), test_selbstbau_verdecker.py um ortho_f00.png ergaenzt.

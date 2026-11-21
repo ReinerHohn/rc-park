@@ -58,22 +58,87 @@ def hoehenfeld(npz, w_wand, g, raster, w_max):
     return np.clip(feld, 0.0, w_max)
 
 
-def anschluss_aus_uneinig(fein, fid, z_traufe, u0, u1):
-    """Wandanschluss eines Vordachs aus der Uneinigkeitskarte uneinig_<fid>.png (tools/fassade_ortho.py): die Dachflaeche vor der Wand macht die Fotos uneinig, die Wand darueber nicht.
-    Profil z_traufe+0,5 .. +4 m, letzte Stufe ueber 40 % der Spitze. Liefert (z, quelle) oder (None, grund).
-    21.11.2026 MESSFEHLER: war die Karte mit dem schon gebauten Vordach als Verdecker gerechnet, ist das Profil flach (Modell loescht den eigenen Beleg, 19,39 -> ANNAHME 16,74).
-    Darum wird eine Karte verworfen, deren fassaden.json verdecker_selbstbau.zustand = 'im_modell' meldet (fassade_ortho seit 21.11.2026: Standard 'entfernt')."""
+def stufe_je_spalte(B, gueltig, m_min):
+    """GENERISCHER Stufen-Detektor (21.11.2026): je Spalte von B (Zeilen x Spalten x Kanaele, Zeile 0 = oben) die beste Zwei-Niveau-Zerlegung
+    (Stueckweise konstant, kleinste Fehlerquadratsumme; Segmente >= m_min Zeilen). Keine Schwelle relativ zur Spitze - gesucht ist der WECHSEL des Niveaus.
+    gueltig: (Zeilen x Spalten) bool, Spalte zaehlt nur bei >= 90 % gueltigen Zeilen. Liefert je Spalte (k, gewinn, kontrast) oder None;
+    k = erste Zeile des unteren Segments, gewinn = 1 - SSE_2 / SSE_1 (Anteil der Streuung, den die Stufe erklaert), kontrast = |Mittel oben - Mittel unten|."""
+    N = B.shape[0]; out = []
+    if N < 2 * m_min + 1: return [None] * B.shape[1]
+    k = np.arange(m_min, N - m_min + 1)
+    for j in range(B.shape[1]):
+        if gueltig[:, j].mean() < 0.9: out.append(None); continue
+        x = B[:, j].reshape(N, -1).astype(float); cs = np.cumsum(x, 0); q = np.cumsum((x ** 2).sum(1))
+        m1 = cs[k - 1] / k[:, None]; m2 = (cs[-1] - cs[k - 1]) / (N - k)[:, None]
+        sse = q[-1] - k * (m1 ** 2).sum(1) - (N - k) * (m2 ** 2).sum(1); sse0 = q[-1] - N * ((cs[-1] / N) ** 2).sum()
+        if sse0 <= 1e-9: out.append(None); continue
+        i = int(np.argmin(sse)); out.append((int(k[i]), float(1 - sse[i] / sse0), float(np.linalg.norm(m1[i] - m2[i]))))
+    return out
+
+
+def stufenkante(z_spalten, gewinn, kontrast=None, gewinn_min=0.5, kontrast_min=30.0, band=0.5, lauf_min=0.5):
+    """Gueltigkeits-Guard fuer eine durchgehende waagrechte Stufe: groesster ZUSAMMENHAENGENDER Spaltenlauf, dessen Stufen-z alle in einem Band
+    der Hoehe `band` liegen, Gewinn >= gewinn_min und Kontrast >= kontrast_min (Lab 0-255; Schatten-/Lichtgrenze auf hellem Putz bleibt darunter).
+    Spalten ohne Bild (nan) unterbrechen den Lauf nicht, zaehlen aber nicht. Gilt nur, wenn der Lauf >= lauf_min der Spalten MIT Bild deckt
+    (ein Fenster, ein Schatten, eine Leitung deckt nur Teile). Liefert (z_median, anteil, (j0, j1)) oder (None, anteil_bester, None)."""
+    z = np.asarray(z_spalten, float); g = np.asarray(gewinn, float); n = len(z); da = np.isfinite(z)
+    k_ = np.full(n, np.inf) if kontrast is None else np.asarray(kontrast, float)
+    ok = da & (g >= gewinn_min) & (k_ >= kontrast_min); best = (0, None)
+    for j0 in range(n):
+        if not ok[j0]: continue
+        lo = hi = z[j0]; j1 = j0; j = j0 + 1; zahl = 1
+        while j < n:
+            if not da[j]: j += 1; continue
+            if not ok[j] or max(hi, z[j]) - min(lo, z[j]) > band: break
+            lo, hi = min(lo, z[j]), max(hi, z[j]); j1 = j; zahl += 1; j += 1
+        if zahl > best[0]: best = (zahl, (j0, j1))
+    anteil = best[0] / max(int(da.sum()), 1)
+    if best[1] is None or anteil < lauf_min: return None, anteil, None
+    j0, j1 = best[1]; zz = z[j0:j1 + 1]; return float(np.median(zz[np.isfinite(zz)])), anteil, best[1]
+
+
+def anschluss_aus_uneinig(fein, fid, z_traufe, u0, u1, hoch=5.0, streifen=0.2, bild=None):
+    """Wandanschluss eines Vordachs = OBERKANTE der Dachflaeche an der Wand, gemessen als waagrechte Fotokante im verschmolzenen Wandbild ortho_<fid>.png
+    (Dachdeckung vor der Wand -> Wandputz darueber: Wechsel des Farb-NIVEAUS), bestaetigt durch die Uneinigkeitskarte uneinig_<fid>.png (die Anschlusslinie
+    selbst macht die Fotos uneinig: Kante in leicht verschiedener Projektion). Suchfenster z_traufe+0,5 .. z_traufe+hoch, Spaltenstreifen `streifen` m.
+    Liefert (z, quelle) oder (None, grund) -> Aufrufer behaelt die ANNAHME.
+    21.11.2026 URSACHE ANNAHME 16,74 statt ~19,4 (Schwabentor-1120 f00): die alte Regel (Profil der Uneinigkeit ueber u gemittelt, 'letzte Stufe ueber 40 % der
+    Spitze') setzte voraus, dass die Dachflaeche uneinig und die Wand darueber einig ist. Die Karte zeigt aber das Gegenteil: Dachflaeche und Wand liegen
+    beide bei 25-36, nur die Anschlusslinie selbst ist ein heller Balken (43-45); 40 % der Spitze (~18) unterschreitet das Profil nie -> 'keine Stufe'.
+    Dazu zog ein senkrechter Fremdbalken (Stange/Leitung, Wert 255) den u-Mittelwert hoch. Neu: Niveauwechsel je Spalte (stufe_je_spalte) + Guard
+    zusammenhaengender Spaltenlauf (stufenkante) + Gegenprobe Uneinigkeit (Median ueber die Laufspalten, Gipfel +-0,4 m um die Kante >= 1,15 x Fenstermedian).
+    MESSFEHLER 21.11.: Karte mit dem schon gebauten Vordach als Verdecker -> zirkulaer; verworfen, wenn fassaden.json verdecker_selbstbau.zustand = 'im_modell'."""
     import cv2
     FJ = json.load(open(os.path.join(fein, "fassaden.json")))
     if (FJ.get("verdecker_selbstbau") or {}).get("zustand") == "im_modell":
-        return None, f"Uneinigkeitskarte {fid} mit gebauten Vorbauten als Verdecker gerechnet - zirkulaer, nicht verwendet"
-    R_ = {f["id"]: f for f in FJ["fassaden"]}[fid]["raster"]; un = cv2.imread(os.path.join(fein, f"uneinig_{fid}.png"), 0)
-    cz = float(R_["zelle"]) * float(R_["nz"]) / un.shape[0]; py = lambda z: int((R_["z1"] - z) / cz); px = lambda u: int((u - R_["u0"]) / cz)
-    zs = np.arange(z_traufe + 0.5, z_traufe + 4.0, 0.25); pr = np.array([un[py(z), px(u0):px(u1)].mean() for z in zs]); sw = 0.4 * pr.max()
-    hoch = [k_ for k_ in range(len(zs) - 2) if pr[k_] >= sw and pr[k_ + 1] < sw and pr[k_ + 2] < sw]
-    if not hoch: return None, f"Uneinigkeitskarte {fid}: keine Stufe im Profil (max {pr.max():.0f})"
-    z_an = round(float(zs[max(hoch)]) + 0.125, 2)
-    return z_an, f"Uneinigkeitskarte {fid}: Dachflaeche endet bei z {z_an} (Schwelle 40 % der Spitze)"
+        return None, f"Wandbild {fid} mit gebauten Vorbauten als Verdecker gerechnet - zirkulaer, nicht verwendet"
+    R_ = {f["id"]: f for f in FJ["fassaden"]}[fid]["raster"]; im = cv2.imread(os.path.join(fein, f"ortho_{fid}.png"))
+    if im is None: return None, f"ortho_{fid}.png fehlt"
+    c = float(R_["zelle"]) * float(R_["nz"]) / im.shape[0]; py = lambda z: int(round((R_["z1"] - z) / c)); px = lambda u: int(round((u - R_["u0"]) / c))
+    ya, yb = max(0, py(z_traufe + hoch)), min(im.shape[0], py(z_traufe + 0.5)); xa, xb = max(0, px(u0)), min(im.shape[1], px(u1))
+    w = max(1, int(round(streifen / c))); ns = (xb - xa) // w
+    if yb - ya < int(1.0 / c) or ns < 3: return None, f"Wandbild {fid}: Suchfenster zu klein"
+    lab = cv2.cvtColor(cv2.GaussianBlur(im, (0, 0), max(0.5, 0.03 / c)), cv2.COLOR_BGR2LAB).astype(float)[ya:yb, xa:xa + ns * w]
+    gl = (im[ya:yb, xa:xa + ns * w].sum(2) > 0)
+    B = lab.reshape(yb - ya, ns, w, 3).mean(2); G = gl.reshape(yb - ya, ns, w).all(2)
+    st = stufe_je_spalte(B, G, max(2, int(0.3 / c)))
+    zj = [R_["z1"] - (ya + s[0]) * c if s else np.nan for s in st]; gj = [s[1] if s else 0.0 for s in st]; kj = [s[2] if s else 0.0 for s in st]
+    z_k, anteil, lauf = stufenkante(zj, gj, kj)
+    if bild is not None: bild.update(z_spalten=zj, gewinn=gj, kontrast=kj, lauf=lauf, u_spalten=[R_["u0"] + (xa + (j + 0.5) * w) * c for j in range(ns)])
+    if z_k is None: return None, f"Wandbild {fid}: keine durchgehende waagrechte Stufe (bester Spaltenlauf {anteil:.0%} < 50 %)"
+    un = cv2.imread(os.path.join(fein, f"uneinig_{fid}.png"), 0); bestaetigt = "ohne Uneinigkeitskarte"
+    if un is not None:
+        cu = float(R_["zelle"]) * float(R_["nz"]) / un.shape[0]; ua, ub = xa + lauf[0] * w, xa + (lauf[1] + 1) * w
+        U = un[int(ya * c / cu):int(yb * c / cu), int(ua * c / cu):int(ub * c / cu)].astype(float)
+        pr = np.median(U, 1); zu = R_["z1"] - (int(ya * c / cu) + np.arange(len(pr)) + 0.5) * cu; nah = np.abs(zu - z_k) <= 0.4
+        unten, oben = (zu < z_k - 0.1) & (zu > z_k - 1.0), (zu > z_k + 0.1) & (zu < z_k + 1.0)
+        gipfel = pr[nah].max() if nah.any() else 0.0; med = max(float(np.median(pr)), 1.0)
+        mu, mo = (float(np.median(pr[unten])) if unten.any() else 0.0), (float(np.median(pr[oben])) if oben.any() else 0.0)
+        if gipfel >= 1.15 * med: bestaetigt = f"Uneinigkeit Gipfel {gipfel:.0f} vs. Median {med:.0f}"      # die Anschlusslinie selbst (Schwabentor f00)
+        elif abs(mu - mo) >= 0.15 * max(mu, mo, 1.0) and unten.any() and oben.any(): bestaetigt = f"Uneinigkeit wechselt {mu:.0f} -> {mo:.0f}"   # Dachflaeche uneinig, Wand einig
+        else: return None, f"Wandbild {fid}: Fotokante z {z_k:.2f} ohne Gegenprobe in der Uneinigkeitskarte (Gipfel {gipfel:.0f} < 1,15 x {med:.0f}, kein Niveauwechsel {mu:.0f}/{mo:.0f})"
+    z_an = round(z_k, 2)
+    return z_an, f"Wandbild {fid}: Fotokante Dach->Wand bei z {z_an} (Niveauwechsel je {streifen:.1f}-m-Spalte, Lauf {anteil:.0%} der Spalten, {bestaetigt})"
 
 
 def galerie_messen(feld, g, raster, w_wand, fein=None, fid=None):
