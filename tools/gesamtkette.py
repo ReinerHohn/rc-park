@@ -104,6 +104,31 @@ def lauf(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
     print(f"    rc {r.returncode} ({e['sekunden']} s) {' | '.join(e['ende'])[:300]}", flush=True); return r.returncode, r.stdout
 
 
+_BAU_OFFEN = [None]
+
+
+def bauen(B, name, ziel, log, zwischen=True):
+    """Bau einer Kettenstufe. 21.11.2026 (Tempo, Kettenlauf 1121o: bauen_mit_fassaden/fenstern/bauplan/wolkenkoerpern je ~125 s, davon der groessere Teil Abnahme):
+    Jeder dieser Bauten wird gebraucht - die naechste Stufe liest das STL (mono/fenster_ortho --stl, umriss_tor, koerper_schleife, ebenen_abweichung, kantenstufe) -,
+    die ABNAHME (Pruefstand, Hoehen-Tor, Modell neben Foto, Umriss-Tor, Sichtblatt) aber nur fuer den letzten. zwischen=True -> RCPARK_NUR_BAUEN=1 (nur Generator,
+    gleiches STL), die volle Abnahme holt abnahme_nachholen() auf dem ENDSTAND nach (kein Tor faellt weg). RCPARK_ZWISCHENABNAHME=1 = alter Ablauf (Abnahme nach jedem Bau)."""
+    nur = zwischen and os.environ.get("RCPARK_ZWISCHENABNAHME") != "1"; alt = os.environ.get("RCPARK_NUR_BAUEN")
+    if nur: os.environ["RCPARK_NUR_BAUEN"] = "1"
+    try: r = lauf(B, name, ["bash", "tools/bauen_abnehmen.sh", ziel], log, ok=(0, 1))
+    finally:
+        if alt is None: os.environ.pop("RCPARK_NUR_BAUEN", None)
+        else: os.environ["RCPARK_NUR_BAUEN"] = alt
+    _BAU_OFFEN[0] = name if nur else None
+    return r
+
+
+def abnahme_nachholen(B, ziel, log):
+    """Volle Abnahme (bauen_abnehmen.sh --nur-pruefen) auf dem aktuellen STL, wenn der letzte Bau ein Zwischenbau ohne Abnahme war (bauen)."""
+    if not _BAU_OFFEN[0]: return None
+    n = _BAU_OFFEN[0]; _BAU_OFFEN[0] = None
+    return lauf(B, "abnahme_nach_" + n, ["bash", "tools/bauen_abnehmen.sh", ziel, "--nur-pruefen"], log, ok=(0, 1))
+
+
 def notiz(B, name, ok, **k):
     B["schritte"].append(dict(stufe=name, ok=ok, **k)); __import__("json_sicher").schreiben(B["_pfad"], B); print(f"    {name}: {k}", flush=True)
 
@@ -392,7 +417,7 @@ def main():
         dd = os.path.join(P, "dicht"); nz = os.path.join(P, "openmvs", "mesh_modell_ausschnitt.npz")
         t_n = time.time()
         if os.path.exists(os.path.join(dd, "fused.ply")) and lauf(B, "fassaden_netz", [PY, "-I", "tools/netz_aus_dicht.py", ZR, dd], log)[0] == 0 and frisch(nz, t_n):      # frisch: ein Netzausschnitt eines frueheren Laufs gilt nicht
-            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + (["--fein", os.path.join(dd, "sparse"), FV] if os.path.isdir(os.path.join(dd, "sparse")) else []), log)[0] == 0: lauf(B, "bauen_mit_fassaden", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
+            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + (["--fein", os.path.join(dd, "sparse"), FV] if os.path.isdir(os.path.join(dd, "sparse")) else []), log)[0] == 0: bauen(B, "bauen_mit_fassaden", a.ziel, log)   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
         else: notiz(B, "fassaden", False, fehler=f"kein dichter Ordner ({dd}/fused.ply) oder Netzstufe ohne neues Ergebnis ({nz})")
     if dran("fassaden") and os.path.exists(os.path.join(Z, "audit", "fassaden_kette.json")) and os.environ.get("RCPARK_OHNE_MONO") != "1":      # 17.11.2026 Stufe 'mono' (nach relief_putz/steine der Fassaden-Kette): Feinrelief aus Einzelfotos,
         fkj = os.path.join(Z, "audit", "fassaden_kette.json"); FK = json.load(open(fkj)); stl_m = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); mono_w = []      # tools/relief_aus_fotos_mono.py (Depth Anything V2 Small, Apache-2.0), Feld = Wand bis 10 m
@@ -426,7 +451,7 @@ def main():
                 # 21.11.2026 (Schwabentor: Tor f00 gebaut, aber nur Nische 0,6 m - Gegenseite f01 hat 4 Fotos und keinen Bogenkandidaten): Durchfahrt ueber die durchgehende Laibung im
                 # Torweg (dichte Wolke = Lage, keine Rueckwand) -> durchfahrt/tiefe_m in oeffnungen_auto.json (tools/durchfahrt_pruefen.py; Form bleibt aus Wandbild/Sweep).
                 if os.path.exists(W) and os.path.exists(os.path.join(Z, "audit", "oeffnungen_auto.json")): lauf(B, "oeffnungen_durchfahrt", [PY, "-W", "ignore", "-I", "tools/durchfahrt_pruefen.py", os.path.join(fo, "fassaden.json"), os.path.join(Z, "audit", "oeffnungen_auto.json"), "--wolke", W], log, ok=(0, 3))
-                lauf(B, "bauen_mit_fenstern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+                bauen(B, "bauen_mit_fenstern", a.ziel, log)
             os.environ.clear(); os.environ.update(env_alt)
     if dran("fenster") and os.path.exists(os.path.join(Z, "messprotokoll")):
         if not json.load(open(ZJ)).get("neben_fotos"): lauf(B, "neben_fotos_waehlen", [PY, "-W", "ignore", "-I", "tools/neben_fotos_waehlen.py", ZR, "--eintragen"], log, ok=(0, 3))      # 16.11.2026: ohne neben_fotos liefen Umriss-Tor und 'Modell neben Foto' leer durch
@@ -488,7 +513,7 @@ def main():
             if os.path.exists(os.path.join(eb_, "ebenen.json")) and os.path.exists(oa_):
                 erg_["oeffnungen_wandbild_rc"] = lauf(B, "bauplan_oeffnungen_wandbild", [PY, "-u", "-W", "ignore", "-I", "tools/oeffnungen_aus_kanten.py", ZR, eb_, "--uebernehmen", oa_]
                                                       + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3))[0]
-            if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+            if os.path.exists(gp_): bauen(B, "bauen_mit_bauplan", a.ziel, log)
             # 21.11.2026 (ANALYSE_SACKGASSEN: Koerper, die auf keiner Wandebene liegen - Treppenturm, Dachueberstand, Laterne - kamen im Handlauf aus der dichten Wolke): Rest der Wolke am
             # gebauten Modell -> Dach-Schichtprofil (audit/dach_profil.json, nur einmal gegen das LoD2-Dach) und KOERPER-SCHLEIFE (tools/koerper_schleife.py: Haufen benennen, Nachbarn/Hohlraeume
             # abtrennen, Kandidaten bauen, JE KANDIDAT nachmessen, annehmen/verwerfen -> audit/koerper_auto.json) -> volle Abnahme, wenn die Schleife gebaut hat.
@@ -506,12 +531,13 @@ def main():
                 # Beruehrlinien je Blickrichtung gewichtet) - ersetzt Wolkenradius/-profil (Schwabentor Treppenturm: Wolke r 1,73, Foto 1,585, Handstand 1,555; Traufe 11,25 / 11,57).
                 rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"], log, ok=(0, 3, 4))[0]
                 erg_["rund_umriss_rc"] = rr_
-                if k_.get("baulaeufe") or rr_ == 0 or sp_rc_ == 0: lauf(B, "bauen_mit_wolkenkoerpern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+                if k_.get("baulaeufe") or rr_ == 0 or sp_rc_ == 0: bauen(B, "bauen_mit_wolkenkoerpern", a.ziel, log)
                 if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
                     notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
             notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
     # --- Ende Stufe 'bauplan' ---
+    abnahme_nachholen(B, a.ziel, log)                                    # 21.11.2026: volle Abnahme auf dem Endstand der Zwischenbauten (bauen)
     # 18.11.2026: die Kantenstufe bewertet den LoD2-Klotz VOR den Fassaden (Kaufhaus gk2 F1 0,01 - Fotokanten im Fensterband, der Klotz hat dort keine). Zweite Bewertung am
     # FERTIGEN Modell mit demselben Sweep -> kanten_bericht_fertig.json, audit/kanten3d_fertig.png (Kernmethode: misst, ob Fassaden/Bauplan die Fotokanten treffen).
     if (dran("bauplan") or dran("fassaden")) and os.path.exists(os.path.join(KD, "sweep.npz")) and os.path.exists(AU):
@@ -573,6 +599,7 @@ def main():
         else:
             rc_, out_ = lauf(B, "druck", ["bash", "tools/bausatz.sh", a.ziel, ",".join(mk_)], log, ok=(0, 3))
             notiz(B, "druck_ergebnis", rc_ == 0, masken=len(mk_), hinweis="rc 3 = Luftinsel/Abbruch (Meldungen im Log); Teile: modelle/stl/<ziel>_teile, Platten: modelle/stl/<ziel>_farbteile")
+    abnahme_nachholen(B, a.ziel, log)
     return abschluss()
 
 

@@ -32,6 +32,7 @@ if [ -f $FO/elemente.json ]; then
   case "$v" in *"-> GLEICH") ok "Fassadenbild GPU-Weg = CPU-Weg ($(grep -o 'Zellrechnung: [A-Z, a-z]*' $S/og.txt | head -1); ${v#VERGLEICH })";; *) rot "Fassadenbild GPU-Weg weicht vom CPU-Weg ab: $v";; esac
 fi
 k=$($P -I tools/test_kette_stabil.py 2>&1); [ $? = 0 ] && ok "Kette gegen stille Fehler: $(echo "$k" | grep -c '^    ok') Tests (veraltete Ausgaben, leere Ergebnisse, Platte/Verknuepfung, Abbruch-Bericht)" || { rot "Kette gegen stille Fehler"; echo "$k" | grep FEHLER; }
+k=$($P -I tools/test_kette_tempo.py 2>&1); [ $? = 0 ] && ok "Kette Tempo: $(echo "$k" | grep -c '^    ok') Tests (Waende parallel in Wandreihenfolge, GPU-Plaetze, Zwischenbau ohne Abnahme + Abnahme auf dem Endstand)" || { rot "Kette Tempo"; echo "$k" | grep FEHLER; }
 a=$($P -W ignore -I tools/pruefstand.py modelle/$O/objekt.json 2>&1 | grep -c "alle Pruefungen bestanden"); [ "$a" = "1" ] && ok "Pruefstand ober_tvdr gruen" || rot "Pruefstand ober_tvdr"
 v=$(grep -l '"vertrauen": true' modelle/schwab_v3/messprotokoll/K-dl_*.json 2>/dev/null | wc -l); e=$(ls modelle/schwab_v3/messprotokoll/K-eigen__*.json | wc -l); [ "$e" -ge 150 ] && [ "$v" -ge 100 ] && ok "Kameras: $e eigene, $v gepruefte Fremdkameras" || rot "Kameras: $e eigene, $v gepruefte Fremdkameras (erwartet >= 150 / >= 100)"
 u=$($P -I tools/kamera_plausibel.py | tail -1 | cut -d" " -f1); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"

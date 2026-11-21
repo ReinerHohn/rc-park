@@ -356,6 +356,73 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
     return koerper, belege
 
 
+class _Weiche:
+    """stdout je Thread puffern: jede Wand schreibt in ihren eigenen Puffer, ausgegeben wird Wand fuer Wand in der Reihenfolge von W (Log wie beim seriellen Lauf)."""
+    def __init__(s, echt): s.echt = echt; s.lokal = __import__("threading").local()
+    def write(s, x):
+        b = getattr(s.lokal, "buf", None)
+        if b is None: return s.echt.write(x)
+        b.append(x); return len(x)
+    def flush(s):
+        if getattr(s.lokal, "buf", None) is None: s.echt.flush()
+    def __getattr__(s, k): return getattr(s.echt, k)
+
+
+_GPU_SEM = [None]
+
+
+GPU_TEILE = {"steine_aus_foto.py", "tiefe_lokal.py"}      # Teilwerkzeuge mit GPU: steine_aus_foto (render_kern/torch, 0,8-2 GB), tiefe_lokal (PatchMatch ~2,2 GB); 21.11.: 6 steine_aus_foto gleichzeitig = CUDA OOM
+
+
+def _gpu_run(cmd, **k):
+    """subprocess.run fuer GPU-Teilwerkzeuge (GPU_TEILE): hoechstens so viele gleichzeitig wie GPU-Plaetze (_waende_parallel) - mit 1 Platz nie mehr VRAM als der serielle Lauf."""
+    s = _GPU_SEM[0]
+    if s is None: return subprocess.run(cmd, **k)
+    with s: return subprocess.run(cmd, **k)
+
+
+def parallel_plaetze(n_waende, env=None):
+    """(Waende gleichzeitig, GPU-Plaetze). 21.11.2026 (Tempo, Kettenlauf 1121o: fassaden_kette 1356 s, Waende nacheinander, 28 Kerne):
+    CPU: FASSADEN_PARALLEL oder min(Waende, Kerne/4, verfuegbarer RAM / 2,6 GB - gemessen 21.11.: Spitze 2,5 GB Teilprozesse je Wand); 1 = alter serieller Ablauf.
+    GPU: FASSADEN_GPU_PARALLEL oder aus der Job-Buchung RCPARK_GPU_MB (tools/job_start.sh): je PatchMatch-Lauf (3200 px) ~2,2 GB -> Buchung // 2300, hoechstens 2, mindestens 1
+    (PatchMatch laeuft mit 100 % GPU - ein zweiter Lauf bringt nur die Ueberlappung von Entzerren/Fusion, kostet aber VRAM)."""
+    env = os.environ if env is None else env
+    if env.get("FASSADEN_PARALLEL"): n = int(env["FASSADEN_PARALLEL"])
+    else:
+        try: frei_mb = int([z.split()[1] for z in open("/proc/meminfo") if z.startswith("MemAvailable")][0]) // 1024
+        except Exception: frei_mb = 3000
+        n = min(n_waende, max(1, (os.cpu_count() or 4) // 4), max(1, frei_mb // 2600))
+    g = int(env["FASSADEN_GPU_PARALLEL"]) if env.get("FASSADEN_GPU_PARALLEL") else max(1, min(2, int(env.get("RCPARK_GPU_MB") or 0) // 2300))
+    return max(1, min(n, n_waende)), max(1, g)
+
+
+def _waende_parallel(W, f, objekt=None):
+    """f(w) fuer jede Wand. Die Waende sind unabhaengig (eigene Dateien relief/<wand>*, eigener Arbeitsordner tiefe_lokal/<wand>_fein; Objekt-STL und LoD2-Nachbarn
+    werden nur gelesen) -> Threads (die Arbeit steckt in den Teilprozessen), Ausgabe in Wandreihenfolge, GPU-Teil begrenzt (_gpu_run)."""
+    import threading, traceback
+    from concurrent.futures import ThreadPoolExecutor
+    n, g = parallel_plaetze(len(W)); _GPU_SEM[0] = threading.Semaphore(g)
+    if n <= 1:
+        for w in W: f(w)
+        return
+    print(f"Waende parallel: {n} gleichzeitig, GPU-Plaetze {g} (FASSADEN_PARALLEL=1 = seriell)", flush=True)
+    if objekt:                                                            # gemeinsame Zwischenspeicher VOR den Threads fuellen (trimesh rechnet Eigenschaften sonst je Thread nach)
+        nb = lod2_netze(objekt)[1]
+        if nb is not None: nb.face_normals; nb.triangles
+    echt = sys.stdout; we = _Weiche(echt); sys.stdout = we
+    def eins(w):
+        we.lokal.buf = []; fe = None
+        try: f(w)
+        except BaseException as e: fe = e; we.lokal.buf.append(traceback.format_exc())
+        t = "".join(we.lokal.buf); we.lokal.buf = None; return t, fe
+    try:
+        with ThreadPoolExecutor(n) as ex:
+            for fu in [ex.submit(eins, w) for w in W]:
+                t, fe = fu.result(); echt.write(t); echt.flush()
+                if fe is not None: raise fe
+    finally: sys.stdout = echt
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--netz", required=True); ap.add_argument("--wand", nargs=8, action="append", default=[]); ap.add_argument("--min_laenge", type=float, default=3.0)
     ap.add_argument("--px", type=float, default=0.05); ap.add_argument("--massstab", nargs=4, help="wie relief_putz.py (Relief im Rohrahmen)")
@@ -368,9 +435,9 @@ def main():
             t_ = f"{os.path.basename([c_ for c_ in cmd if str(c_).endswith('.py')][0])}: " + (f"vom System beendet (Signal {-r.returncode})" if r.returncode < 0 else (r.stderr.strip().splitlines() or ["?"])[-1][:200])
             abstuerze.append(t_); print("    FEHLER (Werkzeug abgestuerzt, NICHT 'kein Ergebnis'):", t_, flush=True)
     def lauf(cmd):
-        r = subprocess.run([PY, "-W", "ignore", "-I"] + cmd, capture_output=True, text=True); z = (r.stdout.strip().splitlines() or [r.stderr.strip()[-200:]])[-1]; print("   ", z[:200], flush=True); absturz_merken(r, cmd); return r.returncode
+        r = (_gpu_run if os.path.basename(cmd[0]) in GPU_TEILE else subprocess.run)([PY, "-W", "ignore", "-I"] + cmd, capture_output=True, text=True); z = (r.stdout.strip().splitlines() or [r.stderr.strip()[-200:]])[-1]; print("   ", z[:200], flush=True); absturz_merken(r, cmd); return r.returncode
     nb_stl = nachbarn_stl(a.objekt, rd) if not a.wand else ""            # 17.11.2026: LoD2-Nachbarn als Verdecker der Fotostufe (am Kaufhaus zeigte das "beste Foto" der Ostwand das Nachbarhaus davor)
-    for w in W:
+    def _wand(w):                                                     # 21.11.2026 (Tempo): Rumpf einer Wand; die Waende laufen parallel (_waende_parallel), Ablauf je Wand unveraendert
         A = np.array(w["a"]); Bp = np.array(w["b"]); L = float(np.linalg.norm(Bp - A)); t = (Bp - A) / L; n = np.array([t[1], -t[0]]); n = n if (np.array(w["aussen"]) - A) @ n > 0 else -n
         for q_ in ("_putz", "_voll", "_foto", "_tor"):                   # 17.11.2026: eigene Ergebnisse eines FRUEHEREN Laufs dieser Wand weg, bevor neu gerechnet wird - sonst liegen neben einer Wand, die jetzt 'aus' ist,
             for e_ in (".npz", ".jpg"):                                  # noch alte Bilder (kaufhaus_gk: w07_foto.jpg mit dem Nachbarhaus als "Quader"). _misch (lokale Feinrechnung, teuer) bleibt.
@@ -379,7 +446,7 @@ def main():
         if wf is not None:
             w["z1_first"] = w["z1"]; w["z1"] = round(wf[2], 2); w["wand_m2"] = round(float(wf[0].sum()) * a.px ** 2, 1); w["frei_m2"] = round(float(wf[1].sum()) * a.px ** 2, 1)
             if wf[1].sum() < max(0.1 * wf[0].sum(), 2.0 / a.px ** 2):
-                w["aus"] = f"Brandwand: von {w['wand_m2']} m2 Wandflaeche (LoD2) nur {w['frei_m2']} m2 frei, davor steht ein Nachbargebaeude (LoD2 < 1 m)"; w["fotos"] = []; w["laenge"] = round(L, 2); print(f"WAND {w['name']}: {L:.1f} m - AUS: {w['aus']}", flush=True); continue
+                w["aus"] = f"Brandwand: von {w['wand_m2']} m2 Wandflaeche (LoD2) nur {w['frei_m2']} m2 frei, davor steht ein Nachbargebaeude (LoD2 < 1 m)"; w["fotos"] = []; w["laenge"] = round(L, 2); print(f"WAND {w['name']}: {L:.1f} m - AUS: {w['aus']}", flush=True); return
         fotos, bew = fotos_fuer_wand(od, A, Bp, n, 0.0, w["z1"]); w["fotos"] = fotos; w["laenge"] = round(L, 2); print(f"WAND {w['name']}: {L:.1f} m, z bis {w['z1']:.1f}, Fotos {[(f[-12:], round(s_)) for s_, _, f in bew]}", flush=True)
         r0 = os.path.join(rd, w["name"] + ".npz"); r1 = os.path.join(rd, w["name"] + "_putz.npz"); r2 = os.path.join(rd, w["name"] + "_voll.npz")
         rc = lauf([os.path.join(HIER, "relief_einsatz.py"), a.netz, r0, "--ecke_a", *map(str, w["a"]), "--ecke_b", *map(str, w["b"]), "--aussen", *map(str, w["aussen"]), "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", str(a.px), "--klemme", "-0.10", "0.15"])
@@ -392,7 +459,7 @@ def main():
             print(f"    Wandflaeche (LoD2) {w['wand_m2']} m2 bis z {w['z1']:.1f}, frei {w['frei_m2']} m2; Loecher in der freien Wand ohne Oeffnungen {w['loch_wand'] * 100:.0f} %", flush=True)
         if leer:                                                          # 16.11.2026 (Haertetest ober_tvdr): Netz deckt die Wand nicht -> frueher AUS. Jetzt: leeres Relief als Traeger, Putz und Steine NUR aus Fotos (Stufe 5c ab Boden)
             w["netz"] = "deckt die Wand nicht"; print("    Netz deckt die Wand nicht - nur Fotostufe", flush=True)
-            if not a.fotosteine or not fotos or lauf([os.path.join(HIER, "relief_einsatz.py"), "-", r0, "--ecke_a", *map(str, w["a"]), "--ecke_b", *map(str, w["b"]), "--aussen", *map(str, w["aussen"]), "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", str(a.px)]) != 0: w["aus"] = "kein Netz, keine Fotostufe"; continue
+            if not a.fotosteine or not fotos or lauf([os.path.join(HIER, "relief_einsatz.py"), "-", r0, "--ecke_a", *map(str, w["a"]), "--ecke_b", *map(str, w["b"]), "--aussen", *map(str, w["aussen"]), "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", str(a.px)]) != 0: w["aus"] = "kein Netz, keine Fotostufe"; return
             if wf is not None: wand_eintragen(r0)
         Z = np.load(r0); w["loch"] = round(float(Z["lochanteil"]), 3); w["oeffnung"] = round(float(Z["oeffnung"].mean()), 3)
         quelle = r0
@@ -407,18 +474,18 @@ def main():
             for q_ in (rpr, rpr[:-4] + ".jpg"):
                 if os.path.exists(q_) and rc_t != 0: os.remove(q_)
         if w.get("quader") is False:
-            if leer: w["aus"] = "kein Netz in der Wand und kein Quaderwerk im Foto (Quader-Tor) - nichts zu tun"; print("    AUS:", w["aus"], flush=True); continue
+            if leer: w["aus"] = "kein Netz in der Wand und kein Quaderwerk im Foto (Quader-Tor) - nichts zu tun"; print("    AUS:", w["aus"], flush=True); return
             w.update(relief_roh(r0, r2, a.px)); print(f"    kein Quaderwerk im Foto: Netz-Relief roh, kleine Loecher glatt gefuellt ({w['gefuellt'] * 100:.1f} % der Flaeche), Oeffnungen als Ruecksprung, Relief {w['vorstand'] * 100:.0f} cm vor die Wandebene, keine generierten Steine", flush=True)
             for q_ in (r1, r1[:-4] + ".jpg", os.path.join(rd, w["name"] + "_foto.npz"), os.path.join(rd, w["name"] + "_foto.jpg")):      # Reste eines frueheren Laufs (Putzmaske/Fotosteine) gelten nicht mehr
                 if os.path.exists(q_): os.remove(q_)
-            continue
+            return
         if fotos and lauf([os.path.join(HIER, "relief_putz.py"), r0, r1, a.objekt, *fotos, "--feld", "0", str(L), "0", str(w["z1"])] + (["--massstab", *a.massstab] if a.massstab else [])) == 0:
             quelle = r1; w["putz"] = round(float(np.load(r1)["putz"].mean()), 3)
         if leer:
-            if quelle != r1: w["aus"] = "kein Netz und kein Putz erkannt (Fotofarbe) - nichts zu tun"; print("    AUS:", w["aus"]); continue
+            if quelle != r1: w["aus"] = "kein Netz und kein Putz erkannt (Fotofarbe) - nichts zu tun"; print("    AUS:", w["aus"]); return
             import shutil; shutil.copy(r1, r2); w["generiert"] = 0.0
         elif lauf([os.path.join(HIER, "steine_generieren.py"), quelle, r2, "--max_loch_m2", "1.5"]) == 0: w["generiert"] = round(float(np.load(r2)["generiert_anteil"]), 3)
-        else: w["aus"] = "steine_generieren fehlgeschlagen"; continue
+        else: w["aus"] = "steine_generieren fehlgeschlagen"; return
         fab = 0.0 if leer else a.foto_ab
         if a.fotosteine and "putz" in np.load(quelle).files and w["z1"] > fab + 2.0:      # 16.11.2026 Stufe 5c: oberhalb --foto_ab (Strassenfotos zu flach fuer brauchbares Scan-Relief) Quader/Gewaende/Baender
             rfo = os.path.join(rd, w["name"] + "_foto.npz")                                 # mit Fugen aus dem BESTEN Foto, direkt auf der Wandebene, Verdeckung gegen das Modell + Gegenfoto (Baeume)
@@ -426,7 +493,7 @@ def main():
                                               "--feld", "0.1", str(round(L - 0.1, 2)), str(fab), str(w["z1"]), "--px", "0.03", "--nah", "0", "--streng"] + (["--massstab", *a.massstab] if a.massstab else [])) == 0 and os.path.exists(rfo):
                 w["foto_feld"] = [0.0, round(L, 2), fab, round(float(w["z1"]), 2)]; w["foto_steine"] = int(np.load(rfo)["steine"])
         if leer:
-            if not w.get("foto_feld"): w["aus"] = "kein Netz und kein brauchbares Foto fuer Steine"; print("    AUS:", w["aus"]); continue
+            if not w.get("foto_feld"): w["aus"] = "kein Netz und kein brauchbares Foto fuer Steine"; print("    AUS:", w["aus"]); return
             w["nur_foto"] = True                                          # anbauen(): nur die Fotoplatte, keine leere Grundplatte (gab 193 Splitterkoerper am Haertetest)
         if a.fein and not leer:                                           # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
             Zv = np.load(r2); rel_ = Zv["rel"]; H_ = rel_.shape[0]; pz = Zv["putz"] if "putz" in Zv.files else np.zeros_like(rel_, bool); pz = np.vstack([pz, np.zeros((H_ - pz.shape[0], pz.shape[1]), bool)]) if pz.shape[0] < H_ else pz
@@ -434,11 +501,12 @@ def main():
             while k_ > 0 and (stein[k_ - 1] or (H_ - k_) * a.px < 1.5): k_ -= 1
             z1f = round(min((H_ - k_) * a.px, 12.0), 2)
             if z1f >= 2.0:
-                feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = subprocess.run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
+                feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = _gpu_run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
                                                                                                            "--aussen", *map(str, w["aussen"]), "--feld", *feld, "--max_size", a.fein_max_size] + (["--massstab", *a.massstab] if a.massstab else []), capture_output=True, text=True)
                 print("   ", (rf_.stdout.strip().splitlines() or [rf_.stderr.strip()[-200:]])[-1][:200], flush=True); absturz_merken(rf_, [os.path.join(HIER, "tiefe_lokal.py")]); rfe = os.path.join(rd, w["name"] + "_fein.npz")
                 if rf_.returncode == 0 and os.path.exists(rfe) and lauf([os.path.join(HIER, "relief_mischen.py"), rfe, r2, os.path.join(rd, w["name"] + "_misch.npz")]) == 0:
                     w["fein_feld"] = [0.0, round(L, 2), 0.0, round(z1f - 0.1, 2)]; w["fein_anteil"] = round(float(np.load(os.path.join(rd, w["name"] + "_misch.npz"))["fein"].mean()), 3)
+    _waende_parallel(W, _wand, a.objekt if not a.wand else None)
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(dict(netz=a.netz, waende=W), open(os.path.join(od, "audit", "fassaden_kette.json"), "w"), indent=1, ensure_ascii=False)
     print("->", os.path.join(od, "audit", "fassaden_kette.json"), "| ANSEHEN: relief/<wand>_voll.jpg")
     n_rel = sum(1 for w in W if not w.get("aus"))                         # 17.11.2026 (Durchsicht): die Stufe endete IMMER mit rc 0 - auch ohne ein einziges Relief und nach Abstuerzen der Teilwerkzeuge
