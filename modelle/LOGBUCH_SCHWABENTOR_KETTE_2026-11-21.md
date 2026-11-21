@@ -188,3 +188,12 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 - Messung: Wolke an der Modellflaeche 67 % -> 70 %, Haufen am Turm verschwunden (Bild audit/wolke_rest.jpg). Schnelltest 0 Fehler.
 - Von aussen verglichen: Handstand Schaft 1,56 / Gesims 1,85 bei 11,57 -> Gesims passt, Schaftradius 0,17 m groesser (offen: Wolkenrauschen nach aussen oder Massstab).
 - OFFEN: Haube fehlt (Wolke hat ueber z 11,6 nur 45-65 Punkte je Scheibe), Oeffnungen (Abwicklung `fassade_zylinder.py` nicht in der Kette), Koerper voll statt hohl, noch nicht im Treiber der Schleife (Annahmeregel), Abnahme nicht gelaufen.
+
+## Nachtrag 21.11. 10:25 - Martinstor Seitenerkennung fertig (10:19, rc 3): Seiten NICHT getrennt - Ursache gefunden: PERSON als Bruecke
+- `seiten_erkennen --streng` auf der DB martinstor-1120 (2107 Bilder, 2895 Pruefpaare, 29 min GPU): 170 Gruppen, 1339 fremde Bilder, 724 549 Paare geloescht; aber Teil 0 = 750 Bilder mit Sued 52 UND Nord 203 (Bezug: Seitenmodelle 19.11.).
+- Die Gruppen selbst sind REIN (Sued: 2 und 13; Nord: 0, 5, 9, 11, 12, 15, 16, 27, 28, 29, 38). Alle direkten Sued<->Nord-Verbindungen = 'verwechselt' (richtig). Die Bruecke ist Gruppe 36 (18 Bilder `fotos__vf_*`):
+  'echt' zu Sued-Gruppe 2 (66 Paare, 54 % eindeutig gleich) UND zu Nord-Gruppe 0 (26 Paare, 42 %). Kontaktbogen angesehen: Selbstaufnahme-Videobilder, eine PERSON fuellt das halbe Bild, auf beiden Torseiten.
+  Die Zuordnungen und der Paar-Pruefer sehen dieselbe Person -> "gleiches Motiv" -> Seiten haengen ueber den Vordergrund zusammen. Das erklaert auch das verklebte Ergebnis des schrittweisen Mappers.
+- Nebenbefund: 162 Nord-Bezugsbilder stehen unter 'fremd'.
+- WIEDER DASSELBE MUSTER: `tools/handy_masken.py` / `video_masken.py` (Masken fuer Personen/Fahrzeuge) gibt es, `iphone_sfm.py` uebergibt aber kein mask_path -> nicht in der Kette.
+- 10:22 Job `masken-martinstor-1121` (Batch 4): OOM-Rueckfaelle auf der 8-GB-Karte -> gestoppt, 10:24 neu als `...1121b` mit Batch 2. Danach: Merkmale in den Masken aus den Paaren nehmen, Seitenerkennung neu, Erwartung: Teil 0 zerfaellt in Sued und Nord.
