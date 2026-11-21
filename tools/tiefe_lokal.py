@@ -25,6 +25,26 @@ def ply_lesen(p):
         dt = np.dtype([(nm, {"float": "<f4", "uchar": "u1", "double": "<f8"}[t]) for t, nm in props]); return np.frombuffer(f.read(n * dt.itemsize), dtype=dt, count=n)
 
 
+def bilder_anpassen(rec, bilder):
+    """21.11.2026 (Schwabentor-Kette: tiefe_lokal 'vom System beendet (Signal 6)' fuer w01 und w03): das Buendel war aus auf 1600 px verkleinerten Bildern gerechnet
+    (Kamera 1200x1600), der Bildordner der Kette enthaelt die ORIGINALE (3000x4000). COLMAPs Entzerrer bricht dann ab ('Uncaught exceptions in thread pool', SIGABRT).
+    Hier: jede Kamera auf die echte Dateigroesse umrechnen (gleiches Seitenverhaeltnis = nur Massstab; volle Aufloesung ist der Sinn der Feinrechnung),
+    Bilder mit fehlender Datei oder anderem Seitenverhaeltnis aus dem Teilnetz nehmen. Liefert die Zahl der verbleibenden Bilder."""
+    import cv2
+    fertig = {}; raus = []
+    for im in list(rec.images.values()):
+        if not im.has_pose: continue
+        cam = rec.cameras[im.camera_id]; p = os.path.join(bilder, im.name); b = cv2.imread(p, cv2.IMREAD_UNCHANGED) if os.path.exists(p) else None
+        if b is None: raus.append((im.name, "Datei fehlt")); rec.deregister_frame(im.frame_id); continue
+        h, w = b.shape[:2]
+        if (w, h) == (cam.width, cam.height) or fertig.get(im.camera_id) == (w, h): continue
+        if im.camera_id in fertig or abs(w / h - cam.width / cam.height) > 0.01 * cam.width / cam.height:
+            raus.append((im.name, f"Datei {w}x{h}, Kamera {cam.width}x{cam.height}")); rec.deregister_frame(im.frame_id); continue
+        print(f"Kamera {im.camera_id}: {cam.width}x{cam.height} -> {w}x{h} (Bildordner hat eine andere Aufloesung als das Buendel)", flush=True); cam.rescale(w, h); fertig[im.camera_id] = (w, h)
+    if raus: print("aus dem Teilnetz genommen:", raus[:6], flush=True)
+    return sum(1 for im in rec.images.values() if im.has_pose)
+
+
 def main():
     import pycolmap, resource
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))                     # 15.11.2026: zwei Abstuerze (CUDA out of memory) schrieben je 590 MB Speicherabbild nach /var/lib/systemd/coredump = Root-Platte
@@ -54,6 +74,7 @@ def main():
         if len(nimm) < 4: print(f"ABBRUCH: nur {len(nimm)} der gewaehlten Fotos im Netz"); return 1
         for im in list(rec.images.values()):
             if im.name not in nimm: rec.deregister_frame(im.frame_id)
+        if bilder_anpassen(rec, a.bilder) < 4: print("ABBRUCH: weniger als 4 Fotos passen zu ihrer Kamera (Bildgroesse)"); return 1
         sp = os.path.join(W, "sparse_teil"); shutil.rmtree(sp, ignore_errors=True); os.makedirs(sp); rec.write(sp)
         for d_ in ("images", "stereo", "sparse"): shutil.rmtree(os.path.join(W, d_), ignore_errors=True)
         uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size; pycolmap.undistort_images(W, sp, a.bilder, output_type="COLMAP", undistort_options=uo); print(f"entzerrt {len(nimm)} Bilder, {time.time() - t0:.0f} s", flush=True)

@@ -13,7 +13,8 @@ scharf. KERNMETHODE: Form aus Fotokanten. Ablauf:
      Putz = Putzniveau. Stellen ohne Fotodaten (verdeckt) = Scan-Relief.
 aus.npz hat das Format der Relief-Einsaetze (px 2 cm, Maske 'fein' = alles) und wird wie ein Feineinsatz vor das grobe Relief gesetzt
 (Generator: relief_koerper(aus, rand_auslauf=False), grobes Relief dort tief_felder). aus.jpg ANSEHEN. Fugentiefe und Bosse sind ANNAHME, die Fugenlage ist echt.
-Weitere Optionen: --ohne u0 u1 z0 z1 (mehrfach), --tor 0.12, --schwelle 2.4, --foto/--objekt/--stl/--streng/--gegenfoto (Feld direkt aus Fotos).
+Weitere Optionen: --ohne u0 u1 z0 z1 (mehrfach), --tor 0.12, --schwelle 2.4, --foto/--objekt/--stl/--streng/--gegenfoto (Feld direkt aus Fotos),
+--paar 0.3 (21.11.2026 Paar-Probe: Haupt- und Gegenfoto, die fast nirgends uebereinstimmen, haben eine falsche Kamera - naechstes Foto statt die Wand als "Verdecker" zu loeschen).
 Ausgaben: <aus.npz> + <aus>.jpg (Fassadenbild | Steinbild). Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/steine_aus_foto.py ... (oder `tools/py seg ...`; ohne 'seg' waehlt tools/py ~/.venvs/rcpark, dort fehlt cv2).
 Exit: 0 = geschrieben, 2 = kaum Stein mit Fotodaten, 3 = kein vertrauenswuerdiges Foto / --streng ohne Ergebnis, 5 = Quader-Tor: kein Fugenraster.
 """
@@ -37,6 +38,8 @@ def main():
     ap.add_argument("--feld", nargs=4, type=float, required=True); ap.add_argument("--px", type=float, default=0.02); ap.add_argument("--fuge", type=float, default=0.03); ap.add_argument("--massstab", nargs=4, type=float)
     ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--foto", help="statt des Orthos: Bild direkt aus diesem kalibrierten Foto auf der Reliefebene lesen (fassaden/nr/ortho dann als - - 0 - angeben)"); ap.add_argument("--objekt"); ap.add_argument("--stl", help="Modell-STL(s) fuer die Verdeckungspruefung"); ap.add_argument("--rand", type=float, default=0.3); ap.add_argument("--streng", action="store_true", help="nur mit Gegenfoto und <= 2 cm/px (fuer die automatische Kette)"); ap.add_argument("--gegenfoto", help="Foto fuer die Verdecker-Gegenprobe (sonst das naechstbeste von anderem Standort bei --foto auto)"); ap.add_argument("--uneinig", type=float, default=0.25, help="oertliche Korrelation mit dem Gegenfoto unter diesem Wert = Verdecker"); ap.add_argument("--textur", type=float, default=8.0, help="nur Stellen mit Struktur pruefen (Grauwert-Streuung); glatter Putz hat keine Korrelation"); ap.add_argument("--nah", type=float, default=0.25, help="Stein nur so nah (m) an der groben Steinmaske; 0 = aus (Wand ohne Wandbilder: sonst gehen Steinbaender verloren, die die grobe Maske nicht kennt)"); ap.add_argument("--duenn", type=float, default=0.12, help="Steinflaechen duenner als dies (m) verwerfen; 0 = aus"); ap.add_argument("--putz_v", type=float, default=0.45)
     ap.add_argument("--tor", type=float, default=0.12, help="Quader-Tor: Mindestanteil der Feldhoehe mit regelmaessigen, durchlaufenden Lagerfugen (0 = aus). Gemessen 17.11.2026: Gemessen 17.11.2026: echtes Quaderwerk (Schwabentor Sued/West/Nord, beide Polaritaeten) 18-40 %% mit 7-25 Schichten; kein Quaderwerk (kaufhaus_gk Hauptfassade roter Putz mit Fenstern/Gesimsen, Seitenstreifen) 0-3 %% mit 0-1 Schichten. Schwelle dazwischen; ausserdem >= 4 Schichten. Schwelle dazwischen; rc 5 bei Ablehnung")
+    ap.add_argument("--paar", type=float, default=0.3, help="Paar-Probe: Haupt- und Gegenfoto muessen auf mindestens diesem Anteil der gemeinsam gesehenen Struktur uebereinstimmen, sonst ist eine Kamera falsch (kein Verdecker) und das naechste Foto wird versucht")
+    ap.add_argument("--haupt_max", type=int, default=3, help="so viele Hauptfotos (Rangfolge) hoechstens versuchen"); ap.add_argument("--gegen_max", type=int, default=4, help="so viele Gegenfotos je Hauptfoto hoechstens versuchen")
     ap.add_argument("--schwelle", type=float, default=2.4, help="Fuge ab so vielen Standardabweichungen der Abweichung vom oertlichen Median"); a = ap.parse_args()
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float32); H, W = rel.shape; rp = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); A = Z["a"]; t = Z["t"]; niv = float(Z.get("putz_niveau_m", 0.0))
     if not a.foto: F = json.load(open(a.fassaden))["fassaden"][int(a.nr)]; R = F["raster"]; o = np.array(F["o"]); d = np.array(F["d"]); im = cv2.imread(a.ortho)
@@ -65,23 +68,44 @@ def main():
             rang.sort(key=lambda q_: -q_[0])
             if not rang or rang[0][2] < 0.3: print("kein vertrauenswuerdiges Foto sieht mindestens 30 % dieses Feldes"); return 3
             a.foto = rang[0][1]; print("Fotowahl:", [(q_[1][-22:], f"{q_[2] * 100:.0f} %", f"{q_[3] * 100:.1f} cm/px") for q_ in rang[:4]])
-        Kc = FE.kamera(os.path.join(mp_, "K-" + a.foto + ".json")); ok_, mx_, my_, zc_ = FE.sichtbar(mm_, Kc, P_, rk_, tol=0.6)
-        if a.stl and a.rand > 0: ok_ = cv2.erode(ok_.reshape(U.shape).astype(np.uint8), np.ones((2 * int(a.rand / c) + 1,) * 2, np.uint8)).astype(bool).ravel()
-        im = cv2.imread(glob.glob(os.path.join(root_, obj_["fotos_dir"], a.foto + ".*"))[0]); bild = cv2.remap(im, mx_.astype(np.float32).reshape(U.shape), my_.astype(np.float32).reshape(U.shape), cv2.INTER_LINEAR, borderValue=(0, 0, 0)); bild[~ok_.reshape(U.shape)] = 0
-        # VERDECKER, die nicht im Modell stehen (Baum, Geruest, Fahrzeug): Gegenprobe mit dem naechstbesten Foto von einem ANDEREN Standort - auf der Wandebene muessen beide
+        def lesen(n_):                                                    # Foto n_ auf der Wandebene des Reliefs: (sichtbar, Bild, Tiefe, Kamera)
+            K_ = FE.kamera(os.path.join(mp_, "K-" + n_ + ".json")); ok_, mx_, my_, zc_ = FE.sichtbar(mm_, K_, P_, rk_, tol=0.6)
+            if a.stl and a.rand > 0: ok_ = cv2.erode(ok_.reshape(U.shape).astype(np.uint8), np.ones((2 * int(a.rand / c) + 1,) * 2, np.uint8)).astype(bool).ravel()
+            im_ = cv2.imread(glob.glob(os.path.join(root_, obj_["fotos_dir"], n_ + ".*"))[0]); b_ = cv2.remap(im_, mx_.astype(np.float32).reshape(U.shape), my_.astype(np.float32).reshape(U.shape), cv2.INTER_LINEAR, borderValue=(0, 0, 0)); b_[~ok_.reshape(U.shape)] = 0
+            return ok_, b_, zc_, K_
+        def nrm_(b_, s_=3.0): g_ = cv2.GaussianBlur(cv2.cvtColor(b_, cv2.COLOR_BGR2GRAY).astype(np.float32), (0, 0), s_); m_ = cv2.blur(g_, (61, 61)); sd_ = np.sqrt(np.maximum(cv2.blur(g_ * g_, (61, 61)) - m_ * m_, 0)); return (g_ - m_) / (sd_ + 2.0), sd_
+        def standort(K_): return -cv2.Rodrigues(np.array(K_["rvec"]))[0].T @ np.array(K_["t"])
+        # VERDECKER, die nicht im Modell stehen (Baum, Geruest, Fahrzeug): Gegenprobe mit einem Foto von einem ANDEREN Standort - auf der Wandebene muessen beide
         # dasselbe zeigen (oertlich normierte Helligkeit); wo sie sich grossflaechig widersprechen, gilt die Stelle als "keine Daten" (16.11.2026: Baum wurde auf der Suedseite zu Steinen).
-        C0_ = -cv2.Rodrigues(np.array(Kc["rvec"]))[0].T @ np.array(Kc["t"]); zweit = None
-        for q_ in rang[1:] if rang else []:
-            K2 = FE.kamera(os.path.join(mp_, "K-" + q_[1] + ".json")); C2_ = -cv2.Rodrigues(np.array(K2["rvec"]))[0].T @ np.array(K2["t"])
-            if np.linalg.norm(C2_ - C0_) > 0.08 * np.linalg.norm(C0_ - P_.mean(0)) and q_[2] > 0.3: zweit = (q_[1], K2); break
-        if a.gegenfoto: zweit = (a.gegenfoto, FE.kamera(os.path.join(mp_, "K-" + a.gegenfoto + ".json")))
-        if zweit:
-            ok2, mx2, my2, _ = FE.sichtbar(mm_, zweit[1], P_, rk_, tol=0.6); im2 = cv2.imread(glob.glob(os.path.join(root_, obj_["fotos_dir"], zweit[0] + ".*"))[0]); b2 = cv2.remap(im2, mx2.astype(np.float32).reshape(U.shape), my2.astype(np.float32).reshape(U.shape), cv2.INTER_LINEAR)
-            def nrm_(b_): g_ = cv2.GaussianBlur(cv2.cvtColor(b_, cv2.COLOR_BGR2GRAY).astype(np.float32), (0, 0), 3); m_ = cv2.blur(g_, (61, 61)); sd_ = np.sqrt(np.maximum(cv2.blur(g_ * g_, (61, 61)) - m_ * m_, 0)); return (g_ - m_) / (sd_ + 2.0), sd_
-            (na_, sa_), (nb_, sb_) = nrm_(bild), nrm_(b2); beide = ok_.reshape(U.shape) & ok2.reshape(U.shape); korr = cv2.blur(na_ * nb_, (81, 81))      # oertliche Korrelation: gleiche Wand = hoch, Laub gegen Wand oder Laub gegen Laub = ~0
-            uneinig = beide & (sa_ > a.textur) & (korr < a.uneinig); uneinig = cv2.dilate(cv2.morphologyEx(uneinig.astype(np.uint8), cv2.MORPH_OPEN, np.ones((25, 25), np.uint8)), np.ones((31, 31), np.uint8)).astype(bool)
-            bild[uneinig] = 0; print(f"Gegenfoto {zweit[0][-30:]}: {beide.mean() * 100:.0f} % des Feldes von beiden gesehen, {uneinig.mean() * 100:.0f} % widerspruechlich (Verdecker?) -> ausgeblendet")
-        else: print("kein Gegenfoto von anderem Standort - Verdecker ausserhalb des Modells NICHT geprueft")
+        # 21.11.2026 PAAR-PROBE (Schwabentor West w00: Gegenfoto eigen__192 hatte eine falsche Kamera - Gesims 4 m zu tief auf der Wand -, auf 99 % der Struktur
+        # widerspruechlich; ausgeblendet wurden genau die Eckquader, das Quader-Tor sah 0 % Schichten, die Wand blieb glatt): ein Verdecker widerspricht OERTLICH,
+        # ein Foto mit falscher Kamera UEBERALL. Stimmt ein Paar auf weniger als --paar der gemeinsam gesehenen Struktur ueberein, ist das kein Verdecker, sondern
+        # ein unpassendes Paar -> naechstes Gegenfoto. Unter den --haupt_max besten Hauptfotos gewinnt das, das am besten von einem Foto eines anderen Standorts BESTAETIGT wird
+        # (Schwabentor West: Rang 1 eigen__..114052 ist verwackelt - einig 47 %, Quader-Tor 3 % -, die Nachbaraufnahmen ..114037/39/50 vom selben Standort sind scharf - einig 69-72 %, Quader-Tor 16-20 %).
+        haupt = [q_[1] for q_ in rang[:a.haupt_max] if q_[2] >= 0.3] if rang else [a.foto]; gew = None; erst = None; abgelehnt = []; je_haupt = []
+        for hf in haupt:
+            ok_, bild, zc_, Kc = lesen(hf); erst = erst or (hf, ok_, bild, zc_, Kc); na_, sa_ = nrm_(bild); C0_ = standort(Kc)
+            kand2 = [a.gegenfoto] if a.gegenfoto else [q_[1] for q_ in rang if q_[1] != hf and q_[2] > 0.3 and np.linalg.norm(standort(FE.kamera(os.path.join(mp_, "K-" + q_[1] + ".json"))) - C0_) > 0.08 * np.linalg.norm(C0_ - P_.mean(0))]
+            for n2 in kand2[:a.gegen_max]:
+                ok2, b2, _, _ = lesen(n2); nb_, sb_ = nrm_(b2); beide = ok_.reshape(U.shape) & ok2.reshape(U.shape); korr = cv2.blur(na_ * nb_, (81, 81))      # oertliche Korrelation: gleiche Wand = hoch, Laub gegen Wand oder Laub gegen Laub = ~0
+                tex = beide & (sa_ > a.textur); te_ = beide & ((sa_ > a.textur) | (sb_ > a.textur))      # Einigkeit auf der Struktur BEIDER Fotos: ein verwackeltes Hauptfoto hat kaum eigene Struktur und waere sonst immer 'einig'
+                einig = float((korr[te_] >= a.uneinig).mean()) if te_.sum() >= 2000 else 1.0      # zu wenig Struktur zum Vergleichen (glatter Putz) = wie bisher annehmen
+                if einig >= a.paar or a.gegenfoto:
+                    kf_ = cv2.blur(nrm_(bild, 1.0)[0] * nrm_(b2, 1.0)[0], (81, 81)); km_ = float(np.clip(kf_[te_], 0, 1).mean()) if te_.sum() >= 2000 else 1.0
+                    # Rang: mittlere FEINE Korrelation (1 cm statt 3 cm vorgeglaettet, stetig) - der Anteil 'einig' saettigt, ein verwackeltes Foto ist oft noch zu 100 % 'einig'
+                    wert = km_ * float(ok_.mean()); je_haupt.append(f"{hf[-12:]}+{n2[-12:]}: einig {einig * 100:.0f} %, Korrelation {km_:.2f} x sichtbar {ok_.mean() * 100:.0f} %")      # bestaetigte Flaeche: Abdeckung zaehlt mit
+                    if gew is None or wert > gew[0]: gew = (wert, hf, ok_, bild, zc_, Kc, n2, beide, korr, tex, einig)
+                    break
+                abgelehnt.append(f"{hf[-12:]}+{n2[-12:]}: einig {einig * 100:.0f} %")
+        if abgelehnt: print(f"Fotopaare verworfen (stimmen auf der Wandebene auf < {a.paar * 100:.0f} % der Struktur ueberein = Kamera eines Fotos falsch, kein Verdecker):", abgelehnt)
+        if len(je_haupt) > 1: print("Paar-Probe je Hauptfoto (Anteil der Struktur, auf dem das Gegenfoto dasselbe zeigt):", je_haupt)
+        zweit = None
+        if gew:
+            _, a.foto, ok_, bild, zc_, Kc, zweit, beide, korr, tex, einig = gew
+            uneinig = tex & (korr < a.uneinig); uneinig = cv2.dilate(cv2.morphologyEx(uneinig.astype(np.uint8), cv2.MORPH_OPEN, np.ones((25, 25), np.uint8)), np.ones((31, 31), np.uint8)).astype(bool)
+            bild[uneinig] = 0; print(f"Gegenfoto {zweit[-30:]}: {beide.mean() * 100:.0f} % des Feldes von beiden gesehen, Paar einig auf {einig * 100:.0f} % der Struktur, {uneinig.mean() * 100:.0f} % widerspruechlich (Verdecker?) -> ausgeblendet")
+        else:
+            a.foto, ok_, bild, zc_, Kc = erst; print("kein passendes Gegenfoto von anderem Standort - Verdecker ausserhalb des Modells NICHT geprueft")
         mpp_ist = float(np.median(zc_[ok_]) / Kc["f_px"]) if ok_.any() else 9.0
         if a.streng and (zweit is None or mpp_ist > 0.02):               # Kette: lieber nichts als Steine aus einem groben oder ungeprueften Einzelfoto (Haertetest: Holzgeruest in 6 cm/px wurde zu "Quadern")
             print(f"STRENG: kein Ergebnis ({'kein Gegenfoto' if zweit is None else f'Foto zu grob: {mpp_ist * 100:.1f} cm/px > 2'})"); return 3
