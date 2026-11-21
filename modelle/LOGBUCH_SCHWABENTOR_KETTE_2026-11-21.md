@@ -119,3 +119,16 @@ Dichte triangulierte Fotokanten je Ebene, Laufzeit 4-6 s je Ebene (GPU), neben d
 - f00_vb0 (Erkerfront, w +1,00, Band 0,8): 46 782 Punkte, 62 %
 - f01 (Feldseite) keine Ebene: nur 4 Fotos (< 6).
 Ausgabe `<daten>/ebenen/ebenen.json` + je Ebene `sweep.npz`, für den Vorbau zusätzlich `bild.png` (1 cm). Noch nicht in `gesamtkette.py` eingehängt; nächster Schritt `ebenen_abweichung.py`.
+
+## Nachtrag 02:20 - ERSTER VOLLER DURCHLAUF DER SCHLEIFE in der Kette (Lauf 1121k, 02:06-02:16, 22 Stufen in Ordnung, ohne Eingriff)
+Neue Werkzeuge, alle in Stufe `bauplan` eingehängt: `ebenen_bauplan.py` (Kanten je Ebene) -> `ebenen_masse.py` (Maße aus Kanten) -> Bau (`bauteile.vorbauten_aus_json`, Zweig kanten_mass) -> `ebenen_abweichung.py` (Abweichung je Ebene mit Ort und Bild, Verlauf `audit/ebenen_abweichung_verlauf.jsonl`).
+Die Kette hat am Erker selbst gemessen: Kasten z 10,23..11,47 (Hand 10,22 / 11,42), Breite 8,30 (8,06), Ausladung 1,29 (1,45 ± 0,38), 6 Konsolen im Abstand 1,55 m, Strebenfuß z 8,38 (unsicher, nicht gegengeprüft), 3 Pfosten bei u -3,51 / 0,32 / 4,19.
+ABWEICHUNG vorher (Katalog-Galerie mit Grobmaßen) -> nachher (aus Kanten):
+- Erkerebene f00_vb0: Fotokanten an der Modellfläche 63 % -> 91 %, an einer Modellkante 7 % -> 87 %, erfundene Modellkanten 94 % -> 75 %.
+- Stadtseite Wandebene: Kante 42 % -> 50 %. Nord und Süd unverändert (91 / 45 % und 85 / 23 %).
+- Gesamt (195 913 Fotokanten, 4 Ebenen): Fläche 82 % -> 88 %, Kante 35 % -> 56 %.
+Bild: `audit/abweichung_f00_vb0_vergleich.jpg`. Handstand-Vergleich: Galerie PASST, Vordach PASST (dabei ist der Dachüberstand 0,25 m eine ANNAHME; gemessen sind Traufe und Anschluss) -> 2 von 11.
+Arbeitsliste, die die Kette jetzt selbst schreibt (Erkerebene, „Form fehlt“): 1. zweite Kante am Holm z 11,0-11,7 rechts, 0,11 m hinter der Front (2330 Punkte); 2. dieselbe links (800); 3. Traufecke links z 16,1-16,3 (538).
+Noch NICHT automatisch: der Rückweg von der Arbeitsliste in den Bau (Schritt 4) - die Liste wird geschrieben, aber noch nicht abgearbeitet.
+Grenze der Kennzahl „erfunden“: 75-94 % der Modellkanten ohne Fotokante - das Relief der Wände erzeugt sehr viele kleine Modellkanten; so ist die Zahl nicht als Güte lesbar (offen: nur Kanten > 0,3 m Länge zählen).
+Katalog entfernt: `Wand.galerie` nur noch mit MIT_KATALOG_GALERIE=1, Uhr ohne Katalog-Ziffern (nur gemessene Kreise).

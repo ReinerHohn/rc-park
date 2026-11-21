@@ -1,36 +1,36 @@
 {
  "referenz": "modelle/schwab_v3/elemente.json - Handstand mit Foto-Triangulation (foto_mass.py), Nutzer 20.11.2026: 'beim Schwabentor mal einen richtig geilen Stand'. Hoehen und Groessen vergleichbar; u-Lagen NICHT (anderer Rahmen, Schaft x 0,933).",
- "passt": 0,
+ "passt": 2,
  "gesamt": 11,
  "bauteile": [
   {
    "bauteil": "galerie",
-   "urteil": "FALSCH",
+   "urteil": "PASST",
    "masse": {
     "schwelle_unten": {
      "soll": 10.22,
-     "ist": 9.62,
-     "ok": false
+     "ist": 10.23,
+     "ok": true
     },
     "holm_oben": {
      "soll": 11.42,
-     "ist": 12.02,
-     "ok": false
+     "ist": 11.47,
+     "ok": true
     },
     "ausladung": {
      "soll": 1.45,
-     "ist": 1.15,
+     "ist": 1.29,
      "ok": true
     },
     "breite": {
      "soll": 8.06,
-     "ist": 9.08,
-     "ok": false
+     "ist": 8.3,
+     "ok": true
     },
     "pfosten": {
      "soll": 3,
-     "ist": 2,
-     "ok": false
+     "ist": 3,
+     "ok": true
     },
     "streben": {
      "soll": 6,
@@ -41,7 +41,7 @@
   },
   {
    "bauteil": "vordach",
-   "urteil": "FALSCH",
+   "urteil": "PASST",
    "masse": {
     "traufe_z": {
      "soll": 16.09,
@@ -55,8 +55,8 @@
     },
     "ausladung": {
      "soll": 1.54,
-     "ist": 1.1,
-     "ok": false
+     "ist": 1.54,
+     "ok": true
     }
    }
   },

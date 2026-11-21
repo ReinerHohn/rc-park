@@ -266,7 +266,7 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
     return koerper, belege
 
 
-def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=True):
+def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):      # 21.11.2026: Katalog-Ziffern/Zeiger aus (Nutzer: kein Baukasten) - nur die gemessenen Kreise
     """Turmuhren aus tools/uhren_wandbild.py (audit/uhren_auto.json, Kettenstufe 'bauplan', 21.11.2026; vorher nur Hand-Generator schwab_v3/martinstor_v4).
     Gemessen: Mitte, Aussen- und (falls belegt) Innendurchmesser im feinen Wandbild. Ring bis w_ring vor der Wandebene, Innenfeld bis w_feld (ANNAHME 10 / 6 cm wie schwab_v3);
     details=True: Wand.zifferblatt (Wulste, 12 Ziffern, Zeiger) - Ziffernform/Zeit = ANNAHME. Ohne Innenkreis: Innenfeld = 0,66 x Aussen (ANNAHME, schwab_v3 3,52/5,36)."""
@@ -295,8 +295,37 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
         o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0)); w0 = min(0.0, ww) - einbinden
         P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
         for g in F["gruppen"]:
-            G_ = g.get("galerie")
-            if G_ and os.environ.get("OHNE_GALERIE") != "1":      # 21.11.2026: Masse gemessen (vorbauten_bauplan.galerie_messen), Gestalt = bewaehrtes Bauteil Wand.galerie wie schwab_v3
+            KM_ = g.get("kanten_mass"); G_ = g.get("galerie")
+            if KM_ and KM_.get("kasten") and os.environ.get("OHNE_KANTENMASS") != "1":
+                # 21.11.2026 (Nutzer: "so wenig allgemeine Bauteile wie moeglich ... was nicht moeglich ist, wird aus allgemeinen Bauteilen gebaut"): Vorbau aus den dichten triangulierten
+                # Fotokanten seiner Ebene (tools/ebenen_bauplan.py -> tools/ebenen_masse.py). Aus Kanten: Kasten (Unter-/Oberkante, Breite, Ausladung), Konsolen (Zahl, Lage, Unterkante),
+                # Strebenfuss, Pfostenlage. Nicht aus Kanten (ANNAHME, im Beleg): Pfostenquerschnitt, Strebe gerade, Raehm, Dachflaeche (nur Traufe/Anschluss gemessen).
+                WG = Wand(o, o + d, aussen=o + n); Kb = KM_["kasten"]; wf = ww + float(KM_["ausladung"]); wi = ww - einbinden; KK = WG.kasten; ann = []
+                teile.append(KK(Kb["u0"], Kb["u1"], Kb["z_unten"], Kb["z_oben"], wi, wf))
+                Ko = KM_.get("konsolen"); St = KM_.get("streben")
+                if Ko:
+                    for a_, b_ in Ko["lage"]:
+                        teile.append(KK(a_, b_, Ko["z_unten"], Kb["z_unten"] + 0.02, wi, wf))
+                        if St and St["z_fuss"] < Ko["z_unten"] - 0.3:
+                            teile.append(WG.huelle([(u_, z_, w_) for u_ in (a_, b_) for z_, w_ in ((St["z_fuss"], wi), (St["z_fuss"] + 0.3, wi), (Ko["z_unten"] + 0.02, wf - 0.3), (Ko["z_unten"] + 0.02, wf - 0.05))]))
+                    ann.append("Konsolen als Balken von der Wand bis zur Front" + ("; Streben gerade vom Wandfuss zur Konsole" if St else ""))
+                z_d = (G_ or {}).get("z_dach"); V_ = (G_ or {}).get("vordach"); Pf = KM_.get("pfosten") or []
+                if z_d and z_d > Kb["z_oben"] + 0.5:
+                    for p_ in Pf:
+                        bp = p_["breite"] or 0.22; teile.append(KK(p_["u"] - bp / 2, p_["u"] + bp / 2, Kb["z_oben"] - 0.02, z_d + 0.02, wf - bp, wf))
+                    if Pf: ann.append("Pfostenquerschnitt %s" % ", ".join(("%.2f m gemessen" % p_["breite"]) if p_["breite"] else "0,22 m Standard" for p_ in Pf))
+                    zt = V_["z_traufe"] if V_ else z_d + 0.3
+                    teile.append(KK(Kb["u0"], Kb["u1"], z_d, zt, wf - 0.25, wf)); teile.append(KK(Kb["u0"], Kb["u0"] + 0.25, z_d, zt, wi, wf)); teile.append(KK(Kb["u1"] - 0.25, Kb["u1"], z_d, zt, wi, wf)); ann.append("Raehm 0,25 m stark (Hoehe aus dem Sweep-Band)")
+                    if V_:
+                        ua, ub, dk, wt = Kb["u0"] - 0.15, Kb["u1"] + 0.15, 0.15, wf + 0.25
+                        teile.append(WG.huelle([(u_, z_, w_) for u_ in (ua, ub) for z_, w_ in ((V_["z_anschluss"], wi), (V_["z_anschluss"] - dk, wi), (V_["z_traufe"] + dk, wt), (V_["z_traufe"], wt))]))
+                        ann.append("Vordach = ebene Platte (allgemeines Bauteil): Traufe und Wandanschluss gemessen, Ueberstand 0,25 m und Dachhaut 0,15 m Standard")
+                belege.append(dict(seite="wand", element=f"Vorbau {F.get('id', '')} aus Fotokanten: Kasten z {Kb['z_unten']:.2f}-{Kb['z_oben']:.2f}, Breite {Kb['breite']:.2f}, Ausladung {KM_['ausladung']:.2f} m"
+                                   + (f", {Ko['anzahl']} Konsolen" if Ko else "") + (f", {len(Pf)} Pfosten" if Pf and z_d else "") + (", Vordach" if V_ and z_d else ""),
+                                   quelle=KM_.get("quelle", "tools/ebenen_masse.py"), kasten=Kb, konsolen=(Ko or {}).get("anzahl"), konsolen_abstand=(Ko or {}).get("abstand"), strebenfuss=(St or {}).get("z_fuss"),
+                                   pfosten_u=[p_["u"] for p_ in Pf], traufe=(V_ or {}).get("z_traufe"), anschluss=(V_ or {}).get("z_anschluss"), hinweis="ANNAHME: " + "; ".join(ann) if ann else ""))
+                continue
+            if G_ and os.environ.get("MIT_KATALOG_GALERIE") == "1":      # Katalog-Galerie (Wand.galerie) nur noch auf Wunsch - Nutzer 21.11.: "nicht aus dem Baukasten"      # 21.11.2026: Masse gemessen (vorbauten_bauplan.galerie_messen), Gestalt = bewaehrtes Bauteil Wand.galerie wie schwab_v3
                 WG = Wand(o, o + d, aussen=o + n); pf_ = G_["pfosten"]; z_fu = G_.get("z_fuss")
                 teile.append(WG.galerie(G_["u0"], G_["u1"], G_["z_boden"], G_["z_holm"], G_["z_dach"] + 0.1, G_["w"], pfosten=pf_ if len(pf_) >= 2 else 3, streben=int(G_.get("streben") or 0),
                                         z_fuss=z_fu, tafeln=False, w_wand=G_["w_wand"]))

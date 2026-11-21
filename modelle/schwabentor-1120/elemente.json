@@ -160,9 +160,9 @@
   "seite": "wand",
   "element": "Bogenoeffnung Fassade f00 (spitz, automatisch erkannt)",
   "quelle": "OWLv2-Bogenkasten als Suchfenster (fassade_parsing.py) -> Ebenen-Sweep ueber die Fotos (fassade_tiefe.py: Durchblick = Fotos in der Wandtiefe nicht deckungsgleich) -> Formfamilie eingepasst (tools/oeffnungen_bogen.py), Fotos eigen__IMG_20261106_113130, eigen__IMG_20261106_113142, eigen__IMG_20261106_113141",
-  "lichte_breite": 4.786,
-  "kaempfer": 3.018,
-  "scheitel": 6.204,
+  "lichte_breite": 4.864,
+  "kaempfer": 3.238,
+  "scheitel": 6.265,
   "tiefe": 0.6,
   "hinweis": "ERKENNUNG, am Bild oeffnungen_<id>.jpg pruefen; ANNAHME: Tiefe 0.6 m (kein Gegenstueck auf der Gegenseite gefunden/gesehen); ANNAHME: Kreisbogen der Formfamilie, Gewaende ohne Profil",
   "seite_name": "wand"
@@ -177,51 +177,51 @@
  {
   "seite": "wand",
   "element": "Rueckwand hinter 3 Oeffnungen in Leibungstiefe 0.15 m (Kragen zum Hohlraum geschlossen)",
-  "quelle": "ANNAHME: 0.15 m (nur 0 belastbare Fenstertiefen < 3; Anhalt Kaufhaus-Fotomass 0,14 / 0,19 m an einem anderen Haus, modelle/kaufhaus_gk/objekt.json rueckwand)",
+  "quelle": "ANNAHME: 0.15 m (nur 1 belastbare Fenstertiefen < 3; Anhalt Kaufhaus-Fotomass 0,14 / 0,19 m an einem anderen Haus, modelle/kaufhaus_gk/objekt.json rueckwand)",
   "hinweis": "nicht gemessen - mit Fotomass (foto_mass --kamera, zwei Gegenrichtungen) ersetzen",
   "umrisse": [
    {
-    "u0": -3.675,
-    "u1": 1.17,
-    "z0": 8.338,
-    "z1": 10.27,
-    "vorn": -0.005,
-    "schale": [
-     -0.06,
-     -0.0
-    ],
-    "tiefe_ist": 0.15,
-    "flaeche_m2": 9.361,
-    "erkannt": 1,
-    "nur_feld": false
-   },
-   {
-    "u0": -0.018,
-    "u1": 1.419,
-    "z0": 17.14,
-    "z1": 18.848,
+    "u0": 1.926,
+    "u1": 2.521,
+    "z0": 23.121,
+    "z1": 24.813,
     "vorn": -0.005,
     "schale": [
      -0.1,
      -0.0
     ],
     "tiefe_ist": 0.15,
-    "flaeche_m2": 2.454,
+    "flaeche_m2": 1.007,
     "erkannt": 1,
     "nur_feld": false
    },
    {
-    "u0": -0.525,
-    "u1": 2.307,
-    "z0": 21.807,
-    "z1": 24.959,
+    "u0": -0.034,
+    "u1": 1.436,
+    "z0": 17.161,
+    "z1": 18.9,
     "vorn": -0.005,
     "schale": [
      -0.1,
      -0.0
     ],
     "tiefe_ist": 0.15,
-    "flaeche_m2": 8.926,
+    "flaeche_m2": 2.556,
+    "erkannt": 1,
+    "nur_feld": false
+   },
+   {
+    "u0": -0.551,
+    "u1": 2.345,
+    "z0": 21.816,
+    "z1": 25.015,
+    "vorn": -0.005,
+    "schale": [
+     -0.1,
+     -0.0
+    ],
+    "tiefe_ist": 0.15,
+    "flaeche_m2": 9.264,
     "erkannt": 1,
     "nur_feld": false
    }
@@ -230,18 +230,42 @@
  },
  {
   "seite": "wand",
-  "element": "Vorbau f00 u -3.90..4.58 z 9.10..19.62",
-  "quelle": "Ebenen-Sweep tools/fassade_tiefe.py -> tools/vorbauten_bauplan.py (Hoehenfeld je Zelle)",
-  "breite": 8.48,
-  "ausladung_front": 1.15,
-  "dach_ausladung": 2.15,
-  "kaesten": 545,
-  "hinweis": "Gestalt = gemessene Tiefe je 0.20-m-Zelle (3x3-Median); Unterseite geschlossen (Konsolen/Streben nicht einzeln) = ANNAHME",
+  "element": "Vorbau f00 aus Fotokanten: Kasten z 10.23-11.47, Breite 8.30, Ausladung 1.29 m, 6 Konsolen, 3 Pfosten, Vordach",
+  "quelle": "dichte triangulierte Fotokanten f00_vb0 (71293 Punkte)",
+  "kasten": {
+   "z_unten": 10.23,
+   "z_oben": 11.47,
+   "u0": -3.9,
+   "u1": 4.4,
+   "breite": 8.3
+  },
+  "konsolen": 6,
+  "konsolen_abstand": 1.55,
+  "strebenfuss": 8.38,
+  "pfosten_u": [
+   -3.51,
+   0.32,
+   4.19
+  ],
+  "traufe": 16.02,
+  "anschluss": 19.39,
+  "hinweis": "ANNAHME: Konsolen als Balken von der Wand bis zur Front; Streben gerade vom Wandfuss zur Konsole; Pfostenquerschnitt 0,22 m Standard, 0,22 m Standard, 0,22 m Standard; Raehm 0,25 m stark (Hoehe aus dem Sweep-Band); Vordach = ebene Platte (allgemeines Bauteil): Traufe und Wandanschluss gemessen, Ueberstand 0,25 m und Dachhaut 0,15 m Standard",
   "seite_name": "wand"
  },
  {
   "seite": "wand",
-  "element": "142 Null-Volumen-Splitter entfernt",
+  "element": "Uhr f00 (Durchmesser 5.13 m)",
+  "quelle": "Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze im feinen Wandbild (1 cm)",
+  "mitte_u": 0.036,
+  "mitte_z": 31.955,
+  "d_aussen": 5.127,
+  "d_innen": 3.435,
+  "hinweis": "ANNAHME: Ringtiefe 10 cm, Feld 6 cm",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "1 Null-Volumen-Splitter entfernt",
   "quelle": "Generator (decompose, Volumen < 1e-5 m3)",
   "seite_name": "wand"
  }

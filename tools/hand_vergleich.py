@@ -22,7 +22,12 @@ def main():
     FE = lade(os.path.join(A, "fenster_auto.json")) or {}; EL = lade(os.path.join(od, "elemente.json")) or []; txt = " ".join(e.get("element", "") for e in EL).lower()
     gal = [g["galerie"] for F in VB.get("fassaden", []) for g in F["gruppen"] if g.get("galerie")]
     ist = {}
-    if gal:
+    km = [(g["kanten_mass"], g) for F in VB.get("fassaden", []) for g in F["gruppen"] if (g.get("kanten_mass") or {}).get("kasten")]      # 21.11.2026: Masse aus den triangulierten Fotokanten gehen vor
+    if km:
+        k_, g_ = km[0]; K_ = k_["kasten"]; ist["galerie"] = dict(schwelle_unten=K_["z_unten"], holm_oben=K_["z_oben"], ausladung=k_["ausladung"], breite=K_["breite"], pfosten=len(k_.get("pfosten") or []), streben=(k_.get("konsolen") or {}).get("anzahl"))
+        v = (g_.get("galerie") or {}).get("vordach")
+        if v: ist["vordach"] = dict(traufe_z=v["z_traufe"], anschluss_z=v["z_anschluss"], ausladung=round(k_["ausladung"] + 0.25, 2))
+    elif gal:
         g = gal[0]; wand = g["w_wand"] + 0.05
         ist["galerie"] = dict(schwelle_unten=g["z_boden"], holm_oben=g["z_holm"], ausladung=round(g["w"] - wand, 2), breite=round(g["u1"] - g["u0"], 2), pfosten=len(g["pfosten"]), streben=g.get("streben"))
         if g.get("vordach"): v = g["vordach"]; ist["vordach"] = dict(traufe_z=v["z_traufe"], anschluss_z=v["z_anschluss"], ausladung=round(v["w_traufe"] - wand, 2))
