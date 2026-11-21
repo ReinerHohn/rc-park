@@ -416,6 +416,7 @@ class _Weiche:
 
 
 _GPU_SEM = [None]
+FEIN_AUS = [""]                                                         # Meldung des tiefe_lokal-Guards (rc 2) -> keine weitere Wand versucht die Feinrechnung
 
 
 GPU_TEILE = {"steine_aus_foto.py", "tiefe_lokal.py"}      # Teilwerkzeuge mit GPU: steine_aus_foto (render_kern/torch, 0,8-2 GB), tiefe_lokal (PatchMatch ~2,2 GB); 21.11.: 6 steine_aus_foto gleichzeitig = CUDA OOM
@@ -542,7 +543,9 @@ def main():
         if leer:
             if not w.get("foto_feld"): w["aus"] = "kein Netz und kein brauchbares Foto fuer Steine"; print("    AUS:", w["aus"]); return
             w["nur_foto"] = True                                          # anbauen(): nur die Fotoplatte, keine leere Grundplatte (gab 193 Splitterkoerper am Haertetest)
-        if a.fein and not leer:                                           # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
+        if a.fein and not leer and FEIN_AUS[0]:                           # 21.11.2026: Guard von tiefe_lokal (Buendel/Bilder unpassend) gilt fuer alle Waende - nicht je Wand 10 min neu versuchen
+            w["fein_aus"] = FEIN_AUS[0]
+        if a.fein and not leer and not FEIN_AUS[0]:                       # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
             Zv = np.load(r2); rel_ = Zv["rel"]; H_ = rel_.shape[0]; pz = Zv["putz"] if "putz" in Zv.files else np.zeros_like(rel_, bool); pz = np.vstack([pz, np.zeros((H_ - pz.shape[0], pz.shape[1]), bool)]) if pz.shape[0] < H_ else pz
             stein = ((rel_ != 0) & ~pz).mean(1) >= 0.3; k_ = H_
             while k_ > 0 and (stein[k_ - 1] or (H_ - k_) * a.px < 1.5): k_ -= 1
@@ -551,6 +554,9 @@ def main():
                 feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = _gpu_run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
                                                                                                            "--aussen", *map(str, w["aussen"]), "--feld", *feld, "--max_size", a.fein_max_size] + (["--massstab", *a.massstab] if a.massstab else []), capture_output=True, text=True)
                 print("   ", (rf_.stdout.strip().splitlines() or [rf_.stderr.strip()[-200:]])[-1][:200], flush=True); absturz_merken(rf_, [os.path.join(HIER, "tiefe_lokal.py")]); rfe = os.path.join(rd, w["name"] + "_fein.npz")
+                if rf_.returncode == 2:                                   # Guard: Buendel und Bildordner passen nicht (z. B. entzerrtes Buendel + Originalfotos) -> Feinrechnung fuer ALLE Waende aus, laut
+                    FEIN_AUS[0] = (rf_.stdout.strip().splitlines() or ["?"])[-1][:400]; w["fein_aus"] = FEIN_AUS[0]; print("    FEIN UEBERSPRUNGEN (alle Waende):", FEIN_AUS[0], flush=True)
+                elif rf_.returncode == 3: w["fein_aus"] = (rf_.stdout.strip().splitlines() or ["?"])[-1][:300]; print("    FEIN OHNE ABDECKUNG:", w["fein_aus"], flush=True)
                 if rf_.returncode == 0 and os.path.exists(rfe) and lauf([os.path.join(HIER, "relief_mischen.py"), rfe, r2, os.path.join(rd, w["name"] + "_misch.npz")]) == 0:
                     w["fein_feld"] = [0.0, round(L, 2), 0.0, round(z1f - 0.1, 2)]; w["fein_anteil"] = round(float(np.load(os.path.join(rd, w["name"] + "_misch.npz"))["fein"].mean()), 3)
     _waende_parallel(W, _wand, a.objekt if not a.wand else None)
