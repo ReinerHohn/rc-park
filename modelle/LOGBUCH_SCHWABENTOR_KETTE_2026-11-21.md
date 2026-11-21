@@ -353,3 +353,20 @@ Stand in `.claude/UEBERGABE.md` (Merges Nischen-Fenster, leere Fassaden, Seiten 
 
 ## UEBERGABE 21.11.2026 18:50
 Stand in `.claude/UEBERGABE.md`, Nachtplan `modelle/PLAN_NACHT_2026-11-21.md` (einfache Agenten arbeiten die Schleife ab).
+
+## 18:47 Agent Verdecker/Selbstbau (Vordach-Anschluss 19,39 -> ANNAHME 16,74 in Lauf 1121o)
+- BELEGT (Kopien im Scratchpad, Kettendaten unberuehrt): fassade_ortho f00 1 cm mit vier Modellen. Kette 17:55 / STL 18:08 (mit Vordach): Messflaeche (relief_f00) liegt
+  AUF dem eigenen Vordach (+1,14 m bei z 15,5-16, Hang bis +0,15 bei 19,5) -> Fotos sehen dort dieselbe Dachflaeche -> Dachband in uneinig_f00 geloescht (Median z 17-18,5: 18-22).
+  Generator ohne Vorbauten (leere vorbauten_auto) und Fix: Flaeche = Wand (rel ~0), Dachband zurueck (28-36), Oberkante ~19,0-19,4 (Hand 19,43). Bild audit/verdecker_selbstbau_uneinig_f00.jpg.
+- FIX generisch: tools/selbstbau_verdecker.py - Dreiecke im Vorbau-Raum (vorbauten_auto.json, u +-0,3, z Fuss..Anschluss +0,3) mehr als 0,15 m vor der vorderen von
+  gemessener Wand/LoD2-Ebene raus (Schwelle ab gemessener Wand haette 50 m2 echtes Relief mitgenommen), das vom Generator weggeschnittene Wandstueck in der gemessenen Ebene
+  geflickt (ohne Flicken Relief -0,60 = Blick in den Hohlraum). fassade_ortho nutzt das standardmaessig (--mit-selbstbau = alt; --waende-stl behaelt), schreibt verdecker_selbstbau
+  in fassaden.json. vorbauten_bauplan.anschluss_aus_uneinig (ausgelagert) verwirft Karten 'im_modell'. Test tools/test_selbstbau_verdecker.py im Schnelltest.
+- FEHLER/OFFEN: Der Stufen-Detektor (Mittel ueber u, 40 % der Fensterspitze) findet auch in der sauberen Karte KEINE Stufe: Fenstermaximum ist ein heller Balken z 19,5-20
+  (43-45), die Wand darueber ist nicht mehr dunkel (25-30, alte Karte 20.11. dunkel). Ohne neuen Detektor bleibt der Anschluss ANNAHME 16,74 - der Fix allein holt 19,39 NICHT zurueck.
+- GESCHWISTER (Modell als Verdecker/Flaeche fuer Messungen): fassade_ortho in fenster_ortho, fenster_ortho_fein, bauplan_innen_ortho(+_fein, Sicht-STL aus gebautem Modell) -> mit
+  diesem Fix erledigt. steine_aus_foto (fassaden_kette, --stl gebautes Modell + Nachbarn): Vordach verdeckt Wandstreifen; nicht zirkulaer fuer die Steine, aber ein falsch
+  platziertes Vordach verdeckt den falschen Streifen (Vorbau-Raum = 24 % von f00) - nicht umgestellt. relief_aus_fotos_mono (--stl gebautes Modell, Feld bis 10 m): Ueberlapp mit
+  Vorbau-Raum nur z 8-10 m. rund_aus_umriss: 3014/6720 Umrissbeobachtungen verdeckt; der eigene Rundkoerper verdeckt die Tangentenpunkte (r0*1,08+0,05) nur, wenn der gebaute Radius
+  > 8 % zu gross waere - geometrisch nicht zirkulaer, ohne Lauf. dach_profil_wolke: Achse aus dem gebauten Modell (inkl. eigenem Dachprofil) - schwach zirkulaer, nicht gemessen.
+  umriss_tor/ebenen_abweichung/foto_diff: Modell ist der Pruefling (Tor), gewollt.

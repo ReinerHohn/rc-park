@@ -58,6 +58,24 @@ def hoehenfeld(npz, w_wand, g, raster, w_max):
     return np.clip(feld, 0.0, w_max)
 
 
+def anschluss_aus_uneinig(fein, fid, z_traufe, u0, u1):
+    """Wandanschluss eines Vordachs aus der Uneinigkeitskarte uneinig_<fid>.png (tools/fassade_ortho.py): die Dachflaeche vor der Wand macht die Fotos uneinig, die Wand darueber nicht.
+    Profil z_traufe+0,5 .. +4 m, letzte Stufe ueber 40 % der Spitze. Liefert (z, quelle) oder (None, grund).
+    21.11.2026 MESSFEHLER: war die Karte mit dem schon gebauten Vordach als Verdecker gerechnet, ist das Profil flach (Modell loescht den eigenen Beleg, 19,39 -> ANNAHME 16,74).
+    Darum wird eine Karte verworfen, deren fassaden.json verdecker_selbstbau.zustand = 'im_modell' meldet (fassade_ortho seit 21.11.2026: Standard 'entfernt')."""
+    import cv2
+    FJ = json.load(open(os.path.join(fein, "fassaden.json")))
+    if (FJ.get("verdecker_selbstbau") or {}).get("zustand") == "im_modell":
+        return None, f"Uneinigkeitskarte {fid} mit gebauten Vorbauten als Verdecker gerechnet - zirkulaer, nicht verwendet"
+    R_ = {f["id"]: f for f in FJ["fassaden"]}[fid]["raster"]; un = cv2.imread(os.path.join(fein, f"uneinig_{fid}.png"), 0)
+    cz = float(R_["zelle"]) * float(R_["nz"]) / un.shape[0]; py = lambda z: int((R_["z1"] - z) / cz); px = lambda u: int((u - R_["u0"]) / cz)
+    zs = np.arange(z_traufe + 0.5, z_traufe + 4.0, 0.25); pr = np.array([un[py(z), px(u0):px(u1)].mean() for z in zs]); sw = 0.4 * pr.max()
+    hoch = [k_ for k_ in range(len(zs) - 2) if pr[k_] >= sw and pr[k_ + 1] < sw and pr[k_ + 2] < sw]
+    if not hoch: return None, f"Uneinigkeitskarte {fid}: keine Stufe im Profil (max {pr.max():.0f})"
+    z_an = round(float(zs[max(hoch)]) + 0.125, 2)
+    return z_an, f"Uneinigkeitskarte {fid}: Dachflaeche endet bei z {z_an} (Schwelle 40 % der Spitze)"
+
+
 def galerie_messen(feld, g, raster, w_wand, fein=None, fid=None):
     """21.11.2026 (Nutzer: "der Erker ist doch generiert beim guten Fall ... hier voelliger Wurstelschrott"): wie im Hand-Generator schwab_v3 nur MASSE messen und das
     bewaehrte Bauteil bauteile.Wand.galerie bauen lassen. Aus dem Hoehenfeld (Zeile 0 = oben): Bruestungsband = unterstes zusammenhaengendes Zeilenband, in dem >= 50 % der
@@ -120,12 +138,9 @@ def galerie_messen(feld, g, raster, w_wand, fein=None, fid=None):
         wt = w_wand + d_["w_median"]; z_an = round(d_["z1"] + 0.6 * d_["w_median"], 2); an_q = "ANNAHME: Oberkante Dachband + 0,6 x Ausladung (Neigung ~31 Grad)"
         if fein and fid:      # Anschluss an der Wand aus der Uneinigkeitskarte des feinen Wandbilds: die Dachflaeche vor der Wand macht die Fotos uneinig, die Wand darueber nicht
             try:
-                import cv2
-                R_ = {f["id"]: f for f in json.load(open(os.path.join(fein, "fassaden.json")))["fassaden"]}[fid]["raster"]; un = cv2.imread(os.path.join(fein, f"uneinig_{fid}.png"), 0)
-                cz = float(R_["zelle"]) * float(R_["nz"]) / un.shape[0]; py = lambda z: int((R_["z1"] - z) / cz); px = lambda u: int((u - R_["u0"]) / cz)
-                zs = np.arange(d_["z0"] + 0.5, d_["z0"] + 4.0, 0.25); pr = np.array([un[py(z), px(g["koerper"]["u0"]):px(g["koerper"]["u1"])].mean() for z in zs]); sw = 0.4 * pr.max()
-                hoch = [k_ for k_ in range(len(zs) - 2) if pr[k_] >= sw and pr[k_ + 1] < sw and pr[k_ + 2] < sw]
-                if hoch: z_an = round(float(zs[max(hoch)]) + 0.125, 2); an_q = f"Uneinigkeitskarte {fid}: Dachflaeche endet bei z {z_an} (Schwelle 40 % der Spitze)"
+                z_m, an_m = anschluss_aus_uneinig(fein, fid, d_["z0"], g["koerper"]["u0"], g["koerper"]["u1"])
+                if z_m is not None: z_an, an_q = z_m, an_m
+                elif an_m: an_q += f" ({an_m})"
             except Exception as e_: an_q += f" (Karte nicht lesbar: {str(e_)[:60]})"
         erg["vordach"] = dict(z_traufe=round(d_["z0"], 2), w_traufe=round(wt, 2), z_anschluss=z_an, u0=d_["u0"], u1=d_["u1"], quelle="Traufband im Ebenen-Sweep" if d_.get("aus_traufband") else "Dachkandidat im Ebenen-Sweep",
                               annahme="Anschluss: " + an_q + "; Breite = Galerie + 0,1 m")
