@@ -1,4 +1,4 @@
-# Übergabe 21.11.2026 15:40
+# Übergabe 21.11.2026 16:05 (fortgeschrieben)
 Weiter mit: „weiter“ (oder /uebergabe fortsetzen; vorher Skill `sitzungsbeginn`)
 
 ## Auftrag
@@ -19,8 +19,14 @@ Weiter mit: „weiter“ (oder /uebergabe fortsetzen; vorher Skill `sitzungsbegi
 
 ## Läuft gerade
 - Kette Martinstor `kette-martinstor-1121a` (--ab sfm, vorhandene DB; alte sparse in pipe/sfm/alt_1121) · Log /media/oem/scan/rc-park_daten/job_logs/kette-martinstor-1121a.log · Prüfen: `grep -a "JOB_ENDE\|FEHLER\|Seiten" <log> | tail` · danach: Seitenteile, Vereinen, Blick-Tor, Lage gegen LoD2-Grundriss auswerten, in METHODE_SEITEN_SFM.md nachtragen. Belegt GPU ~6989 MiB.
-- Agent „Körper-Kandidaten in Schleife“ (adc725c0da17ef23b, Worktree .claude/worktrees/agent-adc725c0da17ef23b, locked) · Ergebnis abwarten, Bilder prüfen, mergen, Schnelltest.
+- Agent „Bogenkanten aus Wandbild“ (Worktree-Agent, gestartet 15:55): oeffnungen_aus_kanten mit Bildkanten aus ortho_f00(_fein).png, Maße außen/licht/Fase getrennt · Ergebnis prüfen, mergen, Schnelltest.
+- Fächer-Analyse r00 (Scratchpad faecher.py, Hintergrund): welche Kamera erzeugt den Streupunkt-Fächer am Schwabentor.
 - Dauerdienste gpuwache/platz_waechter/editordraht nicht melden.
+
+## Erledigt 15:40–16:05
+- Schwabentor Uhrring-Neubau: Abnahme bestanden, 1 Körper (vorher 2); Neben-Fotobilder CUDA-OOM unter Martinstor-Last → nachholen.
+- koerper_schleife gemergt (992f43415), Schnelltest 0 Fehler, Regression identisch, Abnahme bestanden, Worktree entfernt.
+- Torbreite geklärt: 5,37 = Außenkante Fase, 4,49 = lichte Weite; Form Spitzbogen (Werkzeug wählte Rund).
 
 ## Nächste Schritte
 1. Martinstor-Lauf prüfen (Befehl oben); bei Ende Auswertung + Bild + Realitäts-%.
