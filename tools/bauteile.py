@@ -413,17 +413,40 @@ def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):    
     return koerper, belege
 
 
+def vordach_profil_z(s, c):
+    """Profil eines Vordachs 0..1 (s = 0 Traufe, s = 1 Wandanschluss): c = 0 gerade, c > 0 geschweift (flach an der Traufe, steil an der Wand), c < 0 gewoelbt."""
+    s = np.asarray(s, float)
+    return s if abs(c) < 1e-6 else (np.exp(c * s) - 1.0) / (np.exp(c) - 1.0)
+
+
+def vordach_walm(W, u0, u1, w_wand, w_t, z_t, z_a, c=0.0, As=0.0, dk=0.15, einbinden=0.10, n=16):
+    """WALM-VORDACH mit gemessenem Profil (GENERISCH, 21.11.2026; Masse aus tools/vordach_profil.py -> audit/vordach_profil.json).
+    Front z = z_t + (z_a - z_t) * g(a / (w_t - w_wand)), Seiten dasselbe Profil auf den Walm-Ruecksprung As skaliert (As = 0: senkrechte Giebelseiten).
+    Gebaut als Stapel von Huellen zwischen aufeinanderfolgenden Hoehenrechtecken (u0 + t As .. u1 - t As, w_wand - einbinden .. w_t - t A) - ein krummes Profil wird
+    so stueckweise eben (n Stufen); Unterseite flach dk unter der Traufe (Traufkasten/Galeriedecke). Ziegel nicht modelliert (glatt)."""
+    A = w_t - w_wand; wi = w_wand - einbinden
+    if A <= 0.05 or u1 - u0 <= 2 * As + 0.1: return M()
+    t = np.linspace(0.0, 1.0, n + 1); z = z_t + (z_a - z_t) * vordach_profil_z(t, c)
+    def rect(tk, zk): return [(u, zk, w) for u in (u0 + tk * As, u1 - tk * As) for w in (wi, max(w_t - tk * A, wi + 0.02))]
+    teile = [W.huelle(rect(0.0, z_t - dk) + rect(0.0, z_t))] + [W.huelle(rect(a_, za) + rect(b_, zb)) for a_, b_, za, zb in zip(t[:-1], t[1:], z[:-1], z[1:])]
+    return M.batch_boolean(teile, OpType.Add)
+
+
 def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
     """Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep an die Wand bauen (20.11.2026, GENERISCH; Liste: tools/vorbauten_bauplan.py
     -> audit/vorbauten_auto.json, Kettenstufe 'bauplan'). Je Gruppe ein Hoehenfeld w[zeile][spalte] (m vor der gemessenen Wand, Raster 'raster', Zeile 0 = oben):
     zeilenweise gleich tiefe Laeufe (auf 'stufe' gerundet) werden Kaesten von 'einbinden' m in der Wand bis zur Front. Gestalt = gemessene Tiefe je Zelle, kein Musterteil.
     Liefert (koerper, belege); ohne Datei unveraendert."""
     if not os.path.exists(datei): return koerper, []
-    J = json.load(open(datei)); teile = []; belege = []
+    J = json.load(open(datei)); teile = []; belege = []; VPJ = {}
+    vpd = os.path.join(os.path.dirname(os.path.abspath(datei)), "vordach_profil.json")       # tools/vordach_profil.py (Kettenstufe 'bauplan'); OHNE_VORDACH_PROFIL=1 = ebene Platte wie bisher
+    if os.path.exists(vpd) and os.environ.get("OHNE_VORDACH_PROFIL") != "1":
+        try: VPJ = {(e.get("id"), e.get("gruppe", 0)): e for e in json.load(open(vpd)).get("fassaden", []) if e.get("profil")}
+        except Exception: VPJ = {}
     for F in J.get("fassaden", []):
         o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0)); w0 = min(0.0, ww) - einbinden
         P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
-        for g in F["gruppen"]:
+        for gi_, g in enumerate(F["gruppen"]):
             KM_ = g.get("kanten_mass"); G_ = g.get("galerie")
             if KM_ and KM_.get("kasten") and os.environ.get("OHNE_KANTENMASS") != "1":
                 # 21.11.2026 (Nutzer: "so wenig allgemeine Bauteile wie moeglich ... was nicht moeglich ist, wird aus allgemeinen Bauteilen gebaut"): Vorbau aus den dichten triangulierten
@@ -445,7 +468,12 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                     if Pf: ann.append("Pfostenquerschnitt %s" % ", ".join(("%.2f m gemessen" % p_["breite"]) if p_["breite"] else "0,22 m Standard" for p_ in Pf))
                     zt = V_["z_traufe"] if V_ else z_d + 0.3
                     teile.append(KK(Kb["u0"], Kb["u1"], z_d, zt, wf - 0.25, wf)); teile.append(KK(Kb["u0"], Kb["u0"] + 0.25, z_d, zt, wi, wf)); teile.append(KK(Kb["u1"] - 0.25, Kb["u1"], z_d, zt, wi, wf)); ann.append("Raehm 0,25 m stark (Hoehe aus dem Sweep-Band)")
-                    if V_:
+                    VP_ = VPJ.get((F.get("id"), gi_))
+                    if V_ and VP_:                  # 21.11.2026 (Nutzer: Vordach im Foto geschweiftes Walmdach, Modell ebene Platte): Profil + Walm aus Foto-Silhouetten (tools/vordach_profil.py)
+                        teile.append(vordach_walm(WG, VP_["u0"], VP_["u1"], ww, VP_["w_t"], VP_["z_t"], VP_["z_a"], c=VP_["c"], As=VP_["As"], einbinden=einbinden))
+                        ann.append(f"Vordach {VP_['familie']} (c {VP_['c']:+.1f}, Walm-Ruecksprung {VP_['As']:.2f} m, Traufe w {VP_['w_t']:.2f} z {VP_['z_t']:.2f}, Anschluss z {VP_['z_a']:.2f}) aus "
+                                   f"{len(VP_.get('fotos', []))} Foto-Silhouetten ({VP_.get('fotos_familie')} Fotos einzeln gleiche Familie); {VP_.get('annahme', '')}")
+                    elif V_:
                         ua, ub, dk, wt = Kb["u0"] - 0.15, Kb["u1"] + 0.15, 0.15, wf + 0.25
                         teile.append(WG.huelle([(u_, z_, w_) for u_ in (ua, ub) for z_, w_ in ((V_["z_anschluss"], wi), (V_["z_anschluss"] - dk, wi), (V_["z_traufe"] + dk, wt), (V_["z_traufe"], wt))]))
                         ann.append("Vordach = ebene Platte (allgemeines Bauteil): Traufe und Wandanschluss gemessen, Ueberstand 0,25 m und Dachhaut 0,15 m Standard")

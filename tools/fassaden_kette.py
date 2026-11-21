@@ -397,6 +397,21 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
                 if fl_w is not None and "putz_niveau_m" not in Zf_.files:          # Relief ohne Putzniveau (kein Wandbild): Niveau = Median der Wandzellen (relief_roh: 'vorstand')
                     mw_ = (Zf_["wand"] if "wand" in Zf_.files else np.ones(Zf_["rel"].shape, bool)) & ~Zf_["oeffnung"] & (Zf_["rel"] > 0); fl_w -= float(np.median(Zf_["rel"][mw_])) if mw_.any() else 0.0
                 if fl_w is not None: belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} auf der gemessenen Koerperflaeche ({fl_w:+.2f} m zur Wandebene)", quelle="fassaden_kette.koerper_flaeche (Stab-Sonde gegen den Grundkoerper nach Wandversatz)", relief_auf_flaeche_m=round(fl_w, 3)))
+        if os.environ.get("OHNE_VORBAU_FLACH") != "1":
+            # 21.11.2026 (Nutzerbild neben_eigen__IMG_20261106_113231: Wandgemaelde unter dem Vordach als Klumpen): hinter/unter Vorbauten Relief nur mit Tiefensprung in den
+            # triangulierten Fotokanten der Wandebene (putz_wandbild.relief_vorbau_flach); gilt fuer das Netzrelief und das Fotorelief. OHNE_VORBAU_FLACH=1 = alter Stand.
+            from putz_wandbild import vorbau_zonen, kanten_wand, relief_vorbau_flach
+            ffn_ = fein_ordner(objekt_json); ej_ = os.path.join(os.path.dirname(ffn_), "ebenen", "ebenen.json") if ffn_ else ""
+            for art_ in (("f", f), ("ff", ff if hat_foto else None)):
+                if not art_[1]: continue
+                Zv_ = np.load(art_[1]); zon_ = vorbau_zonen(od, Zv_)
+                if not zon_: continue
+                fo_ = art_[1][:-4] + "_vorbau.npz"; inf_ = relief_vorbau_flach(art_[1], fo_, zon_, kanten_wand(ej_, Zv_) if ej_ else None)
+                if inf_.get("unveraendert") or not inf_.get("flach_m2"): continue
+                if art_[0] == "f": f = fo_
+                else: ff = fo_
+                belege.append(dict(seite="wand", element=f"Relief {os.path.basename(art_[1])} hinter Vorbau: {inf_['flach_m2']} m2 ohne Kantenbeleg auf Wandniveau, {inf_['belegt_m2']} m2 Tiefensprung belegt",
+                                   quelle="putz_wandbild.relief_vorbau_flach (Fotokanten der Wandebene, ebenen.json)", hinweis=f"Bild relief/{os.path.basename(fo_)[:-4]}.jpg; Zone {inf_['zone_m2']} m2"))
         # 21.11.2026 QUADERRASTER aus dem Wandbild (Nutzer: unterer Turm "geschmolzen", Eckquader "Rauschen"): Reliefs wurden 1:1 gebaut - Fugen 0,1-0,4 mm H0,
         # Beulen bis 1 mm H0. Jetzt je Stein ebene Stirnflaeche + druckbare Rillen; Wand ohne Quader-Tor (w02: unten Quader, oben Putz) nur in der Steinzone von unten.
         qbel = []

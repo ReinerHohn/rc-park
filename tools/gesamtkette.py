@@ -550,6 +550,8 @@ def main():
             eb_ = os.path.join(D, "ebenen")
             if os.path.exists(os.path.join(KD, "kam_wahl.json")) and lauf(B, "bauplan_ebenen", [PY, "-W", "ignore", "-I", "tools/ebenen_bauplan.py", ZR, fo, KD, eb_], log, ok=(0, 3))[0] == 0:
                 erg_["ebenen_masse_rc"] = lauf(B, "bauplan_ebenen_masse", [PY, "-W", "ignore", "-I", "tools/ebenen_masse.py", ZR, eb_], log, ok=(0, 3))[0]
+                # 21.11.2026 (Nutzer: Vordach im Foto geschweiftes Walmdach, Modell ebene Platte): Profil/Walm aus Foto-Silhouetten (SfM-Kameras) -> audit/vordach_profil.json -> bauteile.vordach_walm
+                if os.path.exists(os.path.join(KD, "kam.json")): erg_["vordach_profil_rc"] = lauf(B, "bauplan_vordach_profil", [PY, "-W", "ignore", "-I", "tools/vordach_profil.py", ZR, KD], log, ok=(0, 3))[0]
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["laibung_rc"] = lauf(B, "bauplan_laibung", [PY, "-W", "ignore", "-I", "tools/laibung_aus_fotos.py", fa_, ffn, ZJ], log, ok=(0, 3))[0]   # 21.11.2026 spaet: Laibungstiefe aus der seitlich sichtbaren Laibung in >= 3 Schraegfotos (Sweep sieht den Laden nicht)
