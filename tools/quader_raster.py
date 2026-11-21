@@ -180,6 +180,122 @@ def eckquader_bloecke(lab, px, z0, ecke_links=True, ecke_rechts=True, rand=0.10)
     return erg
 
 
+def _bogen_linie(bogen, c):
+    """Bogenlinie (nur oberhalb des Kaempfers) aus tools/nischen_fenster.umriss: Punkte (u, z), Tangente, Normale NACH AUSSEN (weg von der Oeffnung), Bogenlaenge s."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from nischen_fenster import umriss
+    m, b, zk, zt = float(bogen["u"]), float(bogen["breite"]), float(bogen["kaempfer"]), float(bogen["scheitel"])
+    P = umriss(bogen["form"], m - b / 2, m + b / 2, zk, zk, zt, schritt=c / 2); P = P[P[:, 1] > zk + c / 4]      # ohne die Kaempferlinie (Sohle des Umrisses)
+    if len(P) < 10: return None
+    pts = P[:, :2]; nrm = -P[:, 2:4]; tg = np.gradient(pts, axis=0); tg /= np.maximum(np.linalg.norm(tg, axis=1, keepdims=True), 1e-9)
+    s = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))]
+    return pts, tg, nrm, s
+
+
+def keilsteine(antwort, lab, c, uu, zz, bogen, vz=1.0, frei=None, gueltig=None, r_max=1.8, band=(0.2, 1.2), stoss_min=0.15, schwelle=2.4, min_fugen=3, min_stein_m2=0.01,
+               kohaerenz_min=0.5, amp_min=0.25, radial_tol=0.06):
+    """KEILSTEINE UM EINEN BOGEN aus dem Wandbild (21.11.2026 spaet, Schwabentor Stadtseite: das Quaderraster baute die Bogensteine als Rechtecke quer ueber die
+    radialen Fugen). Koordinaten je Zelle: s = Bogenlaenge des Fusspunkts auf der Bogenlinie (bogen: form, u, breite, kaempfer, scheitel - oeffnungen_auto.json),
+    r = Abstand nach aussen. Linien gleicher s stehen SENKRECHT auf der Bogenlinie = radiale Fugen.
+      Ring    = r-Bereich, in dem radiale Fugen stehen: KOHAERENZ = Korrelation der (hochpassgefilterten) s-Profile zweier 10-cm-Scheiben im Abstand 10 cm - radiale
+                Fugen liegen in beiden an derselben Stelle s, Lagerfugen/Stossfugen eines Rechteckverbands nicht (Probe Schwabentor: Ring 0,73-0,80, Quader 0,0-0,3).
+                Ring = zusammenhaengend um das Maximum mit >= max(50 %, kohaerenz_min). Die Bogenlinie ist oft die lichte Innenkante (Gewaende ohne Fugen davor).
+                Kohaerenz < kohaerenz_min oder Profil ohne Fugenhub (< amp_min) -> KEINE Keilsteine (Putzbogen, nichts erfinden).
+      Fugen   = Spitzen im s-Profil (Median im Ring 15..85 %), Abstand >= stoss_min, und RADIAL: in innerer und aeusserer Ringhaelfte an derselben Stelle (+- radial_tol);
+                >= min_fugen sonst keine Keilsteine.
+      je Stein eigener Ruecken: Spitze im r-Profil des Steins zwischen 60 und 150 % der Steinhoehe, sonst der gemeinsame.
+    Zellen im Ring bekommen neue Steinnummern (Grenzen = radiale Fugen und Ruecken -> Rillen in quader_relief); Reste alter Rechtecksteine < min_stein_m2 gehen an den
+    naechsten Keilstein. Liefert (lab_neu, keil_ids, info). antwort, lab, frei, gueltig: H x W im Wandraster (Zeile 0 = oben), uu: u je Spalte, zz: z je Zeile."""
+    from scipy.signal import find_peaks
+    from scipy.spatial import cKDTree
+    L_ = _bogen_linie(bogen, c); lab = np.asarray(lab, np.int32).copy(); leer = (lab, np.zeros(0, np.int32))
+    if L_ is None: return (*leer, dict(grund="Bogenlinie zu kurz"))
+    pts, tg, nrm, s = L_; H, W = lab.shape
+    uL, uR = pts[:, 0].min() - r_max, pts[:, 0].max() + r_max; zlo, zhi = float(bogen["kaempfer"]), pts[:, 1].max() + r_max
+    jj = np.flatnonzero((uu >= uL) & (uu <= uR)); ii = np.flatnonzero((zz >= zlo) & (zz <= zhi))
+    if len(jj) < 5 or len(ii) < 5: return (*leer, dict(grund="Bogen ausserhalb des Ausschnitts"))
+    I, J = np.meshgrid(ii, jj, indexing="ij"); X = np.stack([uu[J].ravel(), zz[I].ravel()], 1)
+    _, k = cKDTree(pts).query(X); v_ = X - pts[k]; r = np.einsum("ij,ij->i", v_, nrm[k]); a_ = np.abs(np.einsum("ij,ij->i", v_, tg[k]))
+    ok = (r > 0) & (r <= r_max) & (k >= 2) & (k <= len(pts) - 3) & (a_ <= np.maximum(c, 0.6 * r))      # Fusspunkt innen (Spitzbogen-Scheitel: zwei Tangenten -> grosszuegig)
+    # IN DER OEFFNUNG (lichte Bogenlinie, darunter die Pfeilerflucht) ist kein Mauerwerk der Wand: alte Rechtecksteine, die zu >= 50 % dort liegen, entfallen
+    # (Probe Schwabentor: Gewoelbe/Torweg hinter dem Bogen bekam 'Steine', die Oeffnungsmaske des Reliefs ist dort lueckig)
+    m0, b0, zk0 = float(bogen["u"]), float(bogen["breite"]), float(bogen["kaempfer"]); Iv, Jv = I.ravel(), J.ravel()
+    drin = ((r < 0) & (k >= 2) & (k <= len(pts) - 3)) | ((X[:, 1] <= zk0) & (np.abs(X[:, 0] - m0) < b0 / 2))
+    ids_ = lab[Iv, Jv]; weg_innen = 0
+    if (ids_ > 0).any():
+        n_all = np.bincount(lab.ravel(), minlength=lab.max() + 1); n_in = np.bincount(ids_[drin & (ids_ > 0)], minlength=lab.max() + 1)
+        raus = np.flatnonzero((n_in >= 0.5 * np.maximum(n_all, 1)) & (np.arange(len(n_all)) > 0)); weg_innen = int(len(raus))
+        if weg_innen: lab[np.isin(lab, raus)] = 0
+    I, J, r, sz = Iv[ok], Jv[ok], r[ok], s[k[ok]]
+    A = vz * np.asarray(antwort, np.float32)[I, J]; g = np.ones(len(I), bool) if gueltig is None else np.asarray(gueltig, bool)[I, J]
+    fr = np.zeros(len(I), bool) if frei is None else np.asarray(frei, bool)[I, J]
+    if (g & ~fr).sum() * c * c < 0.3: return (*leer, dict(grund="kein Wandbild um den Bogen"))
+    w_ = g & ~fr; rb = np.round(r / c).astype(int)
+    def profil(sel, achse):
+        idx = rb[sel] if achse == "r" else np.round(sz[sel] / c).astype(int); val = A[sel]
+        if not len(idx): return np.zeros(0), 0
+        lo = int(idx.min()); n = int(idx.max()) - lo + 1; p = np.zeros(n); cnt = np.bincount(idx - lo, minlength=n)
+        order = np.argsort(idx); grenzen = np.r_[0, np.cumsum(cnt)]; vs = val[order]
+        for b_ in range(n):
+            if cnt[b_] >= 3: p[b_] = float(np.median(vs[grenzen[b_]:grenzen[b_ + 1]]))
+        return ndi.gaussian_filter1d(p, 1.0), lo
+    # RING = wo radiale Fugen stehen (Probe Schwabentor 21.11.: die Bogenlinie aus oeffnungen_auto ist die LICHTE Innenkante, davor liegen 0,4-0,5 m dunkles
+    # Gewaende ohne Fugen, erst dann die Keilsteine; ein r-Profil 'erste Fuge = Ruecken' traf die Gewaendekante). Je r-Scheibe (scheibe m, Schritt scheibe/2):
+    # Staerke = Summe der Spitzen-Prominenz im s-Profil je m Bogenlaenge. Ring = zusammenhaengender Bereich um das Maximum mit >= 50 % davon.
+    dr_ = band[0] / 2; r0s = np.arange(0.0, r_max - dr_ + 1e-9, dr_ / 2); nS = int(np.ceil(s[-1] / c)) + 1; PS = []
+    for r0 in r0s:                                                         # s-Profil je r-Scheibe auf gemeinsamem s-Raster
+        p_, l_ = profil(w_ & (r >= r0) & (r < r0 + dr_), "s"); q_ = np.full(nS, np.nan)
+        if len(p_): q_[max(l_, 0):min(l_ + len(p_), nS)] = p_[max(-l_, 0):max(-l_, 0) + min(l_ + len(p_), nS) - max(l_, 0)]
+        PS.append(q_)
+    st = []
+    for i_ in range(len(r0s)):                                             # KOHAERENZ: Korrelation mit der Scheibe dr_ weiter aussen (radiale Fuge = gleiche s-Lage)
+        j_ = i_ + 2
+        if j_ >= len(r0s): st.append(0.0); continue
+        a_, b_ = PS[i_], PS[j_]; m_ = np.isfinite(a_) & np.isfinite(b_) & (a_ != 0) & (b_ != 0)
+        if m_.sum() < max(20, int(0.5 / c)): st.append(0.0); continue
+        # Hochpass (Fugenabstand < 2 x 0,25 m): langsamer Verlauf entlang des Bogens (Naehe zur Oeffnungskante, Licht) korreliert sonst auch auf glattem Putz (synth. 0,5-0,8)
+        ha = a_[m_] - ndi.gaussian_filter1d(a_[m_], 0.25 / c); hb = b_[m_] - ndi.gaussian_filter1d(b_[m_], 0.25 / c)
+        st.append(float(np.corrcoef(ha, hb)[0, 1]) if min(ha.std(), hb.std()) >= amp_min else 0.0)
+    st = np.nan_to_num(np.asarray(st))
+    if not len(st) or st.max() < kohaerenz_min: return (*leer, dict(grund=f"keine radialen Fugen um den Bogen (Kohaerenz {st.max() if len(st) else 0:.2f} < {kohaerenz_min})", kohaerenz=[round(float(x), 2) for x in st]))
+    im = int(np.argmax(st)); a_i, b_i = im, im
+    while a_i > 0 and st[a_i - 1] >= max(0.5 * st[im], kohaerenz_min): a_i -= 1
+    while b_i < len(st) - 1 and st[b_i + 1] >= max(0.5 * st[im], kohaerenz_min): b_i += 1
+    r_in = float(r0s[a_i]); R = float(r0s[b_i] + dr_); dR = R - r_in
+    if not (band[0] <= dR <= band[1]): return (*leer, dict(grund=f"Ring {r_in:.2f}..{R:.2f} m unplausibel (Steinhoehe {dR:.2f} ausserhalb {band})", kohaerenz=[round(float(x), 2) for x in st]))
+    sel = w_ & (r >= r_in + 0.15 * dR) & (r <= r_in + 0.85 * dR); ps, slo = profil(sel, "s")
+    if len(ps) < 5 or ps.std() <= 1e-6: return (*leer, dict(grund="kein s-Profil", r_in=round(r_in, 3), ruecken=round(R, 3)))
+    fk, _ = find_peaks(ps, distance=max(1, int(stoss_min / c)), prominence=schwelle * 0.6 * float(ps.std())); fugen = (fk + slo) * c
+    # RADIAL-PROBE: eine Keilsteinfuge steht in der inneren UND der aeusseren Ringhaelfte an derselben Stelle s (eine senkrechte Stossfuge eines Rechtecksteins wandert in s)
+    halb = []
+    for h0, h1 in ((0.1, 0.5), (0.5, 0.9)):
+        p_, l_ = profil(w_ & (r >= r_in + h0 * dR) & (r <= r_in + h1 * dR), "s"); pk_, _ = find_peaks(p_, prominence=0.3 * schwelle * float(p_.std()) if len(p_) and p_.std() > 0 else 1.0); halb.append((pk_ + l_) * c)
+    radial = np.array([all(len(h) and np.abs(h - f_).min() <= radial_tol for h in halb) for f_ in fugen], bool); n_schraeg = int((~radial).sum()); fugen = fugen[radial]
+    if len(fugen) < min_fugen: return (*leer, dict(grund=f"nur {len(fugen)} radiale Fugen (< {min_fugen}; {n_schraeg} nicht radial)", r_in=round(r_in, 3), ruecken=round(R, 3)))
+    grenzen = np.r_[0.0, fugen, s[-1]]; seg = np.searchsorted(grenzen, sz, side="right") - 1; seg = np.clip(seg, 0, len(grenzen) - 2)
+    Rk = np.full(len(grenzen) - 1, R)
+    for q in range(len(grenzen) - 1):                                     # je Stein eigener Ruecken
+        sq = w_ & (seg == q) & (sz > grenzen[q] + c) & (sz < grenzen[q + 1] - c)
+        if sq.sum() < 20: continue
+        p_, l_ = profil(sq, "r")
+        if len(p_) < 5 or p_.std() <= 1e-6: continue
+        pk_, pp_ = find_peaks(p_, prominence=schwelle * 0.5 * float(p_.std())); r_ = (pk_ + l_) * c; mm = (r_ >= r_in + 0.6 * dR) & (r_ <= r_in + 1.5 * dR)
+        if mm.any(): Rk[q] = float(r_[mm][np.argmax(pp_["prominences"][mm])])
+    # Kaempfersteine: Abschnitte > 2,5 x Medianbreite (dort fand das s-Profil keine Fugen - am Kaempfer gehen die Keilsteine in die Lagen ueber) bleiben beim Quaderraster
+    br_ = np.diff(grenzen); gross = br_ > 2.5 * float(np.median(br_)) if len(br_) >= 3 else np.zeros(len(br_), bool)
+    rein = ~fr & (r <= Rk[seg]) & ~gross[seg]; base = int(lab.max()) + 1; alt = np.unique(lab[I[rein], J[rein]]); alt = alt[alt > 0]
+    lab[I[rein], J[rein]] = base + seg[rein]
+    for o_ in alt:                                                         # Reste der Rechtecksteine: zu klein -> an den naechsten Keilstein
+        komp, nk = ndi.label(lab == o_)
+        for kk in range(1, nk + 1):
+            if (komp == kk).sum() * c * c < min_stein_m2: lab[komp == kk] = -1
+    if (lab == -1).any():
+        kz = lab >= base; _, (ai, aj) = ndi.distance_transform_edt(~kz, return_indices=True); m1 = lab == -1; lab[m1] = lab[ai[m1], aj[m1]]
+    keil = np.arange(base, base + len(grenzen) - 1, dtype=np.int32); keil = keil[np.isin(keil, lab)]
+    breite = np.diff(grenzen)
+    return lab, keil, dict(keilsteine=int(len(keil)), fugen=int(len(fugen)), fugen_nicht_radial=n_schraeg, alte_steine_in_oeffnung=weg_innen, kaempferabschnitte_beim_raster=int(gross.sum()), r_in=round(r_in, 3), ruecken=round(R, 3), steinhoehe_m=round(dR, 3), kohaerenz=[round(float(x), 2) for x in st],
+                           ruecken_je_stein=[round(x, 3) for x in Rk], bogenbreite_je_stein_m=[round(float(x), 3) for x in breite], form=bogen["form"])
+
+
 def _fassade(Z, ffn, parallel=0.95, abstand=1.0):
     try: FF = json.load(open(os.path.join(ffn, "fassaden.json")))["fassaden"]
     except Exception: return None
@@ -203,10 +319,11 @@ def _maske_umrechnen(Zq, key, Zz):
     out = np.zeros((H, W), bool); out[np.ix_(oki, okj)] = M[np.ix_(i[oki], j[okj])]; return out
 
 
-def quader_auf_relief(Z, ffn, min_fotos=2, massstab=None, min_mm=None, rand_ecke=(False, False), vorn_quelle=None, frei=(), nur_in=None, zone_unten=False):
+def quader_auf_relief(Z, ffn, min_fotos=2, massstab=None, min_mm=None, rand_ecke=(False, False), vorn_quelle=None, frei=(), nur_in=None, zone_unten=False, boegen=None):
     """Relief Z (dict/npz der Fassaden-Kette: rel, a, t, n, u0, z0, px; optional putz, oeffnung, vordergrund, wand) + Wandbild-Ordner (fassade_fein) ->
     (rel_neu, info) oder (None, info) ohne Fassade/Einzelbilder/Raster. Steinflaeche = Wandbild-Quaderflaeche (putz_wandbild.glatt_karte 'quader', Mehrfoto)
-    ohne Oeffnungen; gemessene Tiefe = Relief ohne Putzmaske/Vordergrund/Loecher."""
+    ohne Oeffnungen; gemessene Tiefe = Relief ohne Putzmaske/Vordergrund/Loecher.
+    boegen = {fassaden-id: [dict(form, u, breite, kaempfer, scheitel), ...]} (audit/oeffnungen_auto.json): um jeden Bogen Keilsteine mit radialen Fugen (keilsteine)."""
     from PIL import Image
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import putz_wandbild as PW
     F = _fassade(Z, ffn)
@@ -233,10 +350,19 @@ def quader_auf_relief(Z, ffn, min_fotos=2, massstab=None, min_mm=None, rand_ecke
     ri = np.clip(i - i0, 0, hh - 1); rj = np.clip(j - j0, 0, ww - 1); innen = ((i - i0) >= 0) & ((i - i0) < hh); innen_j = ((j - j0) >= 0) & ((j - j0) < ww)
     if "oeffnung" in Z:                                                   # Oeffnungen (Tor, Fenster) sind kein Stein: Reliefmaske ins Wandbildraster
         oe = np.zeros((hh, ww), bool); oe[np.ix_(ri[innen], rj[innen_j])] = np.asarray(Z["oeffnung"], bool)[np.ix_(innen, innen_j)]
-        stein &= ~ndi.binary_dilation(oe, np.ones((int(0.1 / c) | 1,) * 2))
+        oe_f = ndi.binary_dilation(oe, np.ones((int(0.1 / c) | 1,) * 2)) if "oeffnung" in Z else None
+    if oe_f is not None: stein &= ~oe_f
     if stein.sum() * c * c < 0.3: return None, dict(grund="Wandbild zeigt hier kein Quaderwerk")
     lab_f, fuge, si = raster_segmentieren(ant, stein, c)
-    if si["steine"] == 0: return None, dict(grund="kein Lagenraster im Wandbild", **si)
+    # 21.11.2026 spaet (Schwabentor Stadtseite, Quader-Fehlerliste Punkt 4): um Boegen laufen die Fugen RADIAL - Keilsteine statt Rechtecke (nur im Bogenring)
+    keil = np.zeros(0, np.int32); ki = []
+    for bg in (boegen or {}).get(F["id"], []):
+        if bg.get("form", "gerade") == "gerade": continue
+        uu_f = float(R["u0"]) + (j0 + np.arange(ww) + 0.5) * c; zz_f = float(R["z1"]) - (i0 + np.arange(hh) + 0.5) * c
+        lab_f, k_, i_ = keilsteine(ant, lab_f, c, uu_f, zz_f, bg, vz=1.0 if si["polaritaet"] == "hell" else -1.0, frei=oe_f, gueltig=nf >= min_fotos)
+        keil = np.r_[keil, k_]; ki.append(dict(i_, bogen=[bg.get("form"), round(float(bg["u"]), 2), round(float(bg["scheitel"]), 2)]))
+    si["keilsteine"] = ki
+    if si["steine"] == 0 and not len(keil): return None, dict(grund="kein Lagenraster im Wandbild", **si)
     lab = np.zeros((H, W), np.int32); lab[np.ix_(innen, innen_j)] = lab_f[np.ix_(ri[innen], rj[innen_j])]
     if "wand" in Z: lab[~np.asarray(Z["wand"], bool)] = 0
     # VOR DER WAND (Probe w02 21.11.: Vordach-Dachziegel und Wandgemaelde unter dem Vordach bekamen 'Steine'): Steine, die zu >= 20 % in der um 0,3 m
@@ -269,6 +395,7 @@ def quader_auf_relief(Z, ffn, min_fotos=2, massstab=None, min_mm=None, rand_ecke
             k_ += luecke; zgr = z0 + (H - k_) * px                       # Oberkante der Steinzone
             info_zone = (round(zu_, 2), round(zgr, 2))
             cz = np.asarray(ndi.mean(np.broadcast_to(zz[:, None], (H, W)).astype(np.float64), lab, ids)); bleib &= (cz <= zgr) & (cz >= zu_)
+        if len(keil) and len(ids): bleib |= np.isin(ids, keil) & (np.nan_to_num(np.asarray(ndi.mean(np.asarray(nur_in, bool).astype(np.float64), lab, ids))) >= 0.5 if nur_in is not None else True)   # Keilsteine: eigenes Tor (Bogenruecken + radiale Fugen), nicht die Steinzone
         raus = ids[~bleib]; weg_zone = int(len(raus))
         if weg_zone: lab[np.isin(lab, raus)] = 0
         if nur_in is not None: lab[~np.asarray(nur_in, bool)] = 0                 # Stein ueber den Rand der belegten Flaeche hinaus: dort abschneiden
