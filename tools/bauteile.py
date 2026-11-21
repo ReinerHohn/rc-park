@@ -327,11 +327,17 @@ def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):    
     details=True: Wand.zifferblatt (Wulste, 12 Ziffern, Zeiger) - Ziffernform/Zeit = ANNAHME. Ohne Innenkreis: Innenfeld = 0,66 x Aussen (ANNAHME, schwab_v3 3,52/5,36)."""
     if not os.path.exists(datei): return koerper, []
     belege = []
+    # 21.11.2026 (Kettenlauf 1121m: Abnahme 'Anzahl getrennte Koerper' = 2): die Schleife hatte die Wand um -0,15 m zurueckgesetzt (Korrektur 'wandversatz'), der Uhrring reichte
+    # nur bis -0,05 m hinter die ALTE Wandebene und schwebte 10 cm vor der Wand. Der Ring reicht jetzt bis hinter die gemessene Wandlage dieser Fassade.
+    wv_ = {}; kp_ = os.path.join(os.path.dirname(datei), "schleife_korrekturen.json")
+    if os.path.exists(kp_):
+        for K_ in json.load(open(kp_)).get("korrekturen", []):
+            if K_.get("art") == "wandversatz" and K_.get("angenommen") is not False: wv_[K_.get("fassade")] = min(wv_.get(K_.get("fassade"), 0.0), float(K_["w_soll"]))
     for fid, F in json.load(open(datei)).items():
         o = np.array(F["o"], float); W_ = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
         for U in F.get("uhren", []):
             da = float(U["d_aussen"]); di = float(U["d_innen"]) if U.get("d_innen") else 0.66 * da
-            ring = W_.scheibe(U["u"], U["z"], da, -0.05, w_ring) - W_.scheibe(U["u"], U["z"], di, w_feld, w_ring + 0.05)
+            ring = W_.scheibe(U["u"], U["z"], da, min(-0.05, wv_.get(fid, 0.0) - 0.05), w_ring) - W_.scheibe(U["u"], U["z"], di, w_feld, w_ring + 0.05)
             koerper = koerper + ring
             if details: koerper = koerper + W_.zifferblatt(U["u"], U["z"], da, di)
             belege.append(dict(seite="wand", element=f"Uhr {fid} (Durchmesser {da:.2f} m)", quelle=U.get("quelle", "tools/uhren_wandbild.py"), mitte_u=U["u"], mitte_z=U["z"], d_aussen=da, d_innen=di,
