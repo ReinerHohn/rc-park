@@ -1,37 +1,50 @@
 {
  "quelle": "tools/oeffnungen_aus_kanten.py",
- "wolke": "modelle/schwabentor-1120/sfm/punkte_modell_schwabentor-1120.npy",
+ "wolke": "/home/oem/git/rc-park/modelle/schwabentor-1120/sfm/punkte_modell_schwabentor-1120.npy",
  "ebenen": {
   "f00_wand": {
    "oeffnungen": [
     {
-     "form": "rundbogen",
+     "form": "spitzbogen",
      "sicher": true,
-     "form_grund": "Rest sturz 0.218, rundbogen 0.111, segmentbogen 0.110, spitzbogen 0.103",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.109, rundbogen 0.079, segmentbogen 0.079, spitzbogen 0.029",
+     "form_quelle": "wandbild",
      "zone": [
-      -2.474,
-      2.893,
+      -2.463,
+      2.794,
       1.572,
-      6.342
+      6.604
      ],
-     "mitte_u": 0.209,
+     "mitte_u": 0.167,
      "breite": {
-      "wert": 5.366,
-      "punkte": 1718,
-      "rest": 0.111,
-      "kantenpunkte_links": 368,
-      "kantenpunkte_rechts": 0
+      "wert": 4.496,
+      "quelle": "zweite parallele Kante, eigener Ausgleich (Abstand -0.38 m)",
+      "rest": {
+       "punktrest": 0.019,
+       "belegt": 0.29,
+       "belegt_abschluss": 0.25
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
-      "wert": 3.659,
+      "wert": 2.986,
+      "quelle": "zweite parallele Kante, eigener Ausgleich (Abstand -0.38 m)",
+      "rest": {
+       "punktrest": 0.019,
+       "belegt": 0.29,
+       "belegt_abschluss": 0.25
+      },
       "hinweis": null
      },
      "scheitel": {
-      "wert": 6.342,
-      "stich": 2.683,
-      "kantenpunkte": 1001,
-      "rest_kanten": 0.068
+      "wert": 6.223,
+      "stich": 3.237,
+      "quelle": "zweite parallele Kante, eigener Ausgleich (Abstand -0.38 m)",
+      "rest": {
+       "punktrest": 0.019,
+       "belegt": 0.29,
+       "belegt_abschluss": 0.25
+      }
      },
      "sohlbank": {
       "wert": 1.572,
@@ -45,7 +58,7 @@
       "kanten": -0.0,
       "kantenpunkte": 1369
      },
-     "radius": 2.683,
+     "radius": 3.455,
      "reste": {
       "sturz": {
        "rest": 0.218,
@@ -77,6 +90,878 @@
       "Form aus dem Rand des Wolkenflecks: nur 1417 Kantenpunkte am Umriss, 21% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.04,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 26,
+       "kanten": [
+        {
+         "u": -2.474,
+         "tiefe": -0.032,
+         "tiefe_tol": 0.07,
+         "fotos": 14,
+         "rest": 0.015,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -2.071,
+         "tiefe": 0.132,
+         "tiefe_tol": 0.07,
+         "fotos": 10,
+         "rest": 0.019,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -2.066,
+         "tiefe": 0.763,
+         "tiefe_tol": 0.07,
+         "fotos": 7,
+         "rest": 0.02,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -1.974,
+         "tiefe": 0.158,
+         "tiefe_tol": 0.07,
+         "fotos": 11,
+         "rest": 0.016,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -1.495,
+         "tiefe": 0.472,
+         "tiefe_tol": 0.07,
+         "fotos": 7,
+         "rest": 0.019,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -1.263,
+         "tiefe": -0.394,
+         "tiefe_tol": 0.084,
+         "fotos": 7,
+         "rest": 0.019,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": -2.474,
+       "innen_kandidaten": [
+        -2.071,
+        -2.066,
+        -1.974
+       ],
+       "innen": {
+        "u": -2.071,
+        "tiefe": 0.132,
+        "tiefe_tol": 0.07,
+        "fotos": 10,
+        "rest": 0.019,
+        "quelle": "einzelfotos"
+       },
+       "aussen": {
+        "u": -2.474,
+        "tiefe": -0.032,
+        "tiefe_tol": 0.07,
+        "fotos": 14,
+        "rest": 0.015,
+        "quelle": "einzelfotos"
+       }
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 19,
+       "kanten": [
+        {
+         "u": 2.303,
+         "tiefe": 0.522,
+         "tiefe_tol": 0.07,
+         "fotos": 7,
+         "rest": 0.015,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 2.316,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 6,
+         "rest": 0.146,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 2.684,
+         "tiefe": 0.087,
+         "tiefe_tol": 0.07,
+         "fotos": 10,
+         "rest": 0.014,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 2.839,
+         "tiefe": 0.051,
+         "tiefe_tol": 0.07,
+         "fotos": 9,
+         "rest": 0.01,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 2.839,
+       "innen_kandidaten": [
+        2.684,
+        2.316,
+        2.303
+       ],
+       "innen": null,
+       "aussen": {
+        "u": 2.839,
+        "tiefe": 0.051,
+        "tiefe_tol": 0.07,
+        "fotos": 9,
+        "rest": 0.01,
+        "quelle": "einzelfotos"
+       }
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0756,
+        "belegt": 0.45,
+        "stich": 0.0,
+        "breite": 5.253,
+        "uL": -2.469,
+        "kaempfer": 6.491
+       },
+       "rundbogen": {
+        "rest": 0.0617,
+        "belegt": 0.53,
+        "stich": 2.527,
+        "breite": 5.055,
+        "uL": -2.386,
+        "kaempfer": 3.778
+       },
+       "segmentbogen": {
+        "rest": 0.0594,
+        "belegt": 0.6,
+        "stich": 2.136,
+        "breite": 4.488,
+        "uL": -2.089,
+        "kaempfer": 4.321
+       },
+       "spitzbogen": {
+        "rest": 0.0515,
+        "belegt": 0.7,
+        "stich": 3.395,
+        "breite": 5.244,
+        "uL": -2.451,
+        "kaempfer": 3.208
+       }
+      },
+      "kantenzug_punkte": 1791,
+      "reste": {
+       "sturz": {
+        "rest": 0.1089,
+        "stich": 0.0,
+        "breite": 4.952,
+        "kaempfer": 6.111,
+        "punkte": 896
+       },
+       "rundbogen": {
+        "rest": 0.079,
+        "stich": 2.56,
+        "breite": 5.121,
+        "kaempfer": 3.796,
+        "punkte": 896
+       },
+       "segmentbogen": {
+        "rest": 0.0788,
+        "stich": 2.533,
+        "breite": 5.114,
+        "kaempfer": 3.825,
+        "punkte": 896
+       },
+       "spitzbogen": {
+        "rest": 0.0295,
+        "stich": 3.375,
+        "breite": 5.258,
+        "kaempfer": 3.23,
+        "punkte": 896
+       }
+      },
+      "form": "spitzbogen",
+      "form_grund": "Rest sturz 0.109, rundbogen 0.079, segmentbogen 0.079, spitzbogen 0.029",
+      "breite_wolkenfleck": 5.4,
+      "versatz": {
+       "bereich": [
+        -1.342,
+        0.191
+       ],
+       "spitzen": [
+        [
+         -0.41,
+         0.265
+        ],
+        [
+         -1.16,
+         0.241
+        ],
+        [
+         -1.19,
+         0.236
+        ],
+        [
+         -0.3,
+         0.171
+        ]
+       ],
+       "kurve": [
+        [
+         -1.34,
+         0.126
+        ],
+        [
+         -1.33,
+         0.131
+        ],
+        [
+         -1.32,
+         0.11
+        ],
+        [
+         -1.31,
+         0.107
+        ],
+        [
+         -1.3,
+         0.104
+        ],
+        [
+         -1.29,
+         0.099
+        ],
+        [
+         -1.28,
+         0.083
+        ],
+        [
+         -1.27,
+         0.065
+        ],
+        [
+         -1.26,
+         0.054
+        ],
+        [
+         -1.25,
+         0.056
+        ],
+        [
+         -1.24,
+         0.072
+        ],
+        [
+         -1.23,
+         0.065
+        ],
+        [
+         -1.22,
+         0.065
+        ],
+        [
+         -1.21,
+         0.101
+        ],
+        [
+         -1.2,
+         0.174
+        ],
+        [
+         -1.19,
+         0.236
+        ],
+        [
+         -1.18,
+         0.225
+        ],
+        [
+         -1.17,
+         0.23
+        ],
+        [
+         -1.16,
+         0.241
+        ],
+        [
+         -1.15,
+         0.235
+        ],
+        [
+         -1.14,
+         0.193
+        ],
+        [
+         -1.13,
+         0.11
+        ],
+        [
+         -1.12,
+         0.105
+        ],
+        [
+         -1.11,
+         0.105
+        ],
+        [
+         -1.1,
+         0.089
+        ],
+        [
+         -1.09,
+         0.081
+        ],
+        [
+         -1.08,
+         0.077
+        ],
+        [
+         -1.07,
+         0.062
+        ],
+        [
+         -1.06,
+         0.065
+        ],
+        [
+         -1.05,
+         0.075
+        ],
+        [
+         -1.04,
+         0.099
+        ],
+        [
+         -1.03,
+         0.117
+        ],
+        [
+         -1.02,
+         0.109
+        ],
+        [
+         -1.01,
+         0.12
+        ],
+        [
+         -1.0,
+         0.123
+        ],
+        [
+         -0.99,
+         0.129
+        ],
+        [
+         -0.98,
+         0.131
+        ],
+        [
+         -0.97,
+         0.136
+        ],
+        [
+         -0.96,
+         0.142
+        ],
+        [
+         -0.95,
+         0.145
+        ],
+        [
+         -0.94,
+         0.139
+        ],
+        [
+         -0.93,
+         0.139
+        ],
+        [
+         -0.92,
+         0.134
+        ],
+        [
+         -0.91,
+         0.128
+        ],
+        [
+         -0.9,
+         0.117
+        ],
+        [
+         -0.89,
+         0.093
+        ],
+        [
+         -0.88,
+         0.073
+        ],
+        [
+         -0.87,
+         0.059
+        ],
+        [
+         -0.86,
+         0.053
+        ],
+        [
+         -0.85,
+         0.053
+        ],
+        [
+         -0.84,
+         0.061
+        ],
+        [
+         -0.83,
+         0.059
+        ],
+        [
+         -0.82,
+         0.059
+        ],
+        [
+         -0.81,
+         0.062
+        ],
+        [
+         -0.8,
+         0.059
+        ],
+        [
+         -0.79,
+         0.059
+        ],
+        [
+         -0.78,
+         0.048
+        ],
+        [
+         -0.77,
+         0.046
+        ],
+        [
+         -0.76,
+         0.069
+        ],
+        [
+         -0.75,
+         0.077
+        ],
+        [
+         -0.74,
+         0.08
+        ],
+        [
+         -0.73,
+         0.08
+        ],
+        [
+         -0.72,
+         0.075
+        ],
+        [
+         -0.71,
+         0.065
+        ],
+        [
+         -0.7,
+         0.062
+        ],
+        [
+         -0.69,
+         0.053
+        ],
+        [
+         -0.68,
+         0.048
+        ],
+        [
+         -0.67,
+         0.065
+        ],
+        [
+         -0.66,
+         0.078
+        ],
+        [
+         -0.65,
+         0.096
+        ],
+        [
+         -0.64,
+         0.097
+        ],
+        [
+         -0.63,
+         0.102
+        ],
+        [
+         -0.62,
+         0.097
+        ],
+        [
+         -0.61,
+         0.096
+        ],
+        [
+         -0.6,
+         0.094
+        ],
+        [
+         -0.59,
+         0.086
+        ],
+        [
+         -0.58,
+         0.067
+        ],
+        [
+         -0.57,
+         0.075
+        ],
+        [
+         -0.56,
+         0.083
+        ],
+        [
+         -0.55,
+         0.091
+        ],
+        [
+         -0.54,
+         0.097
+        ],
+        [
+         -0.53,
+         0.102
+        ],
+        [
+         -0.52,
+         0.107
+        ],
+        [
+         -0.51,
+         0.104
+        ],
+        [
+         -0.5,
+         0.118
+        ],
+        [
+         -0.49,
+         0.094
+        ],
+        [
+         -0.48,
+         0.093
+        ],
+        [
+         -0.47,
+         0.096
+        ],
+        [
+         -0.46,
+         0.101
+        ],
+        [
+         -0.45,
+         0.099
+        ],
+        [
+         -0.44,
+         0.11
+        ],
+        [
+         -0.43,
+         0.149
+        ],
+        [
+         -0.42,
+         0.19
+        ],
+        [
+         -0.41,
+         0.265
+        ],
+        [
+         -0.4,
+         0.251
+        ],
+        [
+         -0.39,
+         0.238
+        ],
+        [
+         -0.38,
+         0.224
+        ],
+        [
+         -0.37,
+         0.211
+        ],
+        [
+         -0.36,
+         0.187
+        ],
+        [
+         -0.35,
+         0.139
+        ],
+        [
+         -0.34,
+         0.081
+        ],
+        [
+         -0.33,
+         0.089
+        ],
+        [
+         -0.32,
+         0.123
+        ],
+        [
+         -0.31,
+         0.153
+        ],
+        [
+         -0.3,
+         0.171
+        ],
+        [
+         -0.29,
+         0.161
+        ],
+        [
+         -0.28,
+         0.163
+        ],
+        [
+         -0.27,
+         0.144
+        ],
+        [
+         -0.26,
+         0.136
+        ],
+        [
+         -0.25,
+         0.115
+        ],
+        [
+         -0.24,
+         0.125
+        ],
+        [
+         -0.23,
+         0.131
+        ],
+        [
+         -0.22,
+         0.115
+        ],
+        [
+         -0.21,
+         0.105
+        ],
+        [
+         -0.2,
+         0.089
+        ],
+        [
+         -0.19,
+         0.085
+        ],
+        [
+         -0.18,
+         0.061
+        ],
+        [
+         -0.17,
+         0.062
+        ],
+        [
+         -0.16,
+         0.064
+        ],
+        [
+         -0.15,
+         0.065
+        ],
+        [
+         -0.14,
+         0.069
+        ],
+        [
+         -0.13,
+         0.072
+        ],
+        [
+         -0.12,
+         0.075
+        ],
+        [
+         -0.11,
+         0.102
+        ],
+        [
+         -0.1,
+         0.104
+        ],
+        [
+         -0.09,
+         0.126
+        ],
+        [
+         -0.08,
+         0.153
+        ],
+        [
+         -0.07,
+         0.196
+        ],
+        [
+         0.06,
+         0.393
+        ],
+        [
+         0.07,
+         0.348
+        ],
+        [
+         0.08,
+         0.296
+        ],
+        [
+         0.09,
+         0.216
+        ],
+        [
+         0.1,
+         0.193
+        ],
+        [
+         0.11,
+         0.181
+        ],
+        [
+         0.12,
+         0.157
+        ],
+        [
+         0.13,
+         0.136
+        ],
+        [
+         0.14,
+         0.11
+        ],
+        [
+         0.15,
+         0.088
+        ],
+        [
+         0.16,
+         0.075
+        ],
+        [
+         0.17,
+         0.07
+        ],
+        [
+         0.18,
+         0.072
+        ],
+        [
+         0.19,
+         0.077
+        ]
+       ],
+       "untergrund": 0.101,
+       "geprueft": [
+        {
+         "g": -0.41,
+         "beleg_versatz": 0.265,
+         "beleg_eigen": 0.29,
+         "beleg_abschluss": 0.25,
+         "laibungskante": [
+          "links"
+         ]
+        }
+       ]
+      },
+      "innen": {
+       "uL": -2.081,
+       "uR": 2.415,
+       "breite": 4.496,
+       "kaempfer": 2.986,
+       "scheitel": 6.223
+      },
+      "aussen": {
+       "uL": -2.463,
+       "uR": 2.794,
+       "breite": 5.258,
+       "kaempfer": 3.23,
+       "scheitel": 6.604
+      }
+     },
+     "wolkenrand": {
+      "form": "rundbogen",
+      "form_quelle": "wolkenrand",
+      "breite": 5.366,
+      "kaempfer": 3.659,
+      "scheitel": 6.342,
+      "reste": {
+       "sturz": {
+        "rest": 0.218,
+        "median": 0.087,
+        "punkte": 1718
+       },
+       "rundbogen": {
+        "rest": 0.111,
+        "median": 0.043,
+        "punkte": 1718
+       },
+       "segmentbogen": {
+        "rest": 0.11,
+        "median": 0.043,
+        "punkte": 1718
+       },
+       "spitzbogen": {
+        "rest": 0.103,
+        "median": 0.034,
+        "punkte": 1718
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 5.258,
+      "scheitel": 6.604,
+      "kaempfer": 3.23,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.029,
+       "chamfer_laibungen": 0.08,
+       "chamfer_abschluss": 0.052,
+       "belegt": 0.65,
+       "belegt_abschluss": 0.72
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": 0.381,
+      "links": 0.382,
+      "rechts": 0.38,
+      "scheitel": 0.381,
+      "quelle": "Abstand Aussen-/Innenkante",
+      "tiefe_innenkante_links": 0.132,
+      "tiefe_innenkante_rechts": null,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "id": "f00_wand_o0"
     },
     {
@@ -152,36 +1037,60 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.04,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "hinweis": "Oeffnung zu klein fuer die Laibungssuche"
+     },
      "id": "f00_wand_o1"
     },
     {
-     "form": "unbestimmt",
+     "form": "sturz",
      "sicher": true,
-     "form_grund": "sturz 0.099 gegen rundbogen 0.112: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.008, rundbogen 0.052, segmentbogen 0.008, spitzbogen 0.057",
+     "form_quelle": "wandbild",
      "zone": [
-      -3.119,
-      -2.389,
+      -3.461,
+      -2.211,
       9.012,
-      9.311
+      9.816
      ],
-     "mitte_u": -2.754,
+     "mitte_u": -2.836,
      "breite": {
-      "wert": 0.73,
-      "punkte": 246,
-      "rest": 0.099,
-      "kantenpunkte_links": 0,
-      "kantenpunkte_rechts": 0
+      "wert": 1.25,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.008,
+       "chamfer_laibungen": 0.074,
+       "chamfer_abschluss": 0.029,
+       "belegt": 0.68,
+       "belegt_abschluss": 0.92
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
       "wert": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.008,
+       "chamfer_laibungen": 0.074,
+       "chamfer_abschluss": 0.029,
+       "belegt": 0.68,
+       "belegt_abschluss": 0.92
+      },
       "hinweis": "gerader Sturz: kein Kaempfer"
      },
      "scheitel": {
-      "wert": 9.311,
+      "wert": 9.816,
       "stich": 0.0,
-      "kantenpunkte": 0,
-      "rest_kanten": null
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.008,
+       "chamfer_laibungen": 0.074,
+       "chamfer_abschluss": 0.029,
+       "belegt": 0.68,
+       "belegt_abschluss": 0.92
+      }
      },
      "sohlbank": {
       "wert": 9.012,
@@ -227,36 +1136,341 @@
       "Form aus dem Rand des Wolkenflecks: nur 1 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.04,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 37,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 37,
+       "kanten": [
+        {
+         "u": -2.239,
+         "tiefe": -0.01,
+         "tiefe_tol": 0.07,
+         "fotos": 13,
+         "rest": 0.016,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -2.208,
+         "tiefe": -0.215,
+         "tiefe_tol": 0.07,
+         "fotos": 20,
+         "rest": 0.013,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": -2.239,
+       "innen_kandidaten": [],
+       "innen": {
+        "u": -2.208,
+        "tiefe": -0.215,
+        "tiefe_tol": 0.07,
+        "fotos": 20,
+        "rest": 0.013,
+        "quelle": "einzelfotos"
+       },
+       "aussen": {
+        "u": -2.208,
+        "tiefe": -0.215,
+        "tiefe_tol": 0.07,
+        "fotos": 20,
+        "rest": 0.013,
+        "quelle": "einzelfotos"
+       }
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0248,
+        "belegt": 0.94,
+        "stich": 0.0,
+        "breite": 1.24,
+        "uL": -3.464,
+        "kaempfer": 9.814
+       },
+       "rundbogen": {
+        "rest": 0.0522,
+        "belegt": 0.4,
+        "stich": 0.624,
+        "breite": 1.248,
+        "uL": -3.445,
+        "kaempfer": 9.252
+       },
+       "segmentbogen": {
+        "rest": 0.0561,
+        "belegt": 0.55,
+        "stich": 0.296,
+        "breite": 1.286,
+        "uL": -3.497,
+        "kaempfer": 9.565
+       },
+       "spitzbogen": {
+        "rest": 0.0544,
+        "belegt": 0.41,
+        "stich": 0.658,
+        "breite": 1.289,
+        "uL": -3.473,
+        "kaempfer": 9.215
+       }
+      },
+      "kantenzug_punkte": 326,
+      "reste": {
+       "sturz": {
+        "rest": 0.008,
+        "stich": 0.0,
+        "breite": 1.25,
+        "kaempfer": 9.816,
+        "punkte": 326
+       },
+       "rundbogen": {
+        "rest": 0.0522,
+        "stich": 0.656,
+        "breite": 1.311,
+        "kaempfer": 9.215,
+        "punkte": 326
+       },
+       "segmentbogen": {
+        "rest": 0.0083,
+        "stich": 0.025,
+        "breite": 1.249,
+        "kaempfer": 9.797,
+        "punkte": 326
+       },
+       "spitzbogen": {
+        "rest": 0.0573,
+        "stich": 0.7,
+        "breite": 1.399,
+        "kaempfer": 9.166,
+        "punkte": 326
+       }
+      },
+      "form": "sturz",
+      "form_grund": "Rest sturz 0.008, rundbogen 0.052, segmentbogen 0.008, spitzbogen 0.057",
+      "breite_wolkenfleck": 0.84,
+      "versatz": {
+       "bereich": [
+        -0.183,
+        0.12
+       ],
+       "spitzen": [
+        [
+         -0.15,
+         0.09
+        ],
+        [
+         -0.12,
+         0.076
+        ],
+        [
+         -0.1,
+         0.062
+        ]
+       ],
+       "kurve": [
+        [
+         -0.18,
+         0.153
+        ],
+        [
+         -0.17,
+         0.132
+        ],
+        [
+         -0.16,
+         0.083
+        ],
+        [
+         -0.15,
+         0.09
+        ],
+        [
+         -0.14,
+         0.09
+        ],
+        [
+         -0.13,
+         0.069
+        ],
+        [
+         -0.12,
+         0.076
+        ],
+        [
+         -0.11,
+         0.056
+        ],
+        [
+         -0.1,
+         0.062
+        ],
+        [
+         -0.09,
+         0.062
+        ],
+        [
+         -0.08,
+         0.062
+        ],
+        [
+         -0.07,
+         0.049
+        ],
+        [
+         0.06,
+         0.0
+        ],
+        [
+         0.07,
+         0.0
+        ],
+        [
+         0.08,
+         0.0
+        ],
+        [
+         0.09,
+         0.0
+        ],
+        [
+         0.1,
+         0.0
+        ],
+        [
+         0.11,
+         0.0
+        ],
+        [
+         0.12,
+         0.021
+        ]
+       ],
+       "untergrund": 0.062
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": -3.461,
+       "uR": -2.211,
+       "breite": 1.25,
+       "kaempfer": null,
+       "scheitel": 9.816
+      },
+      "aussen": {
+       "uL": -3.461,
+       "uR": -2.211,
+       "breite": 1.25,
+       "kaempfer": null,
+       "scheitel": 9.816
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 0.73,
+      "kaempfer": null,
+      "scheitel": 9.311,
+      "reste": {
+       "sturz": {
+        "rest": 0.099,
+        "median": 0.056,
+        "punkte": 246
+       },
+       "rundbogen": {
+        "rest": 0.112,
+        "median": 0.078,
+        "punkte": 246
+       },
+       "segmentbogen": {
+        "rest": 0.103,
+        "median": 0.08,
+        "punkte": 246
+       },
+       "spitzbogen": {
+        "rest": 0.124,
+        "median": 0.117,
+        "punkte": 246
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 1.25,
+      "scheitel": 9.816,
+      "kaempfer": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.008,
+       "chamfer_laibungen": 0.074,
+       "chamfer_abschluss": 0.029,
+       "belegt": 0.68,
+       "belegt_abschluss": 0.92
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": -0.215,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "id": "f00_wand_o2"
     },
     {
-     "form": "unbestimmt",
+     "form": "sturz",
      "sicher": true,
-     "form_grund": "sturz 0.052 gegen rundbogen 0.062: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.009, rundbogen 0.035, segmentbogen 0.010, spitzbogen 0.045",
+     "form_quelle": "wandbild",
      "zone": [
-      0.173,
-      0.62,
+      0.011,
+      0.692,
       9.172,
-      9.619
+      9.816
      ],
-     "mitte_u": 0.397,
+     "mitte_u": 0.352,
      "breite": {
-      "wert": 0.447,
-      "punkte": 126,
-      "rest": 0.052,
-      "kantenpunkte_links": 0,
-      "kantenpunkte_rechts": 0
+      "wert": 0.681,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.009,
+       "chamfer_laibungen": 0.11,
+       "chamfer_abschluss": 0.003,
+       "belegt": 0.45,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
       "wert": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.009,
+       "chamfer_laibungen": 0.11,
+       "chamfer_abschluss": 0.003,
+       "belegt": 0.45,
+       "belegt_abschluss": 1.0
+      },
       "hinweis": "gerader Sturz: kein Kaempfer"
      },
      "scheitel": {
-      "wert": 9.619,
+      "wert": 9.816,
       "stich": 0.0,
-      "kantenpunkte": 0,
-      "rest_kanten": null
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.009,
+       "chamfer_laibungen": 0.11,
+       "chamfer_abschluss": 0.003,
+       "belegt": 0.45,
+       "belegt_abschluss": 1.0
+      }
      },
      "sohlbank": {
       "wert": 9.172,
@@ -302,6 +1516,296 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.05,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 36,
+       "kanten": [
+        {
+         "u": 0.014,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 0,
+         "rest": null,
+         "quelle": "wandbild"
+        }
+       ],
+       "aussen_start": 0.014,
+       "innen_kandidaten": [],
+       "innen": {
+        "u": 0.014,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 0,
+        "rest": null,
+        "quelle": "wandbild"
+       },
+       "aussen": {
+        "u": 0.014,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 0,
+        "rest": null,
+        "quelle": "wandbild"
+       }
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 34,
+       "kanten": [
+        {
+         "u": 0.71,
+         "tiefe": -0.314,
+         "tiefe_tol": 0.07,
+         "fotos": 9,
+         "rest": 0.016,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 0.71,
+       "innen_kandidaten": [],
+       "innen": {
+        "u": 0.71,
+        "tiefe": -0.314,
+        "tiefe_tol": 0.07,
+        "fotos": 9,
+        "rest": 0.016,
+        "quelle": "einzelfotos"
+       },
+       "aussen": {
+        "u": 0.71,
+        "tiefe": -0.314,
+        "tiefe_tol": 0.07,
+        "fotos": 9,
+        "rest": 0.016,
+        "quelle": "einzelfotos"
+       }
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0041,
+        "belegt": 1.0,
+        "stich": 0.0,
+        "breite": 0.703,
+        "uL": 0.01,
+        "kaempfer": 9.817
+       },
+       "rundbogen": {
+        "rest": 0.0924,
+        "belegt": 0.36,
+        "stich": 0.185,
+        "breite": 0.369,
+        "uL": 0.18,
+        "kaempfer": 9.633
+       },
+       "segmentbogen": {
+        "rest": 0.0692,
+        "belegt": 0.57,
+        "stich": 0.237,
+        "breite": 0.73,
+        "uL": 0.01,
+        "kaempfer": 9.606
+       },
+       "spitzbogen": {
+        "rest": 0.0956,
+        "belegt": 0.32,
+        "stich": 0.275,
+        "breite": 0.372,
+        "uL": 0.181,
+        "kaempfer": 9.73
+       }
+      },
+      "kantenzug_punkte": 168,
+      "reste": {
+       "sturz": {
+        "rest": 0.0089,
+        "stich": 0.0,
+        "breite": 0.681,
+        "kaempfer": 9.816,
+        "punkte": 168
+       },
+       "rundbogen": {
+        "rest": 0.0354,
+        "stich": 0.665,
+        "breite": 1.331,
+        "kaempfer": 9.174,
+        "punkte": 168
+       },
+       "segmentbogen": {
+        "rest": 0.0096,
+        "stich": 0.014,
+        "breite": 0.712,
+        "kaempfer": 9.806,
+        "punkte": 168
+       },
+       "spitzbogen": {
+        "rest": 0.0455,
+        "stich": 0.376,
+        "breite": 0.751,
+        "kaempfer": 9.478,
+        "punkte": 168
+       }
+      },
+      "form": "sturz",
+      "form_grund": "Rest sturz 0.009, rundbogen 0.035, segmentbogen 0.010, spitzbogen 0.045",
+      "breite_wolkenfleck": 0.475,
+      "versatz": {
+       "bereich": [
+        -0.112,
+        0.15
+       ],
+       "spitzen": [
+        [
+         0.12,
+         0.24
+        ],
+        [
+         -0.09,
+         0.07
+        ]
+       ],
+       "kurve": [
+        [
+         -0.11,
+         0.07
+        ],
+        [
+         -0.1,
+         0.06
+        ],
+        [
+         -0.09,
+         0.07
+        ],
+        [
+         -0.08,
+         0.06
+        ],
+        [
+         -0.07,
+         0.06
+        ],
+        [
+         -0.06,
+         0.07
+        ],
+        [
+         0.07,
+         0.0
+        ],
+        [
+         0.08,
+         0.0
+        ],
+        [
+         0.09,
+         0.0
+        ],
+        [
+         0.1,
+         0.0
+        ],
+        [
+         0.11,
+         0.16
+        ],
+        [
+         0.12,
+         0.24
+        ],
+        [
+         0.13,
+         0.24
+        ],
+        [
+         0.14,
+         0.24
+        ],
+        [
+         0.15,
+         0.27
+        ]
+       ],
+       "untergrund": 0.07,
+       "geprueft": [
+        {
+         "g": 0.12,
+         "beleg_versatz": 0.24,
+         "beleg_eigen": 0.3,
+         "beleg_abschluss": 0.79,
+         "laibungskante": []
+        }
+       ]
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": 0.011,
+       "uR": 0.692,
+       "breite": 0.681,
+       "kaempfer": null,
+       "scheitel": 9.816
+      },
+      "aussen": {
+       "uL": 0.011,
+       "uR": 0.692,
+       "breite": 0.681,
+       "kaempfer": null,
+       "scheitel": 9.816
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 0.447,
+      "kaempfer": null,
+      "scheitel": 9.619,
+      "reste": {
+       "sturz": {
+        "rest": 0.052,
+        "median": 0.04,
+        "punkte": 126
+       },
+       "rundbogen": {
+        "rest": 0.062,
+        "median": 0.046,
+        "punkte": 126
+       },
+       "segmentbogen": {
+        "rest": 0.052,
+        "median": 0.041,
+        "punkte": 126
+       },
+       "spitzbogen": {
+        "rest": 0.062,
+        "median": 0.046,
+        "punkte": 126
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 0.681,
+      "scheitel": 9.816,
+      "kaempfer": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.009,
+       "chamfer_laibungen": 0.11,
+       "chamfer_abschluss": 0.003,
+       "belegt": 0.45,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": -0.314,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "innen": [
       {
        "form": "unbestimmt",
@@ -380,33 +1884,52 @@
      "id": "f00_wand_o3"
     },
     {
-     "form": "unbestimmt",
+     "form": "sturz",
      "sicher": true,
-     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.006, rundbogen 0.095, segmentbogen 0.005, spitzbogen 0.095",
+     "form_quelle": "wandbild",
      "zone": [
-      -2.808,
-      -2.434,
+      -3.239,
+      -2.365,
       9.672,
-      10.159
+      9.823
      ],
-     "mitte_u": -2.621,
+     "mitte_u": -2.802,
      "breite": {
-      "wert": 0.375,
-      "punkte": 38,
-      "rest": 0.003,
-      "kantenpunkte_links": 3,
-      "kantenpunkte_rechts": 5
+      "wert": 0.874,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.006,
+       "chamfer_laibungen": 0.069,
+       "chamfer_abschluss": 0.005,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
       "wert": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.006,
+       "chamfer_laibungen": 0.069,
+       "chamfer_abschluss": 0.005,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      },
       "hinweis": "gerader Sturz: kein Kaempfer"
      },
      "scheitel": {
-      "wert": 10.159,
+      "wert": 9.823,
       "stich": 0.0,
-      "kantenpunkte": 50,
-      "rest_kanten": 0.065
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.006,
+       "chamfer_laibungen": 0.069,
+       "chamfer_abschluss": 0.005,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      }
      },
      "sohlbank": {
       "wert": 9.672,
@@ -452,36 +1975,367 @@
       "Form aus dem Rand des Wolkenflecks: nur 58 Kantenpunkte am Umriss, 69% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 37,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 37,
+       "kanten": [
+        {
+         "u": -2.251,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 14,
+         "rest": 0.013,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": -2.251,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0049,
+        "belegt": 1.0,
+        "stich": 0.0,
+        "breite": 0.86,
+        "uL": -3.232,
+        "kaempfer": 9.826
+       },
+       "rundbogen": {
+        "rest": 0.0779,
+        "belegt": 0.45,
+        "stich": 0.281,
+        "breite": 0.561,
+        "uL": -2.938,
+        "kaempfer": 9.712
+       },
+       "segmentbogen": {
+        "rest": 0.0112,
+        "belegt": 1.0,
+        "stich": 0.04,
+        "breite": 0.858,
+        "uL": -3.23,
+        "kaempfer": 9.792
+       },
+       "spitzbogen": {
+        "rest": 0.0801,
+        "belegt": 0.39,
+        "stich": 0.304,
+        "breite": 0.603,
+        "uL": -2.92,
+        "kaempfer": 9.71
+       }
+      },
+      "kantenzug_punkte": 175,
+      "reste": {
+       "sturz": {
+        "rest": 0.0057,
+        "stich": 0.0,
+        "breite": 0.874,
+        "kaempfer": 9.823,
+        "punkte": 175
+       },
+       "rundbogen": {
+        "rest": 0.0952,
+        "stich": 0.218,
+        "breite": 0.437,
+        "kaempfer": 10.832,
+        "punkte": 175
+       },
+       "segmentbogen": {
+        "rest": 0.0053,
+        "stich": 0.047,
+        "breite": 1.837,
+        "kaempfer": 9.78,
+        "punkte": 175
+       },
+       "spitzbogen": {
+        "rest": 0.0946,
+        "stich": 0.557,
+        "breite": 0.481,
+        "kaempfer": 9.672,
+        "punkte": 175
+       }
+      },
+      "form": "sturz",
+      "form_grund": "Rest sturz 0.006, rundbogen 0.095, segmentbogen 0.005, spitzbogen 0.095",
+      "breite_wolkenfleck": 0.4,
+      "versatz": {
+       "bereich": [
+        -0.094,
+        0.3
+       ],
+       "spitzen": [
+        [
+         0.18,
+         0.661
+        ],
+        [
+         0.16,
+         0.644
+        ]
+       ],
+       "kurve": [
+        [
+         -0.09,
+         0.0
+        ],
+        [
+         -0.08,
+         0.0
+        ],
+        [
+         -0.07,
+         0.0
+        ],
+        [
+         -0.06,
+         0.0
+        ],
+        [
+         0.07,
+         0.0
+        ],
+        [
+         0.08,
+         0.0
+        ],
+        [
+         0.09,
+         0.0
+        ],
+        [
+         0.1,
+         0.136
+        ],
+        [
+         0.11,
+         0.305
+        ],
+        [
+         0.12,
+         0.559
+        ],
+        [
+         0.13,
+         0.576
+        ],
+        [
+         0.14,
+         0.61
+        ],
+        [
+         0.15,
+         0.627
+        ],
+        [
+         0.16,
+         0.644
+        ],
+        [
+         0.17,
+         0.644
+        ],
+        [
+         0.18,
+         0.661
+        ],
+        [
+         0.19,
+         0.525
+        ],
+        [
+         0.2,
+         0.068
+        ],
+        [
+         0.21,
+         0.051
+        ],
+        [
+         0.22,
+         0.0
+        ],
+        [
+         0.23,
+         0.0
+        ],
+        [
+         0.24,
+         0.0
+        ],
+        [
+         0.25,
+         0.0
+        ],
+        [
+         0.26,
+         0.0
+        ],
+        [
+         0.27,
+         0.0
+        ],
+        [
+         0.28,
+         0.0
+        ],
+        [
+         0.29,
+         0.034
+        ],
+        [
+         0.3,
+         0.051
+        ]
+       ],
+       "untergrund": 0.017,
+       "geprueft": [
+        {
+         "g": 0.18,
+         "beleg_versatz": 0.661,
+         "beleg_eigen": 0.4,
+         "beleg_abschluss": 0.58,
+         "laibungskante": []
+        },
+        {
+         "g": 0.16,
+         "beleg_versatz": 0.644,
+         "beleg_eigen": 0.47,
+         "beleg_abschluss": 0.75,
+         "laibungskante": []
+        }
+       ]
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": -3.239,
+       "uR": -2.365,
+       "breite": 0.874,
+       "kaempfer": null,
+       "scheitel": 9.823
+      },
+      "aussen": {
+       "uL": -3.239,
+       "uR": -2.365,
+       "breite": 0.874,
+       "kaempfer": null,
+       "scheitel": 9.823
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 0.375,
+      "kaempfer": null,
+      "scheitel": 10.159,
+      "reste": {
+       "sturz": {
+        "rest": 0.003,
+        "median": 0.002,
+        "punkte": 38
+       },
+       "rundbogen": {
+        "rest": 0.025,
+        "median": 0.01,
+        "punkte": 38
+       },
+       "segmentbogen": {
+        "rest": 0.004,
+        "median": 0.003,
+        "punkte": 38
+       },
+       "spitzbogen": {
+        "rest": 0.025,
+        "median": 0.01,
+        "punkte": 38
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 0.874,
+      "scheitel": 9.823,
+      "kaempfer": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.006,
+       "chamfer_laibungen": 0.069,
+       "chamfer_abschluss": 0.005,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": null,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "id": "f00_wand_o4"
     },
     {
-     "form": "unbestimmt",
+     "form": "sturz",
      "sicher": true,
-     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.014, rundbogen 0.024, segmentbogen 0.019, spitzbogen 0.037",
+     "form_quelle": "wandbild",
      "zone": [
-      2.892,
-      3.266,
+      2.943,
+      3.169,
       19.972,
-      20.259
+      20.097
      ],
-     "mitte_u": 3.079,
+     "mitte_u": 3.056,
      "breite": {
-      "wert": 0.374,
-      "punkte": 22,
-      "rest": 0.003,
-      "kantenpunkte_links": 0,
-      "kantenpunkte_rechts": 2
+      "wert": 0.226,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.014,
+       "chamfer_laibungen": 0.036,
+       "chamfer_abschluss": 0.013,
+       "belegt": 0.76,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
       "wert": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.014,
+       "chamfer_laibungen": 0.036,
+       "chamfer_abschluss": 0.013,
+       "belegt": 0.76,
+       "belegt_abschluss": 1.0
+      },
       "hinweis": "gerader Sturz: kein Kaempfer"
      },
      "scheitel": {
-      "wert": 20.259,
+      "wert": 20.097,
       "stich": 0.0,
-      "kantenpunkte": 0,
-      "rest_kanten": null
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.014,
+       "chamfer_laibungen": 0.036,
+       "chamfer_abschluss": 0.013,
+       "belegt": 0.76,
+       "belegt_abschluss": 1.0
+      }
      },
      "sohlbank": {
       "wert": 19.972,
@@ -527,6 +2381,412 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 7,
+       "kanten": [
+        {
+         "u": 2.614,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 5,
+         "rest": 0.013,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 2.694,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 6,
+         "rest": 0.016,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 2.804,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 3,
+         "rest": 0.013,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 2.804,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 12,
+       "kanten": [
+        {
+         "u": 3.224,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 6,
+         "rest": 0.009,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 3.333,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 5,
+         "rest": 0.06,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 3.224,
+       "innen_kandidaten": [],
+       "innen": {
+        "u": 3.224,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 6,
+        "rest": 0.009,
+        "quelle": "einzelfotos"
+       },
+       "aussen": {
+        "u": 3.224,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 6,
+        "rest": 0.009,
+        "quelle": "einzelfotos"
+       }
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0105,
+        "belegt": 1.0,
+        "stich": 0.0,
+        "breite": 0.22,
+        "uL": 2.945,
+        "kaempfer": 20.092
+       },
+       "rundbogen": {
+        "rest": 0.027,
+        "belegt": 0.82,
+        "stich": 0.216,
+        "breite": 0.433,
+        "uL": 2.757,
+        "kaempfer": 20.294
+       },
+       "segmentbogen": {
+        "rest": 0.0296,
+        "belegt": 0.81,
+        "stich": 0.159,
+        "breite": 0.41,
+        "uL": 2.763,
+        "kaempfer": 20.353
+       },
+       "spitzbogen": {
+        "rest": 0.0162,
+        "belegt": 0.94,
+        "stich": 0.329,
+        "breite": 0.151,
+        "uL": 2.95,
+        "kaempfer": 20.092
+       }
+      },
+      "kantenzug_punkte": 40,
+      "reste": {
+       "sturz": {
+        "rest": 0.0139,
+        "stich": 0.0,
+        "breite": 0.226,
+        "kaempfer": 20.097,
+        "punkte": 40
+       },
+       "rundbogen": {
+        "rest": 0.0236,
+        "stich": 0.142,
+        "breite": 0.284,
+        "kaempfer": 19.972,
+        "punkte": 40
+       },
+       "segmentbogen": {
+        "rest": 0.0194,
+        "stich": 0.027,
+        "breite": 0.235,
+        "kaempfer": 20.077,
+        "punkte": 40
+       },
+       "spitzbogen": {
+        "rest": 0.0366,
+        "stich": 0.297,
+        "breite": 0.169,
+        "kaempfer": 20.422,
+        "punkte": 40
+       }
+      },
+      "form": "sturz",
+      "form_grund": "Rest sturz 0.014, rundbogen 0.024, segmentbogen 0.019, spitzbogen 0.037",
+      "breite_wolkenfleck": 0.4,
+      "versatz": {
+       "bereich": [
+        -0.094,
+        0.387
+       ],
+       "spitzen": [
+        [
+         0.33,
+         0.64
+        ],
+        [
+         0.3,
+         0.4
+        ],
+        [
+         0.13,
+         0.24
+        ],
+        [
+         0.24,
+         0.24
+        ]
+       ],
+       "kurve": [
+        [
+         -0.09,
+         0.32
+        ],
+        [
+         -0.08,
+         0.32
+        ],
+        [
+         -0.07,
+         0.32
+        ],
+        [
+         -0.06,
+         0.32
+        ],
+        [
+         0.07,
+         0.0
+        ],
+        [
+         0.08,
+         0.0
+        ],
+        [
+         0.09,
+         0.08
+        ],
+        [
+         0.1,
+         0.12
+        ],
+        [
+         0.11,
+         0.12
+        ],
+        [
+         0.12,
+         0.16
+        ],
+        [
+         0.13,
+         0.24
+        ],
+        [
+         0.14,
+         0.24
+        ],
+        [
+         0.15,
+         0.2
+        ],
+        [
+         0.16,
+         0.2
+        ],
+        [
+         0.17,
+         0.2
+        ],
+        [
+         0.18,
+         0.2
+        ],
+        [
+         0.19,
+         0.2
+        ],
+        [
+         0.2,
+         0.16
+        ],
+        [
+         0.21,
+         0.16
+        ],
+        [
+         0.22,
+         0.16
+        ],
+        [
+         0.23,
+         0.16
+        ],
+        [
+         0.24,
+         0.24
+        ],
+        [
+         0.25,
+         0.24
+        ],
+        [
+         0.26,
+         0.24
+        ],
+        [
+         0.27,
+         0.24
+        ],
+        [
+         0.28,
+         0.24
+        ],
+        [
+         0.29,
+         0.36
+        ],
+        [
+         0.3,
+         0.4
+        ],
+        [
+         0.31,
+         0.4
+        ],
+        [
+         0.32,
+         0.44
+        ],
+        [
+         0.33,
+         0.64
+        ],
+        [
+         0.34,
+         0.56
+        ],
+        [
+         0.35,
+         0.4
+        ],
+        [
+         0.36,
+         0.4
+        ],
+        [
+         0.37,
+         0.44
+        ],
+        [
+         0.38,
+         0.6
+        ]
+       ],
+       "untergrund": 0.24,
+       "geprueft": [
+        {
+         "g": 0.33,
+         "beleg_versatz": 0.64,
+         "beleg_eigen": 0.39,
+         "beleg_abschluss": 0.33,
+         "laibungskante": []
+        },
+        {
+         "g": 0.3,
+         "beleg_versatz": 0.4,
+         "beleg_eigen": 0.48,
+         "beleg_abschluss": 0.3,
+         "laibungskante": []
+        },
+        {
+         "g": 0.13,
+         "beleg_versatz": 0.24,
+         "beleg_eigen": 0.22,
+         "beleg_abschluss": 0.0,
+         "laibungskante": []
+        }
+       ]
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": 2.943,
+       "uR": 3.169,
+       "breite": 0.226,
+       "kaempfer": null,
+       "scheitel": 20.097
+      },
+      "aussen": {
+       "uL": 2.943,
+       "uR": 3.169,
+       "breite": 0.226,
+       "kaempfer": null,
+       "scheitel": 20.097
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 0.374,
+      "kaempfer": null,
+      "scheitel": 20.259,
+      "reste": {
+       "sturz": {
+        "rest": 0.003,
+        "median": 0.003,
+        "punkte": 22
+       },
+       "rundbogen": {
+        "rest": 0.018,
+        "median": 0.016,
+        "punkte": 22
+       },
+       "segmentbogen": {
+        "rest": 0.004,
+        "median": 0.003,
+        "punkte": 22
+       },
+       "spitzbogen": {
+        "rest": 0.02,
+        "median": 0.018,
+        "punkte": 22
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 0.226,
+      "scheitel": 20.097,
+      "kaempfer": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.014,
+       "chamfer_laibungen": 0.036,
+       "chamfer_abschluss": 0.013,
+       "belegt": 0.76,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": null,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "id": "f00_wand_o5"
     },
     {
@@ -602,36 +2862,60 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "hinweis": "Oeffnung zu klein fuer die Laibungssuche"
+     },
      "id": "f00_wand_o6"
     },
     {
-     "form": "unbestimmt",
+     "form": "rundbogen",
      "sicher": true,
-     "form_grund": "sturz 0.075 gegen rundbogen 0.051: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.084, rundbogen 0.026, segmentbogen 0.026, spitzbogen 0.026",
+     "form_quelle": "wandbild",
      "zone": [
-      -2.788,
-      -1.06,
+      -3.101,
+      -0.977,
       23.352,
-      25.606
+      25.457
      ],
-     "mitte_u": -1.924,
+     "mitte_u": -2.039,
      "breite": {
-      "wert": 1.728,
-      "punkte": 394,
-      "rest": 0.039,
-      "kantenpunkte_links": 94,
-      "kantenpunkte_rechts": 2
+      "wert": 2.124,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.072,
+       "chamfer_abschluss": 0.009,
+       "belegt": 0.84,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
-      "wert": 25.182,
+      "wert": 24.394,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.072,
+       "chamfer_abschluss": 0.009,
+       "belegt": 0.84,
+       "belegt_abschluss": 1.0
+      },
       "hinweis": null
      },
      "scheitel": {
-      "wert": 25.606,
-      "stich": 0.424,
-      "kantenpunkte": 0,
-      "rest_kanten": null
+      "wert": 25.457,
+      "stich": 1.062,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.072,
+       "chamfer_abschluss": 0.009,
+       "belegt": 0.84,
+       "belegt_abschluss": 1.0
+      }
      },
      "sohlbank": {
       "wert": 23.28,
@@ -645,7 +2929,7 @@
       "kanten": 0.26,
       "kantenpunkte": 96
      },
-     "radius": null,
+     "radius": 1.062,
      "reste": {
       "sturz": {
        "rest": 0.075,
@@ -677,6 +2961,517 @@
       "Form aus dem Rand des Wolkenflecks: nur 46 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.08,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 21,
+       "kanten": [
+        {
+         "u": -3.056,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 7,
+         "rest": 0.018,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -2.956,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 7,
+         "rest": 0.029,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -2.411,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 8,
+         "rest": 0.031,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -2.367,
+         "tiefe": 0.398,
+         "tiefe_tol": 0.076,
+         "fotos": 14,
+         "rest": 0.01,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": -2.956,
+       "innen_kandidaten": [
+        -2.411,
+        -2.367
+       ],
+       "innen": {
+        "u": -3.056,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 7,
+        "rest": 0.018,
+        "quelle": "einzelfotos"
+       },
+       "aussen": {
+        "u": -3.056,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 7,
+        "rest": 0.018,
+        "quelle": "einzelfotos"
+       }
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 21,
+       "kanten": [
+        {
+         "u": -0.958,
+         "tiefe": 0.549,
+         "tiefe_tol": 0.07,
+         "fotos": 13,
+         "rest": 0.016,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -0.885,
+         "tiefe": 0.303,
+         "tiefe_tol": 0.07,
+         "fotos": 19,
+         "rest": 0.011,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": -0.958,
+       "innen_kandidaten": [],
+       "innen": {
+        "u": -0.958,
+        "tiefe": 0.549,
+        "tiefe_tol": 0.07,
+        "fotos": 13,
+        "rest": 0.016,
+        "quelle": "einzelfotos"
+       },
+       "aussen": {
+        "u": -0.958,
+        "tiefe": 0.549,
+        "tiefe_tol": 0.07,
+        "fotos": 13,
+        "rest": 0.016,
+        "quelle": "einzelfotos"
+       }
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0409,
+        "belegt": 0.76,
+        "stich": 0.0,
+        "breite": 2.04,
+        "uL": -3.013,
+        "kaempfer": 25.059
+       },
+       "rundbogen": {
+        "rest": 0.0076,
+        "belegt": 1.0,
+        "stich": 1.077,
+        "breite": 2.154,
+        "uL": -3.123,
+        "kaempfer": 24.372
+       },
+       "segmentbogen": {
+        "rest": 0.0091,
+        "belegt": 1.0,
+        "stich": 0.696,
+        "breite": 2.024,
+        "uL": -3.016,
+        "kaempfer": 24.748
+       },
+       "spitzbogen": {
+        "rest": 0.0131,
+        "belegt": 0.98,
+        "stich": 1.203,
+        "breite": 2.068,
+        "uL": -3.049,
+        "kaempfer": 24.372
+       }
+      },
+      "kantenzug_punkte": 1194,
+      "reste": {
+       "sturz": {
+        "rest": 0.0838,
+        "stich": 0.0,
+        "breite": 2.074,
+        "kaempfer": 25.348,
+        "punkte": 1194
+       },
+       "rundbogen": {
+        "rest": 0.0262,
+        "stich": 1.062,
+        "breite": 2.124,
+        "kaempfer": 24.394,
+        "punkte": 1194
+       },
+       "segmentbogen": {
+        "rest": 0.0262,
+        "stich": 1.009,
+        "breite": 2.126,
+        "kaempfer": 24.446,
+        "punkte": 1194
+       },
+       "spitzbogen": {
+        "rest": 0.0262,
+        "stich": 1.071,
+        "breite": 2.129,
+        "kaempfer": 24.386,
+        "punkte": 1194
+       }
+      },
+      "form": "rundbogen",
+      "form_grund": "Rest sturz 0.084, rundbogen 0.026, segmentbogen 0.026, spitzbogen 0.026",
+      "breite_wolkenfleck": 1.92,
+      "versatz": {
+       "bereich": [
+        -0.432,
+        0.24
+       ],
+       "spitzen": [
+        [
+         -0.09,
+         0.838
+        ],
+        [
+         -0.24,
+         0.68
+        ],
+        [
+         -0.19,
+         0.643
+        ],
+        [
+         0.1,
+         0.364
+        ]
+       ],
+       "kurve": [
+        [
+         -0.43,
+         0.243
+        ],
+        [
+         -0.42,
+         0.25
+        ],
+        [
+         -0.41,
+         0.261
+        ],
+        [
+         -0.4,
+         0.257
+        ],
+        [
+         -0.39,
+         0.294
+        ],
+        [
+         -0.38,
+         0.32
+        ],
+        [
+         -0.37,
+         0.349
+        ],
+        [
+         -0.36,
+         0.331
+        ],
+        [
+         -0.35,
+         0.312
+        ],
+        [
+         -0.34,
+         0.298
+        ],
+        [
+         -0.33,
+         0.327
+        ],
+        [
+         -0.32,
+         0.342
+        ],
+        [
+         -0.31,
+         0.382
+        ],
+        [
+         -0.3,
+         0.408
+        ],
+        [
+         -0.29,
+         0.434
+        ],
+        [
+         -0.28,
+         0.496
+        ],
+        [
+         -0.27,
+         0.537
+        ],
+        [
+         -0.26,
+         0.61
+        ],
+        [
+         -0.25,
+         0.662
+        ],
+        [
+         -0.24,
+         0.68
+        ],
+        [
+         -0.23,
+         0.665
+        ],
+        [
+         -0.22,
+         0.618
+        ],
+        [
+         -0.21,
+         0.596
+        ],
+        [
+         -0.2,
+         0.625
+        ],
+        [
+         -0.19,
+         0.643
+        ],
+        [
+         -0.18,
+         0.643
+        ],
+        [
+         -0.17,
+         0.629
+        ],
+        [
+         -0.16,
+         0.643
+        ],
+        [
+         -0.15,
+         0.669
+        ],
+        [
+         -0.14,
+         0.68
+        ],
+        [
+         -0.13,
+         0.735
+        ],
+        [
+         -0.12,
+         0.783
+        ],
+        [
+         -0.11,
+         0.801
+        ],
+        [
+         -0.1,
+         0.827
+        ],
+        [
+         -0.09,
+         0.838
+        ],
+        [
+         -0.08,
+         0.827
+        ],
+        [
+         -0.07,
+         0.798
+        ],
+        [
+         0.06,
+         0.397
+        ],
+        [
+         0.07,
+         0.375
+        ],
+        [
+         0.08,
+         0.36
+        ],
+        [
+         0.09,
+         0.353
+        ],
+        [
+         0.1,
+         0.364
+        ],
+        [
+         0.11,
+         0.353
+        ],
+        [
+         0.12,
+         0.335
+        ],
+        [
+         0.13,
+         0.338
+        ],
+        [
+         0.14,
+         0.327
+        ],
+        [
+         0.15,
+         0.331
+        ],
+        [
+         0.16,
+         0.283
+        ],
+        [
+         0.17,
+         0.272
+        ],
+        [
+         0.18,
+         0.257
+        ],
+        [
+         0.19,
+         0.265
+        ],
+        [
+         0.2,
+         0.268
+        ],
+        [
+         0.21,
+         0.276
+        ],
+        [
+         0.22,
+         0.276
+        ],
+        [
+         0.23,
+         0.276
+        ],
+        [
+         0.24,
+         0.309
+        ]
+       ],
+       "untergrund": 0.362,
+       "geprueft": [
+        {
+         "g": -0.09,
+         "beleg_versatz": 0.838,
+         "beleg_eigen": 0.83,
+         "beleg_abschluss": 1.0,
+         "laibungskante": []
+        },
+        {
+         "g": -0.24,
+         "beleg_versatz": 0.68,
+         "beleg_eigen": 0.64,
+         "beleg_abschluss": 0.93,
+         "laibungskante": []
+        },
+        {
+         "g": -0.19,
+         "beleg_versatz": 0.643,
+         "beleg_eigen": 0.62,
+         "beleg_abschluss": 0.89,
+         "laibungskante": []
+        }
+       ]
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": -3.101,
+       "uR": -0.977,
+       "breite": 2.124,
+       "kaempfer": 24.394,
+       "scheitel": 25.457
+      },
+      "aussen": {
+       "uL": -3.101,
+       "uR": -0.977,
+       "breite": 2.124,
+       "kaempfer": 24.394,
+       "scheitel": 25.457
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 1.728,
+      "kaempfer": 25.182,
+      "scheitel": 25.606,
+      "reste": {
+       "sturz": {
+        "rest": 0.075,
+        "median": 0.076,
+        "punkte": 394
+       },
+       "rundbogen": {
+        "rest": 0.051,
+        "median": 0.058,
+        "punkte": 394
+       },
+       "segmentbogen": {
+        "rest": 0.039,
+        "median": 0.054,
+        "punkte": 394
+       },
+       "spitzbogen": {
+        "rest": 0.051,
+        "median": 0.058,
+        "punkte": 394
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 2.124,
+      "scheitel": 25.457,
+      "kaempfer": 24.394,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.072,
+       "chamfer_abschluss": 0.009,
+       "belegt": 0.84,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": 0.549,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "innen": [
       {
        "form": "unbestimmt",
@@ -756,33 +3551,52 @@
      "id": "f00_wand_o7"
     },
     {
-     "form": "unbestimmt",
+     "form": "rundbogen",
      "sicher": true,
-     "form_grund": "sturz 0.086 gegen rundbogen 0.071: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.085, rundbogen 0.026, segmentbogen 0.026, spitzbogen 0.026",
+     "form_quelle": "wandbild",
      "zone": [
-      1.45,
-      3.088,
+      1.131,
+      3.262,
       23.372,
-      25.591
+      25.511
      ],
-     "mitte_u": 2.269,
+     "mitte_u": 2.196,
      "breite": {
-      "wert": 1.638,
-      "punkte": 282,
-      "rest": 0.057,
-      "kantenpunkte_links": 50,
-      "kantenpunkte_rechts": 54
+      "wert": 2.131,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.073,
+       "chamfer_abschluss": 0.007,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
-      "wert": 25.182,
+      "wert": 24.446,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.073,
+       "chamfer_abschluss": 0.007,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      },
       "hinweis": null
      },
      "scheitel": {
-      "wert": 25.591,
-      "stich": 0.409,
-      "kantenpunkte": 0,
-      "rest_kanten": null
+      "wert": 25.511,
+      "stich": 1.065,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.073,
+       "chamfer_abschluss": 0.007,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      }
      },
      "sohlbank": {
       "wert": 23.33,
@@ -796,7 +3610,7 @@
       "kanten": 0.16,
       "kantenpunkte": 104
      },
-     "radius": null,
+     "radius": 1.065,
      "reste": {
       "sturz": {
        "rest": 0.086,
@@ -828,6 +3642,498 @@
       "Form aus dem Rand des Wolkenflecks: nur 105 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 17,
+       "kanten": [
+        {
+         "u": 1.208,
+         "tiefe": 0.18,
+         "tiefe_tol": 0.088,
+         "fotos": 13,
+         "rest": 0.011,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 1.814,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 6,
+         "rest": 0.035,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 1.865,
+         "tiefe": 0.376,
+         "tiefe_tol": 0.088,
+         "fotos": 13,
+         "rest": 0.01,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 1.208,
+       "innen_kandidaten": [
+        1.814
+       ],
+       "innen": null,
+       "aussen": null
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 16,
+       "kanten": [
+        {
+         "u": 3.006,
+         "tiefe": 0.155,
+         "tiefe_tol": 0.082,
+         "fotos": 8,
+         "rest": 0.013,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": 3.37,
+         "tiefe": 0.263,
+         "tiefe_tol": 0.098,
+         "fotos": 4,
+         "rest": 0.008,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 3.006,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0533,
+        "belegt": 0.71,
+        "stich": 0.0,
+        "breite": 2.01,
+        "uL": 1.229,
+        "kaempfer": 24.812
+       },
+       "rundbogen": {
+        "rest": 0.0066,
+        "belegt": 1.0,
+        "stich": 1.065,
+        "breite": 2.13,
+        "uL": 1.131,
+        "kaempfer": 24.443
+       },
+       "segmentbogen": {
+        "rest": 0.0088,
+        "belegt": 1.0,
+        "stich": 0.679,
+        "breite": 1.971,
+        "uL": 1.176,
+        "kaempfer": 24.689
+       },
+       "spitzbogen": {
+        "rest": 0.0137,
+        "belegt": 0.99,
+        "stich": 1.067,
+        "breite": 1.98,
+        "uL": 1.165,
+        "kaempfer": 24.452
+       }
+      },
+      "kantenzug_punkte": 1220,
+      "reste": {
+       "sturz": {
+        "rest": 0.0846,
+        "stich": 0.0,
+        "breite": 2.058,
+        "kaempfer": 25.386,
+        "punkte": 610
+       },
+       "rundbogen": {
+        "rest": 0.0263,
+        "stich": 1.065,
+        "breite": 2.131,
+        "kaempfer": 24.446,
+        "punkte": 610
+       },
+       "segmentbogen": {
+        "rest": 0.0263,
+        "stich": 0.953,
+        "breite": 2.127,
+        "kaempfer": 24.557,
+        "punkte": 610
+       },
+       "spitzbogen": {
+        "rest": 0.0263,
+        "stich": 1.066,
+        "breite": 2.131,
+        "kaempfer": 24.446,
+        "punkte": 610
+       }
+      },
+      "form": "rundbogen",
+      "form_grund": "Rest sturz 0.085, rundbogen 0.026, segmentbogen 0.026, spitzbogen 0.026",
+      "breite_wolkenfleck": 1.85,
+      "versatz": {
+       "bereich": [
+        -0.409,
+        0.3
+       ],
+       "spitzen": [
+        [
+         -0.12,
+         0.76
+        ],
+        [
+         -0.09,
+         0.756
+        ],
+        [
+         -0.34,
+         0.618
+        ],
+        [
+         -0.37,
+         0.578
+        ]
+       ],
+       "kurve": [
+        [
+         -0.41,
+         0.531
+        ],
+        [
+         -0.4,
+         0.531
+        ],
+        [
+         -0.39,
+         0.524
+        ],
+        [
+         -0.38,
+         0.538
+        ],
+        [
+         -0.37,
+         0.578
+        ],
+        [
+         -0.36,
+         0.571
+        ],
+        [
+         -0.35,
+         0.604
+        ],
+        [
+         -0.34,
+         0.618
+        ],
+        [
+         -0.33,
+         0.607
+        ],
+        [
+         -0.32,
+         0.585
+        ],
+        [
+         -0.31,
+         0.545
+        ],
+        [
+         -0.3,
+         0.553
+        ],
+        [
+         -0.29,
+         0.553
+        ],
+        [
+         -0.28,
+         0.498
+        ],
+        [
+         -0.27,
+         0.535
+        ],
+        [
+         -0.26,
+         0.531
+        ],
+        [
+         -0.25,
+         0.535
+        ],
+        [
+         -0.24,
+         0.527
+        ],
+        [
+         -0.23,
+         0.531
+        ],
+        [
+         -0.22,
+         0.531
+        ],
+        [
+         -0.21,
+         0.491
+        ],
+        [
+         -0.2,
+         0.476
+        ],
+        [
+         -0.19,
+         0.502
+        ],
+        [
+         -0.18,
+         0.487
+        ],
+        [
+         -0.17,
+         0.513
+        ],
+        [
+         -0.16,
+         0.538
+        ],
+        [
+         -0.15,
+         0.615
+        ],
+        [
+         -0.14,
+         0.651
+        ],
+        [
+         -0.13,
+         0.691
+        ],
+        [
+         -0.12,
+         0.76
+        ],
+        [
+         -0.11,
+         0.753
+        ],
+        [
+         -0.1,
+         0.742
+        ],
+        [
+         -0.09,
+         0.756
+        ],
+        [
+         -0.08,
+         0.709
+        ],
+        [
+         -0.07,
+         0.684
+        ],
+        [
+         0.06,
+         0.495
+        ],
+        [
+         0.07,
+         0.444
+        ],
+        [
+         0.08,
+         0.375
+        ],
+        [
+         0.09,
+         0.353
+        ],
+        [
+         0.1,
+         0.222
+        ],
+        [
+         0.11,
+         0.211
+        ],
+        [
+         0.12,
+         0.193
+        ],
+        [
+         0.13,
+         0.204
+        ],
+        [
+         0.14,
+         0.185
+        ],
+        [
+         0.15,
+         0.164
+        ],
+        [
+         0.16,
+         0.127
+        ],
+        [
+         0.17,
+         0.102
+        ],
+        [
+         0.18,
+         0.098
+        ],
+        [
+         0.19,
+         0.109
+        ],
+        [
+         0.2,
+         0.102
+        ],
+        [
+         0.21,
+         0.098
+        ],
+        [
+         0.22,
+         0.08
+        ],
+        [
+         0.23,
+         0.098
+        ],
+        [
+         0.24,
+         0.087
+        ],
+        [
+         0.25,
+         0.105
+        ],
+        [
+         0.26,
+         0.105
+        ],
+        [
+         0.27,
+         0.084
+        ],
+        [
+         0.28,
+         0.084
+        ],
+        [
+         0.29,
+         0.076
+        ],
+        [
+         0.3,
+         0.105
+        ]
+       ],
+       "untergrund": 0.508,
+       "geprueft": [
+        {
+         "g": -0.12,
+         "beleg_versatz": 0.76,
+         "beleg_eigen": 0.81,
+         "beleg_abschluss": 1.0,
+         "laibungskante": []
+        },
+        {
+         "g": -0.09,
+         "beleg_versatz": 0.756,
+         "beleg_eigen": 0.82,
+         "beleg_abschluss": 1.0,
+         "laibungskante": []
+        },
+        {
+         "g": -0.34,
+         "beleg_versatz": 0.618,
+         "beleg_eigen": 0.56,
+         "beleg_abschluss": 0.8,
+         "laibungskante": [
+          "rechts"
+         ]
+        }
+       ]
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": 1.131,
+       "uR": 3.262,
+       "breite": 2.131,
+       "kaempfer": 24.446,
+       "scheitel": 25.511
+      },
+      "aussen": {
+       "uL": 1.131,
+       "uR": 3.262,
+       "breite": 2.131,
+       "kaempfer": 24.446,
+       "scheitel": 25.511
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 1.638,
+      "kaempfer": 25.182,
+      "scheitel": 25.591,
+      "reste": {
+       "sturz": {
+        "rest": 0.086,
+        "median": 0.068,
+        "punkte": 282
+       },
+       "rundbogen": {
+        "rest": 0.071,
+        "median": 0.059,
+        "punkte": 282
+       },
+       "segmentbogen": {
+        "rest": 0.057,
+        "median": 0.058,
+        "punkte": 282
+       },
+       "spitzbogen": {
+        "rest": 0.071,
+        "median": 0.059,
+        "punkte": 282
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 2.131,
+      "scheitel": 25.511,
+      "kaempfer": 24.446,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.026,
+       "chamfer_laibungen": 0.073,
+       "chamfer_abschluss": 0.007,
+       "belegt": 0.83,
+       "belegt_abschluss": 1.0
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": null,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "innen": [
       {
        "form": "unbestimmt",
@@ -906,33 +4212,52 @@
      "id": "f00_wand_o8"
     },
     {
-     "form": "unbestimmt",
+     "form": "segmentbogen",
      "sicher": true,
-     "form_grund": "sturz 0.066 gegen rundbogen 0.066: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.053, rundbogen 0.081, segmentbogen 0.031, spitzbogen 0.088",
+     "form_quelle": "wandbild",
      "zone": [
-      -1.653,
-      -0.42,
+      -2.087,
+      -0.413,
       27.872,
-      28.509
+      28.502
      ],
-     "mitte_u": -1.036,
+     "mitte_u": -1.25,
      "breite": {
-      "wert": 1.233,
-      "punkte": 94,
-      "rest": 0.056,
-      "kantenpunkte_links": 0,
-      "kantenpunkte_rechts": 0
+      "wert": 1.673,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.031,
+       "chamfer_laibungen": 0.042,
+       "chamfer_abschluss": 0.03,
+       "belegt": 0.88,
+       "belegt_abschluss": 0.95
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
-      "wert": 28.299,
+      "wert": 28.266,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.031,
+       "chamfer_laibungen": 0.042,
+       "chamfer_abschluss": 0.03,
+       "belegt": 0.88,
+       "belegt_abschluss": 0.95
+      },
       "hinweis": null
      },
      "scheitel": {
-      "wert": 28.509,
-      "stich": 0.21,
-      "kantenpunkte": 0,
-      "rest_kanten": null
+      "wert": 28.502,
+      "stich": 0.236,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.031,
+       "chamfer_laibungen": 0.042,
+       "chamfer_abschluss": 0.03,
+       "belegt": 0.88,
+       "belegt_abschluss": 0.95
+      }
      },
      "sohlbank": {
       "wert": 27.872,
@@ -946,7 +4271,7 @@
       "kanten": null,
       "kantenpunkte": 0
      },
-     "radius": null,
+     "radius": 1.601,
      "reste": {
       "sturz": {
        "rest": 0.066,
@@ -978,6 +4303,421 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 11,
+       "kanten": [
+        {
+         "u": -1.996,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 8,
+         "rest": 0.017,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": -1.996,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 11,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0205,
+        "belegt": 0.93,
+        "stich": 0.0,
+        "breite": 1.669,
+        "uL": -2.081,
+        "kaempfer": 28.456
+       },
+       "rundbogen": {
+        "rest": 0.0338,
+        "belegt": 0.81,
+        "stich": 0.667,
+        "breite": 1.333,
+        "uL": -1.739,
+        "kaempfer": 27.912
+       },
+       "segmentbogen": {
+        "rest": 0.0299,
+        "belegt": 0.93,
+        "stich": 0.236,
+        "breite": 1.664,
+        "uL": -2.078,
+        "kaempfer": 28.265
+       },
+       "spitzbogen": {
+        "rest": 0.0396,
+        "belegt": 0.76,
+        "stich": 0.981,
+        "breite": 1.71,
+        "uL": -2.135,
+        "kaempfer": 28.053
+       }
+      },
+      "kantenzug_punkte": 368,
+      "reste": {
+       "sturz": {
+        "rest": 0.0532,
+        "stich": 0.0,
+        "breite": 1.638,
+        "kaempfer": 28.458,
+        "punkte": 368
+       },
+       "rundbogen": {
+        "rest": 0.0812,
+        "stich": 0.748,
+        "breite": 1.497,
+        "kaempfer": 27.872,
+        "punkte": 368
+       },
+       "segmentbogen": {
+        "rest": 0.0313,
+        "stich": 0.236,
+        "breite": 1.673,
+        "kaempfer": 28.266,
+        "punkte": 368
+       },
+       "spitzbogen": {
+        "rest": 0.0883,
+        "stich": 0.791,
+        "breite": 1.582,
+        "kaempfer": 27.872,
+        "punkte": 368
+       }
+      },
+      "form": "segmentbogen",
+      "form_grund": "Rest sturz 0.053, rundbogen 0.081, segmentbogen 0.031, spitzbogen 0.088",
+      "breite_wolkenfleck": 1.3,
+      "versatz": {
+       "bereich": [
+        -0.308,
+        0.3
+       ],
+       "spitzen": [
+        [
+         -0.09,
+         0.75
+        ],
+        [
+         0.07,
+         0.734
+        ],
+        [
+         0.12,
+         0.656
+        ],
+        [
+         0.23,
+         0.648
+        ]
+       ],
+       "kurve": [
+        [
+         -0.31,
+         0.484
+        ],
+        [
+         -0.3,
+         0.5
+        ],
+        [
+         -0.29,
+         0.539
+        ],
+        [
+         -0.28,
+         0.531
+        ],
+        [
+         -0.27,
+         0.523
+        ],
+        [
+         -0.26,
+         0.57
+        ],
+        [
+         -0.25,
+         0.531
+        ],
+        [
+         -0.24,
+         0.523
+        ],
+        [
+         -0.23,
+         0.562
+        ],
+        [
+         -0.22,
+         0.57
+        ],
+        [
+         -0.21,
+         0.523
+        ],
+        [
+         -0.2,
+         0.5
+        ],
+        [
+         -0.19,
+         0.484
+        ],
+        [
+         -0.18,
+         0.492
+        ],
+        [
+         -0.17,
+         0.492
+        ],
+        [
+         -0.16,
+         0.414
+        ],
+        [
+         -0.15,
+         0.445
+        ],
+        [
+         -0.14,
+         0.477
+        ],
+        [
+         -0.13,
+         0.484
+        ],
+        [
+         -0.12,
+         0.555
+        ],
+        [
+         -0.11,
+         0.641
+        ],
+        [
+         -0.1,
+         0.727
+        ],
+        [
+         -0.09,
+         0.75
+        ],
+        [
+         -0.08,
+         0.703
+        ],
+        [
+         -0.07,
+         0.719
+        ],
+        [
+         0.06,
+         0.703
+        ],
+        [
+         0.07,
+         0.734
+        ],
+        [
+         0.08,
+         0.734
+        ],
+        [
+         0.09,
+         0.711
+        ],
+        [
+         0.1,
+         0.703
+        ],
+        [
+         0.11,
+         0.641
+        ],
+        [
+         0.12,
+         0.656
+        ],
+        [
+         0.13,
+         0.617
+        ],
+        [
+         0.14,
+         0.617
+        ],
+        [
+         0.15,
+         0.609
+        ],
+        [
+         0.16,
+         0.625
+        ],
+        [
+         0.17,
+         0.617
+        ],
+        [
+         0.18,
+         0.633
+        ],
+        [
+         0.19,
+         0.625
+        ],
+        [
+         0.2,
+         0.617
+        ],
+        [
+         0.21,
+         0.633
+        ],
+        [
+         0.22,
+         0.602
+        ],
+        [
+         0.23,
+         0.648
+        ],
+        [
+         0.24,
+         0.57
+        ],
+        [
+         0.25,
+         0.57
+        ],
+        [
+         0.26,
+         0.57
+        ],
+        [
+         0.27,
+         0.633
+        ],
+        [
+         0.28,
+         0.586
+        ],
+        [
+         0.29,
+         0.539
+        ],
+        [
+         0.3,
+         0.562
+        ]
+       ],
+       "untergrund": 0.578,
+       "geprueft": [
+        {
+         "g": -0.09,
+         "beleg_versatz": 0.75,
+         "beleg_eigen": 0.7,
+         "beleg_abschluss": 0.78,
+         "laibungskante": []
+        },
+        {
+         "g": 0.07,
+         "beleg_versatz": 0.734,
+         "beleg_eigen": 0.74,
+         "beleg_abschluss": 0.81,
+         "laibungskante": []
+        },
+        {
+         "g": 0.12,
+         "beleg_versatz": 0.656,
+         "beleg_eigen": 0.69,
+         "beleg_abschluss": 0.77,
+         "laibungskante": []
+        }
+       ]
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": -2.087,
+       "uR": -0.413,
+       "breite": 1.673,
+       "kaempfer": 28.266,
+       "scheitel": 28.502
+      },
+      "aussen": {
+       "uL": -2.087,
+       "uR": -0.413,
+       "breite": 1.673,
+       "kaempfer": 28.266,
+       "scheitel": 28.502
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 1.233,
+      "kaempfer": 28.299,
+      "scheitel": 28.509,
+      "reste": {
+       "sturz": {
+        "rest": 0.066,
+        "median": 0.052,
+        "punkte": 94
+       },
+       "rundbogen": {
+        "rest": 0.066,
+        "median": 0.05,
+        "punkte": 94
+       },
+       "segmentbogen": {
+        "rest": 0.056,
+        "median": 0.046,
+        "punkte": 94
+       },
+       "spitzbogen": {
+        "rest": 0.1,
+        "median": 0.083,
+        "punkte": 94
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 1.673,
+      "scheitel": 28.502,
+      "kaempfer": 28.266,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.031,
+       "chamfer_laibungen": 0.042,
+       "chamfer_abschluss": 0.03,
+       "belegt": 0.88,
+       "belegt_abschluss": 0.95
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": null,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "id": "f00_wand_o9"
     },
     {
@@ -1054,6 +4794,89 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 12,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 12,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0373,
+        "belegt": 0.58,
+        "stich": 0.0,
+        "breite": 0.116,
+        "uL": -2.76,
+        "kaempfer": 28.732
+       },
+       "rundbogen": {
+        "rest": 0.042,
+        "belegt": 0.63,
+        "stich": 0.057,
+        "breite": 0.114,
+        "uL": -2.747,
+        "kaempfer": 28.7
+       },
+       "segmentbogen": {
+        "rest": 0.0287,
+        "belegt": 0.65,
+        "stich": 0.127,
+        "breite": 0.26,
+        "uL": -2.743,
+        "kaempfer": 28.732
+       },
+       "spitzbogen": {
+        "rest": 0.0138,
+        "belegt": 0.93,
+        "stich": 0.219,
+        "breite": 0.327,
+        "uL": -2.737,
+        "kaempfer": 28.64
+       }
+      },
+      "kantenzug_punkte": 221,
+      "reste": {
+       "sturz": {
+        "rest": 0.0296,
+        "stich": 0.0,
+        "breite": 0.312,
+        "kaempfer": 28.827,
+        "punkte": 221
+       },
+       "rundbogen": {
+        "rest": 0.0265,
+        "stich": 0.157,
+        "breite": 0.314,
+        "kaempfer": 28.685,
+        "punkte": 221
+       },
+       "segmentbogen": {
+        "rest": 0.0273,
+        "stich": 0.098,
+        "breite": 0.314,
+        "kaempfer": 28.737,
+        "punkte": 221
+       },
+       "spitzbogen": {
+        "rest": 0.0262,
+        "stich": 0.308,
+        "breite": 0.324,
+        "kaempfer": 28.577,
+        "punkte": 221
+       }
+      },
+      "form": "unbestimmt",
+      "form_grund": "sturz 0.030 gegen rundbogen 0.026: kein klarer Sieger (Faktor 0.6)"
+     },
      "id": "f00_wand_o10"
     },
     {
@@ -1130,6 +4953,98 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f00_fein.png + ortho_f00.png",
+      "einzelfotos": 40,
+      "laibung_links": {
+       "fotos_sehen": 11,
+       "kanten": [
+        {
+         "u": 3.124,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 0,
+         "rest": null,
+         "quelle": "wandbild"
+        }
+       ],
+       "aussen_start": 3.124,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 11,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0262,
+        "belegt": 0.91,
+        "stich": 0.0,
+        "breite": 0.672,
+        "uL": 3.219,
+        "kaempfer": 32.621
+       },
+       "rundbogen": {
+        "rest": 0.0135,
+        "belegt": 0.67,
+        "stich": 0.058,
+        "breite": 0.116,
+        "uL": 3.377,
+        "kaempfer": 32.795
+       },
+       "segmentbogen": {
+        "rest": 0.0141,
+        "belegt": 0.96,
+        "stich": 0.184,
+        "breite": 0.98,
+        "uL": 2.911,
+        "kaempfer": 32.852
+       },
+       "spitzbogen": {
+        "rest": 0.034,
+        "belegt": 0.9,
+        "stich": 0.327,
+        "breite": 0.586,
+        "uL": 2.979,
+        "kaempfer": 32.112
+       }
+      },
+      "kantenzug_punkte": 423,
+      "reste": {
+       "sturz": {
+        "rest": 0.0412,
+        "stich": 0.0,
+        "breite": 0.961,
+        "kaempfer": 33.015,
+        "punkte": 423
+       },
+       "rundbogen": {
+        "rest": 0.0367,
+        "stich": 0.501,
+        "breite": 1.002,
+        "kaempfer": 32.567,
+        "punkte": 423
+       },
+       "segmentbogen": {
+        "rest": 0.0303,
+        "stich": 0.192,
+        "breite": 0.977,
+        "kaempfer": 32.856,
+        "punkte": 423
+       },
+       "spitzbogen": {
+        "rest": 0.0368,
+        "stich": 0.5,
+        "breite": 1.001,
+        "kaempfer": 32.569,
+        "punkte": 423
+       }
+      },
+      "form": "unbestimmt",
+      "form_grund": "sturz 0.041 gegen rundbogen 0.037: kein klarer Sieger (Faktor 0.6)"
+     },
      "id": "f00_wand_o11"
     }
    ],
@@ -1138,7 +5053,12 @@
    "schwelle_hinten": 0.07,
    "boden_z": 1.57,
    "wolkenpunkte": 3773682,
-   "quelle": "wolke+kanten"
+   "quelle": "wolke+kanten",
+   "wandbild": {
+    "ordner": "/media/oem/scan/rc-park_daten/schwabentor-1120/fassade_fein",
+    "bild": "ortho_f00_fein.png + ortho_f00.png",
+    "einzelfotos": 40
+   }
   },
   "f02_wand": {
    "oeffnungen": [
@@ -1215,6 +5135,23 @@
       "Form aus dem Rand des Wolkenflecks: nur 6 Kantenpunkte am Umriss, 10% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f02_fein.png + ortho_f02.png",
+      "einzelfotos": 36,
+      "laibung_links": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "hinweis": "Wandbild an der Oeffnung leer"
+     },
      "id": "f02_wand_o0"
     }
    ],
@@ -1223,7 +5160,12 @@
    "schwelle_hinten": 0.096,
    "boden_z": -0.03,
    "wolkenpunkte": 2015208,
-   "quelle": "wolke+kanten"
+   "quelle": "wolke+kanten",
+   "wandbild": {
+    "ordner": "/media/oem/scan/rc-park_daten/schwabentor-1120/fassade_fein",
+    "bild": "ortho_f02_fein.png + ortho_f02.png",
+    "einzelfotos": 36
+   }
   },
   "f03_wand": {
    "oeffnungen": [
@@ -1294,6 +5236,116 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "laibung_links": {
+       "fotos_sehen": 16,
+       "kanten": [
+        {
+         "u": -4.844,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 4,
+         "rest": 0.093,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -4.554,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 6,
+         "rest": 0.018,
+         "quelle": "einzelfotos"
+        },
+        {
+         "u": -4.337,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 4,
+         "rest": 0.089,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": -4.554,
+       "innen_kandidaten": [
+        -4.337
+       ]
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 18,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.078,
+        "belegt": 0.51,
+        "stich": 0.0,
+        "breite": 0.943,
+        "uL": -4.485,
+        "kaempfer": 3.483
+       },
+       "rundbogen": {
+        "rest": 0.0521,
+        "belegt": 0.7,
+        "stich": 0.469,
+        "breite": 0.939,
+        "uL": -4.561,
+        "kaempfer": 3.552
+       },
+       "segmentbogen": {
+        "rest": 0.0836,
+        "belegt": 0.31,
+        "stich": 0.277,
+        "breite": 1.046,
+        "uL": -4.638,
+        "kaempfer": 3.335
+       },
+       "spitzbogen": {
+        "rest": 0.0596,
+        "belegt": 0.63,
+        "stich": 0.71,
+        "breite": 1.019,
+        "uL": -4.64,
+        "kaempfer": 3.412
+       }
+      },
+      "kantenzug_punkte": 334,
+      "reste": {
+       "sturz": {
+        "rest": 0.0386,
+        "stich": 0.0,
+        "breite": 0.836,
+        "kaempfer": 3.987,
+        "punkte": 334
+       },
+       "rundbogen": {
+        "rest": 0.0273,
+        "stich": 0.472,
+        "breite": 0.944,
+        "kaempfer": 3.546,
+        "punkte": 334
+       },
+       "segmentbogen": {
+        "rest": 0.027,
+        "stich": 0.295,
+        "breite": 0.934,
+        "kaempfer": 3.717,
+        "punkte": 334
+       },
+       "spitzbogen": {
+        "rest": 0.0273,
+        "stich": 0.471,
+        "breite": 0.942,
+        "kaempfer": 3.547,
+        "punkte": 334
+       }
+      },
+      "form": "unbestimmt",
+      "form_grund": "sturz 0.039 gegen rundbogen 0.027: kein klarer Sieger (Faktor 0.6)"
+     },
      "id": "f03_wand_o0"
     },
     {
@@ -1369,36 +5421,156 @@
       "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "laibung_links": {
+       "fotos_sehen": 8,
+       "kanten": [
+        {
+         "u": -1.99,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 0,
+         "rest": null,
+         "quelle": "wandbild"
+        }
+       ],
+       "aussen_start": -1.99,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 7,
+       "kanten": [
+        {
+         "u": -1.72,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 3,
+         "rest": 0.006,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.12,
+        "belegt": 0.0,
+        "stich": 0.0,
+        "breite": 0.276,
+        "uL": -1.624,
+        "kaempfer": 11.799
+       },
+       "rundbogen": {
+        "rest": 0.0643,
+        "belegt": 0.61,
+        "stich": 0.315,
+        "breite": 0.631,
+        "uL": -1.982,
+        "kaempfer": 10.939
+       },
+       "segmentbogen": {
+        "rest": 0.0691,
+        "belegt": 0.62,
+        "stich": 0.237,
+        "breite": 0.622,
+        "uL": -1.972,
+        "kaempfer": 11.017
+       },
+       "spitzbogen": {
+        "rest": 0.0581,
+        "belegt": 0.71,
+        "stich": 0.422,
+        "breite": 0.629,
+        "uL": -1.976,
+        "kaempfer": 10.863
+       }
+      },
+      "kantenzug_punkte": 702,
+      "reste": {
+       "sturz": {
+        "rest": 0.0449,
+        "stich": 0.0,
+        "breite": 0.624,
+        "kaempfer": 11.167,
+        "punkte": 702
+       },
+       "rundbogen": {
+        "rest": 0.031,
+        "stich": 0.314,
+        "breite": 0.629,
+        "kaempfer": 10.898,
+        "punkte": 702
+       },
+       "segmentbogen": {
+        "rest": 0.0332,
+        "stich": 0.206,
+        "breite": 0.626,
+        "kaempfer": 11.007,
+        "punkte": 702
+       },
+       "spitzbogen": {
+        "rest": 0.029,
+        "stich": 0.413,
+        "breite": 0.63,
+        "kaempfer": 10.847,
+        "punkte": 702
+       }
+      },
+      "form": "unbestimmt",
+      "form_grund": "sturz 0.045 gegen rundbogen 0.031: kein klarer Sieger (Faktor 0.6)"
+     },
      "id": "f03_wand_o1"
     },
     {
-     "form": "unbestimmt",
+     "form": "sturz",
      "sicher": true,
-     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
-     "form_quelle": "wolkenrand",
+     "form_grund": "Bildkanten: Rest sturz 0.021, rundbogen 0.053, segmentbogen 0.020, spitzbogen 0.073",
+     "form_quelle": "wandbild",
      "zone": [
-      4.117,
-      4.653,
+      3.887,
+      5.055,
       19.972,
-      20.357
+      20.657
      ],
-     "mitte_u": 4.385,
+     "mitte_u": 4.471,
      "breite": {
-      "wert": 0.536,
-      "punkte": 38,
-      "rest": 0.022,
-      "kantenpunkte_links": 118,
-      "kantenpunkte_rechts": 42
+      "wert": 1.168,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.021,
+       "chamfer_laibungen": 0.05,
+       "chamfer_abschluss": 0.028,
+       "belegt": 0.77,
+       "belegt_abschluss": 0.81
+      },
+      "hinweis": "lichte Weite (Innenkante)"
      },
      "kaempfer": {
       "wert": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.021,
+       "chamfer_laibungen": 0.05,
+       "chamfer_abschluss": 0.028,
+       "belegt": 0.77,
+       "belegt_abschluss": 0.81
+      },
       "hinweis": "gerader Sturz: kein Kaempfer"
      },
      "scheitel": {
-      "wert": 20.357,
+      "wert": 20.657,
       "stich": 0.0,
-      "kantenpunkte": 40,
-      "rest_kanten": 0.144
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.021,
+       "chamfer_laibungen": 0.05,
+       "chamfer_abschluss": 0.028,
+       "belegt": 0.77,
+       "belegt_abschluss": 0.81
+      }
      },
      "sohlbank": {
       "wert": 20.16,
@@ -1444,6 +5616,361 @@
       "Form aus dem Rand des Wolkenflecks: nur 119 Kantenpunkte am Umriss, 92% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "laibung_links": {
+       "fotos_sehen": 5,
+       "kanten": [
+        {
+         "u": 3.87,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 5,
+         "rest": 0.011,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 3.87,
+       "innen_kandidaten": [],
+       "innen": {
+        "u": 3.87,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 5,
+        "rest": 0.011,
+        "quelle": "einzelfotos"
+       },
+       "aussen": {
+        "u": 3.87,
+        "tiefe": null,
+        "tiefe_tol": null,
+        "fotos": 5,
+        "rest": 0.011,
+        "quelle": "einzelfotos"
+       }
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 6,
+       "kanten": [
+        {
+         "u": 4.959,
+         "tiefe": null,
+         "tiefe_tol": null,
+         "fotos": 5,
+         "rest": 0.009,
+         "quelle": "einzelfotos"
+        }
+       ],
+       "aussen_start": 4.959,
+       "innen_kandidaten": [],
+       "innen": null,
+       "aussen": null
+      },
+      "chamfer": {
+       "sturz": {
+        "rest": 0.0223,
+        "belegt": 0.82,
+        "stich": 0.0,
+        "breite": 1.152,
+        "uL": 3.889,
+        "kaempfer": 20.642
+       },
+       "rundbogen": {
+        "rest": 0.059,
+        "belegt": 0.61,
+        "stich": 0.63,
+        "breite": 1.26,
+        "uL": 3.848,
+        "kaempfer": 20.087
+       },
+       "segmentbogen": {
+        "rest": 0.0628,
+        "belegt": 0.53,
+        "stich": 0.394,
+        "breite": 1.228,
+        "uL": 3.868,
+        "kaempfer": 20.324
+       },
+       "spitzbogen": {
+        "rest": 0.0336,
+        "belegt": 0.82,
+        "stich": 0.328,
+        "breite": 0.167,
+        "uL": 4.446,
+        "kaempfer": 20.192
+       }
+      },
+      "kantenzug_punkte": 413,
+      "reste": {
+       "sturz": {
+        "rest": 0.0211,
+        "stich": 0.0,
+        "breite": 1.168,
+        "kaempfer": 20.657,
+        "punkte": 413
+       },
+       "rundbogen": {
+        "rest": 0.0535,
+        "stich": 0.618,
+        "breite": 1.235,
+        "kaempfer": 20.119,
+        "punkte": 413
+       },
+       "segmentbogen": {
+        "rest": 0.0198,
+        "stich": 0.041,
+        "breite": 1.17,
+        "kaempfer": 20.627,
+        "punkte": 413
+       },
+       "spitzbogen": {
+        "rest": 0.073,
+        "stich": 1.017,
+        "breite": 1.249,
+        "kaempfer": 19.972,
+        "punkte": 413
+       }
+      },
+      "form": "sturz",
+      "form_grund": "Rest sturz 0.021, rundbogen 0.053, segmentbogen 0.020, spitzbogen 0.073",
+      "breite_wolkenfleck": 0.6,
+      "versatz": {
+       "bereich": [
+        -0.134,
+        0.3
+       ],
+       "spitzen": [
+        [
+         0.19,
+         0.18
+        ],
+        [
+         0.29,
+         0.141
+        ],
+        [
+         -0.12,
+         0.062
+        ]
+       ],
+       "kurve": [
+        [
+         -0.13,
+         0.047
+        ],
+        [
+         -0.12,
+         0.062
+        ],
+        [
+         -0.11,
+         0.062
+        ],
+        [
+         -0.1,
+         0.07
+        ],
+        [
+         -0.09,
+         0.086
+        ],
+        [
+         -0.08,
+         0.125
+        ],
+        [
+         -0.07,
+         0.203
+        ],
+        [
+         -0.06,
+         0.25
+        ],
+        [
+         0.07,
+         0.234
+        ],
+        [
+         0.08,
+         0.18
+        ],
+        [
+         0.09,
+         0.078
+        ],
+        [
+         0.1,
+         0.039
+        ],
+        [
+         0.11,
+         0.0
+        ],
+        [
+         0.12,
+         0.008
+        ],
+        [
+         0.13,
+         0.023
+        ],
+        [
+         0.14,
+         0.078
+        ],
+        [
+         0.15,
+         0.125
+        ],
+        [
+         0.16,
+         0.141
+        ],
+        [
+         0.17,
+         0.156
+        ],
+        [
+         0.18,
+         0.164
+        ],
+        [
+         0.19,
+         0.18
+        ],
+        [
+         0.2,
+         0.172
+        ],
+        [
+         0.21,
+         0.094
+        ],
+        [
+         0.22,
+         0.055
+        ],
+        [
+         0.23,
+         0.047
+        ],
+        [
+         0.24,
+         0.031
+        ],
+        [
+         0.25,
+         0.0
+        ],
+        [
+         0.26,
+         0.047
+        ],
+        [
+         0.27,
+         0.086
+        ],
+        [
+         0.28,
+         0.133
+        ],
+        [
+         0.29,
+         0.141
+        ],
+        [
+         0.3,
+         0.141
+        ]
+       ],
+       "untergrund": 0.086,
+       "geprueft": [
+        {
+         "g": 0.19,
+         "beleg_versatz": 0.18,
+         "beleg_eigen": 0.38,
+         "beleg_abschluss": 0.09,
+         "laibungskante": []
+        },
+        {
+         "g": 0.29,
+         "beleg_versatz": 0.141,
+         "beleg_eigen": 0.12,
+         "beleg_abschluss": 0.16,
+         "laibungskante": []
+        }
+       ]
+      },
+      "hinweis_gewaende": "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt",
+      "innen": {
+       "uL": 3.887,
+       "uR": 5.055,
+       "breite": 1.168,
+       "kaempfer": null,
+       "scheitel": 20.657
+      },
+      "aussen": {
+       "uL": 3.887,
+       "uR": 5.055,
+       "breite": 1.168,
+       "kaempfer": null,
+       "scheitel": 20.657
+      }
+     },
+     "wolkenrand": {
+      "form": "unbestimmt",
+      "form_quelle": "wolkenrand",
+      "breite": 0.536,
+      "kaempfer": null,
+      "scheitel": 20.357,
+      "reste": {
+       "sturz": {
+        "rest": 0.022,
+        "median": 0.004,
+        "punkte": 38
+       },
+       "rundbogen": {
+        "rest": 0.027,
+        "median": 0.021,
+        "punkte": 38
+       },
+       "segmentbogen": {
+        "rest": 0.024,
+        "median": 0.014,
+        "punkte": 38
+       },
+       "spitzbogen": {
+        "rest": 0.027,
+        "median": 0.018,
+        "punkte": 38
+       }
+      }
+     },
+     "aussenmass": {
+      "breite": 1.168,
+      "scheitel": 20.657,
+      "kaempfer": null,
+      "quelle": "Umrissausgleich an Bildkanten (Kantenzug)",
+      "rest": {
+       "punktrest": 0.021,
+       "chamfer_laibungen": 0.05,
+       "chamfer_abschluss": 0.028,
+       "belegt": 0.77,
+       "belegt_abschluss": 0.81
+      },
+      "hinweis": "Aussenkante in der Wandebene inkl. Fase/Gewaende"
+     },
+     "gewaende": {
+      "breite": null,
+      "links": null,
+      "rechts": null,
+      "scheitel": null,
+      "quelle": "keine parallele zweite Kante belegt",
+      "tiefe_innenkante_links": null,
+      "tiefe_innenkante_rechts": null,
+      "hinweis": "Tiefe = Parallaxe der Einzelfotos (m hinter der Fassadenebene), nur wenn eine Laibungskante den Umriss traegt"
+     },
      "id": "f03_wand_o2"
     },
     {
@@ -1520,6 +6047,11 @@
       "Form aus dem Rand des Wolkenflecks: nur 96 Kantenpunkte am Umriss, 100% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "hinweis": "Oeffnung zu klein fuer die Laibungssuche"
+     },
      "id": "f03_wand_o3"
     },
     {
@@ -1592,6 +6124,23 @@
      "anteil_hinten": 0.95,
      "annahmen": [],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "laibung_links": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "hinweis": "Wandbild an der Oeffnung leer"
+     },
      "id": "f03_wand_o4"
     },
     {
@@ -1667,6 +6216,23 @@
       "Form aus dem Rand des Wolkenflecks: nur 1293 Kantenpunkte am Umriss, 100% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "laibung_links": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "hinweis": "Wandbild an der Oeffnung leer"
+     },
      "id": "f03_wand_o5"
     },
     {
@@ -1742,6 +6308,23 @@
       "Form aus dem Rand des Wolkenflecks: nur 838 Kantenpunkte am Umriss, 100% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "laibung_links": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "hinweis": "Wandbild an der Oeffnung leer"
+     },
      "id": "f03_wand_o6"
     },
     {
@@ -1817,6 +6400,23 @@
       "Form aus dem Rand des Wolkenflecks: nur 315 Kantenpunkte am Umriss, 70% der Umrisslaenge belegt (noetig 40 / 50%)"
      ],
      "zelle": 0.1,
+     "wandbild": {
+      "bild": "ortho_f03_fein.png + ortho_f03.png",
+      "einzelfotos": 33,
+      "laibung_links": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "laibung_rechts": {
+       "fotos_sehen": 0,
+       "kanten": [],
+       "aussen_start": null,
+       "innen_kandidaten": []
+      },
+      "hinweis": "Wandbild an der Oeffnung leer"
+     },
      "id": "f03_wand_o7"
     }
    ],
@@ -1825,7 +6425,12 @@
    "schwelle_hinten": 0.07,
    "boden_z": 0.17,
    "wolkenpunkte": 1798342,
-   "quelle": "wolke+kanten"
+   "quelle": "wolke+kanten",
+   "wandbild": {
+    "ordner": "/media/oem/scan/rc-park_daten/schwabentor-1120/fassade_fein",
+    "bild": "ortho_f03_fein.png + ortho_f03.png",
+    "einzelfotos": 33
+   }
   }
  }
 }
