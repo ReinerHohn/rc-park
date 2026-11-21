@@ -38,6 +38,7 @@ Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> d
 - Bauteil neu/falsch -> `bauteil-runde` (`modelle/VORLAGE_BAUTEIL_RUNDE.md`).
 - Fassaden/Fenster/Relief/leere Wand -> `fassaden` (`modelle/PIPELINE_FASSADEN.md`).
 - Rippen/Baender/Leisten/Staebe -> `linien-features`.
+- Vorbauten/Erker, Ebenen, Abweichungsschleife, "Kette soll den Handstand erreichen" -> `modelle/METHODE_EBENEN_BAUPLAN.md`.
 - Drucken -> `druck`.
 - Lehren: `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Lehren-Register). Platten: Memory reference-laufwerke-uuid.
 

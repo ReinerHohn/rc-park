@@ -1,0 +1,20 @@
+# Inhalt von modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026)
+- Z.11: ## Läufe (alle automatisch, ohne Eingriff)
+- Z.24: ## Sackgassen und Zeitfresser
+- Z.31: ## Offen (Reihenfolge nach Handstand-Vergleich)
+- Z.41: ## Nachtrag 01:40 - Lage geprüft: Annahme „Lagekorrektur fehlt“ WIDERLEGT
+- Z.49: ## Nachtrag 01:55 - Nutzerkorrektur: KEIN Baukasten, Form aus dem feinen Wandbild
+- Z.53: ## METHODE (Stand 21.11., wird hier fortgeschrieben)
+- Z.65: ## Nachtrag 01:50 - Probe Schritt 3 der Methode (von Hand angestoßen, nur Bild, kein Modellteil)
+- Z.71: ## Rückfälle dieser Nacht (vermeidbar, keine Werkzeuglehre)
+- Z.78: ## Nachtrag ~01:53 (Uhrzeit berichtigt, stand falsch als 02:40) - Form aus dem Bild der Erkerebene: zwei Proben (von Hand angestoßen, noch K
+- Z.84: ## ENTSCHEIDUNG Nutzer 21.11. ~01:55 (berichtigt)
+- Z.88: ## Nachtrag ~01:58 (berichtigt, stand falsch als 03:15) - UNTERSUCHUNG: Wie weit trägt die Kanten-Triangulation auf einer Sweep-Ebene? (Erke
+- Z.105: ## LEITBILD Nutzer 21.11. ~02:00 (berichtigt) (gilt für die METHODE oben)
+- Z.114: ## Nachtrag 02:05 - Schritt 1 der Schleife als Werkzeug: `tools/ebenen_bauplan.py` (Job `ebenen-schwabentor`, Log job_logs/ebenen-schwabento
+- Z.123: ## Nachtrag 02:20 - ERSTER VOLLER DURCHLAUF DER SCHLEIFE in der Kette (Lauf 1121k, 02:06-02:16, 22 Stufen in Ordnung, ohne Eingriff)
+- Z.136: ## Nachtrag ~02:22 - Gegenprobe DICHTE WOLKE in der Abweichungsstufe (Nutzer: „wo ist die dichte Wolke, dass man abgleichen kann, dass die e
+- Z.143: ## KONVERGIERENDE SCHLEIFE (Nutzer 02:28: „wir brauchen eine konvergierende Loop“) - Regeln
+- Z.148: ## Nachtrag 02:30 (abgelesen) - Nutzer: keine dichte Wolke um ihrer selbst willen; Ebenen in ALLE Richtungen (auch von der Seite)
+- Z.156: ## Nachtrag 02:33 (abgelesen) - SCHICHTSTAPEL (Nutzer: „geht auf der GPU sehr schnell ... auf ganz vielen, aus allen Winkeln machen und so e

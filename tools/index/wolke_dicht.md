@@ -1,4 +1,4 @@
-# Werkzeuge: wolke_dicht (87)
+# Werkzeuge: wolke_dicht (88)
 - `tools/bauteil_element_wolke.py` [gen] bauteil_element_wolke.py - Elemente, die die AUTOMATISCHE Elementschleife (generator_elemente_schleife.py) aus dem Restfeld der Wolke ableitet.
 - `tools/bauteil_rumpf_wolke.py` [-] bauteil_rumpf_wolke.py - Rumpf + Dach AUS DER DICHTEN PUNKTWOLKE (Spec S3b, Nutzerregel 6.11.: Wolke = erste Wahrheit).
 - `tools/bogen_aus_wolke.py` [seg] bogen_aus_wolke.py - Bogenoeffnungen als LOECHER in einer duennen Platte der Wolke um die Fassadenebene messen (3D-Lage, keine Foto-Ebenenannahme). Schritte: Rahmen (Umeyama) -> Ti
@@ -14,6 +14,7 @@
 - `tools/dicht_verformen.py` [-] dicht_verformen.py <dicht_pts.npy> <alte_wolke.npy> <aus_prefix> [--iter 15] [--u0 -14 --u1 14 --z0 4 --z1 12] [--ordnung 2] Verformende Ausrichtung (Regel: Wolken verziehen sich u
 - `tools/dicht_vorpruefung.py` [-] dicht_vorpruefung.py - billige Schranke VOR einer teuren dichten Rechnung (Sweetspot-Ziel: viele Modelle in kurzer Zeit; Lehre aus der Bodenwolke 3.11., >1 h GPU).
 - `tools/fassade_tiefe.py` [seg] fassade_tiefe.py <objekt.json> <fassaden-ordner> <nr> [--zelle 0.04] [--w -0.8 2.5] [--dw 0.05] [--fotos a,b,...] [--min_m2 0.5] [--min_w 0.25]
+- `tools/fenster_tiefe_tor.py` [-] fenster_tiefe_tor.py - Fensterliste (audit/fenster_auto.json) mit dem Ebenen-Sweep pruefen und ergaenzen (21.11.2026, Kettenstufe 'bauplan').
 - `tools/foto_punkt_picker.py` [seg] foto_punkt_picker.py — erzeugt eine eigenständige HTML-Seite zum PRÄZISEN Markieren von Modell-Passpunkten in einem Foto (Handy/Desktop). Du klickst die bekannten Bauwerks-Punkte (
 - `tools/gruppen_punkt_tor.py` [col] gruppen_punkt_tor.py <sparse> <objekt.json> <picks.json> [--tol 0.3] - TOR: derselbe Objektpunkt, aus verschiedenen FOTOGRUPPEN trianguliert, muss zusammenfallen.
 - `tools/helm_profil_wolke.py` [-] helm_profil_wolke.py - Profil r(z) eines N-eckigen Helms/Turms (Apothem je Hoehe) aus der Fotowolke, mit Achslage und Flaechenphase (generisch, kein Objektname).

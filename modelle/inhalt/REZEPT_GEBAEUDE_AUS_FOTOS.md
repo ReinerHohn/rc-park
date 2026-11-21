@@ -66,27 +66,33 @@
   - Z.111: - L44 Aufraeumen gehoert in den Regelkreis, nicht nur ans Rundenende: abgebrochene Spuren (OOM, Zeitlimit, 'Co
   - Z.112: - L45 Messung vor Bauteil pruefen, wenn Detail-Runden systematisch VERLIEREN: Foto-F1-Modellkanten arbeiten au
   - Z.113: - L46 NULLKONTROLLE FUER JEDE KENNZAHL: Foto-F1 (Toleranz 0,14 m, 9-cm-Zellen) misst auf ornamentreichen Flaec
-- Z.115: ## Was die Methode heute nicht kann (ehrlich)
-- Z.121: ## Neues Gebäude in Schritten
-  - Z.143: - L29 Freistehende Figuren/Aufbauten: Achse (u, s) und Hoehenmarken (Scheitel, Spitze, Sohle) je Instanz mit Z
-  - Z.144: - L30 Eine Pruefzeile auf ein freistehendes Teil darf nicht ueber Flaechenpunkte im Achsenfenster messen: die 
-  - Z.151: - L31 Ein Bauteil mit schlechtem Wolkenbeleg kann in der Lage stimmen und nur in der FORM falsch sein (Stirn d
-  - Z.152: - L32 Zwei Kameras nahe beieinander (Schnittwinkel 9 Grad) liefern +-0,27 m; erst die dritte Kamera mit >= 20 
-  - Z.153: - L33 Pruefzeilen auf Teile mit Vordach/Ueberstand als Schnitt in 2 Hoehen + Reichweite in n und +-u (Mitte de
-  - Z.195: - L32 Schwesterreihe gleichen Typs: Form (Breite, Vordach, Wandhoehe) uebertragbar, Lage/Hoehe NICHT (0,5-0,8 
-  - Z.220: - **L47 (11.11., Nutzer-Sichtfunde)**: Zielfinder-Schwellen nach BELEG (Anzahl Fotos), nicht nach Pixelsumme -
-  - Z.221: - **L48 (11.11., Nutzer-Sichtfunde generalisieren)**: (a) JEDER Nutzer-Sichtfund wird automatisch Testfall: Be
-  - Z.226: - **L49 (11.11., Formfund Westgiebel, Nutzerauftrag "Lerne aus heute")**: Ein Nutzer-Formfund kann richtig UND
-  - Z.227: - **L50 (11.11., Kennzahl fuer Form)**: Kantendichte (Foto-F1) ist blind fuer Formfamilien (Treppe/Saegezahn -
-  - Z.228: - **L51 (11.11., Torwerkzeug-Ausgaben)**: Prueferurteil per gierigem Regex gelesen -> "Extra data" -> zwei ANG
-  - Z.229: - **L52 (11.11., gezeigte Ergebnisse)**: Viewer zeigte den Modellstand vom Vorabend (sed-Zeilenbereich liess d
-  - Z.230: - **L53 (11.11., Laufzeit)**: Laufzeitaussagen ("45-90 min, nicht aenderbar") nur gemessen machen: Messung erg
-  - Z.231: - **L54 (11.11., Reihenfolge Kreis)**: Nutzerfunde vor Fehlteilen und vor "schwaechstes Teil"; innerhalb Form 
-  - Z.232: - **L55 (12.11., Konsolen)**: Eine konvexe Huelle ueber ein konkaves gemessenes Profil fuellt die Sehne (rote 
-  - Z.233: - **L55 (11.11., Kennzahl-Kopplung)**: Eine Teilnote darf nur vom Teil und vom Foto abhaengen. Foto-F1 hing ue
-  - Z.234: - **L56 (11.11., LLM-Pruefer)**: Ein Bildpruefer am Dreierbild sieht FORM (Kasten, Formfamilie 6/6 gefangen), 
-  - Z.235: - **L57 (11.11., Leerlauf-Ursache)**: 24 von 30 verworfenen Grauzonen-Runden hatten unveraenderte Teile - Mech
-  - Z.237: - **L55 (11.11., Formkorrektur ohne F1-Gewinn)**: Eine Formkorrektur an kleinem Bauteilanteil (ein Block, ~1 m
-  - Z.240: - L55 (2026-11-11, Kreis2 Baldachin-Mitte): Relative Lage zweier Teile (Krone ueber Figur) nur in DEMSELBEN Ka
-  - Z.242: - **L58 (11.11., Eckfiguren Erker)**: Ein Modell-Eckpunkt (Polygonvertex bei Gesimshoehe) in mehrere kalibrier
-  - Z.246: - L55 (12.11.): Aussparungen eines Profilteils an die lokale Front (n_front) binden; nach Aenderung Teilvolume
+  - Z.120: - **L-EBENE1 (21.11.):** Ein Gebäude hat mehrere Ebenen; jede bekommt ihren eigenen Bauplan (dichte Fotokanten
+  - Z.121: - **L-EBENE2:** Die Kette muss den Prüfer ersetzen: Abweichung je Ebene mit Ort als Arbeitsliste, Umbau nur an
+  - Z.122: - **L-EBENE3:** Kanten messen genau, sind an glatten/gekachelten Flächen blind; die dichte Wolke zeigt dort gr
+  - Z.123: - **L-EBENE4:** Eine andere Ansicht derselben Kantenpunkte (Seitenriss) ist keine neue Messung und keine Bestä
+  - Z.124: - **L-EBENE5:** Ein Kettenergebnis, das kein Generator verbaut, ist ein Fehler, kein „in Ordnung“ (Sackgassen-
+  - Z.125: - **L-EBENE6:** Zuerst Kette gegen Handstand vergleichen; der Handstand ist dabei kein cm-Sollwert (Handpunkte
+- Z.127: ## Was die Methode heute nicht kann (ehrlich)
+- Z.133: ## Neues Gebäude in Schritten
+  - Z.155: - L29 Freistehende Figuren/Aufbauten: Achse (u, s) und Hoehenmarken (Scheitel, Spitze, Sohle) je Instanz mit Z
+  - Z.156: - L30 Eine Pruefzeile auf ein freistehendes Teil darf nicht ueber Flaechenpunkte im Achsenfenster messen: die 
+  - Z.163: - L31 Ein Bauteil mit schlechtem Wolkenbeleg kann in der Lage stimmen und nur in der FORM falsch sein (Stirn d
+  - Z.164: - L32 Zwei Kameras nahe beieinander (Schnittwinkel 9 Grad) liefern +-0,27 m; erst die dritte Kamera mit >= 20 
+  - Z.165: - L33 Pruefzeilen auf Teile mit Vordach/Ueberstand als Schnitt in 2 Hoehen + Reichweite in n und +-u (Mitte de
+  - Z.207: - L32 Schwesterreihe gleichen Typs: Form (Breite, Vordach, Wandhoehe) uebertragbar, Lage/Hoehe NICHT (0,5-0,8 
+  - Z.232: - **L47 (11.11., Nutzer-Sichtfunde)**: Zielfinder-Schwellen nach BELEG (Anzahl Fotos), nicht nach Pixelsumme -
+  - Z.233: - **L48 (11.11., Nutzer-Sichtfunde generalisieren)**: (a) JEDER Nutzer-Sichtfund wird automatisch Testfall: Be
+  - Z.238: - **L49 (11.11., Formfund Westgiebel, Nutzerauftrag "Lerne aus heute")**: Ein Nutzer-Formfund kann richtig UND
+  - Z.239: - **L50 (11.11., Kennzahl fuer Form)**: Kantendichte (Foto-F1) ist blind fuer Formfamilien (Treppe/Saegezahn -
+  - Z.240: - **L51 (11.11., Torwerkzeug-Ausgaben)**: Prueferurteil per gierigem Regex gelesen -> "Extra data" -> zwei ANG
+  - Z.241: - **L52 (11.11., gezeigte Ergebnisse)**: Viewer zeigte den Modellstand vom Vorabend (sed-Zeilenbereich liess d
+  - Z.242: - **L53 (11.11., Laufzeit)**: Laufzeitaussagen ("45-90 min, nicht aenderbar") nur gemessen machen: Messung erg
+  - Z.243: - **L54 (11.11., Reihenfolge Kreis)**: Nutzerfunde vor Fehlteilen und vor "schwaechstes Teil"; innerhalb Form 
+  - Z.244: - **L55 (12.11., Konsolen)**: Eine konvexe Huelle ueber ein konkaves gemessenes Profil fuellt die Sehne (rote 
+  - Z.245: - **L55 (11.11., Kennzahl-Kopplung)**: Eine Teilnote darf nur vom Teil und vom Foto abhaengen. Foto-F1 hing ue
+  - Z.246: - **L56 (11.11., LLM-Pruefer)**: Ein Bildpruefer am Dreierbild sieht FORM (Kasten, Formfamilie 6/6 gefangen), 
+  - Z.247: - **L57 (11.11., Leerlauf-Ursache)**: 24 von 30 verworfenen Grauzonen-Runden hatten unveraenderte Teile - Mech
+  - Z.249: - **L55 (11.11., Formkorrektur ohne F1-Gewinn)**: Eine Formkorrektur an kleinem Bauteilanteil (ein Block, ~1 m
+  - Z.252: - L55 (2026-11-11, Kreis2 Baldachin-Mitte): Relative Lage zweier Teile (Krone ueber Figur) nur in DEMSELBEN Ka
+  - Z.254: - **L58 (11.11., Eckfiguren Erker)**: Ein Modell-Eckpunkt (Polygonvertex bei Gesimshoehe) in mehrere kalibrier
+  - Z.258: - L55 (12.11.): Aussparungen eines Profilteils an die lokale Front (n_front) binden; nach Aenderung Teilvolume

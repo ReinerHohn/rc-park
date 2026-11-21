@@ -53,6 +53,9 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         from bauteile import vorbauten_aus_json
         koerper, bel_v = vorbauten_aus_json(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "vorbauten_auto.json"))
         for b_ in bel_v: beleg(**b_)
+        from bauteile import uhren_aus_json            # 21.11.2026: Turmuhren (Kettenstufe 'bauplan': tools/uhren_wandbild.py -> audit/uhren_auto.json)
+        koerper, bel_u = uhren_aus_json(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "uhren_auto.json"))
+        for b_ in bel_u: beleg(**b_)
     tl_ = koerper.decompose()                         # Null-Volumen-Splitter entfernen (wie Kaufhaus-Generator 17.11.); echte schwebende Teile bleiben und fallen in der Pruefung auf
     if len(tl_) > 1 and any(t_.volume() < 1e-5 for t_ in tl_):
         koerper = M.batch_boolean([t_ for t_ in tl_ if t_.volume() >= 1e-5], __import__("manifold3d").OpType.Add); beleg("wand", "%d Null-Volumen-Splitter entfernt" % sum(1 for t_ in tl_ if t_.volume() < 1e-5), "Generator (decompose, Volumen < 1e-5 m3)")

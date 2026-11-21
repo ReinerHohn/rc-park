@@ -44,18 +44,18 @@
    "naechster_schritt": "objekt.json/quellen fuellen, Zeilen mit Quelle anlegen"
   },
   {
-   "datum": "auto",
-   "wer": "umriss_tor",
-   "auto_id": "umriss-eigen__IMG_20261106_113231-0",
-   "text": "GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 2 Fotos einig: +4.72 m ueber 0.0 m bei [0.0, 0.0, 0.0] (Foto eigen__IMG_20261106_113231)",
-   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
-  },
-  {
    "datum": "2026-11-20",
    "wer": "Nutzer (Bildmarkierung 22:55)",
    "quelle": "fassade_fein/ortho_f00.png, ortho_f03.png",
    "text": "Wandbild Stadtseite f00: Konsolen/Unterseite des Bilderkers schraeg verzerrt (Bauteil liegt vor der Wandebene, Koerper kennt den Erker nicht). Wandbild Nordseite f03: schwarzes Loch + verschmierter Streifen links, wo das Treppentuermchen/Nachbarhaus vor der Wand steht (Koerper kennt den Vorbau nicht, keine Verdeckung).",
    "testauftrag": "Nach Stufe vorbauten/Erker im Koerper Wandbild neu rechnen: Verzerrung und Schmierstreifen muessen verschwinden oder als eigene Flaeche (Vorbau) erscheinen; sonst Werkzeugfehler in fassade_ortho (Sichtbarkeit gegen Stufenmodell)."
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__IMG_20261106_113231-0",
+   "text": "GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 2 Fotos einig: +4.72 m ueber 0.0 m bei [0.0, 0.0, 0.0] (Foto eigen__IMG_20261106_113231)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
   }
  ]
 }

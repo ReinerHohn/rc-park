@@ -1,4 +1,4 @@
-# Werkzeuge: foto_mass (114)
+# Werkzeuge: foto_mass (115)
 - `tools/bauplan_aus_foto.py` [seg] bauplan_aus_foto.py — die beschriebene Methode als EINE Kette: 1) Gebäude aus Umgebung freistellen (ML-Maske, gebaeude_segment) 2) auf das Gebäude zuschneiden 3) PERSPEKTIVE raus (
 - `tools/bilder_einsortieren.py` [-] bilder_einsortieren.py - PIPELINE-SCHRITT nach bilder_holen.py: geerntete Fotos (fotos_eingang) in den Fotoordner des Objekts einsortieren.
 - `tools/bilder_holen.py` [seg] bilder_holen.py - PIPELINE-SCHRITT: Fotos einer Attraktion aus freien Quellen holen - nur die mit MEHRWERT fuer die Fotowolke.
@@ -10,6 +10,7 @@
 - `tools/commons_harvest.py` [-] commons_harvest.py — Wikimedia-Commons-Foto-Ernte für datenreiche Wahrzeichen. Für den "Internet-Foto-Photogrammetrie"-Ansatz: ein weltberühmtes Gebäude hat hunderte/tausende FREI 
 - `tools/dach_aus_fotos.py` [seg] dach_aus_fotos.py <objekt.json> [--teil N] [--voxel 0.15] [--rand 3.5] [--schreiben] [--neu] - DACH AUS DEN FOTOS: Hoehe und Umriss des Dachs aus der Himmelskante vieler Fotos.
 - `tools/dach_aus_luftbild.py` [seg] dach_aus_luftbild.py — HARTES MODUL: Dachstruktur direkt aus dem DOP-LUFTBILD ableiten (generell). Idee: die Dachfläche (DOP) in den Modell-Frame warpen → DISTANZTRANSFORMATION zum
+- `tools/ebenen_masse.py` [-] ebenen_masse.py - MASSE eines Vorbaus aus den dichten triangulierten Fotokanten seiner Ebene (21.11.2026, Kettenstufe 'bauplan', Schritt 2 der Schleife).
 - `tools/flaechen_gegen_netz.py` [seg] flaechen_gegen_netz.py - "Geraffel"-Melder (Nutzeridee 2026-11-07): Im FOTO sind Fenster-/Wandflaechen einfarbig, im 3D-Netz sind dort Beulen. Ablauf je Foto (K-Kamera wie foto_dif
 - `tools/flaechen_mass.py` [seg] flaechen_mass.py - FLAECHENMASS (Spec modelle/archiv/SPEC_FLAECHENMASS.md, Nutzerentscheid 11.11.): Formvergleich ueber FLAECHEN statt Kanten.
 - `tools/foto_auftrag.py` [seg] foto_auftrag.py <objekt.json> <fassaden-ordner> <aus.html> [--wunsch wuensche.json] [--mpp 0.01] [--extra-umriss x0 y0 x1 y1 ...]

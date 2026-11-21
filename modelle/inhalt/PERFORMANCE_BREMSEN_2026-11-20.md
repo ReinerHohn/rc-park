@@ -1,0 +1,24 @@
+# Inhalt von modelle/PERFORMANCE_BREMSEN_2026-11-20.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Versteckte Performance-Bremsen: Pipeline, Bibliotheken, Hardware (Untersuchung 20.11.2026, 16:30-16:45)
+- Z.6: ## Wo die Zeit liegt (Kettenberichte, Minuten je Stufe)
+- Z.12: ## A. Pipeline
+- Z.31: ## B. Bibliotheken
+- Z.42: ## C. Hardware / Kernel
+- Z.48: ## Rangfolge nach Nutzen je Aufwand
+- Z.56: ## Umsetzung 20.11. ab 16:45 (Nutzer: "setz die Punkte 2 bis 4 auch um")
+- Z.68: ## Wo sonst noch AVX2 fehlt (Nutzerfrage 16:50, gemessen per objdump/Laufzeitabfrage)
+- Z.77: ## KORREKTUR Embree (20.11. 17:10, gemessen `tools/versuche/embree_ab.py`)
+- Z.85: ## Weitere Hebel (20.11. 17:20-18:00)
+- Z.105: ## Profil mit perf (20.11. 17:55, Nutzer hat `kernel.perf_event_paranoid=1`, `ptrace_scope=0` gesetzt; perf = /usr/lib/linux-tools-6.8.0-78/
+- Z.124: ## Agentenrunde 20.11. 18:40-19:00 (9 Auftraege, Berichte /media/oem/rcdaten/tmp/hebel_1120/NN_*.md) - Kernaussagen, [n] = von der Sitzung n
+- Z.158: ## Nachtrag 20:40 - wo der schrittweise Mapper WIRKLICH die Zeit laesst (perf am laufenden Lauf)
+- Z.169: ## Nachtrag 20:44 - die "fremde Seite" am Martinstor ist ueberwiegend STADTRUNDGANG, nicht Tor (gemessen + angesehen)
+- Z.180: ## Nachtrag 20:50 - Schwabentor-Kette 1120: Tore gerechnet, Lage NICHT bestanden (rc 3, Abbruch vor dem Modellieren - so gewollt)
+- Z.189: ## Nachtrag 20:55 - Martinstor-Kette 1120b nach 6 h am Zeitlimit der SfM-Stufe abgebrochen (rc 124, 20:51) - EIGENER FEHLER
+- Z.197: ## Nachtrag 21:12 - Schwabentor 1120: KORREKTUR der Deutung von 20:50 (Grundriss-Tor)
+- Z.207: ## Nachtrag 21:36 - Speicher voll: `fassade_ortho.py --zelle 0.01` (Schwabentor, 444 Messkameras) wuchs auf 4,4 GB RAM + 7,3 GB Auslagerung,
+- Z.217: ## Nachtrag 22:17 - Agent Mapper-Skalierung (Bericht `/media/oem/rcdaten/tmp/hebel_1120/10_mapper_skalierung.md`, Quelltextstellen dort)
+- Z.228: ## Nachtrag 22:19 - Agent Bildwahl/Dichte Wolke/Speicher (Bericht `/media/oem/rcdaten/tmp/hebel_1120/11_dicht_bildwahl_speicher.md`, Simulat
+- Z.243: ## Nachtrag 22:27 - Wandbild-Fehler BESTAETIGT und behoben (`tools/fassade_ortho.py:424`, float32-Summe der Gewichte)
+- Z.250: ## Nachtrag 22:33 - Schwabentor-Kette 1120d zu Ende (rc 4, 54 Stufen, 5 nicht in Ordnung), 3D-Seite https://claude.ai/artifact/Fw3Dvs6XdwqqR
+- Z.256: ## Nachtrag 23:36 - Schwabentor von null: Bauplan-Stufen zum ersten Mal durchgelaufen (Kette 1120e `--ab fenster --bis bauplan`, 14 Stufen o

@@ -17,294 +17,589 @@
    {
     "klasse": "fenster",
     "zone": [
-     -6.02,
-     -5.468,
-     10.008,
-     14.41
+     -3.821,
+     1.609,
+     8.299,
+     10.191
     ],
-    "tiefe": -0.16,
-    "tiefe_innen": 0.08,
-    "tiefe_ring": 0.24,
-    "ncc_innen": 0.331,
-    "ncc_ring": 0.661,
+    "tiefe": -0.06,
+    "tiefe_innen": -0.04,
+    "tiefe_ring": 0.02,
+    "ncc_innen": 0.856,
+    "ncc_ring": 0.596,
     "fotos": 35,
     "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 35 Einzelfoto-Orthos (innen +0.08 minus Ring +0.24); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
+    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 35 Einzelfoto-Orthos (innen -0.04 minus Ring +0.02); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
    },
    {
     "klasse": "fenster",
     "zone": [
-     -3.675,
-     -1.988,
-     8.338,
-     10.27
+     -3.105,
+     -0.884,
+     22.969,
+     25.444
     ],
-    "tiefe": -0.14,
-    "tiefe_innen": -0.02,
-    "tiefe_ring": 0.12,
-    "ncc_innen": 0.81,
-    "ncc_ring": 0.67,
-    "fotos": 37,
-    "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 37 Einzelfoto-Orthos (innen -0.02 minus Ring +0.12); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
-   },
-   {
-    "klasse": "fenster",
-    "zone": [
-     -2.574,
-     -0.229,
-     0.004,
-     5.177
-    ],
-    "tiefe": 0.0,
-    "tiefe_innen": 0.16,
-    "tiefe_ring": 0.16,
-    "ncc_innen": 0.266,
-    "ncc_ring": 0.501,
-    "fotos": 26,
-    "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 26 Einzelfoto-Orthos (innen +0.16 minus Ring +0.16); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
-   },
-   {
-    "klasse": "fenster",
-    "zone": [
-     -2.389,
-     -1.782,
-     23.083,
-     24.684
-    ],
-    "tiefe": -0.3,
-    "tiefe_innen": 0.5,
-    "tiefe_ring": 0.8,
-    "ncc_innen": 0.751,
-    "ncc_ring": 0.779,
+    "tiefe": -0.06,
+    "tiefe_innen": 0.38,
+    "tiefe_ring": 0.44,
+    "ncc_innen": 0.759,
+    "ncc_ring": 0.716,
     "fotos": 21,
     "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 21 Einzelfoto-Orthos (innen +0.50 minus Ring +0.80); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
+    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 21 Einzelfoto-Orthos (innen +0.38 minus Ring +0.44); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
    },
    {
     "klasse": "fenster",
     "zone": [
-     -2.016,
-     1.17,
-     8.338,
-     10.27
+     -2.464,
+     -0.055,
+     -0.022,
+     4.942
     ],
-    "tiefe": -0.22,
-    "tiefe_innen": -0.1,
-    "tiefe_ring": 0.12,
-    "ncc_innen": 0.823,
-    "ncc_ring": 0.679,
-    "fotos": 35,
+    "tiefe": -0.38,
+    "tiefe_innen": -0.18,
+    "tiefe_ring": 0.2,
+    "ncc_innen": 0.175,
+    "ncc_ring": 0.414,
+    "fotos": 21,
     "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 35 Einzelfoto-Orthos (innen -0.10 minus Ring +0.12); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
+    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 21 Einzelfoto-Orthos (innen -0.18 minus Ring +0.20); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
    },
    {
     "klasse": "fenster",
     "zone": [
-     2.595,
-     4.157,
-     8.338,
-     10.27
+     -2.312,
+     -1.684,
+     23.121,
+     24.813
     ],
-    "tiefe": -0.16,
-    "tiefe_innen": -0.02,
-    "tiefe_ring": 0.14,
-    "ncc_innen": 0.801,
-    "ncc_ring": 0.828,
-    "fotos": 23,
+    "tiefe": -0.2,
+    "tiefe_innen": 0.7,
+    "tiefe_ring": 0.9,
+    "ncc_innen": 0.587,
+    "ncc_ring": 0.695,
+    "fotos": 21,
     "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 23 Einzelfoto-Orthos (innen -0.02 minus Ring +0.14); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
+    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 21 Einzelfoto-Orthos (innen +0.70 minus Ring +0.90); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
    },
    {
-    "klasse": "tuer",
+    "klasse": "fenster",
     "zone": [
-     -2.491,
-     2.403,
-     -0.06,
-     25.523
+     1.188,
+     3.158,
+     22.969,
+     25.444
     ],
-    "tiefe": 0.04,
-    "tiefe_innen": 0.12,
-    "tiefe_ring": 0.08,
-    "ncc_innen": 0.795,
-    "ncc_ring": 0.83,
-    "fotos": 18,
+    "tiefe": 0.14,
+    "tiefe_innen": 0.5,
+    "tiefe_ring": 0.36,
+    "ncc_innen": 0.648,
+    "ncc_ring": 0.406,
+    "fotos": 16,
+    "flach": false,
+    "umriss": [
+     [
+      1.994,
+      24.815
+     ],
+     [
+      1.894,
+      24.705
+     ],
+     [
+      1.824,
+      24.515
+     ],
+     [
+      1.824,
+      23.125
+     ],
+     [
+      1.774,
+      23.085
+     ],
+     [
+      1.184,
+      23.085
+     ],
+     [
+      1.184,
+      22.995
+     ],
+     [
+      3.154,
+      23.015
+     ],
+     [
+      3.154,
+      23.105
+     ],
+     [
+      2.984,
+      23.115
+     ],
+     [
+      2.984,
+      23.365
+     ],
+     [
+      3.154,
+      23.605
+     ],
+     [
+      3.154,
+      24.165
+     ],
+     [
+      3.124,
+      24.195
+     ],
+     [
+      3.084,
+      24.525
+     ],
+     [
+      2.954,
+      24.525
+     ],
+     [
+      2.964,
+      24.105
+     ],
+     [
+      2.914,
+      23.515
+     ],
+     [
+      2.914,
+      23.105
+     ],
+     [
+      2.384,
+      23.095
+     ],
+     [
+      2.354,
+      23.265
+     ],
+     [
+      2.374,
+      24.275
+     ],
+     [
+      2.424,
+      24.655
+     ],
+     [
+      2.364,
+      24.765
+     ],
+     [
+      2.234,
+      24.845
+     ]
+    ],
+    "stege": [
+     [
+      [
+       2.914,
+       23.335
+      ],
+      [
+       2.914,
+       23.105
+      ],
+      [
+       2.984,
+       23.115
+      ],
+      [
+       2.984,
+       23.335
+      ]
+     ],
+     [
+      [
+       3.014,
+       23.785
+      ],
+      [
+       2.934,
+       23.785
+      ],
+      [
+       2.924,
+       23.575
+      ],
+      [
+       2.984,
+       23.605
+      ],
+      [
+       3.004,
+       23.655
+      ]
+     ]
+    ],
+    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 16 Einzelfoto-Orthos (innen +0.50 minus Ring +0.36); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
+   },
+   {
+    "klasse": "bogen",
+    "zone": [
+     0.125,
+     2.513,
+     -0.109,
+     5.492
+    ],
+    "tiefe": 1.6,
+    "anteil_tief": 0.63,
+    "zellen": 1602,
+    "flach": false,
+    "umriss": [
+     [
+      0.37,
+      -0.109
+     ],
+     [
+      0.37,
+      5.004
+     ],
+     [
+      0.41,
+      5.19
+     ],
+     [
+      0.449,
+      5.275
+     ],
+     [
+      0.488,
+      5.337
+     ],
+     [
+      0.528,
+      5.386
+     ],
+     [
+      0.567,
+      5.427
+     ],
+     [
+      0.606,
+      5.461
+     ],
+     [
+      0.646,
+      5.49
+     ],
+     [
+      0.685,
+      5.515
+     ],
+     [
+      0.724,
+      5.535
+     ],
+     [
+      0.764,
+      5.553
+     ],
+     [
+      0.803,
+      5.567
+     ],
+     [
+      0.842,
+      5.579
+     ],
+     [
+      0.882,
+      5.588
+     ],
+     [
+      0.921,
+      5.594
+     ],
+     [
+      0.96,
+      5.597
+     ],
+     [
+      1.0,
+      5.599
+     ],
+     [
+      1.039,
+      5.597
+     ],
+     [
+      1.078,
+      5.594
+     ],
+     [
+      1.118,
+      5.588
+     ],
+     [
+      1.157,
+      5.579
+     ],
+     [
+      1.196,
+      5.567
+     ],
+     [
+      1.236,
+      5.553
+     ],
+     [
+      1.275,
+      5.535
+     ],
+     [
+      1.314,
+      5.515
+     ],
+     [
+      1.354,
+      5.49
+     ],
+     [
+      1.393,
+      5.461
+     ],
+     [
+      1.433,
+      5.427
+     ],
+     [
+      1.472,
+      5.386
+     ],
+     [
+      1.511,
+      5.337
+     ],
+     [
+      1.551,
+      5.275
+     ],
+     [
+      1.59,
+      5.19
+     ],
+     [
+      1.629,
+      5.004
+     ],
+     [
+      1.629,
+      -0.109
+     ]
+    ],
+    "stege": [],
+    "bogen": {
+     "flanke_links": 0.37,
+     "flanke_rechts": 1.629,
+     "kreis_mitte": [
+      1.0,
+      4.968
+     ],
+     "radius": 0.63,
+     "scheitel": 5.599,
+     "kaempfer": [
+      5.004,
+      5.004
+     ],
+     "bogenpunkte": 756,
+     "auf_kreis": 0.16
+    },
+    "quelle": "Zone OWLv2 (tuer); offen/Tiefe aus Ebenen-Sweep-Karte tiefe_f00.npz (Median 1.60 m hinter der Wand, 63 % der Zellen > 1.0 m); Umriss aus Bildkanten (Pfeilerflanken + Kreis-RANSAC durch 756 Bogenkantenpunkte, 16 % auf dem Kreis)"
+   },
+   {
+    "klasse": "bogen",
+    "zone": [
+     -2.541,
+     2.225,
+     -0.086,
+     25.53
+    ],
+    "tiefe": -0.1,
     "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 18 Einzelfoto-Orthos (innen +0.12 minus Ring +0.08); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
+    "hinweis": "Bogen nicht offen (Tiefenkarte) oder keine Karte - Blendbogen/Nische, nicht gebaut"
    },
    {
     "klasse": "bogen",
     "zone": [
      1.176,
-     3.041,
-     23.065,
-     25.523
+     3.034,
+     23.048,
+     25.53
     ],
-    "tiefe": 3.2,
-    "anteil_tief": 0.87,
-    "zellen": 738,
+    "tiefe": 3.0,
+    "anteil_tief": 0.86,
+    "zellen": 745,
     "flach": false,
     "umriss": [
      [
-      1.247,
-      23.065
+      1.852,
+      23.048
      ],
      [
-      1.247,
-      24.629
+      1.852,
+      24.507
      ],
      [
-      1.306,
-      24.916
+      1.882,
+      24.647
      ],
      [
-      1.365,
-      25.043
+      1.912,
+      24.711
      ],
      [
-      1.424,
-      25.136
+      1.942,
+      24.759
      ],
      [
-      1.483,
-      25.21
+      1.972,
+      24.796
      ],
      [
-      1.542,
-      25.271
+      2.002,
+      24.827
      ],
      [
-      1.6,
-      25.322
+      2.032,
+      24.853
      ],
      [
-      1.659,
-      25.365
+      2.062,
+      24.875
      ],
      [
-      1.718,
-      25.402
+      2.093,
+      24.894
      ],
      [
-      1.777,
-      25.433
+      2.123,
+      24.91
      ],
      [
-      1.836,
-      25.46
+      2.153,
+      24.923
      ],
      [
-      1.895,
-      25.481
+      2.183,
+      24.934
      ],
      [
-      1.954,
-      25.498
+      2.213,
+      24.943
      ],
      [
-      2.013,
-      25.512
+      2.243,
+      24.95
      ],
      [
-      2.071,
-      25.521
+      2.273,
+      24.955
      ],
      [
-      2.13,
-      25.526
+      2.303,
+      24.958
      ],
      [
-      2.189,
-      25.528
+      2.333,
+      24.959
      ],
      [
-      2.248,
-      25.526
+      2.363,
+      24.958
      ],
      [
-      2.307,
-      25.521
+      2.393,
+      24.955
      ],
      [
-      2.366,
-      25.512
+      2.423,
+      24.95
      ],
      [
-      2.425,
-      25.498
+      2.454,
+      24.943
      ],
      [
       2.484,
-      25.481
+      24.934
      ],
      [
-      2.542,
-      25.46
+      2.514,
+      24.923
      ],
      [
-      2.601,
-      25.433
+      2.544,
+      24.91
      ],
      [
-      2.66,
-      25.402
+      2.574,
+      24.894
      ],
      [
-      2.719,
-      25.365
+      2.604,
+      24.875
      ],
      [
-      2.778,
-      25.322
+      2.634,
+      24.853
      ],
      [
-      2.837,
-      25.271
+      2.664,
+      24.827
      ],
      [
-      2.896,
-      25.21
+      2.694,
+      24.796
      ],
      [
-      2.955,
-      25.136
+      2.724,
+      24.759
      ],
      [
-      3.013,
-      25.043
+      2.754,
+      24.711
      ],
      [
-      3.072,
-      24.916
+      2.784,
+      24.647
      ],
      [
-      3.131,
-      24.629
+      2.815,
+      24.507
      ],
      [
-      3.131,
-      23.065
+      2.815,
+      23.048
      ]
     ],
     "stege": [],
     "bogen": {
-     "flanke_links": 1.247,
-     "flanke_rechts": 3.131,
+     "flanke_links": 1.852,
+     "flanke_rechts": 2.815,
      "kreis_mitte": [
-      2.189,
-      24.585
+      2.333,
+      24.476
      ],
-     "radius": 0.943,
-     "scheitel": 25.528,
+     "radius": 0.482,
+     "scheitel": 24.959,
      "kaempfer": [
-      24.629,
-      24.629
+      24.507,
+      24.507
      ],
-     "bogenpunkte": 627,
-     "auf_kreis": 0.27
+     "bogenpunkte": 624,
+     "auf_kreis": 0.16
     },
-    "quelle": "Zone OWLv2 (bogen); offen/Tiefe aus Ebenen-Sweep-Karte tiefe_f00.npz (Median 3.20 m hinter der Wand, 87 % der Zellen > 1.0 m); Umriss aus Bildkanten (Pfeilerflanken + Kreis-RANSAC durch 627 Bogenkantenpunkte, 27 % auf dem Kreis)"
+    "quelle": "Zone OWLv2 (bogen); offen/Tiefe aus Ebenen-Sweep-Karte tiefe_f00.npz (Median 3.00 m hinter der Wand, 86 % der Zellen > 1.0 m); Umriss aus Bildkanten (Pfeilerflanken + Kreis-RANSAC durch 624 Bogenkantenpunkte, 16 % auf dem Kreis)"
    }
   ]
  },
@@ -358,10 +653,10 @@
    {
     "klasse": "fenster",
     "zone": [
-     -0.525,
-     2.307,
-     21.807,
-     24.959
+     -0.551,
+     2.345,
+     21.816,
+     25.015
     ],
     "tiefe": null,
     "hinweis": "Tiefe nicht messbar (zu wenige/zu aehnliche Fotos)"
@@ -369,33 +664,33 @@
    {
     "klasse": "fenster",
     "zone": [
-     -0.018,
-     1.419,
-     17.14,
-     18.848
+     -0.034,
+     1.436,
+     17.161,
+     18.9
     ],
-    "tiefe": -0.42,
+    "tiefe": -0.46,
     "tiefe_innen": -0.2,
-    "tiefe_ring": 0.22,
+    "tiefe_ring": 0.26,
     "ncc_innen": 0.849,
-    "ncc_ring": 0.766,
+    "ncc_ring": 0.79,
     "fotos": 7,
     "flach": true,
-    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 7 Einzelfoto-Orthos (innen -0.20 minus Ring +0.22); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
+    "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 7 Einzelfoto-Orthos (innen -0.20 minus Ring +0.26); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
    },
    {
     "klasse": "fenster",
     "zone": [
-     0.084,
-     1.364,
-     10.308,
+     0.08,
+     1.368,
+     10.307,
      11.824
     ],
     "tiefe": 0.0,
     "tiefe_innen": -0.02,
     "tiefe_ring": -0.02,
     "ncc_innen": 0.78,
-    "ncc_ring": 0.609,
+    "ncc_ring": 0.61,
     "fotos": 21,
     "flach": true,
     "quelle": "Zone OWLv2 (fassade_parsing); Tiefe Parallaxen-Sweep ueber 21 Einzelfoto-Orthos (innen -0.02 minus Ring -0.02); Umriss Lab-Abstand zur Wandfarbe (Otsu) im feinen Wandbild"
@@ -403,10 +698,10 @@
    {
     "klasse": "fenster",
     "zone": [
-     0.254,
-     1.316,
-     22.4,
-     24.35
+     0.304,
+     1.399,
+     22.708,
+     24.648
     ],
     "tiefe": null,
     "hinweis": "Tiefe nicht messbar (zu wenige/zu aehnliche Fotos)"
@@ -414,10 +709,10 @@
    {
     "klasse": "tuer",
     "zone": [
-     -5.121,
-     -0.927,
-     13.044,
-     17.693
+     -5.077,
+     -0.915,
+     13.047,
+     17.717
     ],
     "tiefe": null,
     "hinweis": "Tiefe nicht messbar (zu wenige/zu aehnliche Fotos)"
@@ -443,8 +738,8 @@
     "klasse": "tuer",
     "zone": [
      -0.509,
-     1.221,
-     0.002,
+     1.224,
+     0.003,
      12.549
     ],
     "tiefe": -0.12,

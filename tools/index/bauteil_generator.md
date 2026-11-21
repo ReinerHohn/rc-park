@@ -1,4 +1,4 @@
-# Werkzeuge: bauteil_generator (58)
+# Werkzeuge: bauteil_generator (60)
 - `tools/_test_baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baum_erzeugen.py` [-] baum_erzeugen.py - Wissensbaum fuer KI-Suche (Nutzer 20.11.2026: "Informationen baumartig, damit der Kontext nicht vollballert"). Erzeugt (nie von Hand pflegen, nach neuen Dateien 
@@ -15,6 +15,7 @@
 - `tools/dach_optimieren.py` [seg] dach_optimieren.py — autonome Varianten-Schleife mit dem OVERLAY-IoU als Zielfunktion. Variiert Dach-Sweep (ROOF_SWEEP) + First-Länge/Spitzigkeit (ROOF_INSET), baut Massing+Hybrid 
 - `tools/dach_params_ndom.py` [seg] dach_params_ndom.py — Dach-FORM-Parameter direkt aus dem LASER (nDOM = DOM1-DGM1) messen: First-Höhe, Trauf-Höhe (Dach-Unterkante am Gebäuderand), First-LÄNGE (→ Walm-Inset/Spitzig
 - `tools/dach_vermessen.py` [seg] dach_vermessen.py <objekt.json> [--wolke npy] - Dachform je LoD2-Grundflaeche aus Laser DOM1 (allgemein, je Objekt; Nullstart-Schritt 'dach').
+- `tools/ebenen_form.py` [seg] ebenen_form.py - GESTALT eines Vorbaus aus dem feinen Wandbild AUF SEINER EIGENEN EBENE (21.11.2026, Kettenstufe 'bauplan').
 - `tools/erker_finden.py` [seg] erker_finden.py — ERKER robust lokalisieren über die HELMSPITZEN (ragen über den First).
 - `tools/formen_zusammen.py` [-] Formsegmente (helm_fit/gauben_fit/baluster_fit-Ausgaben) an ein Kantengitter anhaengen: formen_zusammen.py GITTER.json OUT.json FORM1.json [FORM2.json ...] Jede Formdatei traegt 's
 - `tools/formfamilie_pruefen.py` [seg] formfamilie_pruefen.py - FORMFAMILIEN-SICHTPRUEFUNG JE BAUTEIL (Spec modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md, Nutzerauftrag 11.11.).
@@ -55,5 +56,6 @@
 - `tools/passform_check.py` [gen] passform_check.py — AUTOMATISCHER Lage-Abgleich Modell-Render ↔ Foto (fängt „Element auf falscher Höhe", z.B. Statuen auf Balkonhöhe). Zweck (User): solche Fehler künftig AUTOMATIS
 - `tools/pfad_gegenprobe.py` [seg] pfad_gegenprobe.py - JEDEN 3D-Pfad (Rippe, Leiste ...) gegen unabhaengige Fotos pruefen: Pfadpunkte in die Kameras projizieren, Anteil auf stabilen Kanten (Stabilitaetskarte, 3 px 
 - `tools/realitaet_form.py` [seg] realitaet_form.py - FORMNOTE (Realitaet Teil 2: Form). Spec modelle/archiv/SPEC_FORMNOTE.md (Nutzerentscheid 11.11.).
+- `tools/sparse_zeigen.py` [-] sparse_zeigen.py - ein COLMAP-Sparse-Modell (Kameramodell) als Bild und als 3D-HTML zeigen. Allgemein, jedes Modell (images.bin + points3D.bin).
 - `tools/stadttor_generator.py` [gen] stadttor_generator.py — TYP-GENERATOR 'Stadttor' (Torturm mit Durchfahrt). Parametrisch, config-getrieben → ein Generator für Martinstor UND Schwabentor (und jedes weitere Torturm-
 - `tools/testdruck_dachziegel.py` [gen] testdruck_dachziegel.py - Testplatte: wie sehen Dachdeckungen im Massstab (Standard H0 1:87) auf dem Bambu P1S (0,4-mm-Duese) aus?

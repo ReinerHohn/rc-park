@@ -1,8 +1,10 @@
-# Werkzeuge: geometrie_flaechen (33)
+# Werkzeuge: geometrie_flaechen (35)
 - `tools/arkaden_fit.py` [seg] arkaden_fit.py - Arkadenboegen als FORMFAMILIE statt freier Kettenbildung (Koordinator 9.11., Runde 3). Eingabe: Gitter mit "saeulen" [{cx,cy,R,z_fuss,z_kopf}], ein oder mehrere Sw
 - `tools/auto_fit_alle.py` [-] auto_fit_alle.py <objekt> --wolke w.npy --fotos kam.json --bilder dir [--typen a,b,..] [--iter 40] Automatische Annaeherung ALLER parametrischen Bauteile an die Wolke (Nutzerwunsch
 - `tools/autofit.py` [seg] autofit.py — ARCHETYP-AGNOSTISCHER Autofit-Kern.
 - `tools/baluster_fit.py` [seg] Balkonbruestung als Reihe gleicher Rotationskoerper (Baluster) aus Wolke + Tiefen-Sweep, Periode per Autokorrelation, Profil aus der gefalteten Musterzelle. Ablauf: (1) Hoehenband 
+- `tools/ebenen_abweichung.py` [seg] ebenen_abweichung.py - ABWEICHUNG Modell gegen Bauplan JE EBENE, mit Ort (21.11.2026, Kettenstufe 'bauplan', Schritt 3 der Schleife).
+- `tools/ebenen_bauplan.py` [seg] ebenen_bauplan.py - BAUPLAN JE EBENE: dichte triangulierte Fotokanten (+ feines Bild) fuer jede Wand und jede Sweep-Ebene (21.11.2026, Kettenstufe 'bauplan').
 - `tools/ebenen_einrasten.py` [gen] ebenen_einrasten.py - Familie 'Ebenen': RANSAC-Ebenen aus der Wolke (Modellrahmen, m), dann Netzknoten nahe einer Ebene (Abstand < --tol, Normale < --winkel) auf die Ebene projizie
 - `tools/ebenen_modell.py` [gen] ebenen_modell.py - Scharfes Netz aus gemessenen Ebenen + Carving-Belegung (SPEC S8 Baustein 2+4+5). Keine Vorlagen, kein STL/Generator.
 - `tools/ebenen_zellen_schnitt.py` [gen] ebenen_zellen_schnitt.py - Familie 'Ebenenanordnung + Graph-Cut' (eigene Nachbildung des PolyFit/Kinetic-Gedankens, KEIN CGAL-Code, daher lizenzfrei): 1 RANSAC-Ebenen aus der Wolke

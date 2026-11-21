@@ -117,6 +117,13 @@ Format: Lehre (allgemein formuliert) | Anlass | wo im Werkzeug/Ablauf umgesetzt.
 - L-BETRIEB4 (2026-11-20): Messlaeufe allein rechnen; mehrere 'alle Kerne'-Jobs bremsen sich (Mapper je 3-4 Kerne, 13 % Zeit in Faden-Sperren) und machen Zeiten unvergleichbar.
 - L-BETRIEB5 (2026-11-20): Zeitfresser am laufenden Prozess messen (perf), nicht aus dem Log ableiten: Mapper = 92 % Schur-Elimination, nicht Loeserfehler. Und erst den Bildsatz pruefen (Vorpruef-Regeln Kette/Zeitfenster brachten 42 % Bilder ohne eigenen Treffer), dann den Loeser.
 
+- **L-EBENE1 (21.11.):** Ein Gebäude hat mehrere Ebenen; jede bekommt ihren eigenen Bauplan (dichte Fotokanten + feines Bild auf DIESER Ebene). Auf der Wandebene sitzt ein Vorbau verschoben (Erker 0,3 m). Methode: `modelle/METHODE_EBENEN_BAUPLAN.md`.
+- **L-EBENE2:** Die Kette muss den Prüfer ersetzen: Abweichung je Ebene mit Ort als Arbeitsliste, Umbau nur annehmen, wenn die Kennzahl steigt.
+- **L-EBENE3:** Kanten messen genau, sind an glatten/gekachelten Flächen blind; die dichte Wolke zeigt dort grob, wo Form fehlt, und trennt echte Schichten (≥ 80 % bestätigt) von Scheintreffern.
+- **L-EBENE4:** Eine andere Ansicht derselben Kantenpunkte (Seitenriss) ist keine neue Messung und keine Bestätigung.
+- **L-EBENE5:** Ein Kettenergebnis, das kein Generator verbaut, ist ein Fehler, kein „in Ordnung“ (Sackgassen-Tor). Vier Tage lag der Sweep als „Vorschlag“ herum.
+- **L-EBENE6:** Zuerst Kette gegen Handstand vergleichen; der Handstand ist dabei kein cm-Sollwert (Handpunkte bis 0,38 m unsicher).
+
 ## Was die Methode heute nicht kann (ehrlich)
 - Blanke Wände: Eine Kantenwolke kann Wand und Öffnung nicht unterscheiden (Stirnwände blieben ANNAHME). Dafür braucht es eine dichte Wolke oder Fototextur.
 - Dach über 15 m: Abdeckung 0,20. Dafür braucht es Drohnen-/Hochframes und Dachebenen aus dem Generator.

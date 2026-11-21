@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (98)
+# Werkzeuge: sonstige (101)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -18,6 +18,7 @@
 - `tools/handy_kalibrieren.py` [col] handy_kalibrieren.py - Brennweite f (und k1) der Handykamera je Formatgruppe unabhaengig bestimmen, mit Unsicherheit (Register DB).
 - `tools/handy_masken.py` [seg] handy_masken.py - GPU-Masken fuer bewegte/nicht zum Bauwerk gehoerende Dinge in Handyfotos (Personen, Fahrzeuge, Fahrraeder, Marktstaende/Zelte, Kisten). Wie video_masken.py (nicht
 - `tools/handy_masken_v2.py` [seg] handy_masken_v2.py - Handy-Masken v2 (Register DI). v1 (handy_masken.py) bleibt unveraendert. Aenderungen gegenueber v1, alle aus den Segmentierungsklassen (ADE20K id2label) bzw. O
+- `tools/haufen_herkunft.py` [col] haufen_herkunft.py - welche BILDER haben einen Strassenhaufen des Grundriss-Tors erzeugt? (20.11.2026, Schwabentor: Flugpunkt-Faecher auf dem Platz)
 - `tools/haut_find.py` [-] haut_find.py — Haut-Teil(e) auf der Bauplan-Karte FINDEN (Nummer -> wo hin).
 - `tools/hintergrundhaus.py` [seg] hintergrundhaus.py - HINTERGRUNDHAUS (Reifegrad 1) in Minuten: LoD2-Koerper + LoD2-Dach (DOM1 als Gegenprobe), Fenster aus vorhandenen Fotos, sonst Fensterraster als ANNAHME, duenn
 - `tools/hybrid_abgleich.py` [gen] hybrid_abgleich.py - Dachflaechen je QUELLE getrennt fitten (Strassenwolke, Drohnenwolke, Generator) und Abweichungen melden (Register BR/BS).
@@ -93,7 +94,9 @@
 - `tools/verify_gorge.py` [seg] verify_gorge.py — MESSBARE Prüfung der Einschnitt/Schlucht-Kantenerkennung. Rendert Hillshade (Draufsicht) + erkannte Platte + ihre Kanten, und MISST objektiv: wall_frac = Anteil d
 - `tools/versuch_log.py` [-] versuch_log.py - AUTOMATISCHES Versuchslog (Nutzerauftrag 7.11.: nichts doppelt versuchen, Fehlschlaege mitschreiben). Bibliothek (von Werkzeugen am Ende eines Laufs aufgerufen) + 
 - `tools/viadukt_gelaende.py` [gen] viadukt_gelaende.py — Viadukt, der der ECHTEN Trasse + dem GELÄNDE folgt.
+- `tools/vorbauten_bauplan.py` [seg] vorbauten_bauplan.py - Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep in eine BAULISTE uebersetzen (20.11.2026).
 - `tools/vorwissen_empfindlichkeit.py` [-] vorwissen_empfindlichkeit.py - Wie viel Vorwissen steckt im Nullstart? (Register BI)
 - `tools/zeit_je_modell.py` [-] zeit_je_modell.py - Wanduhr je Nullstart-Stufe und je Schritt aus ALLEN vorhandenen nullstart_bericht.json (Sweetspot 'viele Modelle in kurzer Zeit'). Zeigt, wo die Zeit eines Mode
 - `tools/zier_3d.py` [-] zier_3d.py - Bild-zu-3D fuer Zierteile (Figuren ...) aus zier_ausschnitt.py (2026-11-05).
 - `tools/zier_ausschnitt.py` [seg] zier_ausschnitt.py - Ausschnitte erkannter Zierteile (Figuren, Wappen ...) in VOLLER Fotoaufloesung aus den Originalfotos (2026-11-05).
+- `tools/zswap_an.sh` [sh] zswap_an.sh [an|aus|stand] - komprimierte Auslagerung im Arbeitsspeicher (zswap) vor der Auslagerungsdatei auf der SSD. Grund (Nutzer 20.11.2026, modelle/HARDWARE_STAND_2026-11-20.

@@ -19,28 +19,28 @@
 - Z.154: ## Ungesehene Seite (kein SfM-Foto) - Nutzer 16.11.2026: "Nein, nicht spiegeln. Du musst Fotos suchen von dieser ungesehenen Seite."
 - Z.165: ## Stufe `seiten` der Gesamtkette: Wand ohne Foto -> Fotos holen (16.11.2026)
 - Z.182: ## Vorbauten automatisch: Ebenen-Sweep je Fassade (`tools/fassade_tiefe.py`, 16.11.2026) - ERSTE FASSUNG, nur Vorschlaege
-- Z.196: ## Nachregistrieren fremder Fotos - Stand 16.11.2026
-- Z.204: ## Stufe `seiten`: ERSTER DURCHLAUF bis zur Messkamera (16.11.2026 ~10:45, Schwabentor)
-- Z.214: ## Kamera am Modell nachziehen (`tools/kamera_verfeinern.py`, 16.11.2026) - schliesst die Luecke der Stufe `seiten`
-- Z.225: ## Fotoauftrag an den Nutzer (`tools/foto_auftrag.py`, 16.11.2026)
-- Z.240: ## Sofort-Urteil fuer Fotos vor Ort (`tools/foto_schnellcheck.py`, Aufruf `tools/foto_check.sh <objekt> <datei>`) - 16.11.2026
-- Z.251: ## Lehren 16.11.2026 nachmittags (fuer das naechste Gebaeude) und was davon schon generisch ist
-- Z.269: ## Runde Bauteile und Wandebene - 16.11.2026 mittags (Nutzer: Treppenturm "kleine Fensterchen", "wichtig fuer Schloesser"; "Warum nicht auto
-- Z.301: ## HAERTETEST 16.11.2026 nachmittags: drittes Gebaeude `ober_tvdr` (LoD2 DEBW_0010007Tvdr, Haeuserzeile Oberlinden noerdlich des Tors)
-- Z.388: ## Nachtrag 16.11.2026 nachts: Fehlersuche (statische Pruefung + Kettenbericht + Bild Modell neben Foto)
-- Z.409: ## Nachtrag 16.11.2026 spaet nachts: zweite Fehlersuche (Kameras)
-- Z.418: ## Nachtrag 17.11.2026 00:30: Stabilisierung der Kette
-- Z.429: ## Nachtrag 17.11.2026: Bausatz - Farbteile, Druckteilung, Druckzeit (Nutzerziel: mehrere Teile, je Farbe ein Teil, Stein flach drucken, gut
-- Z.442: ### Druckzeit gemessen (17.11.2026, Turm, PrusaSlicer-Standardprofil, Bett 256 mm) - Grundlage fuer die naechste Bauart
-- Z.451: ### Bausatz Turm, Stand 17.11.2026 vormittags (Variante 2,2 mm Wand, nie gedruckt)
-- Z.460: ### Bausatz fuer zwei Drucker (17.11.2026, Nutzer: grobe Teile Prusa MK4S 0,8-mm-Duese, feine Teile Bambu) - `tools/bausatz.sh <objekt> <mas
-- Z.469: ### Drucker aus der Sitzung starten + Demonstrator (17.11.2026)
-- Z.476: ### Agentenrunde 17.11.2026 (von mir nachgeprueft)
-- Z.485: ## Nachtrag 17.11.2026: Bauteil-Katalog erweitert (Bauteil-Runde Kaufhaus, `tools/bauteile.py`)
-- Z.496: ## Feinrelief aus Einzelfotos per monokularer Tiefe (`tools/relief_aus_fotos_mono.py`) - VERSUCH 17.11.2026
-- Z.512: ### Nachtrag 17.11.2026 abends: Mono-Relief im Schwabentor-Generator und in der Gesamtkette
-- Z.528: ### Nachtrag 17.11.2026 nachts: Feinausrichtung der Wandbilder ("pixelgenau uebereinander") - `tools/wand_feinausrichtung.py`
-- Z.547: ## Nachtrag 17.11.2026 abends: Runde 3 Kaufhaus - Feinteil-Mass, Restbrei, Erker-Masswerk, Dachdeckung, Figuren
-- Z.559: ### Nachtrag 17.11.2026 nachts: Gestalt aus Wandbild + Tiefe - `tools/form_aus_wandbild.py` (Versuch, nicht Standard)
-- Z.566: ### Nachtrag 18.11.2026 nachts: Kanten einrasten + affiner Konsens (form_aus_wandbild, Agent Kanten)
-- Z.573: ## Nachtrag 18.11.2026: Rueckwand hinter Oeffnungen (Regel A) und Innenwaende (Laube/Arkade)
+- Z.200: ## Nachregistrieren fremder Fotos - Stand 16.11.2026
+- Z.208: ## Stufe `seiten`: ERSTER DURCHLAUF bis zur Messkamera (16.11.2026 ~10:45, Schwabentor)
+- Z.218: ## Kamera am Modell nachziehen (`tools/kamera_verfeinern.py`, 16.11.2026) - schliesst die Luecke der Stufe `seiten`
+- Z.229: ## Fotoauftrag an den Nutzer (`tools/foto_auftrag.py`, 16.11.2026)
+- Z.244: ## Sofort-Urteil fuer Fotos vor Ort (`tools/foto_schnellcheck.py`, Aufruf `tools/foto_check.sh <objekt> <datei>`) - 16.11.2026
+- Z.255: ## Lehren 16.11.2026 nachmittags (fuer das naechste Gebaeude) und was davon schon generisch ist
+- Z.273: ## Runde Bauteile und Wandebene - 16.11.2026 mittags (Nutzer: Treppenturm "kleine Fensterchen", "wichtig fuer Schloesser"; "Warum nicht auto
+- Z.305: ## HAERTETEST 16.11.2026 nachmittags: drittes Gebaeude `ober_tvdr` (LoD2 DEBW_0010007Tvdr, Haeuserzeile Oberlinden noerdlich des Tors)
+- Z.392: ## Nachtrag 16.11.2026 nachts: Fehlersuche (statische Pruefung + Kettenbericht + Bild Modell neben Foto)
+- Z.413: ## Nachtrag 16.11.2026 spaet nachts: zweite Fehlersuche (Kameras)
+- Z.422: ## Nachtrag 17.11.2026 00:30: Stabilisierung der Kette
+- Z.433: ## Nachtrag 17.11.2026: Bausatz - Farbteile, Druckteilung, Druckzeit (Nutzerziel: mehrere Teile, je Farbe ein Teil, Stein flach drucken, gut
+- Z.446: ### Druckzeit gemessen (17.11.2026, Turm, PrusaSlicer-Standardprofil, Bett 256 mm) - Grundlage fuer die naechste Bauart
+- Z.455: ### Bausatz Turm, Stand 17.11.2026 vormittags (Variante 2,2 mm Wand, nie gedruckt)
+- Z.464: ### Bausatz fuer zwei Drucker (17.11.2026, Nutzer: grobe Teile Prusa MK4S 0,8-mm-Duese, feine Teile Bambu) - `tools/bausatz.sh <objekt> <mas
+- Z.473: ### Drucker aus der Sitzung starten + Demonstrator (17.11.2026)
+- Z.480: ### Agentenrunde 17.11.2026 (von mir nachgeprueft)
+- Z.489: ## Nachtrag 17.11.2026: Bauteil-Katalog erweitert (Bauteil-Runde Kaufhaus, `tools/bauteile.py`)
+- Z.500: ## Feinrelief aus Einzelfotos per monokularer Tiefe (`tools/relief_aus_fotos_mono.py`) - VERSUCH 17.11.2026
+- Z.516: ### Nachtrag 17.11.2026 abends: Mono-Relief im Schwabentor-Generator und in der Gesamtkette
+- Z.532: ### Nachtrag 17.11.2026 nachts: Feinausrichtung der Wandbilder ("pixelgenau uebereinander") - `tools/wand_feinausrichtung.py`
+- Z.551: ## Nachtrag 17.11.2026 abends: Runde 3 Kaufhaus - Feinteil-Mass, Restbrei, Erker-Masswerk, Dachdeckung, Figuren
+- Z.563: ### Nachtrag 17.11.2026 nachts: Gestalt aus Wandbild + Tiefe - `tools/form_aus_wandbild.py` (Versuch, nicht Standard)
+- Z.570: ### Nachtrag 18.11.2026 nachts: Kanten einrasten + affiner Konsens (form_aus_wandbild, Agent Kanten)
+- Z.577: ## Nachtrag 18.11.2026: Rueckwand hinter Oeffnungen (Regel A) und Innenwaende (Laube/Arkade)
