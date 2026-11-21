@@ -474,6 +474,7 @@ def main():
             if os.path.exists(os.path.join(KD, "kam_wahl.json")) and lauf(B, "bauplan_ebenen", [PY, "-W", "ignore", "-I", "tools/ebenen_bauplan.py", ZR, fo, KD, eb_], log, ok=(0, 3))[0] == 0:
                 erg_["ebenen_masse_rc"] = lauf(B, "bauplan_ebenen_masse", [PY, "-W", "ignore", "-I", "tools/ebenen_masse.py", ZR, eb_], log, ok=(0, 3))[0]
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
+            if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
             if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
