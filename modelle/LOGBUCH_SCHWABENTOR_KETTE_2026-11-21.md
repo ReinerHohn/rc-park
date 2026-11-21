@@ -260,3 +260,10 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
   Tiefenkarten-Massstab nur synthetisch; kein gemeinsamer Buendelausgleich der Seiten; Bereinigung (Kamera je Clip) vor dem globalen Mapper je Seite weicht vom Handlauf ab (dort unbereinigte DB); mehr als zwei Teile nur im Code.
 - Fester Test `tools/test_seiten_modelle.py` (5 Teile, ohne GPU, Attrappen fuer COLMAP/dicht_modell/seiten_vereinen) im Schnelltest. Schnelltest im Worktree: 2 Fehler, beide `PLATZ ZU KNAPP` (Root 4,2 GB frei, Grenze 5 GB:
   `test_kette_stabil` und `Kette lauf()` rufen `platz_pruefen`) - nicht aus dieser Aenderung; alle uebrigen Punkte gruen.
+
+## Nachtrag 21.11. 15:24 - Kettenlaeufe als Beleg, Platz, Agenten
+- Zusammengefuehrt: Agent "Mapper je Seite + Vereinen" (a7fc0be1b, `tools/sfm_seiten_modelle.py`), Schnelltest 0 Fehler.
+- PLATZ: Root nur 2,5 GB frei (Grenze 5): erster Start `kette-schwabentor-1121m` 15:11 scheiterte still am Platz-Tor (ich hatte nur die letzte Zeile der Startausgabe gelesen - Rueckfall). Abhilfe: fertige Agenten-Worktrees aufgeloest (je ~600 MB), Scratch-Ordner alter Sitzungen nach /media/oem/rcdaten/tmp/scratch_alt_1121/ ausgelagert (kopiert, Dateizahl verglichen, dann entfernt) -> 5,0 GB.
+- 15:15 `kette-schwabentor-1121m` (--ab bauplan --bis bauplan): Beleg fuer Wolkenrest/Dachprofil in der Kette; `audit/koerper_auto.json` und `dach_profil.json` von Hand vorher beiseite (Scratchpad sw_hand_1121).
+- 15:23 `kette-martinstor-1121a` (--ab sfm, wartet auf GPU/RAM hinter dem Schwabentor-Lauf): SCHNELLER BELEG der Seitenfolge in der Kette mit der VORHANDENEN Datenbank (Merkmale/Paare aus Cache -> Maskenfilter als Rueckfall -> Seitenerkennung -> globaler Mapper je Seite -> dichte Wolken -> Vereinen -> Tore) statt 10-14 h von null; alte sparse-Staende nach pipe/sfm/alt_1121/ verschoben. Der Lauf ganz von null (Masken in der Merkmalssuche) folgt danach.
+- Agenten laufen: Oeffnungen aus Kanten, Koerper-Schleife (Nachbarn, Kasten/Ring/Stab, Annahmeregel), Rezept-Dokument + fester Vereinen-Test.
