@@ -28,6 +28,19 @@ def _kachel(ek, nk, art="dom1"):
     return _cache[k]
 
 
+def dom1_bilinear(E, N, art="dom1"):
+    """Wie dom1_hoehe, aber bilinear zwischen den vier Pixelmitten (21.11.2026, Dach-Veto: auf steilen Daechern macht das 1-m-Raster sonst +-0,5 m Lage = +-0,75 m Hoehe)."""
+    E, N = np.asarray(E, float), np.asarray(N, float); z = np.full(E.shape, np.nan)
+    ek, nk = (E // 1000).astype(int), (N // 1000).astype(int)
+    for a, b in set(zip(ek.ravel().tolist(), nk.ravel().tolist())):
+        K = _kachel(a, b, art)
+        if K is None: continue
+        A, xc, yc, _ = K; m = (ek == a) & (nk == b); fj = E[m] - xc; fi = yc - N[m]; j0 = np.floor(fj).astype(int); i0 = np.floor(fi).astype(int); tj = fj - j0; ti = fi - i0
+        ok = (i0 >= 0) & (i0 + 1 < A.shape[0]) & (j0 >= 0) & (j0 + 1 < A.shape[1]); zz = np.full(m.sum(), np.nan); i, j, u, w = i0[ok], j0[ok], tj[ok], ti[ok]
+        zz[ok] = (A[i, j] * (1 - u) * (1 - w) + A[i, j + 1] * u * (1 - w) + A[i + 1, j] * (1 - u) * w + A[i + 1, j + 1] * u * w); z[m] = zz
+    return z
+
+
 def dom1_hoehe(E, N, art="dom1"):
     E, N = np.asarray(E, float), np.asarray(N, float); z = np.full(E.shape, np.nan)
     ek, nk = (E // 1000).astype(int), (N // 1000).astype(int)
