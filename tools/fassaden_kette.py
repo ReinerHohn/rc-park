@@ -305,6 +305,25 @@ def wandende_ist_ecke(waende, w, ende, abstand=0.8, parallel=0.95):
     return True
 
 
+def quadern(f, objekt_json, Z_basis, art, ecken=(False, False)):
+    """Quaderraster aus dem Wandbild auf ein gebautes Relief (tools/quader_raster.py, 21.11.2026): je Stein ebene Stirnflaeche (Median der Tiefe), druckbare Rillen.
+    art: 'fein' (mono/misch, Steinzone unten), 'foto' (Fotorelief: nur wo es Stein ist), 'wand' (Wand ohne Quader-Tor: nur Steinzone von unten).
+    Liefert (pfad, info) - pfad = f, wenn nichts zu tun ist (kein Wandbild, kein Raster) oder OHNE_QUADER_RASTER=1."""
+    if os.environ.get("OHNE_QUADER_RASTER") == "1" or not f or not os.path.exists(f): return f, None
+    ffn = fein_ordner(objekt_json)
+    if not ffn: return f, None
+    sys.path.insert(0, HIER); from quader_raster import quader_datei
+    od = os.path.dirname(os.path.abspath(objekt_json)); Zf = np.load(f)
+    kw = dict(vorn_quelle=dict(Z_basis) if Z_basis is not None and "vorn" in Z_basis.files else None, frei=uhren_frei(od, Zf))
+    if art == "foto": kw["nur_in"] = np.asarray(Zf["rel"]) > (float(Zf["putz_niveau_m"]) if "putz_niveau_m" in Zf.files else 0.0) + 0.01
+    if art == "wand": kw["zone_unten"] = True
+    if any(ecken): kw["rand_ecke"] = tuple(ecken)                         # Eckquader am Gebaeudeende: Bloecke mit gemessener Hoehe/Laenge
+    try: p, info = quader_datei(f, ffn, **kw)
+    except Exception as e: print(f"    quader_raster {os.path.basename(f)}: FEHLER {type(e).__name__}: {str(e)[:160]} - Relief unveraendert", flush=True); return f, None
+    if p != f: print(f"    quader_raster {os.path.basename(f)}: {info.get('relief_steine')} Steine, Rillen {info.get('relief_rille_mm')} mm, Bild {os.path.basename(p)[:-4]}.jpg", flush=True)
+    return p, (info if p != f else None)
+
+
 def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
     """Fuer Generatoren: alle relief/*_voll.npz der Fassaden-Kette als Platten anfuegen, begrenzt auf die nach aussen verschobene Koerperhuelle.
     fenster = Pfad der Fensterliste (fenster_fuer_bau), wenn die Fenster VOR dem Relief geschnitten wurden: die Reliefplatte bleibt dann in den Fensterrechtecken offen.
@@ -378,6 +397,20 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
                 if fl_w is not None and "putz_niveau_m" not in Zf_.files:          # Relief ohne Putzniveau (kein Wandbild): Niveau = Median der Wandzellen (relief_roh: 'vorstand')
                     mw_ = (Zf_["wand"] if "wand" in Zf_.files else np.ones(Zf_["rel"].shape, bool)) & ~Zf_["oeffnung"] & (Zf_["rel"] > 0); fl_w -= float(np.median(Zf_["rel"][mw_])) if mw_.any() else 0.0
                 if fl_w is not None: belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} auf der gemessenen Koerperflaeche ({fl_w:+.2f} m zur Wandebene)", quelle="fassaden_kette.koerper_flaeche (Stab-Sonde gegen den Grundkoerper nach Wandversatz)", relief_auf_flaeche_m=round(fl_w, 3)))
+        # 21.11.2026 QUADERRASTER aus dem Wandbild (Nutzer: unterer Turm "geschmolzen", Eckquader "Rauschen"): Reliefs wurden 1:1 gebaut - Fugen 0,1-0,4 mm H0,
+        # Beulen bis 1 mm H0. Jetzt je Stein ebene Stirnflaeche + druckbare Rillen; Wand ohne Quader-Tor (w02: unten Quader, oben Putz) nur in der Steinzone von unten.
+        qbel = []
+        if w.get("quader") is False and not w.get("nur_foto"):
+            f, qi_ = quadern(f, objekt_json, Z, "wand"); qbel.append(("Wand", qi_))
+        if hat_foto:
+            WLq_ = json.load(open(B))["waende"]; ff, qi_ = quadern(ff, objekt_json, Z, "foto", (wandende_ist_ecke(WLq_, w, "a"), wandende_ist_ecke(WLq_, w, "b"))); qbel.append(("Fotorelief", qi_))
+        if mono_: fmo, qi_ = quadern(fmo, objekt_json, Z, "fein"); qbel.append(("Feinrelief mono", qi_))
+        elif tf and os.path.exists(fm): fm, qi_ = quadern(fm, objekt_json, Z, "fein"); qbel.append(("Feinrelief misch", qi_))
+        for nm_, qi_ in qbel:
+            if qi_: belege.append(dict(seite="wand", element=f"Quaderraster {nm_} Fassade {w['name']}: {qi_.get('relief_steine')} Steine eben, Rillen {qi_.get('relief_rille_mm')} mm (Breite, Tiefe H0)",
+                                       quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
+                                       lagen_m=qi_.get("lagen_m", [])[:40], eckquader={k_: {kk: v_ for kk, v_ in e_.items() if kk != "bloecke"} | dict(n=len(e_.get("bloecke", []))) for k_, e_ in (qi_.get("eckquader") or {}).items()}, front_p5_p95_m=qi_.get("relief_front_p5_p95_m"), verworfen=qi_.get("verworfen"),
+                                       hinweis="ANNAHME: Rillenbreite/-tiefe = Druckmass (MINMM x SCALE), echte Fugen 1-3 cm; Stirnflaeche eben (Bossen nicht gemessen); Bild relief/<datei>_q.jpg ansehen"))
         if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else []), flaeche=fl_w) ^ hu)
         fl_ = None
         if hat_foto and os.environ.get("FOTOSTEINE_NETZEBENE") != "1":   # 21.11.2026: Fotosteine auf die gemessene Koerperflaeche (Netzebene lag 0,24-0,5 m hinter der korrigierten Wand -> Steine unsichtbar)
