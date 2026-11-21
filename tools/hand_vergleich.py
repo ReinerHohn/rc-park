@@ -83,11 +83,14 @@ def main():
         unten = [s for s in sch if s[0] <= sch[0][0] + 2.0]                 # Traufzone: die untersten 2 m des Dachprofils
         ue = [sorted([-s[1] - wh[0], s[2] - wh[0], -s[3] - wh[1], s[4] - wh[1]])[1:3] for s in unten]   # je Scheibe die zwei mittleren Seiten (robust gegen eine schiefe Seite)
         ist["zeltdach_ueberstand"] = dict(ueberstand=round(max(sum(x) / 2 for x in ue), 2), _quelle="wolke")
-        br = [(s[0], (s[2] - s[1] + s[4] - s[3]) / 4) for s in sch]; obere = [b for b in br if b[0] >= (br[0][0] + br[-1][0]) / 2]
+        br =[(s[0], (s[2] - s[1] + s[4] - s[3]) / 4) for s in sch]; obere = [b for b in br if b[0] >= (br[0][0] + br[-1][0]) / 2]
         if obere:
             i_h = min(range(len(obere)), key=lambda i: obere[i][1]); hals = obere[i_h]
             kr = next((b for b in obere[i_h + 1:] if b[1] > 1.2 * hals[1]), None)   # Krempe = erste Verbreiterung > 20 % ueber dem schmalsten Hals
             if kr: ist["laterne"] = dict(spitze_z=round(br[-1][0] + s_ / 2, 2), krempe_z=kr[0], _quelle="wolke")
+    TF = DP.get("traufe_foto") or {}           # 21.11.2026 tools/traufe_aus_fotos.py (Kettenstufe bauplan_traufe_foto): Ueberstand aus triangulierten Fotokanten geht vor (Median der gemessenen Seiten)
+    tg = [E for E in (TF.get("seiten") or {}).values() if E.get("gueltig") and E.get("ueberstand") is not None] if TF.get("gueltig") and TF.get("angenommen") is not False else []
+    if tg: ist["zeltdach_ueberstand"] = dict(ueberstand=round(float(__import__("statistics").median([E["ueberstand"] for E in tg])), 2), _quelle="foto")
     SF = DP.get("spitze_foto") or {}          # 21.11.2026 tools/spitze_aus_umriss.py (Kettenstufe bauplan_spitze_umriss): Spitze/Krempe aus der Himmelskante der Fotos gehen vor
     if SF.get("gueltig") and SF.get("spitze_z") is not None: ist["laterne"] = dict(spitze_z=SF["spitze_z"], krempe_z=SF.get("krempe_z"), _quelle="foto")
     ug = [e for e in EL if e.get("pfosten_je_seite") is not None and "umgang" in e.get("element", "").lower()]   # 21.11.2026: Umgang aus tools/umgang_aus_fotos.py (Beleg mit gezaehlter Pfostenzahl)
