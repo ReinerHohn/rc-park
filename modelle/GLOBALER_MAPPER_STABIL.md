@@ -232,3 +232,8 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
   Alle 8 Laeufe: Urteil vereint; Endlage der Suedseite gegen den unverfaelschten Lauf: Lage 0,26-0,96 % der Bauhoehe (Median der Wolkenpunkte), Drehung 0,04-0,49 Grad.
   -> Lage, Lot und Drehung haengen nicht mehr an der Klappung. NICHT belegt: Massstab (kommt weiter aus der Klappung), Bauten ohne Spitze, ohne rechte Winkel, Verfaelschung ueber 30 Grad / 30 %.
 - Recherche (Agent) `modelle/RECHERCHE_SEITEN_SFM_2026-11-21.md`. WICHTIG Lizenz: SegFormer-Gewichte (handy_masken, video_masken, gebaeude_segment) = NVIDIA Source Code License, nur nicht-kommerziell -> fuer die Verkaufskette ersetzen (Vorschlag RF-DETR-Seg, Apache-2.0; ungemessen).
+
+### 21.11. 15:12 - Pruefung Turmtiefe und Massstab der Suedseite am vereinten Modell (grob)
+- In den Wandrichtungen gemessen (Wandebene = dichteste Lage, Breite = 2.-98. Perzentil der Punkte in der Wandebene), Baender der Hoehe 30-40 % / 40-50 %:
+  Tiefe Nord-Sued 0,914 / 0,914; Breite Nord 0,948 / 0,919; Breite Sued 1,004 / 0,844 (Sued/Nord 1,06 / 0,92). Tiefe/Breite(Nord) = 0,96 / 0,99 - LoD2-Grundriss 11,39/11,69 = 0,97.
+- Darueber (50-80 %) streut die Breitenmessung (Sued/Nord 0,75-0,88: Erker/Tuermchen, duenne Kanten) -> fuer den Massstab der zweiten Seite so NICHT brauchbar; kein Hinweis auf groben Massstabsfehler, kein Beleg fuer < 3 %.
