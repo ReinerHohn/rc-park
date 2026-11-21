@@ -155,8 +155,16 @@ def vereinen(XA, CA, VA, XB, CB, VB, P, Q, up, rel=0.02, DA=None, DB=None):
     # 21.11.2026 (Martinstor, gefilterte DB, globale Stuecke): die Klappung lieferte Massstab, Lot und Wandrichtung richtig, aber die LAGE um eine Turmbreite daneben (Sued-Turm stand
     # NEBEN dem Nord-Turm, Bild vereinen_probe.jpg) -> Stange von B wurde am falschen Ort gesucht, Achsen 24 % uneinig. Mit dichten Wolken hat jedes Modell seine EIGENE Spitze:
     # B waagerecht so verschieben, dass Spitze auf Spitze liegt; die Klappung traegt dann nur noch Massstab, Lot und Drehung um das Lot. Unabhaengige Probe dafuer: Turmhoehe beider Modelle.
-    versatz = None
+    versatz = None; lot_b = None
     if DA is not None and DB is not None:
+        # LOT DER ZWEITEN SEITE aus IHREN EIGENEN Waenden (Nutzer am 3D-Bild 21.11. 14:45: "Suedseite noch gekippt"; gemessen 4,52 Grad): die Klappung richtet B nur ueber die
+        # stimmigen Punktpaare auf. Kleinste Drehung, die das Wand-Lot von B (in der geklappten Lage) auf das Lot von A legt, um den Schwerpunkt der B-Wolke.
+        Bk = s * np.asarray(DB) @ R.T + t; ub, nb = lot_aus_waenden(Bk, up)
+        if nb:
+            w_ = float(np.degrees(np.arccos(np.clip(ub @ up, -1, 1)))); lot_b = dict(normalen=int(nb), kippung_grad=w_)
+            if 0.2 < w_ < 15.0:
+                ax_ = np.cross(ub, up); ax_ /= np.linalg.norm(ax_); K_ = np.array([[0, -ax_[2], ax_[1]], [ax_[2], 0, -ax_[0]], [-ax_[1], ax_[0], 0]]); wr = np.radians(w_)
+                Rk = np.eye(3) + np.sin(wr) * K_ + (1 - np.cos(wr)) * K_ @ K_; c_ = np.median(Bk, 0); R = Rk @ R; t = Rk @ (t - c_) + c_; lot_b["berichtigt"] = True
         ga, gb = spitze_global(lok(DA)), spitze_global(lok(s * np.asarray(DB) @ R.T + t))
         if ga is not None and gb is not None:
             versatz = dict(klapp_versatz=float(np.linalg.norm(ga[0] - gb[0]) / max(ga[2], 1e-9)), hoehe_a=ga[2], hoehe_b=gb[2], hoehe_einigkeit=float(abs(ga[2] - gb[2]) / max(ga[2], 1e-9)))
@@ -166,7 +174,7 @@ def vereinen(XA, CA, VA, XB, CB, VB, P, Q, up, rel=0.02, DA=None, DB=None):
     if versatz is not None:                                                          # mit eigener Spitze je Modell: hoechste Bauteile aus den DICHTEN Wolken (die duenne Wolke von B hat oben oft keine Punkte)
         zm = ga[0]; sa, sb = spitze(lok(DA), zm, H, boden), spitze(lok(s * np.asarray(DB) @ R.T + t), zm, H, boden)      # Suchmitte = Spitze (die Klapp-Treffer koennen neben dem Turm liegen)
     else: zm = wm; sa, sb = spitze(a_, wm, H, boden), spitze(b_, wm, H, boden)
-    erg = dict(spitzen=versatz, paare=int(len(P)), inlier=int(inl.sum()), rest=float(np.median(np.linalg.norm(s * P[inl] @ R.T + t - Q[inl], axis=1))), massstab=float(s), wandhoehe=H, s=float(s), R=R.tolist(), t=t.tolist(), lot=up.tolist())
+    erg = dict(spitzen=versatz, lot_b=lot_b, paare=int(len(P)), inlier=int(inl.sum()), rest=float(np.median(np.linalg.norm(s * P[inl] @ R.T + t - Q[inl], axis=1))), massstab=float(s), wandhoehe=H, s=float(s), R=R.tolist(), t=t.tolist(), lot=up.tolist())
     if sa is None or sb is None: erg.update(urteil="keine hoechsten Bauteile in beiden Modellen gefunden - Achse unbestimmt", ok=False); return erg
     v = wm - np.median(ca[:, :2], 0); v /= np.linalg.norm(v); hoch = max(sa[2], sb[2])
     if DA is not None: a_d, b_d = lok(DA), lok(s * np.asarray(DB) @ R.T + t)      # dichte Wolken (genauer) fuer Achse, Dach und Flanke
@@ -270,6 +278,7 @@ def main(argv=None):
     erg = vereinen(np.array(list(XA.values())), CA, np.array([r[2] for r in RA]), np.array(list(XB.values())), CB, np.array([r[2] for r in RB]), P, Q, up, a.rel, DA, DB)
     erg.update(modell_a=os.path.abspath(a.a), modell_b=os.path.abspath(a.b), lot_herkunft=lot_info); json.dump(erg, open(os.path.join(a.aus, "vereinen.json"), "w"), indent=1); pr = erg.get("pruefung") or {}
     if "inlier" in erg: print(f"geklappte Lage: {erg['inlier']} von {erg['paare']} Punktpaaren, Rest {erg['rest']:.4f}, Massstab B->A {erg['massstab']:.3f}")
+    if erg.get("lot_b"): print(f"Lot der zweiten Seite aus ihren Waenden ({erg['lot_b']['normalen']} Normalen): {erg['lot_b']['kippung_grad']:.2f} Grad gekippt" + (" - berichtigt" if erg['lot_b'].get('berichtigt') else ""))
     if erg.get("spitzen"): print(f"eigene Spitze je Modell: Klappung lag {100 * erg['spitzen']['klapp_versatz']:.1f} % der Turmhoehe daneben (berichtigt), Turmhoehen {100 * erg['spitzen']['hoehe_einigkeit']:.1f} % verschieden")
     if pr: print(f"Achse aus {erg.get('achse_aus')}: Einigkeit der Modelle {100 * pr['achse_einigkeit']:.2f} % der Bauhoehe | Blick vorher {pr['blick_vorher']:.0f} Grad, nachher {pr['blick_nachher']:.0f} | Flanke {pr['flanke']} {pr['flanke_punkte']} | Dach {pr['dach']} | Tiefe {pr['tiefe']:.2f} der Bauhoehe")
     if DA is not None and "B_nach_A" in erg:
