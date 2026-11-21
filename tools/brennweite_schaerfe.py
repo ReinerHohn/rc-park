@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""brennweite_schaerfe.py <sparse-modell> [--aus bericht.json] [--liste datei.txt] [--weich 4] [--unbestimmt 10]
+"""brennweite_schaerfe.py <sparse-modell> [--aus bericht.json] [--liste datei.txt] [--sperrliste datei.txt --vereinen liste.txt ...] [--weich 4] [--unbestimmt 10]
 
 WIE SCHARF BESTIMMT EIN FOTO SEINE BRENNWEITE? (21.11.2026, Nutzerauftrag: "Methode, wie wir Einzelfotos ohne Brennweite rausfiltern".)
 Befund davor: zwischen zwei Mapper-Laeufen (global/global, global/schrittweise, schrittweise/schrittweise) wandern fast nur EINZELFOTOS; ihre Brennweite faellt je Lauf 2-6 %
@@ -18,7 +18,9 @@ import numpy as np
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("modell"); ap.add_argument("--aus"); ap.add_argument("--liste"); ap.add_argument("--weich", type=float, default=4.0); ap.add_argument("--unbestimmt", type=float, default=10.0); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("modell"); ap.add_argument("--aus"); ap.add_argument("--liste"); ap.add_argument("--weich", type=float, default=4.0); ap.add_argument("--unbestimmt", type=float, default=10.0)
+    ap.add_argument("--sperrliste", help="Sperrliste fuers Messen schreiben: unbestimmt + zu_wenig, vereinigt mit den Listen aus --vereinen (Kette: sfm/sperrliste_messen.txt fuer tools/dicht_bildwahl.py --ohne)")
+    ap.add_argument("--vereinen", nargs="*", default=[], help="vorhandene Namenslisten (eine Zeile je Bild), die in die Sperrliste eingehen, z. B. konsens_arbeit/unstabil.txt; sie werden nicht veraendert"); a = ap.parse_args()
     import pycolmap, cv2
     r = pycolmap.Reconstruction(a.modell); KS = np.geomspace(0.70, 1.43, 25); G = collections.defaultdict(list); Z = np.array([0.0, 0, 0]); alle = []
     for im in r.images.values():
@@ -54,8 +56,19 @@ def main():
     for e in E: Q[q(e["bilder"][0])][e["urteil"]] += len(e["bilder"])
     for k, c in sorted(Q.items(), key=lambda t: -sum(t[1].values()))[:8]: print(f"  {k[:22]:22s} " + "  ".join(f"{u} {c[u]}" for u in ("scharf", "weich", "unbestimmt", "zu_wenig")))
     if a.aus: json.dump(dict(modell=a.modell, kameras=E), open(a.aus, "w"), indent=1)
-    if a.liste: open(a.liste, "w").write("".join(n + "\n" for e in E if e["urteil"] in ("unbestimmt", "zu_wenig") for n in e["bilder"]))
+    gesperrt = sorted({n for e in E if e["urteil"] in ("unbestimmt", "zu_wenig") for n in e["bilder"]})
+    if a.liste: open(a.liste, "w").write("".join(n + "\n" for n in gesperrt))
+    if a.sperrliste: n_alle, n_fremd = sperrliste_schreiben(a.sperrliste, gesperrt, a.vereinen); print(f"Sperrliste fuers Messen: {n_alle} Bilder ({len(gesperrt)} unbestimmt/zu wenig Punkte + {n_fremd} weitere aus {len(a.vereinen)} Liste(n)) -> {a.sperrliste}")
     return 0
+
+
+def sperrliste_schreiben(ziel, namen, listen=()):
+    """Sperrliste = namen VEREINIGT mit den Zeilen der vorhandenen Dateien in `listen` (z. B. konsens_arbeit/unstabil.txt) - die Quelllisten bleiben unveraendert.
+    -> (Zahl gesamt, Zahl der Namen, die nur aus den anderen Listen kommen). Fehlende Dateien zaehlen als leer."""
+    alle = set(namen)
+    for p in listen:
+        if os.path.isfile(p): alle |= {os.path.basename(z.strip()) for z in open(p) if z.strip()}
+    open(ziel, "w").write("".join(n + "\n" for n in sorted(alle))); return len(alle), len(alle - set(namen))
 
 
 if __name__ == "__main__": sys.exit(main())

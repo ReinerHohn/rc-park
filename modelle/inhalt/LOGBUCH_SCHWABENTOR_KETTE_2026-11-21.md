@@ -18,3 +18,12 @@
 - Z.143: ## KONVERGIERENDE SCHLEIFE (Nutzer 02:28: „wir brauchen eine konvergierende Loop“) - Regeln
 - Z.148: ## Nachtrag 02:30 (abgelesen) - Nutzer: keine dichte Wolke um ihrer selbst willen; Ebenen in ALLE Richtungen (auch von der Seite)
 - Z.156: ## Nachtrag 02:33 (abgelesen) - SCHICHTSTAPEL (Nutzer: „geht auf der GPU sehr schnell ... auf ganz vielen, aus allen Winkeln machen und so e
+- Z.169: ## Nachtrag 21.11. 09:44 - Martinstor: schrittweiser Mapper "eng" fertig, Suedseite VERKLEBT
+- Z.179: ## Nachtrag 21.11. ab 09:50 - Seitenfolge in die Kette (Martinstor, Beweis an vorhandenen Daten)
+- Z.185: ## Nachtrag 21.11. 10:05 - Treppenturm automatisch aus dem Wolkenrest (erste Zeile "FEHLT" der Analyse)
+- Z.192: ## Nachtrag 21.11. 10:25 - Martinstor Seitenerkennung fertig (10:19, rc 3): Seiten NICHT getrennt - Ursache gefunden: PERSON als Bruecke
+- Z.201: ## Nachtrag 21.11. 10:40 - Dach als Schichtprofil der Wolke (Schwabentor) + Maskenfilter (Martinstor)
+- Z.211: ## Nachtrag 21.11. 10:59 - Paar-Pruefer bekommt die Masken (Nutzer: "na klar muss der Pruefer die Masken bekommen")
+- Z.217: ## Nachtrag 21.11. 11:27 - BELEG: mit Masken trennt die Seitenerkennung Sued und Nord am Martinstor
+- Z.225: ## Nachtrag 21.11. 11:29 - Suedmodell + hartes Blick-Tor
+- Z.233: ## Nachtrag 21.11. 13:40 - Seitenfolge IN DER KETTE (Agent im Worktree, nur Code + feste Tests, KEIN Kettenlauf)

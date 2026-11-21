@@ -2,7 +2,12 @@
 """iphone_sfm.py <bilderordner> <arbeitsordner> - COLMAP-SfM (pycolmap, SIFT-GPU, exhaustive, Mapper) fuer die iPhone-Fotos; GPU von Anfang an (Nutzerregel).
   /media/oem/scan/venv-colmap/bin/python -I tools/iphone_sfm.py <bilderordner> <arbeitsordner> [--mapper auto|auto_alt|global|inkrementell|konsens] [--flexglue]
   (oder `tools/py col tools/iphone_sfm.py ...`; ohne 'col' waehlt tools/py venv-seg, dort fehlt pycolmap). RCPARK_FLEXGLUE=1 wie --flexglue. Defekte Bilder vorher nach quarantaene/ (fotos_pruefen.py).
-Ausgaben in <arbeitsordner>: db.db, paare.txt (ab > 300 Bildern), sparse/<n>/ (COLMAP-Modelle), mapper_wahl.json (Mapperwahl + GPS-Tor).
+VORSTUFE 'seiten' (21.11.2026, Standard AN, tools/sfm_seiten_vorstufe.py): Vordergrund-Masken (handy_masken, GPU) -> Masken in der Merkmalssuche (ImageReader.mask_path; vorhandene
+  Datenbank ohne Masken: db_masken_filter als Rueckfall) -> seiten_erkennen --streng --masken -> Mapper rechnet auf db_seiten.db. Zwischenstaende werden wiederverwendet.
+  RCPARK_SEITEN=0 schaltet sie ab, =immer nimmt db_seiten.db auch ohne 'verwechselt'-Urteil; RCPARK_MASKEN_EXTRAKTION=0 = Masken nur als Filter; RCPARK_MASKEN_BATCH (2).
+DB-BEREINIGUNG vor JEDEM Mapper (Kamera je Videoclip, EXIF-Prioren weg, tools/sfm_db_variante.py -> db_mapper.db; der Konsens-Weg bereinigt selbst). RCPARK_DB_BEREINIGEN=0 = alter Stand.
+Ausgaben in <arbeitsordner>: db.db, paare.txt (ab > 300 Bildern), sparse/<n>/ (COLMAP-Modelle), mapper_wahl.json (Mapperwahl + GPS-Tor + 'seiten': Bildteile, fehlende Seiten),
+  masken/, masken_colmap/, seiten.json, db_seiten.db, db_mapper.db.
 Exit 0 = fertig; Abbruch mit Text, wenn der erzwungene Konsens- bzw. der globale Mapper scheitert.
 """
 import sys, os, pycolmap, time
@@ -40,6 +45,12 @@ img, w = sys.argv[1], sys.argv[2]; os.makedirs(w, exist_ok=True); db = f"{w}/db.
 import subprocess
 subprocess.run(["/media/oem/scan/venv-seg/bin/python", "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "fotos_pruefen.py"), img], check=False)
 so = pycolmap.FeatureExtractionOptions(); so.sift.max_num_features = 6400; so.max_image_size = 2400
+# VORSTUFE 'seiten', Schritt 1 (21.11.2026): Masken fuer Personen/Fahrzeuge/Baeume VOR der Merkmalssuche (Martinstor: eine Person in Selbstaufnahme-Videobildern verband Sued- und Nordseite).
+SEITEN = os.environ.get("RCPARK_SEITEN", "1"); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import sfm_seiten_vorstufe as SV, json
+_seiten = {}; _roh = f"{w}/masken"; _mk = f"{w}/db.masken.json"       # db.masken.json = Beleg, dass db.db MIT Masken in der Merkmalssuche entstand
+_mit_maske = SEITEN != "0" and os.environ.get("RCPARK_MASKEN_EXTRAKTION", "1") != "0"
+if SEITEN != "0": _seiten["masken"] = SV.masken_rechnen(img, w)
+else: print("VORSTUFE 'seiten' ABGESCHALTET (RCPARK_SEITEN=0): keine Masken, keine Seitenerkennung - Seitenverklebung symmetrischer Bauwerke moeglich", flush=True)
 # Cache: Merkmale und Paare aus einem frueheren Lauf wiederverwenden, wenn die Datenbank genau diese Fotos enthaelt (keine Qualitaetsaenderung).
 import sqlite3
 _n_fotos = len([f for f in os.listdir(img) if os.path.isfile(os.path.join(img, f))])
@@ -53,7 +64,12 @@ if os.path.exists(db):
 if _db_ok:
     print(f"Merkmale und Paare aus Cache ({_ni} Bilder, {_nm} Paare)", flush=True)
 else:
-    pycolmap.extract_features(db, img, camera_mode=pycolmap.CameraMode.PER_IMAGE, extraction_options=so, device=pycolmap.Device.cuda); print("Merkmale", time.time() - t, flush=True)
+    _db_neu = not os.path.exists(db); _ro = pycolmap.ImageReaderOptions(); _n_mask = 0
+    if os.path.exists(_mk): os.remove(_mk)                                # Beleg gilt nur fuer die Datenbank, die er beschreibt
+    if _mit_maske:                                                        # Masken schon in der Merkmalssuche (COLMAP: <mask_path>/<Bildname>.png, 0 = ignorieren) - besser als nachtraeglich filtern
+        _ro.mask_path = f"{w}/masken_colmap"; _n_mask, _n_leer = SV.masken_colmap(img, _roh, _ro.mask_path); print(f"Merkmalssuche mit Masken: {_n_mask} von {_n_fotos} Bildern, {_n_leer} mit leerer Maske (COLMAP ueberspringt Bilder ohne Maskendatei)", flush=True)
+    pycolmap.extract_features(db, img, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, extraction_options=so, device=pycolmap.Device.cuda); print("Merkmale", time.time() - t, flush=True)
+    if _mit_maske and _db_neu: json.dump(dict(masken=_n_mask, bilder=_n_fotos, zeit=time.strftime("%Y-%m-%d %H:%M")), open(_mk, "w"))   # bestand db.db schon (Teilstand), haben alte Bilder Merkmale OHNE Maske -> kein Beleg, Filter-Rueckfall
     _paare = paarliste(db, w)
     if _paare:
         po_ = pycolmap.ImportedPairingOptions(); po_.match_list_path = _paare
@@ -68,6 +84,12 @@ if "--flexglue" in sys.argv or os.environ.get("RCPARK_FLEXGLUE") == "1":
     _r = subprocess.run([sys.executable, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "flexglue_zuordnung.py"), "--db", db, "--bilder", img, "--aus", _fg], check=False)
     if _r.returncode == 0: db = _fg; print("Mapper rechnen auf FlexGlue-Zuordnungen:", db, flush=True)
     else: print("ACHTUNG FlexGlue nicht vollstaendig (rc", _r.returncode, ") - Mapper rechnen auf SIFT", flush=True)
+# VORSTUFE 'seiten', Schritte 2+3 (21.11.2026): vorhandene Datenbank ohne Masken -> Vordergrund-Zuordnungen nachtraeglich streichen (db_maske.db); dann Seitenerkennung (GPU, Paar-Pruefer
+# mit Masken) -> db_seiten.db ohne die Paare zwischen aehnlichen, aber verschiedenen Seiten. Scheitert ein Schritt, bricht die SfM ab (kein stiller Mapper-Lauf auf ungefilterten Paaren).
+if SEITEN != "0":
+    _seiten["masken_weg"] = "merkmalssuche" if os.path.isfile(_mk) else "filter"
+    if not os.path.isfile(_mk): db = SV.masken_filter(db, _roh, w)
+    db, _seiten["erkennung"] = SV.seiten(db, img, w, _roh, modus=SEITEN)
 # Mapper: COLMAP-Binaerdatei mit CUDA (GPU-Bündelausgleich, BundleAdjustmentCeres.use_gpu). Die pycolmap-Python-Bibliothek hat keine GPU-Ceres.
 COLMAP_BIN = "/media/oem/scan/colmap-build/prefix/bin/colmap"
 _env = dict(os.environ, LD_LIBRARY_PATH=":".join(["/media/oem/scan/cuda-toolkit-combo/lib64", "/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib", "/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib", "/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib"]))
@@ -82,9 +104,15 @@ _env = dict(os.environ, LD_LIBRARY_PATH=":".join(["/media/oem/scan/cuda-toolkit-
 #   18 %; global ist NICHT immun (Variante gemeinsame Kamera: 18 %) -> Tor ist Pflicht. Ergebnis: <w>/mapper_wahl.json.
 import re, json, shutil
 MAPPER = sys.argv[sys.argv.index("--mapper") + 1] if "--mapper" in sys.argv else "auto"; _tools = os.path.dirname(os.path.abspath(__file__))
+_dbm = []
+def _db_mapper():
+    """DB-Bereinigung fuer JEDEN Mapper-Weg (21.11.2026; vorher nur im Konsens-Weg): Kamera je Videoclip, EXIF-Prioren weg, Panoramen raus -> <w>/db_mapper.db. Erst beim ersten
+    Bedarf gerechnet (der Konsens-Weg bereinigt seine eigene Kopie; eine Kopie der Datenbank ist am Martinstor 2,8 GB)."""
+    if not _dbm: _dbm.append(db if os.environ.get("RCPARK_DB_BEREINIGEN", "1") == "0" else SV.bereinigen(db, w))
+    return _dbm[0]
 def _inkrementell(ziel):
     os.makedirs(ziel, exist_ok=True)
-    subprocess.run([COLMAP_BIN, "mapper", "--database_path", db, "--image_path", img, "--output_path", ziel,
+    subprocess.run([COLMAP_BIN, "mapper", "--database_path", _db_mapper(), "--image_path", img, "--output_path", ziel,
                     "--Mapper.num_threads", os.environ.get("RCPARK_MAPPER_FAEDEN", "-1"), "--Mapper.ba_use_gpu", "1", "--Mapper.ba_gpu_index", "0", "--Mapper.ba_max_num_images_direct_dense_gpu_solver", "0"], env=_env, check=True)
     # 20.11.2026: Faeden 1 -> -1 (alle). Der Wert steuert laut COLMAP-Quelltext Ceres-Ableitungen und RANSAC der Lageschaetzung; "1" stand seit 14.11. ohne Grund da.
     # A/B Schwabentor 203 Bilder (tools/versuche/mapper_faeden_ab.sh): 179 Bilder nach 540 s gegen 217 s (2,5 x), Ergebnis gleichwertig (181 Bilder / 65 019 Punkte / 1,239 px
@@ -102,11 +130,14 @@ def _konsens_urteil(lief):
     import global_mapper_konsens as GK
     namen = [f for f in os.listdir(img) if os.path.isfile(os.path.join(img, f))]; clips = {n_.split("__vf_")[0] for n_ in namen if "__vf_" in n_}
     kp = f"{w}/konsens_arbeit/konsens.json"; kj = json.load(open(kp)) if lief and os.path.isfile(kp) else None
-    g, u, ab = GK.urteil(kj, len(namen), len(clips), lief)
-    return dict(bilder=len(namen), videoclips=len(clips), rueckgrat=(kj or {}).get("schnitt", {}).get("stabil"), gemeinsam=(kj or {}).get("schnitt", {}).get("gemeinsam"),
+    # 21.11.2026: Bilder, die die Seitenerkennung als FREMD aus den Paaren nahm (anderes Bauwerk; Martinstor 1362 von 2107), koennen nicht ins Modell - sie zaehlen nicht zur Bildzahl,
+    # sonst hiesse es 'unter 50 % im Modell' = falscher DATENMANGEL und der langsame Ausweichweg liefe an.
+    _e = _seiten.get("erkennung") or {}; n_fremd = _e.get("fremd", 0) if _e.get("db", "").endswith("db_seiten.db") else 0
+    g, u, ab = GK.urteil(kj, len(namen) - n_fremd, len(clips), lief)
+    return dict(bilder=len(namen), fremd=n_fremd, videoclips=len(clips), rueckgrat=(kj or {}).get("schnitt", {}).get("stabil"), gemeinsam=(kj or {}).get("schnitt", {}).get("gemeinsam"),
                 im_modell=(kj or {}).get("bewertung", {}).get("n_reg"), gruende=g, ursachen=u, abhilfe=ab)
 def _global(ziel):
-    dbg = db + ".global.db"; shutil.copyfile(db, dbg); os.makedirs(ziel, exist_ok=True)       # Kalibrierung aendert Intrinsik/Zweibild-Geometrien in der DB -> nur auf der Kopie
+    dbg = db + ".global.db"; shutil.copyfile(_db_mapper(), dbg); os.makedirs(ziel, exist_ok=True)       # Kalibrierung aendert Intrinsik/Zweibild-Geometrien in der DB -> nur auf der Kopie
     r1 = subprocess.run([COLMAP_BIN, "view_graph_calibrator", "--database_path", dbg], env=_env, stdout=open(os.path.join(w, "kalib.log"), "w"), stderr=subprocess.STDOUT)
     r2 = subprocess.run([COLMAP_BIN, "global_mapper", "--database_path", dbg, "--image_path", img, "--output_path", ziel], env=_env, stdout=open(os.path.join(w, "global.log"), "w"), stderr=subprocess.STDOUT)
     os.remove(dbg); return r1.returncode == 0 and r2.returncode == 0 and os.path.isdir(os.path.join(ziel, "0"))
@@ -156,3 +187,16 @@ GB.belegen()
 json.dump(wahl, open(os.path.join(w, "mapper_wahl.json"), "w"), indent=1); print("MAPPERWAHL", json.dumps(wahl), flush=True)
 rec = {k: pycolmap.Reconstruction(os.path.join(f"{w}/sparse", k)) for k in sorted(os.listdir(f"{w}/sparse")) if k.isdigit()}
 for k, r in rec.items(): print(k, r.summary(), flush=True)
+# 21.11.2026: Modelle und Seiten MELDEN - die Kette verwendet nur sparse/0; fehlt dort ein Bildteil (Seite), darf das nicht still bleiben.
+_reg = lambda r: {r.images[i].name for i in r.reg_image_ids()} if hasattr(r, "reg_image_ids") else {im.name for im in r.images.values()}
+wahl["modelle"] = {k: len(_reg(r)) for k, r in rec.items()}
+if len(rec) > 1: print(f"ACHTUNG {len(rec)} MODELLE: " + ", ".join(f"sparse/{k} {n} Bilder" for k, n in wahl["modelle"].items()) + " - die Kette verwendet nur sparse/0", flush=True)
+if SEITEN != "0":
+    _e = _seiten.get("erkennung") or {}
+    if _e.get("db", "").endswith("db_seiten.db"):
+        _e["im_modell"], _e["meldungen"] = SV.teile_im_modell(_e["seiten_json"], {k: _reg(r) for k, r in rec.items()})
+        print("SEITEN IM MODELL: " + "; ".join(f"Teil {t_['teil']} ({t_['bilder']} Bilder): " + ", ".join(f"sparse/{m} {n}" for m, n in t_["im_modell"].items()) for t_ in _e["im_modell"][:8]), flush=True)
+        for m_ in _e["meldungen"]: print("ACHTUNG SEITE: " + m_, flush=True)
+    wahl["seiten"] = _seiten
+else: wahl["seiten"] = dict(abgeschaltet=True)
+json.dump(wahl, open(os.path.join(w, "mapper_wahl.json"), "w"), indent=1)

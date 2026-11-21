@@ -35,3 +35,5 @@ arkaden_fit.py
 helm_fit.py
 gauben_fit.py
 baluster_fit.py
+seiten_erkennen.py
+doppelgaenger_paare.py

@@ -1,4 +1,4 @@
-# Werkzeuge: sfm_mapper (55)
+# Werkzeuge: sfm_mapper (56)
 - `tools/ansichten_foto_paare.py` [seg] ansichten_foto_paare.py - FUER JEDES MODELL: Kantenbild des Modells aus den kalibrierten Kameras NEBEN dem Foto, ueber alle Blickrichtungen UND Hoehenwinkel (von oben, eben, von un
 - `tools/bildsuche_paare.py` [seg] bildsuche_paare.py <bilder-ordner> --aus <paare.txt> [--k 40] [--liste namen.txt] [--pruefen-db <db>]
 - `tools/colmap_db_schema.py` [-] colmap_db_schema.py <db.db> - KOPIE einer COLMAP-Datenbank auf das Schema von pycolmap 4.2.1 (venv-colmap) zurueckfuehren. 18.11.2026 (Kaufhaus gk2h, Stufe seiten_luecken: "No regi
@@ -47,6 +47,7 @@
 - `tools/sfm_lod2_buendel.py` [col] sfm_lod2_buendel.py - GENERISCH: Buendelausgleich eines SfM-Netzes MIT den amtlichen Flaechen (LoD2-Waende/-Daecher aller Gebaeude im Umkreis + DGM1) als Bedingung, ohne Handpicks 
 - `tools/sfm_netz.py` [col] sfm_netz.py - GENERISCH: SfM-Netz je Fassadenseite bauen, bewerten und reparieren (Lehren aus Martinstor, Register AH/AI).
 - `tools/sfm_registrieren.py` [seg] sfm_registrieren.py - ein Foto ueber HANDPICKS in ein metrisch ausgerichtetes Netz einhaengen (Register AJ).
+- `tools/sfm_seiten_vorstufe.py` [seg] sfm_seiten_vorstufe.py - Vorstufe 'seiten' der SfM (tools/iphone_sfm.py ruft die Funktionen hier auf; kein eigenes Kommandozeilenwerkzeug).
 - `tools/sfm_stabil_schnitt.py` [col] sfm_stabil_schnitt.py <sparse_A/0> <sparse_B/0> --ausgabe <ordner> [--lage 0.10] [--rot 2.0] [--liste unstabil.txt] Konsens zweier Laeufe des globalen Mappers (gleiche Eingabe, and
 - `tools/sfm_verzerrung_test.py` [-] sfm_verzerrung_test.py - Ist ein SfM-Netz METRISCH oder projektiv verbogen? (Lehre Register AI, Suednetz Martinstor)
 - `tools/tiefen_kameras.py` [col] tiefen_kameras.py - GENERISCH: Kameras eines COLMAP-Dichte-Arbeitsordners (sfm_dicht.py, entzerrte PINHOLE-Bilder) als JSON exportieren, damit Werkzeuge ohne pycolmap (venv-seg: te

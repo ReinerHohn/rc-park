@@ -14,3 +14,5 @@ gitter_kurven.py 2500 Schaetzung (Konsens 2,2 Mio Pkt + knn ~300k; set_per_proce
 helm_fit.py 1600 Deckel torch.cuda.set_per_process_memory_fraction(0.18) = 1,5 GB (RCPARK_GPU_ANTEIL), Spitze nicht gemessen; OOM 9.11. bei fremdem 6-GB-Prozess
 gauben_fit.py 1600 Deckel wie helm_fit.py (0.18), Spitze nicht gemessen
 baluster_fit.py 700 Deckel RCPARK_GPU_ANTEIL=0.08; nvidia-smi 9.11.: 130 MiB waehrend des Laufs
+# NICHT eingetragen (exklusiv), 21.11.2026: handy_masken.py (Spitze 6,9 GiB bei --batch 2 und --breite 1536 = 7066 MiB, mit 20 % ueber der Karte; Batch 4 = OOM-Rueckfaelle), seiten_erkennen.py / doppelgaenger_paare.py (LoFTR + Entscheidungsnetz, Spitze NICHT gemessen).
+#   In der Kette laufen beide als Vorstufe in tools/iphone_sfm.py (tools/sfm_seiten_vorstufe.py) VOR der Merkmalssuche bzw. vor dem Mapper, nacheinander, innerhalb der GPU-Buchung des Kettenjobs (6000 MiB) - die Masken liegen also ~1 GiB UEBER der Buchung (OOM-Leiter in handy_masken faengt es ab; RCPARK_MASKEN_BATCH=1 senkt die Spitze, nicht gemessen).
