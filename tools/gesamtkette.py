@@ -477,6 +477,12 @@ def main():
             if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
+            # 21.11.2026 (Schwabentor: Wolke/Sweep gaben Tor 4,86-5,37 m, Rundbogen; das Wandbild zeigt Spitzbogen, lichte Weite 4,50 = Hand 4,49): Oeffnungen aus Wolke + Kanten + FEINEM
+            # WANDBILD (tools/oeffnungen_aus_kanten.py) -> gebaute Oeffnungen in audit/oeffnungen_auto.json bekommen Form/lichte Masse aus den Bildkanten (--uebernehmen; Beifang baut nichts).
+            oa_ = os.path.join(Z, "audit", "oeffnungen_auto.json")
+            if os.path.exists(os.path.join(eb_, "ebenen.json")) and os.path.exists(oa_):
+                erg_["oeffnungen_wandbild_rc"] = lauf(B, "bauplan_oeffnungen_wandbild", [PY, "-u", "-W", "ignore", "-I", "tools/oeffnungen_aus_kanten.py", ZR, eb_, "--uebernehmen", oa_]
+                                                      + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3))[0]
             if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
             # 21.11.2026 (ANALYSE_SACKGASSEN: Koerper, die auf keiner Wandebene liegen - Treppenturm, Dachueberstand, Laterne - kamen im Handlauf aus der dichten Wolke): Rest der Wolke am
             # gebauten Modell -> Dach-Schichtprofil (audit/dach_profil.json, nur einmal gegen das LoD2-Dach) und KOERPER-SCHLEIFE (tools/koerper_schleife.py: Haufen benennen, Nachbarn/Hohlraeume

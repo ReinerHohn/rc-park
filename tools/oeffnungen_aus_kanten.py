@@ -808,9 +808,38 @@ def sauber(o):
     return o
 
 
+FORM_KURZ = {"spitzbogen": "spitz", "rundbogen": "rund", "segmentbogen": "stich"}     # Namen in bauteile.bogen_querschnitt
+
+
+def uebernehmen(ber, auto_pfad, log=print):
+    """Wandbild-Masse in audit/oeffnungen_auto.json (tools/oeffnungen_bogen.py -> bauteile.oeffnungen_aus_json) schreiben (21.11.2026, Nutzer: Kette vollautomatisch).
+    Nur bereits GEBAUTE Oeffnungen (Durchblick im Ebenen-Sweep belegt) werden geaendert - Beifang dieses Werkzeugs (Galeriebalken als 'Fenster') baut nichts Neues.
+    Bedingungen: Form aus dem Wandbild (form_quelle 'wandbild', Bogenform), gleiche Fassade (<fid>_wand), Mitte innerhalb der halben Breite der gebauten Oeffnung.
+    Uebernommen: Form, lichte Breite, Kaempfer, Scheitel, Lage u (Mitte der Bildkanten); NICHT die Sohle (Wolkenfleck, unten Leute/Autos). Alte Werte unter 'vor_wandbild'."""
+    if not os.path.exists(auto_pfad): log(f"uebernehmen: {auto_pfad} fehlt"); return 0
+    A = json.load(open(auto_pfad)); n = 0
+    for fid, F in A.items():
+        if not isinstance(F, dict): continue
+        kand = [o for o in (ber["ebenen"].get(f"{fid}_wand") or {}).get("oeffnungen", []) if o.get("form_quelle") == "wandbild" and o.get("form") in FORM_KURZ]
+        for x in F.get("oeffnungen", []):
+            if not x.get("gebaut") or "breite" not in x: continue
+            k = [o for o in kand if abs(o["mitte_u"] - x["u"]) < x["breite"] / 2]
+            if not k: continue
+            o = min(k, key=lambda o: abs(o["mitte_u"] - x["u"]))
+            if o["kaempfer"]["wert"] is None or o["scheitel"]["wert"] is None: continue
+            x.setdefault("vor_wandbild", {kk: x.get(kk) for kk in ("form", "u", "breite", "kaempfer", "scheitel")})
+            x.update(form=FORM_KURZ[o["form"]], u=round(o["mitte_u"], 3), breite=round(o["breite"]["wert"], 3), kaempfer=round(o["kaempfer"]["wert"], 3), scheitel=round(o["scheitel"]["wert"], 3),
+                     mass_quelle=f"wandbild (tools/oeffnungen_aus_kanten.py {o['id']}): {o['breite'].get('hinweis') or 'Bildkante'}; {o['breite'].get('quelle')}",
+                     aussenmass=o.get("aussenmass"), gewaende=o.get("gewaende"))
+            n += 1; log(f"uebernehmen: {fid} {o['id']} -> {x['form']} Breite {x['breite']} Kaempfer {x['kaempfer']} Scheitel {x['scheitel']} (vorher {x['vor_wandbild']})")
+    if n: json.dump(A, open(auto_pfad, "w"), indent=1, ensure_ascii=False)
+    return n
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ebenen"); ap.add_argument("--wolke", default=""); ap.add_argument("--bild", type=int, default=1)
     ap.add_argument("--nur", default=""); ap.add_argument("--aus", default="", help="Ausgabeordner (Standard <objektordner>/audit)")
+    ap.add_argument("--uebernehmen", default="", help="audit/oeffnungen_auto.json: gebaute Oeffnungen mit Wandbild-Form/-Massen ueberschreiben (Kettenstufe 'bauplan')")
     ap.add_argument("--wandbild", default="auto", help="Ordner von fassade_fein (fassaden.json, ortho_<fid>_fein.png, ortho_<fid>_einzeln/); 'auto' = <ebenen>/../fassade_fein, '' = ohne"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); aus = a.aus or os.path.join(od, "audit"); os.makedirs(aus, exist_ok=True)
     EJ = [e for e in json.load(open(os.path.join(a.ebenen, "ebenen.json")))["ebenen"] if e.get("art") == "wand" and (not a.nur or e["id"] in a.nur.split(","))]
@@ -839,7 +868,9 @@ def main():
         if a.bild and "_kanten" in erg: kontrollbild(e, erg, os.path.join(aus, f"oeffnungen_kanten_{e['id']}.jpg"), wandbild=wb)
         ber["ebenen"][e["id"]] = sauber(erg)
     json.dump(ber, open(os.path.join(aus, "oeffnungen_kanten.json"), "w"), indent=1, ensure_ascii=False)
-    print(f"-> {os.path.join(aus, 'oeffnungen_kanten.json')}: {n_ges} Oeffnungen"); return 0 if n_ges else 3
+    print(f"-> {os.path.join(aus, 'oeffnungen_kanten.json')}: {n_ges} Oeffnungen")
+    if a.uebernehmen: print(f"uebernehmen: {uebernehmen(ber, a.uebernehmen)} gebaute Oeffnung(en) mit Wandbild-Massen in {a.uebernehmen}")
+    return 0 if n_ges else 3
 
 
 if __name__ == "__main__": sys.exit(main())
