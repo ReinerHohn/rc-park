@@ -101,3 +101,12 @@ GEHT NICHT:
 - Stärke der Hölzer nach hinten, Knaggenform.
 ANNAHME zur Ursache der schwachen senkrechten Kanten: Kamerastandorte liegen entlang der Straßenachse (Parallaxe vor allem in der Höhe). Nicht geprüft.
 Folgerung nach Nutzerentscheidung: Brüstungskasten, Konsolen/Streben (Zahl, Lage, Neigung) und Breite/Ausladung aus Kanten bauen; Pfosten: Lage aus Kanten, Querschnitt Bauteil-Standard; Vordach: allgemeines Bauteil mit Traufe/Anschluss aus der Uneinigkeitskarte.
+
+## LEITBILD Nutzer 21.11. ~03:25 (gilt für die METHODE oben)
+„Das, was ich damals von Hand gemacht habe, wo ich dir gesagt habe, was noch nicht passt, das muss jetzt automatisch laufen. Du musst mich ersetzen durch eine automatische Bauplanabweichung, Fotokantenabweichung, die Tiefen sweepen und mehrere Baupläne auf mehrere Ebenen machen und dort die Abweichungen mit diesen Bauplänen abgleichen.“
+Umsetzung als SCHLEIFE (ersetzt den Nutzer als Prüfer):
+1. Ebenen finden (Tiefen-Sweep je Wand) und je Ebene einen Bauplan rechnen (feines Bild + dichte triangulierte Fotokanten auf dieser Ebene).
+2. Modell bauen (Kanten -> Maße/Form; nur was Kanten nicht hergeben, aus allgemeinem Bauteil).
+3. ABWEICHUNG je Ebene messen, mit Ort: (a) Fotokanten ohne Modellkante = fehlt/falsche Lage, (b) Modellkanten ohne Fotokante = erfunden, (c) Modell auf der Ebene gegen das Bauplanbild.
+4. Abweichungsliste = Arbeitsliste (größte zuerst) -> zurück zu 2, bis die Abweichung unter der Schwelle liegt oder nichts mehr besser wird; Rest wird als offen gemeldet.
+Vorhanden als Bausteine: `kantenstufe.py` (fehlende_kanten_haufen), `foto_diff.py`, `aenderung_check.py`, `teil_fotoform.py`. Fehlt: die Auswertung JE EBENE und die Rückführung in den Bau.
