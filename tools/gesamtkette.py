@@ -582,6 +582,9 @@ def main():
                 # 21.11.2026 (KERNMETHODE; Schwabentor: Wolke endet 3,5 m unter dem Knauf, Laternenhals im duennen Wolkenbereich): Laterne/Spitze aus der HIMMELSKANTE der kalibrierten
                 # Fotos an der Dachachse (tools/spitze_aus_umriss.py -> Block 'spitze_foto' in dach_profil.json; bauteile.dach_aus_profil baut damit ueber dem Laternenhals). Masken aus dem Cache der Stufe 'dachfoto'.
                 sp_rc_ = lauf(B, "bauplan_spitze_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/spitze_aus_umriss.py", ZR], log, ok=(0, 3, 4))[0] if os.path.exists(dp_) else 3; erg_["spitze_umriss_rc"] = sp_rc_
+                # 22.11.2026 (Foto IMG_113231/113056: offene Laterne mit Pfosten/Krempe/Haube/Knauf, Modell runde Zwiebel): Eckenzahl + Pfosten + Zonen aus den Kanten IM INNEREN der
+                # Silhouette in voller Fotoaufloesung (tools/laterne_aus_fotos.py -> Block 'laterne_foto'; bauteile.dach_aus_profil baut dann bauteile.laterne statt der Drehringe).
+                la_rc_ = lauf(B, "bauplan_laterne_foto", [PY, "-u", "-W", "ignore", "-I", "tools/laterne_aus_fotos.py", ZR, "--bild", os.path.join(Z, "audit", "laterne_foto.jpg")], log, ok=(0, 3, 4))[0] if sp_rc_ == 0 else 3; erg_["laterne_foto_rc"] = la_rc_
                 # 21.11.2026 (Nutzer "noch nicht gut": dicke dunkle Traufe im Foto, 2-cm-Scheibe im Modell; Ueberstand nur "aus der Wolke"): TRAUFE aus Fotokanten
                 # (tools/traufe_aus_fotos.py: Kanten-Sweep waagrechter Traufkanten mit den SfM-Kameras -> Block 'traufe_foto' in dach_profil.json; bauteile.traufe_einbauen baut
                 # je gemessener Seite einen Traufkasten, ungesehene Seiten bleiben Wolke/DOM1). Bild audit/traufe_foto.jpg.
