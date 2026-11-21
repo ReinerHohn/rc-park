@@ -194,3 +194,8 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
 - `seiten_blick_tor` fiel am Nordmodell zuerst FAELSCHLICH durch (4 Paare): alle 6 Gruppen sind laut Bezug Nord - der Paar-Pruefer nennt verschiedene Videoclips derselben Seite 'verwechselt'.
   Fix: Tor prueft nur 'verwechselt'-Paare aus VERSCHIEDENEN Bildteilen (kein Weg ueber echte Verbindungen). Danach: Nachtmodell 25 von 25 verklebt (rc 3), Nord global und Sued bestanden.
   Folgefrage: die Seitenerkennung loescht demnach auch echte Nord-Nord-Paare (Urteil 'verwechselt' innerhalb eines Teils) - Anteil messen.
+
+### 21.11. 13:02 - Nord global Lauf a gegen b (gefilterte DB, 538 Bilder) + Schaerfe-Test
+- Lauf b: 538 von 538, 909 s, 76 430 Punkte, 1,00 px. a gegen b: 456 von 538 Kameras auf <= 1 % gleich, Median 0,07 %, 74 Bilder > 2 % (eigen 28, Clip jEQJ 17, fotos 12; Clips F8y3 und LSi6 je 0).
+- Schaerfe-Test auf Lauf a (PRUEFUNG 3, Schwellen unveraendert): scharf 433 -> 4 wandern (1 %); weich 29 -> 5; unbestimmt 24 -> 16 (67 %); zu_wenig 52 -> 49 (94 %).
+  Mit Sperrliste (unbestimmt + zu_wenig = 76 Bilder) bleiben 462 Bilder, davon wandern 9 (2 %). -> Auf gefilterten Daten ist der globale Mapper fuer die scharf bestimmten Kameras zu 99 % wiederholbar.
