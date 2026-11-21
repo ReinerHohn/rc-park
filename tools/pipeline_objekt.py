@@ -201,7 +201,19 @@ def main():
         if stufe_wahl != "grob" and not os.path.isdir(sparse_wahl):
             uns_ = os.path.join(daten, "sfm", "konsens_arbeit", "unstabil.txt"); mwj_ = os.path.join(daten, "sfm", "mapper_wahl.json")      # 19.11.2026: Konsens-Mapper -> nur Rueckgrat-Kameras in die dichte Wolke
             kons_ = os.path.isfile(uns_) and os.path.isfile(mwj_) and json.load(open(mwj_)).get("gewaehlt") == "konsens"
-            rc_w, out_w = run([PY_COL, "-I", "tools/dicht_bildwahl.py", sparse_dir, sparse_wahl] + (["--ohne", uns_] if kons_ else []), log); print(out_w.strip()[-400:], flush=True)
+            # 21.11.2026: Sperrliste fuers Messen = unstabile Kameras des Konsens-Mappers VEREINIGT mit den Kameras, deren Brennweite das Modell nicht festlegt (tools/brennweite_schaerfe.py:
+            # 'unbestimmt' wandert zwischen zwei Mapper-Laeufen zu 67-100 %, 'scharf' zu 1-14 %) -> sfm/sperrliste_messen.txt. unstabil.txt selbst bleibt unveraendert.
+            # GUARD (ANNAHME 50 %, nicht gemessen; Martinstor Nord 14 %, Sued 21 %): sperrt die Schaerfe-Liste mehr als die Haelfte der Bilder (kleiner Fotosatz, jedes Foto eigene Kamera),
+            # gilt nur die Konsens-Liste wie bisher - sonst bliebe keine dichte Wolke. RCPARK_SCHAERFE_SPERRE=0 = Stand vor dem 21.11.
+            ohne_ = uns_ if kons_ else ""; sperr_ = os.path.join(daten, "sfm", "sperrliste_messen.txt")
+            if os.environ.get("RCPARK_SCHAERFE_SPERRE", "1") != "0":
+                rc_b, out_b = run([PY_COL, "-I", "tools/brennweite_schaerfe.py", sparse_dir, "--aus", os.path.join(daten, "sfm", "brennweite_schaerfe.json"), "--liste", os.path.join(daten, "sfm", "unbestimmt.txt"),
+                                   "--sperrliste", sperr_] + (["--vereinen", uns_] if kons_ else []), log); print(out_b.strip()[-400:], flush=True)
+                n_sperr = len([z for z in open(sperr_) if z.strip()]) if rc_b == 0 and os.path.isfile(sperr_) else 0
+                if rc_b != 0: print(f"ACHTUNG brennweite_schaerfe.py gescheitert (rc {rc_b}) - dichte Wolke OHNE Schaerfe-Sperrliste", flush=True)
+                elif reg and n_sperr > 0.5 * reg: print(f"ACHTUNG Sperrliste {n_sperr} von {reg} Bildern (> 50 %) - NICHT angewandt (zu wenige scharf bestimmte Kameras; mehr Fotos/Video noetig), nur Konsens-Liste", flush=True)
+                elif n_sperr: ohne_ = sperr_
+            rc_w, out_w = run([PY_COL, "-I", "tools/dicht_bildwahl.py", sparse_dir, sparse_wahl] + (["--ohne", ohne_] if ohne_ else []), log); print(out_w.strip()[-400:], flush=True)
             if rc_w != 0: sparse_wahl = sparse_dir
         sparse_dicht = sparse_wahl if os.path.isdir(sparse_wahl) else sparse_dir
         script = os.path.join(daten, "dicht_kette.py")

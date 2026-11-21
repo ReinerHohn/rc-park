@@ -1,7 +1,8 @@
-# Werkzeuge: wolke_dicht (88)
+# Werkzeuge: wolke_dicht (90)
 - `tools/bauteil_element_wolke.py` [gen] bauteil_element_wolke.py - Elemente, die die AUTOMATISCHE Elementschleife (generator_elemente_schleife.py) aus dem Restfeld der Wolke ableitet.
 - `tools/bauteil_rumpf_wolke.py` [-] bauteil_rumpf_wolke.py - Rumpf + Dach AUS DER DICHTEN PUNKTWOLKE (Spec S3b, Nutzerregel 6.11.: Wolke = erste Wahrheit).
 - `tools/bogen_aus_wolke.py` [seg] bogen_aus_wolke.py - Bogenoeffnungen als LOECHER in einer duennen Platte der Wolke um die Fassadenebene messen (3D-Lage, keine Foto-Ebenenannahme). Schritte: Rahmen (Umeyama) -> Ti
+- `tools/dach_profil_wolke.py` [gen] dach_profil_wolke.py - DACH ALS SCHICHTPROFIL AUS DER DICHTEN WOLKE (Ueberstand, Neigung, Laterne ohne Musterteil), 21.11.2026.
 - `tools/dach_wolke_fit.py` [-] dach_wolke_fit.py - Satteldach-Parameter (baukasten 'satteldach') per CMA-ES in die Punktwolke einpassen (nur Wolkenabstand, ohne Foto): schnell, viele Auswertungen. Ziel: Mittel(m
 - `tools/dicht_ausrichten.py` [gen] dicht_ausrichten.py <fused.ply> <T.npz> <aus_prefix> [--max N] Dichte COLMAP-Wolke mit der Aehnlichkeitstransformation (R,s,t aus iphone_ausrichten.py) in den Netzrahmen legen: p' 
 - `tools/dicht_bildwahl.py` [col] dicht_bildwahl.py <sparse_ein> <sparse_aus> - Bildauswahl fuer die dichte Wolke (Tiefenkarten = teuerster Schritt). Lehre Schwabentor 2026-11-14 (Nutzer: 'koennen wir nicht weiter 
@@ -75,6 +76,7 @@
 - `tools/wolke_neu_fusionieren.py` [col] wolke_neu_fusionieren.py <objekt.json> <pipe-ordner> [--stufe schnell|fein] - dichte Wolke OHNE die unplausiblen Kameras neu fusionieren.
 - `tools/wolke_pose_am_generator.py` [-] wolke_pose_am_generator.py - Pose (Roll/Gier/Nick + Versatz) einer Seitenwolke gegen die OBERFLAECHE des Generator-STL (Register BW). Ersetzt Kantenperzentil-Messungen (abdeckungsa
 - `tools/wolke_profile.py` [-] wolke_profile.py - GENERISCH: Formprofile je Hoehenschicht aus der dichten Fotowolke (+ DOM1) -> Profiltabelle fuer den Generator und automatische Pruefzeilen in der Masstabelle (R
+- `tools/wolke_rest.py` [seg] wolke_rest.py - WAS FEHLT DEM MODELL ALS KOERPER? Rest der dichten Wolke, der nicht an der Modellflaeche liegt, als Haufen mit Ort und Grobform (21.11.2026).
 - `tools/wolke_saeubern.py` [col] wolke_saeubern.py <objekt.json> --wolke ein.npy [--farben f.npy] --aus aus.npy [--umkreis 35] [--tief 1.0] - Wolke fuer Anzeige/Veto saeubern (15.11.2026): (1) nur Punkte im --umkr
 - `tools/wolke_solid.py` [seg] wolke_solid.py - "Wolke zuerst" (Spec modelle/archiv/SPEC_S3b_WOLKE_ZUERST.md, Nutzer 5.11. 19:45): Buendelwolke -> druckbarer Solid, das Modell nur als Fueller.
 - `tools/wolke_sparse_abstand.py` [-] Abstand dichter Wolkenpunkte zu den triangulierten Sparse-Punkten (allgemein, je Objekt).

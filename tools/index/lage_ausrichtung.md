@@ -1,4 +1,4 @@
-# Werkzeuge: lage_ausrichtung (44)
+# Werkzeuge: lage_ausrichtung (45)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
@@ -31,6 +31,7 @@
 - `tools/massstab_quelle_gps.py` [-] massstab_quelle_gps.py - Massstabsquelle GPS der FOTOS (horizontal, unabhaengig von den Bodenankern) (Register BP).
 - `tools/massstab_quelle_lod2.py` [-] massstab_quelle_lod2.py - Massstabsquelle 'LoD2-Nachbargebaeude als Hoehenschwarm' (vertikal).
 - `tools/modell_ausrichten_gpu.py` [seg] modell_ausrichten_gpu.py <objekt> --wolke w.npy [--typ bauteil|ganz] [--sichtbar] [--stl_aus out.stl] GPU-Sweep ueber ALLE Freiheitsgrade eines Modells/Bauteils (Nutzer 8.11.: 'Ele
+- `tools/modell_lage_vergleich.py` [col] modell_lage_vergleich.py <modell_A> <modell_B> [--aus bericht.json] [--liste 10]
 - `tools/nachbarn_modellrahmen.py` [gen] nachbarn_modellrahmen.py - LoD2-Nachbargebaeude (ohne das Objekt selbst) als Netz im Modell-/SfM-Rahmen (Nutzer 10.11.: "wo ein anderes Haus steht, kann ich keine Fotos machen" -> 
 - `tools/objekt_rahmen.py` [-] objekt_rahmen.py - GENERISCH: fehlende Pflichtangaben 'rahmen' und 'lod2' eines Objekts ergaenzen (Lernregister 3, 2026-11-04).
 - `tools/rahmen_aus_lod2.py` [-] rahmen_aus_lod2.py <objekt.json> [--name NAME] [--schreiben] - lod2 {gml,id}, koordinate_utm und rahmen fuer ein Objekt OHNE diese Angaben, ueber das GML-Namensattribut (Lehre Schw

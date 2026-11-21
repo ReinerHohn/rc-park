@@ -1,4 +1,4 @@
-# Werkzeuge: pruefung_abnahme (35)
+# Werkzeuge: pruefung_abnahme (36)
 - `tools/breite_quellenvergleich.py` [-] breite_quellenvergleich.py - Helmbreite quer (E-W) je Hoehe aus DERSELBEN Silhouetten-Schaetzung (hybrid_abgleich.silhouette_quer) fuer Strassenwolke, Generator-STL, Drohnenwolke g
 - `tools/diff_parallel.py` [-] diff_parallel.py - Foto-Diff-Auswertung (modell_wettbewerb.py) PARALLEL statt nacheinander (7.11., 'Zeit ist Geld'): je (Glaettung, Modus) ein eigener Job ueber tools/job_start.sh 
 - `tools/editor_draht.py` [seg] Draht-Editor (lokal, Port 8767): Kantenkandidaten anklicken, loeschen, vereinigen, als Spline bearbeiten/glaetten, neue Kanten ueber Wolkenpunkte ziehen, Abdeckung gegen die abgest
@@ -29,6 +29,7 @@
 - `tools/realitaet_prozent.py` [-] realitaet_prozent.py - EINE Prozentzahl "wie nah ist das Modell an der Realitaet" fuer den aktuellen main-Stand (Nutzerwunsch 10.11.: "nach jedem neuen Ergebnis eine Prozentzahl").
 - `tools/schatten_tor.py` [seg] schatten_tor.py - SCHATTIERUNGS-MASS (Hinweis, KEIN Tor): passt die Schattierung des Modells unter dem Licht DIESES Fotos zum Foto? (Recherche 17.11.2026, Schritt 4 / F1; Vorlage t
 - `tools/seiten_audit.py` [seg] seiten_audit.py - PFLICHT-SICHTBLATT nach jedem Bau (Mechanik fuer Lehre F5/F6: vollstaendiger Mehrflaechen-Audit, nie nur eine Seite).
+- `tools/seiten_blick_tor.py` [col] seiten_blick_tor.py <sparse-modell> <seiten.json> [--min 5] [--winkel 60] [--aus bericht.json]
 - `tools/stadtmesh_vergleich.py` [seg] stadtmesh_vergleich.py - Stadtmesh (Pruefreferenz, Typ 19) und aktuelles Modell-STL aus derselben Richtung rendern (Auftrag G4, Schritt 5).
 - `tools/tor_verschiebung.py` [gen] tor_verschiebung.py - NULLKONTROLLE fuer das Foto-Tor ("F1 nachher > vorher"), Rippen-Befund 11.11. (rippen_diag/BERICHT.md).
 - `tools/umriss_tor.py` [seg] umriss_tor.py <objekt.json> [FOTO ...] [--stl a.stl,...] [--tol 0.35] [--breite 0.6] [--eintragen] - UMRISS-TOR: Dachlinie des Modells gegen die Himmelskante im Foto.

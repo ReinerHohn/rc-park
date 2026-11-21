@@ -244,11 +244,18 @@ def main():
             mw = json.load(open(mwj)) if os.path.isfile(mwj) and os.path.getmtime(mwj) >= t_s else {}
             if mw.get("datenmangel"): print("ACHTUNG DATENMANGEL (Mapper): " + "; ".join(mw["datenmangel"].get("ursachen", [])) + " | ABHILFE: " + mw["datenmangel"].get("abhilfe", ""), flush=True); notiz(B, "datenmangel", False, mapper=mw.get("gewaehlt"), **mw["datenmangel"])
             elif mw: notiz(B, "mapper", True, gewaehlt=mw.get("gewaehlt"), sekunden=mw.get("konsens_sek") or mw.get("global_sek"))
+            # 21.11.2026: Vorstufe 'seiten' der SfM (tools/sfm_seiten_vorstufe.py) - Bildteile ohne echte Verbindung und fehlende Seiten stehen als eigene Zeile im Bericht (nie still eine Seite weglassen)
+            sv_ = mw.get("seiten") or {}; se_ = sv_.get("erkennung") or {}
+            if se_: notiz(B, "seiten_vorstufe", not se_.get("getrennt") and not se_.get("meldungen"), bildteile=se_.get("teile"), fremde_bilder=se_.get("fremd"), verwechselt=se_.get("verwechselt_pruefer"), masken=sv_.get("masken_weg"),
+                          mapper_db=os.path.basename(se_.get("db") or ""), modelle=mw.get("modelle"), meldungen=se_.get("meldungen"),
+                          hinweis=("Seiten getrennt: die Kette verwendet nur sparse/0, Vereinen (tools/seiten_vereinen.py) ist noch NICHT eingebaut" if se_.get("getrennt") else se_.get("hinweis") or ""))
+            elif sv_.get("abgeschaltet"): notiz(B, "seiten_vorstufe", False, fehler="Vorstufe 'seiten' abgeschaltet (RCPARK_SEITEN=0) - keine Masken, keine Seitenerkennung, Seiten-Blick-Tor ohne Urteil")
         except Exception as e_: print("HINWEIS mapper_wahl.json nicht lesbar:", e_, flush=True)
         if rc_s != 0: return abschluss(4, f"SfM gescheitert (rc {rc_s}) - Wolke/Ausrichtung eines frueheren Laufs werden NICHT weiterverwendet")
         alt = [x_ for x_ in (W, AU) if not frisch(x_, t_s)]
         if alt: return abschluss(4, "SfM endete mit rc 0, schrieb aber NICHT neu: " + ", ".join(os.path.relpath(x_, ROOT) for x_ in alt) + f" (LoD2-Abgleich gescheitert? {P}/pipeline.log) - alte Wolke/Ausrichtung werden nicht weiterverwendet")
 
+    _sb = [None]                                                           # Ergebnis des Seiten-Blick-Tors (haengt nur am SfM-Modell, nicht an der Ausrichtung -> einmal je Lauf)
     def tore(tag):
         sp = os.path.join(P, "sfm", "sparse", "0"); erg = {}
         if not os.path.isdir(sp): notiz(B, f"tor_kamera{tag}", False, fehler=f"kein SfM-Netz {sp} - Kameraabdeckung und Insel-Tor NICHT geprueft (17.11.2026: wurden still uebersprungen)")
@@ -259,6 +266,20 @@ def main():
         if os.path.isdir(sp):                                              # 20.11.2026 (Martinstor FlexGlue-Nacht): Hinweis-Tore Seitenverkleben - Modell aus punktlos getrennten Stuecken? Kameras gegen Foto-GPS auf der falschen Turmseite?
             erg["zerfall"] = lauf(B, f"tor_zerfall{tag}", [PYC, "-I", "tools/modell_zerlegen.py", sp, "--min-bilder", "10"], log, ok=(0, 3))[0]
             erg["gps_seiten"] = lauf(B, f"tor_gps_seiten{tag}", [PYC, "-I", "tools/gps_seiten_pruefen.py", sp, "--bilder", FV], log, ok=(0, 2, 3))[0]
+            if tag == "":
+                # 21.11.2026 HARTES Tor gegen Seitenverklebung (Martinstor: 51 Sued-Bilder auf der Nordwand, tor_zerfall meldete 'ein Stueck', GPS-Tor ohne GPS-Fotos): Bildgruppen, die
+                # die Seitenerkennung als 'verwechselt' kennt, duerfen im Modell nicht in dieselbe Richtung blicken. rc 3 = verklebt -> Modell nicht weiterverwenden (Abbruch unten).
+                sj_ = os.path.join(P, "sfm", "seiten.json")
+                if os.path.isfile(sj_): _sb[0] = lauf(B, "tor_seiten_blick", [PYC, "-I", "tools/seiten_blick_tor.py", sp, sj_, "--aus", os.path.join(P, "sfm", "seiten_blick.json")], log)[0]
+                else: notiz(B, "tor_seiten_blick", False, fehler=f"keine {sj_} - Seiten-Blick-Tor NICHT geprueft (SfM vor dem 21.11.2026 gerechnet oder Vorstufe 'seiten' abgeschaltet, RCPARK_SEITEN=0)")
+                # Sperrliste fuers Messen: Kameras, deren Brennweite das Modell nicht festlegt (wandern zwischen zwei Mapper-Laeufen zu 67-100 %), vereinigt mit der Liste der
+                # unstabilen Kameras des Konsens-Mappers -> sfm/sperrliste_messen.txt (die dichte Wolke nimmt sie ueber tools/dicht_bildwahl.py --ohne, siehe pipeline_objekt.py)
+                uns_ = os.path.join(P, "sfm", "konsens_arbeit", "unstabil.txt"); mwj_ = os.path.join(P, "sfm", "mapper_wahl.json")
+                try: kons_ = os.path.isfile(uns_) and json.load(open(mwj_)).get("gewaehlt") == "konsens"
+                except Exception: kons_ = False
+                lauf(B, "brennweite_schaerfe", [PYC, "-I", "tools/brennweite_schaerfe.py", sp, "--aus", os.path.join(P, "sfm", "brennweite_schaerfe.json"), "--liste", os.path.join(P, "sfm", "unbestimmt.txt"),
+                                                "--sperrliste", os.path.join(P, "sfm", "sperrliste_messen.txt")] + (["--vereinen", uns_] if kons_ else []), log)
+            erg["seiten_blick"] = _sb[0]
         if os.path.isdir(sp): erg["insel"] = lauf(B, f"tor_insel{tag}", [PYC, "-I", "tools/kette_insel_pruefen.py", ZR, sp], log, ok=(0, 3))[0]   # 15.11. (Schwabentor): Bildketten ohne Fremdstuetze (Videoclip) = Faecher/Geisterwolke; schreibt audit/kette_insel.json
         erg["grundriss"] = lauf(B, f"tor_grundriss{tag}", [PY, "-I", "tools/wolke_grundriss_pruefen.py", ZR, "--wolke", W], log)[0] if os.path.exists(W) else None
         if os.path.isdir(sp) and os.path.exists(AU):                       # 19.11.2026 (Martinstor, schiefe uebergrosse Haeuserzeile aus einem Fernclip): setzt eine Bildgruppe Punkte hoch ueber die LoD2-Hoehe? -> audit/wolke_gruppen.json
@@ -267,7 +288,11 @@ def main():
 
     if dran("tore"):
         erg = tore("")
-        bestanden = lambda e: e.get("gps") in (0, None) and e.get("grundriss") == 0
+        if erg.get("seiten_blick") not in (0, None):                      # 21.11.2026: hartes Tor - eine andere Ausrichtung heilt ein verklebtes SfM-Modell nicht, deshalb kein Loesungs-Kreislauf
+            B["lage"] = dict(tore=erg, bestanden=False, fehler="seiten_verklebt" if erg["seiten_blick"] == 3 else "tor_abgestuerzt"); __import__("json_sicher").schreiben(bp, B)
+            if erg["seiten_blick"] == 3: return abschluss(3, "SEITEN-BLICK-TOR durchgefallen: aehnliche Seiten liegen im SfM-Modell aufeinander (pipe/sfm/seiten_blick.json) - Modell NICHT weiterverwenden, nicht modellieren. Abhilfe: Seiten getrennt rechnen und vereinen (tools/seiten_erkennen.py, tools/seiten_vereinen.py)")
+            return abschluss(4, f"Seiten-Blick-Tor abgestuerzt (rc {erg['seiten_blick']}, Log ansehen) - KEIN Urteil ueber Seitenverklebung")
+        bestanden = lambda e: e.get("gps") in (0, None) and e.get("grundriss") == 0 and e.get("seiten_blick") in (0, None)
         try:                                                             # 15.11.: Hoehen-Tor (DOM1-Laser gegen Modelldach) bei jedem neuen Objekt mit LoD2 in bauen_abnehmen einschalten
             _o = json.load(open(os.path.join(ROOT, ZR)))
             if _o.get("lod2", {}).get("id") and "hoehen_tor" not in _o: _o["hoehen_tor"] = True; __import__("json_sicher").schreiben(os.path.join(ROOT, ZR), _o)

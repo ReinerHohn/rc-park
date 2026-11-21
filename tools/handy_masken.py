@@ -60,7 +60,8 @@ def main():
     if fp16: model = model.half()
     ids = klassen_ids(model.config.id2label, a.markise, not a.kein_gruen); print("maskierte Klassen (aus id2label):", ids, flush=True)
     mean = np.array([0.485, 0.456, 0.406], np.float32); std = np.array([0.229, 0.224, 0.225], np.float32)
-    fs = sorted(sum((glob.glob(os.path.join(o, "*.jpg")) + glob.glob(os.path.join(o, "*.png")) for o in a.ordner), []))
+    # 21.11.2026: Endungen ohne Gross/Klein-Unterschied und mit .jpeg - der Sammelordner der Kette (martinstor-1120) hat 56 .jpeg und 9 .JPG, die bisher KEINE Maske bekamen (2042 von 2107)
+    fs = sorted(os.path.join(o, f) for o in a.ordner for f in os.listdir(o) if os.path.splitext(f)[1].lower() in (".jpg", ".jpeg", ".png") and os.path.isfile(os.path.join(o, f)))
     if a.max: fs = fs[:a.max]
     gruppen = {}
     for f in fs:
