@@ -344,6 +344,9 @@ def dach_aus_profil(koerper, datei):
     lo, hi = koerper.bounding_box()[:3], koerper.bounding_box()[3:]; koerper = koerper - M.cube((hi[0] - lo[0] + 20, hi[1] - lo[1] + 20, hi[2] - z0 + 40)).translate((lo[0] - 10, lo[1] - 10, z0))
     SF = D.get("spitze_foto") or {}; ab = spitze_ab(SF); bel_sp = []
     if ab is not None: P = [p for p in P if p[0] + dz <= ab + 1e-6] or P[:1]       # 21.11.2026: ueber 'ab' kommt die Laterne/Spitze aus den Foto-Silhouetten (tools/spitze_aus_umriss.py), die Wolke ist dort duenn
+    # 21.11.2026 (Nutzer "noch nicht gut", neben_eigen__IMG_20261106_113231.jpg: dicke dunkle Traufe im Foto, duenne 2-cm-Scheibe im Modell): Traufe der Seiten mit
+    # Fotomessung (tools/traufe_aus_fotos.py, Block 'traufe_foto') als Traufkasten mit Untersicht + Stirn; Scheiben dort auf die Aussenkante begrenzt, Traufring eingefuegt.
+    P, kaesten_tr, bel_tr = traufe_einbauen(P, D)
     teile = [M.hull_points(R(a_, a_[0]) + R(b_, b_[0])) for a_, b_ in zip(P[:-1], P[1:])] + [M.hull_points(R(P[-1], P[-1][0]) + R(P[-1], P[-1][0] + dz))] + [M.hull_points(R(P[0], z0 - 0.02) + R(P[0], P[0][0]))]
     if ab is not None:
         A = SF["achse"]; FP = [p for p in SF["profil"] if p[0] >= ab - 1e-6]
@@ -358,11 +361,71 @@ def dach_aus_profil(koerper, datei):
         bel_sp = [dict(seite="dach", element=f"Laterne/Spitze aus Foto-Silhouetten ab z {ab:.2f} bis Spitze z {SF['spitze_z']:.2f} m" + (f", Krempe z {SF['krempe_z']:.2f} (Hals z {SF['hals_z']:.2f})" if SF.get("krempe_z") else ""),
                        quelle=f"tools/spitze_aus_umriss.py: Himmelskante in {SF.get('fotos')} kalibrierten Fotos aus Sektoren {SF.get('sektoren')}, Spitze Median (Streuung {SF.get('spitze_streuung')} m)",
                        hinweis=f"ANNAHME: Querschnitt {nr_} von {len(FP)} Hoehen eckig, Rest rund (Blickrichtungs-Abhaengigkeit der Halbbreite); Laterne voll gebaut (offene Pfosten nicht aufgeloest); Spitze auf der Dachachse")]
-    koerper = koerper + M.batch_boolean(teile, OpType.Add); ann = sum(len(p[6]) for p in P if len(p) > 6)
+    teile += kaesten_tr
+    koerper = koerper + M.batch_boolean(teile, OpType.Add); ann = sum(len(p[6]) for p in P if len(p) > 6 and isinstance(p[6], list))
     return koerper, [dict(seite="dach", element=f"Dach als Schichtprofil ab z {z0:.1f} m: Traufe halb {(P[0][2] - P[0][1]) / 2:.2f} x {(P[0][4] - P[0][3]) / 2:.2f} m (Wand {D['wand_halb'][0]:.2f} x {D['wand_halb'][1]:.2f}), Neigung ~{D.get('neigung_grad')} Grad, bis z {P[-1][0] + dz:.1f} m",
                           quelle=f"dichte Wolke, {len(P)} Scheiben je {dz} m (tools/dach_profil_wolke.py); ersetzt das LoD2/Laser-Dach (bis {D.get('modell_hoehe_vorher', 0):.1f} m)",
                           hinweis=f"ANNAHME: {ann} von {4 * len(P)} Scheibenseiten ohne Wolke an der gemessenen Achse gespiegelt (Dachflaeche von keinem Foto gesehen); Stufen von {dz} m statt glatter Flaeche; "
-                                  + ("Laterne/Spitze darueber aus Fotos" if bel_sp else "Spitze/Knauf ueber dem Wolkenende FEHLT") + "; Dach voll")] + bel_sp
+                                  + ("Laterne/Spitze darueber aus Fotos" if bel_sp else "Spitze/Knauf ueber dem Wolkenende FEHLT") + "; Dach voll")] + bel_sp + bel_tr
+
+
+TRAUF_SEITEN = {"-d": (1, -1), "+d": (2, 1), "-n": (3, -1), "+n": (4, 1)}      # Seite -> (Index in der Scheibe [z, u_lo, u_hi, v_lo, v_hi], Vorzeichen)
+
+
+def traufkasten(o, e, t, w_innen, w_wand, z_wand, w_aussen, z_unten, z_oben, s0, s1):
+    """TRAUFKASTEN (GENERISCH, 21.11.2026): Prisma entlang einer Dachseite mit Querschnitt Einbindung -> Wandanschluss (w_wand, z_wand) -> Untersicht -> Stirn-Unterkante
+    (w_aussen, z_unten) -> Stirn -> Aussenkante (w_aussen, z_oben) -> waagrecht zurueck bis w_innen. w = Abstand von o entlang der Aussennormalen e (2D), s0..s1 entlang t.
+    Gestalt nur aus den uebergebenen Massen (tools/traufe_aus_fotos.py), kein Musterteil. Konvexer Querschnitt (z_wand <= z_unten <= z_oben, w_innen < w_wand < w_aussen)."""
+    o = np.asarray(o, float); e = np.asarray(e, float); t = np.asarray(t, float)
+    q = [(w_innen, z_wand), (w_wand, z_wand), (w_aussen, z_unten), (w_aussen, z_oben), (w_innen, z_oben)]
+    return M.hull_points([[*(o + w * e + s * t), z] for w, z in q for s in (s0, s1)])
+
+
+def traufe_einbauen(P, D, einbinden=0.3):
+    """Traufe der FOTO-gemessenen Seiten (dach_profil.json 'traufe_foto', tools/traufe_aus_fotos.py) in das Scheibenprofil einbauen -> (P neu, Traufkaesten, Belege).
+    Je gueltiger Seite: alle Scheiben auf die Aussenkante begrenzt (das Dach steht nirgends weiter hinaus als die gemessene Traufe), ein Traufring in Hoehe der
+    Aussenkante eingefuegt (die Dachflaeche beginnt an der Traufkante) und ein Traufkasten (Untersicht + Stirn) von der Wand bis zur Aussenkante, entlang der Seite
+    bis zur Traufe der Nachbarseiten (Ecke). Seiten ohne gueltige Fotomessung bleiben wie die Wolke/DOM1 sie liefern (Beleg nennt sie und den Grund)."""
+    TF = D.get("traufe_foto") or {}
+    if not TF.get("gueltig") or TF.get("angenommen") is False or not P: return P, [], []
+    o = np.array(D["o"], float); d = np.array(D["d"], float); n = np.array(D["n"], float); wh = D["wand_halb"]
+    gut = {}
+    for s, E in (TF.get("seiten") or {}).items():
+        if s not in TRAUF_SEITEN or not E.get("gueltig"): continue
+        zu = E.get("z_unten") if E.get("z_unten") is not None else E.get("z_unten_bau", E["z_oben"] - 0.08); zw = E.get("z_wand_bau", E["z_wand"])   # z_wand_bau: ueber einem offenen Umgang
+        if not (E["a_wand"] < E["a_aussen"] and zw <= zu <= E["z_oben"] and E["a_aussen"] - E["a_wand"] <= 2.5 and E["z_oben"] - zw <= 3.0): continue   # Gueltigkeits-Guard
+        gut[s] = dict(E, _zu=zu, _zw=zw, _h=float(wh[0] if "d" in s else wh[1]))
+    if not gut: return P, [], []
+    P = [list(p) for p in P]
+    for s, E in gut.items():                                                       # Dach nirgends weiter hinaus als die Traufkante dieser Seite
+        i, sg = TRAUF_SEITEN[s]; ext = E["_h"] + E["a_aussen"]
+        for p in P: p[i] = sg * min(sg * p[i], ext)
+    zr = float(np.median([E["z_oben"] for E in gut.values()]))
+    def lage(z):                                                                   # Scheibe bei z (linear zwischen den Nachbarn, ausserhalb die Randscheibe)
+        zs = [p[0] for p in P]
+        if z <= zs[0]: return list(P[0][1:5])
+        if z >= zs[-1]: return list(P[-1][1:5])
+        k = next(k for k in range(1, len(P)) if zs[k] >= z); f = (z - zs[k - 1]) / max(zs[k] - zs[k - 1], 1e-9)
+        return [P[k - 1][j] + f * (P[k][j] - P[k - 1][j]) for j in range(1, 5)]
+    ring = [round(zr, 3)] + lage(zr) + [0, "traufe_foto"]
+    for s, E in gut.items(): i, sg = TRAUF_SEITEN[s]; ring[i] = sg * (E["_h"] + E["a_aussen"])
+    P = sorted([p for p in P if abs(p[0] - zr) > 0.05] + [ring], key=lambda p: p[0])
+    kaesten = []; bel = []
+    for s, E in gut.items():
+        e = {"-d": -d, "+d": d, "-n": -n, "+n": n}[s]; t = n if "d" in s else d
+        s0, s1 = (ring[3], ring[4]) if "d" in s else (ring[1], ring[2])
+        h = E["_h"]; kaesten.append(traufkasten(o, e, t, h + E["a_wand"] - einbinden, h + E["a_wand"], E["_zw"], h + E["a_aussen"], E["_zu"], E["z_oben"], s0, s1))
+        st = (f"Stirn {E['z_oben'] - E['z_unten']:.2f} m (Unterkante z {E['z_unten']:.2f} gemessen)" if E.get("z_unten") is not None
+              else (E.get("unterkante_quelle") or "ANNAHME: Stirn-Unterkante in den Fotos nicht aufgeloest -> Untersicht als Ebene Wandanschluss -> Aussenkante") + f" (Untersicht {E.get('untersicht_grad')} Grad, Stirn {E['z_oben'] - E['_zu']:.2f} m)")
+        if E.get("umgang_z1") is not None: st += f"; offener Umgang darunter (Raehm z {E['umgang_z1']:.2f}): Kasten erst ab z {E['_zw']:.2f}, Laufgang bleibt offen"
+        bel.append(dict(seite="dach", element=f"Traufkasten {s} aus Fotos: Ueberstand {E['ueberstand']:.2f} m vor dem Wandanschluss, Aussenkante z {E['z_oben']:.2f} m, Wandanschluss z {E['z_wand']:.2f} m",
+                        quelle=f"tools/traufe_aus_fotos.py: Kanten-Sweep waagrechter Traufkanten in {E.get('fotos')} kalibrierten Fotos (Hoehenwinkel {E.get('el_bereich')}), in beiden Fotohaelften bestaetigt; bauteile.traufkasten",
+                        ueberstand=E["ueberstand"], a_wand=E["a_wand"], a_aussen=E["a_aussen"], z_wand=E["z_wand"], z_oben=E["z_oben"], z_unten=E.get("z_unten"),
+                        hinweis=st + f"; Wandanschluss {E['a_wand']:+.2f} m gegen die Profilwand (wand_halb) - die Modellwand darunter wird hier nicht verschoben"))
+    rest = [s for s in TRAUF_SEITEN if s not in gut]
+    if rest: bel.append(dict(seite="dach", element=f"Traufe {', '.join(rest)} NICHT aus Fotos: weiter aus Wolke/DOM1-Scheiben (vorlaeufig)",
+                             quelle="tools/traufe_aus_fotos.py", hinweis="; ".join(f"{s}: {((TF.get('seiten') or {}).get(s) or {}).get('grund') or 'nicht gemessen'}" for s in rest)))
+    return P, kaesten, bel
 
 
 def spitze_ab(SF):
