@@ -61,6 +61,9 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 **Git**
 - 20.11. · ungepushte Arbeit auf dem GPU-PC (1159 Commits, 8,2 GB Binärdateien) → ✗ Katastrophe · Push je Arbeitsblock, Git-Sperre 1 MB/Geheimnisse
 
+**Platz**
+- 21.11. · Platz-Tor 5 GB brach Neubauten still ab (45 min verloren) → ✔ Mindestplatz 15 GB, Tor raeumt auf statt abzubrechen, Abbruch nur < 5 GB (7baf8d6a3); Absturzabbilder 4,1 GB in /var/lib/systemd/coredump
+
 ## Offen
 - (20.11.) Versteckte Bremsen gesucht: COLMAP/Ceres ohne AVX2/FMA gebaut (Testbau `colmap_opt_bau` läuft), 91 % der Abgleich-Paare vergeblich, Mapper-Kaskade bis 5 Läufe bei Datenmangel, LightGlue fp16 in 2 Werkzeugen aus (−34 % gemessen) – Rangliste und Messwerte [modelle/PERFORMANCE_BREMSEN_2026-11-20.md]
 - (20.11.) Hardware-Stand gemessen: RAM 2 × 8 GB DDR5-5600, Firmware erlaubt 64 GB → Kauf 2 × 32 GB empfohlen; CPU 55 W Dauergrenze greift schon bei Teillast, Hitzedrosselung nur ~1 %; Windows-Test der Dauerleistung offen [modelle/HARDWARE_STAND_2026-11-20.md]

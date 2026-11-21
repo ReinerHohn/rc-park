@@ -45,5 +45,10 @@ Methoden: `modelle/archiv/METHODE_WAHRZEICHEN_AUS_FOTOS.md` · `METHODE_3D_AUS_A
 - 27.10. · Render per chromium-WebGL / matplotlib-Per-Face → ✗ tot bzw. hässlich · nur pyrender + EGL
 - 26.10. · Voll-Detail-Mesh als HTML (367 MB) / KI-Bild→3D für Architektur → ✗ Anti-Pattern
 
+**Tagesfazit 21.11.** (Register modelle/ERKENNTNISSE.md)
+- 21.11. · Handmessen statt Kettenstufen → ✗ Handstand nur 2 → 4/11 · nur Kettenlauf zaehlt, Agenten liefern Stufe + Test
+- 21.11. · Kette scheitert, Handfolge nicht → Tauschprobe stufenweise fand Ursache (Sperrliste in dichter Seitenwolke) → ✔ eingebaut
+- 21.11. · Treppenturm/Tor/Nischenfenster/Fotosteine-Paarprobe als Kettenstufen → ✔ eingebaut; Kettenbeweis Lauf 1121o
+
 ## Offen
 - Uncommittete Modell-Arbeit vom 30.10. auf `kaufhaus-freiburg` (Hofgut, Kaufhaus, Martinstor, Münster …) sichten und committen (Nutzer)
