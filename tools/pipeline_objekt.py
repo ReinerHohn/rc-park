@@ -36,6 +36,11 @@ PY_SEG = "/media/oem/scan/venv-seg/bin/python"
 PY_COL = "/media/oem/scan/venv-colmap/bin/python"  # pycolmap (SfM, Kamera-Export)
 PY_SEG = "/media/oem/scan/venv-seg/bin/python"    # torch auf der GPU (Ausrichtung, Luecken)
 
+def fremd_anzahl(seiten_json):
+    """Anzahl fremder Bilder aus seiten.json - 'fremd' ist eine Liste der Bildnamen (aeltere Staende: Zahl)."""
+    fr = (seiten_json or {}).get("fremd") or 0
+    return len(fr) if isinstance(fr, (list, tuple, dict)) else int(fr)
+
 def run(cmd, log=None):
     print("+", " ".join(cmd), flush=True)
     # 18.11.2026 (Kaufhaus gk2e: Fusion 1 h ohne jede Zeile im Log): Ausgabe zeilenweise ins Log statt erst am Ende - Fortschritt (z. B. 'Fusing image [n/N]') sichtbar
@@ -182,7 +187,7 @@ def main():
     # 21.11.2026 (Martinstor-Kettenlauf 1121a brach ab: 574 von 2107 registriert, Ziel 1053 - aber die Seitenerkennung hatte 1362 Bilder als FREMD erkannt, d. h. ohne
     # echte Verbindung zum Objekt; von den 745 Objektbildern waren 574 im Modell). Grundmenge = Objektbilder, wenn die Seitenerkennung gelaufen ist.
     try:
-        sj_ = json.load(open(os.path.join(daten, "sfm", "seiten.json"))); n_fremd = int(sj_.get("fremd") or 0)
+        sj_ = json.load(open(os.path.join(daten, "sfm", "seiten.json"))); n_fremd = fremd_anzahl(sj_)   # 21.11.2026: seiten.json schreibt die LISTE der fremden Bilder - int(list) warf, except schluckte, Ziel blieb 1053 (Martinstor 1121b)
         if 0 < n_fremd < n_gueltig: ziel = 0.5 * (n_gueltig - n_fremd); print(f"SfM-Ziel: {n_fremd} fremde Bilder (Seitenerkennung) zaehlen nicht -> Ziel >= {int(ziel)} von {n_gueltig - n_fremd} Objektbildern", flush=True)
     except Exception: pass
     status = "OK" if rc_ok and reg is not None and reg >= ziel else "FEHLER"
