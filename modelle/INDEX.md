@@ -16,7 +16,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/ZIEL_PIPELINE_H0.md` (23 kB) ZIEL: Pipeline von null -> H0-druckbares Modell fuer beliebiges Ziel (Nutzer-/goal 18.11.2026) -> Inhalt `modelle/inhalt/ZIEL_PIPELINE_H0.md` (7 Abschnitte)
 
 ## SfM, Mapper, Lage
-- `modelle/GLOBALER_MAPPER_STABIL.md` (24 kB) Globaler Mapper stabil machen - Versuchsprotokoll und Rezept (ab 19.11.2026) -> Inhalt `modelle/inhalt/GLOBALER_MAPPER_STABIL.md` (8 Abschnitte)
+- `modelle/GLOBALER_MAPPER_STABIL.md` (29 kB) Globaler Mapper stabil machen - Versuchsprotokoll und Rezept (ab 19.11.2026) -> Inhalt `modelle/inhalt/GLOBALER_MAPPER_STABIL.md` (11 Abschnitte)
 - `modelle/LAGEBILD_KANTENGITTER_2026-11-09.md` (27 kB) Lagebild Kanten-Drahtgitter Kaufhaus Freiburg (Fotos + Punktwolke) - Stand 9.11.2026, ~17:10 -> Inhalt `modelle/inhalt/LAGEBILD_KANTENGITTER_2026-11-09.md` (8 Abschnitte)
 
 ## Fassaden, Bauteile, Kanten
@@ -40,13 +40,14 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 ## Logbuecher
 - `modelle/LOGBUCH_GIEBEL_OST_KREIS1_2026-11-10.md` (1 kB) Logbuch Kreis1 Fehlteil fk_+16_+0_+26 (Ost-Staffelgiebel), 2026-11-10
 - `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` (74 kB) Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte -> Inhalt `modelle/inhalt/LOGBUCH_KETTENTEST_2026-11-19.md` (37 Abschnitte)
-- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (24 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (21 Abschnitte)
+- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (31 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (27 Abschnitte)
 
 ## Sonstiges
 - `modelle/ANALYSE_SACKGASSEN_2026-11-21.md` (3 kB) Analyse: Warum 19.-21.11.2026 in Sackgassen (Auftrag Nutzer 21.11. 09:57)
 - `modelle/ANLEITUNG_FOTOS_NUBIA.md` (7 kB) Anleitung Fotos mit dem nubia (Z2462N, "Focus 2 5G") fuer Photogrammetrie
 - `modelle/BELEUCHTUNG.md` (3 kB) Beleuchtung — „geile" Monument-Lichttechnik (Miniatur-Wunderland)
 - `modelle/CPU_LEISTUNG.md` (13 kB) CPU/GPU maximal auslasten - Messung, Werkzeuge, Einrichtung (Stand 2026-11-06)
+- `modelle/ERKENNTNISSE.md` (2 kB) Erkenntnis-Register (destilliert; Ablauf: Skill `erkenntnis`; Einzelheiten in den Logbuechern)
 - `modelle/ERKLAERUNG_DRAHTGITTER.md` (3 kB) Wie das Kanten-Drahtgitter entsteht (einfach erklaert, Stand 9.11.2026 abends)
 - `modelle/ERKLAERUNG_FOTO_ZU_PUNKTWOLKE.md` (2 kB) Foto -> Punktwolke: wie es funktioniert (Kurzfassung zum Nachlesen)
 - `modelle/GPU_LUECKEN_2026-11-08.md` (8 kB) GPU-Luecken (Suche 8.11., Nutzerauftrag) - nach Code-Durchsicht, Laufzeiten NOCH NICHT gemessen

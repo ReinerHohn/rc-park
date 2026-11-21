@@ -1,0 +1,13 @@
+# Erkenntnis-Register (destilliert; Ablauf: Skill `erkenntnis`; Einzelheiten in den Logbuechern)
+
+Eine Zeile je Erkenntnis: Datum · Erkenntnis · Messwert · Beleg · Folge in der Kette (✔ eingebaut / offen).
+
+- 21.11.2026 · DATEN · Seitenverklebung Martinstor kam von einer PERSON im Vordergrund (Selbstaufnahme-Video von beiden Torseiten), nicht nur von aehnlichen Waenden · 18 Brueckenbilder; mit Masken 0 gemischte Bildteile statt 750 Bilder gemischt · LOGBUCH_SCHWABENTOR_KETTE_2026-11-21 (10:25, 11:27) · Masken vor Merkmalssuche + im Paar-Pruefer; Kontaktbogen je Brueckengruppe: offen (Werkzeuge da: handy_masken, db_masken_filter, seiten_erkennen --masken)
+- 21.11.2026 · DATEN · 286 von 2042 heruntergeladenen Bildern haben > 30 % Vordergrund (Personen/Fahrzeuge) · Maskenbericht · wie oben · Vorfilter "zu viel Vordergrund": offen
+- 21.11.2026 · NICHT IN DER KETTE · Seitenerkennung/-vereinen (19.11.), Masken (4./8.11.), DB-Bereinigung Kamera je Clip (19.11., nur Konsens-Weg) existierten, wurden von der Kette nicht aufgerufen · 4. Seitenverwechslung, 8,4 h Mapper umsonst · ANALYSE_SACKGASSEN_2026-11-21 · Einbau SfM-Stufe: offen
+- 21.11.2026 · MESSFEHLER · Urteil "globaler Lauf verformt" (20.11., Median 2,48 %) kam vom nicht robusten Ausgleich ueber alle Kameras; robust: Median 0,65 % · `tools/modell_lage_vergleich.py` · GLOBALER_MAPPER_STABIL (21.11.) · ✔ Werkzeug; alte Urteile nachgemessen
+- 21.11.2026 · ANNAHME WIDERLEGT · "Einzelfoto-Streuung ist eine Schwaeche des globalen Mappers": zwei schrittweise Laeufe streuen genauso (12 von 43 Bildern > 2 %) · GLOBALER_MAPPER_STABIL · Ursache = Aufnahme (Brennweite/Abstand nicht trennbar)
+- 21.11.2026 · METHODE · Brennweiten-Schaerfe je Kamera am fertigen Modell sagt wandernde Fotos vorher: 'unbestimmt' wandert zu 71-100 %, 'scharf' zu 3-14 % · `tools/brennweite_schaerfe.py` · Sperrliste fuers Messen: offen; zweite Ursache bei Videobildern: offen
+- 21.11.2026 · DATEN · Ketten-DB Martinstor: jedes der 2107 Bilder eine eigene Kamera (auch Videobilder), EXIF-Brennweite nur bei 49, teils unsinnig (bis 2185 x Bildbreite) · DB-Abfrage im Logbuch · Kamera je Clip + EXIF-Plausibilitaet IMMER vor dem Mapper: offen
+- 21.11.2026 · METHODE · Koerper, die auf keiner Wandebene liegen (Treppenturm, Dachueberstand, Laterne), findet der Rest der dichten Wolke am Modell ohne Vorwissen · Schwabentor +28 461 Wolkenpunkte am Modell · `tools/wolke_rest.py`, `dach_profil_wolke.py` · im Generator ✔, im Schleifen-Treiber: offen
+- 21.11.2026 · ARBEITSWEISE · 10 % der Commits von zwei Tagen gingen in den Bau aus Fotokanten; der Handlauf war nie als Liste "Handschritt -> Kettenstufe" aufgeschrieben · ANALYSE_SACKGASSEN_2026-11-21 · Liste ist der Arbeitsplan
