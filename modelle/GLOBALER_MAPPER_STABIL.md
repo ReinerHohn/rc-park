@@ -206,3 +206,13 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
   Der globale Mapper baut dieselben Bilder in Sekunden ein, der Schaerfe-Test sperrt sie. Kein Modell auf der Platte (COLMAP schreibt erst am Ende) -> Vergleich global/schrittweise fuer Nord entfaellt; es bleiben Sued (gleiche DB) und der Nord-Bezug vom 19.11.
 - LEHRE: schrittweiser Mapper ohne Vorfilter "Motiv fraglich" verbrennt am Ende eine Stunde an einer Handvoll Bilder; Schnappschuesse (`--Mapper.snapshot_path`) haetten das Modell gerettet - bei jedem kuenftigen schrittweisen Lauf setzen.
 - 14:05 `mt_dicht_nord_1121` laeuft (Bildwahl 266 von 538 Bildern, Eingang global Lauf a).
+
+### 21.11. 14:42 - BELEG: Sued und Nord aus GLOBALEN/gefilterten Stuecken vereint (Martinstor)
+- Dichte Wolke Nord fertig 14:28 (266 von 538 Bildern, 23 min, 134 MB), Sued 12:22 (5 min, 27 MB).
+- `seiten_vereinen` zuerst ABGELEHNT (Achse 24,4 % uneinig). Bild `vereinen_probe.jpg`: die Klappung liefert Massstab, Lot und Wandrichtung richtig, stellt den Sued-Turm aber eine Turmbreite NEBEN den Nord-Turm
+  (149 von 1034 Punktpaaren stimmig - an einer verschobenen Stelle) -> die Stange von B wurde am falschen Ort gesucht. Das ist die Ursache des Scheiterns vom 19./20.11. ("Achsen 14-20 % uneinig").
+- FIX `seiten_vereinen.py`: mit dichten Wolken sucht jedes Modell seine EIGENE Spitze in der ganzen Wolke (`spitze_global`), B wird waagerecht Spitze auf Spitze geschoben; neue unabhaengige Probe Turmhoehe (Grenze 4 %).
+  Ergebnis: Klappung lag 35,2 % der Turmhoehe daneben (berichtigt); Achse (oberstes Band, je Modell) 1,36 % einig (Grenze 1,5); Blick 29 -> 151 Grad; Dach 1,06 / 0,98 (trifft sich an der Achse); Flanke nicht bewertbar; Turmhoehen 3,9 % verschieden. Urteil VEREINT (rc 0).
+  Fester Test `test_seiten_vereinen.py` weiter bestanden, Schnelltest 0 Fehler.
+- KNAPP: Achse 1,36 % (Grenze 1,5) und Hoehen 3,9 % (Grenze 4, heute a priori gesetzt) -> Massstab zwischen den Seiten vermutlich ~4 % daneben; Feinausgleich (Hoehe/ICP an Dach und Seitenwaenden) offen. Sued nur Teil 1 (99 Bilder); Teil 2 (52) nicht vereint.
+- Bild `zeigen/vereint_1121.png`, Grundriss/Ansicht `martinstor_vereint.jpg` (gezeigt), 3D https://claude.ai/artifact/22eEm3PCx5NWmbYTUoiAhQ. `sparse_zeigen.py --dazu/--dazu-matrix` zeigt zwei Modelle gemeinsam.

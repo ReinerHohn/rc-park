@@ -76,10 +76,14 @@ def lot_rahmen(C, U, Rt):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("sparse"); ap.add_argument("--png"); ap.add_argument("--html"); ap.add_argument("--titel", default="")
     ap.add_argument("--max-punkte", type=int, default=150000)
+    ap.add_argument("--dazu", help="zweites Sparse-Modell (andere Seite)"); ap.add_argument("--dazu-matrix", help="vereinen.json (B_nach_A) oder 4x4 .npy: Abbildung des zweiten Modells ins erste"); ap.add_argument("--namen", default="Modell A,Modell B")
     ap.add_argument("--ply", help="dichte Wolke (fused.ply im Rahmen DIESES Modells) statt der duennen Modellpunkte zeigen"); a = ap.parse_args()
     namen, C, V, U, Rt = lies_bilder(a.sparse); X, F, S = lies_punkte(a.sparse)
     if a.ply: X, F = lies_ply(a.ply); S = np.full(len(X), 99)
-    up, e1, e2 = lot_rahmen(C, U, Rt); m = np.median(C, 0)
+    up, e1, e2 = lot_rahmen(C, U, Rt); m = np.median(C, 0); n_a = len(namen)
+    if a.dazu:                                                                                  # 21.11.2026: zweites (Seiten-)Modell mit seiner Abbildung ins System des ersten dazuzeigen (tools/seiten_vereinen.py: B_nach_A)
+        M = np.array(json.load(open(a.dazu_matrix))["B_nach_A"]) if a.dazu_matrix.endswith(".json") else np.load(a.dazu_matrix); sR = M[:3, :3]; R_ = sR / np.cbrt(np.linalg.det(sR))
+        n2, C2, V2, U2, _ = lies_bilder(a.dazu); namen = list(namen) + list(n2); C = np.concatenate([C, C2 @ sR.T + M[:3, 3]]); V = np.concatenate([V, V2 @ R_.T]); U = np.concatenate([U, U2 @ R_.T])
     def lokal(P): P = P - m; return np.stack([P @ e1, P @ e2, P @ up], 1)
     Cl, Xl = lokal(C), lokal(X); Vl = np.stack([V @ e1, V @ e2, V @ up], 1)
     r = np.percentile(np.linalg.norm(Cl[:, :2], axis=1), 95) * 2.2 + 1e-9                      # Ausschnitt: Kamerakranz + Rand
@@ -87,6 +91,7 @@ def main():
     lo, hi = np.percentile(Xl[:, 2], [1, 99.5]); ok = (Xl[:, 2] > lo - 0.1 * (hi - lo)) & (Xl[:, 2] < hi + 0.1 * (hi - lo)); Xl, F = Xl[ok], F[ok]
     if len(Xl) > a.max_punkte: i = np.random.default_rng(0).choice(len(Xl), a.max_punkte, replace=False); Xl, F = Xl[i], F[i]
     gr = [herkunft(n) for n in namen]; farbe = {"eigene Fotos": "#d62728", "Videobilder": "#ff9f1c", "Netzfotos": "#1f77b4"}
+    if a.dazu: na_, nb_ = a.namen.split(","); gr = [na_] * n_a + [nb_] * (len(namen) - n_a); farbe = {na_: "#1f77b4", nb_: "#d62728"}
     zahl = {g: gr.count(g) for g in farbe if gr.count(g)}
     print(f"Modell: {len(namen)} Kameras ({', '.join(f'{v} {k}' for k, v in zahl.items())}), {len(X)} Punkte, gezeigt {len(Xl)}")
     if a.png:

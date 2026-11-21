@@ -87,6 +87,20 @@ def stange(X, wm, H, boden, band=0.025, quantil=99.9):
     xy = nah[k, :2]; m = np.median(xy, 0); return m, float(z9 - boden), int(k.sum()), float(np.median(np.linalg.norm(xy - m, axis=1)))
 
 
+def spitze_global(X):
+    """Hoechstes schlankes Bauteil der GANZEN dichten Wolke (ohne Vorgabe, wo der Bau steht): oberstes Band unter dem 99,95-%-Hoechstwert, darin der dichteste Haufen im Grundriss.
+    Rueckgabe (xy, Hoehe der Spitze, Hoehe ueber dem Boden = 1-%-Wert) oder None."""
+    if len(X) < 5000: return None
+    bo = float(np.percentile(X[:, 2], 1)); z = float(np.percentile(X[:, 2], 99.95)); H = z - bo; k = X[X[:, 2] > z - 0.045 * H]
+    if len(k) < 30: return None
+    m = np.median(k[:, :2], 0)
+    for _ in range(6):
+        kk = k[np.linalg.norm(k[:, :2] - m, axis=1) < 0.055 * H]
+        if len(kk) < 20: break
+        m = np.median(kk[:, :2], 0)
+    return m, z, float(z - bo)
+
+
 def achse_aus_dach(X, wm, v, H, boden, schichten=40):
     """Achse aus der DACHFLAECHE statt aus Einzelpunkten der Spitze (die sind in der duennen Wolke laengs der Sehstrahlen verschmiert: Martinstor 2,4 m daneben, und beide
     Modelle irren in der geklappten Lage GLEICH - 'Einigkeit' 0,17 m war wertlos). Je Hoehenschicht ueber der Wandoberkante die dichteste Lage u laengs der Blickrichtung;
@@ -138,14 +152,26 @@ def vereinen(XA, CA, VA, XB, CB, VB, P, Q, up, rel=0.02, DA=None, DB=None):
     g = geklappt(P, Q, up, rel)
     if g is None: return dict(urteil="keine geklappte Lage (zu wenige/uneinige Punktpaare)", ok=False)
     s, R, t, inl = g; e1 = np.cross(up, [1.0, 0, 0]); e1 /= np.linalg.norm(e1); E = np.array([e1, np.cross(up, e1), up]); lok = lambda X: np.asarray(X) @ E.T
+    # 21.11.2026 (Martinstor, gefilterte DB, globale Stuecke): die Klappung lieferte Massstab, Lot und Wandrichtung richtig, aber die LAGE um eine Turmbreite daneben (Sued-Turm stand
+    # NEBEN dem Nord-Turm, Bild vereinen_probe.jpg) -> Stange von B wurde am falschen Ort gesucht, Achsen 24 % uneinig. Mit dichten Wolken hat jedes Modell seine EIGENE Spitze:
+    # B waagerecht so verschieben, dass Spitze auf Spitze liegt; die Klappung traegt dann nur noch Massstab, Lot und Drehung um das Lot. Unabhaengige Probe dafuer: Turmhoehe beider Modelle.
+    versatz = None
+    if DA is not None and DB is not None:
+        ga, gb = spitze_global(lok(DA)), spitze_global(lok(s * np.asarray(DB) @ R.T + t))
+        if ga is not None and gb is not None:
+            versatz = dict(klapp_versatz=float(np.linalg.norm(ga[0] - gb[0]) / max(ga[2], 1e-9)), hoehe_a=ga[2], hoehe_b=gb[2], hoehe_einigkeit=float(abs(ga[2] - gb[2]) / max(ga[2], 1e-9)))
+            t = t + E.T @ np.array([ga[0][0] - gb[0][0], ga[0][1] - gb[0][1], 0.0])
     a_ = lok(XA); b_ = lok(s * np.asarray(XB) @ R.T + t); ca = lok(CA); cb = lok(s * np.asarray(CB) @ R.T + t); q = lok(Q[inl]); boden = float(np.percentile(ca[:, 2], 20))
-    wm = np.median(q[:, :2], 0); H = float(np.percentile(q[:, 2], 98) - boden); sa, sb = spitze(a_, wm, H, boden), spitze(b_, wm, H, boden)
-    erg = dict(paare=int(len(P)), inlier=int(inl.sum()), rest=float(np.median(np.linalg.norm(s * P[inl] @ R.T + t - Q[inl], axis=1))), massstab=float(s), wandhoehe=H, s=float(s), R=R.tolist(), t=t.tolist(), lot=up.tolist())
+    wm = np.median(q[:, :2], 0); H = float(np.percentile(q[:, 2], 98) - boden)
+    if versatz is not None:                                                          # mit eigener Spitze je Modell: hoechste Bauteile aus den DICHTEN Wolken (die duenne Wolke von B hat oben oft keine Punkte)
+        zm = ga[0]; sa, sb = spitze(lok(DA), zm, H, boden), spitze(lok(s * np.asarray(DB) @ R.T + t), zm, H, boden)      # Suchmitte = Spitze (die Klapp-Treffer koennen neben dem Turm liegen)
+    else: zm = wm; sa, sb = spitze(a_, wm, H, boden), spitze(b_, wm, H, boden)
+    erg = dict(spitzen=versatz, paare=int(len(P)), inlier=int(inl.sum()), rest=float(np.median(np.linalg.norm(s * P[inl] @ R.T + t - Q[inl], axis=1))), massstab=float(s), wandhoehe=H, s=float(s), R=R.tolist(), t=t.tolist(), lot=up.tolist())
     if sa is None or sb is None: erg.update(urteil="keine hoechsten Bauteile in beiden Modellen gefunden - Achse unbestimmt", ok=False); return erg
     v = wm - np.median(ca[:, :2], 0); v /= np.linalg.norm(v); hoch = max(sa[2], sb[2])
     if DA is not None: a_d, b_d = lok(DA), lok(s * np.asarray(DB) @ R.T + t)      # dichte Wolken (genauer) fuer Achse, Dach und Flanke
     else: a_d, b_d = a_, b_
-    st = [stange(X, wm, H, boden) for X in (a_d, b_d)] if DA is not None else [None, None]
+    st = [stange(X, zm, H, boden) for X in (a_d, b_d)] if DA is not None else [None, None]
     da_, db_ = (None, None) if all(st) else (achse_aus_dach(a_d, wm, v, H, boden), achse_aus_dach(b_d, wm, v, H, boden))
     if all(st):                                                                    # beide Seiten: oberstes Band; sieht eine Seite die Spitze deutlich hoeher, zaehlt sie doppelt
         w = np.array([2.0 if st[0][1] > st[1][1] + 0.05 * H else 1.0, 2.0 if st[1][1] > st[0][1] + 0.05 * H else 1.0])
@@ -166,6 +192,7 @@ def vereinen(XA, CA, VA, XB, CB, VB, P, Q, up, rel=0.02, DA=None, DB=None):
     pr = dict(achse_einigkeit=einig / hoch, blick_vorher=blick_vor, blick_nachher=blick_nach, flanke=fl, flanke_punkte=dict(a=fa, b_gedreht=fbd, b_geklappt=fbg), dach=dach, tiefe=float(2 * abs((achse - wm) @ v)) / hoch)
     gruende = []
     if pr["achse_einigkeit"] > 0.015: gruende.append(f"die Modelle sind sich ueber die Achse nicht einig ({100 * pr['achse_einigkeit']:.1f} % der Bauhoehe, Grenze 1,5 %)")
+    if versatz and versatz["hoehe_einigkeit"] > 0.04: gruende.append(f"Turmhoehen der zwei Modelle {100 * versatz['hoehe_einigkeit']:.1f} % verschieden (Grenze 4 %) - Massstab der Klappung oder Spitze falsch")
     if blick_vor > 60: gruende.append(f"die geklappte Lage ist keine Klappung (Kameras {blick_vor:.0f} Grad auseinander statt < 60)")
     if fl == "verschieden": gruende.append("Nachbarbau liegt in beiden Seitenmodellen auf verschiedenen Flanken")
     if dach and min(dach["a"], dach["b"]) < 0.80: gruende.append(f"Dachflaechen erreichen die Achse schon bei {100 * min(dach['a'], dach['b']):.0f} % der Bauhoehe (sie kreuzen sich, Achse liegt falsch)")
@@ -225,6 +252,7 @@ def main(argv=None):
     erg = vereinen(np.array(list(XA.values())), CA, np.array([r[2] for r in RA]), np.array(list(XB.values())), CB, np.array([r[2] for r in RB]), P, Q, up, a.rel, DA, DB)
     erg.update(modell_a=os.path.abspath(a.a), modell_b=os.path.abspath(a.b), lot_herkunft=lot_info); json.dump(erg, open(os.path.join(a.aus, "vereinen.json"), "w"), indent=1); pr = erg.get("pruefung") or {}
     if "inlier" in erg: print(f"geklappte Lage: {erg['inlier']} von {erg['paare']} Punktpaaren, Rest {erg['rest']:.4f}, Massstab B->A {erg['massstab']:.3f}")
+    if erg.get("spitzen"): print(f"eigene Spitze je Modell: Klappung lag {100 * erg['spitzen']['klapp_versatz']:.1f} % der Turmhoehe daneben (berichtigt), Turmhoehen {100 * erg['spitzen']['hoehe_einigkeit']:.1f} % verschieden")
     if pr: print(f"Achse aus {erg.get('achse_aus')}: Einigkeit der Modelle {100 * pr['achse_einigkeit']:.2f} % der Bauhoehe | Blick vorher {pr['blick_vorher']:.0f} Grad, nachher {pr['blick_nachher']:.0f} | Flanke {pr['flanke']} {pr['flanke_punkte']} | Dach {pr['dach']} | Tiefe {pr['tiefe']:.2f} der Bauhoehe")
     print(("SEITEN VEREINT: " if erg["ok"] else "WARNUNG SEITEN NICHT VEREINT: ") + erg["urteil"]); return 0 if erg["ok"] else 3
 
