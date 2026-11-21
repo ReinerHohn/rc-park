@@ -1,0 +1,51 @@
+{
+ "f00": [
+  {
+   "kasten": [
+    1.926,
+    2.521,
+    23.121,
+    24.813
+   ],
+   "sicher": 0.69,
+   "ring": 0.71,
+   "hinten": 0.53,
+   "vorn": 0.14,
+   "urteil": "bleibt"
+  }
+ ],
+ "f01": [],
+ "f02": [],
+ "f03": [
+  {
+   "kasten": [
+    -0.034,
+    1.436,
+    17.161,
+    18.9
+   ],
+   "sicher": 0.85,
+   "ring": 0.57,
+   "hinten": 0.03,
+   "vorn": 0.67,
+   "urteil": "bleibt (Sweep ringsum unsicher - kein Urteil)"
+  },
+  {
+   "kasten": [
+    -0.551,
+    2.345,
+    21.816,
+    25.015
+   ],
+   "sicher": 0.63,
+   "ring": 0.3,
+   "hinten": 0.08,
+   "vorn": 0.51,
+   "urteil": "bleibt (Sweep ringsum unsicher - kein Urteil)"
+  }
+ ],
+ "f04": [],
+ "f05": [],
+ "f06": [],
+ "f07": []
+}

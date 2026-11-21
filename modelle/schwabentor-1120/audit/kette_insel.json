@@ -1,0 +1,111 @@
+{
+ "werkzeug": "kette_insel_pruefen.py",
+ "sparse": "/media/oem/scan/rc-park_daten/schwabentor-1120/pipe/sfm/sparse/0",
+ "anteil": 0.05,
+ "n": 623,
+ "gruppen": {
+  "video_frames_Laxl3ULfqEI": 13
+ },
+ "hinweis_anker": {
+  "eigen": 74
+ },
+ "ausschliessen": [
+  "video_frames_0P_MuzeClHM__vf_012",
+  "video_frames_0P_MuzeClHM__vf_013",
+  "video_frames_0P_MuzeClHM__vf_015",
+  "video_frames_LY0SA6ALdi0__vf_007",
+  "video_frames_LY0SA6ALdi0__vf_008",
+  "video_frames_LY0SA6ALdi0__vf_218",
+  "video_frames_Laxl3ULfqEI__vf_037",
+  "video_frames_Laxl3ULfqEI__vf_038",
+  "video_frames_Laxl3ULfqEI__vf_039",
+  "video_frames_Laxl3ULfqEI__vf_040",
+  "video_frames_Laxl3ULfqEI__vf_041",
+  "video_frames_Laxl3ULfqEI__vf_042",
+  "video_frames_Laxl3ULfqEI__vf_043",
+  "video_frames_Laxl3ULfqEI__vf_044",
+  "video_frames_Laxl3ULfqEI__vf_045",
+  "video_frames_Laxl3ULfqEI__vf_046",
+  "video_frames_Laxl3ULfqEI__vf_047",
+  "video_frames_Laxl3ULfqEI__vf_048",
+  "video_frames_Laxl3ULfqEI__vf_049"
+ ],
+ "werte": {
+  "video_frames_0P_MuzeClHM__vf_012": {
+   "punkte": 0,
+   "fremd": 0
+  },
+  "video_frames_0P_MuzeClHM__vf_013": {
+   "punkte": 0,
+   "fremd": 0
+  },
+  "video_frames_0P_MuzeClHM__vf_015": {
+   "punkte": 50,
+   "fremd": 0
+  },
+  "video_frames_LY0SA6ALdi0__vf_007": {
+   "punkte": 23,
+   "fremd": 0
+  },
+  "video_frames_LY0SA6ALdi0__vf_008": {
+   "punkte": 23,
+   "fremd": 0
+  },
+  "video_frames_LY0SA6ALdi0__vf_218": {
+   "punkte": 51,
+   "fremd": 1
+  },
+  "video_frames_Laxl3ULfqEI__vf_037": {
+   "punkte": 2573,
+   "fremd": 115
+  },
+  "video_frames_Laxl3ULfqEI__vf_038": {
+   "punkte": 2569,
+   "fremd": 79
+  },
+  "video_frames_Laxl3ULfqEI__vf_039": {
+   "punkte": 2547,
+   "fremd": 44
+  },
+  "video_frames_Laxl3ULfqEI__vf_040": {
+   "punkte": 2355,
+   "fremd": 10
+  },
+  "video_frames_Laxl3ULfqEI__vf_041": {
+   "punkte": 2359,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_042": {
+   "punkte": 2346,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_043": {
+   "punkte": 2133,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_044": {
+   "punkte": 2002,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_045": {
+   "punkte": 1757,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_046": {
+   "punkte": 1619,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_047": {
+   "punkte": 1428,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_048": {
+   "punkte": 1197,
+   "fremd": 0
+  },
+  "video_frames_Laxl3ULfqEI__vf_049": {
+   "punkte": 994,
+   "fremd": 0
+  }
+ }
+}

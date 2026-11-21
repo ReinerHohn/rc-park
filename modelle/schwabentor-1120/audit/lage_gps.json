@@ -1,0 +1,32 @@
+{
+ "werkzeug": "lage_gps_pruefen.py",
+ "ausrichtung": "modelle/schwabentor-1120/messprotokoll/SFM-AUSRICHTUNG-schwabentor-1120.json",
+ "lage": null,
+ "n_kameras": 623,
+ "n_gps": 174,
+ "ransac": {
+  "inlier": 125,
+  "von": 174
+ },
+ "geprueft": true,
+ "median_abstand_m": 3.4485103910975803,
+ "gps_fit": {
+  "drehung_grad": -0.027411027289109883,
+  "drehung_90": [
+   -0.3335586479772333,
+   0.34738736431655737
+  ],
+  "massstab": 0.9944785533925882,
+  "massstab_90": [
+   0.9898056607802893,
+   0.9979046868278083
+  ],
+  "rest_median_m": 4.388625010073427
+ },
+ "fernfotos": {
+  "n": 14,
+  "entfernung_gps_durch_modell": 0.995752413541572,
+  "richtungsfehler_grad": -0.13683845137303763
+ },
+ "warnungen": []
+}

@@ -1,0 +1,38 @@
+{
+ "tol_m": 0.35,
+ "befunde": [
+  {
+   "foto": "eigen__IMG_20261106_113231",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.67,
+   "breite_m": 0.67,
+   "xyz": [
+    3.4,
+    21.42,
+    22.56
+   ]
+  },
+  {
+   "foto": "eigen__IMG_20261106_113231",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.99,
+   "breite_m": 2.84,
+   "xyz": [
+    -1.24,
+    8.26,
+    39.34
+   ]
+  },
+  {
+   "foto": "eigen__IMG_20261106_113231",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.57,
+   "breite_m": 1.3,
+   "xyz": [
+    3.4,
+    21.42,
+    27.71
+   ]
+  }
+ ]
+}

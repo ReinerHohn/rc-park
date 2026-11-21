@@ -1,0 +1,22 @@
+{
+ "rueckwand": {
+  "tiefe": 0.15,
+  "quelle": "ANNAHME: 0.15 m (nur 1 belastbare Fenstertiefen < 3; Anhalt Kaufhaus-Fotomass 0,14 / 0,19 m an einem anderen Haus, modelle/kaufhaus_gk/objekt.json rueckwand)",
+  "hinweis": "nicht gemessen - mit Fotomass (foto_mass --kamera, zwei Gegenrichtungen) ersetzen",
+  "auto": "bauplan 2026-11-21",
+  "n": 1
+ },
+ "fenster": [
+  {
+   "tiefe": 0.14,
+   "fassade": "f00",
+   "zone": [
+    1.188,
+    3.158,
+    22.969,
+    25.444
+   ],
+   "fotos": 16
+  }
+ ]
+}

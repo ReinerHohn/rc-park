@@ -1,0 +1,63 @@
+{
+ "ausrichtung": "SFM-AUSRICHTUNG-schwabentor-1120.json",
+ "anteil_unmoeglich": 0.0661,
+ "ausrichtung_verdaechtig": true,
+ "gruppen": {
+  "eigen": {
+   "punkte": 69847,
+   "unmoeglich": 3945,
+   "anteil": 0.056,
+   "auffaellig": false
+  },
+  "netz_commons_geo": {
+   "punkte": 614,
+   "unmoeglich": 8,
+   "anteil": 0.013,
+   "auffaellig": false
+  },
+  "video_frames_LY0SA6ALdi0": {
+   "punkte": 1732,
+   "unmoeglich": 894,
+   "anteil": 0.516,
+   "auffaellig": true
+  },
+  "video_frames_LMS3Va6psfY": {
+   "punkte": 3779,
+   "unmoeglich": 165,
+   "anteil": 0.044,
+   "auffaellig": false
+  },
+  "video_frames_NW-Mt7ryZ8c": {
+   "punkte": 307,
+   "unmoeglich": 307,
+   "anteil": 1.0,
+   "auffaellig": true
+  },
+  "video_frames_0P_MuzeClHM": {
+   "punkte": 169,
+   "unmoeglich": 0,
+   "anteil": 0.0,
+   "auffaellig": false
+  },
+  "video_frames_Laxl3ULfqEI": {
+   "punkte": 6970,
+   "unmoeglich": 32,
+   "anteil": 0.005,
+   "auffaellig": false
+  }
+ },
+ "auffaellig": [
+  "video_frames_LY0SA6ALdi0",
+  "video_frames_NW-Mt7ryZ8c"
+ ],
+ "einzelfotos": [
+  "netz_commons_geo__016_Freiburg_im_Breisgau-_Dr._Siegfried_Büche_am_Schwabentor_Aufnahme_zum_80._G.jpeg",
+  "netz_commons_geo__020_Freiburg_im_Breisgau_Schwabentor_1.jpg",
+  "netz_commons_geo__024_Freiburg_im_Breisgau_TodorBozhinov_13.JPG",
+  "netz_commons_geo__025_Freiburg_im_Breisgau_TodorBozhinov_14.JPG",
+  "netz_commons_geo__037_Schwabentor_Freiburg_i._Br_-_geo.hlipp.de_-_22496.jpg",
+  "netz_commons_geo__094_Schwabentor_-_panoramio_1.jpg",
+  "netz_commons_geo__121_Freiburg_Tram_6.jpg"
+ ],
+ "ausschliessen": []
+}

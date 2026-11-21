@@ -1,0 +1,112 @@
+{
+ "zeit": "2026-11-21 15:15",
+ "objekt": "modelle/schwabentor-1120/objekt.json",
+ "kriterium": {
+  "min_tiefe": 1.0,
+  "signifikanz": 3.0,
+  "band": 0.4,
+  "zone_anteil": 0.15,
+  "min_zellen": 150,
+  "min_m2": 2.0,
+  "zelle": 0.06,
+  "dw": 0.1,
+  "fenster": 21,
+  "max_fotos": 24
+ },
+ "fassaden": {
+  "f00": {
+   "geprueft": true,
+   "fotos": 20,
+   "wand_versatz": -0.1800000000000459,
+   "sweep": [
+    -13.18,
+    1.0
+   ],
+   "zonen": [
+    {
+     "klasse": "bogen",
+     "zone": [
+      -2.54,
+      2.51,
+      -0.11,
+      25.53
+     ],
+     "gebaeudetiefe": 11.68,
+     "anteil_spitze": 0.016,
+     "sichere_zellen": 7217,
+     "durchblick": false
+    }
+   ],
+   "befund": "keine Innenwand (Spitze 1.35 m, Signifikanz 18.0, 0.0 m2, Zonen dabei 0)",
+   "spitze_rel": -1.35,
+   "signifikanz": 18.0,
+   "zellen_tief": 220,
+   "flaeche_spitze_m2": 0.0
+  },
+  "f01": {
+   "geprueft": false,
+   "grund": "keine grosse bodennahe Oeffnungszone (bogen/tuer/tor) im Erkenner"
+  },
+  "f02": {
+   "geprueft": false,
+   "grund": "keine grosse bodennahe Oeffnungszone (bogen/tuer/tor) im Erkenner"
+  },
+  "f03": {
+   "geprueft": true,
+   "fotos": 9,
+   "wand_versatz": 0.05999999999995076,
+   "sweep": [
+    -13.64,
+    1.0
+   ],
+   "zonen": [
+    {
+     "klasse": "bogen",
+     "zone": [
+      -5.08,
+      -1.09,
+      0.88,
+      17.24
+     ],
+     "gebaeudetiefe": 12.14
+    }
+   ],
+   "befund": "keine Innenwand (92 sichere tiefe Kernzellen < 150)"
+  },
+  "f04": {
+   "geprueft": true,
+   "fotos": 15,
+   "wand_versatz": 0.4499999999999824,
+   "sweep": [
+    -4.45,
+    1.0
+   ],
+   "zonen": [
+    {
+     "klasse": "bogen",
+     "zone": [
+      -0.51,
+      1.22,
+      0.01,
+      12.55
+     ],
+     "gebaeudetiefe": 2.95
+    }
+   ],
+   "befund": "keine Innenwand (0 sichere tiefe Kernzellen < 150)"
+  },
+  "f05": {
+   "geprueft": false,
+   "grund": "keine grosse bodennahe Oeffnungszone (bogen/tuer/tor) im Erkenner"
+  },
+  "f06": {
+   "geprueft": false,
+   "grund": "keine grosse bodennahe Oeffnungszone (bogen/tuer/tor) im Erkenner"
+  },
+  "f07": {
+   "geprueft": false,
+   "grund": "keine grosse bodennahe Oeffnungszone (bogen/tuer/tor) im Erkenner"
+  }
+ },
+ "innenwaende": []
+}

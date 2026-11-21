@@ -1,0 +1,302 @@
+{
+ "fotos": {
+  "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg.jpg",
+   "dmed": 21.410572052001953,
+   "ppm": 116.3063021641767,
+   "sitz": {
+    "gewinn": 0.2471,
+    "versatz_m": 0.526,
+    "versatz_px": [
+     4,
+     61
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg.json",
+   "kamera_sha": "2d0531e892228205",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg.npz"
+  },
+  "video_frames_LY0SA6ALdi0__vf_207": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/video_frames_LY0SA6ALdi0__vf_207.jpg",
+   "dmed": 38.49931716918945,
+   "ppm": 20.96386839113963,
+   "sitz": {
+    "gewinn": 0.0706,
+    "versatz_m": 1.051,
+    "versatz_px": [
+     -1,
+     22
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-video_frames_LY0SA6ALdi0__vf_207.json",
+   "kamera_sha": "b302257a4423bb0c",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/video_frames_LY0SA6ALdi0__vf_207.npz"
+  },
+  "video_frames_LY0SA6ALdi0__vf_208": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/video_frames_LY0SA6ALdi0__vf_208.jpg",
+   "dmed": 23.272438049316406,
+   "ppm": 34.68027787090134,
+   "sitz": {
+    "gewinn": 0.0441,
+    "versatz_m": 1.286,
+    "versatz_px": [
+     33,
+     30
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-video_frames_LY0SA6ALdi0__vf_208.json",
+   "kamera_sha": "0fb3d3ec56afa956",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/video_frames_LY0SA6ALdi0__vf_208.npz"
+  },
+  "eigen__IMG_20261106_113312": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_113312.jpg",
+   "dmed": 17.039838790893555,
+   "ppm": 164.43082121818426,
+   "sitz": {
+    "gewinn": 0.0589,
+    "versatz_m": 1.045,
+    "versatz_px": [
+     17,
+     171
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_113312.json",
+   "kamera_sha": "db919a3452563c6a",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_113312.npz"
+  },
+  "eigen__IMG_20261106_114133": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_114133.jpg",
+   "dmed": 7.27463960647583,
+   "ppm": 384.02954908378064,
+   "sitz": {
+    "gewinn": 0.0907,
+    "versatz_m": 1.066,
+    "versatz_px": [
+     367,
+     -181
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_114133.json",
+   "kamera_sha": "3e1f0f3487698b3b",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_114133.npz"
+  },
+  "eigen__192": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__192.jpg",
+   "dmed": 25.136642456054688,
+   "ppm": 95.01189708540284,
+   "sitz": {
+    "gewinn": 0.0846,
+    "versatz_m": 0.879,
+    "versatz_px": [
+     -47,
+     69
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__192.json",
+   "kamera_sha": "0f08e2f185595c60",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__192.npz"
+  },
+  "eigen__IMG_20261106_113545_1": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_113545_1.jpg",
+   "dmed": 9.384845733642578,
+   "ppm": 295.26862469824925,
+   "sitz": {
+    "gewinn": 0.0566,
+    "versatz_m": 0.627,
+    "versatz_px": [
+     28,
+     -183
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_113545_1.json",
+   "kamera_sha": "fe9284a5163ee32f",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_113545_1.npz"
+  },
+  "eigen__IMG_20261106_114050": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_114050.jpg",
+   "dmed": 12.545612335205078,
+   "ppm": 220.5655882537749,
+   "sitz": {
+    "gewinn": 0.1983,
+    "versatz_m": 0.99,
+    "versatz_px": [
+     -83,
+     -202
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_114050.json",
+   "kamera_sha": "a1e252b76186ae01",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_114050.npz"
+  },
+  "eigen__IMG_20261106_113429": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_113429.jpg",
+   "dmed": 6.396081209182739,
+   "ppm": 433.84707379275125,
+   "sitz": {
+    "gewinn": 0.1042,
+    "versatz_m": 0.115,
+    "versatz_px": [
+     -25,
+     43
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_113429.json",
+   "kamera_sha": "f3cace14d7be1929",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_113429.npz"
+  },
+  "eigen__IMG_20261106_113855": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_113855.jpg",
+   "dmed": 23.463600158691406,
+   "ppm": 121.3789624898903,
+   "sitz": {
+    "gewinn": 0.0469,
+    "versatz_m": 1.468,
+    "versatz_px": [
+     124,
+     -128
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_113855.json",
+   "kamera_sha": "e575e89d73da911c",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_113855.npz"
+  },
+  "eigen__IMG_20261106_113337": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_113337.jpg",
+   "dmed": 11.735075950622559,
+   "ppm": 237.82838865049814,
+   "sitz": {
+    "gewinn": 0.1834,
+    "versatz_m": 0.801,
+    "versatz_px": [
+     14,
+     190
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_113337.json",
+   "kamera_sha": "f295f8c1e85c2be4",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_113337.npz"
+  },
+  "video_frames_LY0SA6ALdi0__vf_206": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/video_frames_LY0SA6ALdi0__vf_206.jpg",
+   "dmed": 39.16363525390625,
+   "ppm": 20.6082661390104,
+   "sitz": {
+    "gewinn": 0.0486,
+    "versatz_m": 0.847,
+    "versatz_px": [
+     4,
+     17
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-video_frames_LY0SA6ALdi0__vf_206.json",
+   "kamera_sha": "c9df65970b4894fd",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/video_frames_LY0SA6ALdi0__vf_206.npz"
+  },
+  "video_frames_LY0SA6ALdi0__vf_210": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/video_frames_LY0SA6ALdi0__vf_210.jpg",
+   "dmed": 21.649057388305664,
+   "ppm": 37.280820305811766,
+   "sitz": {
+    "gewinn": 0.0148,
+    "versatz_m": 1.146,
+    "versatz_px": [
+     15,
+     40
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-video_frames_LY0SA6ALdi0__vf_210.json",
+   "kamera_sha": "7195148d28dc2db5",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/video_frames_LY0SA6ALdi0__vf_210.npz"
+  },
+  "eigen__IMG_20261106_113648": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_113648.jpg",
+   "dmed": 13.50108528137207,
+   "ppm": 206.34807654281676,
+   "sitz": {
+    "gewinn": 0.0376,
+    "versatz_m": 0.306,
+    "versatz_px": [
+     -4,
+     63
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_113648.json",
+   "kamera_sha": "8eefa5ceb0b1b57f",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_113648.npz"
+  },
+  "eigen__IMG_20261106_114013": {
+   "bild": "../../../../media/oem/scan/rc-park_daten/schwabentor-1120/fotos/eigen__IMG_20261106_114013.jpg",
+   "dmed": 9.143478393554688,
+   "ppm": 304.69065051072295,
+   "sitz": {
+    "gewinn": 0.0169,
+    "versatz_m": 0.496,
+    "versatz_px": [
+     1,
+     -151
+    ]
+   },
+   "kamera_datei": "modelle/schwabentor-1120/messprotokoll/K-eigen__IMG_20261106_114013.json",
+   "kamera_sha": "3b9318d292ba13f3",
+   "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+   "stl_sha": "ab76bc9efd03baf0",
+   "zeit": "2026-11-20 21:15",
+   "npz": "/media/oem/scan/rc-park_daten/fototor_bezug/schwabentor-1120/eigen__IMG_20261106_114013.npz"
+  }
+ },
+ "parameter": {
+  "tol": 0.35,
+  "rand": 1.0,
+  "kachel": 1.5,
+  "min_diff": 0.01,
+  "n_boot": 400,
+  "min_px": 300,
+  "min_kacheln": 6,
+  "sitz_max": 0.04,
+  "pool_floor": 0.005,
+  "fassade_floor": 0.02,
+  "min_fotos": 3
+ }
+}

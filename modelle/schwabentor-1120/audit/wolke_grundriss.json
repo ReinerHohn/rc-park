@@ -1,6 +1,6 @@
 {
  "werkzeug": "wolke_grundriss_pruefen.py",
- "wolke": "modelle/schwabentor-1120/sfm/punkte_modell_schwabentor-1120.npy",
+ "wolke": "/home/oem/git/rc-park/modelle/schwabentor-1120/sfm/punkte_modell_schwabentor-1120.npy",
  "lod2_gebaeude": 36,
  "wandpunkte": 3326493,
  "geprueft": true,
@@ -17,7 +17,7 @@
      48,
      33
     ],
-    "geklaert": null
+    "geklaert": "echte Umgebung auf dem Platz vor der Stadtseite (Laterne, Schildermast, Oberleitung, Fahrzeuge/Passanten, auskragender Bilderker), kein versetztes Teilnetz"
    },
    {
     "punkte": 863,
@@ -80,7 +80,7 @@
     "geklaert": null
    }
   ],
-  "warnung": true
+  "warnung": false
  },
  "teile": {
   "ziel": "DEBW_001000hPLcp",

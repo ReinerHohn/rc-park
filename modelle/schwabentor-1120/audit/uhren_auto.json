@@ -1,0 +1,45 @@
+{
+ "f00": {
+  "o": [
+   3.736338765143183,
+   15.285188595694338
+  ],
+  "d": [
+   -0.029655713502864632,
+   0.999560172604249
+  ],
+  "n": [
+   0.999560172604249,
+   0.029655713502864632
+  ],
+  "uhren": [
+   {
+    "u": 0.036,
+    "z": 31.955,
+    "d_aussen": 5.127,
+    "d_innen": 3.435,
+    "stuetze_aussen": 1.0,
+    "stuetze_innen": 1.0,
+    "kasten": [
+     -2.55,
+     2.74,
+     29.41,
+     34.69
+    ],
+    "stimmen": 4,
+    "quelle": "Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze im feinen Wandbild (1 cm)"
+   }
+  ],
+  "verworfen": [
+   {
+    "kasten": [
+     -3.660971368060741,
+     1.777993475689259,
+     11.139931640624955,
+     15.766640624999955
+    ],
+    "grund": "Kreis nur zu 77 % von Kanten gestuetzt"
+   }
+  ]
+ }
+}

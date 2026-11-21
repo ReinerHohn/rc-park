@@ -1,0 +1,162 @@
+{
+ "objekt": "schwabentor-1120",
+ "zeit": "2026-11-20 21:15",
+ "stl": "modelle/stl/schwabentor-1120_1-87.stl",
+ "parameter": {
+  "tol": 0.35,
+  "rand": 1.0,
+  "kachel": 1.5,
+  "min_diff": 0.01,
+  "n_boot": 400,
+  "min_px": 300,
+  "min_kacheln": 6,
+  "sitz_max": 0.04,
+  "pool_floor": 0.005,
+  "fassade_floor": 0.02,
+  "min_fotos": 3
+ },
+ "fotos": {
+  "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 6.7
+  },
+  "video_frames_LY0SA6ALdi0__vf_207": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 0.6
+  },
+  "video_frames_LY0SA6ALdi0__vf_208": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 0.8
+  },
+  "eigen__IMG_20261106_113312": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 10.2
+  },
+  "eigen__IMG_20261106_114133": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 11.2
+  },
+  "eigen__192": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 3.0
+  },
+  "eigen__IMG_20261106_113545_1": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 11.3
+  },
+  "eigen__IMG_20261106_114050": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 12.7
+  },
+  "eigen__IMG_20261106_113429": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 12.3
+  },
+  "eigen__IMG_20261106_113855": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 10.8
+  },
+  "eigen__IMG_20261106_113337": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 9.2
+  },
+  "video_frames_LY0SA6ALdi0__vf_206": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 0.5
+  },
+  "video_frames_LY0SA6ALdi0__vf_210": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 0.5
+  },
+  "eigen__IMG_20261106_113648": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 7.3
+  },
+  "eigen__IMG_20261106_114013": {
+   "urteil": "nicht beurteilbar",
+   "grund": "kein Bezugsstand",
+   "sekunden": 9.6
+  }
+ },
+ "gesamt": {
+  "urteil": "nicht beurteilbar",
+  "grund": "0 beurteilbare Fotos < 3",
+  "beurteilbar": 0,
+  "schlechter": 0,
+  "besser": 0,
+  "gleich": 0,
+  "fassaden": {
+   "N": {
+    "urteil": "nicht beurteilbar",
+    "grund": "0 beurteilbare Fotos < 3",
+    "beurteilbar": 0,
+    "schlechter": 0,
+    "besser": 0,
+    "gleich": 0
+   },
+   "O": {
+    "urteil": "nicht beurteilbar",
+    "grund": "0 beurteilbare Fotos < 3",
+    "beurteilbar": 0,
+    "schlechter": 0,
+    "besser": 0,
+    "gleich": 0
+   },
+   "S": {
+    "urteil": "nicht beurteilbar",
+    "grund": "0 beurteilbare Fotos < 3",
+    "beurteilbar": 0,
+    "schlechter": 0,
+    "besser": 0,
+    "gleich": 0
+   },
+   "W": {
+    "urteil": "nicht beurteilbar",
+    "grund": "0 beurteilbare Fotos < 3",
+    "beurteilbar": 0,
+    "schlechter": 0,
+    "besser": 0,
+    "gleich": 0
+   },
+   "Dach": {
+    "urteil": "nicht beurteilbar",
+    "grund": "0 beurteilbare Fotos < 3",
+    "beurteilbar": 0,
+    "schlechter": 0,
+    "besser": 0,
+    "gleich": 0
+   }
+  }
+ },
+ "bezug_geschrieben": [
+  "eigen__192",
+  "eigen__IMG_20261106_113312",
+  "eigen__IMG_20261106_113337",
+  "eigen__IMG_20261106_113429",
+  "eigen__IMG_20261106_113545_1",
+  "eigen__IMG_20261106_113648",
+  "eigen__IMG_20261106_113855",
+  "eigen__IMG_20261106_114013",
+  "eigen__IMG_20261106_114050",
+  "eigen__IMG_20261106_114133",
+  "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg",
+  "video_frames_LY0SA6ALdi0__vf_206",
+  "video_frames_LY0SA6ALdi0__vf_207",
+  "video_frames_LY0SA6ALdi0__vf_208",
+  "video_frames_LY0SA6ALdi0__vf_210"
+ ]
+}
