@@ -34,7 +34,8 @@ def main():
     uh = [u for F in UH.values() if isinstance(F, dict) for u in F.get("uhren", [])]
     if uh: ist["uhr"] = dict(durchmesser=uh[0]["d_aussen"], mitte_z=uh[0]["z"])
     to = [o for F in OE.values() if isinstance(F, dict) for o in F.get("oeffnungen", []) if o.get("gebaut")]
-    if to: o = max(to, key=lambda o: o.get("breite") or 0); ist["tor"] = dict(breite=o.get("breite"), scheitel=o.get("scheitel"), kaempfer=o.get("kaempfer"))
+    if to:    # 21.11.2026: gleiches mit gleichem - breite/scheitel/kaempfer = LICHTE Oeffnung (Innenkante), scheitel_aussen = Aussenkante inkl. Gewaende (oeffnungen_aus_kanten 'aussenmass')
+        o = max(to, key=lambda o: o.get("breite") or 0); ist["tor"] = dict(breite=o.get("breite"), scheitel=o.get("scheitel"), kaempfer=o.get("kaempfer"), scheitel_aussen=(o.get("aussenmass") or {}).get("scheitel"))
     if any(o.get("durchfahrt") for o in to): ist["tor_durchfahrt"] = {}
     for r in R["bauteile"]:
         if r["bauteil"] == "rundbogenfenster":
@@ -68,12 +69,15 @@ def main():
         b = r["bauteil"]; t = float(r.get("toleranz_m", 0.3))
         if b not in ist: erg.append(dict(bauteil=b, urteil="FEHLT", soll=r["masse"])); continue
         ab = {}; q_ = ist[b].get("_quelle", "foto")    # 21.11.2026 KERNMETHODE: Masse nur aus der Wolke zaehlen als VORLAEUFIG (Quelle je Bauteil)
+        ann = r.get("hand_annahme") or {}              # 21.11.2026: Handwerte, die die Handquelle selbst als ANNAHME fuehrt und die ein Fotobeleg widerlegt - angezeigt, nicht geurteilt
         for k, s in r["masse"].items():
             i = ist[b].get(k)
+            if k in ann: ab[k] = dict(soll=s, ist=i, ok=True, hand_annahme=ann[k]); continue
             if i is None: ab[k] = dict(soll=s, ist=None, ok=False); continue
             ok = abs(float(i) - float(s)) <= (t if k not in ("anzahl", "pfosten", "streben", "pfosten_je_seite") else 0)
             ab[k] = dict(soll=s, ist=i, ok=ok)
         u = "PASST" if all(x["ok"] for x in ab.values()) else "FALSCH"; n_passt += u == "PASST"; erg.append(dict(bauteil=b, urteil=u, masse=ab, quelle=q_))
+        if ann and u == "PASST": erg[-1]["hinweis"] = "ohne Handannahme(n): " + ", ".join(f"{k} Hand {r['masse'][k]} / Kette {ist[b].get(k)}" for k in ann if k in r["masse"])
     for e in erg:
         z = f"{e['urteil']:6s} {e['bauteil']:20s}" + ("  [nur Wolke - vorlaeufig]" if e.get("quelle") == "wolke" else "")
         if e["urteil"] == "FALSCH": z += "  " + ", ".join(f"{k} {v['ist']} statt {v['soll']}" for k, v in e["masse"].items() if not v["ok"])
