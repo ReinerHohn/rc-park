@@ -45,3 +45,19 @@ Nachspielen:
 - Folge: Der Handstand ist kein Sollwert für Höhen auf ±0,3 m; `hand_vergleich` zeigt zuverlässig nur FEHLT und grobe Abweichungen.
 - Echte Messschwäche der Kette: Bänder aus dem Sweep sind durch Raster und Glättung um etwa ±0,3 m verbreitert (Galerie 9,6–12,0 statt 10,2–11,4). Abhilfe (allgemein): Kanten des Bauteils auf seiner EIGENEN Ebene aus den Fotos triangulieren, wie von Hand mit foto_mass.
 - Nutzer 01:38: „es geht darum, eine generelle Methode zu finden“.
+
+## Nachtrag 01:55 - Nutzerkorrektur: KEIN Baukasten, Form aus dem feinen Wandbild
+- Nutzer: „Nein, nicht aus dem Baukasten. Du musst mit dem feinen Raster aus dem Bauplan die Kanten erkennen.“ Das ist die harte Regel „Wandbild = Bauplan, keine Musterteile“. Mein Verstoß in dieser Nacht: `galerie_messen` -> `Wand.galerie` (Katalog-Galerie mit gemessenen Maßen) und `uhren_aus_json` mit `Wand.zifferblatt` (fertige Ziffern). Beides kommt wieder heraus.
+- Vorhandenes Werkzeug dafür: `tools/form_aus_wandbild.py` (17.11.; Wandbild auf beliebiger Ebene `--w`, Segmentierung, Kanten einrasten, `teil()`), bisher nur von Hand am Kaufhaus, keine Kettenstufe.
+
+## METHODE (Stand 21.11., wird hier fortgeschrieben)
+Ein Gebäude = mehrere EBENEN, jede Ebene bekommt ihren eigenen Bauplan.
+1. Grundebenen = Wände des Grundkörpers (Kameras aus SfM, Lage geprüft).
+2. Ebenen-Sweep je Wand: Wo werden die Fotos erst vor oder hinter der Wand deckungsgleich? -> neue Ebenen (Vorbau +w, Nische/Öffnung -w) mit Zone.
+3. Je gefundener Ebene ein feines Wandbild (1 cm) AUF DIESER EBENE aus den Fotos (dort ist das Teil scharf, auf der Wandebene verschmiert).
+4. Gestalt aus diesem Bild: Kanten/Flächen + Tiefe je Zelle -> Form. Erkenner liefern nur Zonen, nie die Form. Kein Katalogteil.
+5. Bauen, dann das Wandbild der Grundebene mit dem neuen Körper neu rechnen (Verdeckung stimmt jetzt) und ab Schritt 2 wiederholen, bis nichts Neues kommt.
+6. Beweis je Lauf: Fotokanten am Modell (Anteil ≤ 15 cm), automatisch.
+Offene Grenze: wirklich Freistehendes mit Luft dahinter (schräge Streben, offene Brüstung) hat auf einer Ebene Parallaxe -> Fotokanten aus mehreren Ansichten (ANNAHME, am Erker noch nicht geprüft).
+
+Was daran neu ist (ehrlich): die Einzelteile gab es alle (Sweep 16.11., Wandbild auf Ebene 17.11., Form aus Wandbild 17.11.). Neu ist nur die Kopplung als Schleife in der Kette: Sweep-Ebene -> eigenes Wandbild -> Form -> Bau -> neu rechnen. Neu seit heute Nacht außerdem: Sackgassen-Tor, Vergleich mit dem Handstand, Verlauf je Lauf.
