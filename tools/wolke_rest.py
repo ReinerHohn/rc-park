@@ -23,7 +23,7 @@ def kreis(xy):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("wolke"); ap.add_argument("--stl"); ap.add_argument("--fern", type=float, default=0.35); ap.add_argument("--zelle", type=float, default=0.4)
     ap.add_argument("--anschluss", type=float, default=0.8); ap.add_argument("--weit", type=float, default=4.0, help="Punkte weiter weg vom Modell = Umgebung, nicht betrachtet"); ap.add_argument("--min_p", type=int, default=150)
-    ap.add_argument("--jeder", type=int, default=6); ap.add_argument("--boden", type=float, default=1.0); ap.add_argument("--bild", default=""); a = ap.parse_args()
+    ap.add_argument("--jeder", type=int, default=6); ap.add_argument("--boden", type=float, default=1.0); ap.add_argument("--bild", default=""); ap.add_argument("--uebernehmen", action="store_true", help="runde Haufen mit Drehprofil nach audit/koerper_auto.json (Eingang bauteile.drehkoerper_aus_wolkenrest)"); a = ap.parse_args()
     import trimesh
     from scipy.spatial import cKDTree
     from scipy import ndimage
@@ -39,7 +39,17 @@ def main():
         if dk.min() > a.anschluss: continue                                                   # beruehrt das Modell nicht -> Umgebung
         c = P - P.mean(0); ev = np.sqrt(np.maximum(np.linalg.eigvalsh(np.cov(c.T)), 0)); cx, cy, r, res = kreis(P[:, :2]); hoehe = float(P[:, 2].max() - P[:, 2].min())
         form = "rund" if (res <= 0.08 and 0.4 <= r <= 4.0 and hoehe >= 1.5) else ("platte" if ev[0] <= 0.25 and ev[1] >= 0.6 else "koerper")
-        H.append(dict(punkte=int(s.sum()), kasten=[round(float(x), 2) for x in np.r_[P.min(0), P.max(0)]], abstand_max=round(float(np.percentile(dk, 95)), 2), abstand_median=round(float(np.median(dk)), 2),
+        prof = None
+        if form == "rund":                                                                    # DREHPROFIL r(z) aus der Wolke um die gefundene Achse: Schaft, Gesims, Haube ohne Musterteil
+            rr = np.hypot(W[:, 0] - cx, W[:, 1] - cy); nah = (rr < r + 0.9) & (d > 0.15) & (W[:, 2] < P[:, 2].max() + 6.0); zz = W[nah, 2]; rq = rr[nah]; prof = []
+            for z0 in np.arange(float(P[:, 2].min()), float(zz.max()) if nah.any() else 0.0, 0.25):
+                q = rq[(zz >= z0) & (zz < z0 + 0.25)]
+                if len(q) < 25:
+                    if prof and z0 > P[:, 2].max(): break
+                    continue
+                hh, kk = np.histogram(q, bins=np.arange(0.0, r + 0.95, 0.05)); j = int(np.argmax(hh * kk[1:]))      # dichteste Schale (flaechengewichtet), nicht der Median: Innenpunkte/Nachbarwand stoeren
+                prof.append([round(float(z0 + 0.125), 2), round(float(np.median(q[(q >= kk[j] - 0.05) & (q < kk[j + 1] + 0.05)])), 3), int(len(q))])
+        H.append(dict(profil=prof, punkte=int(s.sum()), kasten=[round(float(x), 2) for x in np.r_[P.min(0), P.max(0)]], abstand_max=round(float(np.percentile(dk, 95)), 2), abstand_median=round(float(np.median(dk)), 2),
                       form=form, kreis=dict(x=round(cx, 2), y=round(cy, 2), r=round(r, 2), rest=round(res, 3)) if form == "rund" else None, staerke=[round(float(x), 2) for x in ev]))
     H.sort(key=lambda h: -h["punkte"])
     for i, h in enumerate(H):
@@ -48,6 +58,12 @@ def main():
               + (f" (Kreis r {h['kreis']['r']} m, Rest {h['kreis']['rest']} m)" if h["kreis"] else ""))
     A = os.path.join(od, "audit"); os.makedirs(A, exist_ok=True); json.dump(dict(quelle="tools/wolke_rest.py", stl=os.path.relpath(stl, ROOT), wolke=a.wolke, fern=a.fern, an_flaeche=round(float((d <= a.fern).mean()), 3), haufen=H),
                                                                             open(os.path.join(A, "wolke_rest.json"), "w"), indent=1)
+    if a.uebernehmen:                                                                         # gefundene Koerper DAUERHAFT ablegen: nach dem Bau liegt der Haufen am Modell und verschwindet aus dem Rest
+        kp = os.path.join(A, "koerper_auto.json"); K = json.load(open(kp)).get("haufen", []) if os.path.exists(kp) else []
+        for h in H:
+            if h.get("profil") and len(h["profil"]) >= 4 and not any(np.hypot(k["kreis"]["x"] - h["kreis"]["x"], k["kreis"]["y"] - h["kreis"]["y"]) < 1.0 for k in K):
+                K.append(dict(h, id=f"rund{len(K)}", an_flaeche_vorher=round(float((d <= a.fern).mean()), 3))); print(f"uebernommen als Kandidat: {K[-1]['id']} (r {h['kreis']['r']} m)")
+        json.dump(dict(quelle="tools/wolke_rest.py --uebernehmen", haufen=K), open(kp, "w"), indent=1)
     if a.bild:
         import cv2
         px = 0.05; B = []

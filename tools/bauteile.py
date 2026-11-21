@@ -285,6 +285,25 @@ def korrekturen_aus_json(koerper, datei, art=None, ohne=None):
     return koerper, belege
 
 
+def drehkoerper_aus_wolkenrest(koerper, datei, nseg=48):
+    """Runde Anbauten (Treppenturm, Rundturm, Saeule) aus tools/wolke_rest.py (--uebernehmen -> audit/koerper_auto.json, 21.11.2026): Haufen der dichten Wolke, der NICHT am Modell liegt, Form 'rund'.
+    Achse = Kreisausgleich im Grundriss, Gestalt = gemessenes DREHPROFIL r(z) in 0,25-m-Scheiben (Schaft, Gesims) - kein Musterteil. Unter der ersten Scheibe bis z 0 mit deren Radius
+    (Boden von der Wolke abgeschnitten); oben endet der Koerper, wo die Wolke endet (Haube/Dach nur, wenn die Wolke sie zeigt - sonst im Beleg als FEHLT). Nur Haufen mit angenommen != false."""
+    if not os.path.exists(datei): return koerper, []
+    belege = []
+    for H in json.load(open(datei)).get("haufen", []):
+        P = H.get("profil") or []
+        if H.get("form") != "rund" or len(P) < 4 or H.get("angenommen") is False: continue
+        x, y = H["kreis"]["x"], H["kreis"]["y"]; dz = P[1][0] - P[0][0]; teile = [M.cylinder(P[0][0] + 0.01, P[0][1], P[0][1], nseg).translate((x, y, 0.0))]
+        for (z0, r0, _), (z1, r1, _) in zip(P[:-1], P[1:]): teile.append(M.cylinder(z1 - z0 + 0.005, r0, r1, nseg).translate((x, y, z0)))
+        teile.append(M.cylinder(dz / 2, P[-1][1], P[-1][1], nseg).translate((x, y, P[-1][0])))
+        koerper = koerper + M.batch_boolean(teile, OpType.Add)
+        belege.append(dict(seite="wand", element=f"Rundkoerper {H.get('id', '')} bei x {x:.2f} y {y:.2f}: Schaft r {float(np.median([p[1] for p in P])):.2f} m, z 0..{P[-1][0] + dz / 2:.2f} m, groesster Radius {max(p[1] for p in P):.2f} m",
+                           quelle=f"dichte Wolke: Rest am Modell ({H['punkte']} Punkte), Kreisausgleich Rest {H['kreis']['rest']} m, Drehprofil in {len(P)} Scheiben (tools/wolke_rest.py)",
+                           hinweis="ANNAHME: voll (nicht hohl), oben flach abgeschlossen, wo die Wolke endet - Haube/Dach FEHLT; Oeffnungen fehlen (Abwicklung noch nicht in der Kette)"))
+    return koerper, belege
+
+
 def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):      # 21.11.2026: Katalog-Ziffern/Zeiger aus (Nutzer: kein Baukasten) - nur die gemessenen Kreise
     """Turmuhren aus tools/uhren_wandbild.py (audit/uhren_auto.json, Kettenstufe 'bauplan', 21.11.2026; vorher nur Hand-Generator schwab_v3/martinstor_v4).
     Gemessen: Mitte, Aussen- und (falls belegt) Innendurchmesser im feinen Wandbild. Ring bis w_ring vor der Wandebene, Innenfeld bis w_feld (ANNAHME 10 / 6 cm wie schwab_v3);

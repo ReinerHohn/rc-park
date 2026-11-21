@@ -181,3 +181,10 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 - FlexGlue (Logbuch 19./20.11.): trennt die Seiten NICHT besser (alle 4 Varianten gleich), bringt +30/+40 % Bilder; automatisches Vereinen aus GLOBALEN Stuecken scheiterte (Achsen 14-20 % uneinig), gelang nur mit schrittweise gerechneten Seiten + dichter Wolke.
 - PLAN (Nutzer: "mach das unbedingt, beweise es"; Beweis zuerst an vorhandenen Daten, Kette von null spaeter): 1 Seiten erkennen (--streng) -> 2 je Seite schrittweise -> 3 dichte Wolke je Seite -> 4 vereinen -> 5 hartes Tor (getrennte Seiten duerfen nicht am selben Ort gleich blicken).
 - 09:50 Job `seiten-martinstor-1121` rc 127: Befehl als EIN String an job_start.sh uebergeben (Rueckfall; job_start will BEFEHL als einzelne Argumente). 09:51 neu als `seiten-martinstor-1121b` (DB martinstor-1120, Ausgabe /media/oem/rcdaten/tmp/mt_seiten_1121/).
+
+## Nachtrag 21.11. 10:05 - Treppenturm automatisch aus dem Wolkenrest (erste Zeile "FEHLT" der Analyse)
+- `wolke_rest.py`: fuer runde Haufen DREHPROFIL r(z) in 0,25-m-Scheiben (dichteste Schale je Scheibe); `--uebernehmen` legt sie dauerhaft in `audit/koerper_auto.json` (nach dem Bau verschwindet der Haufen aus dem Rest).
+- `bauteile.drehkoerper_aus_wolkenrest` (Generator + Vorlage): Kegelstuempfe aus dem Profil. Schwabentor: Achse x 1,80 y 22,80, Schaft r 1,73 m, Gesims r 1,88 bei z 11,4, Ende z 12,0.
+- Messung: Wolke an der Modellflaeche 67 % -> 70 %, Haufen am Turm verschwunden (Bild audit/wolke_rest.jpg). Schnelltest 0 Fehler.
+- Von aussen verglichen: Handstand Schaft 1,56 / Gesims 1,85 bei 11,57 -> Gesims passt, Schaftradius 0,17 m groesser (offen: Wolkenrauschen nach aussen oder Massstab).
+- OFFEN: Haube fehlt (Wolke hat ueber z 11,6 nur 45-65 Punkte je Scheibe), Oeffnungen (Abwicklung `fassade_zylinder.py` nicht in der Kette), Koerper voll statt hohl, noch nicht im Treiber der Schleife (Annahmeregel), Abnahme nicht gelaufen.

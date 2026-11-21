@@ -5,7 +5,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 ## Regeln, Methode, Vorlagen
 - `modelle/KI_AUFRAEUMEN_2026-11-20.md` (3 kB) KI-konformes Aufraeumen (20.11.2026)
 - `modelle/LIZENZ_WERKZEUGE.md` (23 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (16 Abschnitte)
-- `modelle/METHODE_EBENEN_BAUPLAN.md` (6 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)
+- `modelle/METHODE_EBENEN_BAUPLAN.md` (7 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)
 - `modelle/METHODE_MASSTABELLE.md` (13 kB) METHODE: Masstabelle + generischer Pruefstand (das Rueckgrat jeder Modellerzeugung aus Daten)
 - `modelle/METHODE_MESSEN_DANN_BAUEN.md` (26 kB) Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md) -> Inhalt `modelle/inhalt/METHODE_MESSEN_DANN_BAUEN.md` (10 Abschnitte)
 - `modelle/REGELN_AUSFUEHRLICH.md` (10 kB) RC-Park – Arbeitsregeln (gelten für jede Sitzung, jedes Objekt)
@@ -39,9 +39,11 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 
 ## Logbuecher
 - `modelle/LOGBUCH_GIEBEL_OST_KREIS1_2026-11-10.md` (1 kB) Logbuch Kreis1 Fehlteil fk_+16_+0_+26 (Ost-Staffelgiebel), 2026-11-10
-- `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` (74 kB) Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte -> Inhalt `modelle/inhalt/LOGBUCH_KETTENTEST_2026-11-19.md` (35 Abschnitte)
+- `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` (74 kB) Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte -> Inhalt `modelle/inhalt/LOGBUCH_KETTENTEST_2026-11-19.md` (37 Abschnitte)
+- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (24 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (21 Abschnitte)
 
 ## Sonstiges
+- `modelle/ANALYSE_SACKGASSEN_2026-11-21.md` (3 kB) Analyse: Warum 19.-21.11.2026 in Sackgassen (Auftrag Nutzer 21.11. 09:57)
 - `modelle/ANLEITUNG_FOTOS_NUBIA.md` (7 kB) Anleitung Fotos mit dem nubia (Z2462N, "Focus 2 5G") fuer Photogrammetrie
 - `modelle/BELEUCHTUNG.md` (3 kB) Beleuchtung — „geile" Monument-Lichttechnik (Miniatur-Wunderland)
 - `modelle/CPU_LEISTUNG.md` (13 kB) CPU/GPU maximal auslasten - Messung, Werkzeuge, Einrichtung (Stand 2026-11-06)
@@ -49,16 +51,16 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/ERKLAERUNG_FOTO_ZU_PUNKTWOLKE.md` (2 kB) Foto -> Punktwolke: wie es funktioniert (Kurzfassung zum Nachlesen)
 - `modelle/GPU_LUECKEN_2026-11-08.md` (8 kB) GPU-Luecken (Suche 8.11., Nutzerauftrag) - nach Code-Durchsicht, Laufzeiten NOCH NICHT gemessen
 - `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` (13 kB) GPU-Parallelbetrieb: Untersuchung (Zwischenstand 2026-11-06, wird laufend ergaenzt)
-- `modelle/LEHREN_2026-11-08_SWEEP_UND_FOTOLOOP.md` (1 kB) Lehren 8.11. (Sweep, Lot, Foto-Loop) - Nutzerwunsch "Logge alles mit und lerne"
 - `modelle/HARDWARE_STAND_2026-11-20.md` (9 kB) Hardware-Stand und Aufruest-Optionen (gemessen 20.11.2026)
 - `modelle/KETTE_LUECKEN_2026-11-20.md` (10 kB) Kette-Luecken 20.11.2026: Faehigkeiten, die nicht in die Kette fliessen (ohne Vorbauten/Galerie/Vordach)
+- `modelle/LEHREN_2026-11-08_SWEEP_UND_FOTOLOOP.md` (1 kB) Lehren 8.11. (Sweep, Lot, Foto-Loop) - Nutzerwunsch "Logge alles mit und lerne"
 - `modelle/LERNJOURNAL_MARTINSTOR.md` (32 kB) Lernjournal Martinstor — Detailschleife (Foto ↔ Modell) -> Inhalt `modelle/inhalt/LERNJOURNAL_MARTINSTOR.md` (28 Abschnitte)
 - `modelle/LIB_UPDATES_2026-11-19.md` (16 kB) Bibliotheken: neue Versionen und Release Notes (Stand 19.11.2026)
 - `modelle/MASSPRUEFUNG_MARTINSTOR.md` (9 kB) Maßprüfung Martinstor – Nachweis gegen amtliche Laserdaten
 - `modelle/MASSSTAB.md` (3 kB) 📐 Maßstab — VERBINDLICH: N 1:160
 - `modelle/NULLSTART_GENERALITAET.md` (4 kB) Nullstart allgemein machen - Ziel: Historisches Kaufhaus Freiburg von 0 (Nutzer 2026-11-03)
-- `modelle/PIPELINE_H0.md` (19 kB) Pipeline: beliebiges Objekt → druckfertiges H0-Modell (1:87) -> Inhalt `modelle/inhalt/PIPELINE_H0.md` (18 Abschnitte)
 - `modelle/PERFORMANCE_BREMSEN_2026-11-20.md` (36 kB) Versteckte Performance-Bremsen: Pipeline, Bibliotheken, Hardware (Untersuchung 20.11.2026, 16:30-16:45) -> Inhalt `modelle/inhalt/PERFORMANCE_BREMSEN_2026-11-20.md` (23 Abschnitte)
+- `modelle/PIPELINE_H0.md` (19 kB) Pipeline: beliebiges Objekt → druckfertiges H0-Modell (1:87) -> Inhalt `modelle/inhalt/PIPELINE_H0.md` (18 Abschnitte)
 - `modelle/PIPELINE_KOMPLETT_2026-11-07.md` (23 kB) RC-Park – Kaufhaus Freiburg: Pipeline-Review und Arbeitsplan -> Inhalt `modelle/inhalt/PIPELINE_KOMPLETT_2026-11-07.md` (30 Abschnitte)
 - `modelle/PIPELINE_LERNREGISTER.md` (7 kB) Pipeline-Lernregister (objektübergreifend)
 - `modelle/PROTOKOLL_VALIDATOR.md` (18 kB) Protokoll: Einheitlicher vollautomatischer Modell-Validator

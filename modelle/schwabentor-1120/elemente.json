@@ -45,6 +45,22 @@
  },
  {
   "seite": "wand",
+  "element": "Korrektur k00 f00: u -6.02..6.15 z 0.00..36.86 von +0.00 auf -0.15 m",
+  "quelle": "Abweichungsschleife tools/ebenen_schleife.py: Wandebene f00_wand liegt gemessen -0.15 m neben der Fassadenebene des Koerpers",
+  "kennzahl_vorher": {
+   "an_flaeche": 0.827,
+   "an_kante": 0.505,
+   "wolke": 0.71
+  },
+  "kennzahl_nachher": {
+   "an_flaeche": 0.958,
+   "an_kante": 0.713,
+   "wolke": 0.814
+  },
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Feinrelief Fassade w00 aus Einzelfotos (Feld u 0.1..7.6, z 0.0..10.0)",
   "quelle": "Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",
   "korrelation": [
@@ -169,6 +185,102 @@
  },
  {
   "seite": "wand",
+  "element": "Korrektur k01 f03: u 1.69..3.89 z 4.49..5.41 von +0.07 auf +0.38 m",
+  "quelle": "Abweichungsschleife tools/ebenen_schleife.py: 842 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe +0.33 m gegen die Ebene",
+  "kennzahl_vorher": {
+   "an_flaeche": 0.906,
+   "an_kante": 0.46,
+   "wolke": 0.917
+  },
+  "kennzahl_nachher": {
+   "an_flaeche": 0.911,
+   "an_kante": 0.491,
+   "wolke": 0.909
+  },
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Korrektur k02 f03: u 5.66..6.15 z 10.25..11.78 von +0.06 auf +0.20 m",
+  "quelle": "Abweichungsschleife tools/ebenen_schleife.py: 817 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe +0.15 m gegen die Ebene",
+  "kennzahl_vorher": {
+   "an_flaeche": 0.911,
+   "an_kante": 0.491,
+   "wolke": 0.909
+  },
+  "kennzahl_nachher": {
+   "an_flaeche": 0.92,
+   "an_kante": 0.503,
+   "wolke": 0.909
+  },
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Korrektur k03 f03: u 5.78..6.35 z 5.46..5.87 von +0.09 auf +0.29 m",
+  "quelle": "Abweichungsschleife tools/ebenen_schleife.py: 654 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe +0.24 m gegen die Ebene",
+  "kennzahl_vorher": {
+   "an_flaeche": 0.92,
+   "an_kante": 0.503,
+   "wolke": 0.909
+  },
+  "kennzahl_nachher": {
+   "an_flaeche": 0.927,
+   "an_kante": 0.51,
+   "wolke": 0.909
+  },
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Korrektur k04 f00: u -4.51..-0.77 z 35.91..36.34 von -0.25 auf -0.43 m",
+  "quelle": "Abweichungsschleife tools/ebenen_schleife.py: 555 Fotokanten ohne Modellflaeche auf f00_wand, Tiefe -0.28 m gegen die Ebene",
+  "kennzahl_vorher": {
+   "an_flaeche": 0.958,
+   "an_kante": 0.713,
+   "wolke": 0.814
+  },
+  "kennzahl_nachher": {
+   "an_flaeche": 0.968,
+   "an_kante": 0.718,
+   "wolke": 0.815
+  },
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Korrektur k05 f00: u -4.04..-3.88 z 22.62..25.10 von -0.25 auf -0.42 m",
+  "quelle": "Abweichungsschleife tools/ebenen_schleife.py: 422 Fotokanten ohne Modellflaeche auf f00_wand, Tiefe -0.27 m gegen die Ebene",
+  "kennzahl_vorher": {
+   "an_flaeche": 0.968,
+   "an_kante": 0.718,
+   "wolke": 0.815
+  },
+  "kennzahl_nachher": {
+   "an_flaeche": 0.974,
+   "an_kante": 0.74,
+   "wolke": 0.816
+  },
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Korrektur k06 f03: u -0.60..0.15 z 2.07..2.22 von -0.07 auf -0.27 m",
+  "quelle": "Abweichungsschleife tools/ebenen_schleife.py: 300 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe -0.32 m gegen die Ebene",
+  "kennzahl_vorher": {
+   "an_flaeche": 0.927,
+   "an_kante": 0.51,
+   "wolke": 0.909
+  },
+  "kennzahl_nachher": {
+   "an_flaeche": 0.93,
+   "an_kante": 0.513,
+   "wolke": 0.909
+  },
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Gebaeude hohl, 3 Fenster durchgebrochen",
   "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
   "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
@@ -185,10 +297,10 @@
     "u1": 2.521,
     "z0": 23.121,
     "z1": 24.813,
-    "vorn": -0.005,
+    "vorn": -0.145,
     "schale": [
-     -0.1,
-     -0.0
+     -0.23,
+     -0.15
     ],
     "tiefe_ist": 0.15,
     "flaeche_m2": 1.007,
@@ -254,6 +366,13 @@
  },
  {
   "seite": "wand",
+  "element": "Rundkoerper rund0 bei x 1.80 y 22.80: Schaft r 1.73 m, z 0..12.01 m, groesster Radius 1.88 m",
+  "quelle": "dichte Wolke: Rest am Modell (26209 Punkte), Kreisausgleich Rest 0.044 m, Drehprofil in 44 Scheiben (tools/wolke_rest.py)",
+  "hinweis": "ANNAHME: voll (nicht hohl), oben flach abgeschlossen, wo die Wolke endet - Haube/Dach FEHLT; Oeffnungen fehlen (Abwicklung noch nicht in der Kette)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Uhr f00 (Durchmesser 5.13 m)",
   "quelle": "Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze im feinen Wandbild (1 cm)",
   "mitte_u": 0.036,
@@ -265,7 +384,7 @@
  },
  {
   "seite": "wand",
-  "element": "1 Null-Volumen-Splitter entfernt",
+  "element": "25 Null-Volumen-Splitter entfernt",
   "quelle": "Generator (decompose, Volumen < 1e-5 m3)",
   "seite_name": "wand"
  }
