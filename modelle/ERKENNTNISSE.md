@@ -1,4 +1,4 @@
-# Erkenntnis-Register (destilliert; Ablauf: Skill `erkenntnis`; Einzelheiten in den Logbuechern)
+# Erkenntnis-Register (destilliert; Ablauf: allgemeiner Skill `erkenntnis` (~/git/claude-mds) + `.claude/erkenntnis.md`; Einzelheiten in den Logbuechern)
 
 Eine Zeile je Erkenntnis: Datum · Erkenntnis · Messwert · Beleg · Folge in der Kette (✔ eingebaut / offen).
 
