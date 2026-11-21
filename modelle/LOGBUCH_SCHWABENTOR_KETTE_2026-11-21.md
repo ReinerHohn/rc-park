@@ -110,3 +110,12 @@ Umsetzung als SCHLEIFE (ersetzt den Nutzer als Prüfer):
 3. ABWEICHUNG je Ebene messen, mit Ort: (a) Fotokanten ohne Modellkante = fehlt/falsche Lage, (b) Modellkanten ohne Fotokante = erfunden, (c) Modell auf der Ebene gegen das Bauplanbild.
 4. Abweichungsliste = Arbeitsliste (größte zuerst) -> zurück zu 2, bis die Abweichung unter der Schwelle liegt oder nichts mehr besser wird; Rest wird als offen gemeldet.
 Vorhanden als Bausteine: `kantenstufe.py` (fehlende_kanten_haufen), `foto_diff.py`, `aenderung_check.py`, `teil_fotoform.py`. Fehlt: die Auswertung JE EBENE und die Rückführung in den Bau.
+
+## Nachtrag 02:05 - Schritt 1 der Schleife als Werkzeug: `tools/ebenen_bauplan.py` (Job `ebenen-schwabentor`, Log job_logs/ebenen-schwabentor-1121.log)
+Dichte triangulierte Fotokanten je Ebene, Laufzeit 4-6 s je Ebene (GPU), neben dem Martinstor-Mapper:
+- f00_wand (Stadtseite, w -0,15): 56 768 Punkte, 76 % auf der Ebene (±15 cm)
+- f03_wand (w +0,05): 93 211 Punkte, 84 %
+- f02_wand: nur 2 464 Punkte, 64 % (wenige brauchbare Fotos, Baum davor)
+- f00_vb0 (Erkerfront, w +1,00, Band 0,8): 46 782 Punkte, 62 %
+- f01 (Feldseite) keine Ebene: nur 4 Fotos (< 6).
+Ausgabe `<daten>/ebenen/ebenen.json` + je Ebene `sweep.npz`, für den Vorbau zusätzlich `bild.png` (1 cm). Noch nicht in `gesamtkette.py` eingehängt; nächster Schritt `ebenen_abweichung.py`.
