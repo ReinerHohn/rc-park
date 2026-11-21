@@ -199,3 +199,10 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
 - Lauf b: 538 von 538, 909 s, 76 430 Punkte, 1,00 px. a gegen b: 456 von 538 Kameras auf <= 1 % gleich, Median 0,07 %, 74 Bilder > 2 % (eigen 28, Clip jEQJ 17, fotos 12; Clips F8y3 und LSi6 je 0).
 - Schaerfe-Test auf Lauf a (PRUEFUNG 3, Schwellen unveraendert): scharf 433 -> 4 wandern (1 %); weich 29 -> 5; unbestimmt 24 -> 16 (67 %); zu_wenig 52 -> 49 (94 %).
   Mit Sperrliste (unbestimmt + zu_wenig = 76 Bilder) bleiben 462 Bilder, davon wandern 9 (2 %). -> Auf gefilterten Daten ist der globale Mapper fuer die scharf bestimmten Kameras zu 99 % wiederholbar.
+
+### 21.11. 14:05 - Schrittweiser Nord-Lauf GESTOPPT (Nutzerfreigabe 14:03), dichte Wolke Nord gestartet
+- Schrittweise auf derselben gefilterten DB: nach 2 h 36 min nicht fertig. Ab 13:05 Schleife: Gesamtausgleich (8-10 min) -> ein paar Restbilder einbauen -> im naechsten Ausgleich wieder verworfen; Bildzahl 531 -> 525, 31 Bilder in 56 Versuchen.
+  Die Restbilder am Bild angesehen: andere Motive mit dem Tor winzig im Hintergrund (Strassenreiniger, Bagger, Brunnenfigur), extreme Nah- (Zifferblatt, Gedenktafel) und Fernaufnahmen (Stadtansicht vom Berg); je 80-157 Bildpaare, aber im globalen Modell 0 tragfaehige Punkte ('zu_wenig').
+  Der globale Mapper baut dieselben Bilder in Sekunden ein, der Schaerfe-Test sperrt sie. Kein Modell auf der Platte (COLMAP schreibt erst am Ende) -> Vergleich global/schrittweise fuer Nord entfaellt; es bleiben Sued (gleiche DB) und der Nord-Bezug vom 19.11.
+- LEHRE: schrittweiser Mapper ohne Vorfilter "Motiv fraglich" verbrennt am Ende eine Stunde an einer Handvoll Bilder; Schnappschuesse (`--Mapper.snapshot_path`) haetten das Modell gerettet - bei jedem kuenftigen schrittweisen Lauf setzen.
+- 14:05 `mt_dicht_nord_1121` laeuft (Bildwahl 266 von 538 Bildern, Eingang global Lauf a).
