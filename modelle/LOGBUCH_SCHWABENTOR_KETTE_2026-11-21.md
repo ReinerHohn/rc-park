@@ -80,3 +80,24 @@ Was daran neu ist (ehrlich): die Einzelteile gab es alle (Sweep 16.11., Wandbild
 - **Probe B, triangulierte Fotokanten auf das Bild gelegt** (`kanten_vorbau/sweep.npz`, Bild `audit/erker_kantenpunkte_probe.jpg`): 7847 Kantenpunkte in Fronttiefe. Sie zeichnen den Holm (z ≈ 11,50) und die Unterkante der Brüstung samt den Aussparungen der Konsolen (z ≈ 10,25) auf wenige cm genau nach (Handstand 11,42 / 10,22). Kantenpunkte in Wandtiefe liegen an den Strebenfüßen. Senkrechte Kanten (Pfosten) fehlen fast ganz. ANNAHME zur Ursache: die Kameras stehen entlang der Straßenachse, das gibt Parallaxe in der Höhe, kaum seitlich; außerdem suchte der Sweep nur im 0,5-m-Band um das alte Modell mit begrenzter Punktzahl.
 - **Folgerung für die METHODE (Schritt 4 präzisiert):** Die Kanten kommen aus den triangulierten Fotokanten auf der Ebene (Kernmethode), nicht aus Farbflächen. Farbflächen taugen höchstens zum Füllen zwischen belegten Kanten.
 - Nächste Schritte: (1) Kanten-Sweep gezielt und dicht je gefundener Ebene (Box = Zone der Ebene). (2) Bänder (Brüstungskasten, Traufband) mit diesen Kanten begrenzen statt mit dem groben Raster. (3) Stäbe/Pfosten über den Mehrfoto-Sweep für Linien (Skill linien-features), nicht über Helligkeit. (4) Dann Kettenstufe und Katalog-Galerie entfernen.
+
+## ENTSCHEIDUNG Nutzer 21.11. ~02:55
+„So wenig allgemeine Bauteile wie möglich. Untersuche, wie weit du aus Kanten triangulieren kannst, und was nicht möglich ist, wird aus allgemeinen Bauteilen gebaut. Durch das Kantenerkennen müssen wir umso genauer werden mit Maßen.“
+Befund dazu: Die Galerie in schwab_v3 war selbst ein Baukastenteil (`Wand.galerie`, 16.11.) mit 4 von Hand in 3 Fotos angeklickten, triangulierten Punkten (M-113231-001: Unsicherheit 0,38 m), Stückzahlen am Foto gezählt.
+
+## Nachtrag 03:15 - UNTERSUCHUNG: Wie weit trägt die Kanten-Triangulation auf einer Sweep-Ebene? (Erker f00, von Hand angestoßen)
+Aufruf (nachspielbar): Ebene als Fläche `kanten_ebene_f00/ebene.stl` (Rechteck u -4,6..5,8 / z 8,0..20,8 bei w +0,9), dann
+`kanten_tiefe_sweep_flaeche.py kanten/kam_wahl.json kanten/stabil kanten_ebene_f00/sweep.npz --flaeche ebene.stl --flaeche_skala 1.0 --box3 <box.txt> --band 1.6 --ziel_auto --nbdist 80 --refs 80 --nb 12 --maxpx 150000`. Laufzeit wenige Minuten (GPU). 54 463 Kantenpunkte in der Zone (vorher 13 041 aus dem Gesamtlauf). Bild `audit/erker_kanten_dicht_probe.jpg`.
+GEHT (Handstand in Klammern):
+- Unterkante der Brüstung z 10,23 (10,22), Holm z 11,51 (11,42), zweite Kante am Holm 11,29, Konsolen-Unterkante 9,99.
+- Breite an der Unterkante 8,35 m (8,06; grobes Raster vorher 9,08).
+- Ausladung der Front 1,29 m vor der Wand, p10..p90 1,05..1,35 (1,45 bei 0,38 m Unsicherheit des Handpunkts).
+- 6 Konsolen gezählt mit Lage (u -3,6 / -2,05 / -0,5 / 1,05 / 2,65 / 4,2; Abstand ~1,55 m) (Hand: 6 Streben).
+- Streben laufen schräg zur Wand: Tiefe 1,28 m bei z 9,7-10,1, 0,32 m bei z 8,9-9,3, 0,14 m bei z 8,5-8,9.
+GEHT NUR TEILWEISE:
+- Pfosten: alle 3 gefunden (u -3,5 / 0,09..0,39 / 4,08..4,27), aber nur 109-217 Punkte und nur Teilstücke der Höhe; Breite nur am mittleren ablesbar (0,30 m).
+GEHT NICHT:
+- Vordach: fast keine Punkte (Traufkante z 16,19 mit 189 Punkten, Dachfläche nichts - Ziegel geben keine stabilen Kanten).
+- Stärke der Hölzer nach hinten, Knaggenform.
+ANNAHME zur Ursache der schwachen senkrechten Kanten: Kamerastandorte liegen entlang der Straßenachse (Parallaxe vor allem in der Höhe). Nicht geprüft.
+Folgerung nach Nutzerentscheidung: Brüstungskasten, Konsolen/Streben (Zahl, Lage, Neigung) und Breite/Ausladung aus Kanten bauen; Pfosten: Lage aus Kanten, Querschnitt Bauteil-Standard; Vordach: allgemeines Bauteil mit Traufe/Anschluss aus der Uneinigkeitskarte.
