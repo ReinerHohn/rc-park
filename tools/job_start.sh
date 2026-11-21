@@ -14,7 +14,7 @@ set -e
 NAME="$1"; LOG="$2"; shift 2
 [ -n "$NAME" ] && [ -n "$LOG" ] && [ $# -gt 0 ] || { echo "Aufruf: job_start.sh NAME LOGDATEI BEFEHL..."; exit 2; }
 mkdir -p "$(dirname "$LOG")" || { echo "Logordner nicht anlegbar: $(dirname "$LOG")"; exit 2; }      # 17.11.2026: fehlender Logordner liess den Dienst sofort mit rc 1 enden (nur im Journal sichtbar)
-python3 "$(dirname "$0")/platz_pruefen.py" --daten-min-gb "${RCPARK_DATEN_MIN_GB:-5}" || exit 3   # Nutzer 10.11. abends: Standard 5 GB. Nutzer 7.11. nachts: "scheiss auf die 10 GB" -> RCPARK_DATEN_MIN_GB=5 nur bewusst setzen   # Platztor (G1)
+python3 "$(dirname "$0")/platz_pruefen.py" --daten-min-gb "${RCPARK_DATEN_MIN_GB:-15}" || exit 3   # Nutzer 10.11. abends: Standard 5 GB. Nutzer 7.11. nachts: "scheiss auf die 10 GB" -> RCPARK_DATEN_MIN_GB=5 nur bewusst setzen   # Platztor (G1)
 if systemctl --user is-active --quiet "rcpark-$NAME"; then echo "rcpark-$NAME laeuft schon"; exit 1; fi
 LOCK=/media/oem/scan/rc-park_daten/.gpu_lock
 GPUJOB=0; BUDGET=${JOB_GPU_MB:-0}; LIMIT=${JOB_GPU_LIMIT_MB:-7000}

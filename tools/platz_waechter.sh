@@ -13,7 +13,7 @@
 #        (WAECHTER_ZIELE, Standard "/media/oem/rcdaten /media/oem/Volume" (18.11.: 2-TB-SSD statt Stick/Toshiba); AUSLAGERN_MOUNT setzt nur noch das bevorzugte Ziel).
 #        Wiederholen bis MIN + 2 GB erreicht oder kein Kandidat mehr.
 # Kein Ziel/kein Kandidat -> laut melden (Log), nichts loeschen.
-MIN=${WAECHTER_MIN_GB:-14}; RMIN=${WAECHTER_ROOT_MIN_GB:-10}; S=/media/oem/scan
+MIN=${WAECHTER_MIN_GB:-17}; RMIN=${WAECHTER_ROOT_MIN_GB:-17}; S=/media/oem/scan   # Nutzer 21.11.2026: Mindestplatz 15 GB, Waechter 2 GB darueber
 ZIELE=${WAECHTER_ZIELE:-"${AUSLAGERN_MOUNT:-} /media/oem/rcdaten /media/oem/Volume"}
 GESCHUETZT="wettbewerb_kh gschleife_bog diffpar kreislauf limap _git_objekte belegt patches viewer abend"
 cd "$(dirname "$0")/.."
@@ -31,6 +31,11 @@ root_schritt() {
     while IFS= read -r -d '' d; do local ziel="$Z/sitzungen/$(basename "$P")"; mkdir -p "$ziel"; mv -- "$d" "$ziel/" && ln -s "$ziel/$(basename "$d")" "$d" && n=$((n+1)); done \
       < <(find "$P" -mindepth 1 -maxdepth 1 ! -type l -mtime +1 -print0 2>/dev/null)
   done
+  # 21.11.2026: alte Claude-Programmversionen (nicht die aktive) und Browser-Cache auf die externe Platte (mv, nichts loeschen)
+  local X=/media/oem/rcdaten/ausgelagert; if mountpoint -q /media/oem/rcdaten; then
+    local akt=$(readlink -f "$(command -v claude)" 2>/dev/null); mkdir -p "$X/claude_versionen"
+    for d in "$HOME"/.local/share/claude/versions/*; do [ -e "$d" ] && [ "$(readlink -f "$d")" != "$akt" ] && mv -- "$d" "$X/claude_versionen/" && n=$((n+1)); done
+    [ -d "$HOME/.cache/mozilla" ] && mkdir -p "$X/mozilla_cache_$(date +%Y%m%d%H%M)" && mv -- "$HOME/.cache/mozilla" "$X/mozilla_cache_$(date +%Y%m%d%H%M)/" && n=$((n+1)); fi
   echo "$(date +%T) ROOT ${fr}G < ${RMIN}G -> $n kalte Ordner nach $Z verschoben, jetzt $(frei_gb /)G"
 }
 
@@ -51,6 +56,8 @@ daten_schritt() {
   AUSLAGERN_MOUNT=$M bash tools/auslagern.sh "$best" || return 1
 }
 
+einmal() { root_schritt; for i in 1 2 3 4 5 6 7 8 9 10; do f=$(frei_gb $S); [ "$f" -ge "$MIN" ] && break; daten_schritt || break; done; }
+[ "${1:-}" = einmal ] && { einmal; exit 0; }   # von tools/platz_pruefen.py: einmal aufraeumen statt abbrechen
 while true; do
   root_schritt
   for i in 1 2 3 4 5 6 7 8 9 10; do f=$(frei_gb $S); [ "$f" -ge $((MIN + 2)) ] && break; [ "$f" -ge "$MIN" ] && [ "$i" -gt 1 ] && break; daten_schritt || break; done
