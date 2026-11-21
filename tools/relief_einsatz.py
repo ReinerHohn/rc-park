@@ -12,7 +12,11 @@ Die WAND (Lage, Kanten, Oeffnungen) bleibt Sache des Generators. Aus dem Netz ko
 import sys, os, argparse, numpy as np
 
 
-def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005, null_felder=(), trend=False, versatz=0.0, tief_felder=(), rand_auslauf=True):
+def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005, null_felder=(), trend=False, versatz=0.0, tief_felder=(), rand_auslauf=True, flaeche=None):
+    """flaeche (21.11.2026): gemessener Abstand der Koerperflaeche zur Wandebene (m, + = aussen) - das Relief sitzt dann auf DIESER Flaeche statt auf der
+    Ausgleichsebene des Netzes (trend). Grund: Schwabentor-Fotosteine lagen mit trend 0,24-0,5 m HINTER der korrigierten Wand (Netzebene -0,39/-0,51 m, Wand
+    nach Abweichungsschleife -0,15 m) - Eckquader im Beleg, im Modell unsichtbar."""
+    if flaeche is not None: trend = False
     from manifold3d import Manifold, Mesh
     Z = np.load(npz); rel = Z["rel"].astype(np.float64) * faktor; H, W = rel.shape; a = Z["a"]; t = Z["t"]; n = Z["n"]; u0, z0, px = float(Z["u0"]), float(Z["z0"]), float(Z["px"])
     ii, jj = np.mgrid[0:H, 0:W]; niv = float(Z["putz_niveau_m"]) if "putz_niveau_m" in Z.files else 0.0      # Putzniveau (tools/relief_putz.py): Bauteilfelder im Putz liegen auf DIESER Hoehe, sonst zeichnet sich das Feld als Rechteck ab
@@ -24,6 +28,7 @@ def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005, null_felder=(), trend=Fal
     rand = np.minimum.reduce([ii, jj, H - 1 - ii, W - 1 - jj]); rel = rel * np.clip(rand / 2.0, 0, 1) if rand_auslauf else rel        # Rand auf 0 auslaufen (nicht bei Feineinsaetzen vor einem groben Relief: dort gab der Auslauf eine Linie quer ueber den Putz)
     if trend:                                                             # 15.11.2026: Wandanzug/Lage der Netzflaeche wieder aufschlagen (Nutzerbild: Wolke stand 0,15-0,3 m VOR der Modellfassade)
         tu, tz = [float(v) for v in Z["trend_je_m"]]; rel = rel + float(Z["ebene_abstand_m"]) + versatz + tu * (jj + 0.5) * px - tz * (ii + 0.5) * px   # d(u, z) der Ausgleichsebene; ii laeuft nach unten
+    if flaeche is not None: rel = rel - niv + float(flaeche)                # Putz genau auf der Koerperflaeche, Steine davor
     # sockel: Platte steht ueberall etwas vor der Wandebene - deckungsgleiche Flaechen mit der Wand ergeben Splitter (STL nicht wasserdicht, 656 Koerper)
     rel[tief] = -tiefe + 0.01; rel = np.maximum(rel, -tiefe + 0.01) + sockel; u = u0 + (jj + 0.5) * px; z = z0 + (H - 1 - ii + 0.5) * px
     def P(d): return np.c_[(a[0] + u * t[0] + d * n[0]).ravel(), (a[1] + u * t[1] + d * n[1]).ravel(), z.ravel()]

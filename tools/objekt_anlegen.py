@@ -44,8 +44,8 @@ def main():
     gp = os.path.join(root, genfile)
     if nur_gen and os.path.exists(gp):
         alt = open(gp).read()
-        if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 90: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
-        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt and "vorbauten_aus_json" in alt and "uhren_aus_json" in alt and "korrekturen_aus_json" in alt and "wolkenrest_koerper" in alt and "dach_aus_profil" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 100: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
+        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt and "vorbauten_aus_json" in alt and "uhren_aus_json" in alt and "korrekturen_aus_json" in alt and "wolkenrest_koerper" in alt and "dach_aus_profil" in alt and "umgang_aus_json" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
         import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
@@ -90,6 +90,10 @@ if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundris
         from bauteile import oeffnungen_aus_wandbild
         koerper, bel_i = oeffnungen_aus_wandbild(koerper, os.path.join(HERE, "{ob}", IO_["datei"]), ncc_min=IO_.get("ncc_min", 0.2), ersatz={{k: tuple(v) for k, v in IO_.get("ersatz", {{}}).items()}}, nur_frei=True)
         for b_ in bel_i: beleg(**b_)
+    if os.environ.get("OHNE_UMGANG") != "1":          # 21.11.2026: offener Umgang unter der Traufe (Kettenstufe 'bauplan': tools/umgang_aus_fotos.py -> audit/umgang_auto.json), VOR aushoehlen
+        from bauteile import umgang_aus_json
+        koerper, bel_ug = umgang_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "umgang_auto.json"))
+        for b_ in bel_ug: beleg(**b_)
     from bauteile import korrekturen_aus_json          # 21.11.2026: Korrekturen der Abweichungsschleife (tools/ebenen_schleife.py -> audit/schleife_korrekturen.json), VOR dem Aushoehlen (Abtragen am hohlen Koerper wuerde die 1,2-mm-Wand durchschneiden)
     koerper, bel_k = korrekturen_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "schleife_korrekturen.json"), ohne="wandversatz")
     for b_ in bel_k: beleg(**b_)

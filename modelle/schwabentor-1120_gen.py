@@ -40,6 +40,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         from bauteile import oeffnungen_aus_wandbild
         koerper, bel_i = oeffnungen_aus_wandbild(koerper, os.path.join(HERE, "schwabentor-1120", IO_["datei"]), ncc_min=IO_.get("ncc_min", 0.2), ersatz={k: tuple(v) for k, v in IO_.get("ersatz", {}).items()}, nur_frei=True)
         for b_ in bel_i: beleg(**b_)
+    if os.environ.get("OHNE_UMGANG") != "1":          # 21.11.2026: offener Umgang unter der Traufe (Kettenstufe 'bauplan': tools/umgang_aus_fotos.py -> audit/umgang_auto.json), VOR aushoehlen
+        from bauteile import umgang_aus_json
+        koerper, bel_ug = umgang_aus_json(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "umgang_auto.json"))
+        for b_ in bel_ug: beleg(**b_)
     from bauteile import korrekturen_aus_json          # 21.11.2026: Korrekturen der Abweichungsschleife (tools/ebenen_schleife.py -> audit/schleife_korrekturen.json), VOR dem Aushoehlen (Abtragen am hohlen Koerper wuerde die 1,2-mm-Wand durchschneiden)
     koerper, bel_k = korrekturen_aus_json(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "schleife_korrekturen.json"), ohne="wandversatz")
     for b_ in bel_k: beleg(**b_)
