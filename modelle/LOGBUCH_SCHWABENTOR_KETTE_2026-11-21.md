@@ -270,3 +270,9 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 
 ## UEBERGABE 21.11.2026 15:40
 Stand siehe `.claude/UEBERGABE.md` (Martinstor-Kette 1121a laeuft, Agent Oeffnungen gemergt 84f6c437b, Koerper-Agent laeuft).
+
+## 21.11. ~16:00 Merge koerper_schleife (Agent 992f43415) + Uhrring-Neubau
+- Uhrring-Fix gebaut: Abnahme Pruefstand bestanden, "Anzahl getrennte Koerper" 1 (vorher 2). Neben-Foto-Bilder CUDA OOM, weil der Martinstor-Lauf die GPU belegt -> nachholen, wenn die GPU frei ist.
+- koerper_schleife gemergt: wolke_rest trennt fremd/innen/aussen, Formen rund/stab/ring/kasten/band, Treiber tools/koerper_schleife.py, Generator ruft wolkenrest_koerper. Schnelltest 0 Fehler (132 s), Regression identisch, Abnahme bestanden, Sichtblatt unveraendert.
+- Offen (Agent-Fehlerliste): r00 (161 843 Pkt.) ist kein Nachbar, sondern ein Faecher aus Streupunkten oder einer falsch registrierten Bildgruppe (Bild bestaetigt), nur per Ersatzregel weg -> Ursache in SfM/Wolke suchen. Treiber hat noch keinen echten Generatorlauf hinter sich. Am Schwabentor entsteht nur ein Band als Kandidat (Rechteckklotz, wo die Wolke einen Keil zeigt).
+- Realitaet: Benennen ~60 %, Bauen neuer Formen an echten Daten ~20 % (Agent-Schaetzung, Bild gesehen).
