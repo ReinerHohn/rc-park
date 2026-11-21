@@ -134,13 +134,15 @@ def main():
         print(f"ABBRUCH (Abdeckung): nur {(1 - roh) * 100:.1f} % der Zellen mit Punkten ({g.sum()} Punkte im Feld, Soll >= {a.min_abdeckung * 100:.0f} %) - Buendel/Bilder/Fotowahl pruefen, {time.time() - t0:.0f} s", flush=True); return 3
     for _ in range(3):                                                    # kleine Loecher aus Nachbarn (Median 3x3 der gueltigen)
         f_ = cv2.medianBlur(np.nan_to_num(hm, nan=-9).astype(np.float32), 3); nimm_ = loch & (f_ > -5); hm[nimm_] = f_[nimm_]; loch = ~np.isfinite(hm)
-    yy, xx = np.mgrid[0:Hn, 0:Wn]; G = np.c_[xx[~loch], yy[~loch], np.ones((~loch).sum())]; ko = np.linalg.lstsq(G, hm[~loch], rcond=None)[0]
-    rel = hm - (ko[0] * xx + ko[1] * yy + ko[2]); rel -= np.nanmedian(rel[~loch]); rel[loch] = 0.0; q5, q95 = np.percentile(rel[~loch], [5, 95]); rel = np.clip(rel, -0.30, 0.40)
+    # 21.11.2026 (w01: Sockel +25..40 cm kippte die Kleinste-Quadrate-Ebene, Hoehenbild oben +5 / Mitte -8 / unten +15 cm): Ebene nur aus der Wandflaeche
+    from relief_trend import robuste_ebene
+    yy, xx = np.mgrid[0:Hn, 0:Wn]; ko, _, eb_info = robuste_ebene(xx[~loch], yy[~loch], hm[~loch]); ko = np.array(ko, np.float64)
+    rel = hm - (ko[0] * xx + ko[1] * yy + ko[2]); m_ = float(np.nanmedian(rel[~loch])); rel -= m_; ko[2] += m_; rel[loch] = 0.0;      # Median in die Ebene (rel + Ebene = Messung; vorher fehlte er im ebene_abstand_m) q5, q95 = np.percentile(rel[~loch], [5, 95]); rel = np.clip(rel, -0.30, 0.40)
     os.makedirs(os.path.dirname(aus), exist_ok=True)
     np.savez_compressed(aus, rel=rel.astype(np.float32), a=A, t=t, n=n, u0=u0, z0=z0, px=px, lochanteil=float(loch.mean()), lochanteil_roh=roh, hub_p5_p95=float(q95 - q5), ebene_abstand_m=float(ko[2]), trend_je_m=np.array([ko[0] / px, -ko[1] / px]),
                         oeffnung=np.zeros_like(loch), punkte_je_zelle_median=float(np.median(cnt[cnt > 0])) if (cnt > 0).any() else 0.0)
     lx = np.gradient(rel, px, axis=1); lz = np.gradient(rel, px, axis=0); sh = np.clip(0.7 - 0.25 * lx + 0.35 * lz, 0, 1); im = cv2.cvtColor((sh * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR); im[loch] = (0, 0, 255); cv2.imwrite(os.path.splitext(aus)[0] + ".jpg", im)
-    print(f"{a.name}: {Wn}x{Hn} Zellen a {px*100:.1f} cm, {g.sum()} Punkte im Feld ({g.sum() / max((u1-u0)*(z1-z0), 1e-9):.0f} je m2), Median {np.median(cnt[cnt > 0]) if (cnt > 0).any() else 0:.0f} Punkte/Zelle, Loecher {loch.mean()*100:.1f} % (roh {roh*100:.1f} %), Hub p5-p95 {(q95-q5)*100:.1f} cm, {time.time() - t0:.0f} s -> {aus}")
+    print(f"{a.name}: {Wn}x{Hn} Zellen a {px*100:.1f} cm, {g.sum()} Punkte im Feld ({g.sum() / max((u1-u0)*(z1-z0), 1e-9):.0f} je m2), Median {np.median(cnt[cnt > 0]) if (cnt > 0).any() else 0:.0f} Punkte/Zelle, Loecher {loch.mean()*100:.1f} % (roh {roh*100:.1f} %), Hub p5-p95 {(q95-q5)*100:.1f} cm, Ebene {'robust (Wandflaeche ' + format(eb_info['anteil_wand'] * 100, '.0f') + ' %)' if eb_info['robust'] else 'kleinste Quadrate: ' + eb_info['grund']}, {time.time() - t0:.0f} s -> {aus}")
     return 0
 
 
