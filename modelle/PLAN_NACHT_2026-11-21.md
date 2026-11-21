@@ -22,6 +22,9 @@ Anrede „mein grosser Meister“, Deutsch, Fehlerliste vor Lob, Realitäts-% me
    - Eine Zeile ins Logbuch `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md`: Zeit, Lauf, git-Stand, X/11, Fehlerliste aus dem Bild.
 6. **Neuer Fehler sichtbar** (Bauteil fehlt/falsch, Stufe „NICHT in Ordnung“): EINEN Worktree-Agenten starten mit
    Vorlage unten (ein Fehler je Agent, höchstens 2 gleichzeitig). Keine eigenen Fixes am Code ohne Test.
+   **Fix-Agenten IMMER mit `model: "opus"` starten** (Nutzer 21.11. 19:05: Hauptsitzung darf Sonnet sein, Code-Fixes nicht) –
+   Agent-Aufruf: `isolation: "worktree"`, `model: "opus"`, `run_in_background: true`. Baut der Fix auf einem ungemergten Zweig auf:
+   im Auftrag „ZUERST `git merge --no-ff <zweig>`“ voranstellen.
 7. Commit eigener Logbuch-/Plan-Dateien (gezielte Pfade, Attribution-Zeilen), `git pull --no-rebase --no-edit && git push`.
 
 ## Agenten-Vorlage (für Schritt 6)
