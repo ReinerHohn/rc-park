@@ -21,7 +21,7 @@ Entstehung, alle Läufe und Sackgassen: `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-
 3. **Maße aus Kanten** (`tools/ebenen_masse.py`): Ausladung, Kasten (Unter-/Oberkante, Breite), Konsolen (Zahl, Lage), Strebenfuß, Pfostenlage. Alle drei Koordinaten der Kantenpunkte nutzen (auch die Tiefe).
 4. **Bau** (`bauteile.vorbauten_aus_json`, Zweig `kanten_mass`): einfache Körper aus den gemessenen Kanten; Katalogteile nur noch für das, was Kanten nicht hergeben.
 5. **Abweichung je Ebene** (`tools/ebenen_abweichung.py`): Fotokanten an Modellfläche / an Modellkante, „Form fehlt“, „Detail fehlt“, „erfunden“, Flecken mit Ort, Bild je Ebene, Verlauf mit git-Stand; Gegenprobe dichte Wolke (`--wolke`).
-6. **Schleife** (Treiber noch nicht gebaut): je Runde der größte Fleck; Umbau nur annehmen, wenn die Kennzahl seiner Ebene steigt und keine andere Ebene merklich fällt; ein Fleck, der zweimal nichts bringt, wird „offen“ gemeldet; Ende bei keinem großen Fleck, zwei Runden ohne Gewinn oder Rundengrenze.
+6. **Schleife** (`tools/ebenen_schleife.py`, Treiber steht; noch nicht in `gesamtkette.py`): je Runde der größte Fleck; Umbau nur annehmen, wenn die Kennzahl seiner Ebene steigt und keine andere Ebene merklich fällt; ein Fleck, der zweimal nichts bringt, wird „offen“ gemeldet; Ende bei keinem großen Fleck, zwei Runden ohne Gewinn oder Rundengrenze.
 
 ### Gemessene Regeln und Schwellen (bisher nur am Schwabentor eingestellt - an einem zweiten Bauwerk prüfen)
 - Schicht ist eine echte Ebene, wenn die dichte Wolke ≥ 80 % ihrer Kantenpunkte bestätigt (≤ 10 cm); ≤ 5 % = Scheintreffer (Drähte, Mehrdeutigkeit); 40-80 % einzeln prüfen.
@@ -50,7 +50,7 @@ Entstehung, alle Läufe und Sackgassen: `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-
 - Annahme „Lagekorrektur fehlt“: widerlegt (gleicher Rahmen, Vordach auf cm gleich).
 
 ## Offen
-1. Treiber der konvergierenden Schleife (Rückweg von der Arbeitsliste in den Bau).
+1. Schleife in die Kette einhängen; Kandidaten auf Vorbau-Ebenen und Wolkenflecken (Vordach, Durchfahrt). Lauf 2 (21.11.): 7 Runden, 7 angenommen, 0 verworfen, Ende „kein Kandidat mehr“: Stadtseite Fläche 83→97, Kante 50→74, Wolke 71→82; Süd Kante 23→54; West Kante 45→51 (Kästen, Echtheit am Bild noch ungeprüft). Lauf 1 verwarf den Wandversatz-Umbau (trug das Relief ab) → Wandversatz jetzt am Grundkörper.
 2. Schichtstapel + Wolkenprüfung als Standard-Ebenenfinder in der Kette; Richtungen: Wände, schräg, waagrecht (Unterseiten).
 3. Kennzahlen mit der Kantenstufe zusammenführen (eine Zahl je Sache; „erfunden“ nur für Kanten > 0,3 m).
 4. Pfosten/Stäbe über den Mehrfoto-Sweep für Linien (Skill linien-features).

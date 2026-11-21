@@ -1,0 +1,271 @@
+{
+ "quelle": "tools/ebenen_schleife.py",
+ "korrekturen": [
+  {
+   "id": "k00",
+   "ebene": "f00_wand",
+   "art": "wandversatz",
+   "schluessel": null,
+   "fassade": "f00",
+   "o": [
+    3.736338765143183,
+    15.285188595694338
+   ],
+   "d": [
+    -0.029655713502864632,
+    0.999560172604249
+   ],
+   "n": [
+    0.999560172604249,
+    0.029655713502864632
+   ],
+   "u0": -6.021078789935741,
+   "u1": 6.147426743760576,
+   "z0": 0.0,
+   "z1": 36.85999999999996,
+   "w_ist": 0.0,
+   "w_soll": -0.15,
+   "grund": "Wandebene f00_wand liegt gemessen -0.15 m neben der Fassadenebene des Koerpers",
+   "angenommen": true,
+   "vorher": {
+    "an_flaeche": 0.827,
+    "an_kante": 0.505,
+    "wolke": 0.71
+   },
+   "nachher": {
+    "an_flaeche": 0.958,
+    "an_kante": 0.713,
+    "wolke": 0.814
+   },
+   "urteil": "angenommen"
+  },
+  {
+   "id": "k01",
+   "ebene": "f03_wand",
+   "art": "fleck",
+   "schluessel": "1.5,4.5,4.0,5.5",
+   "fassade": "f03",
+   "o": [
+    -1.5459415024223213,
+    21.216985409295155
+   ],
+   "d": [
+    -0.9991775400966542,
+    -0.04054927084916809
+   ],
+   "n": [
+    -0.04054927084916809,
+    0.9991775400966542
+   ],
+   "u0": 1.69,
+   "u1": 3.89,
+   "z0": 4.49,
+   "z1": 5.41,
+   "w_ist": 0.074,
+   "w_soll": 0.38,
+   "grund": "842 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe +0.33 m gegen die Ebene",
+   "angenommen": true,
+   "vorher": {
+    "an_flaeche": 0.906,
+    "an_kante": 0.46,
+    "wolke": 0.917
+   },
+   "nachher": {
+    "an_flaeche": 0.911,
+    "an_kante": 0.491,
+    "wolke": 0.909
+   },
+   "urteil": "angenommen"
+  },
+  {
+   "id": "k02",
+   "ebene": "f03_wand",
+   "art": "fleck",
+   "schluessel": "5.5,10.0,6.0,12.0",
+   "fassade": "f03",
+   "o": [
+    -1.5459415024223213,
+    21.216985409295155
+   ],
+   "d": [
+    -0.9991775400966542,
+    -0.04054927084916809
+   ],
+   "n": [
+    -0.04054927084916809,
+    0.9991775400966542
+   ],
+   "u0": 5.66,
+   "u1": 6.15,
+   "z0": 10.25,
+   "z1": 11.78,
+   "w_ist": 0.061,
+   "w_soll": 0.2,
+   "grund": "817 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe +0.15 m gegen die Ebene",
+   "angenommen": true,
+   "vorher": {
+    "an_flaeche": 0.911,
+    "an_kante": 0.491,
+    "wolke": 0.909
+   },
+   "nachher": {
+    "an_flaeche": 0.92,
+    "an_kante": 0.503,
+    "wolke": 0.909
+   },
+   "urteil": "angenommen"
+  },
+  {
+   "id": "k03",
+   "ebene": "f03_wand",
+   "art": "fleck",
+   "schluessel": "6.0,5.5,6.5,6.0",
+   "fassade": "f03",
+   "o": [
+    -1.5459415024223213,
+    21.216985409295155
+   ],
+   "d": [
+    -0.9991775400966542,
+    -0.04054927084916809
+   ],
+   "n": [
+    -0.04054927084916809,
+    0.9991775400966542
+   ],
+   "u0": 5.78,
+   "u1": 6.35,
+   "z0": 5.46,
+   "z1": 5.87,
+   "w_ist": 0.094,
+   "w_soll": 0.29,
+   "grund": "654 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe +0.24 m gegen die Ebene",
+   "angenommen": true,
+   "vorher": {
+    "an_flaeche": 0.92,
+    "an_kante": 0.503,
+    "wolke": 0.909
+   },
+   "nachher": {
+    "an_flaeche": 0.927,
+    "an_kante": 0.51,
+    "wolke": 0.909
+   },
+   "urteil": "angenommen"
+  },
+  {
+   "id": "k04",
+   "ebene": "f00_wand",
+   "art": "fleck",
+   "schluessel": "-4.5,36.0,-1.0,36.5",
+   "fassade": "f00",
+   "o": [
+    3.736338765143183,
+    15.285188595694338
+   ],
+   "d": [
+    -0.029655713502864632,
+    0.999560172604249
+   ],
+   "n": [
+    0.999560172604249,
+    0.029655713502864632
+   ],
+   "u0": -4.51,
+   "u1": -0.77,
+   "z0": 35.91,
+   "z1": 36.34,
+   "w_ist": -0.254,
+   "w_soll": -0.43,
+   "grund": "555 Fotokanten ohne Modellflaeche auf f00_wand, Tiefe -0.28 m gegen die Ebene",
+   "angenommen": true,
+   "vorher": {
+    "an_flaeche": 0.958,
+    "an_kante": 0.713,
+    "wolke": 0.814
+   },
+   "nachher": {
+    "an_flaeche": 0.968,
+    "an_kante": 0.718,
+    "wolke": 0.815
+   },
+   "urteil": "angenommen"
+  },
+  {
+   "id": "k05",
+   "ebene": "f00_wand",
+   "art": "fleck",
+   "schluessel": "-4.0,22.5,-4.0,25.0",
+   "fassade": "f00",
+   "o": [
+    3.736338765143183,
+    15.285188595694338
+   ],
+   "d": [
+    -0.029655713502864632,
+    0.999560172604249
+   ],
+   "n": [
+    0.999560172604249,
+    0.029655713502864632
+   ],
+   "u0": -4.04,
+   "u1": -3.88,
+   "z0": 22.62,
+   "z1": 25.1,
+   "w_ist": -0.254,
+   "w_soll": -0.42,
+   "grund": "422 Fotokanten ohne Modellflaeche auf f00_wand, Tiefe -0.27 m gegen die Ebene",
+   "angenommen": true,
+   "vorher": {
+    "an_flaeche": 0.968,
+    "an_kante": 0.718,
+    "wolke": 0.815
+   },
+   "nachher": {
+    "an_flaeche": 0.974,
+    "an_kante": 0.74,
+    "wolke": 0.816
+   },
+   "urteil": "angenommen"
+  },
+  {
+   "id": "k06",
+   "ebene": "f03_wand",
+   "art": "fleck",
+   "schluessel": "-0.5,2.0,0.0,2.0",
+   "fassade": "f03",
+   "o": [
+    -1.5459415024223213,
+    21.216985409295155
+   ],
+   "d": [
+    -0.9991775400966542,
+    -0.04054927084916809
+   ],
+   "n": [
+    -0.04054927084916809,
+    0.9991775400966542
+   ],
+   "u0": -0.6,
+   "u1": 0.15,
+   "z0": 2.07,
+   "z1": 2.22,
+   "w_ist": -0.074,
+   "w_soll": -0.27,
+   "grund": "300 Fotokanten ohne Modellflaeche auf f03_wand, Tiefe -0.32 m gegen die Ebene",
+   "angenommen": true,
+   "vorher": {
+    "an_flaeche": 0.927,
+    "an_kante": 0.51,
+    "wolke": 0.909
+   },
+   "nachher": {
+    "an_flaeche": 0.93,
+    "an_kante": 0.513,
+    "wolke": 0.909
+   },
+   "urteil": "angenommen"
+  }
+ ]
+}

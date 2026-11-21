@@ -13,6 +13,9 @@ SEITEN = seiten_aus_rahmen(obj)
 if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss + DOM1-Dach (dach.json, Nullstart-Schritt 'dach') - tools/dach_bauen.py
     koerper, belege, haupt = gebaeude_aus_lod2(OBJ)
     for b_ in belege: beleg(**b_)
+    from bauteile import korrekturen_aus_json as _kw   # 21.11.2026: gemessener Wandversatz am GRUNDKOERPER, bevor Fenster/Relief daran gebaut werden (Abweichungsschleife)
+    koerper, belege = _kw(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "schleife_korrekturen.json"), art="wandversatz")
+    for b_ in belege: beleg(**b_)
     # 17.11.2026 REIHENFOLGE: erst die erkannten Fenster in den Grundkoerper, dann das Relief mit offenen Fensterrechtecken (Relief zuerst liess jedes Fenster aus, vor dem eine Reliefplatte stand:
     # Kaufhaus 5 von 9). fenster_fuer_bau stellt 'Fenster' zurueck, in deren Rechteck das Netz fehlt (Vorbau/Erker davor) - Liste audit/fenster_bau.json.
     from fassaden_kette import anbauen, fenster_fuer_bau   # Fassaden-Kette (tools/fassaden_kette.py): Reliefs je Wand, falls audit/fassaden_kette.json da ist
@@ -37,6 +40,9 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         from bauteile import oeffnungen_aus_wandbild
         koerper, bel_i = oeffnungen_aus_wandbild(koerper, os.path.join(HERE, "schwabentor-1120", IO_["datei"]), ncc_min=IO_.get("ncc_min", 0.2), ersatz={k: tuple(v) for k, v in IO_.get("ersatz", {}).items()}, nur_frei=True)
         for b_ in bel_i: beleg(**b_)
+    from bauteile import korrekturen_aus_json          # 21.11.2026: Korrekturen der Abweichungsschleife (tools/ebenen_schleife.py -> audit/schleife_korrekturen.json), VOR dem Aushoehlen (Abtragen am hohlen Koerper wuerde die 1,2-mm-Wand durchschneiden)
+    koerper, bel_k = korrekturen_aus_json(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "schleife_korrekturen.json"), ohne="wandversatz")
+    for b_ in bel_k: beleg(**b_)
     if belege and os.environ.get("OHNE_HOHL") != "1":        # 16.11.2026 Nutzer: Fenster muessen echte Loecher sein -> Gebaeude hohl, erkannte Fenster durchgebrochen
         from bauteile import aushoehlen
         koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, z_min=z_tor)      # z_tor: unter dem Scheitel einer Durchfahrt (+ 0,5 m Gewoelbe, ANNAHME) bleibt das Torgeschoss massiv

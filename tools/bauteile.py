@@ -266,6 +266,25 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
     return koerper, belege
 
 
+def korrekturen_aus_json(koerper, datei, art=None, ohne=None):
+    """Korrekturen der Abweichungsschleife (tools/ebenen_schleife.py, audit/schleife_korrekturen.json, 21.11.2026; Methode modelle/METHODE_EBENEN_BAUPLAN.md).
+    Jede Korrektur setzt ein Rechteck einer Ebene auf die dort aus Fotokanten gemessene Tiefe: {fassade, o, d, n, u0, u1, z0, z1, w_ist, w_soll, grund}.
+    w_soll > w_ist: Kasten von w_ist - 0,05 bis w_soll anfuegen; w_soll < w_ist: von w_soll bis w_ist + 0,05 abtragen. Nur Eintraege mit angenommen != false. Liefert (koerper, belege)."""
+    if not os.path.exists(datei): return koerper, []
+    plus, minus, belege = [], [], []
+    for K in json.load(open(datei)).get("korrekturen", []):
+        if K.get("angenommen") is False or (art and K.get("art") != art) or (ohne and K.get("art") == ohne): continue      # art='wandversatz': am GRUNDKOERPER vor dem Relief (1. Fassung trug das Relief mit ab: Modellkanten 208 000 -> 38 000)
+        o = np.array(K["o"], float); d = np.array(K["d"], float); n = np.array(K["n"], float)
+        P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
+        wa, wb = (K["w_ist"] - 0.05, K["w_soll"]) if K["w_soll"] > K["w_ist"] else (K["w_soll"], K["w_ist"] + 0.05)
+        (plus if K["w_soll"] > K["w_ist"] else minus).append(M.hull_points([P(u, z, w) for u in (K["u0"], K["u1"]) for z in (K["z0"], K["z1"]) for w in (wa, wb)]))
+        belege.append(dict(seite="wand", element=f"Korrektur {K.get('id', '')} {K.get('fassade', '')}: u {K['u0']:.2f}..{K['u1']:.2f} z {K['z0']:.2f}..{K['z1']:.2f} von {K['w_ist']:+.2f} auf {K['w_soll']:+.2f} m",
+                           quelle="Abweichungsschleife tools/ebenen_schleife.py: " + K.get("grund", ""), kennzahl_vorher=K.get("vorher"), kennzahl_nachher=K.get("nachher")))
+    if minus: koerper = koerper - M.batch_boolean(minus, OpType.Add)
+    if plus: koerper = koerper + M.batch_boolean(plus, OpType.Add)
+    return koerper, belege
+
+
 def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):      # 21.11.2026: Katalog-Ziffern/Zeiger aus (Nutzer: kein Baukasten) - nur die gemessenen Kreise
     """Turmuhren aus tools/uhren_wandbild.py (audit/uhren_auto.json, Kettenstufe 'bauplan', 21.11.2026; vorher nur Hand-Generator schwab_v3/martinstor_v4).
     Gemessen: Mitte, Aussen- und (falls belegt) Innendurchmesser im feinen Wandbild. Ring bis w_ring vor der Wandebene, Innenfeld bis w_feld (ANNAHME 10 / 6 cm wie schwab_v3);
