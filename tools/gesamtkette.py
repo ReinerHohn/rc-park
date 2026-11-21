@@ -555,6 +555,7 @@ def main():
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["laibung_rc"] = lauf(B, "bauplan_laibung", [PY, "-W", "ignore", "-I", "tools/laibung_aus_fotos.py", fa_, ffn, ZJ], log, ok=(0, 3))[0]   # 21.11.2026 spaet: Laibungstiefe aus der seitlich sichtbaren Laibung in >= 3 Schraegfotos (Sweep sieht den Laden nicht)
+            if os.path.exists(fa_) and os.path.isdir(ffn): erg_["sohlbank_rc"] = lauf(B, "bauplan_sohlbank", [PY, "-W", "ignore", "-I", "tools/sohlbank_aus_fotos.py", fa_, ffn, ZJ], log, ok=(0, 3))[0]   # 21.11.2026 spaet: Sohlbank unter Fenster/Nische (dunkles Band, Auskragung aus Bandhoehe/Laenge gegen die Blickschraege, >= 3 Fotos; bauteile.sohlbank)
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["fenster_form_tor_rc"] = lauf(B, "bauplan_fenster_form_tor", [PY, "-I", "tools/fenster_form_tor.py", fa_, ffn], log, ok=(0, 2, 3))[0]   # 21.11.2026 spaet: FORM der gebauten Fenster/Nischen an >= 3 Einzelfotos (rc 2 = FALSCH, hand_vergleich liest audit/fenster_form_tor.json)
             if os.path.isdir(ffn): erg_["umgang_rc"] = lauf(B, "bauplan_umgang", [PY, "-I", "tools/umgang_aus_fotos.py", ZR, ffn], log, ok=(0, 3))[0]   # 21.11.2026: offener Umgang unter der Traufe aus den Einzelfotos (Wandbild endet unter dem Dachueberstand)
             if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
@@ -581,6 +582,12 @@ def main():
                 # 21.11.2026 (KERNMETHODE; Schwabentor: Wolke endet 3,5 m unter dem Knauf, Laternenhals im duennen Wolkenbereich): Laterne/Spitze aus der HIMMELSKANTE der kalibrierten
                 # Fotos an der Dachachse (tools/spitze_aus_umriss.py -> Block 'spitze_foto' in dach_profil.json; bauteile.dach_aus_profil baut damit ueber dem Laternenhals). Masken aus dem Cache der Stufe 'dachfoto'.
                 sp_rc_ = lauf(B, "bauplan_spitze_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/spitze_aus_umriss.py", ZR], log, ok=(0, 3, 4))[0] if os.path.exists(dp_) else 3; erg_["spitze_umriss_rc"] = sp_rc_
+                # 21.11.2026 (Nutzer "noch nicht gut": dicke dunkle Traufe im Foto, 2-cm-Scheibe im Modell; Ueberstand nur "aus der Wolke"): TRAUFE aus Fotokanten
+                # (tools/traufe_aus_fotos.py: Kanten-Sweep waagrechter Traufkanten mit den SfM-Kameras -> Block 'traufe_foto' in dach_profil.json; bauteile.traufe_einbauen baut
+                # je gemessener Seite einen Traufkasten, ungesehene Seiten bleiben Wolke/DOM1). Bild audit/traufe_foto.jpg.
+                tr_rc_ = lauf(B, "bauplan_traufe_foto", [PY, "-u", "-W", "ignore", "-I", "tools/traufe_aus_fotos.py", ZR], log, ok=(0, 3, 4))[0] if os.path.exists(dp_) else 3; erg_["traufe_foto_rc"] = tr_rc_
+                # 22.11.2026: Dachflaechen-Form (gerade/geschweift/gewoelbt) + Fuss des Aufsatzes aus Foto-Silhouetten (Analyse durch Synthese), ersetzt die Wolkenscheiben ueber der Traufe
+                fl_rc_ = lauf(B, "bauplan_dachflaeche_foto", [PY, "-u", "-W", "ignore", "-I", "tools/dachflaeche_aus_umriss.py", ZR], log, ok=(0, 3, 4))[0] if os.path.exists(dp_) else 3; erg_["dachflaeche_foto_rc"] = fl_rc_
                 rc_ = lauf(B, "bauplan_koerper_schleife", [PY, "-W", "ignore", "-I", "tools/koerper_schleife.py", ZR, W, "--bild", os.path.join(Z, "audit", "wolke_rest.jpg")] + (["--erst_bauen"] if dach_neu_ else []), log, ok=(0, 3))[0]
                 try: k_ = json.load(open(ks_)) if rc_ in (0, 3) else {}
                 except Exception: k_ = {}
@@ -589,7 +596,7 @@ def main():
                 # Beruehrlinien je Blickrichtung gewichtet) - ersetzt Wolkenradius/-profil (Schwabentor Treppenturm: Wolke r 1,73, Foto 1,585, Handstand 1,555; Traufe 11,25 / 11,57).
                 rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"], log, ok=(0, 3, 4))[0]
                 erg_["rund_umriss_rc"] = rr_
-                if k_.get("baulaeufe") or rr_ == 0 or sp_rc_ == 0: bauen(B, "bauen_mit_wolkenkoerpern", a.ziel, log)
+                if k_.get("baulaeufe") or rr_ == 0 or sp_rc_ == 0 or tr_rc_ == 0 or fl_rc_ == 0: bauen(B, "bauen_mit_wolkenkoerpern", a.ziel, log)
                 if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
                     notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
