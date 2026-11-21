@@ -217,7 +217,7 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
 - KNAPP: Achse 1,36 % (Grenze 1,5) und Hoehen 3,9 % (Grenze 4, heute a priori gesetzt) -> Massstab zwischen den Seiten vermutlich ~4 % daneben; Feinausgleich (Hoehe/ICP an Dach und Seitenwaenden) offen. Sued nur Teil 1 (99 Bilder); Teil 2 (52) nicht vereint.
 - Bild `zeigen/vereint_1121.png`, Grundriss/Ansicht `martinstor_vereint.jpg` (gezeigt), 3D https://claude.ai/artifact/22eEm3PCx5NWmbYTUoiAhQ. `sparse_zeigen.py --dazu/--dazu-matrix` zeigt zwei Modelle gemeinsam.
 
-### 21.11. 14:57 - Lot der zweiten Seite aus ihren eigenen Waenden (Nutzerfund "Suedseite gekippt")
+### 21.11. 14:55 - Lot der zweiten Seite aus ihren eigenen Waenden (Nutzerfund "Suedseite gekippt")
 - Gemessen: Sued-Waende in der vereinten Lage 4,52 Grad neben dem Nord-Lot (2294 Wandnormalen). `seiten_vereinen.py`: kleinste Drehung, die das Wand-Lot von B auf das Lot von A legt (vor dem Spitzenabgleich).
 - Nachher: Sued-Waende 0,05 Grad neben dem Nord-Lot; Achse 1,36 -> 0,50 % der Bauhoehe einig; Turmhoehen 3,9 -> 3,0 % verschieden; Dach 1,02 / 1,00. Test `test_seiten_vereinen.py` bestanden. 3D-Seite Version 3.
 - OFFEN: Massstab zwischen den Seiten (3 % Hoehenunterschied - Strassengefaelle oder Massstab?) -> Pruefung am LoD2-Grundriss (Turmtiefe).
