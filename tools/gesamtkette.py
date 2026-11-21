@@ -427,7 +427,7 @@ def main():
     # Von Hand eingetragene Werte (ohne "auto") bleiben unberuehrt (die Werkzeuge melden rc 3).
     if dran("bauplan") and os.path.exists(AU):
         fo = os.path.join(D, "fassade"); ffn = fo + "_fein"; bp_ = os.path.join(D, "bauplan"); os.makedirs(bp_, exist_ok=True); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); erg_ = {}
-        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "drehkoerper_aus_wolkenrest", "dach_aus_profil")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
+        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "wolkenrest_koerper", "dach_aus_profil")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
         if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
         else:
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
@@ -470,19 +470,18 @@ def main():
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
             if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
             # 21.11.2026 (ANALYSE_SACKGASSEN: Koerper, die auf keiner Wandebene liegen - Treppenturm, Dachueberstand, Laterne - kamen im Handlauf aus der dichten Wolke): Rest der Wolke am
-            # gebauten Modell -> runde Koerper (audit/koerper_auto.json) und Dach-Schichtprofil (audit/dach_profil.json, nur einmal gegen das LoD2-Dach) -> zweiter Bau, wenn etwas dazukam.
+            # gebauten Modell -> Dach-Schichtprofil (audit/dach_profil.json, nur einmal gegen das LoD2-Dach) und KOERPER-SCHLEIFE (tools/koerper_schleife.py: Haufen benennen, Nachbarn/Hohlraeume
+            # abtrennen, Kandidaten bauen, JE KANDIDAT nachmessen, annehmen/verwerfen -> audit/koerper_auto.json) -> volle Abnahme, wenn die Schleife gebaut hat.
             if os.path.exists(W) and os.path.exists(gp_):
-                ka_, dp_, wr_ = (os.path.join(Z, "audit", n_) for n_ in ("koerper_auto.json", "dach_profil.json", "wolke_rest.json")); vor_ = (os.path.getmtime(ka_) if os.path.exists(ka_) else 0, os.path.exists(dp_))
-                lauf(B, "bauplan_wolkenrest", [PY, "-W", "ignore", "-I", "tools/wolke_rest.py", ZR, W, "--uebernehmen", "--bild", os.path.join(Z, "audit", "wolke_rest.jpg")], log, ok=(0, 3))
-                try: erg_["wolke_am_modell_vorher"] = json.load(open(wr_)).get("an_flaeche_punkte")
-                except Exception: pass
-                if not vor_[1] and os.path.exists(os.path.join(fo, "fassaden.json")): lauf(B, "bauplan_dachprofil", [PY, "-W", "ignore", "-I", "tools/dach_profil_wolke.py", ZR, W, os.path.join(fo, "fassaden.json")], log, ok=(0, 3))
-                if (os.path.getmtime(ka_) if os.path.exists(ka_) else 0, os.path.exists(dp_)) != vor_:
-                    lauf(B, "bauen_mit_wolkenkoerpern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1)); lauf(B, "bauplan_wolkenrest_nachher", [PY, "-W", "ignore", "-I", "tools/wolke_rest.py", ZR, W, "--bild", os.path.join(Z, "audit", "wolke_rest.jpg")], log, ok=(0, 3))
-                    try: erg_["wolke_am_modell_nachher"] = json.load(open(wr_)).get("an_flaeche_punkte")
-                    except Exception: pass
-                    if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
-                        notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
+                dp_, ks_ = (os.path.join(Z, "audit", n_) for n_ in ("dach_profil.json", "koerper_schleife.json")); dach_neu_ = False
+                if not os.path.exists(dp_) and os.path.exists(os.path.join(fo, "fassaden.json")): lauf(B, "bauplan_dachprofil", [PY, "-W", "ignore", "-I", "tools/dach_profil_wolke.py", ZR, W, os.path.join(fo, "fassaden.json")], log, ok=(0, 3)); dach_neu_ = os.path.exists(dp_)
+                rc_ = lauf(B, "bauplan_koerper_schleife", [PY, "-W", "ignore", "-I", "tools/koerper_schleife.py", ZR, W, "--bild", os.path.join(Z, "audit", "wolke_rest.jpg")] + (["--erst_bauen"] if dach_neu_ else []), log, ok=(0, 3))[0]
+                try: k_ = json.load(open(ks_)) if rc_ in (0, 3) else {}
+                except Exception: k_ = {}
+                erg_.update({n_: k_.get(n_) for n_ in ("wolke_am_modell_vorher", "wolke_am_modell_nachher")}, wolkenkoerper=dict(angenommen=[x_["id"] for x_ in k_.get("angenommen", [])], verworfen=[x_["id"] for x_ in k_.get("verworfen", [])], gemeldet=[f"{x_['id']} {x_['form']}" for x_ in k_.get("gemeldet", [])]))
+                if k_.get("baulaeufe"): lauf(B, "bauen_mit_wolkenkoerpern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+                if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
+                    notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
             notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
     # --- Ende Stufe 'bauplan' ---
