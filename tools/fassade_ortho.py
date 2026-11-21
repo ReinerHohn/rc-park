@@ -152,6 +152,7 @@ def main(argv=None):
     ap.add_argument("--zelle", type=float, default=0.05); ap.add_argument("--tol", type=float, default=0.10); ap.add_argument("--relief-vorn", type=float, default=3.0); ap.add_argument("--relief-hinten", type=float, default=6.0); ap.add_argument("--max-mpp", type=float, default=0.06)
     ap.add_argument("--max-winkel", type=float, default=70.0); ap.add_argument("--fotos", help="Komma-Liste (Standard: alle mit K-Datei und buendel_tor ok)")
     ap.add_argument("--waende-stl", action="store_true", help="Fassaden aus senkrechten Modelldreiecken, die keine LoD2-Ebene sind (Erker/Vorbauten)"); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--ohne-innenwaende", action="store_true", help="objekt.json innenwaende (Laube/Arkade-Rueckwand) nicht als Fassaden i00.. mitrechnen"); ap.add_argument("--einzeln", action="store_true"); ap.add_argument("--ohne-nachbarn", action="store_true"); ap.add_argument("--beste", type=int, default=5, help="je Zelle nur die k Fotos mit der besten Guete (cos/mpp) mitteln: 61 Fotos im Median verschmierten Kanten (Kamerareste 1-4 px)"); ap.add_argument("--arbeiter", type=int, default=6, help="parallele Fotos (RAM: Vollbilder bis 0,3 GB je Foto)"); ap.add_argument("--rand", type=float, default=0.5, help="Rand um die Wand (m) fuer Vorsprung/Traufe")
+    ap.add_argument("--mit-selbstbau", action="store_true", help="selbst gebaute Vorbauten (audit/vorbauten_auto.json) als Verdecker/Flaeche behalten (vor dem 21.11.2026; zirkulaer fuer Messungen)")
     ap.add_argument("--max-fotos", type=int, default=40, help="je Fassade nur die besten N Kameras (0 = alle)"); ap.add_argument("--gpu-sicht", action="store_true", help="Sichtbarkeit ueber ein GPU-Tiefenbild je Foto statt CPU-Strahlen. Messung 16.11.2026 (ober_tvdr, 700 Kameras): LANGSAMER (61 s gegen 41 s) und weniger streng - Standard bleibt CPU (embree)"); ap.add_argument("--nur", help="Komma-Liste Flaechen-IDs (f02,e05 ...): nur diese rastern (Tests/Vergleiche; IDs bleiben die des vollen Laufs)")
     ap.add_argument("--ohne-gpu", action="store_true", help="Zellrechnung (Projektion, Blickwinkel, Aufloesung, Bildrand-Maske) auf der CPU statt auf der GPU; die CPU rechnet exakt wie vor dem 17.11.2026 (Vergleichsweg)")
     ap.add_argument("--gpu-mb", type=float, default=2600.0, help="Obergrenze fuer den GPU-Speicher dieses Laufs in MiB (torch-Zuteilung; dazu kommen ~0,3 GB Grundlast des Treibers). Wird sie oder der freie Kartenspeicher ueberschritten: Meldung, Rest auf der CPU")
@@ -197,6 +198,14 @@ def main(argv=None):
     fotos = a.fotos.split(",") if a.fotos else sorted(n_ for n_, c_ in alle_k.items() if _ok(n_, c_))
     print(f"{len(fotos)} Messkameras" + ("" if mit_tor else " (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)"), flush=True)
     m = trimesh.load(a.stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
+    # 21.11.2026 MESSFEHLER (zirkulaer): das gebaute Vordach verdeckte genau die Fotostellen, aus denen vorbauten_bauplan seinen Wandanschluss misst (uneinig_f00: 19,39 -> ANNAHME 16,74).
+    # Selbst gebaute Vorbauten (audit/vorbauten_auto.json) sind weder Verdecker noch Messflaeche; --mit-selbstbau = alter Weg. Bei --waende-stl sind sie die Fassaden selbst -> bleiben.
+    from selbstbau_verdecker import selbstbau_boxen, ohne_selbstbau
+    _sb = selbstbau_boxen(a.objekt); VSB = dict(zustand="keiner", gruppen=len(_sb), dreiecke=0)
+    if _sb and (a.mit_selbstbau or a.waende_stl): VSB["zustand"] = "im_modell"
+    elif _sb:
+        m, VSB["dreiecke"] = ohne_selbstbau(m, _sb); VSB["zustand"] = "entfernt" if VSB["dreiecke"] else "keiner"
+        print(f"Verdecker ohne Selbstbau: {VSB['dreiecke']} Dreiecke aus {len(_sb)} Vorbau-Gruppen entfernt (audit/vorbauten_auto.json)", flush=True)
     if obj.get("zentrierung", "huelle") == "huelle": sys.exit("zentrierung huelle nicht unterstuetzt (Rahmen der Buendelkameras = Modellrahmen)")
     # Zellraster je Fassade (Modellrahmen)
     for F in fas:
@@ -446,7 +455,7 @@ def main(argv=None):
     print(f"Zellrechnung: {GPU['weg']} ({GPU['paare']} Foto-Fassaden-Paare GPU, {GPU['cpu_paare']} CPU" + (f", {GPU['strahlen'] / 1e6:.0f} Mio. Sichtstrahlen, GPU-Rechenzeit {GPU['gpu_s']:.1f} s, GPU-Speicher Spitze {GPU['gpu_mb_spitze']} MiB" if GPU["paare"] else "") + (f"; Grund CPU: {GPU['grund']}" if GPU["grund"] else "") + ")", flush=True)
     print("Zeiten (s): " + ", ".join(f"{k_} {v_}" for k_, v_ in ZT.items()), flush=True)
     json.dump(dict(objekt=a.objekt, stl=os.path.abspath(a.stl), zelle_m=a.zelle, tol_m=a.tol, max_mpp=a.max_mpp, fotos=fotos, fassaden=fas,
-                   beste_k=a.beste, nachbarn_lod2=n_nb, quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1), zeiten_s=ZT, zellrechnung={k_: (round(v_, 1) if isinstance(v_, float) else v_) for k_, v_ in GPU.items() if k_ not in ("an", "cache")}),
+                   beste_k=a.beste, nachbarn_lod2=n_nb, verdecker_selbstbau=VSB, quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1), zeiten_s=ZT, zellrechnung={k_: (round(v_, 1) if isinstance(v_, float) else v_) for k_, v_ in GPU.items() if k_ not in ("an", "cache")}),
               open(os.path.join(a.aus, "fassaden.json"), "w"), indent=1)
     print(f"{len(fas)} Fassaden, {len(fotos)} Fotos, {time.time() - t0:.0f} s"); print("\n".join(bericht))
 
