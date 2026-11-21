@@ -267,3 +267,6 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 - 15:15 `kette-schwabentor-1121m` (--ab bauplan --bis bauplan): Beleg fuer Wolkenrest/Dachprofil in der Kette; `audit/koerper_auto.json` und `dach_profil.json` von Hand vorher beiseite (Scratchpad sw_hand_1121).
 - 15:23 `kette-martinstor-1121a` (--ab sfm, wartet auf GPU/RAM hinter dem Schwabentor-Lauf): SCHNELLER BELEG der Seitenfolge in der Kette mit der VORHANDENEN Datenbank (Merkmale/Paare aus Cache -> Maskenfilter als Rueckfall -> Seitenerkennung -> globaler Mapper je Seite -> dichte Wolken -> Vereinen -> Tore) statt 10-14 h von null; alte sparse-Staende nach pipe/sfm/alt_1121/ verschoben. Der Lauf ganz von null (Masken in der Merkmalssuche) folgt danach.
 - Agenten laufen: Oeffnungen aus Kanten, Koerper-Schleife (Nachbarn, Kasten/Ring/Stab, Annahmeregel), Rezept-Dokument + fester Vereinen-Test.
+
+## UEBERGABE 21.11.2026 15:40
+Stand siehe `.claude/UEBERGABE.md` (Martinstor-Kette 1121a laeuft, Agent Oeffnungen gemergt 84f6c437b, Koerper-Agent laeuft).
