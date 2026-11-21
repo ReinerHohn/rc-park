@@ -40,7 +40,7 @@ button:focus-visible { outline: 2px solid var(--akzent); outline-offset: 2px; }
     <div class="schalter">
       <button id="b_kam" aria-pressed="true">Kameras</button>
       <button id="b_ri" aria-pressed="true">Blickrichtung</button>
-      <button id="b_gr">Punkte groesser</button>
+      <label style="display:flex;gap:6px;align-items:center">Punktgroesse <input type="range" id="r_gr" min="-2.7" max="-1.1" step="0.05" value="-1.7" aria-label="Punktgroesse" style="width:120px"></label>
       <button id="b_oben">Von oben</button>
     </div>
     <div class="hinweis">Ziehen dreht · Rad oder zwei Finger zoomen · Rechtsklick verschiebt</div>
@@ -81,7 +81,7 @@ const D = /*DATEN*/null;
   const um = (b, f) => b.addEventListener("click", () => { const an = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", an); f(an); });
   um($("b_kam"), an => { pk.visible = an; li.visible = an && $("b_ri").getAttribute("aria-pressed") === "true"; });
   um($("b_ri"), an => { li.visible = an && pk.visible; });
-  um($("b_gr"), an => { mp.size = an ? 0.045 : 0.02; });
+  $("r_gr").addEventListener("input", e => { mp.size = Math.pow(10, parseFloat(e.target.value)); });   // 21.11.2026 Nutzer: Punkte auch KLEINER stellen koennen (0,002 bis 0,08; vorher nur Schalter groesser)
   let vonoben = false; $("b_oben").addEventListener("click", () => { vonoben = !vonoben; $("b_oben").textContent = vonoben ? "Schraeg" : "Von oben"; (vonoben ? oben : schraeg)(); });
   (function bild() { steuer.update(); renderer.render(szene, kam); requestAnimationFrame(bild); })();
 })();
