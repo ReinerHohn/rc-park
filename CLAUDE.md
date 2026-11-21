@@ -34,6 +34,7 @@ Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> d
 
 ## Bei Aufgabe X -> Skill / Dokument
 - Neues Objekt / Kette von null -> `objekt-von-null`. SfM/Mapper -> `modelle/GLOBALER_MAPPER_STABIL.md`.
+- Symmetrischer Turm, Seitenverklebung, globaler Mapper je Seite, Seiten vereinen -> `modelle/METHODE_SEITEN_SFM.md`.
 - Foto vom Nutzer vor Ort -> `foto-vor-ort`.
 - Bauteil neu/falsch -> `bauteil-runde` (`modelle/VORLAGE_BAUTEIL_RUNDE.md`).
 - Fassaden/Fenster/Relief/leere Wand -> `fassaden` (`modelle/PIPELINE_FASSADEN.md`).
