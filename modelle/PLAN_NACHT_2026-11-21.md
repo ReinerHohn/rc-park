@@ -47,6 +47,12 @@ Prüfen: `grep -a "seiten_vereinen\|vereint\|ABGELEHNT\|JOB_ENDE" /media/oem/sca
 Erwartet „vereint“ ~2 % Turmhöhen. Alte Seitenwolken liegen danach in `.../martinstor-1120/pipe/sfm/seiten_modelle/teil*/dicht_alt_*` (8,6 GB) → `bash tools/auslagern.sh <ordner>` auf /media/oem/rcdaten.
 Läuft er, keinen weiteren Schwabentor-Lauf parallel mit RAM > 6000 starten – job_start wartet von selbst (RAM-Buchung), nicht von Hand Buchung senken.
 
+## ARBEITSSPEICHER (Nutzer 21.11. 19:40: „lieber nur einen Job über Nacht als ständig scheitern“)
+- Immer NUR EIN Kettenlauf gleichzeitig. Martinstor erst, wenn kein Schwabentor-Lauf mehr läuft (bzw. am Morgen) – nicht einreihen.
+- Agenten dürfen während eines Kettenlaufs KEINE Rechenläufe starten (kein fassade_ortho/tiefe_lokal/steine/GPU-Test, kein Schnelltest mit Prüfstand) – nur Code + kleine synthetische Tests. Ursache 1121p: Agenten-Testlauf parallel -> CUDA-OOM w04 + Kernel-OOM w03 (Signal 6).
+- Nach einem Lauf: `journalctl -k --since <Start> | grep -ci "out of memory\|oom-kill"` – > 0 melden.
+- fassaden_kette wiederholt ein vom System beendetes Teilwerkzeug einmal (nacheinander) und plant Wände nach der Job-Buchung (RCPARK_RAM_MB).
+
 ## Abbruchregeln (dann nur melden, nichts erzwingen)
 - Schnelltest > 0 Fehler nach Merge → Merge zurück, melden.
 - Zwei Läufe hintereinander schlechter (X/11 sinkt) → keinen weiteren Merge, Ursache per Agent, melden.
