@@ -6,10 +6,20 @@ waehrend die Eckquader daneben echt sind. Die Grenze Putz/Stein steht scharf im 
   je Reliefzelle den Punkt auf der Ausgleichsebene in jedes Foto projizieren (Kamera K-<FOTO>.json, k1), Farbe lesen; Putz = wenig Saettigung (< --s) und hell (> --v);
   Mehrheit ueber die Fotos, kleine Flecken weg, eingeschlossene Loecher (Wandbild, Uhr, Fenstergewaende) zum Putz; im Putz rel = Median (ebene Flaeche).
 --feld begrenzt die Anwendung (z. B. nur oberhalb des Bruchsteinsockels). --massstab: Relief liegt im ROHRAHMEN (Schwabentor Nord), Punkt vor der Projektion
-X' = M + k (X - M). aus.npz traegt die Maske 'putz'; aus.jpg zeigt sie gruen - ANSEHEN. Danach ggf. tools/steine_generieren.py (laesst Putz in Ruhe).
+X' = M + k (X - M). aus.npz traegt die Maske 'putz' (+ 'quader_wandbild'); aus.jpg zeigt sie gruen, Quaderflaeche laut Wandbild blaustichig - ANSEHEN.
+21.11.2026 QUADER-VETO: Farb-Putz nur, wo das Wandbild (fassade_fein, putz_wandbild.glatt_karte 'quader') keine Quaderflaeche zeigt (Schwabentor w01). Danach ggf. tools/steine_generieren.py (laesst Putz in Ruhe).
 """
 import sys, os, json, glob, argparse, numpy as np, cv2
 from scipy import ndimage as ndi
+
+
+def quader_veto(Z, objekt_json):
+    """Quaderflaeche laut Wandbild im Relief-Raster Z (bool) oder None (kein fassade_fein / keine passende Fassade / OHNE_QUADER_VETO=1)."""
+    if os.environ.get("OHNE_QUADER_VETO") == "1": return None
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from fassaden_kette import fein_ordner; from putz_wandbild import putz_auf_relief
+        ffn = fein_ordner(objekt_json); return putz_auf_relief(Z, ffn, art="quader") if ffn else None
+    except Exception as e_: print(f"    Quader-Veto nicht moeglich ({type(e_).__name__}: {e_}) - nur Fotofarbe"); return None
 
 
 def main():
@@ -32,18 +42,29 @@ def main():
         putz = (hsv[:, 1] / 255.0 < a.s) & (hsv[:, 2] / 255.0 > a.v); stimmen += putz & ok; gesehen += ok
         print(f"{nm}: {ok.mean()*100:.0f} % der Zellen im Bild, davon Putz {100 * (putz & ok).sum() / max(ok.sum(), 1):.0f} %")
     putz = ((stimmen >= 0.5 * np.maximum(gesehen, 1)) & (gesehen > 0)).reshape(H, W)
+    # 21.11.2026 (Schwabentor w01, Lauf 1121s): helle, wenig gesaettigte Sandsteinquader bestanden das Farbkriterium -> Putzmaske mitten im Quaderfeld (z 3-9 m),
+    # Putz glaettete echte Steine und machte 6-8 cm Stufen Stein/Putz. Das Wandbild (entzerrte Einzelfotos, fassade_fein) zeigt dort in 15-21 Fotos Quaderstruktur
+    # (Glattanteil 0,00). Farbe allein entscheidet nicht mehr: Zellen, die das Wandbild als Quaderflaeche belegt (putz_wandbild 'quader'), sind kein Putz.
+    # Ohne Wandbild (kein fassade_fein, keine passende Fassade) bleibt die Farbe allein. OHNE_QUADER_VETO=1 = alter Stand.
+    veto = quader_veto(Z, a.objekt)
+    if veto is not None: n_veto = int((putz & veto).sum()); putz &= ~veto; print(f"Quader-Veto (Wandbild): {n_veto * px * px:.1f} m2 Farb-Putz auf Quaderflaeche verworfen")
     if a.feld: f0, f1, g0, g1 = a.feld; putz &= (U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1)
-    for f0_, f1_, g0_, g1_ in a.kern: putz |= (U >= f0_) & (U <= f1_) & (ZZ >= g0_) & (ZZ <= g1_)
+    kern = np.zeros((H, W), bool)
+    for f0_, f1_, g0_, g1_ in a.kern: kern |= (U >= f0_) & (U <= f1_) & (ZZ >= g0_) & (ZZ <= g1_)
+    putz |= kern
     putz = ndi.binary_closing(ndi.binary_opening(putz, iterations=1), iterations=2); lab, m = ndi.label(putz)
     if m: gr = ndi.sum(putz, lab, np.arange(1, m + 1)); putz = np.isin(lab, 1 + np.flatnonzero(gr * px * px >= a.min_m2))
     putz = ndi.binary_fill_holes(putz)
+    if veto is not None: putz = ndi.binary_fill_holes(putz & ~(veto & ~kern))       # Schliessen darf keine Quaderzellen zurueckholen; ganz von Putz umschlossene (Uhr, Wandbild im Putz) bleiben Putz wie bisher
     if a.feld: putz &= (U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1)
     if putz.sum() < 100: print("kein Putz gefunden"); return 2
     echt = putz & (rel != 0.0); niveau = float(np.median(rel[echt])) if echt.sum() > 50 else 0.0; stein = ~putz & (rel != 0.0)
     neu = rel.copy(); neu[putz] = niveau if abs(niveau) > 1e-6 else 1e-4
-    Z["rel"] = neu.astype(np.float32); Z["putz"] = putz; Z["putz_niveau_m"] = niveau; np.savez_compressed(a.aus, **Z)
+    Z["rel"] = neu.astype(np.float32); Z["putz"] = putz; Z["putz_niveau_m"] = niveau; Z["quader_wandbild"] = veto if veto is not None else np.zeros((H, W), bool); np.savez_compressed(a.aus, **Z)
     lx = np.gradient(neu, px, axis=1); lz = np.gradient(neu, px, axis=0); s = np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1); im = cv2.cvtColor((s * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)
-    im[putz] = (im[putz] * np.array([0.8, 1.0, 0.8])).astype(np.uint8); cv2.imwrite(os.path.splitext(a.aus)[0] + ".jpg", cv2.resize(im, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))
+    im[putz] = (im[putz] * np.array([0.8, 1.0, 0.8])).astype(np.uint8)
+    if veto is not None: q_ = veto & ~putz; im[q_] = (im[q_] * np.array([1.0, 0.85, 0.85])).astype(np.uint8)       # blaustichig = Quaderflaeche laut Wandbild (kein Putz)
+    cv2.imwrite(os.path.splitext(a.aus)[0] + ".jpg", cv2.resize(im, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))
     print(f"{os.path.basename(a.aus)}: Putz {putz.mean()*100:.1f} % der Flaeche ({putz.sum()*px*px:.0f} m2), Putzniveau {niveau*100:+.1f} cm, Stein im Mittel " + (f"{np.median(rel[stein])*100:+.1f} cm" if stein.any() else "- (kein Relief ausserhalb des Putzes)"))
 
 

@@ -10,7 +10,7 @@ jedem Foto woanders -> die Mehrheit zeigt dort glatten Putz. Quader, Gesimse, Fe
 Gemessen Schwabentor f00 (Median ueber 10-24 Fotos): Putz 0,25-0,30, Uhrring 6, Quaderwerk > 2 (Schwelle 0,8).
 
   glatt_karte(ffn, fid)                -> dict(putz, n, u0, z1, zelle)   (Raster der Fassade, 5 cm)
-  putz_auf_relief(npz_relief, ffn)     -> bool-Maske im Relief-Raster oder None (keine passende Fassade / kein Einzelbild)
+  putz_auf_relief(npz_relief, ffn)     -> bool-Maske im Relief-Raster oder None (keine passende Fassade / kein Einzelbild); art="quader" = Quaderflaeche laut Wandbild
   relief_putz_glatt(f_in, f_out, putz, frei=[(u, z, r)]) -> dict  Putzzellen = ein Niveau (putz_niveau_m), Rest ohne Netzwoelbung;
                                         Kreise 'frei' (Uhr: baut der Generator aus dem Wandbild) ebenfalls auf das Niveau.
   tiefe_belegt(gemessen, flaeche, px)  -> bool  Netztiefe mit Mehrfoto-Beleg (gemessene Umgebung, keine Netzinsel im Lochfeld); relief_putz_glatt glaettet den Rest.
@@ -23,17 +23,19 @@ import sys, os, json, glob, argparse, numpy as np
 _CACHE = {}
 
 
-def glatt_karte(ffn, fid, zelle=0.05, schwelle=0.8, min_fotos=3, anteil=0.6, hochpass=0.02, ort=0.15):
-    """Putzkarte einer Fassade aus ihren entzerrten Einzelfotos (Raster aus fassade_fein/fassaden.json). Ohne Einzelbilder None."""
+def glatt_karte(ffn, fid, zelle=0.05, schwelle=0.8, min_fotos=3, anteil=0.6, hochpass=0.02, ort=0.15, rau_schwelle=3.0, rau_fenster=0.55):
+    """Putzkarte einer Fassade aus ihren entzerrten Einzelfotos (Raster aus fassade_fein/fassaden.json). Ohne Einzelbilder None.
+    Zusaetzlich 'quader' (21.11.2026, Schwabentor w01): Zelle in >= anteil der sehenden Fotos mit Feinstruktur >= rau_schwelle (Quaderwerk > 2, Putz 0,25-0,30,
+    Uhrring 6 - gemessen f00) UND Mehrheit im Fenster rau_fenster (Einzelkanten von Fenstern, Schildern, Kabeln zaehlen nicht als Flaeche)."""
     from PIL import Image                                                 # ohne cv2: laeuft auch in der Generator-Umgebung (fassaden_kette.anbauen)
     from scipy.ndimage import gaussian_filter
-    key = (os.path.abspath(ffn), fid, zelle, schwelle, min_fotos, anteil)
+    key = (os.path.abspath(ffn), fid, zelle, schwelle, min_fotos, anteil, rau_schwelle, rau_fenster)
     if key in _CACHE: return _CACHE[key]
     try: FF = {f["id"]: f for f in json.load(open(os.path.join(ffn, "fassaden.json")))["fassaden"]}
     except Exception: return None
     R = (FF.get(fid) or {}).get("raster"); fs = sorted(glob.glob(os.path.join(ffn, f"ortho_{fid}_einzeln", "*.png")))
     if not R or len(fs) < min_fotos: return None
-    c = float(R["zelle"]); k = max(1, int(round(zelle / c))); n = None; g_ = None
+    c = float(R["zelle"]); k = max(1, int(round(zelle / c))); n = None; g_ = None; r_ = None
     for f in fs:
         try: g = np.asarray(Image.open(f).convert("L"), np.float32)
         except Exception: continue
@@ -46,15 +48,21 @@ def glatt_karte(ffn, fid, zelle=0.05, schwelle=0.8, min_fotos=3, anteil=0.6, hoc
         H, W = (g.shape[0] // k) * k, (g.shape[1] // k) * k
         s = np.where(da, t, 0.0)[:H, :W].reshape(H // k, k, W // k, k).sum((1, 3)); m = da[:H, :W].reshape(H // k, k, W // k, k).sum((1, 3))
         sicht = m >= 0.5 * k * k; gl = sicht & (s / np.maximum(m, 1) < schwelle)
-        n = sicht.astype(np.int32) if n is None else n + sicht; g_ = gl.astype(np.int32) if g_ is None else g_ + gl
+        ra = sicht & (s / np.maximum(m, 1) >= rau_schwelle)
+        n = sicht.astype(np.int32) if n is None else n + sicht; g_ = gl.astype(np.int32) if g_ is None else g_ + gl; r_ = ra.astype(np.int32) if r_ is None else r_ + ra
     if n is None: return None
     putz = (n >= min_fotos) & (g_ >= anteil * np.maximum(n, 1))
-    erg = dict(putz=putz, n=n, u0=float(R["u0"]), z1=float(R["z1"]), zelle=c * k, fotos=len(fs)); _CACHE[key] = erg; return erg
+    from scipy.ndimage import uniform_filter
+    kf = max(1, int(round(rau_fenster / (c * k)))) | 1; q_ = ((n >= min_fotos) & (r_ >= anteil * np.maximum(n, 1))).astype(np.float32)
+    quader = (uniform_filter(q_, kf, mode="nearest") >= 0.5) & (n >= min_fotos)
+    erg = dict(putz=putz, quader=quader, n=n, glatt=g_, rau=r_, u0=float(R["u0"]), z1=float(R["z1"]), zelle=c * k, fotos=len(fs)); _CACHE[key] = erg; return erg
 
 
-def putz_auf_relief(Z, ffn, parallel=0.95, abstand=1.0, **kw):
+def putz_auf_relief(Z, ffn, parallel=0.95, abstand=1.0, art="putz", **kw):
     """Putzkarte der passenden Fassade (Normale parallel, Ebene < abstand m) auf das Relief-Raster Z (dict/npz mit a, t, n, u0, z0, px, rel) legen.
-    Zellen ohne Fassadenbild = False (kein Putz-Beleg). None, wenn keine Fassade passt."""
+    Zellen ohne Fassadenbild = False (kein Putz-Beleg). None, wenn keine Fassade passt.
+    art="quader": stattdessen die Zellen, die das Wandbild als Quaderflaeche belegt (glatt_karte 'quader'); ohne Fassadenbild False.
+    Fuer relief_putz.py: Farb-Putz nur, wo das Wandbild nicht Quaderwerk zeigt."""
     try: FF = json.load(open(os.path.join(ffn, "fassaden.json")))["fassaden"]
     except Exception: return None
     a = np.asarray(Z["a"], float)[:2]; t = np.asarray(Z["t"], float)[:2]; nw = np.asarray(Z["n"], float)[:2]; H, W = Z["rel"].shape; px = float(Z["px"]); u0, z0 = float(Z["u0"]), float(Z["z0"])
@@ -70,7 +78,7 @@ def putz_auf_relief(Z, ffn, parallel=0.95, abstand=1.0, **kw):
     K = glatt_karte(ffn, best[1]["id"], **kw)
     if K is None: return None
     uf = (xy - best[2]) @ best[3]; j = np.floor((uf - K["u0"]) / K["zelle"]).astype(int); i = np.floor((K["z1"] - zz) / K["zelle"]).astype(int)
-    P = K["putz"]; okj = (j >= 0) & (j < P.shape[1]); oki = (i >= 0) & (i < P.shape[0])
+    P = K["quader"] if art == "quader" else K["putz"]; okj = (j >= 0) & (j < P.shape[1]); oki = (i >= 0) & (i < P.shape[0])
     M = np.zeros((H, W), bool); M[np.ix_(oki, okj)] = P[np.ix_(i[oki], j[okj])]; return M
 
 
