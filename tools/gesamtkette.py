@@ -68,6 +68,17 @@ def frisch(pfad, seit):
     return os.path.exists(pfad) and os.path.getmtime(pfad) >= seit - 2.0
 
 
+def fein_paar(P, FV):
+    """--fein-Argumente (Buendel + passender Bildordner) fuer fassaden_kette/tiefe_lokal. 21.11.2026 (Kettenlauf 1121o/p: 'fein 0 %', 1172 s umsonst):
+    frueher dicht/sparse (ENTZERRT, PINHOLE 1200x1600) + Originalfotos (verzerrt, 3000x4000) -> Geometriefilter verwarf alles.
+    Jetzt: das VERZERRTE Quellbuendel der dichten Wolke (sfm/sparse_dicht, sonst sfm/sparse/0 - dicht/sparse ist dessen Entzerrung, gleiche Posen,
+    also derselbe Rahmen wie dicht/fused.ply und SFM-AUSRICHTUNG) + Originalfotos in voller Aufloesung; sonst dicht/sparse + dicht/images (nur 1600 px).
+    tiefe_lokal.paar_pruefen bricht bei einem unpassenden Paar mit rc 2 ab."""
+    for q in (os.path.join(P, "sfm", "sparse_dicht"), os.path.join(P, "sfm", "sparse", "0")):
+        if os.path.exists(os.path.join(q, "images.bin")) and os.path.isdir(FV): return ["--fein", q, FV]
+    dd = os.path.join(P, "dicht")
+    if os.path.exists(os.path.join(dd, "sparse", "images.bin")) and os.path.isdir(os.path.join(dd, "images")): return ["--fein", os.path.join(dd, "sparse"), os.path.join(dd, "images")]
+    return []
 SPEICHER_MUSTER = re.compile(r"CUDA out of memory|OutOfMemoryError|MemoryError|std::bad_alloc|cudaErrorMemoryAllocation|out of memory|vom System beendet \(Signal (9|6)|Signal (9|6)\b|Killed\b", re.I)
 
 
@@ -455,7 +466,7 @@ def main():
         dd = os.path.join(P, "dicht"); nz = os.path.join(P, "openmvs", "mesh_modell_ausschnitt.npz")
         t_n = time.time()
         if os.path.exists(os.path.join(dd, "fused.ply")) and lauf(B, "fassaden_netz", [PY, "-I", "tools/netz_aus_dicht.py", ZR, dd], log)[0] == 0 and frisch(nz, t_n):      # frisch: ein Netzausschnitt eines frueheren Laufs gilt nicht
-            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + (["--fein", os.path.join(dd, "sparse"), FV] if os.path.isdir(os.path.join(dd, "sparse")) else []), log)[0] == 0: bauen(B, "bauen_mit_fassaden", a.ziel, log)   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
+            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + fein_paar(P, FV), log)[0] == 0: bauen(B, "bauen_mit_fassaden", a.ziel, log)   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
         else: notiz(B, "fassaden", False, fehler=f"kein dichter Ordner ({dd}/fused.ply) oder Netzstufe ohne neues Ergebnis ({nz})")
     if dran("fassaden") and os.path.exists(os.path.join(Z, "audit", "fassaden_kette.json")) and os.environ.get("RCPARK_OHNE_MONO") != "1":      # 17.11.2026 Stufe 'mono' (nach relief_putz/steine der Fassaden-Kette): Feinrelief aus Einzelfotos,
         fkj = os.path.join(Z, "audit", "fassaden_kette.json"); FK = json.load(open(fkj)); stl_m = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); mono_w = []      # tools/relief_aus_fotos_mono.py (Depth Anything V2 Small, Apache-2.0), Feld = Wand bis 10 m
