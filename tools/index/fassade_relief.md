@@ -1,4 +1,4 @@
-# Werkzeuge: fassade_relief (59)
+# Werkzeuge: fassade_relief (62)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
 - `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
@@ -42,6 +42,7 @@
 - `tools/oeffnungen_bogen.py` [seg] oeffnungen_bogen.py <ortho-ordner> --objekt <objekt.json> [--aus audit/oeffnungen_auto.json] - BOGENOEFFNUNGEN / TORDURCHFAHRTEN automatisch (17.11.2026, Kettenstufe 'fenster').
 - `tools/oeffnungen_wandbild.py` [seg] oeffnungen_wandbild.py - OEFFNUNGEN einer Wand aus ihrem Wandbild: Zone (Erkenner), TIEFE (Parallaxe der Einzelfoto-Orthos), UMRISS (Bildsegmentierung). 18.11.2026 (Agent Rueckwand
 - `tools/ortho_drape.py` [seg] ortho_drape.py — Oberfläche aus Daten: LGL-Orthophoto (DOP20) deckungsgleich zum Gelände-Modell zuschneiden und als MASSSTABSgenauer Druck-Bogen ausgeben. Über die Gips-Haut gelegt
+- `tools/putz_wandbild.py` [-] putz_wandbild.py - glatte Putzflaeche aus dem Wandbild (mehrere entzerrte Einzelfotos einig) und Netz-Relief dort glatt (21.11.2026).
 - `tools/quader_relief.py` [-] quader_relief.py - Fassade als ADAPTIVER QUADERBAUM aus der Punktwolke (Nutzeridee 6.11.: 'Modell aus Quadern, Diff gegen Wolke, je genauer es passt, desto feiner die Quader'). Rah
 - `tools/quader_relief_bauen.py` [gen] quader_relief_bauen.py - Quaderbaum-Relief einer Fassade aus der Wolke -> STL (Modellrahmen, mm im Massstab) + Kennzahlen. Nichts objektbezogen. venv-seg/bin/python -I tools/quader
 - `tools/relief.py` [gen] relief.py — SCHNELL von DEM-Crop zu 3D-Relief: druckbares STL + drehbare HTML + Hillshade.
@@ -52,6 +53,8 @@
 - `tools/relief_putz.py` [seg] relief_putz.py <relief.npz> <aus.npz> <objekt.json> FOTO [FOTO ...] [--feld u0 u1 z0 z1] [--massstab k x y z] [--s 0.22] [--v 0.45] - Putzflaechen eines Relief-Einsatzes glaetten.
 - `tools/relief_quader_eben.py` [seg] relief_quader_eben.py <relief.npz> <aus.npz> --feld u0 u1 z0 z1 [--feld ...] - glatt behauene Eckquader: Steinzellen eines Feldes auf EINE Hoehe.
 - `tools/relief_test.py` [seg] relief_test.py <objekt.json> <netz.npz> --ecke_a x y --ecke_b x y --feld u0 u1 z0 z1 --fotos K-A K-B ... [--px 0.01] [--aus PREFIX]
+- `tools/relief_trend.py` [-] relief_trend.py - robuste Ausgleichsebene fuer Hoehenbilder (tools/tiefe_lokal.py, tools/relief_mischen.py). Nur numpy.
+- `tools/relief_vordergrund.py` [-] relief_vordergrund.py - VORDERGRUND aus einem Wandrelief nehmen (Schilder, Laternenkoepfe, Poller, Fahrzeugteile vor der Wand), 21.11.2026.
 - `tools/restfeld_fassade.py` [seg] restfeld_fassade.py - Restfeld je Fassade: Tiefe der Daten d*(u,z) gegen Tiefe des Modells, Zelle fuer Zelle (Konvergenzschleife, Nutzer 5.11. 17:00).
 - `tools/rippen_bogen_wahl.py` [seg] rippen_bogen_wahl.py - Rippen als Bogenkandidaten auf der Kegelflaeche testen und per Mehrfoto-Gold-Konsens auswaehlen (13.11.2026, modellbasiert statt Skelett). Aufruf: /media/oem
 - `tools/steine_aus_foto.py` [seg] steine_aus_foto.py <relief.npz> <aus.npz> <fassaden.json> <nr> <ortho_fein.png> --feld u0 u1 z0 z1 [--px 0.02] [--fuge 0.03] [--massstab k x y z]

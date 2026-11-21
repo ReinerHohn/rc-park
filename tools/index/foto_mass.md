@@ -1,4 +1,4 @@
-# Werkzeuge: foto_mass (115)
+# Werkzeuge: foto_mass (116)
 - `tools/bauplan_aus_foto.py` [seg] bauplan_aus_foto.py — die beschriebene Methode als EINE Kette: 1) Gebäude aus Umgebung freistellen (ML-Maske, gebaeude_segment) 2) auf das Gebäude zuschneiden 3) PERSPEKTIVE raus (
 - `tools/bilder_einsortieren.py` [-] bilder_einsortieren.py - PIPELINE-SCHRITT nach bilder_holen.py: geerntete Fotos (fotos_eingang) in den Fotoordner des Objekts einsortieren.
 - `tools/bilder_holen.py` [seg] bilder_holen.py - PIPELINE-SCHRITT: Fotos einer Attraktion aus freien Quellen holen - nur die mit MEHRWERT fuer die Fotowolke.
@@ -101,6 +101,7 @@
 - `tools/teil_fotoform.py` [seg] teil_fotoform.py - FORMPRUEFUNG JE BAUTEIL GEGEN DIE EINZELFOTOS (Regel 9d b, L-KR24).
 - `tools/teil_render_foto.py` [seg] teil_render_foto.py - schattiertes Teil-Render aus der kalibrierten Fotokamera NEBEN dem Fotoausschnitt (Pruefbild fuer Agenten/Pruefer). Warum (11.11., modelle/archiv/SPEC_ORNAMEN
 - `tools/tsdf_netz.py` [seg] tsdf_netz.py - TSDF-Fusion aus COLMAP-Tiefenkarten (geometric.bin) + Posen -> Netz (open3d), Modellrahmen, STL mm. Kandidat fuer tools/modell_wettbewerb.py. venv-o3d/bin/python -I 
+- `tools/umgang_aus_fotos.py` [seg] umgang_aus_fotos.py <objekt.json> <fassade_fein-Ordner> [--aus audit/umgang_auto.json] [--bilder DIR] - OFFENER UMGANG unter der Traufe aus den Fotos (Kettenstufe 'bauplan').
 - `tools/video_frames.py` [seg] video_frames.py — Fotos AUS VIDEOS für Photogrammetrie/Fassadenmessung. Ein Touristen-Video, das um ein Wahrzeichen schwenkt, liefert dutzende Blickwinkel in Sekunden — ideal für S
 - `tools/video_frames_waehlen.py` [seg] video_frames_waehlen.py - aus einem Handyvideo die brauchbaren Einzelbilder waehlen (Schaerfe + Verdeckung), CPU, ohne GPU.
 - `tools/video_kaufhaus_pruefen.py` [seg] video_kaufhaus_pruefen.py - Zeigt ein Video-Clip das Objekt? (Vorab-Filter fuer fremde Videos; Nutzer 7.11.) /media/oem/scan/venv-seg/bin/python -I tools/video_kaufhaus_pruefen.py 
