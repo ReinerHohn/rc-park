@@ -166,7 +166,7 @@ Summe 94 233 Punkte (nicht mehr als die zwei breiten Läufe zusammen, 103 000) -
 Regel-Vorschlag: Schicht gilt als Ebene, wenn Punktzahl ≥ 2 % der stärksten Schicht UND Wolkenbestätigung ≥ 80 %; 40-80 % = prüfen (Teilfläche), darunter verwerfen.
 Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erkers: nur ~1700 Punkte).
 
-## Nachtrag 21.11. 09:50 - Martinstor: schrittweiser Mapper "eng" fertig, Suedseite VERKLEBT
+## Nachtrag 21.11. 09:44 - Martinstor: schrittweiser Mapper "eng" fertig, Suedseite VERKLEBT
 - Lauf `rcpark-mt_inkr_eng2` fertig 05:18 (30 382 s): 4 Modelle, groesstes 983 von 1156 Bildern, 148 794 Punkte, `modell_zerlegen`: EIN Stueck (980).
 - Seitenpruefung gegen die getrennten Bezugsmodelle vom 19.11. (`/media/oem/rcdaten/tmp/mt_seiten/dicht_sued_r9` 74 Bilder, `dicht_nord2` 384): im Hauptmodell stehen 51 Sued- und 293 Nord-Bilder,
   aber am SELBEN Ort mit GLEICHER Blickrichtung (Median-Ort 0,9 Einheiten auseinander, mittlere Blickrichtung 12 Grad statt ~180) -> Sued-Bilder auf die Nordwand geklebt (Seitenverwechslung, 4. Mal).
