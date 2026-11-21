@@ -979,6 +979,9 @@ def rueckwaende(koerper, felder, tiefe, d, rand=0.6, schliessen=0.05, schritt=0.
     zus = None; info = []; w0, w1 = w_bereich
     for f in felder:
         W, u0, u1, z0, z1 = f[:5]; s = -1.0 if W.spiegel else 1.0
+        t_f = float(f[6].get("tiefe", 0.0)) if len(f) > 6 and isinstance(f[6], dict) else None   # 21.11.2026: Laibung dieses Fensters AB WANDEBENE w = 0 (fenster_aus_json: Nische + Fenster)
+        t_ = max(tiefe, t_f or 0.0)
+        w0 = min(w_bereich[0], -(t_ + d + 0.3))                           # gemessene Laibung 0,85 m (Schwabentor f00): Profil muss bis hinter die Rueckwandplatte reichen
         xa, xb = sorted((s * (u0 - rand), s * (u1 + rand))); fa, fb = sorted((s * u0, s * u1)); ya, yb = z0 - rand, z1 + rand
         box = lambda q0, q1: M.cube((xb - xa, yb - ya, q1 - q0)).translate((xa, ya, q0))
         st = (koerper ^ box(w0, w1).transform(W.matrix(0))).transform(_wand_inv(W))
@@ -999,8 +1002,8 @@ def rueckwaende(koerper, felder, tiefe, d, rand=0.6, schliessen=0.05, schritt=0.
         innen = Q.offset(-0.03, JoinType.Miter); tiefst = None
         for w, S in zip(ws, SL):
             if vorn - 0.6 < w < sv and (S ^ innen).area() > 1e-4: tiefst = float(w)
-        t_ = max(tiefe, float(f[6].get("tiefe", 0.0))) if len(f) > 6 and isinstance(f[6], dict) else tiefe   # 21.11.2026: gemessene/Druck-Laibung je Fenster (fenster_aus_json) nicht hinter der globalen Rueckwand verstecken
-        wp = vorn - t_ if tiefst is None else min(vorn - t_, tiefst - schritt / 2 - 0.01)
+        ziel = vorn - tiefe if t_f is None else min(vorn - tiefe, -t_f)       # gemessene Laibung absolut (vorn liegt bei einer Nische schon auf deren Grund - nicht doppelt zaehlen)
+        wp = ziel if tiefst is None else min(ziel, tiefst - schritt / 2 - 0.01)
         ring = Q.offset(d, JoinType.Miter) - Q
         k_ = M.extrude(ring, 0.5 * (sv + sh) - (wp - d)).translate((0, 0, wp - d)) + M.extrude(Q, d).translate((0, 0, wp - d))
         k_ = k_.transform(W.matrix(0)); zus = k_ if zus is None else zus + k_

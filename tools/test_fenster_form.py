@@ -9,7 +9,7 @@ Erwartung:
   T2 fenster_form_tor: alte Liste (links Rechteck) -> FALSCH, rc 2; neue Liste -> kein FALSCH, rc 0.
   T3 hand_vergleich 'rundbogenfenster': alte Liste -> FALSCH wegen form; neue Liste -> form PASST.
   T4 bauteile.fenster_aus_json: Nische 0,03 m wird auf Druckmindestmass (MINMM 0,8 x SCALE 87 = 0,0696 m) vertieft, Beleg nennt ANNAHME; DURCH-Eintrag
-     hat das 7. Feld (Laibungstiefe), aushoehlen() kommt damit klar.
+     hat das 7. Feld (Laibungstiefe), aushoehlen() kommt damit klar, rueckwaende() setzt die Rueckwand in DIESER Tiefe (0,97 m) statt global 0,15.
 < 20 s, nur CPU.
 """
 import sys, os, json, tempfile, shutil, subprocess, numpy as np
@@ -99,17 +99,21 @@ def main():
     os.environ["SCALE"] = "87"; os.environ["MINMM"] = "0.8"
     import bauteile as BT
     from manifold3d import Manifold as M
-    q = dict(u0=-0.3, u1=0.3, z0=1.0, z1=2.0, stimmen_min=5, bogen=dict(form="rund", kaempfer=1.7, scheitel=2.0), tiefe=0.12, tiefe_quelle="ANNAHME 0.12 m (test)",
+    q = dict(u0=-0.3, u1=0.3, z0=1.0, z1=2.0, stimmen_min=5, bogen=dict(form="rund", kaempfer=1.7, scheitel=2.0), tiefe=0.9, tiefe_quelle="ANNAHME 0.9 m (test)",
              nische=dict(u0=-1.0, u1=1.0, z0=1.0, z1=3.0, bogen=dict(form="rund", kaempfer=2.0, scheitel=3.0), tiefe=0.03))
     fj = os.path.join(au, "bau.json"); json.dump(dict(f00=dict(o=[0.0, 0.0], d=[1, 0], n=[0, -1], fenster=[q])), open(fj, "w"))
     k = M.cube((6.0, 4.0, 5.0)).translate((-3.0, 0.0, 0.0))   # Wand y = 0, aussen -y, u = x
     BT.DURCH.clear(); k2, bel = BT.fenster_aus_json(k, fj)
-    dmin = 0.8 * 87 / 1000.0; nfl = NF_fl(q["nische"]); ffl = NF_fl(q); dv = k.volume() - k2.volume(); erw = dmin * nfl + 0.12 * ffl
-    pruef(abs(dv - erw) <= 0.05 * erw, f"T4 Nische 0,03 -> {dmin:.3f} m: Abzug {dv:.4f} m3 (erwartet {erw:.4f}, mit 0,03 waere {0.03 * nfl + 0.12 * ffl:.4f})")
+    dmin = 0.8 * 87 / 1000.0; nfl = NF_fl(q["nische"]); ffl = NF_fl(q); dv = k.volume() - k2.volume(); erw = dmin * nfl + 0.9 * ffl
+    pruef(abs(dv - erw) <= 0.05 * erw, f"T4 Nische 0,03 -> {dmin:.3f} m: Abzug {dv:.4f} m3 (erwartet {erw:.4f}, mit 0,03 waere {0.03 * nfl + 0.9 * ffl:.4f})")
     pruef(bool(bel) and "ANNAHME" in bel[0].get("annahmen", "") and "rund in Nische" in json.dumps(bel[0].get("formen")), f"T4 Beleg: {bel[0].get('annahmen', '')[:90]} | {bel[0].get('formen')}")
-    pruef(len(BT.DURCH) == 1 and len(BT.DURCH[0]) == 7 and abs(BT.DURCH[0][6]["tiefe"] - (dmin + 0.12)) < 1e-6, "T4 DURCH mit Laibungstiefe (7. Feld)")
-    try: k3, n_off, _ = BT.aushoehlen(k2, d=0.1, min_m3=0.1); pruef(n_off == 1, f"T4 aushoehlen mit 7er-DURCH: {n_off} Fenster offen")
-    except Exception as ex: pruef(False, f"T4 aushoehlen: {ex}")
+    pruef(len(BT.DURCH) == 1 and len(BT.DURCH[0]) == 7 and abs(BT.DURCH[0][6]["tiefe"] - (dmin + 0.9)) < 1e-6, "T4 DURCH mit Laibungstiefe (7. Feld)")
+    try:
+        k3, n_off, _ = BT.aushoehlen(k2, d=0.1, min_m3=0.1); pruef(n_off == 1, f"T4 aushoehlen mit 7er-DURCH: {n_off} Fenster offen")
+        k4, info = BT.rueckwaende(k3, BT.DURCH, 0.15, 0.1); ti = (info[0] or {}).get("tiefe_ist")     # tiefe Laibung (gemessen 0,8 m Schwabentor): Rueckwand je Fenster, nicht global 0,15
+        wpl = (info[0].get("vorn") or 0) - (ti or 0)
+        pruef(ti is not None and abs(wpl + dmin + 0.9) <= 0.03, f"T4 rueckwaende je Fenster: Rueckwand bei w {wpl:.3f} (soll {-(dmin + 0.9):.2f} ab Wandebene, global waere -0,15) {info[0]}")
+    except Exception as ex: pruef(False, f"T4 aushoehlen/rueckwaende: {ex}")
     shutil.rmtree(d, ignore_errors=True)
     print(f"test_fenster_form: {F} Fehler"); return 1 if F else 0
 

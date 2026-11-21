@@ -256,9 +256,20 @@ def maske(npz_raster, o, wachs=0.0):
     return m.astype(bool)
 
 
+def plausibel(w, g, ring, vor_max=0.2):
+    """21.11.2026 spaet (Ursache Nischentiefe rechts 0,05 / links 0,15 bei gleichen Nischen, Schwabentor f00): auf glattem weissem Putz liefert der Sweep viele 'gute'
+    Zellen 0,4-2,4 m VOR der Wand (Mehrdeutigkeit ohne Textur; rechte Nische 20 %, linke 13 %), der Median kippt damit nach vorn. Eine Wand mit Nischen hat nichts vor
+    der Wandflaeche: Zellen mehr als vor_max vor dem MODALWERT des Wandrings (5-cm-Klassen) zaehlen nicht."""
+    v = w[ring & g]
+    if v.size < 20: return np.ones_like(g)
+    werte, n_ = np.unique(np.round(v / 0.05) * 0.05, return_counts=True); modal = float(werte[np.argmax(n_)])
+    return w <= modal + vor_max
+
+
 def tiefen(npz, nische, fenster, ring=(0.1, 0.4), min_gut=0.3):
     """Nischentiefe (Nischenring gegen Wandring) und Fenstertiefe (Fenster gegen Nischengrund) aus dem Sweep (negativ = hinter). Werte None = nicht messbar."""
     w, g = npz["w"], npz["gut"].astype(bool); R = (float(npz["u0"]), float(npz["z1"]), float(npz["zelle"]), *w.shape)
+    g = g & plausibel(w, g, maske(R, nische, ring[1]) & ~maske(R, nische, ring[0]))
     mn = maske(R, nische); mf = maske(R, fenster, wachs=float(npz["zelle"]))
     an = mn & ~mf; wr = maske(R, nische, ring[1]) & ~maske(R, nische, ring[0]); fi = maske(R, fenster)
     q = {k: (float(g[m].mean()) if m.any() else 0.0) for k, m in (("nische", an), ("wand", wr), ("fenster", fi))}
@@ -332,7 +343,7 @@ def _eintrag(f, n, t, stimmen, a, quelle, r):
 def tiefe_einzeln(npz, f, ring=(0.1, 0.4), min_gut=0.3):
     """Fenster ohne Nische: Median im Fenster gegen den Wandring (Sweep, negativ = hinter). None = nicht messbar (wie tiefen())."""
     w, g = npz["w"], npz["gut"].astype(bool); R = (float(npz["u0"]), float(npz["z1"]), float(npz["zelle"]), *w.shape)
-    fi = maske(R, f); wr = maske(R, f, ring[1]) & ~maske(R, f, ring[0])
+    fi = maske(R, f); wr = maske(R, f, ring[1]) & ~maske(R, f, ring[0]); g = g & plausibel(w, g, wr)
     if not fi.any() or not wr.any() or g[fi].mean() < min_gut or g[wr].mean() < min_gut: return dict(fenster=None)
     d = float(np.median(w[fi & g]) - np.median(w[wr & g])); return dict(fenster_roh=round(d, 3), fenster=round(d, 3) if -1.0 < d < -0.02 else None)
 
