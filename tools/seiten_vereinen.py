@@ -236,6 +236,24 @@ def punktpaare(db, PA, PB, min_inlier=15, roh=False):
     return [(u, c.most_common(1)[0][0]) for u, c in kor.items()], n
 
 
+def bild_vereint(DA, DB, erg, pfad, n=400000):
+    """PFLICHTBILD (Skill erkenntnis, 21.11.2026: das Vereinen scheiterte dreimal an einer Zahl - 'Achse 14-24 % uneinig' -, das Bild zeigte in einer Minute den zweiten Turm NEBEN dem
+    ersten). Links Ansicht, rechts Grundriss (Punkte ueber 30 % der Bauhoehe); A blau, B rot in der ENDLAGE (B_nach_A). Ein Turm mit zwei gegenueberliegenden Waenden = richtig."""
+    import cv2
+    rng = np.random.default_rng(0); M = np.array(erg["B_nach_A"]); A_ = DA[rng.choice(len(DA), min(n, len(DA)), replace=False)]; B_ = DB[rng.choice(len(DB), min(n, len(DB)), replace=False)] @ M[:3, :3].T + M[:3, 3]
+    up = np.array(erg["lot"]); up /= np.linalg.norm(up); ax = np.array(erg["achse_punkt"]); e1 = np.cross(up, [1.0, 0, 0]); e1 /= np.linalg.norm(e1); e2 = np.cross(up, e1); H = float(erg["bauhoehe"])
+    pa, pb = A_ - ax, B_ - ax; ua, ub = np.c_[pa @ e1, pa @ e2], np.c_[pb @ e1, pb @ e2]; nah = np.r_[ua[np.linalg.norm(ua, axis=1) < 0.5 * H], ub[np.linalg.norm(ub, axis=1) < 0.5 * H]]
+    if len(nah) < 100: return None
+    _, V = np.linalg.eigh(np.cov(nah.T)); l, q = V[:, 0], V[:, 1]; vz = float(np.sign(np.percentile(pa @ up, 99.9)) or 1.0); sc = 420.0 / H; im = np.full((1000, 1900, 3), 255, np.uint8)
+    def setz(x, y, col, x0, x1):
+        k = (x >= x0) & (x < x1) & (y >= 0) & (y < 1000); im[y[k], x[k]] = col
+    for u, p_, col in ((ua, pa, (220, 140, 0)), (ub, pb, (0, 0, 230))):
+        setz((u @ q * sc + 475).astype(int), (940 - vz * (p_ @ up) * sc).astype(int), col, 0, 950); o = vz * (p_ @ up) > 0.3 * H
+        setz((u[o] @ l * sc + 1425).astype(int), (500 - u[o] @ q * sc).astype(int), col, 951, 1900)
+    cv2.line(im, (950, 0), (950, 1000), (0, 0, 0), 1); cv2.putText(im, "Ansicht: A blau, B rot - " + str(erg.get("urteil"))[:60], (10, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2)
+    cv2.putText(im, "Grundriss (ueber 30 % der Hoehe)", (970, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2); cv2.imwrite(pfad, im, [cv2.IMWRITE_JPEG_QUALITY, 82]); return pfad
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("a"); ap.add_argument("b"); ap.add_argument("db"); ap.add_argument("--roh", action="store_true", help="rohe Zuordnungen inkl. abgewiesener Paare fuer die Klappung (globale Stuecke)"); ap.add_argument("--aus", required=True); ap.add_argument("--min-paare", type=int, default=60); ap.add_argument("--rel", type=float, default=0.02)
     ap.add_argument("--dicht-a", help="dichte Wolke von A (fused.ply im System von Modell A): Achse, Dach- und Flankenprobe daraus (genauer als die duenne Wolke)"); ap.add_argument("--dicht-b", help="dichte Wolke von B (im System von Modell B)")
@@ -254,6 +272,9 @@ def main(argv=None):
     if "inlier" in erg: print(f"geklappte Lage: {erg['inlier']} von {erg['paare']} Punktpaaren, Rest {erg['rest']:.4f}, Massstab B->A {erg['massstab']:.3f}")
     if erg.get("spitzen"): print(f"eigene Spitze je Modell: Klappung lag {100 * erg['spitzen']['klapp_versatz']:.1f} % der Turmhoehe daneben (berichtigt), Turmhoehen {100 * erg['spitzen']['hoehe_einigkeit']:.1f} % verschieden")
     if pr: print(f"Achse aus {erg.get('achse_aus')}: Einigkeit der Modelle {100 * pr['achse_einigkeit']:.2f} % der Bauhoehe | Blick vorher {pr['blick_vorher']:.0f} Grad, nachher {pr['blick_nachher']:.0f} | Flanke {pr['flanke']} {pr['flanke_punkte']} | Dach {pr['dach']} | Tiefe {pr['tiefe']:.2f} der Bauhoehe")
+    if DA is not None and "B_nach_A" in erg:
+        try: print("Bild (ANSEHEN):", bild_vereint(DA, DB, erg, os.path.join(a.aus, "vereinen.jpg")))
+        except Exception as e_: print("Bild nicht geschrieben:", e_)
     print(("SEITEN VEREINT: " if erg["ok"] else "WARNUNG SEITEN NICHT VEREINT: ") + erg["urteil"]); return 0 if erg["ok"] else 3
 
 
