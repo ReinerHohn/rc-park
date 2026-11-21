@@ -1,0 +1,1831 @@
+{
+ "quelle": "tools/oeffnungen_aus_kanten.py",
+ "wolke": "modelle/schwabentor-1120/sfm/punkte_modell_schwabentor-1120.npy",
+ "ebenen": {
+  "f00_wand": {
+   "oeffnungen": [
+    {
+     "form": "rundbogen",
+     "sicher": true,
+     "form_grund": "Rest sturz 0.218, rundbogen 0.111, segmentbogen 0.110, spitzbogen 0.103",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -2.474,
+      2.893,
+      1.572,
+      6.342
+     ],
+     "mitte_u": 0.209,
+     "breite": {
+      "wert": 5.366,
+      "punkte": 1718,
+      "rest": 0.111,
+      "kantenpunkte_links": 368,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": 3.659,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 6.342,
+      "stich": 2.683,
+      "kantenpunkte": 1001,
+      "rest_kanten": 0.068
+     },
+     "sohlbank": {
+      "wert": 1.572,
+      "quelle": "boden",
+      "kantenpunkte": 9,
+      "fleckrand": 1.572
+     },
+     "laibung_tiefe": {
+      "wolke": 1.749,
+      "wolke_zellen": 5921,
+      "kanten": -0.0,
+      "kantenpunkte": 1369
+     },
+     "radius": 2.683,
+     "reste": {
+      "sturz": {
+       "rest": 0.218,
+       "median": 0.087,
+       "punkte": 1718
+      },
+      "rundbogen": {
+       "rest": 0.111,
+       "median": 0.043,
+       "punkte": 1718
+      },
+      "segmentbogen": {
+       "rest": 0.11,
+       "median": 0.043,
+       "punkte": 1718
+      },
+      "spitzbogen": {
+       "rest": 0.103,
+       "median": 0.034,
+       "punkte": 1718
+      }
+     },
+     "kantenpunkte_am_umriss": 1417,
+     "umriss_belegt": 0.21,
+     "ring_wand": 0.96,
+     "anteil_hinten": 0.42,
+     "annahmen": [
+      "ANNAHME: Schwelle = Boden (unterste Wandzeile bzw. unterste Kantenpunkte); keine eigene Schwellenkante",
+      "Form aus dem Rand des Wolkenflecks: nur 1417 Kantenpunkte am Umriss, 21% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.04,
+     "id": "f00_wand_o0"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.023 gegen rundbogen 0.020: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -4.07,
+      -3.833,
+      8.612,
+      9.281
+     ],
+     "mitte_u": -3.951,
+     "breite": {
+      "wert": 0.237,
+      "punkte": 142,
+      "rest": 0.018,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": 9.048,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 9.281,
+      "stich": 0.233,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 8.612,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 8.612
+     },
+     "laibung_tiefe": {
+      "wolke": 0.1,
+      "wolke_zellen": 91,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.023,
+       "median": 0.014,
+       "punkte": 142
+      },
+      "rundbogen": {
+       "rest": 0.02,
+       "median": 0.011,
+       "punkte": 142
+      },
+      "segmentbogen": {
+       "rest": 0.02,
+       "median": 0.012,
+       "punkte": 142
+      },
+      "spitzbogen": {
+       "rest": 0.018,
+       "median": 0.014,
+       "punkte": 142
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.99,
+     "anteil_hinten": 1.0,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (spitzbogen)",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.04,
+     "id": "f00_wand_o1"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.099 gegen rundbogen 0.112: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -3.119,
+      -2.389,
+      9.012,
+      9.311
+     ],
+     "mitte_u": -2.754,
+     "breite": {
+      "wert": 0.73,
+      "punkte": 246,
+      "rest": 0.099,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 9.311,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 9.012,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 9.012
+     },
+     "laibung_tiefe": {
+      "wolke": 0.292,
+      "wolke_zellen": 128,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.099,
+       "median": 0.056,
+       "punkte": 246
+      },
+      "rundbogen": {
+       "rest": 0.112,
+       "median": 0.078,
+       "punkte": 246
+      },
+      "segmentbogen": {
+       "rest": 0.103,
+       "median": 0.08,
+       "punkte": 246
+      },
+      "spitzbogen": {
+       "rest": 0.124,
+       "median": 0.117,
+       "punkte": 246
+      }
+     },
+     "kantenpunkte_am_umriss": 1,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.92,
+     "anteil_hinten": 0.93,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 1 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.04,
+     "id": "f00_wand_o2"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.052 gegen rundbogen 0.062: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      0.173,
+      0.62,
+      9.172,
+      9.619
+     ],
+     "mitte_u": 0.397,
+     "breite": {
+      "wert": 0.447,
+      "punkte": 126,
+      "rest": 0.052,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 9.619,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 9.172,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 9.172
+     },
+     "laibung_tiefe": {
+      "wolke": 0.163,
+      "wolke_zellen": 77,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.052,
+       "median": 0.04,
+       "punkte": 126
+      },
+      "rundbogen": {
+       "rest": 0.062,
+       "median": 0.046,
+       "punkte": 126
+      },
+      "segmentbogen": {
+       "rest": 0.052,
+       "median": 0.041,
+       "punkte": 126
+      },
+      "spitzbogen": {
+       "rest": 0.062,
+       "median": 0.046,
+       "punkte": 126
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.73,
+     "anteil_hinten": 1.0,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.05,
+     "innen": [
+      {
+       "form": "unbestimmt",
+       "sicher": true,
+       "form_grund": "sturz 0.015 gegen rundbogen 0.015: kein klarer Sieger (Faktor 0.6)",
+       "form_quelle": "wolkenrand",
+       "zone": [
+        0.494,
+        0.667,
+        9.322,
+        9.616
+       ],
+       "mitte_u": 0.58,
+       "breite": {
+        "wert": 0.173,
+        "punkte": 50,
+        "rest": 0.014,
+        "kantenpunkte_links": 0,
+        "kantenpunkte_rechts": 0
+       },
+       "kaempfer": {
+        "wert": 9.599,
+        "hinweis": null
+       },
+       "scheitel": {
+        "wert": 9.616,
+        "stich": 0.017,
+        "kantenpunkte": 0,
+        "rest_kanten": null
+       },
+       "sohlbank": {
+        "wert": 9.322,
+        "quelle": "fleckrand",
+        "kantenpunkte": 0,
+        "fleckrand": 9.322
+       },
+       "laibung_tiefe": {
+        "wolke": 0.467,
+        "wolke_zellen": 21,
+        "kanten": null,
+        "kantenpunkte": 0
+       },
+       "radius": null,
+       "reste": {
+        "sturz": {
+         "rest": 0.014,
+         "median": 0.007,
+         "punkte": 50
+        },
+        "rundbogen": {
+         "rest": 0.015,
+         "median": 0.007,
+         "punkte": 50
+        },
+        "segmentbogen": {
+         "rest": 0.014,
+         "median": 0.008,
+         "punkte": 50
+        },
+        "spitzbogen": {
+         "rest": 0.015,
+         "median": 0.007,
+         "punkte": 50
+        }
+       },
+       "kantenpunkte_am_umriss": 0,
+       "umriss_belegt": 0.0,
+       "ring_wand": 0.92,
+       "anteil_hinten": 1.0,
+       "annahmen": [
+        "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (segmentbogen)",
+        "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+       ]
+      }
+     ],
+     "id": "f00_wand_o3"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -2.808,
+      -2.434,
+      9.672,
+      10.159
+     ],
+     "mitte_u": -2.621,
+     "breite": {
+      "wert": 0.375,
+      "punkte": 38,
+      "rest": 0.003,
+      "kantenpunkte_links": 3,
+      "kantenpunkte_rechts": 5
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 10.159,
+      "stich": 0.0,
+      "kantenpunkte": 50,
+      "rest_kanten": 0.065
+     },
+     "sohlbank": {
+      "wert": 9.672,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 9.672
+     },
+     "laibung_tiefe": {
+      "wolke": 0.142,
+      "wolke_zellen": 19,
+      "kanten": 0.01,
+      "kantenpunkte": 58
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.003,
+       "median": 0.002,
+       "punkte": 38
+      },
+      "rundbogen": {
+       "rest": 0.025,
+       "median": 0.01,
+       "punkte": 38
+      },
+      "segmentbogen": {
+       "rest": 0.004,
+       "median": 0.003,
+       "punkte": 38
+      },
+      "spitzbogen": {
+       "rest": 0.025,
+       "median": 0.01,
+       "punkte": 38
+      }
+     },
+     "kantenpunkte_am_umriss": 58,
+     "umriss_belegt": 0.69,
+     "ring_wand": 0.82,
+     "anteil_hinten": 1.0,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 58 Kantenpunkte am Umriss, 69% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f00_wand_o4"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      2.892,
+      3.266,
+      19.972,
+      20.259
+     ],
+     "mitte_u": 3.079,
+     "breite": {
+      "wert": 0.374,
+      "punkte": 22,
+      "rest": 0.003,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 2
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 20.259,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 19.972,
+      "quelle": "fleckrand",
+      "kantenpunkte": 2,
+      "fleckrand": 19.972
+     },
+     "laibung_tiefe": {
+      "wolke": 0.112,
+      "wolke_zellen": 12,
+      "kanten": null,
+      "kantenpunkte": 2
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.003,
+       "median": 0.003,
+       "punkte": 22
+      },
+      "rundbogen": {
+       "rest": 0.018,
+       "median": 0.016,
+       "punkte": 22
+      },
+      "segmentbogen": {
+       "rest": 0.004,
+       "median": 0.003,
+       "punkte": 22
+      },
+      "spitzbogen": {
+       "rest": 0.02,
+       "median": 0.018,
+       "punkte": 22
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.84,
+     "anteil_hinten": 1.0,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f00_wand_o5"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      1.392,
+      1.666,
+      20.572,
+      20.959
+     ],
+     "mitte_u": 1.529,
+     "breite": {
+      "wert": 0.274,
+      "punkte": 26,
+      "rest": 0.003,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 20.959,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 20.572,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 20.572
+     },
+     "laibung_tiefe": {
+      "wolke": 0.956,
+      "wolke_zellen": 9,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.003,
+       "median": 0.002,
+       "punkte": 26
+      },
+      "rundbogen": {
+       "rest": 0.019,
+       "median": 0.009,
+       "punkte": 26
+      },
+      "segmentbogen": {
+       "rest": 0.003,
+       "median": 0.003,
+       "punkte": 26
+      },
+      "spitzbogen": {
+       "rest": 0.019,
+       "median": 0.009,
+       "punkte": 26
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.78,
+     "anteil_hinten": 0.75,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f00_wand_o6"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.075 gegen rundbogen 0.051: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -2.788,
+      -1.06,
+      23.352,
+      25.606
+     ],
+     "mitte_u": -1.924,
+     "breite": {
+      "wert": 1.728,
+      "punkte": 394,
+      "rest": 0.039,
+      "kantenpunkte_links": 94,
+      "kantenpunkte_rechts": 2
+     },
+     "kaempfer": {
+      "wert": 25.182,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 25.606,
+      "stich": 0.424,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 23.28,
+      "quelle": "kanten",
+      "kantenpunkte": 153,
+      "fleckrand": 23.352
+     },
+     "laibung_tiefe": {
+      "wolke": 0.142,
+      "wolke_zellen": 520,
+      "kanten": 0.26,
+      "kantenpunkte": 96
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.075,
+       "median": 0.076,
+       "punkte": 394
+      },
+      "rundbogen": {
+       "rest": 0.051,
+       "median": 0.058,
+       "punkte": 394
+      },
+      "segmentbogen": {
+       "rest": 0.039,
+       "median": 0.054,
+       "punkte": 394
+      },
+      "spitzbogen": {
+       "rest": 0.051,
+       "median": 0.058,
+       "punkte": 394
+      }
+     },
+     "kantenpunkte_am_umriss": 46,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.98,
+     "anteil_hinten": 0.92,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (segmentbogen)",
+      "Form aus dem Rand des Wolkenflecks: nur 46 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.08,
+     "innen": [
+      {
+       "form": "unbestimmt",
+       "sicher": true,
+       "form_grund": "sturz 0.029 gegen rundbogen 0.027: kein klarer Sieger (Faktor 0.6)",
+       "form_quelle": "wolkenrand",
+       "zone": [
+        -2.206,
+        -1.594,
+        23.592,
+        25.05
+       ],
+       "mitte_u": -1.9,
+       "breite": {
+        "wert": 0.612,
+        "punkte": 162,
+        "rest": 0.025,
+        "kantenpunkte_links": 56,
+        "kantenpunkte_rechts": 5
+       },
+       "kaempfer": {
+        "wert": 24.852,
+        "hinweis": null
+       },
+       "scheitel": {
+        "wert": 25.05,
+        "stich": 0.198,
+        "kantenpunkte": 0,
+        "rest_kanten": null
+       },
+       "sohlbank": {
+        "wert": 23.592,
+        "quelle": "boden",
+        "kantenpunkte": 4,
+        "fleckrand": 23.592
+       },
+       "laibung_tiefe": {
+        "wolke": 0.301,
+        "wolke_zellen": 136,
+        "kanten": 0.35,
+        "kantenpunkte": 61
+       },
+       "radius": null,
+       "reste": {
+        "sturz": {
+         "rest": 0.029,
+         "median": 0.01,
+         "punkte": 162
+        },
+        "rundbogen": {
+         "rest": 0.027,
+         "median": 0.005,
+         "punkte": 162
+        },
+        "segmentbogen": {
+         "rest": 0.025,
+         "median": 0.005,
+         "punkte": 162
+        },
+        "spitzbogen": {
+         "rest": 0.027,
+         "median": 0.004,
+         "punkte": 162
+        }
+       },
+       "kantenpunkte_am_umriss": 3,
+       "umriss_belegt": 0.0,
+       "ring_wand": 0.96,
+       "anteil_hinten": 1.0,
+       "annahmen": [
+        "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (segmentbogen)",
+        "ANNAHME: Schwelle = Boden (unterste Wandzeile bzw. unterste Kantenpunkte); keine eigene Schwellenkante",
+        "Form aus dem Rand des Wolkenflecks: nur 3 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+       ]
+      }
+     ],
+     "id": "f00_wand_o7"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.086 gegen rundbogen 0.071: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      1.45,
+      3.088,
+      23.372,
+      25.591
+     ],
+     "mitte_u": 2.269,
+     "breite": {
+      "wert": 1.638,
+      "punkte": 282,
+      "rest": 0.057,
+      "kantenpunkte_links": 50,
+      "kantenpunkte_rechts": 54
+     },
+     "kaempfer": {
+      "wert": 25.182,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 25.591,
+      "stich": 0.409,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 23.33,
+      "quelle": "kanten",
+      "kantenpunkte": 202,
+      "fleckrand": 23.372
+     },
+     "laibung_tiefe": {
+      "wolke": 0.128,
+      "wolke_zellen": 335,
+      "kanten": 0.16,
+      "kantenpunkte": 104
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.086,
+       "median": 0.068,
+       "punkte": 282
+      },
+      "rundbogen": {
+       "rest": 0.071,
+       "median": 0.059,
+       "punkte": 282
+      },
+      "segmentbogen": {
+       "rest": 0.057,
+       "median": 0.058,
+       "punkte": 282
+      },
+      "spitzbogen": {
+       "rest": 0.071,
+       "median": 0.059,
+       "punkte": 282
+      }
+     },
+     "kantenpunkte_am_umriss": 105,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.97,
+     "anteil_hinten": 0.99,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (segmentbogen)",
+      "Form aus dem Rand des Wolkenflecks: nur 105 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "innen": [
+      {
+       "form": "unbestimmt",
+       "sicher": true,
+       "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+       "form_quelle": "wolkenrand",
+       "zone": [
+        2.095,
+        2.567,
+        23.672,
+        24.948
+       ],
+       "mitte_u": 2.331,
+       "breite": {
+        "wert": 0.471,
+        "punkte": 106,
+        "rest": 0.026,
+        "kantenpunkte_links": 127,
+        "kantenpunkte_rechts": 2
+       },
+       "kaempfer": {
+        "wert": null,
+        "hinweis": "gerader Sturz: kein Kaempfer"
+       },
+       "scheitel": {
+        "wert": 24.948,
+        "stich": 0.0,
+        "kantenpunkte": 0,
+        "rest_kanten": null
+       },
+       "sohlbank": {
+        "wert": 23.672,
+        "quelle": "fleckrand",
+        "kantenpunkte": 1,
+        "fleckrand": 23.672
+       },
+       "laibung_tiefe": {
+        "wolke": 0.339,
+        "wolke_zellen": 63,
+        "kanten": 0.21,
+        "kantenpunkte": 129
+       },
+       "radius": null,
+       "reste": {
+        "sturz": {
+         "rest": 0.026,
+         "median": 0.004,
+         "punkte": 106
+        },
+        "rundbogen": {
+         "rest": 0.029,
+         "median": 0.006,
+         "punkte": 106
+        },
+        "segmentbogen": {
+         "rest": 0.026,
+         "median": 0.004,
+         "punkte": 106
+        },
+        "spitzbogen": {
+         "rest": 0.029,
+         "median": 0.006,
+         "punkte": 106
+        }
+       },
+       "kantenpunkte_am_umriss": 26,
+       "umriss_belegt": 0.27,
+       "ring_wand": 0.94,
+       "anteil_hinten": 1.0,
+       "annahmen": [
+        "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+        "Form aus dem Rand des Wolkenflecks: nur 26 Kantenpunkte am Umriss, 27% der Umrisslaenge belegt (noetig 40 / 50%)"
+       ]
+      }
+     ],
+     "id": "f00_wand_o8"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.066 gegen rundbogen 0.066: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -1.653,
+      -0.42,
+      27.872,
+      28.509
+     ],
+     "mitte_u": -1.036,
+     "breite": {
+      "wert": 1.233,
+      "punkte": 94,
+      "rest": 0.056,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": 28.299,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 28.509,
+      "stich": 0.21,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 27.872,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 27.872
+     },
+     "laibung_tiefe": {
+      "wolke": 0.088,
+      "wolke_zellen": 6,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.066,
+       "median": 0.052,
+       "punkte": 94
+      },
+      "rundbogen": {
+       "rest": 0.066,
+       "median": 0.05,
+       "punkte": 94
+      },
+      "segmentbogen": {
+       "rest": 0.056,
+       "median": 0.046,
+       "punkte": 94
+      },
+      "spitzbogen": {
+       "rest": 0.1,
+       "median": 0.083,
+       "punkte": 94
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.89,
+     "anteil_hinten": 0.09,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (segmentbogen)",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f00_wand_o9"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": false,
+     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -2.887,
+      -2.549,
+      27.972,
+      28.451
+     ],
+     "mitte_u": -2.718,
+     "breite": {
+      "wert": 0.338,
+      "punkte": 42,
+      "rest": 0.027,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": 28.443,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 28.451,
+      "stich": 0.008,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 27.972,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 27.972
+     },
+     "laibung_tiefe": {
+      "wolke": null,
+      "wolke_zellen": 0,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.027,
+       "median": 0.016,
+       "punkte": 42
+      },
+      "rundbogen": {
+       "rest": 0.029,
+       "median": 0.021,
+       "punkte": 42
+      },
+      "segmentbogen": {
+       "rest": 0.027,
+       "median": 0.016,
+       "punkte": 42
+      },
+      "spitzbogen": {
+       "rest": 0.06,
+       "median": 0.042,
+       "punkte": 42
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.86,
+     "anteil_hinten": 0.0,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (segmentbogen)",
+      "ANNAHME: Durchblick oder Wolkenluecke - im Inneren keine Tiefenpunkte, Laibungstiefe nicht gemessen",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f00_wand_o10"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": false,
+     "form_grund": "sturz 0.068 gegen rundbogen 0.089: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      3.151,
+      3.631,
+      31.672,
+      32.817
+     ],
+     "mitte_u": 3.391,
+     "breite": {
+      "wert": 0.48,
+      "punkte": 126,
+      "rest": 0.068,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 32.817,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 31.672,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 31.672
+     },
+     "laibung_tiefe": {
+      "wolke": null,
+      "wolke_zellen": 4,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.068,
+       "median": 0.058,
+       "punkte": 126
+      },
+      "rundbogen": {
+       "rest": 0.089,
+       "median": 0.059,
+       "punkte": 126
+      },
+      "segmentbogen": {
+       "rest": 0.069,
+       "median": 0.059,
+       "punkte": 126
+      },
+      "spitzbogen": {
+       "rest": 0.12,
+       "median": 0.051,
+       "punkte": 126
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.93,
+     "anteil_hinten": 0.07,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "ANNAHME: Durchblick oder Wolkenluecke - im Inneren keine Tiefenpunkte, Laibungstiefe nicht gemessen",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f00_wand_o11"
+    }
+   ],
+   "kantenpunkte": 56768,
+   "zelle": 0.1,
+   "schwelle_hinten": 0.07,
+   "boden_z": 1.57,
+   "wolkenpunkte": 3773682,
+   "quelle": "wolke+kanten"
+  },
+  "f02_wand": {
+   "oeffnungen": [
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.157 gegen rundbogen 0.212: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -1.61,
+      0.327,
+      2.872,
+      4.948
+     ],
+     "mitte_u": -0.641,
+     "breite": {
+      "wert": 1.936,
+      "punkte": 396,
+      "rest": 0.157,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 3
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 4.948,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 2.872,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 2.872
+     },
+     "laibung_tiefe": {
+      "wolke": 2.405,
+      "wolke_zellen": 91,
+      "kanten": null,
+      "kantenpunkte": 3
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.157,
+       "median": 0.125,
+       "punkte": 396
+      },
+      "rundbogen": {
+       "rest": 0.212,
+       "median": 0.177,
+       "punkte": 396
+      },
+      "segmentbogen": {
+       "rest": 0.158,
+       "median": 0.126,
+       "punkte": 396
+      },
+      "spitzbogen": {
+       "rest": 0.212,
+       "median": 0.175,
+       "punkte": 396
+      }
+     },
+     "kantenpunkte_am_umriss": 6,
+     "umriss_belegt": 0.1,
+     "ring_wand": 0.73,
+     "anteil_hinten": 0.25,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 6 Kantenpunkte am Umriss, 10% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f02_wand_o0"
+    }
+   ],
+   "kantenpunkte": 2464,
+   "zelle": 0.1,
+   "schwelle_hinten": 0.096,
+   "boden_z": -0.03,
+   "wolkenpunkte": 2015208,
+   "quelle": "wolke+kanten"
+  },
+  "f03_wand": {
+   "oeffnungen": [
+    {
+     "form": "sturz",
+     "sicher": true,
+     "form_grund": "Rest sturz 0.003, rundbogen 0.067, segmentbogen 0.016",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -4.482,
+      -3.709,
+      3.072,
+      3.359
+     ],
+     "mitte_u": -4.096,
+     "breite": {
+      "wert": 0.774,
+      "punkte": 38,
+      "rest": 0.003,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 3.359,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 3.072,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 3.072
+     },
+     "laibung_tiefe": {
+      "wolke": 0.144,
+      "wolke_zellen": 24,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.003,
+       "median": 0.003,
+       "punkte": 38
+      },
+      "rundbogen": {
+       "rest": 0.067,
+       "median": 0.066,
+       "punkte": 38
+      },
+      "segmentbogen": {
+       "rest": 0.016,
+       "median": 0.007,
+       "punkte": 38
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.84,
+     "anteil_hinten": 1.0,
+     "annahmen": [
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f03_wand_o0"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.057 gegen rundbogen 0.076: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -1.833,
+      -1.318,
+      8.672,
+      11.153
+     ],
+     "mitte_u": -1.575,
+     "breite": {
+      "wert": 0.515,
+      "punkte": 306,
+      "rest": 0.057,
+      "kantenpunkte_links": 0,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 11.153,
+      "stich": 0.0,
+      "kantenpunkte": 0,
+      "rest_kanten": null
+     },
+     "sohlbank": {
+      "wert": 8.672,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 8.672
+     },
+     "laibung_tiefe": {
+      "wolke": 0.275,
+      "wolke_zellen": 39,
+      "kanten": null,
+      "kantenpunkte": 0
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.057,
+       "median": 0.125,
+       "punkte": 306
+      },
+      "rundbogen": {
+       "rest": 0.076,
+       "median": 0.134,
+       "punkte": 306
+      },
+      "segmentbogen": {
+       "rest": 0.12,
+       "median": 0.139,
+       "punkte": 306
+      },
+      "spitzbogen": {
+       "rest": 0.12,
+       "median": 0.139,
+       "punkte": 306
+      }
+     },
+     "kantenpunkte_am_umriss": 0,
+     "umriss_belegt": 0.0,
+     "ring_wand": 0.82,
+     "anteil_hinten": 0.29,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 0 Kantenpunkte am Umriss, 0% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f03_wand_o1"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      4.117,
+      4.653,
+      19.972,
+      20.357
+     ],
+     "mitte_u": 4.385,
+     "breite": {
+      "wert": 0.536,
+      "punkte": 38,
+      "rest": 0.022,
+      "kantenpunkte_links": 118,
+      "kantenpunkte_rechts": 42
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 20.357,
+      "stich": 0.0,
+      "kantenpunkte": 40,
+      "rest_kanten": 0.144
+     },
+     "sohlbank": {
+      "wert": 20.16,
+      "quelle": "kanten",
+      "kantenpunkte": 14,
+      "fleckrand": 19.972
+     },
+     "laibung_tiefe": {
+      "wolke": 0.083,
+      "wolke_zellen": 23,
+      "kanten": 0.29,
+      "kantenpunkte": 200
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.022,
+       "median": 0.004,
+       "punkte": 38
+      },
+      "rundbogen": {
+       "rest": 0.027,
+       "median": 0.021,
+       "punkte": 38
+      },
+      "segmentbogen": {
+       "rest": 0.024,
+       "median": 0.014,
+       "punkte": 38
+      },
+      "spitzbogen": {
+       "rest": 0.027,
+       "median": 0.018,
+       "punkte": 38
+      }
+     },
+     "kantenpunkte_am_umriss": 119,
+     "umriss_belegt": 0.92,
+     "ring_wand": 1.0,
+     "anteil_hinten": 1.0,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 119 Kantenpunkte am Umriss, 92% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f03_wand_o2"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": false,
+     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      1.518,
+      1.792,
+      22.172,
+      22.559
+     ],
+     "mitte_u": 1.655,
+     "breite": {
+      "wert": 0.274,
+      "punkte": 26,
+      "rest": 0.003,
+      "kantenpunkte_links": 36,
+      "kantenpunkte_rechts": 39
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 22.559,
+      "stich": 0.0,
+      "kantenpunkte": 32,
+      "rest_kanten": 0.124
+     },
+     "sohlbank": {
+      "wert": 22.45,
+      "quelle": "kanten",
+      "kantenpunkte": 29,
+      "fleckrand": 22.172
+     },
+     "laibung_tiefe": {
+      "wolke": null,
+      "wolke_zellen": 4,
+      "kanten": 0.21,
+      "kantenpunkte": 107
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.003,
+       "median": 0.002,
+       "punkte": 26
+      },
+      "rundbogen": {
+       "rest": 0.019,
+       "median": 0.009,
+       "punkte": 26
+      },
+      "segmentbogen": {
+       "rest": 0.003,
+       "median": 0.003,
+       "punkte": 26
+      },
+      "spitzbogen": {
+       "rest": 0.019,
+       "median": 0.01,
+       "punkte": 26
+      }
+     },
+     "kantenpunkte_am_umriss": 96,
+     "umriss_belegt": 1.0,
+     "ring_wand": 0.75,
+     "anteil_hinten": 0.33,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "ANNAHME: Durchblick oder Wolkenluecke - im Inneren keine Tiefenpunkte, Laibungstiefe nicht gemessen",
+      "Form aus dem Rand des Wolkenflecks: nur 96 Kantenpunkte am Umriss, 100% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f03_wand_o3"
+    },
+    {
+     "form": "segmentbogen",
+     "sicher": true,
+     "form_grund": "Rest sturz 0.222, rundbogen 0.222, segmentbogen 0.047, spitzbogen 0.222",
+     "form_quelle": "kanten",
+     "zone": [
+      0.309,
+      1.26,
+      23.272,
+      24.05
+     ],
+     "mitte_u": 0.785,
+     "breite": {
+      "wert": 0.951,
+      "punkte": 148,
+      "rest": 0.047,
+      "kantenpunkte_links": 154,
+      "kantenpunkte_rechts": 41
+     },
+     "kaempfer": {
+      "wert": 23.972,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 24.05,
+      "stich": 0.078,
+      "kantenpunkte": 50,
+      "rest_kanten": 0.082
+     },
+     "sohlbank": {
+      "wert": 23.43,
+      "quelle": "kanten",
+      "kantenpunkte": 47,
+      "fleckrand": 23.272
+     },
+     "laibung_tiefe": {
+      "wolke": 0.173,
+      "wolke_zellen": 35,
+      "kanten": 0.21,
+      "kantenpunkte": 245
+     },
+     "radius": 1.49,
+     "reste": {
+      "sturz": {
+       "rest": 0.222,
+       "median": 0.043,
+       "punkte": 148
+      },
+      "rundbogen": {
+       "rest": 0.222,
+       "median": 0.043,
+       "punkte": 148
+      },
+      "segmentbogen": {
+       "rest": 0.047,
+       "median": 0.039,
+       "punkte": 148
+      },
+      "spitzbogen": {
+       "rest": 0.222,
+       "median": 0.043,
+       "punkte": 148
+      }
+     },
+     "kantenpunkte_am_umriss": 148,
+     "umriss_belegt": 1.0,
+     "ring_wand": 0.9,
+     "anteil_hinten": 0.95,
+     "annahmen": [],
+     "zelle": 0.1,
+     "id": "f03_wand_o4"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.154 gegen rundbogen 0.197: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      0.577,
+      2.141,
+      26.372,
+      27.252
+     ],
+     "mitte_u": 1.359,
+     "breite": {
+      "wert": 1.564,
+      "punkte": 198,
+      "rest": 0.154,
+      "kantenpunkte_links": 130,
+      "kantenpunkte_rechts": 380
+     },
+     "kaempfer": {
+      "wert": 27.18,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 27.252,
+      "stich": 0.072,
+      "kantenpunkte": 658,
+      "rest_kanten": 0.16
+     },
+     "sohlbank": {
+      "wert": 26.64,
+      "quelle": "kanten",
+      "kantenpunkte": 50,
+      "fleckrand": 26.372
+     },
+     "laibung_tiefe": {
+      "wolke": 0.098,
+      "wolke_zellen": 86,
+      "kanten": 0.3,
+      "kantenpunkte": 1168
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.154,
+       "median": 0.073,
+       "punkte": 198
+      },
+      "rundbogen": {
+       "rest": 0.197,
+       "median": 0.153,
+       "punkte": 198
+      },
+      "segmentbogen": {
+       "rest": 0.154,
+       "median": 0.076,
+       "punkte": 198
+      },
+      "spitzbogen": {
+       "rest": 0.198,
+       "median": 0.155,
+       "punkte": 198
+      }
+     },
+     "kantenpunkte_am_umriss": 1293,
+     "umriss_belegt": 1.0,
+     "ring_wand": 0.83,
+     "anteil_hinten": 0.68,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (segmentbogen)",
+      "Form aus dem Rand des Wolkenflecks: nur 1293 Kantenpunkte am Umriss, 100% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f03_wand_o5"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.118 gegen rundbogen 0.097: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      -0.628,
+      0.25,
+      26.472,
+      27.003
+     ],
+     "mitte_u": -0.189,
+     "breite": {
+      "wert": 0.878,
+      "punkte": 74,
+      "rest": 0.097,
+      "kantenpunkte_links": 10,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": 26.564,
+      "hinweis": null
+     },
+     "scheitel": {
+      "wert": 27.003,
+      "stich": 0.439,
+      "kantenpunkte": 779,
+      "rest_kanten": 0.122
+     },
+     "sohlbank": {
+      "wert": 26.73,
+      "quelle": "kanten",
+      "kantenpunkte": 66,
+      "fleckrand": 26.472
+     },
+     "laibung_tiefe": {
+      "wolke": 0.092,
+      "wolke_zellen": 13,
+      "kanten": 0.19,
+      "kantenpunkte": 789
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.118,
+       "median": 0.099,
+       "punkte": 74
+      },
+      "rundbogen": {
+       "rest": 0.097,
+       "median": 0.075,
+       "punkte": 74
+      },
+      "segmentbogen": {
+       "rest": 0.117,
+       "median": 0.104,
+       "punkte": 74
+      },
+      "spitzbogen": {
+       "rest": 0.142,
+       "median": 0.138,
+       "punkte": 74
+      }
+     },
+     "kantenpunkte_am_umriss": 838,
+     "umriss_belegt": 1.0,
+     "ring_wand": 0.77,
+     "anteil_hinten": 0.34,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (rundbogen)",
+      "Form aus dem Rand des Wolkenflecks: nur 838 Kantenpunkte am Umriss, 100% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f03_wand_o6"
+    },
+    {
+     "form": "unbestimmt",
+     "sicher": true,
+     "form_grund": "sturz 0.030 gegen rundbogen 0.030: kein klarer Sieger (Faktor 0.6)",
+     "form_quelle": "wolkenrand",
+     "zone": [
+      2.617,
+      3.091,
+      27.072,
+      27.359
+     ],
+     "mitte_u": 2.854,
+     "breite": {
+      "wert": 0.474,
+      "punkte": 26,
+      "rest": 0.003,
+      "kantenpunkte_links": 169,
+      "kantenpunkte_rechts": 0
+     },
+     "kaempfer": {
+      "wert": null,
+      "hinweis": "gerader Sturz: kein Kaempfer"
+     },
+     "scheitel": {
+      "wert": 27.359,
+      "stich": 0.0,
+      "kantenpunkte": 175,
+      "rest_kanten": 0.236
+     },
+     "sohlbank": {
+      "wert": 27.072,
+      "quelle": "fleckrand",
+      "kantenpunkte": 0,
+      "fleckrand": 27.072
+     },
+     "laibung_tiefe": {
+      "wolke": 0.088,
+      "wolke_zellen": 15,
+      "kanten": 0.11,
+      "kantenpunkte": 344
+     },
+     "radius": null,
+     "reste": {
+      "sturz": {
+       "rest": 0.003,
+       "median": 0.003,
+       "punkte": 26
+      },
+      "rundbogen": {
+       "rest": 0.027,
+       "median": 0.024,
+       "punkte": 26
+      },
+      "segmentbogen": {
+       "rest": 0.004,
+       "median": 0.004,
+       "punkte": 26
+      },
+      "spitzbogen": {
+       "rest": 0.079,
+       "median": 0.086,
+       "punkte": 26
+      }
+     },
+     "kantenpunkte_am_umriss": 315,
+     "umriss_belegt": 0.7,
+     "ring_wand": 0.83,
+     "anteil_hinten": 1.0,
+     "annahmen": [
+      "ANNAHME: Form unbestimmt - Masse aus der Form mit dem kleinsten Rest (sturz)",
+      "Form aus dem Rand des Wolkenflecks: nur 315 Kantenpunkte am Umriss, 70% der Umrisslaenge belegt (noetig 40 / 50%)"
+     ],
+     "zelle": 0.1,
+     "id": "f03_wand_o7"
+    }
+   ],
+   "kantenpunkte": 93211,
+   "zelle": 0.1,
+   "schwelle_hinten": 0.07,
+   "boden_z": 0.17,
+   "wolkenpunkte": 1798342,
+   "quelle": "wolke+kanten"
+  }
+ }
+}
