@@ -75,17 +75,17 @@ Was daran neu ist (ehrlich): die Einzelteile gab es alle (Sweep 16.11., Wandbild
 4. Kaufhaus-Gegenprobe begonnen, obwohl das Schwabentor nicht fertig war.
 5. Schwellen an einem Bauwerk eingestellt (Streuung 0,6 lag genau auf dem Messwert).
 
-## Nachtrag 02:40 - Form aus dem Bild der Erkerebene: zwei Proben (von Hand angestoßen, noch KEINE Kettenstufe)
+## Nachtrag ~01:53 (Uhrzeit berichtigt, stand falsch als 02:40) - Form aus dem Bild der Erkerebene: zwei Proben (von Hand angestoßen, noch KEINE Kettenstufe)
 - **Probe A, Farbflächen + Sweep-Tiefe je Fläche** (`tools/ebenen_form.py`, erste Fassung; Bild `audit/ebenen_form.jpg`): Brüstung und Konsolen werden als Front erkannt, die Ränder sind aber ausgefranst. Fehler: die drei Pfosten fehlen (hängen farblich am dunklen Dachschatten, die geglättete Sweep-Tiefe sagt dort „Wand“), ein Stück des Wandbilds gilt fälschlich als Front (dort kreuzen die Oberleitungsdrähte, der Sweep misst die Drähte). Feine Sweep-Tiefe mit 2-cm-Zellen (`bauplan/tiefe_fein`) ist je Zelle zu verrauscht für eine Maske. URSACHE benannt: Farbklassen trennen Material nicht sauber, die Sweep-Tiefe löst unter ~0,4 m nicht auf.
 - **Probe B, triangulierte Fotokanten auf das Bild gelegt** (`kanten_vorbau/sweep.npz`, Bild `audit/erker_kantenpunkte_probe.jpg`): 7847 Kantenpunkte in Fronttiefe. Sie zeichnen den Holm (z ≈ 11,50) und die Unterkante der Brüstung samt den Aussparungen der Konsolen (z ≈ 10,25) auf wenige cm genau nach (Handstand 11,42 / 10,22). Kantenpunkte in Wandtiefe liegen an den Strebenfüßen. Senkrechte Kanten (Pfosten) fehlen fast ganz. ANNAHME zur Ursache: die Kameras stehen entlang der Straßenachse, das gibt Parallaxe in der Höhe, kaum seitlich; außerdem suchte der Sweep nur im 0,5-m-Band um das alte Modell mit begrenzter Punktzahl.
 - **Folgerung für die METHODE (Schritt 4 präzisiert):** Die Kanten kommen aus den triangulierten Fotokanten auf der Ebene (Kernmethode), nicht aus Farbflächen. Farbflächen taugen höchstens zum Füllen zwischen belegten Kanten.
 - Nächste Schritte: (1) Kanten-Sweep gezielt und dicht je gefundener Ebene (Box = Zone der Ebene). (2) Bänder (Brüstungskasten, Traufband) mit diesen Kanten begrenzen statt mit dem groben Raster. (3) Stäbe/Pfosten über den Mehrfoto-Sweep für Linien (Skill linien-features), nicht über Helligkeit. (4) Dann Kettenstufe und Katalog-Galerie entfernen.
 
-## ENTSCHEIDUNG Nutzer 21.11. ~02:55
+## ENTSCHEIDUNG Nutzer 21.11. ~01:55 (berichtigt)
 „So wenig allgemeine Bauteile wie möglich. Untersuche, wie weit du aus Kanten triangulieren kannst, und was nicht möglich ist, wird aus allgemeinen Bauteilen gebaut. Durch das Kantenerkennen müssen wir umso genauer werden mit Maßen.“
 Befund dazu: Die Galerie in schwab_v3 war selbst ein Baukastenteil (`Wand.galerie`, 16.11.) mit 4 von Hand in 3 Fotos angeklickten, triangulierten Punkten (M-113231-001: Unsicherheit 0,38 m), Stückzahlen am Foto gezählt.
 
-## Nachtrag 03:15 - UNTERSUCHUNG: Wie weit trägt die Kanten-Triangulation auf einer Sweep-Ebene? (Erker f00, von Hand angestoßen)
+## Nachtrag ~01:58 (berichtigt, stand falsch als 03:15) - UNTERSUCHUNG: Wie weit trägt die Kanten-Triangulation auf einer Sweep-Ebene? (Erker f00, von Hand angestoßen)
 Aufruf (nachspielbar): Ebene als Fläche `kanten_ebene_f00/ebene.stl` (Rechteck u -4,6..5,8 / z 8,0..20,8 bei w +0,9), dann
 `kanten_tiefe_sweep_flaeche.py kanten/kam_wahl.json kanten/stabil kanten_ebene_f00/sweep.npz --flaeche ebene.stl --flaeche_skala 1.0 --box3 <box.txt> --band 1.6 --ziel_auto --nbdist 80 --refs 80 --nb 12 --maxpx 150000`. Laufzeit wenige Minuten (GPU). 54 463 Kantenpunkte in der Zone (vorher 13 041 aus dem Gesamtlauf). Bild `audit/erker_kanten_dicht_probe.jpg`.
 GEHT (Handstand in Klammern):
@@ -102,7 +102,7 @@ GEHT NICHT:
 ANNAHME zur Ursache der schwachen senkrechten Kanten: Kamerastandorte liegen entlang der Straßenachse (Parallaxe vor allem in der Höhe). Nicht geprüft.
 Folgerung nach Nutzerentscheidung: Brüstungskasten, Konsolen/Streben (Zahl, Lage, Neigung) und Breite/Ausladung aus Kanten bauen; Pfosten: Lage aus Kanten, Querschnitt Bauteil-Standard; Vordach: allgemeines Bauteil mit Traufe/Anschluss aus der Uneinigkeitskarte.
 
-## LEITBILD Nutzer 21.11. ~03:25 (gilt für die METHODE oben)
+## LEITBILD Nutzer 21.11. ~02:00 (berichtigt) (gilt für die METHODE oben)
 „Das, was ich damals von Hand gemacht habe, wo ich dir gesagt habe, was noch nicht passt, das muss jetzt automatisch laufen. Du musst mich ersetzen durch eine automatische Bauplanabweichung, Fotokantenabweichung, die Tiefen sweepen und mehrere Baupläne auf mehrere Ebenen machen und dort die Abweichungen mit diesen Bauplänen abgleichen.“
 Umsetzung als SCHLEIFE (ersetzt den Nutzer als Prüfer):
 1. Ebenen finden (Tiefen-Sweep je Wand) und je Ebene einen Bauplan rechnen (feines Bild + dichte triangulierte Fotokanten auf dieser Ebene).
