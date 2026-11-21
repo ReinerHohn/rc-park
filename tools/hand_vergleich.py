@@ -15,11 +15,35 @@ def lade(p):
     except Exception: return None
 
 
+FORM_NAME = (("rundbogen", "rund"), ("spitzbogen", "spitz"), ("stichbogen", "stich"), ("segmentbogen", "stich"), ("korbbogen", "korb"), ("rechteckfenster", "gerade"))
+
+
+def soll_form(bauteil):
+    """Formfamilie aus dem BAUTEILNAMEN der Referenz (kein Mass aus dem Handstand): 'rundbogenfenster' -> 'rund'. None = Name sagt keine Form."""
+    return next((f for k, f in FORM_NAME if k in bauteil), None)
+
+
+def form_ist(fz, tor, fid):
+    """Gebaute Formfamilie der gezaehlten Fenster (bogen.form, Rechteck = 'gerade') + Urteil des Form-Tors (audit/fenster_form_tor.json) an denselben Kaesten.
+    Kein Form-Tor-Bericht = 'unsicher' (die Form ist dann nicht an den Fotos geprueft)."""
+    fo = sorted({(q.get("bogen") or {}).get("form", "gerade") for q in fz})
+    L = [t for k, v in ((tor.get("fassaden") or {}).items() if tor else []) if (fid is None or k == fid) and isinstance(v, list) for t in v]
+    ur = []
+    for q in fz:
+        t = next((t for t in L if isinstance(t, dict) and max(abs(a - b) for a, b in zip(t["kasten"], (q["u0"], q["u1"], q["z0"], q["z1"]))) < 0.05), None)
+        ur.append(t["urteil"] if t else "FEHLT")
+    e = dict(ist=fo[0] if len(fo) == 1 else ",".join(fo), tor=ur)
+    if "FALSCH" in ur: e["tor_falsch"] = True; e["grund"] = "Form-Tor: Einzelfotos sagen eine andere Formfamilie"
+    elif any(u != "PASST" for u in ur): e["unsicher"] = True; e["grund"] = "Form-Tor fehlt/unbestimmt (< 3 Fotos) - Form nicht an Fotos belegt"
+    if any(q.get("form_unsicher") for q in fz): e["unsicher"] = True; e["grund"] = "nischen_fenster: " + next(q["form_unsicher"] for q in fz if q.get("form_unsicher"))
+    return e
+
+
 def main():
     obj = os.path.abspath(sys.argv[1]); od = os.path.dirname(obj); A = os.path.join(od, "audit"); R = lade(os.path.join(od, "referenz_hand.json"))
     if not R: print("keine referenz_hand.json"); return 3
     VB = lade(os.path.join(A, "vorbauten_auto.json")) or {}; UH = lade(os.path.join(A, "uhren_auto.json")) or {}; OE = lade(os.path.join(A, "oeffnungen_auto.json")) or {}
-    FE = lade(os.path.join(A, "fenster_auto.json")) or {}; EL = lade(os.path.join(od, "elemente.json")) or []; txt = " ".join(e.get("element", "") for e in EL).lower()
+    FE = lade(os.path.join(A, "fenster_auto.json")) or {}; TOR = lade(os.path.join(A, "fenster_form_tor.json")) or {}; EL = lade(os.path.join(od, "elemente.json")) or []; txt = " ".join(e.get("element", "") for e in EL).lower()
     gal = [g["galerie"] for F in VB.get("fassaden", []) for g in F["gruppen"] if g.get("galerie")]
     ist = {}
     km = [(g["kanten_mass"], g) for F in VB.get("fassaden", []) for g in F["gruppen"] if (g.get("kanten_mass") or {}).get("kasten")]      # 21.11.2026: Masse aus den triangulierten Fotokanten gehen vor
@@ -42,7 +66,9 @@ def main():
             fid_ = next((k for k, F in UH.items() if isinstance(F, dict) and F.get("uhren")), None)       # Seite der Uhr = Stadtseite (Referenz)
             z_ = r["masse"]["sohlbank_z"]; fz = [q for k, F in FE.items() if isinstance(F, dict) and (fid_ is None or k == fid_) for q in F.get("fenster", []) if abs(q["z0"] - z_) < 2.0]
             nb_ = lambda q: q.get("nische") or q          # 21.11.2026 tools/nischen_fenster.py: Nische als eigene Ebene - vorher galt die Fensteroeffnung (0,59 m) als 'Nische'
-            if fz: ist["rundbogenfenster"] = dict(anzahl=len(fz), sohlbank_z=round(sum(nb_(q)["z0"] for q in fz) / len(fz), 2), nische_breite=round(max(nb_(q)["u1"] - nb_(q)["u0"] for q in fz), 2))
+            if fz:
+                ist["rundbogenfenster"] = dict(anzahl=len(fz), sohlbank_z=round(sum(nb_(q)["z0"] for q in fz) / len(fz), 2), nische_breite=round(max(nb_(q)["u1"] - nb_(q)["u0"] for q in fz), 2))
+                ist["rundbogenfenster"]["_form"] = form_ist(fz, TOR, fid_)
     # 21.11.2026: Bauteile aus der Wolke (Kettenstufen wolke_rest -> koerper_auto.json, dach_profil_wolke -> dach_profil.json) - vorher nur Stichwort in elemente.json,
     # darum standen Treppenturm/Laterne/Ueberstand immer auf FEHLT, obwohl die Kette sie baut. Hier mit ihren gemessenen Massen.
     KA = lade(os.path.join(A, "koerper_auto.json")) or {}
@@ -68,6 +94,9 @@ def main():
     if ug: ist["umgang"] = dict(pfosten_je_seite=ug[0]["pfosten_je_seite"])
     for k, w in (("laterne", "laterne"), ("treppenturm", "treppenturm"), ("umgang", "umgang"), ("eckquader", "eckquader"), ("zeltdach_ueberstand", "ueberstand")):
         if w in txt: ist.setdefault(k, {})
+    for r in R["bauteile"]:                                                     # 21.11.2026 spaet: FORM je Bauteil mit Formnamen (rundbogen/spitzbogen/...), nicht nur Hoehe/Anzahl
+        sf = soll_form(r["bauteil"])
+        if sf and r["bauteil"] in ist and "_form" not in ist[r["bauteil"]] and r["bauteil"] != "tor": ist[r["bauteil"]]["_form"] = dict(ist=None, grund="Form nicht gemessen")
     erg = []; n_passt = 0
     for r in R["bauteile"]:
         b = r["bauteil"]; t = float(r.get("toleranz_m", 0.3))
@@ -80,6 +109,9 @@ def main():
             if i is None: ab[k] = dict(soll=s, ist=None, ok=False); continue
             ok = abs(float(i) - float(s)) <= (t if k not in ("anzahl", "pfosten", "streben", "pfosten_je_seite") else 0)
             ab[k] = dict(soll=s, ist=i, ok=ok)
+        sf = soll_form(b); fi_ = ist[b].get("_form")
+        if sf and fi_ is not None:          # Formfamilie: gebaute Form aller gezaehlten Umrisse UND Form-Tor an den Einzelfotos (tools/fenster_form_tor.py)
+            ab["form"] = dict(soll=sf, ist=fi_.get("ist"), ok=fi_.get("ist") == sf and not fi_.get("tor_falsch") and not fi_.get("unsicher"), grund=fi_.get("grund"))
         u = "PASST" if all(x["ok"] for x in ab.values()) else "FALSCH"; n_passt += u == "PASST"; erg.append(dict(bauteil=b, urteil=u, masse=ab, quelle=q_))
         if ann and u == "PASST": erg[-1]["hinweis"] = "ohne Handannahme(n): " + ", ".join(f"{k} Hand {r['masse'][k]} / Kette {ist[b].get(k)}" for k in ann if k in r["masse"])
     for e in erg:

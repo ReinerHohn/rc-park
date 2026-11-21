@@ -49,6 +49,9 @@ def main():
     fe += [] if "Foto A2:" in o else ["Hauptfoto nicht das scharfe A2: " + " | ".join(l for l in o.splitlines() if l.startswith("Foto "))]
     fe += [] if "Gegenfoto B:" in o else ["Gegenfoto nicht B: " + " | ".join(l for l in o.splitlines() if l.startswith("Gegenfoto"))]
     fe += [] if r.returncode == 0 and os.path.exists(os.path.join(d, "aus.npz")) and int(np.load(os.path.join(d, "aus.npz"))["steine"]) >= 20 else [f"keine Steine (rc {r.returncode}): " + o.strip().splitlines()[-1][:200] if o.strip() else "keine Ausgabe"]
+    if r.returncode == 0 and os.path.exists(os.path.join(d, "aus.npz")):      # 21.11.2026: ebene Steine + druckbare Rillen statt erfundener Bosse (quader_raster.quader_relief)
+        Za = np.load(os.path.join(d, "aus.npz")); qr_ = json.loads(str(Za["quader_relief"])) if "quader_relief" in Za.files else None
+        fe += [] if qr_ and qr_["rille_mm"][0] >= 0.8 - 1e-6 and qr_["rille_mm"][1] >= 0.4 - 1e-6 else [f"Steine ohne druckbare Rillen / ebene Stirnflaeche: {qr_}"]
     if fe or os.environ.get("TEST_ZEIGEN"): print(o)
     import shutil; shutil.rmtree(d, ignore_errors=True)
     print("\n".join("FEHLER " + x for x in fe) if fe else "steine_aus_foto Paar-Probe ok"); return 1 if fe else 0

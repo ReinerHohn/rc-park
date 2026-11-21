@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""vordach_profil.py - DACHPROFIL eines Vordachs aus Fotokanten (21.11.2026, Kettenstufe 'bauplan', nach tools/ebenen_masse.py).
+
+Anlass (Nutzer 21.11., audit/neben_eigen__IMG_20261106_113231.jpg Schwabentor Stadtseite): Vordach ueber dem Wandgemaelde ist im Foto ein GESCHWEIFTES Walmdach
+(gruen glasierte Ziegel, konkav, nach unten ausschwingende Traufe, geschweifte Seitenflaechen), im Modell eine ebene Platte. Anschluss (19,81) und Traufe (16,02)
+misst schon vorbauten_bauplan; die Dachflaeche selbst gibt der Kanten-Sweep nicht her (Ziegel = keine stabilen Kanten, METHODE_EBENEN_BAUPLAN 'Nicht: Dachflaeche').
+MESSUNG (KERNMETHODE: Form aus Fotokanten, SfM liefert die Kameras): die Gratlinien (Walmkanten) und die Traufe sind in jedem Foto von vorn/schraeg harte Kanten
+(Firstziegel, Umriss vor der Wand). Hypothesen eines Walm-Vordachs
+    Front:  z = z_t + (z_a - z_t) * g(a / A)      a = Abstand hinter der Traufe, A = w_t - w_a (Traufe bis Wand)
+    Seiten: z = z_t + (z_a - z_t) * g(b / As)     b = Abstand innerhalb der Seitentraufe, As = Ruecksprung des Walms an der Wand (As = 0: senkrechte Giebelseite)
+    g(s) = (exp(c s) - 1) / (exp(c) - 1)          c = 0 gerade, c > 0 GESCHWEIFT (flach an der Traufe, steil an der Wand), c < 0 gewoelbt (konvex)
+werden in jedes Foto projiziert (SfM-Kameras kanten/kam.json, k1-Verzeichnung) und gegen die Bildkanten (Canny, Abstandskarte) bewertet: Stufe 1 Traufe
+(w_t, seitlicher Ueberstand), Stufe 2 Grate + Wandanschlusslinie (c, As). Formfamilie gilt nur, wenn >= --min_fotos Fotos einzeln dieselbe Familie waehlen;
+sonst bleibt die Familie 'gerade' (ANNAHME im Ergebnis). Keine Werte aus dem Handstand.
+Ausgabe: audit/vordach_profil.json {fassaden: [{id, gruppe, u0, u1, w_wand, w_t, z_t, z_a, c, As, familie, profil [[w, z]...], fotos, je_foto, belegt}]} -> bauteile.vorbauten_aus_json
+(baut bauteile.vordach_walm) + Kontrollbild audit/vordach_profil.jpg (bestes Profil rot in den Fotos).
+Aufruf: vordach_profil.py <objekt.json> <kanten-ordner> [--fotos <ordner>] [--aus audit/vordach_profil.json] [--max_fotos 16] [--min_fotos 3]
+rc 0 = mindestens ein Vordach gemessen, rc 3 = kein Vordach in vorbauten_auto.json / keine Fotos.
+"""
+import sys, os, json, argparse, numpy as np
+
+C_GITTER = np.round(np.arange(-3.0, 6.01, 0.5), 2)          # Krummheit c (0 = gerade)
+
+
+def g_profil(s, c):
+    """Profilfunktion 0..1 (s = 0 Traufe, s = 1 Wand); c = 0 gerade, > 0 geschweift (konkav), < 0 konvex."""
+    s = np.asarray(s, float)
+    return s if abs(c) < 1e-6 else (np.exp(c * s) - 1.0) / (np.exp(c) - 1.0)
+
+
+def familie(c, schwelle=0.75):
+    return "gerade" if abs(c) < schwelle else ("geschweift" if c > 0 else "gewoelbt")
+
+
+def walm_kurven(u0, u1, w_a, w_t, z_t, z_a, c, As, n=24):
+    """3D-Kanten des Walm-Vordachs in Wandkoordinaten (u, z, w): zwei Grate (Traufecke -> Wand), Wandanschluss zwischen den Graten. Liste von (n, 3)-Arrays."""
+    t = np.linspace(0.0, 1.0, n); A = w_t - w_a; z = z_t + (z_a - z_t) * g_profil(t, c); w = w_t - t * A
+    links = np.stack([u0 + t * As, z, w], 1); rechts = np.stack([u1 - t * As, z, w], 1)
+    ua, ub = u0 + As, u1 - As; oben = np.stack([np.linspace(ua, ub, n), np.full(n, z_a), np.full(n, w_a)], 1) if ub > ua + 0.2 else np.zeros((0, 3))
+    return [links, rechts, oben]
+
+
+def traufe_kurven(u0, u1, w_t, z_t, n=40):
+    """Traufkante vorn (u0..u1 bei w_t, z_t) und die zwei Seitentraufen bis 0,4 m zurueck (Ecken)."""
+    return [np.stack([np.linspace(u0, u1, n), np.full(n, z_t), np.full(n, w_t)], 1)]
+
+
+class Foto:
+    """Eine Kamera (kam.json-Eintrag) + Kantenabstandskarte im Ausschnitt um das Vordach (skaliert auf ~breite px)."""
+    def __init__(s, name, K, pfad, welt, box_uzw, breite=700):
+        import cv2
+        s.name = name; s.K = K; s.welt = welt; s.ok = False
+        x, y, d = s.proj_roh(welt(box_uzw))
+        if (d <= 1.0).any(): return
+        im = cv2.imread(pfad, cv2.IMREAD_GRAYSCALE)
+        if im is None: return
+        s.sj = im.shape[1] / float(K["W"]); x = x * s.sj; y = y * s.sj
+        x0, x1, y0, y1 = int(x.min()) - 30, int(x.max()) + 30, int(y.min()) - 30, int(y.max()) + 30
+        if x0 < 0 or y0 < 0 or x1 > im.shape[1] or y1 > im.shape[0]: return
+        s.f = breite / float(x1 - x0); s.x0, s.y0 = x0, y0
+        cr = cv2.resize(im[y0:y1, x0:x1], (breite, max(8, int((y1 - y0) * s.f))), interpolation=cv2.INTER_AREA)
+        s.bild = cv2.GaussianBlur(cr, (0, 0), 1.5).astype(np.float32); s.streu = float(s.bild.std()) + 1.0; s.ok = s.streu > 8.0
+
+    def proj_roh(s, X):
+        K = s.K; R = np.array(K["Rn"]); t = np.array(K["tn"]); Xc = X @ R.T + t; d = Xc[:, 2]
+        x = Xc[:, 0] / np.maximum(d, 0.3); y = Xc[:, 1] / np.maximum(d, 0.3); f = 1 + K["params"][3] * (x * x + y * y)
+        return K["f"] * x * f + K["cx"], K["f"] * y * f + K["cy"], d
+
+    def px(s, uzw):
+        x, y, d = s.proj_roh(s.welt(uzw)); return (x * s.sj - s.x0) * s.f, (y * s.sj - s.y0) * s.f
+
+    def bewerte(s, p, ring=4):
+        """SILHOUETTEN-KONTRAST einer Hypothese p (dict u0, u1, w_a, w_t, z_t, z_a, c, As): Umriss = Traufe + zwei Grate + Wandanschluss, ins Foto projiziert;
+        Guete = (Helligkeit im Saum ausserhalb - im Saum innerhalb, je ring px) / Streuung des Ausschnitts. Der Ring unter der Traufe zaehlt nicht (dort Traufkasten/Galerie).
+        21.11.2026: Kantenabstand allein las die Ziegelreihen als Kanten (jede Hypothese auf dem Dach 'traf') -> Flaechenkontrast Dach (dunkel) gegen Wand/Himmel."""
+        import cv2
+        L, R_, O = walm_kurven(p["u0"], p["u1"], p["w_a"], p["w_t"], p["z_t"], p["z_a"], p["c"], p["As"])
+        poly = np.concatenate([L, O[::-1] if len(O) else np.zeros((0, 3)), R_[::-1]]); x, y = s.px(poly); H, W = s.bild.shape
+        if x.min() < -5 or y.min() < -5 or x.max() > W + 5 or y.max() > H + 5: return -1.0
+        inn = np.zeros((H, W), np.uint8); cv2.fillPoly(inn, [np.stack([x, y], 1).round().astype(np.int32)], 1)
+        k_ = np.ones((2 * ring + 1, 2 * ring + 1), np.uint8); aus = cv2.dilate(inn, k_) & (1 - inn); inn = inn & (1 - cv2.erode(inn, k_))   # nur der Saum beidseits des Umrisses
+        ex, ey = s.px(np.array([L[0], R_[0]])); yy, xx = np.mgrid[0:H, 0:W]
+        if abs(ex[1] - ex[0]) < 5: return -1.0
+        ye = ey[0] + (xx - ex[0]) * (ey[1] - ey[0]) / (ex[1] - ex[0]); aus[yy > ye - 3] = 0      # nicht unter der Traufe
+        inn[yy > ye - 3] = 0
+        if inn.sum() < 50 or aus.sum() < 50: return -1.0
+        return float((s.bild[aus > 0].mean() - s.bild[inn > 0].mean()) / s.streu)
+
+
+def fotos_waehlen(KA, welt, box_uzw, aussen, w_min, max_fotos, fdir, mindestabstand=1.5):
+    """Kameras vor der Fassade (w_C >= w_min), Vordach ganz im Bild, Blick nicht steiler als 55 Grad von unten; je Standort (mindestabstand m) nur ein Foto, groesste Abbildung zuerst."""
+    kand = []
+    for nm, K in KA.items():
+        if not os.path.exists(os.path.join(fdir, nm)): continue
+        C = np.array(K["C"], float); wC = aussen(C)
+        if wC < w_min: continue
+        R = np.array(K["Rn"]); t = np.array(K["tn"]); X = welt(box_uzw); Xc = X @ R.T + t
+        if (Xc[:, 2] <= 1.0).any(): continue
+        x = K["f"] * Xc[:, 0] / Xc[:, 2] + K["cx"]; y = K["f"] * Xc[:, 1] / Xc[:, 2] + K["cy"]
+        if x.min() < 0 or y.min() < 0 or x.max() > K["W"] or y.max() > K["H"]: continue
+        hoch = np.degrees(np.arctan2(X[:, 2].mean() - C[2], max(wC, 0.1)))
+        if hoch > 55: continue
+        kand.append((float(x.max() - x.min()), nm, C))
+    kand.sort(key=lambda k: -k[0]); gew = []
+    for b, nm, C in kand:
+        if b < 250: break
+        if any(np.linalg.norm(C - C2) < mindestabstand for _, _, C2 in gew): continue
+        gew.append((b, nm, C))
+        if len(gew) >= max_fotos: break
+    return [nm for _, nm, _ in gew]
+
+
+def messen(F, g, KA, fdir, max_fotos=16, min_fotos=3, log=print):
+    """Ein Vordach (Gruppe g der Fassade F aus vorbauten_auto.json mit kanten_mass.kasten und galerie.vordach) messen. dict oder None."""
+    KM = g.get("kanten_mass") or {}; G = g.get("galerie") or {}; V = G.get("vordach"); Kb = KM.get("kasten")
+    if not (V and Kb): return None
+    o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0))
+    welt = lambda P: np.stack([o[0] + P[:, 0] * d[0] + P[:, 2] * n[0], o[1] + P[:, 0] * d[1] + P[:, 2] * n[1], P[:, 1]], 1)
+    aussen = lambda C: float((C[:2] - o) @ n)
+    wf = ww + float(KM.get("ausladung", g["koerper"]["w_median"])); z_t, z_a = float(V["z_traufe"]), float(V["z_anschluss"])
+    box = np.array([[u, z, w] for u in (Kb["u0"] - 1.0, Kb["u1"] + 1.0) for z in (z_t - 0.6, z_a + 0.8) for w in (ww, wf + 1.0)])
+    nm_ = fotos_waehlen(KA, welt, box, aussen, wf + 3.0, max_fotos, fdir)
+    FO = [f_ for f_ in (Foto(nm, KA[nm], os.path.join(fdir, nm), welt, box) for nm in nm_) if f_.ok]
+    log(f"  Fotos gewaehlt {len(nm_)}, mit Kanten {len(FO)}: {', '.join(f_.name[-20:] for f_ in FO)}")
+    if len(FO) < min_fotos: return dict(belegt=False, grund=f"nur {len(FO)} Fotos", fotos=[f_.name for f_ in FO])
+    # Koordinatenabstieg ueber alle Groessen (Startwerte = Sweep/Kanten: Traufe, Anschluss, Front); Guete = Summe Silhouettenkontrast ueber alle Fotos
+    B = dict(w_t=np.round(np.arange(wf, wf + 0.81, 0.05), 3), z_t=np.round(np.arange(z_t - 0.4, z_t + 0.61, 0.05), 3), s=np.round(np.arange(0.0, 0.81, 0.05), 3),
+             z_a=np.round(np.arange(z_a - 0.4, z_a + 0.61, 0.05), 3), c=C_GITTER, As=np.round(np.arange(0.0, min(2.5, 0.45 * (Kb["u1"] - Kb["u0"])) + 1e-6, 0.125), 3))
+    q = dict(w_t=wf + 0.25, z_t=z_t, s=0.15, z_a=z_a, c=0.0, As=0.6)
+    def hyp(q_): return dict(u0=Kb["u0"] - q_["s"], u1=Kb["u1"] + q_["s"], w_a=ww, w_t=q_["w_t"], z_t=q_["z_t"], z_a=q_["z_a"], c=q_["c"], As=q_["As"])
+    def ges(q_): return float(np.mean([f_.bewerte(hyp(q_)) for f_ in FO]))
+    g_b = ges(q)
+    for runde in range(5):
+        alt = dict(q)
+        for k_ in ("s", "w_t", "z_t", "z_a", "As", "c"):
+            for v_ in B[k_]:
+                q2 = dict(q); q2[k_] = float(v_); g2 = ges(q2)
+                if g2 > g_b + 1e-9: g_b, q = g2, q2
+        if q == alt: break
+    for c_ in C_GITTER:                                                     # Abschluss: c und As gemeinsam (gekoppelt: krummer Grat <-> Ruecksprung)
+        for a_ in B["As"]:
+            q2 = dict(q, c=float(c_), As=float(a_)); g2 = ges(q2)
+            if g2 > g_b + 1e-9: g_b, q = g2, q2
+    log(f"  Silhouette (Runde {runde + 1}): Traufe w {q['w_t']:.2f} z {q['z_t']:.2f} (Front {wf:.2f}), seitlich {q['s']:.2f}, Anschluss z {q['z_a']:.2f}, c {q['c']:+.1f}, As {q['As']:.2f}, Kontrast {g_b:.3f}")
+    # Familie je Foto: bestes (c, As) bei sonst gemeinsamen Werten
+    je = []
+    for f_ in FO:
+        Sg = np.array([[f_.bewerte(hyp(dict(q, c=float(c_), As=float(a_)))) for a_ in B["As"]] for c_ in C_GITTER]); i_, j_ = np.unravel_index(np.argmax(Sg), Sg.shape)
+        je.append(dict(foto=f_.name, c=float(C_GITTER[i_]), As=float(B["As"][j_]), familie=familie(C_GITTER[i_]), guete=round(float(Sg[i_, j_]), 3),
+                       guete_gerade=round(float(Sg[int(np.argmin(np.abs(C_GITTER))), j_]), 3)))
+    c_b = q["c"]; fam = familie(c_b); n_fam = sum(1 for e in je if e["familie"] == fam); gerade = ges(dict(q, c=0.0)); belegt = n_fam >= min_fotos
+    log(f"  Profil: {fam} ({n_fam}/{len(FO)} Fotos einzeln gleich), Kontrast {g_b:.3f} gegen gerade {gerade:.3f}")
+    if not belegt: c_b = 0.0
+    w_t, z_t, z_a, As_b, s_ = q["w_t"], q["z_t"], q["z_a"], q["As"], q["s"]; u0, u1 = Kb["u0"] - s_, Kb["u1"] + s_; A = w_t - ww
+    t = np.linspace(0, 1, 13); prof = [[round(float(w_t - x * A), 3), round(float(z_t + (z_a - z_t) * g_profil(x, c_b)), 3)] for x in t]
+    return dict(id=F.get("id"), u0=round(u0, 3), u1=round(u1, 3), w_wand=ww, w_t=round(float(w_t), 3), z_t=round(z_t, 3), z_a=round(z_a, 3), c=c_b, As=As_b, familie=fam if belegt else "gerade",
+                familie_gemessen=fam, fotos_familie=n_fam, fotos=[f_.name for f_ in FO], guete=round(g_b, 3), guete_gerade=round(gerade, 3),
+                je_foto=je, profil=prof, belegt=belegt, ueberstand_seitlich=s_, front=round(wf, 3), sweep=dict(z_traufe=float(V["z_traufe"]), z_anschluss=float(V["z_anschluss"])),
+                annahme=("" if belegt else f"Familie nicht von >= {min_fotos} Fotos belegt -> gerade; ") + "Seitenflaechen mit demselben Profil wie die Front (auf As skaliert); Ziegel glatt (Reihen < 0,8 mm im Druck); Eckzier (Spitzen) nicht gebaut"), FO
+
+
+def kontrollbild(pfad, erg, FO, n=5):
+    import cv2
+    teile = []
+    for f_ in FO[:n]:
+        b = cv2.cvtColor(f_.bild.astype(np.uint8), cv2.COLOR_GRAY2BGR)
+        for fa, c, col in (("gerade", 0.0, (255, 160, 0)), ("mess", erg["c"], (0, 0, 255))):
+            for k in walm_kurven(erg["u0"], erg["u1"], erg["w_wand"], erg["w_t"], erg["z_t"], erg["z_a"], c, erg["As"]) + traufe_kurven(erg["u0"], erg["u1"], erg["w_t"], erg["z_t"]):
+                if len(k): x, y = f_.px(k); cv2.polylines(b, [np.stack([x, y], 1).astype(np.int32)], False, col, 1)
+        cv2.putText(b, f_.name[-22:], (4, 16), 0, 0.45, (255, 0, 255), 1); h = 420; teile.append(cv2.resize(b, (int(b.shape[1] * h / b.shape[0]), h)))
+    if teile: cv2.imwrite(pfad, np.hstack(teile))
+
+
+def main():
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("kanten"); ap.add_argument("--fotos"); ap.add_argument("--aus")
+    ap.add_argument("--max_fotos", type=int, default=16); ap.add_argument("--min_fotos", type=int, default=3); a = ap.parse_args()
+    od = os.path.dirname(os.path.abspath(a.objekt)); vj = os.path.join(od, "audit", "vorbauten_auto.json")
+    if not os.path.exists(vj): print("keine audit/vorbauten_auto.json"); return 3
+    KA = json.load(open(os.path.join(a.kanten, "kam.json"))); fdir = a.fotos or os.path.join(os.path.dirname(os.path.abspath(a.kanten)), "fotos")
+    aus = a.aus or os.path.join(od, "audit", "vordach_profil.json"); E = []
+    for F in json.load(open(vj)).get("fassaden", []):
+        for gi, g in enumerate(F.get("gruppen", [])):
+            print(f"Fassade {F.get('id')} Gruppe {gi}:"); r = messen(F, g, KA, fdir, a.max_fotos, a.min_fotos)
+            if r is None: print("  kein Vordach (kanten_mass.kasten + galerie.vordach fehlen)"); continue
+            if isinstance(r, dict): E.append(dict(id=F.get("id"), gruppe=gi, **r)); continue
+            erg, FO = r; erg["gruppe"] = gi; E.append(erg); kontrollbild(aus[:-5] + ".jpg", erg, FO)
+    json.dump(dict(quelle="tools/vordach_profil.py (Grate/Traufe aus Fotokanten, SfM-Kameras kanten/kam.json)", fassaden=E), open(aus, "w"), indent=1)
+    print("->", aus); return 0 if any(e.get("profil") for e in E) else 3
+
+
+if __name__ == "__main__":
+    sys.exit(main())

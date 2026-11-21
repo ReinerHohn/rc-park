@@ -19,7 +19,14 @@ Methode (KERNMETHODE, WANDBILD = BAUPLAN; Erkennen = nur Zone):
 Ausgabe: fenster_auto.json neu (Eingang als fenster_auto_vor_nischen.json daneben): je Paar EIN Eintrag = Fensteroeffnung (u0,u1,z0,z1, bogen{form,kaempfer,scheitel},
   tiefe) mit 'nische' {u0,u1,z0,z1,bogen,tiefe}; ueberlappende alte Eintraege derselben Fassade fallen weg. Bericht nischen_fenster.json, Bild nischen_fenster_<fid>.jpg.
 Aufruf:  nischen_fenster.py <fenster_auto.json> <fassade-ordner (elemente.json, tiefe_fNN.npz, vorbauten_fNN.json)> <fassade_fein-ordner> [--nur f00] [--aus ordner]
-rc 0 = mindestens ein Paar eingetragen, 3 = keins (nichts geaendert).
+rc 0 = mindestens ein Paar oder ein Einzelfenster vermessen, 3 = nichts (nichts geaendert).
+NACHTRAG 21.11.2026 spaet (Nutzer "Das ist noch nicht gut", neben_eigen__IMG_20261106_113231: im Modell zwei flache Rechtecke statt Rundbogenfenster):
+ Lauf 1121s fand nur EIN Paar - der Erkenner hatte fuer die LINKE Nische keinen Kasten, das linke Fenster (fenster_tiefe_tor) blieb ein Rechteck ohne Nische.
+ 4. EINZELFENSTER: jedes gelistete Fenster ohne Paar bekommt seinen Umriss/Formfamilie ebenfalls aus den Bildkanten; hat dieselbe Wand ein vermessenes GESCHWISTER
+    (Breite, Hoehe, Sohlbank je +-25 %), ist dessen Nische - verschoben - die SUCHZONE fuer eine Nische hier (Umriss und Tiefe nur aus Kanten/Sweep an dieser Stelle).
+ 5. FORMFAMILIE AUS >= 3 FOTOS: jeder Umriss wird bei fester Lage an den Einzelfoto-Orthos (fassade_fein/ortho_fNN_einzeln/, fassade_ortho --einzeln) geprueft;
+    je Foto eine Stimme (einfachste Familie im Gleichstand, nur bei >= --anteil_min Kantenstuetze). Gilt die Familie mit den meisten Stimmen, wenn >= 3; sonst
+    bleibt die Wandbild-Form mit 'form_unsicher'. Pruefung des GEBAUTEN: tools/fenster_form_tor.py.
 """
 import sys, os, json, argparse, shutil, numpy as np
 
@@ -155,27 +162,86 @@ def form_aus_kanten(B, kasten, innen=None, anteil_min=0.5, kante=4.0, k=5):
     best = None                                                            # Stufe 2: Scheitel + Formfamilie + Kaempfer am ganzen Umriss
     for zt in ZT:
         if zt - zs < 0.2: continue
-        st = {}
-        for f in FORMEN:
-            if f == "gerade": kand = [zt]
-            elif f == "rund": kand = [zt - a] if zt - a > zs + 0.05 else []
-            elif f == "stich": kand = list(np.arange(max(zs + 0.05, zt - a + 0.02), zt - 0.04, 0.02))
-            elif f == "korb": kand = [z_ for z_ in np.arange(max(zs + 0.05, zt - 1.5 * a), zt - 0.04, 0.02) if abs(zt - z_ - a) > 0.01]   # Ellipse gedrueckt ODER ueberhoeht (senkrechter Ansatz)
-            else: kand = list(np.arange(max(zs + 0.05, zt - 1.5 * a), zt - a - 0.02, 0.02))     # spitz: Pfeil bis 1,5 x halbe Breite
-            for zk in kand:
-                P_ = _ohne_innen(umriss(f, uL, uR, zs, zk, zt, schritt=0.02), innen); s_ = stuetze(B, P_, thr)
-                if s_ > st.get(f, ((-1, -1), 0, 0))[0]: st[f] = (s_, float(zk), len(P_))
+        st = familien(B, uL, uR, zs, zt, thr, innen)
         if not st: continue
         top = max(v[0] for v in st.values())
         if best is None or top > best[0]: best = (top, zt, st)
     if best is None: return dict(fehler="keine Scheitelkante / keine Formfamilie passt")
-    top, zt, st = best; p_ = top[0]; n_ = max(v[2] for v in st.values())
-    tol = max(GLEICH * p_, 2.0 * np.sqrt(p_ * (1 - p_) / max(n_, 1)))     # Gleichstand = innerhalb 2 Standardfehlern des Anteils: die reichere Form (freier Kaempfer) muss klar mehr tragen
-    form = next(f for f in ("rund", "gerade", "stich", "korb", "spitz") if f in st and st[f][0][0] >= p_ - tol)   # einfachste Form im Gleichstand
-    zk = st[form][1]; an = st[form][0][0]
+    top, zt, st = best; form = waehle(st); zk = st[form][1]; an = st[form][0][0]
     r = dict(u0=round(uL, 3), u1=round(uR, 3), z0=round(zs, 3), z1=round(zt, 3), bogen=dict(form=form, kaempfer=round(zk, 3), scheitel=round(zt, 3)),
-             anteil=round(an, 2), stuetzen={f: round(v[0][0], 2) for f, v in st.items()}, kante_schwelle=round(thr, 2))
+             anteil=round(an, 2), stuetzen={f: round(v[0][0], 2) for f, v in st.items()}, kaempfer_je_form={f: round(v[1], 3) for f, v in st.items()}, kante_schwelle=round(thr, 2))
     if an < anteil_min: r["fehler"] = f"nur {an:.0%} des Umrisses auf Bildkanten (< {anteil_min:.0%})"
+    return r
+
+
+def familien(B, uL, uR, zs, zt, thr, innen=None):
+    """Bei FESTEN Laibungen uL/uR, Sohlbank zs und Scheitel zt je Formfamilie den Kaempfer mit der hoechsten Kantenstuetze: {form: ((anteil, mittel), kaempfer, n_punkte)}."""
+    a = (uR - uL) / 2; st = {}
+    for f in FORMEN:
+        if f == "gerade": kand = [zt]
+        elif f == "rund": kand = [zt - a] if zt - a > zs + 0.05 else []
+        elif f == "stich": kand = list(np.arange(max(zs + 0.05, zt - a + 0.02), zt - 0.04, 0.02))
+        elif f == "korb": kand = [z_ for z_ in np.arange(max(zs + 0.05, zt - 1.5 * a), zt - 0.04, 0.02) if abs(zt - z_ - a) > 0.01]   # Ellipse gedrueckt ODER ueberhoeht (senkrechter Ansatz)
+        else: kand = list(np.arange(max(zs + 0.05, zt - 1.5 * a), zt - a - 0.02, 0.02))     # spitz: Pfeil bis 1,5 x halbe Breite
+        for zk in kand:
+            P_ = _ohne_innen(umriss(f, uL, uR, zs, zk, zt, schritt=0.02), innen); s_ = stuetze(B, P_, thr)
+            if s_ > st.get(f, ((-1, -1), 0, 0))[0]: st[f] = (s_, float(zk), len(P_))
+    return st
+
+
+def waehle(st):
+    """Einfachste Formfamilie im Gleichstand mit der besten (Gleichstand = innerhalb 2 Standardfehlern des Anteils: die reichere Form mit freiem Kaempfer muss klar mehr tragen)."""
+    p_ = max(v[0] for v in st.values())[0]; n_ = max(v[2] for v in st.values())
+    tol = max(GLEICH * p_, 2.0 * np.sqrt(p_ * (1 - p_) / max(n_, 1)))
+    return next(f for f in ("rund", "gerade", "stich", "korb", "spitz") if f in st and st[f][0][0] >= p_ - tol)
+
+
+# ---------------------------------------------------------------- Formfamilie aus >= 3 Einzelfotos (KERNMETHODE: Formfamilie nie aus einem Bild)
+MIN_FOTOS = 3
+
+
+def einzelbilder(ordner, fid, rast, kasten, rand=1.0):
+    """Einzelfoto-Orthos derselben Wand (fassade_ortho.py --einzeln: ortho_<fid>_einzeln/<foto>.png, gleiches Raster wie das Wandbild), auf 'kasten' (u0,u1,z0,z1) + rand
+    zugeschnitten (Speicher: 40 Fotos x 5 Mio. Pixel passen sonst nicht). Liefert [(foto, Bild)]."""
+    import cv2, glob
+    d = os.path.join(ordner, f"ortho_{fid}_einzeln"); out = []
+    if not os.path.isdir(d): return out
+    u0, z1, c = rast; U0, U1, Z0, Z1 = kasten[0] - rand, kasten[1] + rand, kasten[2] - rand, kasten[3] + rand
+    for p in sorted(glob.glob(os.path.join(d, "*.png"))):
+        g = cv2.imread(p, cv2.IMREAD_GRAYSCALE)
+        if g is None: continue
+        i0, i1 = int(max(0, (z1 - Z1) / c)), int(min(g.shape[0], (z1 - Z0) / c)); j0, j1 = int(max(0, (U0 - u0) / c)), int(min(g.shape[1], (U1 - u0) / c))
+        if i1 - i0 < 10 or j1 - j0 < 10 or not (g[i0:i1, j0:j1] > 0).any(): continue
+        out.append((os.path.basename(p)[:-4], Bild(g[i0:i1, j0:j1].copy(), u0 + j0 * c, z1 - i0 * c, c)))
+    return out
+
+
+def form_fotos(bilder, zone, innen=None, kante=4.0, anteil_min=0.5):
+    """FORMFAMILIE JE EINZELFOTO: in jedem Einzelfoto-Ortho eigene Umrisssuche in derselben Zone (form_aus_kanten: Laibungen, Sohlbank, Scheitel, Familie);
+    eine Stimme nur, wenn der Umriss zu >= anteil_min auf Kanten DIESES Fotos liegt (sonst: Foto zu schraeg, verdeckt, unscharf). Lage je Foto frei - bei fester
+    Lage machten 5-10 cm Kastenfehler am 0,6-m-Fenster aus Rund 'gerade' (Schwabentor f00, gemessen). zone = Suchzone (u0,u1,z0,z1) oder Umriss-dict.
+    Liefert {form: stimmen}, {foto: form}."""
+    K = tuple(zone[k] for k in ("u0", "u1", "z0", "z1")) if isinstance(zone, dict) else tuple(zone[:4]); st_ = {}; je = {}
+    for name, B in bilder:
+        x = form_aus_kanten(B, K, innen=innen, anteil_min=anteil_min, kante=kante)
+        if "fehler" in x: continue
+        f = x["bogen"]["form"]; je[name] = f; st_[f] = st_.get(f, 0) + 1
+    return st_, je
+
+
+def form_bestaetigen(r, bilder, zone, innen=None, kante=4.0, anteil_min=0.5):
+    """Formfamilie des Wandbild-Umrisses r an den Einzelfotos pruefen (in place). Gilt: die Familie mit den meisten Stimmen, wenn sie >= MIN_FOTOS hat; sonst bleibt die
+    Wandbild-Form mit 'form_unsicher' (zu wenige Fotos). Ohne Einzelfotos (alte Laeufe, kein --einzeln) nur Vermerk 'form_fotos': None."""
+    if not bilder: r["form_fotos"] = None; return r
+    st, je = form_fotos(bilder, zone, innen, kante, anteil_min); r["form_fotos"] = st; r["form_fotos_je"] = je
+    if not st: r["form_unsicher"] = "kein Einzelfoto traegt den Umriss"; return r
+    alt = r["bogen"]["form"]; best = max(st, key=lambda f: (st[f], f == alt))
+    if st[best] < MIN_FOTOS: r["form_unsicher"] = f"Formfamilie nur aus {st[best]} Einzelfoto(s) (< {MIN_FOTOS})"; return r
+    if best != alt:
+        zk = (r.get("kaempfer_je_form") or {}).get(best)
+        if zk is None: r["form_unsicher"] = f"Einzelfotos sagen {best}, im Wandbild kein Kaempfer dafuer"; return r
+        r["bogen"] = dict(form=best, kaempfer=zk, scheitel=r["bogen"]["scheitel"]); r["form_wandbild"] = alt
+    r["form_quelle"] = f"{st[best]} von {sum(st.values())} Einzelfotos"
     return r
 
 
@@ -190,9 +256,20 @@ def maske(npz_raster, o, wachs=0.0):
     return m.astype(bool)
 
 
+def plausibel(w, g, ring, vor_max=0.2):
+    """21.11.2026 spaet (Ursache Nischentiefe rechts 0,05 / links 0,15 bei gleichen Nischen, Schwabentor f00): auf glattem weissem Putz liefert der Sweep viele 'gute'
+    Zellen 0,4-2,4 m VOR der Wand (Mehrdeutigkeit ohne Textur; rechte Nische 20 %, linke 13 %), der Median kippt damit nach vorn. Eine Wand mit Nischen hat nichts vor
+    der Wandflaeche: Zellen mehr als vor_max vor dem MODALWERT des Wandrings (5-cm-Klassen) zaehlen nicht."""
+    v = w[ring & g]
+    if v.size < 20: return np.ones_like(g)
+    werte, n_ = np.unique(np.round(v / 0.05) * 0.05, return_counts=True); modal = float(werte[np.argmax(n_)])
+    return w <= modal + vor_max
+
+
 def tiefen(npz, nische, fenster, ring=(0.1, 0.4), min_gut=0.3):
     """Nischentiefe (Nischenring gegen Wandring) und Fenstertiefe (Fenster gegen Nischengrund) aus dem Sweep (negativ = hinter). Werte None = nicht messbar."""
     w, g = npz["w"], npz["gut"].astype(bool); R = (float(npz["u0"]), float(npz["z1"]), float(npz["zelle"]), *w.shape)
+    g = g & plausibel(w, g, maske(R, nische, ring[1]) & ~maske(R, nische, ring[0]))
     mn = maske(R, nische); mf = maske(R, fenster, wachs=float(npz["zelle"]))
     an = mn & ~mf; wr = maske(R, nische, ring[1]) & ~maske(R, nische, ring[0]); fi = maske(R, fenster)
     q = {k: (float(g[m].mean()) if m.any() else 0.0) for k, m in (("nische", an), ("wand", wr), ("fenster", fi))}
@@ -241,28 +318,75 @@ def paare(Z, flaeche_max_anteil=0.5, enthalten=0.9):
 
 
 # ---------------------------------------------------------------- Hauptablauf
-def fassade_auswerten(B, kaesten, npz, a, vorbauten=()):
-    """Je Paar Nische + Fenster vermessen. Liefert (eintraege, bericht)."""
-    E, br = [], []
+def _eintrag(f, n, t, stimmen, a, quelle, r):
+    """Eintrag fuer fenster_auto.json aus Fensterumriss f, Nischenumriss n (oder None), Tiefen t; setzt r['urteil']."""
+    e = dict(u0=f["u0"], u1=f["u1"], z0=f["z0"], z1=f["z1"], teiler=[], kaempfer=None, scheiben=1, stimmen_min=int(stimmen), sprossen=[], bogen=f["bogen"],
+             tiefe=-t["fenster"] if t.get("fenster") is not None else a.fenster_tiefe,      # Sweep: negativ = hinter; im Eintrag positive Tiefe ab Nischengrund (bzw. Wand)
+             tiefe_quelle=("Ebenen-Sweep (Fenster gegen " + ("Nischengrund)" if n is not None else "Wandring)")) if t.get("fenster") is not None
+             else f"ANNAHME {a.fenster_tiefe} m (Sweep im Fenster ohne Textur: {t.get('fenster_roh')}); Bau mindestens Druckmindestmass (bauteile.fenster_aus_json)",
+             form_quelle=f.get("form_quelle") or ("ANNAHME: " + f["form_unsicher"] if f.get("form_unsicher") else "nur fusioniertes Wandbild (keine Einzelfoto-Orthos)"),
+             quelle=quelle)
+    if f.get("form_unsicher"): e["form_unsicher"] = f["form_unsicher"]
+    tx = f"FENSTER {f['u1'] - f['u0']:.2f} m ({f['bogen']['form']}, {f.get('form_quelle') or f.get('form_unsicher') or 'Wandbild'})"
+    if n is None: r["urteil"] = tx if r.get("urteil") is None else r["urteil"] + "; " + tx; return e
+    if "fehler" in n: r["urteil"] = "Fenster ohne Nische: " + n["fehler"] + "; " + tx
+    elif t.get("nische") is None: r["urteil"] = "Fenster ohne Nische: Nischentiefe nicht messbar (zu wenig sichere Sweep-Zellen); " + tx
+    elif t["nische"] > -a.nische_min: r["urteil"] = f"Fenster ohne Nische: Nischenflaeche nur {t['nische']:+.2f} m gegen die Wand (flach, < {a.nische_min} m); " + tx
+    else:
+        e["nische"] = dict(u0=n["u0"], u1=n["u1"], z0=n["z0"], z1=n["z1"], bogen=n["bogen"], tiefe=round(-t["nische"], 3), tiefe_quelle="Ebenen-Sweep (Nischenring gegen Wandring)",
+                           form_quelle=n.get("form_quelle") or ("ANNAHME: " + n["form_unsicher"] if n.get("form_unsicher") else "nur fusioniertes Wandbild"))
+        if abs(e["z0"] - n["z0"]) < 0.03: e["z0"] = n["z0"]                # gleiche Sohlbank: Fenster sitzt auf dem Nischengrund (Kanten liegen <= 3 cm auseinander)
+        r["urteil"] = f"NISCHE {n['u1'] - n['u0']:.2f} m ({n['bogen']['form']}, {-t['nische']:.2f} tief) + " + tx
+    return e
+
+
+def tiefe_einzeln(npz, f, ring=(0.1, 0.4), min_gut=0.3):
+    """Fenster ohne Nische: Median im Fenster gegen den Wandring (Sweep, negativ = hinter). None = nicht messbar (wie tiefen())."""
+    w, g = npz["w"], npz["gut"].astype(bool); R = (float(npz["u0"]), float(npz["z1"]), float(npz["zelle"]), *w.shape)
+    fi = maske(R, f); wr = maske(R, f, ring[1]) & ~maske(R, f, ring[0]); g = g & plausibel(w, g, wr)
+    if not fi.any() or not wr.any() or g[fi].mean() < min_gut or g[wr].mean() < min_gut: return dict(fenster=None)
+    d = float(np.median(w[fi & g]) - np.median(w[wr & g])); return dict(fenster_roh=round(d, 3), fenster=round(d, 3) if -1.0 < d < -0.02 else None)
+
+
+def _ueber(a, b): return min(a[1], b[1]) > max(a[0], b[0]) and min(a[3], b[3]) > max(a[2], b[2])
+
+
+def fassade_auswerten(B, kaesten, npz, a, vorbauten=(), bilder=None, liste=()):
+    """Je Paar Nische + Fenster vermessen; danach jedes schon gelistete Fenster ('liste', fenster_auto.json) ohne Paar: Form aus den Bildkanten, Nische an der Stelle
+    eines vermessenen GESCHWISTERS (gleiche Breite/Sohlbank derselben Wand; die Zone kommt vom Geschwister, der Umriss nur aus den Kanten hier). Formfamilie je
+    Umriss an den Einzelfotos bestaetigt (form_bestaetigen, >= 3 Fotos). Liefert (eintraege, bericht)."""
+    E, br = [], []; kw = dict(kante=a.kante, anteil_min=a.anteil_min); vor = lambda A: any(_ueber(A, (v["u0"], v["u1"], v["z0"], v["z1"])) for v in vorbauten)
+    lade = bilder if callable(bilder) else (lambda kasten: list(bilder or ()))     # bilder: Liste [(foto, Bild)] oder Lader(kasten) -> Liste
     for A, I in paare(zonen(kaesten), a.flaeche_max_anteil):
-        r = dict(zone_aussen=[round(x, 2) for x in A[:4]], zone_innen=[round(x, 2) for x in I[:4]], stimmen=[A[4], I[4]])
-        if any(min(A[1], v["u1"]) > max(A[0], v["u0"]) and min(A[3], v["z1"]) > max(A[2], v["z0"]) for v in vorbauten): r["urteil"] = "uebersprungen: hinter einem Vorbau"; br.append(r); continue
+        r = dict(zone_aussen=[round(x, 2) for x in A[:4]], zone_innen=[round(x, 2) for x in I[:4]], stimmen=[A[4], I[4]], art="paar")
+        if vor(A): r["urteil"] = "uebersprungen: hinter einem Vorbau"; br.append(r); continue
         f = form_aus_kanten(B, I[:4], anteil_min=a.anteil_min, kante=a.kante); r["fenster"] = f
         if "fehler" in f: r["urteil"] = "kein Fenster: " + f["fehler"]; br.append(r); continue
-        n = form_aus_kanten(B, A[:4], innen=(f["u0"], f["u1"], f["z0"], f["z1"]), anteil_min=a.anteil_min, kante=a.kante); r["nische"] = n
+        bil = lade(A[:4]); form_bestaetigen(f, bil, I[:4], **kw); fi = (f["u0"], f["u1"], f["z0"], f["z1"])
+        n = form_aus_kanten(B, A[:4], innen=fi, anteil_min=a.anteil_min, kante=a.kante); r["nische"] = n
+        if "fehler" not in n: form_bestaetigen(n, bil, A[:4], innen=fi, **kw)
         t = tiefen(npz, n, f) if (npz is not None and "fehler" not in n) else dict(nische=None, fenster=None); r["tiefe"] = t
-        e = dict(u0=f["u0"], u1=f["u1"], z0=f["z0"], z1=f["z1"], teiler=[], kaempfer=None, scheiben=1, stimmen_min=int(I[4]), sprossen=[], bogen=f["bogen"],
-                 tiefe=-t["fenster"] if t.get("fenster") is not None else a.fenster_tiefe,      # Sweep: negativ = hinter; im Eintrag positive Tiefe ab Nischengrund
-                 tiefe_quelle="Ebenen-Sweep (Fenster gegen Nischengrund)" if t.get("fenster") is not None else f"ANNAHME {a.fenster_tiefe} m (Sweep im Fenster ohne Textur: {t.get('fenster_roh')})",
-                 quelle="nischen_fenster: Erkennerzone -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep")
-        if "fehler" in n: r["urteil"] = "Fenster ohne Nische: " + n["fehler"]
-        elif t["nische"] is None: r["urteil"] = "Fenster ohne Nische: Nischentiefe nicht messbar (zu wenig sichere Sweep-Zellen)"
-        elif t["nische"] > -a.nische_min: r["urteil"] = f"Fenster ohne Nische: Nischenflaeche nur {t['nische']:+.2f} m gegen die Wand (flach, < {a.nische_min} m)"
-        else:
-            e["nische"] = dict(u0=n["u0"], u1=n["u1"], z0=n["z0"], z1=n["z1"], bogen=n["bogen"], tiefe=round(-t["nische"], 3), tiefe_quelle="Ebenen-Sweep (Nischenring gegen Wandring)")
-            if abs(e["z0"] - n["z0"]) < 0.03: e["z0"] = n["z0"]                # gleiche Sohlbank: Fenster sitzt auf dem Nischengrund (Kanten liegen <= 3 cm auseinander)
-            r["urteil"] = f"NISCHE {n['u1'] - n['u0']:.2f} m ({n['bogen']['form']}, {-t['nische']:.2f} tief) + FENSTER {f['u1'] - f['u0']:.2f} m ({f['bogen']['form']})"
-        E.append(e); br.append(r)
+        E.append(_eintrag(f, n, t, I[4], a, "nischen_fenster: Erkennerzone -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep", r)); br.append(r)
+    # 21.11.2026 (Nutzer 'Das ist noch nicht gut', Schwabentor f00 Lauf 1121s): das LINKE Rundbogenfenster hatte keinen Nischenkasten im Erkenner -> kein Paar -> blieb Rechteck.
+    for q in liste:
+        Q = (q["u0"], q["u1"], q["z0"], q["z1"])
+        if q.get("bogen") or q.get("nische") or any(_ueber(Q, (x["u0"], x["u1"], x["z0"], x["z1"])) or (x.get("nische") and _ueber(Q, (x["nische"]["u0"], x["nische"]["u1"], x["nische"]["z0"], x["nische"]["z1"]))) for x in E): continue
+        r = dict(zone_aussen=[round(x, 2) for x in Q], zone_innen=[round(x, 2) for x in Q], stimmen=[q.get("stimmen_min", 0)] * 2, art="einzeln")
+        if vor(Q): r["urteil"] = "einzeln uebersprungen: hinter einem Vorbau"; br.append(r); continue
+        f = form_aus_kanten(B, Q, anteil_min=a.anteil_min, kante=a.kante); r["fenster"] = f
+        if "fehler" in f: r["urteil"] = "einzeln: Form nicht messbar (bleibt Rechteck): " + f["fehler"]; br.append(r); continue
+        fi = (f["u0"], f["u1"], f["z0"], f["z1"]); bf, hf = fi[1] - fi[0], fi[3] - fi[2]; n = None
+        gs = [x for x in E if x.get("nische") and abs((x["u1"] - x["u0"]) - bf) <= 0.25 * bf and abs((x["z1"] - x["z0"]) - hf) <= 0.25 * hf and abs(x["z0"] - fi[2]) <= 0.25 * hf]
+        if gs:                                                             # Geschwister: dessen Nische, um den Fenstermittelpunkt/die Sohlbank verschoben, ist nur die SUCHZONE
+            x = min(gs, key=lambda x: abs(x["z0"] - fi[2])); N = x["nische"]; du = (fi[0] + fi[1] - x["u0"] - x["u1"]) / 2; dz = fi[2] - x["z0"]
+            Z_ = (N["u0"] + du, N["u1"] + du, N["z0"] + dz, N["z1"] + dz); r["zone_aussen"] = [round(v, 2) for v in Z_]; r["geschwister"] = [x["u0"], x["u1"], x["z0"], x["z1"]]
+            n = form_aus_kanten(B, Z_, innen=fi, anteil_min=a.anteil_min, kante=a.kante); r["nische"] = n
+        bil = lade(r["zone_aussen"]); form_bestaetigen(f, bil, Q, **kw)
+        if n is not None and "fehler" not in n: form_bestaetigen(n, bil, r["zone_aussen"], innen=fi, **kw)
+        if n is not None and "fehler" not in n: t = tiefen(npz, n, f) if npz is not None else dict(nische=None, fenster=None)
+        else: t = tiefe_einzeln(npz, f) if npz is not None else dict(fenster=None); t.setdefault("nische", None)
+        r["tiefe"] = t
+        E.append(_eintrag(f, n, t, q.get("stimmen_min", 0), a, "nischen_fenster (einzeln" + (", Nischenzone vom Geschwister" if n is not None else "") + "): Listenfenster -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep", r)); br.append(r)
     return E, br
 
 
@@ -309,7 +433,8 @@ def main():
         nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
         k = [(e["u0"], e["u1"], e["z0"], e["z1"], e.get("stimmen", 0)) for e in (E.get(fid) or {}).get("elemente", []) if e.get("klasse") in ("fenster", "bogen") and e.get("stimmen", 0) >= a.min_stimmen]
         k += [(q["u0"], q["u1"], q["z0"], q["z1"], q.get("stimmen_min", a.min_stimmen)) for q in F["fenster"]]
-        neu, br = fassade_auswerten(B, k, npz, a, VB.get(fid, ()))
+        bil = lambda kasten, fid=fid, rs=rs: einzelbilder(a.fein, fid, (rs["u0"], rs["z1"], rs["zelle"]), kasten)     # je Zone zugeschnitten laden (Speicher)
+        neu, br = fassade_auswerten(B, k, npz, a, VB.get(fid, ()), bil, list(F["fenster"]))
         bericht[fid] = br
         if not neu: continue
         ub = lambda q: (q.get("nische") or q)
@@ -320,7 +445,8 @@ def main():
     ziel = os.path.join(aus, os.path.basename(a.fenster))
     if os.path.abspath(ziel) == os.path.abspath(a.fenster): shutil.copy(a.fenster, a.fenster[:-5] + "_vor_nischen.json")
     json.dump(J, open(ziel, "w"), indent=1); json.dump(bericht, open(os.path.join(aus, "nischen_fenster.json"), "w"), indent=1)
-    print(f"-> {ziel}: {n_paare} Fenster mit Nische"); return 0 if n_paare else 3
+    n_neu = sum(len(v) for v in bericht.values() if isinstance(v, list) and any("fenster" in r and "fehler" not in r["fenster"] for r in v))
+    print(f"-> {ziel}: {n_paare} Fenster mit Nische"); return 0 if (n_paare or n_neu) else 3
 
 
 if __name__ == "__main__": sys.exit(main())

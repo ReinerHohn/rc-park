@@ -148,6 +148,89 @@ def relief_putz_glatt(f_in, f_out, putz, frei=(), kruemel_m2=0.15, band=0.05, ko
                 unbelegt_kruemel_m2=round(n_unbel * px * px, 2))
 
 
+def vorbau_zonen(od, Z, parallel=0.95, abstand=1.0):
+    """Rechtecke (u0, u1, z0, z1) im Relief-Raster Z hinter/unter Vorbauten (audit/vorbauten_auto.json, Gruppe u0..u1, z0..max(z1, Vordach-Anschluss)) der Fassade,
+    deren Normale zu Z passt und deren Ebene < abstand m von der Reliefwand liegt. [] ohne Datei."""
+    f = os.path.join(od, "audit", "vorbauten_auto.json")
+    if not os.path.exists(f): return []
+    a = np.asarray(Z["a"], float)[:2]; t = np.asarray(Z["t"], float)[:2]; nw = np.asarray(Z["n"], float)[:2]; r = []
+    for F in json.load(open(f)).get("fassaden", []):
+        o = np.asarray(F["o"], float); d = np.asarray(F["d"], float); n = np.asarray(F["n"], float)
+        if n @ nw < parallel or abs((o - a) @ nw) > abstand: continue
+        for g in F.get("gruppen", []):
+            V = ((g.get("galerie") or {}).get("vordach") or {}); z1 = max(float(g["z1"]), float(V.get("z_anschluss", g["z1"])))
+            ua, ub = sorted((float((o + g["u0"] * d - a) @ t), float((o + g["u1"] * d - a) @ t))); r.append((ua, ub, float(g["z0"]), z1))
+    return r
+
+
+def kanten_wand(ebenen_json, Z, parallel=0.95, abstand=1.0):
+    """Triangulierte Fotokanten der passenden WAND-Ebene (tools/ebenen_bauplan.py -> ebenen.json, sweep.npz 'P') im Relief-Raster Z: (u, z, w) mit w = Abstand vor der
+    Reliefebene (Normale Z['n']). None ohne passende Ebene."""
+    try: E = json.load(open(ebenen_json))["ebenen"]
+    except Exception: return None
+    a = np.asarray(Z["a"], float)[:2]; t = np.asarray(Z["t"], float)[:2]; nw = np.asarray(Z["n"], float)[:2]; best = None
+    for e in E:
+        if e.get("art") != "wand": continue
+        o = np.asarray(e["o"], float); n = np.asarray(e["n"], float)
+        if n @ nw < parallel: continue
+        ab = abs((o + float(e.get("w", 0.0)) * n - a) @ nw)
+        if ab <= abstand and (best is None or ab < best[0]): best = (ab, e)
+    if best is None: return None
+    sw = best[1].get("sweep") or os.path.join(os.path.dirname(ebenen_json), best[1]["id"], "sweep.npz")
+    try: P = np.load(sw)["P"]
+    except Exception: return None
+    return np.stack([(P[:, :2] - a) @ t, P[:, 2], (P[:, :2] - a) @ nw], 1)
+
+
+def relief_vorbau_flach(f_in, f_out, zonen, kanten, band=0.05, radius=0.3, min_punkte=3, anteil=0.5, kachel=2.0):
+    """Relief HINTER/UNTER VORBAUTEN nur mit Kantenbeleg (21.11.2026, Nutzerbild neben_eigen__IMG_20261106_113231: Wandgemaelde unter dem Vordach als Klumpen).
+    Dort sieht kaum ein Foto die Wand frei (Pfosten, Bruestung, Vordach davor); die dichte Wolke verschmiert den Vordergrund in die Wand - das Netz ist dicht
+    (tiefe_belegt greift nicht) und das Gemaelde ist bunt (kein Putz). KRITERIUM aus den triangulierten Fotokanten der Wandebene: eine Reliefzelle mit Abweichung >= band
+    vom Wandniveau bleibt nur, wenn im Umkreis 'radius' >= min_punkte Kantenpunkte liegen und >= anteil davon gleichsinnig >= band/2 vor/hinter der Kanten-Wandebene
+    (Median der Kanten in der Zone) liegen = echter Tiefensprung. Gemalte Kanten liegen auf der Wandebene, fehlende Kanten = kein Mehrfoto-Beleg -> Wandniveau.
+    zonen = [(u0, u1, z0, z1)] (vorbau_zonen), kanten = (N, 3) u, z, w (kanten_wand) oder None (dann keine Zelle belegt). Schreibt f_out (+ .jpg), Rueckgabe dict."""
+    from scipy import ndimage as ndi
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from fassaden_kette import wandniveau
+    Z = dict(np.load(f_in)); rel = Z["rel"].astype(np.float32); px = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); H, W = rel.shape
+    m = np.isfinite(rel) & (rel != 0)
+    if "wand" in Z: m &= Z["wand"].astype(bool)
+    if "oeffnung" in Z: m &= ~Z["oeffnung"].astype(bool)
+    jj, ii = np.meshgrid(np.arange(W), np.arange(H)); uu = u0 + (jj + 0.5) * px; zz = z0 + (H - 1 - ii + 0.5) * px; zo = np.zeros((H, W), bool)
+    for (ua, ub, za, zb) in zonen: zo |= (uu >= ua) & (uu <= ub) & (zz >= za) & (zz <= zb)
+    zo &= m
+    if not zo.any(): return dict(unveraendert=True, zone_m2=0.0)
+    L = wandniveau(rel, m, px, kachel=kachel)
+    if L is None: return dict(unveraendert=True, zone_m2=round(float(zo.sum()) * px * px, 2))
+    dv = rel - L; ab = zo & (np.abs(dv) >= band)
+    vor = np.zeros((H, W), np.float32); hin = np.zeros_like(vor); alle = np.zeros_like(vor)
+    if kanten is not None and len(kanten):
+        K = np.asarray(kanten, float); ci = (H - 1 - np.floor((K[:, 1] - z0) / px)).astype(int); cj = np.floor((K[:, 0] - u0) / px).astype(int); ok = (ci >= 0) & (ci < H) & (cj >= 0) & (cj < W)
+        K, ci, cj = K[ok], ci[ok], cj[ok]; inz = zo[ci, cj]
+        if inz.sum() >= min_punkte:
+            w_ref = float(np.median(K[inz, 2])); dk = K[:, 2] - w_ref
+            np.add.at(alle, (ci, cj), 1.0); np.add.at(vor, (ci[dk >= band / 2], cj[dk >= band / 2]), 1.0); np.add.at(hin, (ci[dk <= -band / 2], cj[dk <= -band / 2]), 1.0)
+    # je zusammenhaengendem Abweichungskoerper (gleiches Vorzeichen): Kanten in seinem um 'radius' erweiterten Umriss - Innenflaechen echter Koerper haben keine Kanten,
+    # ihr Rand schon (dort liegt der Tiefensprung); eine gemalte Blase hat Kanten nur auf der Wandebene.
+    beleg = np.zeros((H, W), bool); r_ = max(1, int(round(radius / px))); st = np.ones((2 * r_ + 1, 2 * r_ + 1), bool)
+    for sg, zahl in ((1.0, vor), (-1.0, hin)):
+        lab, nk = ndi.label(ab & (sg * dv > 0))
+        for k_, sl in enumerate(ndi.find_objects(lab), 1):
+            if sl is None: continue
+            s2 = tuple(slice(max(0, s.start - r_), s.stop + r_) for s in sl); cc = lab[s2] == k_; um = ndi.binary_dilation(cc, st)
+            n_ = float(alle[s2][um].sum()); g_ = float(zahl[s2][um].sum())
+            if n_ >= min_punkte and g_ >= anteil * n_: beleg[s2] |= cc
+    flach = ab & ~beleg; neu = rel.copy(); neu[flach] = L[flach]
+    Z["rel"] = neu; Z["vorbau_flach"] = flach; np.savez_compressed(f_out, **Z)
+    try:
+        from PIL import Image
+        lx = np.gradient(neu, px, axis=1); lz = np.gradient(neu, px, axis=0); g_ = (np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1) * 255).astype(np.uint8); im_ = np.stack([g_] * 3, -1)
+        im_[flach] = (im_[flach] * 0.6 + np.array([90, 0, 60])).astype(np.uint8); im_[zo & ~flach & ab] = (im_[zo & ~flach & ab] * 0.6 + np.array([0, 90, 0])).astype(np.uint8)
+        Image.fromarray(np.repeat(np.repeat(im_, 3, 0), 3, 1)).save(f_out[:-4] + ".jpg", quality=88)     # violett = ohne Kantenbeleg auf Wandniveau, gruen = Tiefensprung belegt
+    except Exception: pass
+    return dict(zone_m2=round(float(zo.sum()) * px * px, 2), abweichung_m2=round(float(ab.sum()) * px * px, 2), flach_m2=round(float(flach.sum()) * px * px, 2),
+                belegt_m2=round(float((ab & beleg).sum()) * px * px, 2), kanten=0 if kanten is None else int(len(kanten)))
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("fein"); ap.add_argument("--aus"); a = ap.parse_args()
     Z = np.load(a.relief); M = putz_auf_relief(Z, a.fein)
