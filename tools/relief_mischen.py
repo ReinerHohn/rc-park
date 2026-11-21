@@ -5,12 +5,36 @@ Die lokale Feinrechnung trifft nur 40-60 % der Zellen (Verdeckung, schwache Schn
 0,23 mm bei 1:87; 1 cm waere unter der Druckaufloesung und macht das STL 4x so gross):
   1. Putz (Maske 'putz' des groben Reliefs) bleibt eben wie im groben Relief.
   2. sonst das FEINE Relief, wo es Daten hat (Median der gueltigen 1-cm-Zellen im Rasterfeld);
-  3. sonst das grobe Relief (echt oder generiert). Das feine wird dazu auf das Niveau des groben gebracht (Median-Versatz auf der gemeinsamen Flaeche).
+  3. sonst das grobe Relief (echt oder generiert). Das feine wird dazu auf das Niveau des groben gebracht (robuste Ebene der Differenz auf der gemeinsamen
+     Wandflaeche: Versatz + Neigung, Guard -> Median-Versatz). Ausgleichsebene des Ergebnisses robust (nur Wandflaeche, tools/relief_trend.py).
 Beide Hoehenbilder werden dazu in absolute Abstaende vor der Wandebene umgerechnet (rel + Ausgleichsebene). Ausgabe im Format von relief_einsatz.py
-(Feld = das feine Feld) + Masken 'fein' und 'generiert'; <aus>.jpg: gruen getoent = Putz, blau = aus dem groben Relief, grau = fein. ANSEHEN.
+(Feld = das feine Feld) + Masken 'fein' und 'generiert'; <aus>.jpg: gruen getoent = Putz, blau = aus dem groben Relief, grau = fein, violett = Vordergrund (kompakter Vorsprung, auf Wandniveau, tools/relief_vordergrund.py). ANSEHEN.
 Im Generator: grobes Relief mit `tief_felder=[Feld]` zuruecksetzen und diesen Einsatz davor setzen.
 """
 import sys, os, argparse, numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from relief_trend import robuste_ebene; from relief_vordergrund import vordergrund_weg
+
+# Angleich fein -> grob (21.11.2026, Schwabentor w01): die Feinrechnung (Teilbuendel weniger Fotos) lag gegenueber der dichten Wolke des ganzen Objekts um
+# -1,2 cm/m in z geneigt; nur der Median-Versatz wurde abgezogen -> 4-5 cm Keil im gebauten Relief. Jetzt robuste Ebene der DIFFERENZ fein - grob auf der
+# gemeinsamen Wandflaeche: was beide sehen (Gesims, Gewaende, Sockel), hebt sich in der Differenz auf und bleibt; Vorspruenge nur im feinen fallen als Ausreisser heraus.
+ANGL_MIN_ZELLEN = 500          # gemeinsame Zellen fuer einen Angleich (wie bisher fuer den Versatz)
+ANGL_MIN_SPANNE = 0.4          # Neigung je Richtung nur, wenn die gemeinsamen Zellen >= 40 % des Feldes in dieser Richtung ueberspannen (sonst nur Versatz)
+ANGL_MAX_NEIGUNG = 0.03        # m/m: steiler = kein Kamerakeil mehr, sondern verschiedene Flaechen -> Rueckfall auf den Median-Versatz (Meldung)
+
+
+def fein_angleich(diff, beide, px):
+    """Flaeche (H x W), die vom feinen Feld abgezogen wird: robuste Ebene von diff = fein - grob auf 'beide', mit Gueltigkeits-Guard."""
+    H, W = diff.shape; ii, jj = np.mgrid[0:H, 0:W]; null = np.zeros((H, W))
+    if beide.sum() <= ANGL_MIN_ZELLEN: return dict(flaeche=null, versatz_m=0.0, c=np.zeros(3), guard="zu wenig gemeinsame Zellen: kein Angleich")
+    x, y, v = jj[beide].astype(np.float64), ii[beide].astype(np.float64), diff[beide]
+    c, drin, info = robuste_ebene(x, y, v)
+    spu = (np.percentile(x, 95) - np.percentile(x, 5)) / max(W, 1); spz = (np.percentile(y, 95) - np.percentile(y, 5)) / max(H, 1)
+    if spu < ANGL_MIN_SPANNE: c[0] = 0.0
+    if spz < ANGL_MIN_SPANNE: c[1] = 0.0
+    if not info["robust"] or max(abs(c[0]), abs(c[1])) / px > ANGL_MAX_NEIGUNG:
+        m = float(np.median(v)); return dict(flaeche=null + m, versatz_m=m, c=np.zeros(3), guard="Rueckfall Median-Versatz: " + (info["grund"] or f"Neigung > {ANGL_MAX_NEIGUNG * 100:.0f} cm/m"))
+    c[2] = float(np.median((v - c[0] * x - c[1] * y)[drin]))
+    return dict(flaeche=c[0] * jj + c[1] * ii + c[2], versatz_m=float(np.median(v)), c=c, guard="Ebene" + ("" if spu >= ANGL_MIN_SPANNE and spz >= ANGL_MIN_SPANNE else " (eine Richtung nur Versatz)"))
 
 
 def ebene(Z, H, W):
@@ -34,20 +58,24 @@ def main():
         m = Gz[name].astype(np.uint8); m = np.vstack([m, np.zeros((Hg - m.shape[0], Wg), np.uint8)]) if m.shape[0] < Hg else m
         return cv2.remap(m, ug.astype(np.float32), vg.astype(np.float32), cv2.INTER_NEAREST, borderMode=cv2.BORDER_REPLICATE) > 0
     putz = maske("putz"); gen = maske("generiert"); null_g = cv2.remap((rg == 0.0).astype(np.uint8), ug.astype(np.float32), vg.astype(np.float32), cv2.INTER_NEAREST, borderMode=cv2.BORDER_REPLICATE) > 0
-    fein = np.isfinite(dfe) & ~putz; beide = fein & ~null_g & ~gen; vers = float(np.median(dfe[beide] - dgo[beide])) if beide.sum() > 500 else 0.0
-    d = np.where(fein, dfe - vers, dgo); leer = ~fein & null_g; yy, xx = ii, jj; ok = ~leer       # das FEINE auf das Niveau des groben bringen (das grobe gilt fuer die ganze Wand; umgekehrt stand der Einsatz 1-3 cm versetzt -> Linie an seiner Oberkante)
+    fein = np.isfinite(dfe) & ~putz; beide = fein & ~null_g & ~gen; angl = fein_angleich(dfe - dgo, beide, px)
+    d = np.where(fein, dfe - angl["flaeche"], dgo); leer = ~fein & null_g; yy, xx = ii, jj; ok = ~leer; vers = angl["versatz_m"]       # das FEINE auf das Niveau des groben bringen (das grobe gilt fuer die ganze Wand; umgekehrt stand der Einsatz 1-3 cm versetzt -> Linie an seiner Oberkante)
     # Entstoeren (Kontrollbild 15.11.: schwarze Sprenkel = Einzelzellen-Ausreisser der Feinrechnung und Stufen an der Grenze fein/grob): Zellen, die > 2,5 cm vom 5x5-Median abweichen, auf den Median;
     # an der Grenze fein/grob das grobe Relief ueber 3 Zellen an das feine heranfuehren.
     dm = cv2.medianBlur(np.where(ok, d, 0).astype(np.float32), 5).astype(np.float64); aus_ = ok & (np.abs(d - dm) > 0.025); d[aus_] = dm[aus_]
     w_ = np.clip(cv2.distanceTransform((~fein).astype(np.uint8), cv2.DIST_L2, 3) / 3.0, 0, 1); gl = cv2.GaussianBlur(np.where(ok, d, 0).astype(np.float32), (0, 0), 1.5).astype(np.float64) / np.maximum(cv2.GaussianBlur(ok.astype(np.float32), (0, 0), 1.5), 1e-3)
     rand_ = ~fein & ok & (w_ < 1); d[rand_] = (w_ * d + (1 - w_) * gl)[rand_]
-    G = np.c_[xx[ok], yy[ok], np.ones(ok.sum())]; ko = np.linalg.lstsq(G, d[ok], rcond=None)[0]; rel = d - (ko[0] * xx + ko[1] * yy + ko[2]); rel[leer] = 0.0; rel[(rel == 0.0) & ok] = 1e-4
+    # 21.11.2026 (Schwabentor w01, Verkehrsschild +15 cm als Buckel im Quaderwerk): kompakter Vorsprung >= 10 cm vor der Wand derselben Zeile, nicht durchlaufend,
+    # nicht am Feldrand = Vordergrund (Schild, Laterne, Poller) -> Wandniveau (tools/relief_vordergrund.py; Sockelband/Gesims laufen durch und bleiben). OHNE_VORDERGRUND=1 = alter Stand.
+    vgm = np.zeros((H, W), bool); vg_info = dict(n=0, flaeche_m2=0.0)
+    if os.environ.get("OHNE_VORDERGRUND") != "1": d, vgm, vg_info = vordergrund_weg(d, ok, px)
+    ko, _, eb_info = robuste_ebene(xx[ok], yy[ok], d[ok]); rel = d - (ko[0] * xx + ko[1] * yy + ko[2]); rel[leer] = 0.0; rel[(rel == 0.0) & ok] = 1e-4   # Ebene nur aus der Wandflaeche (tools/relief_trend.py): Vorsprung kippt sie nicht mehr
     niv = float(np.median(rel[putz & ok])) if (putz & ok).sum() > 50 else 0.0
     np.savez_compressed(a.aus, rel=rel.astype(np.float32), a=Fz["a"], t=Fz["t"], n=Fz["n"], u0=u0, z0=z0, px=px, lochanteil=float(leer.mean()), hub_p5_p95=float(np.subtract(*np.percentile(rel[ok], [95, 5]))), ebene_abstand_m=float(ko[2]),
-                        trend_je_m=np.array([ko[0] / px, -ko[1] / px]), fein=fein, generiert=gen & ~fein, generiert_anteil=float((gen & ~fein).mean()), putz=putz, putz_niveau_m=niv, oeffnung=np.zeros((H, W), bool))
+                        trend_je_m=np.array([ko[0] / px, -ko[1] / px]), ebene_robust=bool(eb_info["robust"]), fein_angleich_je_m=np.array([angl["c"][0] / px, -angl["c"][1] / px]), fein_angleich_guard=angl["guard"], fein=fein, generiert=gen & ~fein, generiert_anteil=float((gen & ~fein).mean()), putz=putz, putz_niveau_m=niv, oeffnung=np.zeros((H, W), bool), vordergrund=vgm, vordergrund_m2=float(vg_info['flaeche_m2']))
     lx = np.gradient(rel, px, axis=1); lz = np.gradient(rel, px, axis=0); s = np.clip(0.7 - 0.35 * lx + 0.5 * lz, 0, 1); im = cv2.cvtColor((s * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)
-    im[~fein & ok & ~putz] = (im[~fein & ok & ~putz] * np.array([1.0, 0.82, 0.72])).astype(np.uint8); im[putz] = (im[putz] * np.array([0.8, 1.0, 0.8])).astype(np.uint8); im[leer] = (0, 0, 255); cv2.imwrite(os.path.splitext(a.aus)[0] + ".jpg", im)
-    print(f"{os.path.basename(a.aus)}: {W}x{H} Zellen a {px*100:.0f} cm; fein {fein.mean()*100:.0f} %, aus dem groben Relief {(~fein & ok & ~putz).mean()*100:.0f} % (davon generiert {(gen & ~fein).mean()*100:.0f} %), Putz {putz.mean()*100:.0f} %, leer {leer.mean()*100:.0f} %; Versatz grob->fein {vers*100:+.1f} cm")
+    im[~fein & ok & ~putz] = (im[~fein & ok & ~putz] * np.array([1.0, 0.82, 0.72])).astype(np.uint8); im[putz] = (im[putz] * np.array([0.8, 1.0, 0.8])).astype(np.uint8); im[vgm] = (im[vgm] * np.array([1.0, 0.6, 1.0])).astype(np.uint8); im[leer] = (0, 0, 255); cv2.imwrite(os.path.splitext(a.aus)[0] + ".jpg", im)
+    print(f"{os.path.basename(a.aus)}: {W}x{H} Zellen a {px*100:.0f} cm; fein {fein.mean()*100:.0f} %, aus dem groben Relief {(~fein & ok & ~putz).mean()*100:.0f} % (davon generiert {(gen & ~fein).mean()*100:.0f} %), Putz {putz.mean()*100:.0f} %, Vordergrund {vg_info['n']} Stellen {vg_info['flaeche_m2']} m2, leer {leer.mean()*100:.0f} %; Versatz grob->fein {vers*100:+.1f} cm, Neigung fein-grob {angl['c'][0] / px * 100:+.1f}/{-angl['c'][1] / px * 100:+.1f} cm/m (u/z) abgezogen [{angl['guard']}]; Ebene {'robust, Wandflaeche ' + format(eb_info['anteil_wand'] * 100, '.0f') + ' %' if eb_info['robust'] else 'kleinste Quadrate (' + eb_info['grund'] + ')'}")
     return 0
 
 
