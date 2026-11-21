@@ -46,6 +46,7 @@ Methoden: `modelle/archiv/METHODE_WAHRZEICHEN_AUS_FOTOS.md` · `METHODE_3D_AUS_A
 - 26.10. · Voll-Detail-Mesh als HTML (367 MB) / KI-Bild→3D für Architektur → ✗ Anti-Pattern
 
 **Tagesfazit 21.11.** (Register modelle/ERKENNTNISSE.md)
+- 21.11. · DURCHBRUCH Seiten-SfM symmetrischer Tore OHNE GPS: Verklebung Sued/Nord kam von Person im Vordergrund (Selfie-Video, 18 Brueckenbilder) → Masken in Merkmalssuche + Seitenerkennung → 0 gemischte Bildteile (vorher 750); globaler Mapper auf bereinigter DB wiederholbar (1 % Wanderer bei scharfen Kameras; alter "verformt"-Befund = Messfehler 2,48 → 0,65 %) → Seiten vereint, robust gegen Klappungsfehler · ✔ alles in der Kette (METHODE_SEITEN_SFM.md); Kettenbeweis Vereinen: Lauf kette-martinstor-1121b
 - 21.11. · Handmessen statt Kettenstufen → ✗ Handstand nur 2 → 4/11 · nur Kettenlauf zaehlt, Agenten liefern Stufe + Test
 - 21.11. · Kette scheitert, Handfolge nicht → Tauschprobe stufenweise fand Ursache (Sperrliste in dichter Seitenwolke) → ✔ eingebaut
 - 21.11. · Treppenturm/Tor/Nischenfenster/Fotosteine-Paarprobe als Kettenstufen → ✔ eingebaut; Kettenbeweis Lauf 1121o
