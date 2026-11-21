@@ -179,6 +179,12 @@ def main():
             stufe(bericht, "abdeckung", "OFFEN" if duenn or rc3 != 0 else "OK", det)
         except Exception as e_: print("HINWEIS Abdeckung frueh nicht pruefbar:", e_, flush=True)
     ziel = 0.5 * n_gueltig
+    # 21.11.2026 (Martinstor-Kettenlauf 1121a brach ab: 574 von 2107 registriert, Ziel 1053 - aber die Seitenerkennung hatte 1362 Bilder als FREMD erkannt, d. h. ohne
+    # echte Verbindung zum Objekt; von den 745 Objektbildern waren 574 im Modell). Grundmenge = Objektbilder, wenn die Seitenerkennung gelaufen ist.
+    try:
+        sj_ = json.load(open(os.path.join(daten, "sfm", "seiten.json"))); n_fremd = int(sj_.get("fremd") or 0)
+        if 0 < n_fremd < n_gueltig: ziel = 0.5 * (n_gueltig - n_fremd); print(f"SfM-Ziel: {n_fremd} fremde Bilder (Seitenerkennung) zaehlen nicht -> Ziel >= {int(ziel)} von {n_gueltig - n_fremd} Objektbildern", flush=True)
+    except Exception: pass
     status = "OK" if rc_ok and reg is not None and reg >= ziel else "FEHLER"
     stufe(bericht, "sfm", status, f"registriert {reg} von {n_gueltig} (Ziel >= {int(ziel)})")
     if status != "OK": sichern(); return 2
