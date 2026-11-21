@@ -429,6 +429,8 @@ def _gpu_run(cmd, **k):
     with s: return subprocess.run(cmd, **k)
 
 
+_WIEDERHOL = __import__("threading").Lock()   # Wiederholungen nach Systemabbruch laufen nacheinander
+
 def parallel_plaetze(n_waende, env=None, fein=None):
     """(Waende gleichzeitig, GPU-Plaetze). 21.11.2026 (Tempo, Kettenlauf 1121o: fassaden_kette 1356 s, Waende nacheinander, 28 Kerne):
     CPU: FASSADEN_PARALLEL oder min(Waende, Kerne/4, verfuegbarer RAM / 2,6 GB - gemessen 21.11.: Spitze 2,5 GB Teilprozesse je Wand); 1 = alter serieller Ablauf.
@@ -487,7 +489,12 @@ def main():
             t_ = f"{os.path.basename([c_ for c_ in cmd if str(c_).endswith('.py')][0])}: " + (f"vom System beendet (Signal {-r.returncode})" if r.returncode < 0 else (r.stderr.strip().splitlines() or ["?"])[-1][:200])
             abstuerze.append(t_); print("    FEHLER (Werkzeug abgestuerzt, NICHT 'kein Ergebnis'):", t_, flush=True)
     def lauf(cmd):
-        r = (_gpu_run if os.path.basename(cmd[0]) in GPU_TEILE else subprocess.run)([PY, "-W", "ignore", "-I"] + cmd, capture_output=True, text=True); z = (r.stdout.strip().splitlines() or [r.stderr.strip()[-200:]])[-1]; print("   ", z[:200], flush=True); absturz_merken(r, cmd); return r.returncode
+        lf_ = _gpu_run if os.path.basename(cmd[0]) in GPU_TEILE else subprocess.run
+        r = lf_([PY, "-W", "ignore", "-I"] + cmd, capture_output=True, text=True)
+        if r.returncode < 0:                                              # 21.11.2026 (Nutzer: "wiederholst du Sachen, wo du wegen Arbeitsspeicher gescheitert bist?" - nein, w03 blieb in 1121p weg): vom System beendet -> EINMAL wiederholen, Wiederholungen nacheinander
+            print(f"    WIEDERHOLUNG: {os.path.basename(cmd[0])} vom System beendet (Signal {-r.returncode}) - einmal neu, nacheinander", flush=True)
+            with _WIEDERHOL: __import__("time").sleep(20); r = lf_([PY, "-W", "ignore", "-I"] + cmd, capture_output=True, text=True)
+        z = (r.stdout.strip().splitlines() or [r.stderr.strip()[-200:]])[-1]; print("   ", z[:200], flush=True); absturz_merken(r, cmd); return r.returncode
     nb_stl = nachbarn_stl(a.objekt, rd) if not a.wand else ""            # 17.11.2026: LoD2-Nachbarn als Verdecker der Fotostufe (am Kaufhaus zeigte das "beste Foto" der Ostwand das Nachbarhaus davor)
     def _wand(w):                                                     # 21.11.2026 (Tempo): Rumpf einer Wand; die Waende laufen parallel (_waende_parallel), Ablauf je Wand unveraendert
         A = np.array(w["a"]); Bp = np.array(w["b"]); L = float(np.linalg.norm(Bp - A)); t = (Bp - A) / L; n = np.array([t[1], -t[0]]); n = n if (np.array(w["aussen"]) - A) @ n > 0 else -n
