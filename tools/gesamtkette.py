@@ -571,7 +571,8 @@ def main():
                 if not os.path.exists(dp_) and os.path.exists(os.path.join(fo, "fassaden.json")): lauf(B, "bauplan_dachprofil", [PY, "-W", "ignore", "-I", "tools/dach_profil_wolke.py", ZR, W, os.path.join(fo, "fassaden.json")], log, ok=(0, 3)); dach_neu_ = os.path.exists(dp_)
                 # 21.11.2026 (Schwabentor-1120: Hoehen-Tor +1,62 m / k 0,9605 war kein Massstab - Traufe/Grundriss/Lot/Boden passten -, sondern ein zu breites Wolken-Dachprofil auf 56 Grad):
                 # aeltere Profile ohne DOM1-Veto nachziehen (nur die Scheiben, kein Neumessen gegen das schon umgebaute STL), dann neu bauen.
-                elif os.path.exists(dp_) and "dom1_veto" not in json.load(open(dp_)):
+                # Version 2 (21.11.2026, 1121q: Ueberstand 0,9 -> 0,12 m): Veto 1 interpolierte ueber die Traufkante - aeltere Vetos von 'scheiben_vorher' neu ziehen (VETO_VERSION in dach_profil_wolke.py)
+                elif os.path.exists(dp_) and (json.load(open(dp_)).get("dom1_veto") or {}).get("version", 1) < 2:
                     dach_neu_ = lauf(B, "bauplan_dachprofil_veto", [PY, "-W", "ignore", "-I", "tools/dach_profil_wolke.py", ZR, W, os.path.join(fo, "fassaden.json"), "--nur_veto"], log, ok=(0, 3))[0] == 0
                 # 21.11.2026 (KERNMETHODE; Schwabentor: Wolke endet 3,5 m unter dem Knauf, Laternenhals im duennen Wolkenbereich): Laterne/Spitze aus der HIMMELSKANTE der kalibrierten
                 # Fotos an der Dachachse (tools/spitze_aus_umriss.py -> Block 'spitze_foto' in dach_profil.json; bauteile.dach_aus_profil baut damit ueber dem Laternenhals). Masken aus dem Cache der Stufe 'dachfoto'.

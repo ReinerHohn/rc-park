@@ -28,8 +28,11 @@ def _kachel(ek, nk, art="dom1"):
     return _cache[k]
 
 
-def dom1_bilinear(E, N, art="dom1"):
-    """Wie dom1_hoehe, aber bilinear zwischen den vier Pixelmitten (21.11.2026, Dach-Veto: auf steilen Daechern macht das 1-m-Raster sonst +-0,5 m Lage = +-0,75 m Hoehe)."""
+def dom1_bilinear(E, N, art="dom1", klippe=None):
+    """Wie dom1_hoehe, aber bilinear zwischen den vier Pixelmitten (21.11.2026, Dach-Veto: auf steilen Daechern macht das 1-m-Raster sonst +-0,5 m Lage = +-0,75 m Hoehe).
+    klippe (m, optional): Zelle, deren vier Ecken mehr als klippe auseinanderliegen (Traufkante/Wand ueber der Strasse), bekommt das MAXIMUM der Ecken statt der
+    Interpolation - das 1-m-Raster kann die Kante innerhalb der Zelle nicht verorten, bilinear erfindet dort eine schraege Flaeche, die INNERHALB der echten
+    Traufkante liegt (Schwabentor-1120, 21.11.2026: Dachzellen 37,1 m bis r 6,75 m, bilinear schon bei r 6,25 nur 34,1 m -> Veto schnitt den Dachueberstand 0,9 -> 0,12 m)."""
     E, N = np.asarray(E, float), np.asarray(N, float); z = np.full(E.shape, np.nan)
     ek, nk = (E // 1000).astype(int), (N // 1000).astype(int)
     for a, b in set(zip(ek.ravel().tolist(), nk.ravel().tolist())):
@@ -37,7 +40,11 @@ def dom1_bilinear(E, N, art="dom1"):
         if K is None: continue
         A, xc, yc, _ = K; m = (ek == a) & (nk == b); fj = E[m] - xc; fi = yc - N[m]; j0 = np.floor(fj).astype(int); i0 = np.floor(fi).astype(int); tj = fj - j0; ti = fi - i0
         ok = (i0 >= 0) & (i0 + 1 < A.shape[0]) & (j0 >= 0) & (j0 + 1 < A.shape[1]); zz = np.full(m.sum(), np.nan); i, j, u, w = i0[ok], j0[ok], tj[ok], ti[ok]
-        zz[ok] = (A[i, j] * (1 - u) * (1 - w) + A[i, j + 1] * u * (1 - w) + A[i + 1, j] * (1 - u) * w + A[i + 1, j + 1] * u * w); z[m] = zz
+        zz[ok] = (A[i, j] * (1 - u) * (1 - w) + A[i, j + 1] * u * (1 - w) + A[i + 1, j] * (1 - u) * w + A[i + 1, j + 1] * u * w)
+        if klippe is not None:
+            Q = np.stack([A[i, j], A[i, j + 1], A[i + 1, j], A[i + 1, j + 1]]); kl = (Q.max(0) - Q.min(0)) > klippe
+            zz_ = zz[ok]; zz_[kl] = Q.max(0)[kl]; zz[ok] = zz_
+        z[m] = zz
     return z
 
 

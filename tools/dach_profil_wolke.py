@@ -9,6 +9,8 @@ Ueberstand und keine Laterne. Im Handlauf kam das Dach aus vier gemessenen Trauf
   4. Ende, wo die Wolke weniger als --min_p Punkte je Scheibe hat (Spitze/Knauf fehlen dann - im Bericht).
   5. DOM1-VETO (dom1_veto, 21.11.2026): keine Seite einer Scheibe steht weiter hinaus als die Laser-Isolinie dieser Hoehe + --dom1_tol (0,3 m); nur wo der Laser eine
      Flaeche sieht (Laterne/Spitze bleiben aus der Wolke). Schwabentor-1120: ohne Veto Dach +1,62 m ueber DOM1 bei richtiger Traufe -> sah aus wie 3,5 % Hoehenmassstab.
+     An der Traufkante (Hoehensprung > --dom1_klippe je 1-m-Zelle) NICHT bilinear: dort gilt der hoehere Zellwert, sonst landet die Isolinie auf der Wand und der
+     Dachueberstand wird abgeschnitten (Version 2, Schwabentor 1121q: Ueberstand 0,9 -> 0,12 m). --nur_veto rechnet von 'scheiben_vorher' neu, wenn vorhanden.
 Ausgabe audit/dach_profil.json {o (Achse), d, n, z0, scheiben [[z, u_lo, u_hi, v_lo, v_hi, punkte]]} -> bauteile.dach_aus_profil (Modell ueber z0 abtragen, Schichtkoerper aufsetzen).
 Kernmethode: die Wolke gibt die GROBE Dachform (Kanten koennen Ziegelflaechen nicht); Traufkanten danach aus Fotokanten nachmessen (offen).
 Aufruf: dach_profil_wolke.py <objekt.json> <wolke.npy> <fassaden.json> [--stl S]
@@ -18,13 +20,17 @@ import sys, os, json, argparse, numpy as np
 HIER = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HIER)
 
 
-def laser_im_rahmen(obj, art="dom1"):
-    """Funktion (x, y im Objektrahmen) -> DOM1-Hoehe ueber rahmen.gelaende (bilinear, NaN ohne Kachel); None ohne Rahmen."""
+VETO_VERSION = 2   # 2 (21.11.2026): Klippen-Zellen (Traufkante ueber der Strasse) nicht interpolieren - Version 1 schnitt den Dachueberstand ab (Schwabentor 0,9 -> 0,12 m)
+
+
+def laser_im_rahmen(obj, art="dom1", klippe=None):
+    """Funktion (x, y im Objektrahmen) -> DOM1-Hoehe ueber rahmen.gelaende (bilinear, NaN ohne Kachel); None ohne Rahmen.
+    klippe: siehe dom1_kachel.dom1_bilinear - Zellen mit Hoehensprung > klippe (Traufe/Wand) bekommen den hoeheren Wert (Veto schneidet nur, was der Laser AUSSCHLIESST)."""
     r = obj.get("rahmen") or {}
     if not all(k in r for k in ("mitte_utm", "xhat_utm", "yhat_utm", "gelaende")): return None
     sys.path.insert(0, HIER); from dom1_kachel import dom1_bilinear
     m0, xh, yh, g0 = np.array(r["mitte_utm"], float), np.array(r["xhat_utm"], float), np.array(r["yhat_utm"], float), float(r["gelaende"])
-    return lambda x, y: dom1_bilinear(m0[0] + x * xh[0] + y * yh[0], m0[1] + x * xh[1] + y * yh[1], art) - g0
+    return lambda x, y: dom1_bilinear(m0[0] + x * xh[0] + y * yh[0], m0[1] + x * xh[1] + y * yh[1], art, klippe=klippe) - g0
 
 
 def dom1_veto(P, c, d, n, hoehe, tol=0.3, reichweite=12.0, raster=0.1, min_flaeche=2.0, unter_max=0.5):
@@ -52,13 +58,16 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("wolke"); ap.add_argument("fassaden"); ap.add_argument("--stl"); ap.add_argument("--schritt", type=float, default=0.5); ap.add_argument("--min_p", type=int, default=80)
     ap.add_argument("--rand", type=float, default=0.7); ap.add_argument("--ueber", type=float, default=0.3)
     ap.add_argument("--dom1_tol", type=float, default=0.3); ap.add_argument("--ohne_dom1", action="store_true")
+    ap.add_argument("--dom1_klippe", type=float, default=3.0, help="Hoehensprung je 1-m-Zelle, ab dem eine Zelle als Traufe/Wand gilt (3 m = 72 Grad, steiler als jede Dachflaeche, die das Veto prueft)")
     ap.add_argument("--nur_veto", action="store_true", help="vorhandenes audit/dach_profil.json nur mit dem DOM1-Veto nachziehen (Profil nicht neu messen: das STL traegt dann schon das Profildach)"); a = ap.parse_args()
     objp = os.path.abspath(a.objekt); od = os.path.dirname(objp); obj = json.load(open(objp))
     if a.nur_veto:
-        dp = os.path.join(od, "audit", "dach_profil.json"); D = json.load(open(dp)); hl = laser_im_rahmen(obj)
+        dp = os.path.join(od, "audit", "dach_profil.json"); D = json.load(open(dp)); hl = laser_im_rahmen(obj, klippe=a.dom1_klippe)
         if hl is None or a.ohne_dom1: print("DOM1-Veto: kein Rahmen/Laser - nichts geaendert"); return 3
+        vorher = (D.get("dom1_veto") or {}).get("scheiben_vorher")       # aelteres Veto (Version 1) zuruecknehmen: von den ungeschnittenen Scheiben neu rechnen
+        if vorher and len(vorher) == len(D["scheiben"]): D["scheiben"] = json.loads(json.dumps(vorher))
         alt = json.dumps(D["scheiben"]); veto = dom1_veto(D["scheiben"], D["o"], D["d"], D["n"], hl, tol=a.dom1_tol)
-        D["dom1_veto"] = dict(tol_m=a.dom1_tol, eingriffe=veto, aktiv=True, nachgezogen=True, scheiben_vorher=json.loads(alt)); json.dump(D, open(dp, "w"), indent=1)
+        D["dom1_veto"] = dict(version=VETO_VERSION, tol_m=a.dom1_tol, klippe_m=a.dom1_klippe, eingriffe=veto, aktiv=True, nachgezogen=True, scheiben_vorher=json.loads(alt)); json.dump(D, open(dp, "w"), indent=1)
         print(f"DOM1-Veto (nachgezogen): {len(veto)} Seiten-Scheiben auf die Laser-Isolinie gesetzt" + (f", groesster Ueberstand {max(v['wolke_m'] - v['laser_m'] for v in veto):.2f} m" if veto else "")); return 0
     import trimesh
     stl = a.stl or os.path.join(ROOT, obj["stl"]); m = trimesh.load(stl); m.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0)
@@ -108,16 +117,16 @@ def main():
     Q = np.array([p[1:5] for p in P]); G = Q.copy()
     for k in range(1, len(P) - 1): G[k] = np.median(Q[k - 1:k + 2], 0)                       # Median ueber 3 Scheiben: einzelne Ausreisser an der Traufe (97. Perzentil) glaetten
     for p, q in zip(P, G): p[1:5] = [round(float(x), 3) for x in q]
-    veto = []; hl = None if a.ohne_dom1 else laser_im_rahmen(obj)
+    veto = []; P_vorher = None; hl = None if a.ohne_dom1 else laser_im_rahmen(obj, klippe=a.dom1_klippe)
     if hl is not None:                                                                       # Laser = Hoehen-/Lage-Veto (KERNMETHODE); Wolke darf die Laserflaeche nicht ueberragen
-        veto = dom1_veto(P, c, d, n, hl, tol=a.dom1_tol)
+        P_vorher = json.loads(json.dumps(P)); veto = dom1_veto(P, c, d, n, hl, tol=a.dom1_tol)
         print(f"DOM1-Veto: {len(veto)} Seiten-Scheiben auf die Laser-Isolinie gesetzt, Ausloeser Ueberstand > {a.dom1_tol:.2f} m" + (f" (groesster Ueberstand {max(v['wolke_m'] - v['laser_m'] for v in veto):.2f} m)" if veto else ""))
     if len(P) < 4: print(f"zu wenige Scheiben mit Wolke ueber z {z0:.1f} ({len(P)})"); return 3
     hb = lambda p: ((p[2] - p[1]) / 2, (p[4] - p[3]) / 2); e = hb(P[0]); mi = P[len(P) // 3]; em = hb(mi); nei = float(np.degrees(np.arctan2(mi[0] - P[1][0], max(hb(P[1])[0] - em[0], 1e-3))))
     print(f"Achse x {c[0]:.2f} y {c[1]:.2f}; Wand halb {(wand[1] - wand[0]) / 2:.2f} x {(wand[3] - wand[2]) / 2:.2f} m; Dachbeginn z {z0:.1f}: halb {e[0]:.2f} x {e[1]:.2f} m (Ueberstand {e[0] - (wand[1] - wand[0]) / 2:+.2f} / {e[1] - (wand[3] - wand[2]) / 2:+.2f} m)")
     print(f"{len(P)} Scheiben bis z {P[-1][0] + a.schritt:.1f} (Modell bisher bis {zt:.1f}); Neigung unteres Drittel ~{nei:.0f} Grad; oberste Scheibe halb {hb(P[-1])[0]:.2f} x {hb(P[-1])[1]:.2f} m")
     A = os.path.join(od, "audit"); json.dump(dict(quelle="tools/dach_profil_wolke.py", wolke=a.wolke, o=[float(c[0]), float(c[1])], d=d.tolist(), n=n.tolist(), z0=z0, schritt=a.schritt, wand_halb=[(wand[1] - wand[0]) / 2, (wand[3] - wand[2]) / 2],
-                                                 modell_hoehe_vorher=zt, seiten_aus_modell=n_mod, seiten_gespiegelt=n_sp, achse_uv=[cu, cv_], neigung_grad=round(nei, 1), dom1_veto=dict(tol_m=a.dom1_tol, eingriffe=veto, aktiv=hl is not None), scheiben=P), open(os.path.join(A, "dach_profil.json"), "w"), indent=1)
+                                                 modell_hoehe_vorher=zt, seiten_aus_modell=n_mod, seiten_gespiegelt=n_sp, achse_uv=[cu, cv_], neigung_grad=round(nei, 1), dom1_veto=dict(version=VETO_VERSION, tol_m=a.dom1_tol, klippe_m=a.dom1_klippe, eingriffe=veto, aktiv=hl is not None, scheiben_vorher=P_vorher), scheiben=P), open(os.path.join(A, "dach_profil.json"), "w"), indent=1)
     print(f"Seiten ohne Wolke (ANNAHME): {n_mod} von {4 * len(P)}, davon {n_sp} an der gemessenen Achse (u {cu:+.2f}, v {cv_:+.2f}) gespiegelt"); print("->", os.path.join(A, "dach_profil.json")); return 0
 
 
