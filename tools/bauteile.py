@@ -185,9 +185,9 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     Fenster, vor denen im Modell schon etwas steht (Sonde 3-8 cm vor der Flaeche zu > 20 % gefuellt), werden ausgelassen. Liefert (koerper, belege)."""
     import json, os
     if not os.path.exists(datei): return koerper, []
-    belege = []
+    belege = []; DRUCK_MIN = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0     # 0,8 mm bei 1:87 = 0,07 m
     for fid, F in json.load(open(datei)).items():
-        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0
+        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0; ann = []; formen = {}
         for f in F["fenster"]:
             if f.get("stimmen_min", 0) < min(min_stimmen, 2): continue          # Stimmen prueft schon fenster_aus_parsing.py (anteilig); hier nur noch Einzelstimmen aussieben
             N = f.get("nische"); A_ = N or f
@@ -195,13 +195,20 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
             if (koerper ^ sonde).volume() > 0.2 * sonde.volume(): continue
             if N or f.get("bogen"):                                           # 21.11.2026 tools/nischen_fenster.py: Nische und Fensteroeffnung als ZWEI Ebenen, Umriss je Ebene aus den Bildkanten
                 t0 = float(N["tiefe"]) if N else 0.0; tf = float(f.get("tiefe") or tiefe)
+                # 21.11.2026 spaet (Nutzer: 'zwei flache Rechtecke'): jede Stufe mindestens Druckmindestmass (MINMM im Massstab SCALE, Generatoraufruf), sonst ist
+                # eine gemessene 5-cm-Nische im Druck 0,57 mm = unsichtbar. ANNAHME (Druckbarkeit, CLAUDE.md 'Mindestmass 0,8 mm'), je Fenster im Beleg vermerkt.
+                if N and t0 < DRUCK_MIN: ann.append(f"Nische {fid} u {N['u0']:.2f}: {t0:.2f} -> {DRUCK_MIN:.3f} m"); t0 = DRUCK_MIN
+                if tf < DRUCK_MIN: ann.append(f"Fenster {fid} u {f['u0']:.2f}: {tf:.2f} -> {DRUCK_MIN:.3f} m"); tf = DRUCK_MIN
+                if "ANNAHME" in str(f.get("tiefe_quelle", "")): ann.append(f"Laibung {fid} u {f['u0']:.2f}: {tf:.2f} m nicht gemessen")
                 if N: koerper = koerper - _umriss_prisma(W, N, N["z0"], -t0, 0.05)
                 z0_ = max(f["z0"], N["z0"]) if N else f["z0"]                  # Fenster unter der Nischensohle wuerde einen geschlossenen Hohlraum hinter der Wand schneiden
                 koerper = koerper - _umriss_prisma(W, f, z0_, -(t0 + tf), 0.05); n_ += 1
-                b_ = f.get("bogen") or {}; DURCH.append((W, f["u0"], f["u1"], z0_, b_.get("kaempfer", f["z1"]) if b_.get("form", "gerade") != "gerade" else f["z1"], -(t0 + tf)))
+                k_ = (f.get("bogen") or {}).get("form", "gerade") + (" in Nische" if N else ""); formen[k_] = formen.get(k_, 0) + 1
+                b_ = f.get("bogen") or {}; DURCH.append((W, f["u0"], f["u1"], z0_, b_.get("kaempfer", f["z1"]) if b_.get("form", "gerade") != "gerade" else f["z1"], -(t0 + tf), dict(tiefe=t0 + tf)))   # 7. Feld: Laibungstiefe dieses Fensters fuer rueckwaende()
                 continue
             ab, zu = W.fenster(f["u0"], f["u1"], f["z0"], f["z1"], 0.0, tiefe=tiefe, teiler=f.get("teiler", ()), kaempfer=f.get("kaempfer"), sprossen=f.get("sprossen", ())); koerper = koerper - ab + zu; n_ += 1
-        if n_: belege.append(dict(seite="wand", element=f"{n_} Fenster Fassade {fid} (automatisch erkannt)", quelle="OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
+            formen["rechteck (Form nicht gemessen)"] = formen.get("rechteck (Form nicht gemessen)", 0) + 1
+        if n_: belege.append(dict(seite="wand", element=f"{n_} Fenster Fassade {fid} (automatisch erkannt)", formen=formen, **({"annahmen": "ANNAHME: " + "; ".join(ann)} if ann else {}), quelle="OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
                                   hinweis="ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME"))
     return koerper, belege
 
@@ -933,7 +940,7 @@ def aushoehlen(koerper, d=0.3, schnitte=(), fenster=None, min_m3=0.5, decke=None
     fenster: Liste wie DURCH (Standard: alle bisher mit Wand.fenster gebauten); schnitte: weitere Durchbruchkoerper (Rundfenster, Schlitze).
     Nur Hohlraumteile, die von einem Durchbruch erreicht werden, bleiben (sonst geschlossene Blasen = Extrakoerper im STL). Liefert (koerper, anzahl_offen, hohlraum_m3)."""
     fenster = DURCH if fenster is None else fenster
-    cuts = [W.kasten(u0, u1, z0, z1, wr - d - 0.25, wr + 0.002) for W, u0, u1, z0, z1, wr in fenster] + list(schnitte)
+    cuts = [W.kasten(u0, u1, z0, z1, wr - d - 0.25, wr + 0.002) for W, u0, u1, z0, z1, wr, *_ in fenster] + list(schnitte)
     if not cuts: return koerper, 0, 0.0
     alle = cuts[0]
     for c in cuts[1:]: alle = alle + c
@@ -972,6 +979,9 @@ def rueckwaende(koerper, felder, tiefe, d, rand=0.6, schliessen=0.05, schritt=0.
     zus = None; info = []; w0, w1 = w_bereich
     for f in felder:
         W, u0, u1, z0, z1 = f[:5]; s = -1.0 if W.spiegel else 1.0
+        t_f = float(f[6].get("tiefe", 0.0)) if len(f) > 6 and isinstance(f[6], dict) else None   # 21.11.2026: Laibung dieses Fensters AB WANDEBENE w = 0 (fenster_aus_json: Nische + Fenster)
+        t_ = max(tiefe, t_f or 0.0)
+        w0 = min(w_bereich[0], -(t_ + d + 0.3))                           # gemessene Laibung 0,85 m (Schwabentor f00): Profil muss bis hinter die Rueckwandplatte reichen
         xa, xb = sorted((s * (u0 - rand), s * (u1 + rand))); fa, fb = sorted((s * u0, s * u1)); ya, yb = z0 - rand, z1 + rand
         box = lambda q0, q1: M.cube((xb - xa, yb - ya, q1 - q0)).translate((xa, ya, q0))
         st = (koerper ^ box(w0, w1).transform(W.matrix(0))).transform(_wand_inv(W))
@@ -992,7 +1002,8 @@ def rueckwaende(koerper, felder, tiefe, d, rand=0.6, schliessen=0.05, schritt=0.
         innen = Q.offset(-0.03, JoinType.Miter); tiefst = None
         for w, S in zip(ws, SL):
             if vorn - 0.6 < w < sv and (S ^ innen).area() > 1e-4: tiefst = float(w)
-        wp = vorn - tiefe if tiefst is None else min(vorn - tiefe, tiefst - schritt / 2 - 0.01)
+        ziel = vorn - tiefe if t_f is None else min(vorn - tiefe, -t_f)       # gemessene Laibung absolut (vorn liegt bei einer Nische schon auf deren Grund - nicht doppelt zaehlen)
+        wp = ziel if tiefst is None else min(ziel, tiefst - schritt / 2 - 0.01)
         ring = Q.offset(d, JoinType.Miter) - Q
         k_ = M.extrude(ring, 0.5 * (sv + sh) - (wp - d)).translate((0, 0, wp - d)) + M.extrude(Q, d).translate((0, 0, wp - d))
         k_ = k_.transform(W.matrix(0)); zus = k_ if zus is None else zus + k_
