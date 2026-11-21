@@ -46,42 +46,45 @@ def main():
     KA = lade(os.path.join(A, "koerper_auto.json")) or {}
     rd = [h for h in KA.get("haufen", []) if h.get("form") == "rund" and h.get("kreis") and h.get("urteil", "angenommen") != "verworfen"]
     if rd:
-        h = max(rd, key=lambda h: h.get("punkte", 0)); ist["treppenturm"] = dict(radius=h["kreis"]["r"], traufe=h["kasten"][5])
+        h = max(rd, key=lambda h: h.get("punkte", 0)); U_ = h.get("umriss") or {}
+        if U_.get("gueltig"): ist["treppenturm"] = dict(radius=U_.get("r_schaft", U_["r"]), traufe=U_.get("traufe") or h["kasten"][5], _quelle="foto")   # tools/rund_aus_umriss.py
+        else: ist["treppenturm"] = dict(radius=h["kreis"]["r"], traufe=h["kasten"][5], _quelle="wolke")
     DP = lade(os.path.join(A, "dach_profil.json")) or {}; sch = DP.get("scheiben") or []
     if len(sch) >= 4 and DP.get("wand_halb"):
         wh = DP["wand_halb"]; s_ = float(DP.get("schritt", 0.5))
         unten = [s for s in sch if s[0] <= sch[0][0] + 2.0]                 # Traufzone: die untersten 2 m des Dachprofils
         ue = [sorted([-s[1] - wh[0], s[2] - wh[0], -s[3] - wh[1], s[4] - wh[1]])[1:3] for s in unten]   # je Scheibe die zwei mittleren Seiten (robust gegen eine schiefe Seite)
-        ist["zeltdach_ueberstand"] = dict(ueberstand=round(max(sum(x) / 2 for x in ue), 2))
+        ist["zeltdach_ueberstand"] = dict(ueberstand=round(max(sum(x) / 2 for x in ue), 2), _quelle="wolke")
         br = [(s[0], (s[2] - s[1] + s[4] - s[3]) / 4) for s in sch]; obere = [b for b in br if b[0] >= (br[0][0] + br[-1][0]) / 2]
         if obere:
             i_h = min(range(len(obere)), key=lambda i: obere[i][1]); hals = obere[i_h]
             kr = next((b for b in obere[i_h + 1:] if b[1] > 1.2 * hals[1]), None)   # Krempe = erste Verbreiterung > 20 % ueber dem schmalsten Hals
-            if kr: ist["laterne"] = dict(spitze_z=round(br[-1][0] + s_ / 2, 2), krempe_z=kr[0])
+            if kr: ist["laterne"] = dict(spitze_z=round(br[-1][0] + s_ / 2, 2), krempe_z=kr[0], _quelle="wolke")
     for k, w in (("laterne", "laterne"), ("treppenturm", "treppenturm"), ("umgang", "umgang"), ("eckquader", "eckquader"), ("zeltdach_ueberstand", "ueberstand")):
         if w in txt: ist.setdefault(k, {})
     erg = []; n_passt = 0
     for r in R["bauteile"]:
         b = r["bauteil"]; t = float(r.get("toleranz_m", 0.3))
         if b not in ist: erg.append(dict(bauteil=b, urteil="FEHLT", soll=r["masse"])); continue
-        ab = {}
+        ab = {}; q_ = ist[b].get("_quelle", "foto")    # 21.11.2026 KERNMETHODE: Masse nur aus der Wolke zaehlen als VORLAEUFIG (Quelle je Bauteil)
         for k, s in r["masse"].items():
             i = ist[b].get(k)
             if i is None: ab[k] = dict(soll=s, ist=None, ok=False); continue
             ok = abs(float(i) - float(s)) <= (t if k not in ("anzahl", "pfosten", "streben", "pfosten_je_seite") else 0)
             ab[k] = dict(soll=s, ist=i, ok=ok)
-        u = "PASST" if all(x["ok"] for x in ab.values()) else "FALSCH"; n_passt += u == "PASST"; erg.append(dict(bauteil=b, urteil=u, masse=ab))
+        u = "PASST" if all(x["ok"] for x in ab.values()) else "FALSCH"; n_passt += u == "PASST"; erg.append(dict(bauteil=b, urteil=u, masse=ab, quelle=q_))
     for e in erg:
-        z = f"{e['urteil']:6s} {e['bauteil']:20s}"
+        z = f"{e['urteil']:6s} {e['bauteil']:20s}" + ("  [nur Wolke - vorlaeufig]" if e.get("quelle") == "wolke" else "")
         if e["urteil"] == "FALSCH": z += "  " + ", ".join(f"{k} {v['ist']} statt {v['soll']}" for k, v in e["masse"].items() if not v["ok"])
         print(z)
-    print(f"HANDSTAND ERREICHT: {n_passt} von {len(erg)} Bauteilen passen ({100 * n_passt / len(erg):.0f} %)")
-    json.dump(dict(referenz=R["quelle"], passt=n_passt, gesamt=len(erg), bauteile=erg), open(os.path.join(A, "hand_vergleich.json"), "w"), indent=1, ensure_ascii=False)
+    n_wolke = sum(1 for e in erg if e["urteil"] == "PASST" and e.get("quelle") == "wolke")
+    print(f"HANDSTAND ERREICHT: {n_passt} von {len(erg)} Bauteilen passen ({100 * n_passt / len(erg):.0f} %), davon {n_passt - n_wolke} aus Fotos, {n_wolke} nur aus der Wolke (vorlaeufig)")
+    json.dump(dict(referenz=R["quelle"], passt=n_passt, passt_nur_wolke=n_wolke, gesamt=len(erg), bauteile=erg), open(os.path.join(A, "hand_vergleich.json"), "w"), indent=1, ensure_ascii=False)
     import time, subprocess      # 21.11.2026 (Nutzer: "Loggst du deine ganzen Versuche mit, dass wir das spaeter nochmal nachspielen koennen?"): Verlauf je Lauf mit git-Stand
     try: rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=od).stdout.strip()
     except Exception: rev = "?"
     with open(os.path.join(A, "hand_vergleich_verlauf.jsonl"), "a") as f_:
-        f_.write(json.dumps(dict(zeit=time.strftime("%Y-%m-%d %H:%M"), git=rev, passt=n_passt, gesamt=len(erg), urteile={e["bauteil"]: e["urteil"] for e in erg},
+        f_.write(json.dumps(dict(zeit=time.strftime("%Y-%m-%d %H:%M"), git=rev, passt=n_passt, passt_nur_wolke=n_wolke, gesamt=len(erg), urteile={e["bauteil"]: e["urteil"] for e in erg},
                                  daneben={e["bauteil"]: {k: [v["ist"], v["soll"]] for k, v in e["masse"].items() if not v["ok"]} for e in erg if e["urteil"] == "FALSCH"}), ensure_ascii=False) + "\n")
     return 0
 

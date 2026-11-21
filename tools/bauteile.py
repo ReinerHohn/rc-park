@@ -299,7 +299,8 @@ def drehkoerper_aus_wolkenrest(koerper, datei, nseg=48):
         teile.append(M.cylinder(dz / 2, P[-1][1], P[-1][1], nseg).translate((x, y, P[-1][0])))
         koerper = koerper + M.batch_boolean(teile, OpType.Add)
         belege.append(dict(seite="wand", element=f"Rundkoerper {H.get('id', '')} bei x {x:.2f} y {y:.2f}: Schaft r {float(np.median([p[1] for p in P])):.2f} m, z 0..{P[-1][0] + dz / 2:.2f} m, groesster Radius {max(p[1] for p in P):.2f} m",
-                           quelle=f"dichte Wolke: Rest am Modell ({H['punkte']} Punkte), Kreisausgleich Rest {H['kreis']['rest']} m, Drehprofil in {len(P)} Scheiben (tools/wolke_rest.py)",
+                           quelle=(f"FOTO-UMRISS (tools/rund_aus_umriss.py): {H.get('umriss', {}).get('fotos')} Fotos, {H.get('umriss', {}).get('beobachtungen')} Umrissbeobachtungen, Drehprofil in {len(P)} Hoehen, Traufe {H.get('traufe')}; Lage aus der dichten Wolke (Wolkenradius {H.get('kreis_wolke', {}).get('r')} m nur Startwert)"
+                                   if H.get("mass_quelle") == "foto_umriss" else f"dichte Wolke: Rest am Modell ({H['punkte']} Punkte), Kreisausgleich Rest {H['kreis']['rest']} m, Drehprofil in {len(P)} Scheiben (tools/wolke_rest.py) - VORLAEUFIG, kein Fotomass"),
                            hinweis="ANNAHME: voll (nicht hohl), oben flach abgeschlossen, wo die Wolke endet - Haube/Dach FEHLT; Oeffnungen fehlen (Abwicklung noch nicht in der Kette)"))
     return koerper, belege
 

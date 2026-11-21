@@ -1,4 +1,4 @@
-# Werkzeuge: test (86)
+# Werkzeuge: test (87)
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
@@ -57,6 +57,7 @@
 - `tools/test_realitaet_form.py` [-] test_realitaet_form.py - Beweis zu tools/realitaet_form.py (Spec modelle/archiv/SPEC_FORMNOTE.md). 1. Fallen fallen alle durch (form < 0,5). 2. Bekannte Paare: besseres Teil hat ho
 - `tools/test_regeln_cb.py` [-] test_regeln_cb.py - Gegenbeweis zu Register CB (2026-11-03): der Fehler 'zwei Boegen + Zwischenpfeiler je Flaeche' darf sich nicht wiederholen.
 - `tools/test_rumpf_wolke.py` [gen] test_rumpf_wolke.py - synthetischer Beweis fuer bauteil_rumpf_wolke (bekanntes Haus: Quader + Satteldach, gedreht 15 Grad; Rauschen 3 cm, Ausreisser, Luecken, Sims; Szenario A = al
+- `tools/test_rund_aus_umriss.py` [seg] test_rund_aus_umriss.py - fester synthetischer Test fuer tools/rund_aus_umriss.py (21.11.2026). Zylinder r 1,50 m (Mitte 0,3 / -0,2) mit Steinfugen-Textur vor gestreiftem Hintergru
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_erkennen.py` [-] test_seiten_erkennen.py - feste Erwartungen fuer tools/seiten_erkennen.py (ohne GPU, ohne Bilder): Gemeinschaften, Zusammenhangsteile, Urteil.

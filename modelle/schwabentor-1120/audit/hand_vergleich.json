@@ -1,6 +1,7 @@
 {
  "referenz": "modelle/schwab_v3/elemente.json - Handstand mit Foto-Triangulation (foto_mass.py), Nutzer 20.11.2026: 'beim Schwabentor mal einen richtig geilen Stand'. Hoehen und Groessen vergleichbar; u-Lagen NICHT (anderer Rahmen, Schaft x 0,933).",
  "passt": 4,
+ "passt_nur_wolke": 1,
  "gesamt": 11,
  "bauteile": [
   {
@@ -37,7 +38,8 @@
      "ist": 6,
      "ok": true
     }
-   }
+   },
+   "quelle": "foto"
   },
   {
    "bauteil": "vordach",
@@ -58,7 +60,8 @@
      "ist": 1.54,
      "ok": true
     }
-   }
+   },
+   "quelle": "foto"
   },
   {
    "bauteil": "uhr",
@@ -74,7 +77,8 @@
      "ist": 31.955,
      "ok": false
     }
-   }
+   },
+   "quelle": "foto"
   },
   {
    "bauteil": "tor",
@@ -95,7 +99,8 @@
      "ist": 3.238,
      "ok": false
     }
-   }
+   },
+   "quelle": "foto"
   },
   {
    "bauteil": "rundbogenfenster",
@@ -116,7 +121,8 @@
      "ist": 0.59,
      "ok": false
     }
-   }
+   },
+   "quelle": "foto"
   },
   {
    "bauteil": "laterne",
@@ -132,7 +138,8 @@
      "ist": 48.44,
      "ok": false
     }
-   }
+   },
+   "quelle": "wolke"
   },
   {
    "bauteil": "zeltdach_ueberstand",
@@ -143,7 +150,8 @@
      "ist": 1.15,
      "ok": true
     }
-   }
+   },
+   "quelle": "wolke"
   },
   {
    "bauteil": "treppenturm",
@@ -151,15 +159,16 @@
    "masse": {
     "radius": {
      "soll": 1.555,
-     "ist": 1.73,
+     "ist": 1.585,
      "ok": true
     },
     "traufe": {
      "soll": 11.57,
-     "ist": 11.77,
+     "ist": 11.25,
      "ok": true
     }
-   }
+   },
+   "quelle": "foto"
   },
   {
    "bauteil": "umgang",

@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (103)
+# Werkzeuge: sonstige (104)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -53,6 +53,7 @@
 - `tools/pose_vertrauen_gruppen.py` [col] pose_vertrauen_gruppen.py - Posenunsicherheit der Zusatzfotos je Kameragruppe (Register DF, 2026-11-06). Nur Lesen der Eingaben.
 - `tools/quellen_inventar.py` [-] quellen_inventar.py — ERSCHÖPFENDE, ERZWUNGENE Quellen-Inventur für ein Bauwerk.
 - `tools/real_vs_modell.py` [seg] real_vs_modell.py — scharfe Bewertung REALITÄT gegen MODELL.
+- `tools/rund_aus_umriss.py` [seg] rund_aus_umriss.py - RUNDE KOERPER (Treppenturm, Rundturm, Saeule, Erkertuermchen) aus den FOTO-UMRISSEN vermessen (21.11.2026).
 - `tools/saeulen_breite_suche.py` [-] saeulen_breite_suche.py - Breite JEDES verlaengerten Pfeilers vom Foto-Diff bestimmen lassen (statt Mittelprofil; Nutzer 7.11.: echter Unterschied darf nicht untergehen). Je Pfeile
 - `tools/saeulen_schliessen.py` [gen] saeulen_schliessen.py - GENERISCH: schwebende Saeulen/Pfeiler/Stuetzen eines Netzes bis zum Boden verlaengern (Nutzerfund 6.11.: Saeulen abgeschnitten). Regel (Statik, kein Objektw
 - `tools/sam_arches.py` [seg] sam_arches.py — saubere Bogen-Masken via SAM (Segment Anything), dann measure_arch auf ALLE Bögen → volle Geometrie (Bogenzahl, Stich:Spann, Pfeiler:Spann, Feldteilung, absolute Me
