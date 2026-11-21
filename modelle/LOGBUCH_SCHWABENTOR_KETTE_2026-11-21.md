@@ -61,3 +61,9 @@ Ein Gebäude = mehrere EBENEN, jede Ebene bekommt ihren eigenen Bauplan.
 Offene Grenze: wirklich Freistehendes mit Luft dahinter (schräge Streben, offene Brüstung) hat auf einer Ebene Parallaxe -> Fotokanten aus mehreren Ansichten (ANNAHME, am Erker noch nicht geprüft).
 
 Was daran neu ist (ehrlich): die Einzelteile gab es alle (Sweep 16.11., Wandbild auf Ebene 17.11., Form aus Wandbild 17.11.). Neu ist nur die Kopplung als Schleife in der Kette: Sweep-Ebene -> eigenes Wandbild -> Form -> Bau -> neu rechnen. Neu seit heute Nacht außerdem: Sackgassen-Tor, Vergleich mit dem Handstand, Verlauf je Lauf.
+
+## Nachtrag 01:50 - Probe Schritt 3 der Methode (von Hand angestoßen, nur Bild, kein Modellteil)
+- `form_aus_wandbild.wandbild_fotos` für die Zone f00 u -4,3..5,5 / z 8,3..16,6, 1 cm, 5 beste Fotos; einmal auf der Wandebene (w -0,15), einmal auf der Erkerfront (w +1,0). Bild: `audit/erker_ebenen_probe.jpg`.
+- Beide Bilder sind scharf (die 5 besten Fotos stehen nah beieinander), aber auf der Wandebene liegt die Brüstung etwa 0,3 m zu hoch (Parallaxe). Auf der Erkerebene mit dem Auge abgelesen: Holm oben ≈ 11,5 m, Schwelle unten ≈ 10,35 m. Handstand: 11,42 / 10,22. Also trifft das feine Bild auf der eigenen Ebene den Handstand auf etwa 0,1 m (abgelesen, nicht mit Werkzeug gemessen).
+- Pfosten (3), Knaggen, Riegel, 6 Streben und Konsolen sind im Bild einzeln erkennbar -> Form daraus lesbar. Störer: Oberleitungsdrähte quer durchs Bild.
+- Nächster Schritt: diese Rechnung als Kettenstufe (Ebene aus `vorbauten_auto.json`), dann `gestalt()` darauf, Katalog-Galerie entfernen.
