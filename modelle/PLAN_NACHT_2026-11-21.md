@@ -19,6 +19,8 @@ Anrede „mein grosser Meister“, Deutsch, Fehlerliste vor Lob, Realitäts-% me
    - `grep -a "ERGEBNIS DES LAUFS\|NICHT in Ordnung\|HANDSTAND" <log> | tail -4`
    - `tail -1 modelle/schwabentor-1120/audit/hand_vergleich_verlauf.jsonl` (Zahl X von 11, „daneben“)
    - Sichtblatt `modelle/schwabentor-1120/audit/seiten.jpg` ANSEHEN (Read) und an Nutzer schicken (SendUserFile).
+   - **PFLICHT (Nutzer 21.11. 22:00 „Das ist noch nicht gut“ bei 11/11):** `audit/neben_*.jpg` (Foto | Modell) ANSEHEN und mitschicken. 11/11 prüft nur Höhen/Lagen, NICHT das Aussehen.
+     Realitäts-% aus dem Nebeneinander schätzen (Fenster sichtbar? Quader lesbar? Vordach-Form? Eckquader? Dach?), nicht aus X/11.
    - Eine Zeile ins Logbuch `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md`: Zeit, Lauf, git-Stand, X/11, Fehlerliste aus dem Bild.
 6. **Neuer Fehler sichtbar** (Bauteil fehlt/falsch, Stufe „NICHT in Ordnung“): EINEN Worktree-Agenten starten mit
    Vorlage unten (ein Fehler je Agent, höchstens 2 gleichzeitig). Keine eigenen Fixes am Code ohne Test.
@@ -34,6 +36,7 @@ Objektordner auf main nicht verändern, keine langen GPU-Jobs. Abschluss: schnel
 Worktree-Zweig (Attribution), nicht mergen. Bericht: Fehlerliste, Ursache, Fix, Kontrollbild (angesehen), Realitäts-%.“
 
 ## Offene Punkte (Reihenfolge nach Wirkung)
+0. SICHTBAR (22:00, am neben-Bild): Rundbogenfenster nur flache Rechtecke (Agent läuft) · Quadermauerwerk klumpig + Eckquader verrauscht (Agent läuft) · Vordach flacher Kasten statt geschwungenes Ziegeldach · Wandgemälde unter Vordach als Klumpen statt flach · Dachüberstand dünn · Süd/Ost leer (Fotos).
 1. Läuft: Agent „Kette beschleunigen“ (Wände parallel, Neubau nur am Ende) und Agent „zirkuläre Verdeckung/Vordach“ – nach Meldung mergen (Schritt 3).
 2. Vordach-Anschluss 16,74 statt 19,39 (Ursache: Uneinigkeitskarte mit eigenem Modell als Verdecker) – Agent läuft.
 3. Tor-Form schwankt zwischen Läufen (spitzbogen/sturz) – wenn im Lauf wieder falsch: Agent.
