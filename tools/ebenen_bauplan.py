@@ -20,7 +20,7 @@ HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassade"); ap.add_argument("kanten"); ap.add_argument("aus")
     ap.add_argument("--min_m2", type=float, default=40.0); ap.add_argument("--maxpx", type=int, default=150000); ap.add_argument("--refs", type=int, default=80); ap.add_argument("--nur", default="")
-    ap.add_argument("--bild", type=int, default=1); ap.add_argument("--seiten", type=int, default=1, help="1 = je Vorbau auch die zwei Seitenebenen (senkrecht zur Wand)"); a = ap.parse_args()
+    ap.add_argument("--bild", type=int, default=1); ap.add_argument("--stapel", nargs=3, type=float, help="w0 w1 schritt (m gegen die Wandebene): Schichtstapel je Wand"); ap.add_argument("--seiten", type=int, default=1, help="1 = je Vorbau auch die zwei Seitenebenen (senkrecht zur Wand)"); a = ap.parse_args()
     import trimesh
     od = os.path.dirname(os.path.abspath(a.objekt)); FA = json.load(open(os.path.join(a.fassade, "fassaden.json")))["fassaden"]; os.makedirs(a.aus, exist_ok=True)
     KW, SD = os.path.join(a.kanten, "kam_wahl.json"), os.path.join(a.kanten, "stabil")
@@ -46,7 +46,14 @@ def main():
                 for nm, ue, vz in (("li", Kb["u0"], -1.0), ("re", Kb["u1"], 1.0)):
                     E.append(dict(id=f"f{F['nr']:02d}_vb{k}_{nm}", art="seite", fassade=F["id"], o=[float(x) for x in (o_ + ue * d_)], d=[float(x) for x in n_], n=[float(x) for x in (vz * d_)], w=0.0, w_wand=round(ww_, 3),
                                   zone=[ww_ - 0.4, ww_ + aus_ + 1.6, g["z0"] - 2.2, g["z1"] + 1.5], band=0.5, u_kante=round(float(ue), 2)))
-    if a.nur: E = [e for e in E if e["id"] in a.nur.split(",")]
+    # 21.11.2026 (Nutzer: "geht auf der GPU sehr schnell ... auf ganz vielen, aus allen Winkeln machen"): SCHICHTSTAPEL je Wand - parallele duenne Ebenen (--stapel w0 w1 schritt,
+    # Band = halber Schritt). Im duennen Band ist die Tiefe je Kantenpixel eindeutig (der breite Sweep verwirft mehrdeutige Pixel) -> mehr Punkte; Gegenprobe der Scheintreffer mit der Wolke.
+    if a.stapel:
+        w0s, w1s, ds = a.stapel
+        for e_ in [e_ for e_ in E if e_["art"] == "wand"]:
+            for j, wj in enumerate(np.arange(w0s, w1s + 1e-6, ds)):
+                E.append(dict(id=f"{e_['id'][:3]}_s{j:02d}", art="schicht", fassade=e_["fassade"], o=e_["o"], d=e_["d"], n=e_["n"], w=round(e_["w"] + float(wj), 3), w_wand=e_["w"], zone=e_["zone"], band=round(ds / 2, 3)))
+    if a.nur: E = [e for e in E if e["id"] in a.nur.split(",") or (a.nur.endswith("*") and e["id"].startswith(a.nur[:-1]))]
     PY = sys.executable; n_ok = 0
     for e in E:
         t0 = time.time(); ed = os.path.join(a.aus, e["id"]); os.makedirs(ed, exist_ok=True); o = np.array(e["o"]); d = np.array(e["d"]); n = np.array(e["n"]); u0, u1, z0, z1 = e["zone"]; z0 = max(z0, 0.0)

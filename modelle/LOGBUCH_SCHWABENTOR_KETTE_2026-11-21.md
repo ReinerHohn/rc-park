@@ -152,3 +152,16 @@ Lehre: Kanten messen genau, sind aber an glatten/gekachelten Flächen blind; die
   - Aber: Die Kantenpunkte sind 3D. Der SEITENRISS aller Kantenpunkte des Erkers (Tiefe gegen Höhe) zeigt, was die Frontansicht nicht hergibt: Streben verlassen die Wand bei z ≈ 8,4 und laufen schräg nach vorn (bei z ≈ 9,4 etwa 0,5 m vor der Wand); Pfosten stehen auf der Frontlinie (z 14,1-15,5); Traufkante liegt bei z ≈ 15,9-16,6 etwa 0,3 m VOR der Front (Dachüberstand messbar, bisher ANNAHME 0,25).
   - Dachfläche weiterhin ohne Kanten.
 - Folgerung für die METHODE: „Ebenen in alle Richtungen“ = (a) Sweep-Ebenen auch senkrecht zur Wand, wo Kameras sie sehen, (b) immer zusätzlich Seitenriss und Grundriss der 3D-Kantenpunkte auswerten. Fotos von der Seite (schräg auf den Erker) würden die Seitenebenen füllen -> Fotoauftrag.
+
+## Nachtrag 02:40 - SCHICHTSTAPEL (Nutzer: „geht auf der GPU sehr schnell ... auf ganz vielen, aus allen Winkeln machen und so einen sehr detaillierten Bauplan“)
+`ebenen_bauplan.py --stapel -1.05 2.85 0.3 --nur 'f00_s*' --seiten 0` -> `ebenen_stapeltest/` (von Hand angestoßen): 14 dünne Ebenen parallel zur Stadtseite, Band ±0,15 m, je 4-6 s.
+Kantenpunkte je Schicht (Tiefe gegen die Wand) und Gegenprobe „dichte Wolke ≤ 10 cm daneben“:
+- -0,15 m: 30 459 Punkte, 98 % | +0,15 m: 24 988, 95 %   -> die Wand
+- +1,05 m: 4 823, 96 % | +1,35 m: 17 385, 99 %           -> Erkerfront (Höhen 10,0-11,5)
+- +1,65 m: 2 896, 80 %, Schwerpunkt z 16,1-16,3           -> Traufkante des Vordachs, ~0,35 m vor der Erkerfront
+- -0,45 m: 5 211, 66 % (z 25-36, ANNAHME: Rücksprung/Umgang oben) | +0,45 m: 4 055, 69 % | +0,75 m: 1 113, 42 %
+- ab +1,95 m: je 400-770 Punkte, 0-4 % von der Wolke bestätigt -> Scheintreffer (ANNAHME: Drähte, Mehrdeutigkeit)
+- -0,75 / -1,05 m: 340 / 486 Punkte, 26-33 % -> schwach.
+Summe 94 233 Punkte (nicht mehr als die zwei breiten Läufe zusammen, 103 000) - der Stapel bringt nicht mehr Punkte, aber er FINDET die Ebenen selbst (Spitzen der Punktzahl) und die Wolke trennt echte Schichten (≥ 80 % bestätigt) von Scheintreffern (≤ 4 %).
+Regel-Vorschlag: Schicht gilt als Ebene, wenn Punktzahl ≥ 2 % der stärksten Schicht UND Wolkenbestätigung ≥ 80 %; 40-80 % = prüfen (Teilfläche), darunter verwerfen.
+Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erkers: nur ~1700 Punkte).
