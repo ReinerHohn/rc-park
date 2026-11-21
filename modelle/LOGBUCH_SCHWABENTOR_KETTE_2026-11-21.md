@@ -207,3 +207,9 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 - Martinstor: Masken fertig 10:38 (2042 Bilder, 763 s, im Mittel 12,6 % maskiert). NEU `tools/db_masken_filter.py`: 71 488 Paare, 39 453 gekuerzt, 6281 geloescht (35 s).
   Aber: Bruecke Gruppe 36 bleibt fast gleich (zu Sued 66 -> 59 Paare, zu Nord 26 -> 22) -> die Paare haengen am HINTERGRUND; die Gruppe selbst ist GEMISCHT (Bilder von beiden Torseiten, vermutlich nur ueber die Person zu einer Gruppe geworden).
   Pruefung: Seitenerkennung neu auf der gefilterten DB (Job `seiten-martinstor-1121c`, Start 10:40) - zerfaellt Gruppe 36 auf ihre Seiten?
+
+## Nachtrag 21.11. 10:59 - Paar-Pruefer bekommt die Masken (Nutzer: "na klar muss der Pruefer die Masken bekommen")
+- `doppelgaenger_paare.pruefen(..., masken=)`: Vordergrund (Maske 0) im Bild grau gefuellt, bevor LoFTR und das Entscheidungsnetz es sehen; `seiten_erkennen.py --masken DIR`.
+- Job `seiten-martinstor-1121c` (ohne Masken im Pruefer, Start 10:39) nach 17 min GESTOPPT (Ergebnis waere nicht aussagekraeftig gewesen) - Zeitverlust, ich haette den Pruefer vor dem Start anpassen muessen.
+- 10:56 neu `seiten-martinstor-1121d`: gefilterte DB + Masken im Pruefer. Gruppen auf der gefilterten DB: 190 (vorher 170), 119 Gruppenpaare, 2848 Pruefpaare.
+- Rueckfall: `pkill -f` mit Muster aus der eigenen Befehlszeile benutzt (Regel CLAUDE.md) - traf nur die eigene Shell (rc 144), kein Job betroffen.

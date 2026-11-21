@@ -89,7 +89,7 @@ def main(argv=None):
     ap.add_argument("--aufloesung", type=float, default=2.0, help="Louvain-Aufloesung: groesser = kleinere Gruppen. 1.0 liess am Martinstor eine Gruppe am Tordurchgang gemischt (Nahaufnahmen BEIDER Seiten), 2.0 trennt sie")
     ap.add_argument("--streng", action="store_true", help="nur bestaetigte Verbindungen behalten: auch 'unklare' und ungepruefte schwache Verbindungen zwischen Gruppen loeschen (Verklebung laeuft sonst ueber Umwege, Martinstor 19.11.2026)")
     ap.add_argument("--pruefer-aus", help="Pruefer-Ergebnisse (p je Verbindung) aus einer frueheren seiten.json derselben Datenbank uebernehmen statt neu zu rechnen (Cache)")
-    ap.add_argument("--objekt", help="objekt.json: mit Objektmitte + EXIF-GPS der Fotos entscheidet die STANDRICHTUNG je Bildgruppe vor dem Pruefer (Nutzer 19.11.2026: kuenftig GPS im EXIF; muss auch ohne gehen)")
+    ap.add_argument("--masken", help="Ordner mit Vordergrund-Masken (tools/handy_masken.py; <bildname>.png, 0 = Person/Fahrzeug): der Paar-Pruefer sieht den Vordergrund grau (Martinstor 21.11.2026: Person auf beiden Torseiten = falsche Bruecke)"); ap.add_argument("--objekt", help="objekt.json: mit Objektmitte + EXIF-GPS der Fotos entscheidet die STANDRICHTUNG je Bildgruppe vor dem Pruefer (Nutzer 19.11.2026: kuenftig GPS im EXIF; muss auch ohne gehen)")
     a = ap.parse_args(argv); db = sqlite3.connect(f"file:{a.db}?mode=ro", uri=True); nm = dict(db.execute("select image_id, name from images"))
     K = [(pid // MAXID, pid % MAXID, rows) for pid, rows in db.execute("select pair_id, rows from two_view_geometries where rows >= ?", (a.min_inlier,))]
     C = gemeinschaften(K, list(nm), aufloesung=a.aufloesung); g = {i: k for k, c in enumerate(C) for i in c}; gross = [k for k, c in enumerate(C) if len(c) >= a.min_bilder]
@@ -109,7 +109,7 @@ def main(argv=None):
     elif a.trocken: verb = [dict(a=k[0], b=k[1], paare=len(quer[k]), p_median=None, urteil="ungeprueft") for k in kand]
     else:
         sys.path.insert(0, T); from doppelgaenger_paare import pruefen
-        erg = pruefen(a.bilder, [(x, y) for _, x, y in proben], melden=200); P = collections.defaultdict(list)
+        erg = pruefen(a.bilder, [(x, y) for _, x, y in proben], melden=200, masken=a.masken); P = collections.defaultdict(list)
         for (k, _, _), e in zip(proben, erg):
             if e[2] is not None: P[k].append(e[2])
         for k in kand:

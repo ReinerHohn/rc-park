@@ -82,15 +82,23 @@ def eingabe(b0, b1, groesse, k0, k1, conf):
     return np.concatenate((K, rgb), 0)
 
 
-def pruefen(ordner, paare, groesse=1024, melden=50, halb=False):
+def pruefen(ordner, paare, groesse=1024, melden=50, halb=False, masken=None):
     """paare = [(bild0, bild1), ...] -> [(bild0, bild1, p_gleich, n_loftr)]. p_gleich klein = Doppelgaenger (andere Wand)."""
     import torch, kornia.feature as KF
     lo = KF.LoFTR(pretrained="outdoor").eval().cuda(); dec = netz(); aus = []; cache = {}
+    MK = {}
+    for w_, _, fs_ in os.walk(masken) if masken else []:
+        for f_ in fs_:
+            if f_.endswith(".png"): MK[f_[:-4]] = os.path.join(w_, f_)
 
     def bild(n):
         if n not in cache:
             if len(cache) > 900: cache.clear()
             b = cv2.imread(os.path.join(ordner, n), cv2.IMREAD_COLOR)
+            if b is not None and MK:                                                          # 21.11.2026 (Martinstor): Person in Selbstaufnahmen auf BEIDEN Torseiten -> Pruefer sah "gleiches Motiv".
+                mp = MK.get(os.path.basename(n)) or MK.get(os.path.splitext(os.path.basename(n))[0])      # Vordergrund (Maske 0 = Person/Fahrzeug) grau fuellen: dort entstehen keine Zuordnungen, das Netz sieht nur die feste Szene
+                mk = cv2.imread(mp, 0) if mp else None
+                if mk is not None: b[cv2.resize(mk, (b.shape[1], b.shape[0]), interpolation=cv2.INTER_NEAREST) == 0] = 127
             if b is not None: b = cv2.resize(b, masse(b.shape[1], b.shape[0], groesse), interpolation=cv2.INTER_AREA)   # einmal verkleinern (12-MP-Bild je Paar neu laden kostete die halbe Zeit)
             cache[n] = (b,) + grau_quadrat(b, groesse) if b is not None else None
         return cache[n]
