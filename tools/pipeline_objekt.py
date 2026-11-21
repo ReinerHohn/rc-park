@@ -64,6 +64,24 @@ def db_bilder(db):
     except Exception: return None
 
 
+def seiten_dicht_uebernehmen(daten, sparse_dir):
+    """21.11.2026 SEITENMODELLE (tools/sfm_seiten_modelle.py, von iphone_sfm.py bei mehreren Bildteilen gerechnet): die dichten Wolken je Seite sind dort schon entstanden (das Vereinen
+    braucht sie) und liegen vereint im System von sparse/0 unter sfm/seiten_modelle/. Damit die Stufe 'dicht' sie NICHT ein zweites Mal rechnet, wird dicht/ eine Verknuepfung auf den
+    fertigen COLMAP-Arbeitsordner ('ergebnis.dicht' in sfm/seiten_modelle.json: images, sparse, stereo, fused.ply). Nur wenn es dicht/ noch nicht gibt, die Wolke Punkte hat und nicht
+    aelter ist als das Netz sparse/0 (sonst rechnet die Stufe wie bisher auf sparse/0 - beim vereinten Modell ueber alle Seiten). `--neu dicht` legt die Verknuepfung beiseite und
+    rechnet neu. Rueckgabe True = uebernommen."""
+    smj = os.path.join(daten, "sfm", "seiten_modelle.json"); ziel = os.path.join(daten, "dicht")
+    try: e = (json.load(open(smj)).get("ergebnis") or {}) if os.path.isfile(smj) else {}
+    except Exception as ex: print(f"HINWEIS {smj} nicht lesbar ({ex}) - dichte Wolke wird wie bisher gerechnet", flush=True); return False
+    q = e.get("dicht"); ib = os.path.join(sparse_dir, "images.bin")
+    if not q or os.path.lexists(ziel) or not os.path.isfile(ib): return False
+    qf = os.path.join(q, "fused.ply"); n = ply_punkte(qf)
+    if n == 0 or os.path.getmtime(qf) < os.path.getmtime(ib) - 2:
+        print(f"HINWEIS Seitenmodelle: dichte Wolke {qf} leer oder aelter als das Netz - NICHT uebernommen, Stufe 'dicht' rechnet auf sparse/0", flush=True); return False
+    os.symlink(os.path.abspath(q), ziel)
+    print(f"dichte Wolke aus den Seitenmodellen uebernommen ({e.get('art')}, {n} Punkte): {ziel} -> {q} - keine zweite Rechnung", flush=True); return True
+
+
 def stand_pruefen(daten, fotos):
     """Passen die Zwischenstaende unter `daten` zum Fotoordner und zueinander? Nur lesen. Rueckgabe dict:
     neu/fehlend = Bilder im Ordner, die die SfM nie sah / die die SfM sah und die es nicht mehr gibt (None = keine Datenbank);
@@ -195,6 +213,7 @@ def main():
         kand_proc = subprocess.Popen([PY_SEG, "-W", "ignore", "-I", "tools/lod2_kandidaten.py", "--gml", gml, "--e", str(koord[0]), "--n", str(koord[1]), "--radius", "45"], cwd=ROOT, stdout=kand_log, stderr=subprocess.STDOUT)
         # 3 dichte Wolke
     fused = os.path.join(daten, "dicht", "fused.ply")
+    seiten_dicht_uebernehmen(daten, sparse_dir)
     if ply_punkte(fused) == 0:                                            # 17.11.2026: vorher 'Datei > 0 Byte' - eine fused.ply mit 0 Punkten (nur Kopf) galt als fertig
         # Bildwahl fuer Tiefenkarten (Lehre 14.11.: Fernansichten/gleiche Videobilder kosten voll, bringen am Objekt wenig) -> tools/dicht_bildwahl.py
         sparse_wahl = os.path.join(daten, "sfm", "sparse_dicht")

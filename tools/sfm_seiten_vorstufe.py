@@ -11,7 +11,7 @@ Die von Hand bewiesene Folge (modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md, N
                         (Befund: Ketten-DB Martinstor 2107 Bilder = 2107 Kameras, EXIF-Brennweiten bis 2185 x Bildbreite; die Bereinigung lief nur im Konsens-Weg).
   5. teile_im_modell()  nach dem Mapper: welcher Bildteil (Seite) steht mit wie vielen Bildern in welchem Modell - eine fehlende Seite wird GEMELDET, nie still weggelassen.
 Zwischenstaende werden wiederverwendet (Stand-Datei je Schritt mit Groesse + Zeit der Eingaben). Abschalten: RCPARK_SEITEN=0 (iphone_sfm.py).
-NICHT hier: Mapper je Seite + tools/seiten_vereinen.py (Beweis laeuft noch, 21.11.2026).
+Mapper je Seite + dichte Wolke je Seite + tools/seiten_vereinen.py: tools/sfm_seiten_modelle.py (iphone_sfm.py ruft es bei mehreren Bildteilen auf).
 Fester Test: tools/test_seiten_kette.py (ohne GPU, Unterprozesse durch Attrappen ersetzt)."""
 import os, sys, json, subprocess
 
@@ -139,7 +139,7 @@ def seiten(db, img, w, roh, lauf=subprocess.run, modus="1"):
     if b.get("hinweis"): print("SEITEN HINWEIS:", b["hinweis"], flush=True)
     if b["getrennt"]:
         print(f"ACHTUNG SEITEN GETRENNT: {len(b['teile'])} Bildteile ohne echte Verbindung ({', '.join(str(n) for n in b['teile'][:8])} Bilder) - der Mapper kann sie NICHT in ein Modell legen. "
-              "Die Kette verwendet vorerst nur das Modell sparse/0; welche Seite fehlt, steht nach dem Mapper unter 'SEITEN IM MODELL' (Vereinen tools/seiten_vereinen.py ist noch NICHT eingebaut).", flush=True)
+              "Weiter mit tools/sfm_seiten_modelle.py (je Teil ein Modell + dichte Wolke, dann tools/seiten_vereinen.py; RCPARK_SEITEN_MODELLE=0 schaltet das ab); was in sparse/0 steht, meldet 'SEITEN IM MODELL'.", flush=True)
     return b["db"], b
 
 
