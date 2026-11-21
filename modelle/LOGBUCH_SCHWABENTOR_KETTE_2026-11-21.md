@@ -165,3 +165,13 @@ Kantenpunkte je Schicht (Tiefe gegen die Wand) und Gegenprobe „dichte Wolke �
 Summe 94 233 Punkte (nicht mehr als die zwei breiten Läufe zusammen, 103 000) - der Stapel bringt nicht mehr Punkte, aber er FINDET die Ebenen selbst (Spitzen der Punktzahl) und die Wolke trennt echte Schichten (≥ 80 % bestätigt) von Scheintreffern (≤ 4 %).
 Regel-Vorschlag: Schicht gilt als Ebene, wenn Punktzahl ≥ 2 % der stärksten Schicht UND Wolkenbestätigung ≥ 80 %; 40-80 % = prüfen (Teilfläche), darunter verwerfen.
 Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erkers: nur ~1700 Punkte).
+
+## Nachtrag 21.11. 09:50 - Martinstor: schrittweiser Mapper "eng" fertig, Suedseite VERKLEBT
+- Lauf `rcpark-mt_inkr_eng2` fertig 05:18 (30 382 s): 4 Modelle, groesstes 983 von 1156 Bildern, 148 794 Punkte, `modell_zerlegen`: EIN Stueck (980).
+- Seitenpruefung gegen die getrennten Bezugsmodelle vom 19.11. (`/media/oem/rcdaten/tmp/mt_seiten/dicht_sued_r9` 74 Bilder, `dicht_nord2` 384): im Hauptmodell stehen 51 Sued- und 293 Nord-Bilder,
+  aber am SELBEN Ort mit GLEICHER Blickrichtung (Median-Ort 0,9 Einheiten auseinander, mittlere Blickrichtung 12 Grad statt ~180) -> Sued-Bilder auf die Nordwand geklebt (Seitenverwechslung, 4. Mal).
+  `modell_zerlegen` merkt das nicht (ein Stueck). Der schrittweise Mapper ist am Martinstor also KEIN Ausweg; guter Stand bleibt 19.11.: Seiten getrennt rechnen (Sued 74 / Nord 384), dann vereinen.
+- Die zwei Vergleichslaeufe (`mt_eng_varianten_1120.sh`) sind NICHT gelaufen (Warter nicht mehr aktiv, Ordner `allein` fehlt).
+- Berichtigung: die Schleife (Lauf 2) endete 03:38 (Zeit der Logdatei), nicht 09:27.
+- Neu: `tools/wolke_rest.py` (Rest der dichten Wolke am Modell als Haufen): Schwabentor 67 % der Wolke am Modell; Treppenturm als "rund" r 1,74 m, Dachueberstand, Laterne, zwei Fensternischen ohne Vorwissen gefunden.
+- Handstand schwab_v3 (45 Commits 15./16.11.) kam aus: Bauteil vom Nutzer benannt -> allgemeines Bauteil, Masse aus Foto-Triangulation, Koerper aus der dichten Wolke (Treppenturm Kreisausgleich, Nordwand an Wolke, Relief aus Netz).
