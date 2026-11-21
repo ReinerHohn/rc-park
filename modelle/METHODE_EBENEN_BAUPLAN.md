@@ -47,6 +47,7 @@ Entstehung, alle Läufe und Sackgassen: `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-
 - „Seitenriss“ der vorhandenen Kantenpunkte: keine neue Messung, nur die dritte Koordinate ausgelesen (Nutzer-Einwand 21.11. berechtigt) - keine eigene Stufe, keine Bestätigung.
 - Schichtstapel 14 x 0,3 m an der Stadtseite: findet Wand, Erkerfront, Traufkante selbst; nicht mehr Punkte als zwei breite Läufe.
 - Kennzahl „erfundene Modellkanten“: 75-94 %, weil das Wandrelief viele kleine Kanten erzeugt - so nicht brauchbar.
+- Öffnungen aus den Kanten der Wandebene (`tools/oeffnungen_aus_kanten.py`, 21.11.): NUR aus Kanten findet es am Schwabentor weder Tor noch Rundbogenfenster (stabile Kanten belegen die Bögen nur zu 0-21 %, kein geschlossener Zug); mit der dichten Wolke als Fleckfinder (Rücksprung ≥ 3 Sigma, mindestens 7 cm) Tor (Breite 5,37, Kämpfer 3,66, Scheitel 6,34, Rundbogen aus dem Wolkenrand) und beide Fensternischen (1,73/1,64 breit, Scheitel 25,6, Form unbestimmt). Noch kein Verbraucher im Generator.
 - Annahme „Lagekorrektur fehlt“: widerlegt (gleicher Rahmen, Vordach auf cm gleich).
 
 ## Offen
