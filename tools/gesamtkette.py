@@ -79,9 +79,45 @@ def fein_paar(P, FV):
     dd = os.path.join(P, "dicht")
     if os.path.exists(os.path.join(dd, "sparse", "images.bin")) and os.path.isdir(os.path.join(dd, "images")): return ["--fein", os.path.join(dd, "sparse"), os.path.join(dd, "images")]
     return []
+SPEICHER_MUSTER = re.compile(r"CUDA out of memory|OutOfMemoryError|MemoryError|std::bad_alloc|cudaErrorMemoryAllocation|out of memory|vom System beendet \(Signal (9|6)|Signal (9|6)\b|Killed\b", re.I)
+
+
+def speichermangel(rc, ausgabe, kernel_oom=False):
+    """21.11.2026 (Nutzer: "immer wenn du wegen Speichermangel scheiterst, dann musst du im Lauf wiederholen"): Stufe scheiterte am Speicher (RAM oder GPU)?
+    rc < 0 (vom System beendet: 9 = OOM-Killer, 6 = Abbruch nach fehlgeschlagener Anforderung), Speicher-Meldung in der Ausgabe (auch von Teilwerkzeugen) oder Kernel-OOM waehrend der Stufe."""
+    if rc in (0, None): return False
+    return rc in (-9, -6, 137, 134) or kernel_oom or bool(SPEICHER_MUSTER.search(ausgabe or ""))
+
+
+def _kernel_oom_seit(t0):
+    try:
+        o = subprocess.run(["journalctl", "-k", "--since", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t0)), "--no-pager", "-q"], capture_output=True, text=True, timeout=20).stdout
+        return bool(re.search(r"out of memory|oom-kill|page allocation failure", o, re.I))
+    except Exception: return False
+
+
+def _speicher_abwarten(min_mb=3000, max_s=600):
+    t_ = time.time()
+    while time.time() - t_ < max_s:
+        try: frei = int([z.split()[1] for z in open("/proc/meminfo") if z.startswith("MemAvailable")][0]) // 1024
+        except Exception: return
+        if frei >= min_mb: return
+        time.sleep(15)
 
 
 def lauf(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
+    """Stufe mit Wiederholung bei Speichermangel (RCPARK_SPEICHER_WIEDERHOL, Standard 2): erst warten, bis >= 3 GB RAM frei sind (hoechstens 10 min), dann dieselbe Stufe neu."""
+    n_ = int(os.environ.get("RCPARK_SPEICHER_WIEDERHOL", "2"))
+    for v_ in range(n_ + 1):
+        t0_ = time.time(); rc_, out_ = _lauf_einmal(B, name, cmd, log, ok, timeout, platz)
+        if rc_ in ok or v_ >= n_ or not speichermangel(rc_, out_, _kernel_oom_seit(t0_)): return rc_, out_
+        if B.get("schritte"): B["schritte"][-1]["speicher_wiederholung"] = v_ + 1
+        print(f"    SPEICHERMANGEL in {name} (rc {rc_}) - warte auf freien Speicher und wiederhole ({v_ + 1}/{n_})", flush=True)
+        _speicher_abwarten()
+    return rc_, out_
+
+
+def _lauf_einmal(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
     """Eine Stufe starten. 16.11.2026 (Stabilisierung): Ausgabe laeuft ZEILENWEISE ins Log (vorher erst am Stufenende - eine 30-Minuten-Stufe war blind, ein Haenger nicht zu erkennen);
     Zeitlimit je Stufe (Standard RCPARK_STUFE_MAX_S = 3 h, die Prozessgruppe wird beendet) - ein Haenger auf einem Kern hielt am 16.11. die Kette stundenlang an."""
     import threading, signal
