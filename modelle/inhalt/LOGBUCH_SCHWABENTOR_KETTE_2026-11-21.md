@@ -26,4 +26,5 @@
 - Z.211: ## Nachtrag 21.11. 10:59 - Paar-Pruefer bekommt die Masken (Nutzer: "na klar muss der Pruefer die Masken bekommen")
 - Z.217: ## Nachtrag 21.11. 11:27 - BELEG: mit Masken trennt die Seitenerkennung Sued und Nord am Martinstor
 - Z.225: ## Nachtrag 21.11. 11:29 - Suedmodell + hartes Blick-Tor
-- Z.233: ## Nachtrag 21.11. 13:40 - Seitenfolge IN DER KETTE (Agent im Worktree, nur Code + feste Tests, KEIN Kettenlauf)
+- Z.233: ## Nachtrag 21.11. 13:38 - Wolkenkoerper in der Kette (Stufe bauplan)
+- Z.237: ## Nachtrag 21.11. 13:40 - Seitenfolge IN DER KETTE (Agent im Worktree, nur Code + feste Tests, KEIN Kettenlauf)
