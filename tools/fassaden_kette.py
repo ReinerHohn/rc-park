@@ -429,18 +429,22 @@ def _gpu_run(cmd, **k):
     with s: return subprocess.run(cmd, **k)
 
 
-def parallel_plaetze(n_waende, env=None):
+def parallel_plaetze(n_waende, env=None, fein=None):
     """(Waende gleichzeitig, GPU-Plaetze). 21.11.2026 (Tempo, Kettenlauf 1121o: fassaden_kette 1356 s, Waende nacheinander, 28 Kerne):
     CPU: FASSADEN_PARALLEL oder min(Waende, Kerne/4, verfuegbarer RAM / 2,6 GB - gemessen 21.11.: Spitze 2,5 GB Teilprozesse je Wand); 1 = alter serieller Ablauf.
     GPU: FASSADEN_GPU_PARALLEL oder aus der Job-Buchung RCPARK_GPU_MB (tools/job_start.sh): je PatchMatch-Lauf (3200 px) ~2,2 GB -> Buchung // 2300, hoechstens 2, mindestens 1
     (PatchMatch laeuft mit 100 % GPU - ein zweiter Lauf bringt nur die Ueberlappung von Entzerren/Fusion, kostet aber VRAM)."""
     env = os.environ if env is None else env
+    fein = ("--fein" in sys.argv) if fein is None else fein
+    g = int(env["FASSADEN_GPU_PARALLEL"]) if env.get("FASSADEN_GPU_PARALLEL") else max(1, min(2, int(env.get("RCPARK_GPU_MB") or 0) // 2300))
     if env.get("FASSADEN_PARALLEL"): n = int(env["FASSADEN_PARALLEL"])
     else:
         try: frei_mb = int([z.split()[1] for z in open("/proc/meminfo") if z.startswith("MemAvailable")][0]) // 1024
         except Exception: frei_mb = 3000
+        # 21.11.2026 (1121p: w03 Signal 6 nach Kernel-OOM): Feinrechnung tiefe_lokal braucht gemessen 5,2 GB je GPU-Platz -> vorab abziehen; Obergrenze = Job-Buchung (RCPARK_RAM_MB, job_start) minus 1,5 GB Kette selbst
+        if env.get("RCPARK_RAM_MB"): frei_mb = min(frei_mb, int(env["RCPARK_RAM_MB"]) - 1500)
+        frei_mb -= 5300 * g if fein else 0
         n = min(n_waende, max(1, (os.cpu_count() or 4) // 4), max(1, frei_mb // 2600))
-    g = int(env["FASSADEN_GPU_PARALLEL"]) if env.get("FASSADEN_GPU_PARALLEL") else max(1, min(2, int(env.get("RCPARK_GPU_MB") or 0) // 2300))
     return max(1, min(n, n_waende)), max(1, g)
 
 
