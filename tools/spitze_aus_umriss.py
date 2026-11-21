@@ -131,7 +131,10 @@ def auswerten(messungen, zs, sektor):
 
 def querschnitt(az, h):
     """Sichtbare Halbbreiten h aus Blickrichtungen az (Grad): Quadrat mit Halbseite a und Lage theta zeigt a(|cos(az-theta)|+|sin(az-theta)|) (zwischen a und 1,41 a), ein Kreis immer r.
-    -> ('eckig', theta) wenn das Quadratmodell die Streuung um mindestens 40 % besser erklaert UND die Blickrichtungen mind. 30 Grad (mod 90) ueberdecken, sonst ('rund', 0)."""
+    -> ('eckig', theta) wenn das Quadratmodell die Streuung um mindestens 40 % besser erklaert UND die Blickrichtungen mind. 30 Grad (mod 90) ueberdecken, sonst ('rund', 0).
+    GRENZE (22.11.2026, Schwabentor: offene Laterne als 'rund' gebaut): 'rund' heisst nur 'aus der Silhouette nicht unterscheidbar' - ein Achteck schwankt um 8 % (unter der
+    1600-px-Maske), und aus schmalem Blickwinkelbereich (dort 16 von 17 Fotos in 25 Grad) ist keine Periode messbar. Eckenzahl/Pfosten/Haube: tools/laterne_aus_fotos.py
+    (Kanten im Inneren der Silhouette, volle Aufloesung) - bauteile.dach_aus_profil nimmt dessen Block 'laterne_foto' vor diesen Ringen."""
     az = np.radians(np.asarray(az, float)); h = np.asarray(h, float)
     if len(h) < 4: return None
     m4 = np.degrees(az) % 90; sp = 90 - max(np.diff(np.r_[np.sort(m4), np.sort(m4)[0] + 90]))           # Ueberdeckung der Blickrichtungen modulo 90 Grad

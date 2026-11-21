@@ -358,6 +358,18 @@ def dach_aus_profil(koerper, datei):
     else:
         oben = R(P[-1], P[-1][0] + dz)
         teile = [M.hull_points(R(a_, a_[0]) + R(b_, b_[0])) for a_, b_ in zip(P[:-1], P[1:])] + [M.hull_points(R(P[-1], P[-1][0]) + R(P[-1], P[-1][0] + dz))] + [M.hull_points(R(P[0], z0 - 0.02) + R(P[0], P[0][0]))]
+    # 22.11.2026 (Koordinator, Foto IMG_113231/113056: offene Laterne mit Pfosten, Krempe, Haube, Knauf, Nadel - Modell runde Zwiebel): LATERNE aus den Kanten im Inneren
+    # der Silhouette (tools/laterne_aus_fotos.py, Block 'laterne_foto') als bauteile.laterne; ohne gueltigen Block wie bisher die Drehringe aus spitze_foto.
+    LB = laterne_aus_block(D.get("laterne_foto"), SF) if ab is not None else None
+    if LB is not None:
+        lp, hq = LB; z_dach = min(p[2] for p in oben); lp = dict(lp, z_fuss=max(min(lp["z_fuss"], z_dach + 0.3), z_dach + 0.05))   # Pfosten stehen im Dach (mind. 0,25 m eingebunden)
+        lk, lh = laterne(**lp); teile.append(lk); LF = D["laterne_foto"]
+        bel_sp = [dict(seite="dach", element=f"Laterne aus Fotokanten: {lp['n']} Pfosten (b {lp['b_pfosten']:.2f} m, Umkreis {lp['r_pfosten']:.2f} m) z {lp['z_fuss']:.2f}..{lp['z_pfosten_oben']:.2f}, "
+                                              f"Krempe z {lp['krempe']['z_kante']:.2f} (r {lp['krempe']['r_kante']:.2f}), Haube {LF.get('familie')} {lp['n_haube']}-Eck bis Hals z {lp['haube'][-1][0]:.2f}, "
+                                              f"Knauf {lp['knauf']}, Nadel bis z {lp['nadel'][0] if lp['nadel'] else None}",
+                       quelle=f"tools/laterne_aus_fotos.py: {len(LF.get('fotos', [])) - len(LF.get('ausreisser', []))} Fotos (az {LF.get('az_bereich')}), Pfosten-Kontrastabstand {LF['pfosten'].get('abstand')}; bauteile.laterne",
+                       hinweis="; ".join([hq] + lh + list(LF.get("annahmen", [])) + ([LF["nadel_grund"]] if LF.get("nadel_grund") else []) + ["ANNAHME: Nadelradius 0,03 m (nicht gemessen)"]))]
+        ab = None
     if ab is not None:
         A = SF["achse"]; FP = [p for p in SF["profil"] if p[0] >= ab - 1e-6] or SF["profil"][-1:]
         def ring(p, z):
@@ -466,6 +478,83 @@ def spitze_ab(SF):
         if z is not None: return float(z)
     z = next((p[0] for p in SF["profil"] if p[0] >= float(SF.get("wolke_ende_z", 1e9)) - 1e-6), None)
     return None if z is None else float(z)
+
+
+def _ring_n(achse, n, phase_grad, r, z):
+    """Ecken eines regelmaessigen n-Ecks (Umkreis r, Ecke 0 bei Weltwinkel phase_grad) in Hoehe z."""
+    return [[achse[0] + r * math.cos(math.radians(phase_grad + k * 360.0 / n)), achse[1] + r * math.sin(math.radians(phase_grad + k * 360.0 / n)), z] for k in range(n)]
+
+
+def laterne(achse, n, phase_grad, r_pfosten, b_pfosten, z_fuss, z_pfosten_oben, krempe, haube, knauf=None, nadel=None, n_haube=None, phase_haube=None,
+            massstab=87.0, min_mm=0.8, deck=None):
+    """OFFENE n-ECK-LATERNE (Dachreiter) mit Pfosten, Krempe, Haube, Knauf, Nadel (GENERISCH, 22.11.2026; Masse aus tools/laterne_aus_fotos.py, kein Musterteil).
+    achse (x, y); n Pfosten an den Ecken eines regelmaessigen n-Ecks (Umkreis r_pfosten der Pfostenmitten, Ecke 0 bei phase_grad), Querschnitt b_pfosten x b_pfosten,
+    von z_fuss bis z_pfosten_oben (Pfosten reichen 0,3 m unter z_fuss ins Dach).
+    deck: Dicke des Rahmens auf den Pfosten (Standard = b_pfosten), Umkreis r_pfosten + b_pfosten.
+    krempe: dict(z_kante, r_kante, dicke) - Untersicht vom Rahmen schraeg bis zur Kante (n-Eck wie die Pfosten), Oberseite von der Kante bis zum Haubenfuss.
+    haube: Liste (z, r_umkreis) aufsteigend (Haubenfuss .. Hals) - n_haube-Eck (Standard n) mit phase_haube (Standard phase_grad), Huellen je Ringpaar (geschweift/Zwiebel).
+    knauf: (z_mitte, r) Kugel; nadel: (z_oben, r) Stange vom Knauf bis z_oben.
+    DRUCKBAR (H0 1:massstab): Mindestmass min_mm -> d_min = min_mm * massstab / 1000 m (0,8 mm -> 7 cm). Pfosten schmaler als d_min: geschlossener n-Eck-Koerper
+    (Umkreis r_pfosten + b/2) mit flachen Nischen zwischen den Pfosten (Andeutung, ANNAHME im Beleg). Nadel/Hals duenner als d_min werden auf d_min verdickt (ANNAHME).
+    -> (Manifold, Liste Hinweise)."""
+    d_min = min_mm * massstab / 1000.0; hin = []; teile = []; A = [float(achse[0]), float(achse[1])]
+    nh = int(n_haube or n); ph_h = float(phase_grad if phase_haube is None else phase_haube); deck = float(deck if deck is not None else b_pfosten)
+    z_u = z_fuss - 0.3; r_aussen = r_pfosten + b_pfosten / 2
+    if b_pfosten >= d_min:
+        for k in range(n):
+            w = math.radians(phase_grad + k * 360.0 / n); c = (A[0] + r_pfosten * math.cos(w), A[1] + r_pfosten * math.sin(w)); h = b_pfosten / 2
+            e = (math.cos(w), math.sin(w)); t = (-e[1], e[0])                                       # Pfosten radial ausgerichtet (Seite zur Achse)
+            teile.append(M.hull_points([[c[0] + su * h * e[0] + sv * h * t[0], c[1] + su * h * e[1] + sv * h * t[1], z] for su in (-1, 1) for sv in (-1, 1) for z in (z_u, z_pfosten_oben)]))
+        hin.append(f"{n} Pfosten {b_pfosten:.2f} m ({b_pfosten * 1000 / massstab:.1f} mm bei 1:{massstab:g}) offen")
+    else:
+        k_ = M.hull_points(_ring_n(A, n, phase_grad, r_aussen, z_u) + _ring_n(A, n, phase_grad, r_aussen, z_pfosten_oben)); t_ = min(0.5 * d_min, 0.3 * r_pfosten)
+        for k in range(n):                                                                           # Nische je Seite zwischen zwei Pfosten (Andeutung der Oeffnung)
+            w0 = math.radians(phase_grad + k * 360.0 / n); w1 = math.radians(phase_grad + (k + 1) * 360.0 / n); zb = (z_fuss + 0.15, z_pfosten_oben - 0.1)
+            p0 = np.array([math.cos(w0), math.sin(w0)]) * r_aussen; p1 = np.array([math.cos(w1), math.sin(w1)]) * r_aussen; m_ = (p0 + p1) / 2; nm = m_ / max(np.linalg.norm(m_), 1e-9)
+            q0 = p0 + (p1 - p0) * (b_pfosten + d_min) / max(np.linalg.norm(p1 - p0), 1e-9) * 0.5; q1 = p1 - (p1 - p0) * (b_pfosten + d_min) / max(np.linalg.norm(p1 - p0), 1e-9) * 0.5
+            if np.dot(q1 - q0, p1 - p0) <= 0 or zb[1] <= zb[0]: continue
+            pts = [[A[0] + q[0] + s * nm[0], A[1] + q[1] + s * nm[1], z] for q in (q0, q1) for s in (-t_, 0.3) for z in zb]
+            k_ = k_ - M.hull_points(pts)
+        teile.append(k_); hin.append(f"ANNAHME: Pfosten {b_pfosten:.2f} m unter dem Druckmindestmass {d_min:.3f} m -> geschlossener {n}-Eck-Koerper mit Nischen {t_:.3f} m (Andeutung der offenen Laterne)")
+    zr0 = z_pfosten_oben; zr1 = zr0 + deck
+    teile.append(M.hull_points(_ring_n(A, n, phase_grad, r_aussen, zr0 - 0.01) + _ring_n(A, n, phase_grad, r_aussen, zr1)))        # Rahmen auf den Pfosten
+    zk, rk, dk = float(krempe["z_kante"]), float(krempe["r_kante"]), float(krempe.get("dicke") or d_min)
+    hz0, hr0 = haube[0]
+    teile.append(M.hull_points(_ring_n(A, n, phase_grad, r_aussen, zr1 - 0.01) + _ring_n(A, n, phase_grad, rk, zk) + _ring_n(A, n, phase_grad, rk, zk + dk)
+                               + _ring_n(A, nh, ph_h, max(hr0, d_min / 2), max(hz0, zk + dk))))
+    hb = [(float(z), max(float(r), d_min / 2)) for z, r in haube]
+    if any(r < d_min / 2 for _, r in haube): hin.append(f"ANNAHME: Haubenhals unter {d_min / 2:.3f} m Radius auf das Druckmindestmass verdickt")
+    for (za, ra), (zb_, rb) in zip(hb[:-1], hb[1:]):
+        teile.append(M.hull_points(_ring_n(A, nh, ph_h, ra, za) + _ring_n(A, nh, ph_h, rb, zb_ + 1e-4)))
+    z_ob = hb[-1][0]
+    if knauf:
+        zk_, rk_ = float(knauf[0]), max(float(knauf[1]), d_min / 2)
+        teile.append(M.sphere(rk_, 32).translate((A[0], A[1], zk_)))
+        teile.append(M.cylinder(max(zk_ - z_ob, 0.01) + 0.02, max(hb[-1][1], d_min / 2), max(hb[-1][1], d_min / 2), 24).translate((A[0], A[1], z_ob - 0.01)))   # Hals bis zur Knaufmitte
+        z_ob = zk_ + rk_ * 0.8
+    if nadel:
+        zn, rn = float(nadel[0]), float(nadel[1])
+        if rn < d_min / 2: hin.append(f"ANNAHME: Nadel r {rn:.3f} m auf {d_min / 2:.3f} m verdickt (druckbar)")
+        rn = max(rn, d_min / 2)
+        if zn > z_ob: teile.append(M.cylinder(zn - z_ob + 0.02, rn, rn * 0.6, 16).translate((A[0], A[1], z_ob - 0.02)))
+    return M.batch_boolean(teile, OpType.Add), hin
+
+
+def laterne_aus_block(LF, SF=None, massstab=87.0):
+    """Block 'laterne_foto' (tools/laterne_aus_fotos.py) -> Parameter fuer laterne(); None, wenn ungueltig/abgelehnt. Haube: eigene Eckenzahl nur wenn eindeutig,
+    sonst die der Pfosten (ANNAHME im Beleg). Radien = Silhouetten-Halbbreite / Silhouettenfaktor des Vielecks. Nadel: eigene Messung, sonst spitze_foto.spitze_z."""
+    if not LF or not LF.get("gueltig") or LF.get("angenommen") is False: return None
+    Pf, Z, H = LF["pfosten"], LF["zonen"], LF.get("haube") or {}
+    if H.get("eindeutig"): nh, phh, fh, hq = int(H["n"]), float(H["phase"]), float(H.get("silh_faktor") or 1.0), f"Haube {H['n']}-Eck aus Facettenstufen (Abstand {H.get('abstand')})"
+    else: nh, phh, fh, hq = int(Pf["n"]), float(Pf["phase"]), float(Pf.get("silh_faktor") or 1.0), f"ANNAHME: Haube {Pf['n']}-Eck wie die Pfosten (Facettenprobe unentschieden: bestes {H.get('n')}-Eck, Abstand {H.get('abstand')})"
+    fp = float(Pf.get("silh_faktor") or 1.0)
+    hb = [(p[0], p[1] / fh) for p in LF["profil"] if Z["z_taille"] - 1e-6 <= p[0] <= Z["z_hals"] + 1e-6]
+    if len(hb) < 3: return None
+    nz = LF.get("nadel_z") or (SF or {}).get("spitze_z")
+    return dict(achse=LF["achse"], n=int(Pf["n"]), phase_grad=float(Pf["phase"]), r_pfosten=float(Pf["R"]), b_pfosten=float(Pf["breite"]), z_fuss=float(Z.get("z_pfosten_unten", LF["z_fuss"])),
+                z_pfosten_oben=float(Z["z_pfosten_oben"]), krempe=dict(z_kante=float(Z["z_krempe"]), r_kante=float(Z["r_krempe"]) / fp), haube=hb,
+                knauf=(float(Z["z_knauf"]), float(Z["r_knauf"])) if Z.get("r_knauf", 0) > 1.05 * Z.get("r_hals", 0) else None,
+                nadel=(float(nz), 0.03) if nz else None, n_haube=nh, phase_haube=phh, massstab=massstab), hq
 
 
 def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):      # 21.11.2026: Katalog-Ziffern/Zeiger aus (Nutzer: kein Baukasten) - nur die gemessenen Kreise
