@@ -303,3 +303,6 @@ Stand siehe `.claude/UEBERGABE.md` (Martinstor-Kette 1121a laeuft, Agent Oeffnun
 - SACKGASSEN: (1) Schaerfemass "Feinanteil" |g-blur1|/|g-blur4| im Foto/auf der Wand erkannte 114052 NICHT als verwackelt (0,37 gegen 0,33 - Rauschen/JPEG). (2) Anteil "einig" (Korrelation >= 0,25 bei 3-cm-Vorglaettung) saettigt: verwackeltes Foto synthetisch 100 % einig -> Rang ueber mittlere 1-cm-Korrelation.
   (3) --tor 0 in 5c fuer Waende mit bestandenem Gesamt-Tor waere falsch: w02 wuerde Uhr und Vordachziegel zu "Quadern" machen.
 - OFFEN: Kette nicht neu gelaufen (GPU belegt) - Probe ohne Verdeckungs-STL; eigen__192 hat eine falsche Kamera und speist auch fassade_ortho (f01/f03) - Kamera pruefen; Gesimsband wird zu senkrechten "Steinen", Schlitzfenster/Gewaende als Steinstreifen (Fehlerliste).
+
+## UEBERGABE 21.11.2026 17:20
+Stand in `.claude/UEBERGABE.md` (Merges Nischen-Fenster, leere Fassaden, Seiten vereinen; Tor-Wandbild-Stufe; naechster Kettenlauf ab fassaden).
