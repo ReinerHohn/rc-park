@@ -133,7 +133,7 @@ Noch NICHT automatisch: der Rückweg von der Arbeitsliste in den Bau (Schritt 4)
 Grenze der Kennzahl „erfunden“: 75-94 % der Modellkanten ohne Fotokante - das Relief der Wände erzeugt sehr viele kleine Modellkanten; so ist die Zahl nicht als Güte lesbar (offen: nur Kanten > 0,3 m Länge zählen).
 Katalog entfernt: `Wand.galerie` nur noch mit MIT_KATALOG_GALERIE=1, Uhr ohne Katalog-Ziffern (nur gemessene Kreise).
 
-## Nachtrag 02:30 - Gegenprobe DICHTE WOLKE in der Abweichungsstufe (Nutzer: „wo ist die dichte Wolke, dass man abgleichen kann, dass die erzeugten Formen grob passen?“)
+## Nachtrag ~02:22 - Gegenprobe DICHTE WOLKE in der Abweichungsstufe (Nutzer: „wo ist die dichte Wolke, dass man abgleichen kann, dass die erzeugten Formen grob passen?“)
 Wolke: `modelle/schwabentor-1120/sfm/punkte_modell_schwabentor-1120.npy` (7,85 Mio. Punkte, Modellrahmen). `ebenen_abweichung.py --wolke` (in der Kette eingehängt): je Ebene Anteil der Wolkenpunkte an der Modellfläche (≤ 15 cm) und Flecken > 0,3 m daneben.
 - Erkerbereich allein (1,31 Mio. Punkte): Quader 42 % -> Höhenfeld-Erker 60 % -> Erker aus Kanten 66 % an der Fläche (≤ 30 cm: 79 %). Wolke bestätigt die Kantenmaße: Fronttiefe 1,2-1,3 m, Front belegt bei z 10,1-10,5 / 11,2-11,5 / 15,8-16,1.
 - Je Ebene: Stadtseite Wand 71 % (12 % grob daneben), Nord 91 % (4 %), Süd 51 % (29 %), Erkerebene 74 % (16 %).
@@ -145,7 +145,7 @@ Lehre: Kanten messen genau, sind aber an glatten/gekachelten Flächen blind; die
 2. Je Runde der größte offene Fleck der Arbeitsliste. Ein Fleck, der zweimal ohne Gewinn bearbeitet wurde, wird „offen“ gemeldet (Fotolücke oder Methode fehlt), nicht endlos wiederholt.
 3. Ende: kein Fleck über der Mindestgröße ODER zwei Runden ohne Gewinn ODER Rundengrenze. Verlauf je Runde in `audit/ebenen_abweichung_verlauf.jsonl`.
 
-## Nachtrag ~02:45 - Nutzer: keine dichte Wolke um ihrer selbst willen; Ebenen in ALLE Richtungen (auch von der Seite)
+## Nachtrag 02:30 (abgelesen) - Nutzer: keine dichte Wolke um ihrer selbst willen; Ebenen in ALLE Richtungen (auch von der Seite)
 - Kein „fein“-Lauf der dichten Wolke gestartet (Nutzer: Verbesserung nur für Geschwindigkeit; Ziel sind Modellkanten, Maße, Bauplan). Wolke bleibt grobe Gegenprobe.
 - `ebenen_bauplan.py --seiten 1` (Standard): je Vorbau zwei Seitenebenen senkrecht zur Wand (Achse = Tiefe ab Fassadenebene, Normale ∓d). Probe Erker (`ebenen_seitentest/`, Bild `audit/erker_seitenriss_probe.jpg`):
   - Echte Seitenebenen: nur 1710 / 1838 Kantenpunkte (16 % / 59 % auf der Ebene). URSACHE: die Fotos der Stadtseite schauen frontal die Straße entlang, die Seitenflächen des Erkers sieht kaum eine Kamera.
