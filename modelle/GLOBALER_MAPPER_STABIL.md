@@ -187,3 +187,10 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
 - PRUEFUNG 1 (Sued schrittweise 99 Bilder, 3 s; Abweichung gegen globalen Lauf b): scharf 63 Bilder -> 2 wandern > 2 %; weich 15 -> 3; unbestimmt 21 -> 15 (Median 17,8 % der Szene, Brennweite 13,9 % anders). Von 20 wandernden Bildern 15 als unbestimmt erkannt, 18 mit weich. Schwellen NICHT nachgestellt (erste Fassung).
 - PRUEFUNG 2 (alter globaler Nordlauf var_sift, 818 Bilder mit Kamera je Clip, 61 s): gegen schrittweisen Bezug: unbestimmt 5 -> 5 wandern, weich 12 -> 6, scharf 360 -> 33 (9 %). Lauf 1 gegen Lauf 2: unbestimmt 26 -> 23, zu_wenig 5 -> 5, weich 36 -> 11, scharf 709 -> 96 (14 %).
   -> 'unbestimmt' trifft zu 71-100 %; aber 9-14 % der 'scharfen' wandern trotzdem (Videobilder mit gemeinsamer Kamera): ZWEITE Ursache, nicht die Brennweite (Vermutung: ferne Bilder / schwach angebundene Abschnitte) - offen.
+
+### 21.11. 12:48 - Nord global Lauf a auf gefilterter DB
+- 538 von 538 Bildern (schrittweise nach 80 min erst 489), 1001 s (lief PARALLEL zum schrittweisen Mapper - Zeit nicht sauber), 72 200 Punkte, 0,91 px; `modell_zerlegen`: ein Stueck 486.
+- Gegen den Nord-Bezug 19.11.: 158 von 203 gemeinsamen Bildern auf <= 1 %, Median 0,35 %, 34 Bilder > 2 % (17 %).
+- `seiten_blick_tor` fiel am Nordmodell zuerst FAELSCHLICH durch (4 Paare): alle 6 Gruppen sind laut Bezug Nord - der Paar-Pruefer nennt verschiedene Videoclips derselben Seite 'verwechselt'.
+  Fix: Tor prueft nur 'verwechselt'-Paare aus VERSCHIEDENEN Bildteilen (kein Weg ueber echte Verbindungen). Danach: Nachtmodell 25 von 25 verklebt (rc 3), Nord global und Sued bestanden.
+  Folgefrage: die Seitenerkennung loescht demnach auch echte Nord-Nord-Paare (Urteil 'verwechselt' innerhalb eines Teils) - Anteil messen.

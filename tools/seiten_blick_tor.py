@@ -3,7 +3,7 @@
 
 HARTES TOR nach dem Mapper gegen SEITENVERKLEBUNG, ohne Vorwissen (21.11.2026, Martinstor: 8,4-h-Mapperlauf legte 51 Sued-Bilder auf die Nordwand, tools/modell_zerlegen.py
 meldete "ein Stueck", das GPS-Tor hatte keine GPS-Fotos).
-Eingang: seiten.json aus tools/seiten_erkennen.py (Bildgruppen + Verbindungen mit Urteil des Paar-Pruefers). Zwei Gruppen mit Urteil 'verwechselt' zeigen AEHNLICHE, aber
+Eingang: seiten.json aus tools/seiten_erkennen.py (Bildgruppen + Verbindungen mit Urteil des Paar-Pruefers). Zwei Gruppen mit Urteil 'verwechselt' AUS VERSCHIEDENEN BILDTEILEN (kein Weg ueber 'echte' Verbindungen) zeigen AEHNLICHE, aber
 VERSCHIEDENE Waende. Stehen beide im selben Modell und blicken ihre Kameras im Mittel in dieselbe Richtung (Winkel < --winkel Grad), dann hat der Mapper die eine Wand auf
 die andere gelegt. Richtig getrennte Gegenseiten blicken > 120 Grad gegeneinander; Nachbarseiten ~90 Grad.
 Je Gruppenpaar: Zahl der registrierten Bilder, Winkel der mittleren Blickrichtungen, Abstand der Standorte in Einheiten der Szenengroesse.
@@ -24,7 +24,11 @@ def main():
     for n, (c, v) in C.items():
         if n in g: G.setdefault(g[n], []).append((c, v))
     alle = np.array([c for c, _ in C.values()]); gr = float(np.linalg.norm(np.percentile(alle, 95, 0) - np.percentile(alle, 5, 0))) or 1.0; B = []
+    teil = {gx: i for i, t_ in enumerate(d.get("seiten", [])) for gx in t_["gruppen"]}      # Bildteil (ueber 'echte' Verbindungen zusammenhaengend) je Gruppe
     for V in d.get("verbindungen", []):
+        # Nur Paare aus VERSCHIEDENEN Bildteilen: innerhalb eines Teils sind 'verwechselt'-Urteile oft falsch (Martinstor Nord 21.11.: 4 Paare verschiedener Videoclips DERSELBEN
+        # Seite als verwechselt beurteilt, alle Gruppen laut Bezug Nord -> das Tor fiel am richtigen Nordmodell durch). Echte Verbindungen ueber Dritte widerlegen das Einzelurteil.
+        if teil.get(V["a"]) is not None and teil.get(V["a"]) == teil.get(V["b"]): continue
         if V.get("urteil") != "verwechselt" or len(G.get(V["a"], [])) < a.min or len(G.get(V["b"], [])) < a.min: continue
         va = np.mean([v for _, v in G[V["a"]]], 0); vb = np.mean([v for _, v in G[V["b"]]], 0); w = float(np.degrees(np.arccos(np.clip(va @ vb / np.linalg.norm(va) / np.linalg.norm(vb), -1, 1))))
         ab = float(np.linalg.norm(np.median([c for c, _ in G[V["a"]]], 0) - np.median([c for c, _ in G[V["b"]]], 0)) / gr)
