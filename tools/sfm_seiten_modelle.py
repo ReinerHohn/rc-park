@@ -7,7 +7,7 @@ Verbindung; ein Mapper kann sie nicht in ein Modell legen. Bisher meldete die Ke
   PHASE 1 modelle()         (CPU) je Bildteil mit >= --min-bilder Bildern (kleinere werden GEMELDET, nicht gerechnet): view_graph_calibrator auf einer DB-Kopie, dann
                             `colmap global_mapper --GlobalMapper.image_list_path teil<i>.txt` ZWEIMAL (Lauf a, b). a gegen b: tools/modell_lage_vergleich.py (Zahl in den Bericht),
                             Wahl des Laufs: lauf_wahl(), Sperrliste: tools/brennweite_schaerfe.py.
-  PHASE 2 dicht_vereinen()  (GPU) je Teil tools/dicht_modell.py; Teil A = Teil mit den meisten Bildern im Modell; jeder weitere Teil gegen A: tools/seiten_vereinen.py
+  PHASE 2 dicht_vereinen()  (GPU) je Teil tools/dicht_modell.py (OHNE Sperrliste, siehe DICHT_MIT_SPERRLISTE); Teil A = Teil mit den meisten Bildern im Modell; jeder weitere Teil gegen A: tools/seiten_vereinen.py
                             (URSPRUNGS-Datenbank mit den Querpaaren, NICHT db_seiten.db). rc 0 -> Teil wird in das VEREINTE Modell gelegt (modelle_zusammen), danach
                             tools/seiten_blick_tor.py auf dem vereinten Modell (rc 3 = dieser Teil wird wieder herausgenommen). rc 3/2 -> Teil bleibt draussen und wird mit den
                             Pruefwerten aus vereinen.json GEMELDET; ohne vereinten Teil gilt Teil A allein.
@@ -41,6 +41,12 @@ MIN_BILDER = 30          # ANNAHME (Vorschlag Auftrag, nicht gemessen): Martinst
 MIN_IM_MODELL = 10       # ANNAHME: ein Teilmodell mit weniger registrierten Bildern gilt als nicht entstanden (seiten_blick_tor zaehlt Gruppen ab 5 Bildern)
 AB_WARNUNG = 0.25        # ANNAHME: mehr als 25 % der gemeinsamen Bilder > 2 % der Szene verschieden = "Laeufe uneinig" (gemessen: Nord 74 von 538 = 14 %, Sued 8 von 101 = 8 %)
 SPERR_MAX = 0.5          # ANNAHME wie pipeline_objekt.py: sperrt die Schaerfe-Liste mehr als die Haelfte der Bilder, wird sie nicht angewandt
+# DICHTE WOLKEN DER SEITEN OHNE SPERRLISTE (21.11.2026, Kettenlauf Martinstor: seiten_vereinen lehnte Teil 1 ab, "Turmhoehen 19,8 % verschieden", Bild: Sued ohne Dach).
+# Ursache: die Sperrliste (Brennweite unbestimmt/zu_wenig) traf 39 von 101 Sued-Bildern - die Teleaufnahmen des Helms. In der Handwolke ohne Sperrliste haengen 71 % der
+# Punkte im obersten Band (0,9-1,05 H) an weniger als 3 ungesperrten Bildern (Mitte 0,4-0,6 H: 23 %). Ohne Dach sucht seiten_vereinen die Spitze von B an der Traufe.
+# Beleg: Kettenmodelle + Klappung unveraendert, nur die Sued-Wolke ohne Sperrliste -> vereint, Turmhoehen 1,9 % (Hand: Sperrliste nie fuer die dichte Wolke benutzt).
+# Die Sperrliste wird weiter berechnet und gemeldet, fuer die dichten Wolken der Seiten aber nicht angewandt (alle Teile gleich, damit die Hoehenprobe Gleiches vergleicht).
+DICHT_MIT_SPERRLISTE = False
 
 
 def _lauf(cmd, log=None):
@@ -311,13 +317,18 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
     if not mit: ber["fehler"] = "kein Teilmodell entstanden"; return ber
     for e in mit if not ohne_dicht else []:                                              # je Teil eine dichte Wolke (gleiche Einstellungen wie die Stufe 'dicht' der Kette)
         dd = os.path.join(arb, f"teil{e['teil']}", "dicht"); fu = os.path.join(dd, "fused.ply"); dj = os.path.join(dd, "fertig.json"); sek = 0; rc = 0; wieder = True
-        if not (ply_kopf(fu)[0] > 0 and _neuer(dj, e["modell"])):
-            wieder = False; t0 = time.time(); sag(f"SEITENMODELLE: Teil {e['teil']} dichte Wolke ({e['im_modell']} Bilder im Modell) ...")
-            rc = LAUF([PYC, "-I", os.path.join(T, "dicht_modell.py"), e["modell"], fotos, dd] + (["--ohne", e["sperrliste"]["pfad"]] if (e.get("sperrliste") or {}).get("angewandt") else []), os.path.join(arb, f"teil{e['teil']}", "dicht.log"))
+        mit_sp = DICHT_MIT_SPERRLISTE and bool((e.get("sperrliste") or {}).get("angewandt"))
+        try: alt_sp = json.load(open(dj)).get("sperrliste_angewandt", bool((e.get("sperrliste") or {}).get("angewandt"))) if os.path.isfile(dj) else None   # alte Wolken ohne Vermerk: wie damals
+        except Exception: alt_sp = None
+        if not (ply_kopf(fu)[0] > 0 and _neuer(dj, e["modell"]) and alt_sp == mit_sp):
+            if alt_sp is not None and alt_sp != mit_sp and os.path.isdir(dd):          # FALLE: dicht_modell nimmt eine vorhandene Bildwahl (sparse_dicht) und Tiefenkarten wieder -> alten Ordner beiseitelegen
+                os.rename(dd, _frei(dd + time.strftime("_alt_%Y%m%d_%H%M%S"))); sag(f"SEITENMODELLE: Teil {e['teil']} alte dichte Wolke (Sperrliste {'mit' if alt_sp else 'ohne'}) beiseitegelegt")
+            wieder = False; t0 = time.time(); sag(f"SEITENMODELLE: Teil {e['teil']} dichte Wolke ({e['im_modell']} Bilder im Modell" + (", ohne Sperrliste" if not mit_sp else "") + ") ...")
+            rc = LAUF([PYC, "-I", os.path.join(T, "dicht_modell.py"), e["modell"], fotos, dd] + (["--ohne", e["sperrliste"]["pfad"]] if mit_sp else []), os.path.join(arb, f"teil{e['teil']}", "dicht.log"))
             sek = round(time.time() - t0)
-            if rc == 0 and ply_kopf(fu)[0] > 0: json.dump(dict(sekunden=sek), open(dj, "w"))
+            if rc == 0 and ply_kopf(fu)[0] > 0: json.dump(dict(sekunden=sek, sperrliste_angewandt=mit_sp), open(dj, "w"))
         else: sek = json.load(open(dj)).get("sekunden", 0)
-        n = ply_kopf(fu)[0]; e["dicht"] = dict(ordner=dd, fused=fu if n > 0 else None, punkte=n, rc=rc, sekunden=sek, wiederverwendet=wieder)
+        n = ply_kopf(fu)[0]; e["dicht"] = dict(ordner=dd, fused=fu if n > 0 else None, punkte=n, rc=rc, sekunden=sek, wiederverwendet=wieder, sperrliste_angewandt=mit_sp)
         sag(f"SEITENMODELLE: Teil {e['teil']} dichte Wolke: rc {rc}, {sek} s" + (" (wiederverwendet)" if wieder else "") + f", {n} Punkte")
         if n <= 0: M_.append(f"Teil {e['teil']}: dichte Wolke gescheitert (rc {rc}, {arb}/teil{e['teil']}/dicht.log) - Vereinen dieses Teils nur aus der duennen Wolke")
     mit.sort(key=lambda e: -e["im_modell"]); A = mit[0]; ber["teil_a"] = A["teil"]; fa = (A.get("dicht") or {}).get("fused"); ang = []; ber["vereint"] = [A["teil"]]; ber["nicht_vereint"] = []
@@ -366,12 +377,19 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
     return ber
 
 
+def _frei(p):
+    """Freier Name fuer das Beiseitelegen (zwei Laeufe in derselben Sekunde: 'Directory not empty')."""
+    k = 1; q = p
+    while os.path.exists(q): q = f"{p}_{k}"; k += 1
+    return q
+
+
 def einsetzen(w, ber):
     """'ergebnis.sparse' nach <w>/sparse/0 kopieren (Zeitstempel bleiben: die dichte Wolke ist danach nicht 'aelter als das Netz'). Ein vorhandenes sparse/ mit Inhalt wird
     beiseitegelegt (sparse.alt_<zeit>), nichts geloescht."""
     q = (ber.get("ergebnis") or {}).get("sparse"); sp = os.path.join(w, "sparse")
     if not q or not os.path.isfile(os.path.join(q, "images.bin")): return False
-    if os.path.isdir(sp) and os.listdir(sp): os.rename(sp, sp + ".alt_" + time.strftime("%Y%m%d_%H%M%S"))
+    if os.path.isdir(sp) and os.listdir(sp): os.rename(sp, _frei(sp + ".alt_" + time.strftime("%Y%m%d_%H%M%S")))
     os.makedirs(sp, exist_ok=True); shutil.copytree(q, os.path.join(sp, "0")); ber["ergebnis"]["eingesetzt"] = os.path.join(sp, "0"); return True
 
 

@@ -226,7 +226,12 @@ def vereinen(XA, CA, VA, XB, CB, VB, P, Q, up, rel=0.02, DA=None, DB=None):
     pr = dict(achse_einigkeit=einig / hoch, blick_vorher=blick_vor, blick_nachher=blick_nach, flanke=fl, flanke_punkte=dict(a=fa, b_gedreht=fbd, b_geklappt=fbg), dach=dach, tiefe=float(2 * abs((achse - wm) @ v)) / hoch)
     gruende = []
     if pr["achse_einigkeit"] > 0.015: gruende.append(f"die Modelle sind sich ueber die Achse nicht einig ({100 * pr['achse_einigkeit']:.1f} % der Bauhoehe, Grenze 1,5 %)")
-    if versatz and versatz["hoehe_einigkeit"] > 0.04: gruende.append(f"Turmhoehen der zwei Modelle {100 * versatz['hoehe_einigkeit']:.1f} % verschieden (Grenze 4 %) - Massstab der Klappung oder Spitze falsch")
+    if versatz and versatz["hoehe_einigkeit"] > 0.04:
+        # Hinweis (21.11.2026 Kettenlauf Martinstor: Sued-Wolke ohne Dach, weil die Sperrliste die Teleaufnahmen des Helms aus der dichten Wolke nahm): oberstes Band beider
+        # Wolken ueber DEMSELBEN Boden (Kameras von A) - endet eine Wolke deutlich tiefer, fehlt ihr vermutlich das Dach (Bildauswahl der dichten Wolke), nicht der Massstab.
+        zus = ""
+        if all(st) and abs(st[0][1] - st[1][1]) > 0.04 * hoch: zus = f"; Wolke {'B' if st[1][1] < st[0][1] else 'A'} endet {100 * abs(st[0][1] - st[1][1]) / hoch:.0f} % der Bauhoehe tiefer - fehlt ihr das Dach? (Bildauswahl/Sperrliste der dichten Wolke pruefen)"
+        gruende.append(f"Turmhoehen der zwei Modelle {100 * versatz['hoehe_einigkeit']:.1f} % verschieden (Grenze 4 %) - Massstab der Klappung oder Spitze falsch" + zus)
     if blick_vor > 60: gruende.append(f"die geklappte Lage ist keine Klappung (Kameras {blick_vor:.0f} Grad auseinander statt < 60)")
     if fl == "verschieden": gruende.append("Nachbarbau liegt in beiden Seitenmodellen auf verschiedenen Flanken")
     if dach and min(dach["a"], dach["b"]) < 0.80: gruende.append(f"Dachflaechen erreichen die Achse schon bei {100 * min(dach['a'], dach['b']):.0f} % der Bauhoehe (sie kreuzen sich, Achse liegt falsch)")
