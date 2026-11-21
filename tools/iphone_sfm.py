@@ -5,9 +5,13 @@
 VORSTUFE 'seiten' (21.11.2026, Standard AN, tools/sfm_seiten_vorstufe.py): Vordergrund-Masken (handy_masken, GPU) -> Masken in der Merkmalssuche (ImageReader.mask_path; vorhandene
   Datenbank ohne Masken: db_masken_filter als Rueckfall) -> seiten_erkennen --streng --masken -> Mapper rechnet auf db_seiten.db. Zwischenstaende werden wiederverwendet.
   RCPARK_SEITEN=0 schaltet sie ab, =immer nimmt db_seiten.db auch ohne 'verwechselt'-Urteil; RCPARK_MASKEN_EXTRAKTION=0 = Masken nur als Filter; RCPARK_MASKEN_BATCH (2).
+SEITENMODELLE (21.11.2026, Standard AN, tools/sfm_seiten_modelle.py): trennt die Vorstufe die Bilder in MEHRERE Bildteile (Seiten ohne echte Verbindung) und haben mindestens zwei
+  davon >= 30 Bilder (RCPARK_SEITEN_MIN_BILDER), rechnet statt EINES Mappers je Teil der globale Mapper zweimal, danach je Teil eine dichte Wolke und tools/seiten_vereinen.py;
+  sparse/0 ist dann das VEREINTE Modell (oder, gemeldet, Teil A allein). Bericht seiten_modelle.json, Arbeitsordner seiten_modelle/. Bei genau einem Teil bleibt alles wie bisher.
+  RCPARK_SEITEN_MODELLE=0 = Stand davor (ein Mapper, fehlende Seite nur gemeldet). Gilt fuer --mapper auto|auto_alt|global; ein erzwungener anderer Mapper bleibt erzwungen.
 DB-BEREINIGUNG vor JEDEM Mapper (Kamera je Videoclip, EXIF-Prioren weg, tools/sfm_db_variante.py -> db_mapper.db; der Konsens-Weg bereinigt selbst). RCPARK_DB_BEREINIGEN=0 = alter Stand.
 Ausgaben in <arbeitsordner>: db.db, paare.txt (ab > 300 Bildern), sparse/<n>/ (COLMAP-Modelle), mapper_wahl.json (Mapperwahl + GPS-Tor + 'seiten': Bildteile, fehlende Seiten),
-  masken/, masken_colmap/, seiten.json, db_seiten.db, db_mapper.db.
+  masken/, masken_colmap/, seiten.json, db_seiten.db, db_mapper.db, seiten_modelle.json + seiten_modelle/ (nur bei mehreren Bildteilen).
 Exit 0 = fertig; Abbruch mit Text, wenn der erzwungene Konsens- bzw. der globale Mapper scheitert.
 """
 import sys, os, pycolmap, time
@@ -89,6 +93,7 @@ if "--flexglue" in sys.argv or os.environ.get("RCPARK_FLEXGLUE") == "1":
 if SEITEN != "0":
     _seiten["masken_weg"] = "merkmalssuche" if os.path.isfile(_mk) else "filter"
     if not os.path.isfile(_mk): db = SV.masken_filter(db, _roh, w)
+    _db_ursprung = db                                                     # MIT den Querpaaren zwischen den Seiten - die braucht tools/seiten_vereinen.py (db_seiten.db hat sie nicht mehr)
     db, _seiten["erkennung"] = SV.seiten(db, img, w, _roh, modus=SEITEN)
 # Mapper: COLMAP-Binaerdatei mit CUDA (GPU-Bündelausgleich, BundleAdjustmentCeres.use_gpu). Die pycolmap-Python-Bibliothek hat keine GPU-Ceres.
 COLMAP_BIN = "/media/oem/scan/colmap-build/prefix/bin/colmap"
@@ -148,7 +153,20 @@ def _gps_tor(modell):
 sys.path.insert(0, _tools); import gpu_buchung as GB; GB.frei()   # Mapper rechnet fast nur auf der CPU (global ~7 min, schrittweise ~40 min) -> GPU-Budget solange freigeben
 _t0 = _t_anfang = time.time(); wahl = dict(mapper=MAPPER)
 _fertig = False
-if MAPPER in ("auto", "konsens"):                                         # 19.11.2026 (Nutzer 'Ja, mach es als Standard'): Konsens-Mapper zuerst
+# SEITENMODELLE, Phase 1 (21.11.2026, Handbeweis Martinstor GLOBALER_MAPPER_STABIL.md 12:23-14:42): mehrere Bildteile -> je Teil zwei globale Laeufe statt eines Mappers ueber alles
+# (der koennte die Teile ohnehin nicht in ein Modell legen). Weniger als zwei Teile mit genug Bildern oder kein Teilmodell -> Mapperwahl wie bisher (gemeldet).
+_sm = None; _e0 = _seiten.get("erkennung") or {}
+if _e0.get("getrennt"):
+    if os.environ.get("RCPARK_SEITEN_MODELLE", "1") == "0": print("SEITENMODELLE ABGESCHALTET (RCPARK_SEITEN_MODELLE=0): ein Mapper ueber alle Bildteile, fehlende Seiten werden nur gemeldet", flush=True)
+    elif MAPPER not in ("auto", "auto_alt", "global"): print(f"SEITENMODELLE nicht gerechnet: --mapper {MAPPER} ist erzwungen (belegt ist nur der globale Mapper je Seite)", flush=True)
+    else:
+        import sfm_seiten_modelle as SM
+        _sm = SM.modelle(w, img, _e0["seiten_json"], _db_mapper(), int(os.environ.get("RCPARK_SEITEN_MIN_BILDER", SM.MIN_BILDER))); wahl["seiten_modelle_sek"] = round(time.time() - _t0)
+        if _sm.get("grund") or _sm.get("fehler"):
+            print("SEITENMODELLE: " + (_sm.get("grund") or "FEHLER " + _sm["fehler"]) + " - Mapperwahl wie bisher", flush=True); SM.schreiben(w, _sm)
+            wahl["seiten_modelle"] = dict(gerechnet=False, grund=_sm.get("grund") or _sm.get("fehler"), meldungen=_sm.get("meldungen")); _sm = None; _t0 = time.time()
+        else: wahl["gewaehlt"] = "seiten_global"; _fertig = True
+if not _fertig and MAPPER in ("auto", "konsens"):                                         # 19.11.2026 (Nutzer 'Ja, mach es als Standard'): Konsens-Mapper zuerst
     ok_k = _konsens(f"{w}/sparse_konsens"); wahl["konsens_sek"] = round(time.time() - _t0); ku = _konsens_urteil(ok_k); wahl["konsens"] = ku
     print("Mapper konsens:", "ok" if ok_k else "FEHLGESCHLAGEN", wahl["konsens_sek"], "s, Rueckgrat", ku["rueckgrat"], "von", ku["gemeinsam"], "im Modell", ku["im_modell"], "von", ku["bilder"], flush=True)
     if ku["gruende"]:
@@ -184,6 +202,11 @@ else:
         wahl["hinweis"] = "kein Modell besteht das GPS-Tor (<= 15 % > 15 m) - Lage NICHT glauben" if tg["n_gps"] >= 15 else "zu wenig GPS-Fotos fuer ein Urteil - schrittweiser Mapper wie bisher"
         shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/{nimm}", f"{w}/sparse")
 GB.belegen()
+if _sm:                                                                   # SEITENMODELLE, Phase 2 (GPU): je Teil dichte Wolke, vereinen, Blick-Tor; Ergebnis -> sparse/0 (vereint oder Teil A allein)
+    SM.dicht_vereinen(w, img, _e0["seiten_json"], _db_ursprung, _sm); _ok_sm = SM.einsetzen(w, _sm); SM.schreiben(w, _sm)
+    if not _ok_sm: raise SystemExit("SEITENMODELLE: kein Ergebnismodell (seiten_modelle.json) - bewusst ohne diesen Weg: RCPARK_SEITEN_MODELLE=0")
+    wahl["seiten_modelle"] = dict(gerechnet=True, art=_sm["ergebnis"]["art"], teil_a=_sm.get("teil_a"), vereint=_sm.get("vereint"), nicht_vereint=_sm.get("nicht_vereint"), meldungen=_sm.get("meldungen"),
+                                  dicht=_sm["ergebnis"].get("dicht"), bericht=os.path.join(w, "seiten_modelle.json"))
 json.dump(wahl, open(os.path.join(w, "mapper_wahl.json"), "w"), indent=1); print("MAPPERWAHL", json.dumps(wahl), flush=True)
 rec = {k: pycolmap.Reconstruction(os.path.join(f"{w}/sparse", k)) for k in sorted(os.listdir(f"{w}/sparse")) if k.isdigit()}
 for k, r in rec.items(): print(k, r.summary(), flush=True)
@@ -195,6 +218,8 @@ if SEITEN != "0":
     _e = _seiten.get("erkennung") or {}
     if _e.get("db", "").endswith("db_seiten.db"):
         _e["im_modell"], _e["meldungen"] = SV.teile_im_modell(_e["seiten_json"], {k: _reg(r) for k, r in rec.items()})
+        if _sm and len(_sm.get("vereint") or []) > 1:                     # vereinte Seiten stehen ABSICHTLICH ohne gemeinsame Punkte in sparse/0 (Lage aus seiten_vereinen, Blick-Tor bestanden)
+            _e["meldungen"] = [m_ for m_ in _e["meldungen"] if "ohne echte Verbindung" not in m_]; _e["vereint"] = _sm["vereint"]
         print("SEITEN IM MODELL: " + "; ".join(f"Teil {t_['teil']} ({t_['bilder']} Bilder): " + ", ".join(f"sparse/{m} {n}" for m, n in t_["im_modell"].items()) for t_ in _e["im_modell"][:8]), flush=True)
         for m_ in _e["meldungen"]: print("ACHTUNG SEITE: " + m_, flush=True)
     wahl["seiten"] = _seiten

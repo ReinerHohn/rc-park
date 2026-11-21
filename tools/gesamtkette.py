@@ -248,7 +248,14 @@ def main():
             sv_ = mw.get("seiten") or {}; se_ = sv_.get("erkennung") or {}
             if se_: notiz(B, "seiten_vorstufe", not se_.get("getrennt") and not se_.get("meldungen"), bildteile=se_.get("teile"), fremde_bilder=se_.get("fremd"), verwechselt=se_.get("verwechselt_pruefer"), masken=sv_.get("masken_weg"),
                           mapper_db=os.path.basename(se_.get("db") or ""), modelle=mw.get("modelle"), meldungen=se_.get("meldungen"),
-                          hinweis=("Seiten getrennt: die Kette verwendet nur sparse/0, Vereinen (tools/seiten_vereinen.py) ist noch NICHT eingebaut" if se_.get("getrennt") else se_.get("hinweis") or ""))
+                          hinweis=("Seiten getrennt: je Seite ein Modell + Vereinen siehe Zeile 'seiten_modelle' (tools/sfm_seiten_modelle.py)" if se_.get("getrennt") else se_.get("hinweis") or ""))
+            # 21.11.2026: Seitenmodelle (tools/sfm_seiten_modelle.py) - sparse/0 ist das VEREINTE Modell oder, wenn das Vereinen abgelehnt wurde, Teil A allein. Rot, sobald ein Teil
+            # nicht vereint ist oder der Weg nicht lief; die Meldungen (welcher Teil, Pruefwerte aus vereinen.json) stehen woertlich im Bericht. Das Seiten-Blick-Tor (Stufe 'tore')
+            # prueft danach sparse/0 = das vereinte Modell.
+            sm_ = mw.get("seiten_modelle")
+            if sm_: notiz(B, "seiten_modelle", bool(sm_.get("gerechnet")) and sm_.get("art") == "vereint" and not sm_.get("nicht_vereint"), art=sm_.get("art"), teil_a=sm_.get("teil_a"), vereint=sm_.get("vereint"),
+                          nicht_vereint=sm_.get("nicht_vereint"), meldungen=sm_.get("meldungen"), grund=sm_.get("grund"), bericht=sm_.get("bericht"))
+            elif se_.get("getrennt"): notiz(B, "seiten_modelle", False, fehler="Seiten getrennt, aber Seitenmodelle nicht gerechnet (RCPARK_SEITEN_MODELLE=0 oder erzwungener Mapper) - sparse/0 enthaelt nur einen Teil")
             elif sv_.get("abgeschaltet"): notiz(B, "seiten_vorstufe", False, fehler="Vorstufe 'seiten' abgeschaltet (RCPARK_SEITEN=0) - keine Masken, keine Seitenerkennung, Seiten-Blick-Tor ohne Urteil")
         except Exception as e_: print("HINWEIS mapper_wahl.json nicht lesbar:", e_, flush=True)
         if rc_s != 0: return abschluss(4, f"SfM gescheitert (rc {rc_s}) - Wolke/Ausrichtung eines frueheren Laufs werden NICHT weiterverwendet")
@@ -265,6 +272,8 @@ def main():
         if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT)], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende
         if os.path.isdir(sp):                                              # 20.11.2026 (Martinstor FlexGlue-Nacht): Hinweis-Tore Seitenverkleben - Modell aus punktlos getrennten Stuecken? Kameras gegen Foto-GPS auf der falschen Turmseite?
             erg["zerfall"] = lauf(B, f"tor_zerfall{tag}", [PYC, "-I", "tools/modell_zerlegen.py", sp, "--min-bilder", "10"], log, ok=(0, 3))[0]
+            if erg["zerfall"] == 3 and os.path.isfile(os.path.join(sp, "vereint.json")):   # 21.11.2026: vereinte Seitenmodelle haben ABSICHTLICH keine gemeinsamen Punkte - ihre Lage zueinander kommt aus seiten_vereinen und wird vom Seiten-Blick-Tor geprueft
+                notiz(B, f"tor_zerfall_hinweis{tag}", True, hinweis="sparse/0 ist aus Seitenmodellen vereint (sparse/0/vereint.json, tools/sfm_seiten_modelle.py): mehrere Stuecke ohne gemeinsame Punkte sind hier erwartet, kein Zerfall des Mappers")
             erg["gps_seiten"] = lauf(B, f"tor_gps_seiten{tag}", [PYC, "-I", "tools/gps_seiten_pruefen.py", sp, "--bilder", FV], log, ok=(0, 2, 3))[0]
             if tag == "":
                 # 21.11.2026 HARTES Tor gegen Seitenverklebung (Martinstor: 51 Sued-Bilder auf der Nordwand, tor_zerfall meldete 'ein Stueck', GPS-Tor ohne GPS-Fotos): Bildgruppen, die
