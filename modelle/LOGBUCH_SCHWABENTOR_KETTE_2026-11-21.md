@@ -350,3 +350,6 @@ Stand in `.claude/UEBERGABE.md` (Merges Nischen-Fenster, leere Fassaden, Seiten 
 - Sackgassen: phaseCorrelate zur Ausrichtung (Antwort 0,0-0,3, eine Verschiebung 85 cm falsch); Wandniveau nur aus Putzzellen (1-m-Kachelstufen im Quaderteil); fusioniertes ortho_f00.png fuer die Uhr (Doppelbilder/verschmiert). Gen-Umgebung hat kein cv2 -> Putzkarte mit PIL/scipy.
 - Probebau (Kopie im Scratch, Objektordner unberuehrt): vorher/nachher Ansicht Stadtseite: Kruemel weg, Uhr mit Ring + 12 Ziffernfeldern + Sonne/Stern sichtbar (vorher unsichtbar). Test tools/test_putz_uhr.py im Schnelltest.
 - OFFEN: w00 (Feldseite, Wandgemaelde) behaelt Netzkruemel - Gemaelde ist im Bild Struktur, nicht Putz (anderes Kriterium noetig, z. B. Netz-Uneinigkeit); Fenster/Gesims auf w02 nur schwach (Netz-Relief); Hoehen Uhr = ANNAHME.
+
+## UEBERGABE 21.11.2026 18:50
+Stand in `.claude/UEBERGABE.md`, Nachtplan `modelle/PLAN_NACHT_2026-11-21.md` (einfache Agenten arbeiten die Schleife ab).
