@@ -2,7 +2,7 @@
 """modell_lage_vergleich.py <modell_A> <modell_B> [--aus bericht.json] [--liste 10]
 
 Zwei SfM-Modelle derselben Bilder gegeneinander: WO und BEI WELCHEN BILDERN weichen sie ab? (21.11.2026, Untersuchung "warum scheitert der globale Mapper", Nutzerauftrag.)
-Gemeinsame Bilder -> robuste Aehnlichkeitsabbildung B -> A (Umeyama, 5 Runden mit den besten 60 %) -> je Bild:
+Gemeinsame Bilder -> robuste Aehnlichkeitsabbildung B -> A (RANSAC ueber Vierergruppen, Treffer = Lage <= 1 % der Szene, dann Umeyama ueber die Treffer) -> je Bild:
   Lage-Abweichung in % der Szenengroesse (Szenengroesse = 5.-95.-Perzentil-Diagonale der Kamerastandorte in A), Drehungsabweichung in Grad, Brennweiten-Verhaeltnis B/A.
 Ausgabe: Gesamt (Median, 90 %, Anteil > 2 %) und JE BILDQUELLE (Namensteil vor '__': eigene Fotos, Netz, Videoclip) - zeigt, ob wenige Quellen (freie Brennweite, Fernfotos)
 die Abweichung tragen oder das ganze Modell verformt ist. rc 0 immer (Messwerkzeug).

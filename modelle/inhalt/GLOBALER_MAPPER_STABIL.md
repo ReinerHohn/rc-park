@@ -7,3 +7,13 @@
 - Z.120: ## Befunde 01:50 (nach V4b, V5)
 - Z.135: ## Rezept "globaler Mapper stabil" (Stand 19.11.2026 03:45, Werkzeug `tools/global_mapper_konsens.py`, Schalter `tools/iphone_sfm.py --mappe
 - Z.164: ## Ergebnispfade
+- Z.172: ## Untersuchung 21.11.2026 (Nutzer: "untersuche tief, warum der globale Mapper gescheitert ist ... groesster Hebel") - laufend
+- Z.183: ### 21.11. 12:44 - Methode BRENNWEITEN-SCHAERFE (`tools/brennweite_schaerfe.py`) gegen wandernde Einzelfotos
+- Z.191: ### 21.11. 12:48 - Nord global Lauf a auf gefilterter DB
+- Z.198: ### 21.11. 13:02 - Nord global Lauf a gegen b (gefilterte DB, 538 Bilder) + Schaerfe-Test
+- Z.203: ### 21.11. 14:05 - Schrittweiser Nord-Lauf GESTOPPT (Nutzerfreigabe 14:03), dichte Wolke Nord gestartet
+- Z.210: ### 21.11. 14:42 - BELEG: Sued und Nord aus GLOBALEN/gefilterten Stuecken vereint (Martinstor)
+- Z.220: ### 21.11. 14:55 - Lot der zweiten Seite aus ihren eigenen Waenden (Nutzerfund "Suedseite gekippt")
+- Z.225: ### 21.11. 14:59 - Drehung der zweiten Seite um das Lot aus den Wandrichtungen (Nutzerfund "von oben verdreht")
+- Z.230: ### 21.11. 15:05 - BELASTUNGSPROBE Vereinen (Nutzer: "beweise, dass du es bei jeder Wand richtig ausrichten wirst")
+- Z.236: ### 21.11. 15:09 - Pruefung Turmtiefe und Massstab der Suedseite am vereinten Modell (grob)

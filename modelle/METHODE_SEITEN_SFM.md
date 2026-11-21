@@ -39,10 +39,10 @@ Entstehung, alle Läufe und Zahlen: `modelle/GLOBALER_MAPPER_STABIL.md` (ab „U
 ### Schon in der Kette / noch Handfolge (im Code geprüft 21.11.2026)
 - IN DER KETTE (`tools/iphone_sfm.py` über `tools/sfm_seiten_vorstufe.py`, Standard an, `RCPARK_SEITEN=0` aus): Schritt 1 (`masken_rechnen`), Schritt 2 (`masken_colmap` -> `mask_path`; Rückfall `masken_filter`), Schritt 4 (`seiten` -> Mapper rechnet auf `db_seiten.db`), Schritt 3 für jeden Mapper-Weg (`bereinigen` -> `db_mapper.db`), dazu `teile_im_modell` (meldet, welche Seite im Modell fehlt).
 - IN DER KETTE (`tools/gesamtkette.py`, Stufe tore): Schritt 9 `seiten_blick_tor.py` als hartes Tor (rc 3 -> Abbruch, kein Lösungs-Kreislauf; ohne `seiten.json` nur Meldung „nicht geprüft“); Schritt 6 `brennweite_schaerfe.py` -> `sfm/sperrliste_messen.txt` (vereinigt mit `unstabil.txt` des Konsens-Mappers). `tools/pipeline_objekt.py` gibt die Sperrliste an die Bildwahl der dichten Wolke.
-- HANDFOLGE: Schritt 5 - die Kette rechnet EIN Modell auf der ganzen gefilterten Datenbank (Mapperwahl `auto`: Konsens-Mapper = zwei globale Läufe + Konsens-Schnitt), nicht je Seite; bei getrennten Seiten nimmt sie nur `sparse/0` und meldet die fehlende Seite.
-- HANDFOLGE: Schritt 7 je Seite (`dicht_modell.py` hat keinen Aufrufer in der Kette), Schritt 8 (`seiten_vereinen.py` wird nirgends aufgerufen, nur als Hinweistext genannt), Laufvergleich `modell_lage_vergleich.py`, Blick-Tor am vereinten Ergebnis.
+- IN DER KETTE seit 21.11. 15:15 (`tools/sfm_seiten_modelle.py`, von `iphone_sfm.py` bei mehreren Bildteilen, Schalter `RCPARK_SEITEN_MODELLE`): Schritt 5 (je Teil ab 30 Bildern zwei globale Läufe, Laufwahl, a/b-Vergleich, Sperrliste), Schritt 7 (`dicht_modell.py` je Teil), Schritt 8 (`seiten_vereinen.py` gegen den größten Teil, vereintes Modell nach `sparse/0`), Blick-Tor am vereinten Modell; bei Ablehnung Teil A allein + Meldung. Schwellen (30 Bilder, 1 % Laufwahl) sind ANNAHMEN.
+- NOCH HANDARBEIT: Sichtprüfung des Pflichtbilds `vereinen.jpg`; Maßstab der zweiten Seite (kommt aus der Klappung).
 - Die Sperrliste wirkt in der Kette nur auf die dichte Wolke, noch nicht auf Kantenstufe und Wandbild.
-- Kein Kettenlauf hat den Einbau bisher belegt (nur fester Test `tools/test_seiten_kette.py`).
+- Beleg durch Kettenlauf: `kette-martinstor-1121a` (ab sfm, vorhandene Datenbank) läuft seit 21.11. 15:26 - Ergebnis hier nachtragen.
 
 ## Versucht (Ergebnis in einem Satz; Einzelheiten in den Quellen oben)
 - Schrittweiser Mapper „eng“ über alle Bilder (8,4 h): Südbilder auf der Nordwand verklebt, ein Stück - kein Ausweg.

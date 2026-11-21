@@ -1,4 +1,4 @@
-# Werkzeuge: test (81)
+# Werkzeuge: test (83)
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
@@ -58,7 +58,9 @@
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_erkennen.py` [-] test_seiten_erkennen.py - feste Erwartungen fuer tools/seiten_erkennen.py (ohne GPU, ohne Bilder): Gemeinschaften, Zusammenhangsteile, Urteil.
 - `tools/test_seiten_kette.py` [col] Fester Test (ohne GPU, Sekunden) fuer die Seitenfolge der Kette vom 21.11.2026 - synthetische Mini-Modelle (COLMAP-Textformat) und Mini-Datenbanken: 1 seiten_blick_tor.py zwei 'ver
+- `tools/test_seiten_modelle.py` [col] Fester Test (ohne GPU, Sekunden) fuer tools/sfm_seiten_modelle.py (21.11.2026: je Seite ein Kameramodell, je Seite eine dichte Wolke, vereinen). Synthetischer Turm: 14 Nordbilder (
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
+- `tools/test_seiten_vereinen_robust.py` [-] Fester Test: BELASTUNGSPROBE fuer seiten_vereinen.vereinen OHNE echte Daten (Vorbild tools/versuche/vereinen_robust_1121.py, dort an den Martinstor-Wolken: 8 verfaelschte Laeufe en
 - `tools/test_spitze_hoehe.py` [-] test_spitze_hoehe.py - synthetischer Beweis der Spitzen-Triangulation (2026-11-05): 12 Kameras im Kreis sehen eine Spitze bei (1, 2, 16); 5 davon liefern Fehlspuren (Giebelstufe/Ka
 - `tools/test_stabil_schnitt.py` [-] test_stabil_schnitt.py - Schnelltest fuer tools/sfm_stabil_schnitt.schnitt(): synthetische Kameras entlang einer Strasse (fast kollinear, wie Martinstor), Lauf B = Aehnlichkeitstra
 - `tools/test_stoermaske.py` [seg] test_stoermaske.py - SYNTHETISCHER BEWEIS fuer teil_fotoform --stoermaske (SPEC_STOERMASKE). Foto t1 = echtes Foto, t2 = dasselbe mit eingesetztem 'Stoerer' (Schachbrett-Rechteck m

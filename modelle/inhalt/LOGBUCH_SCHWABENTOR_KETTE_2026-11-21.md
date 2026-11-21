@@ -28,3 +28,5 @@
 - Z.225: ## Nachtrag 21.11. 11:29 - Suedmodell + hartes Blick-Tor
 - Z.233: ## Nachtrag 21.11. 13:38 - Wolkenkoerper in der Kette (Stufe bauplan)
 - Z.237: ## Nachtrag 21.11. 13:40 - Seitenfolge IN DER KETTE (Agent im Worktree, nur Code + feste Tests, KEIN Kettenlauf)
+- Z.245: ## Nachtrag 21.11. 15:10 - SEITENMODELLE IN DER KETTE: je Seite Mapper + dichte Wolke + Vereinen (Agent im Worktree, nur Code + feste Tests,
+- Z.264: ## Nachtrag 21.11. 15:24 - Kettenlaeufe als Beleg, Platz, Agenten

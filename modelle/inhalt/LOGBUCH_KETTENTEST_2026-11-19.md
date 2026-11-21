@@ -34,3 +34,5 @@
 - Z.360: ## 22:20-23:00 Suedanhang global (Nutzer: "machen wir das mit dem globalen Mapper") + FlexGlue
 - Z.372: ## 20.11. 00:30-01:10 Recherche-Liste abarbeiten (Nutzer: "die ganze Liste wieder abarbeiten ... Sift und FlexGlue vereinigen") - zuerst Pun
 - Z.415: ## UEBERGABE 20.11.2026 ~09:00 (nach /clear hier weiterlesen)
+- Z.421: ## UEBERGABE 20.11.2026 12:55
+- Z.424: ## UEBERGABE 20.11.2026 16:30

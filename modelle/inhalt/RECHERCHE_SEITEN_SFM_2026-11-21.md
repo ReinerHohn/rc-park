@@ -1,0 +1,36 @@
+# Inhalt von modelle/RECHERCHE_SEITEN_SFM_2026-11-21.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Recherche: Verbesserungen fuer die Seiten-SfM-Folge (Stand 21.11.2026)
+- Z.17: ## Rangliste: die fuenf Massnahmen mit dem groessten Hebel
+- Z.29: ## Schwaeche 1 - Seitenverwechslung: Pruefer nennt Clips derselben Seite "verwechselt", 162 echte Bilder unter "fremd"
+- Z.31: ### Was in den eigenen Unterlagen schon steht
+- Z.40: ### Funde im Netz
+- Z.47: ### Vorschlaege (nach erwartetem Nutzen)
+- Z.54: ### Nicht empfohlen
+- Z.60: ## Schwaeche 2 - Masken: keine Klasse Strassenbahn, Statuen/Wandbilder als Person, Lizenz SegFormer
+- Z.62: ### Was in den eigenen Unterlagen schon steht
+- Z.67: ### Funde im Netz
+- Z.74: ### Vorschlaege
+- Z.81: ### Nicht empfohlen
+- Z.87: ## Schwaeche 3 - Einzelfotos ohne EXIF wandern; 9-14 % "scharfer" Videobilder wandern trotzdem
+- Z.89: ### Was in den eigenen Unterlagen schon steht
+- Z.96: ### Funde im Netz
+- Z.103: ### Vorschlaege
+- Z.110: ### Nicht empfohlen
+- Z.116: ## Schwaeche 4 - Vereinen ohne gemeinsame Punkte: Massstab ~4 % uneinig, Seite B 4,5 Grad gekippt, Seitenwaende leer
+- Z.118: ### Was in den eigenen Unterlagen schon steht
+- Z.125: ### Funde im Netz
+- Z.132: ### Vorschlaege
+- Z.142: ### Nicht empfohlen
+- Z.147: ## Schwaeche 5 - Bilder mit fraglichem Motiv kosten den schrittweisen Mapper Stunden
+- Z.149: ### Was in den eigenen Unterlagen schon steht
+- Z.154: ### Funde im Netz
+- Z.159: ### Vorschlaege
+- Z.166: ### Nicht empfohlen
+- Z.171: ## Schwaeche 6 - Globaler Mapper: Laufstreuung, nicht deterministisch trotz Seed
+- Z.173: ### Was in den eigenen Unterlagen schon steht
+- Z.178: ### Funde im Netz
+- Z.184: ### Vorschlaege
+- Z.191: ### Nicht empfohlen
+- Z.197: ## Lizenzbefunde dieser Recherche (in `LIZENZ_WERKZEUGE.md` nachzutragen - nicht von mir geaendert)
+- Z.208: ## Was ich NICHT pruefen konnte
+- Z.221: ## Quellen (heute abgerufen, soweit nicht anders vermerkt)
