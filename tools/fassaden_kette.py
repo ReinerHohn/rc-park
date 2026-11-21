@@ -269,6 +269,30 @@ def koerper_flaeche(basis, a, t, n, felder, w_aussen=1.0, w_innen=-1.5, schritt=
     return float(np.median(ws)) if ws else None
 
 
+def fein_ordner(objekt_json):
+    """Ordner des feinen Wandbilds (Kettenstufe fenster: fassade_ortho --zelle 0.01 --einzeln -> <daten>/fassade_fein). objekt.json 'fassade_fein' (relativ zum Repo oder absolut)
+    geht vor, sonst /media/oem/scan/rc-park_daten/<objektordner>/fassade_fein wie tools/gesamtkette.py. '' wenn nicht da."""
+    od = os.path.dirname(os.path.abspath(objekt_json)); q = json.load(open(objekt_json)).get("fassade_fein")
+    for p in ([q if os.path.isabs(q) else os.path.join(os.path.dirname(os.path.dirname(od)), q)] if q else []) + [os.path.join("/media/oem/scan/rc-park_daten", os.path.basename(od), "fassade_fein")]:
+        if os.path.exists(os.path.join(p, "fassaden.json")): return p
+    return ""
+
+
+def uhren_frei(od, Z, parallel=0.95, abstand=1.0):
+    """Uhrscheiben aus audit/uhren_auto.json (tools/uhren_wandbild.py) als Kreise (u, z, r) im Relief-Raster Z, wenn ihre Fassade zu dieser Wand passt.
+    Dort baut bauteile.uhren_aus_json das Zifferblatt - Netz-Relief davor waere doppelt (Nutzerbild 21.11.: Uhr nur flacher Kreis im Relief)."""
+    f = os.path.join(od, "audit", "uhren_auto.json")
+    if not os.path.exists(f): return []
+    a = np.asarray(Z["a"], float)[:2]; t = np.asarray(Z["t"], float)[:2]; nw = np.asarray(Z["n"], float)[:2]; r = []
+    for F in json.load(open(f)).values():
+        o = np.asarray(F["o"], float); d = np.asarray(F["d"], float); n = np.asarray(F["n"], float)
+        if n @ nw < parallel: continue
+        for U in F.get("uhren", []):
+            p = o + float(U["u"]) * d
+            if abs((p - a) @ nw) <= abstand: r.append((float((p - a) @ t), float(U["z"]), 0.5 * float(U["d_aussen"]) + 0.05))
+    return r
+
+
 def wandende_ist_ecke(waende, w, ende, abstand=0.8, parallel=0.95):
     """Gebaeudeecke = Wandende ('a'/'b'), an dem KEINE gleichgerichtete Nachbarwand weiterlaeuft (Ende an Anfang innerhalb 'abstand' m, |cos| >= parallel).
     Wandabschnitte derselben Flucht (eine Fassade in mehrere LoD2-Stuecke zerlegt) sind so keine Ecke (21.11.2026, Eckquader-Erkennung)."""
@@ -331,7 +355,30 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
             if not info.get("unveraendert"):
                 f = f2; belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']}: Restbrei auf Wandniveau, Bauteilflaechen ersetzt", quelle="fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
                                            hinweis=f"ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg {info['brei_weg'] * 100:.0f} %, durch Fotobauteile ersetzt {info['ersetzt'] * 100:.0f} %, {info['linienhaft_behalten']} linienhafte Stuecke behalten; Bild relief/{w['name']}_rein.jpg"))
-        if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
+        fl_w = None
+        if w.get("quader") is False and not w.get("nur_foto") and os.environ.get("OHNE_PUTZ_WANDBILD") != "1":
+            # 21.11.2026 (Nutzerbild umgang_bau_ansicht, w02 Stadtseite): Putzwand ohne Quaderwerk. (a) 'Kruemel' auf dem glatten Putz = Netzrauschen auf texturarmem Putz
+            # (39 % Netzloecher, Einzelzellen 5-15 cm daneben; putz_eben liess > 5 cm stehen). Putz jetzt aus dem WANDBILD (tools/putz_wandbild.py: mehrere entzerrte Einzelfotos
+            # einig glatt) -> dort ein Niveau; die Uhrscheiben (audit/uhren_auto.json) baut bauteile.uhren_aus_json, dort ebenfalls Niveau.
+            # (b) das Relief stand ohne Trend auf der LoD2-Ebene (+0,11 m Vorstand), die gemessene Koerperflaeche lag nach der Abweichungsschleife bei -0,15 m (Platte 0,26 m davor);
+            # jetzt Putzniveau genau auf die gemessene Koerperflaeche (koerper_flaeche). RELIEF_LOD2_EBENE=1 = alter Stand.
+            ffn = fein_ordner(objekt_json)
+            if ffn:
+                from putz_wandbild import putz_auf_relief, relief_putz_glatt
+                M_ = putz_auf_relief(np.load(f), ffn)
+                if M_ is not None:
+                    f3 = os.path.join(od, "relief", w["name"] + "_glatt.npz"); info = relief_putz_glatt(f, f3, M_, frei=uhren_frei(od, Z))
+                    if not info.get("unveraendert"):
+                        f = f3; belege.append(dict(seite="wand", element=f"Putz Fassade {w['name']} glatt aus dem Wandbild ({info['putz_anteil'] * 100:.0f} % der Wand, {info['frei']} Uhrfeld(er) frei)",
+                                                   quelle="tools/putz_wandbild.py: entzerrte Einzelfotos (fassade_fein/ortho_<fid>_einzeln), Putz = >= 3 Fotos sehen die Zelle und >= 60 % davon ohne Feinstruktur",
+                                                   putz_anteil=info["putz_anteil"], rausch_vorher_cm=info["rausch_vorher_cm"], hinweis=f"Netzrauschen auf dem Putz vorher {info['rausch_vorher_cm']} cm (Streuung); relief/{w['name']}_glatt.jpg ansehen"))
+            if os.environ.get("RELIEF_LOD2_EBENE") != "1":
+                Zf_ = np.load(f); hh_, ww_ = Zf_["rel"].shape; px_ = float(Zf_["px"]); u0_, z0_ = float(Zf_["u0"]), float(Zf_["z0"])
+                fl_w = koerper_flaeche(basis, Zf_["a"], Zf_["t"], Zf_["n"], [(u0_ + fu * ww_ * px_, z0_ + fz * hh_ * px_) for fu in (0.3, 0.5, 0.7) for fz in (0.3, 0.6, 0.9)])
+                if fl_w is not None and "putz_niveau_m" not in Zf_.files:          # Relief ohne Putzniveau (kein Wandbild): Niveau = Median der Wandzellen (relief_roh: 'vorstand')
+                    mw_ = (Zf_["wand"] if "wand" in Zf_.files else np.ones(Zf_["rel"].shape, bool)) & ~Zf_["oeffnung"] & (Zf_["rel"] > 0); fl_w -= float(np.median(Zf_["rel"][mw_])) if mw_.any() else 0.0
+                if fl_w is not None: belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} auf der gemessenen Koerperflaeche ({fl_w:+.2f} m zur Wandebene)", quelle="fassaden_kette.koerper_flaeche (Stab-Sonde gegen den Grundkoerper nach Wandversatz)", relief_auf_flaeche_m=round(fl_w, 3)))
+        if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else []), flaeche=fl_w) ^ hu)
         fl_ = None
         if hat_foto and os.environ.get("FOTOSTEINE_NETZEBENE") != "1":   # 21.11.2026: Fotosteine auf die gemessene Koerperflaeche (Netzebene lag 0,24-0,5 m hinter der korrigierten Wand -> Steine unsichtbar)
             zf0_ = np.load(ff); hh_, ww_ = zf0_["rel"].shape; px_ = float(zf0_["px"]); u0_, z0_ = float(zf0_["u0"]), float(zf0_["z0"])

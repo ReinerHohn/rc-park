@@ -22,7 +22,96 @@ def stuetze(kanten, cx, cy, r, tol=2):
     k = cv2.dilate(kanten, np.ones((2 * tol + 1, 2 * tol + 1), np.uint8)); return float((k[y[ok], x[ok]] > 0).mean())
 
 
+def gold_maske(bgr):
+    """Vergoldete Teile (Ziffern, Randwulst, Zeiger): Farbton gelb/ocker, gesaettigt, hell (HSV, OpenCV-Skala). Schwabentor f00: 8-13 % der Scheibe."""
+    h, s, v = [x.astype(int) for x in cv2.split(cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV))]
+    return (h >= 12) & (h <= 35) & (s >= 70) & (v >= 90)
+
+
+def druckbar(maske, px, d_min=0.8 * 87 / 1000.0):
+    """Mindestmass im Druck: Striche duenner als d_min (m, Standard 0,8 mm bei 1:87 = 7 cm) auf d_min verbreitern (Oeffnung mit d_min trennt duenn/dick,
+    duenne Teile um d_min/2 je Seite aufgeweitet), Flecken < d_min^2 weg. Keine Form erfunden: nur vorhandene Striche werden dicker."""
+    n0, lab0, st0, _ = cv2.connectedComponentsWithStats(maske.astype(np.uint8), connectivity=8)      # Einzelflecken (Glanzpunkte) vor dem Aufweiten weg
+    maske = maske & ~np.isin(lab0, np.flatnonzero(st0[1:, cv2.CC_STAT_AREA] * px * px < 0.25 * d_min * d_min) + 1)
+    k = max(3, int(np.ceil(d_min / px)) | 1); E = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)); m8 = maske.astype(np.uint8)
+    dick = cv2.morphologyEx(m8, cv2.MORPH_OPEN, E).astype(bool); duenn = maske & ~dick
+    r = max(1, int(round(0.5 * d_min / px))); E2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
+    m = dick | cv2.dilate(duenn.astype(np.uint8), E2).astype(bool)
+    n, lab, st, _ = cv2.connectedComponentsWithStats(m.astype(np.uint8), connectivity=8)
+    weg = np.flatnonzero(st[1:, cv2.CC_STAT_AREA] * px * px < d_min * d_min) + 1
+    return m & ~np.isin(lab, weg)
+
+
+def zifferblatt_aus_fotos(fein, fid, raster, U, aus, px=0.02, rand=1.0, min_fotos=3, mehrheit=0.5, w_ring=0.10, w_feld=0.06, hoch=0.07, zeiger=True):
+    """ZIFFERBLATT-RELIEF AUS DEM WANDBILD (21.11.2026, Nutzerbild: Uhr nur flacher Kreis; Katalog-Ziffern sind verboten - kein Baukasten).
+    Je entzerrtem Einzelfoto (fein/ortho_<fid>_einzeln) die Scheibe suchen (Kreis-Hough, Radius = gemessener Aussenradius +- 12 %, Suchfenster +- rand m: die Einzelbilder
+    liegen bis 0,85 m gegeneinander versetzt), auf die Scheibe normieren (Mitte, Radius) und die Goldteile ausschneiden.
+    Feste Teile (Ziffernring, Randwulst: r >= Innenradius) = Mehrheit von >= min_fotos Fotos (Kabel/Spiegelung fallen heraus).
+    Zeiger (r < Innenradius) bewegen sich zwischen den Fotos -> aus dem SCHAERFSTEN Foto (zeiger=True; Uhrzeit dieses Fotos).
+    Hoehen ueber der Wandflaeche: Innenfeld w_feld, Ziffernring w_ring, Gold + hoch (ANNAHME 6 / 10 / +7 cm = 0,7 / 1,15 / +0,8 mm im Druck).
+    Schreibt aus (.npz wie relief_einsatz: rel, a, t, n, u0, z0, px + scheibe d_aussen) und aus.jpg; Rueckgabe dict oder None."""
+    import glob
+    c = float(raster["zelle"]); u0r, z1r = float(raster["u0"]), float(raster["z1"]); ra = 0.5 * float(U["d_aussen"]); ri = 0.5 * float(U["d_innen"]) if U.get("d_innen") else 0.66 * ra
+    cx0 = (float(U["u"]) - u0r) / c; cy0 = (z1r - float(U["z"])) / c; R0 = ra / c; m_ = int((ra + rand) / c)
+    S = ra + 0.06; N = int(np.ceil(2 * S / px)); g_ = (np.arange(N) + 0.5) * px - S; X, Y = np.meshgrid(g_, -g_); rr = np.hypot(X, Y); inn = rr <= ra
+    K = []
+    for f in sorted(glob.glob(os.path.join(fein, f"ortho_{fid}_einzeln", "*.png"))):
+        im = cv2.imread(f)
+        if im is None: continue
+        x0, y0 = max(0, int(cx0) - m_), max(0, int(cy0) - m_); A = im[y0:int(cy0) + m_, x0:int(cx0) + m_]
+        if A.size == 0: continue
+        g = cv2.cvtColor(A, cv2.COLOR_BGR2GRAY); s = min(1.0, 500.0 / max(A.shape[:2])); gs = cv2.GaussianBlur(cv2.resize(g, None, fx=s, fy=s, interpolation=cv2.INTER_AREA), (5, 5), 1.2)
+        C = cv2.HoughCircles(gs, cv2.HOUGH_GRADIENT, dp=1, minDist=3, param1=110, param2=15, minRadius=int(0.88 * R0 * s), maxRadius=int(1.12 * R0 * s) + 1)
+        if C is None: continue
+        kan = cv2.Canny(gs, 40, 110); st, cx, cy, r = max(((stuetze(kan, a_, b_, r_), a_, b_, r_) for a_, b_, r_ in C[0][:40]), key=lambda t: t[0])
+        if st < 0.7: continue
+        cx, cy, r = x0 + cx / s, y0 + cy / s, r / s; k_ = r / R0                                   # Scheibe dieses Fotos -> Normraster (Mitte, Radius gleich)
+        B = cv2.remap(im, (cx + X / c * k_).astype(np.float32), (cy - Y / c * k_).astype(np.float32), cv2.INTER_LINEAR, borderValue=(0, 0, 0))
+        if (B.sum(2) > 0)[inn].mean() < 0.97: continue
+        sch = float(cv2.Laplacian(cv2.cvtColor(B, cv2.COLOR_BGR2GRAY).astype(np.float32), cv2.CV_32F)[inn].var())
+        K.append(dict(foto=os.path.basename(f)[:-4], schaerfe=sch, stuetze=st, gold=gold_maske(B), bild=B))
+    if len(K) < min_fotos: return None
+    K.sort(key=lambda k: -k["schaerfe"]); ref = cv2.GaussianBlur(cv2.cvtColor(K[0]["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32); mk = inn.astype(np.uint8)
+    for k in K[1:]:                                                       # Feinausrichtung auf das schaerfste Foto (ECC affin): die Einzelbilder sind leicht verschert/verdreht entzerrt
+        try:
+            M = np.eye(2, 3, dtype=np.float32); _, M = cv2.findTransformECC(ref, cv2.GaussianBlur(cv2.cvtColor(k["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32), M, cv2.MOTION_AFFINE,
+                                                                             (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 100, 1e-5), mk, 5)
+            k["bild"] = cv2.warpAffine(k["bild"], M, (N, N), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP); k["gold"] = gold_maske(k["bild"]); k["ecc"] = True
+        except cv2.error: k["ecc"] = False
+    K = [K[0]] + [k for k in K[1:] if k.get("ecc")]
+    if len(K) < min_fotos: return None
+    stimme = np.mean([k["gold"] for k in K], 0)
+    fest = (stimme >= mehrheit) & (rr >= ri - 2 * px) & inn
+    zg = (K[0]["gold"] & (rr < ri - 2 * px)) if zeiger else np.zeros_like(fest)
+    gold = druckbar(fest | zg, px) & inn
+    rel = np.where(rr > ri, w_ring, w_feld) + hoch * gold; rel[~inn] = 0.0
+    erg = dict(rel=rel.astype(np.float32), px=px, d_aussen=2 * ra, d_innen=2 * ri, gold_anteil=float(gold[inn].mean()), fotos=[k["foto"] for k in K], zeiger_foto=K[0]["foto"] if zeiger else "")
+    vis = K[0]["bild"].copy(); vis[gold] = (0, 215, 255); vis[~inn] = (60, 60, 60)
+    cv2.imwrite(aus[:-4] + ".jpg", np.hstack([K[0]["bild"], vis, cv2.cvtColor((np.clip(stimme, 0, 1) * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)]))
+    return erg
+
+
+def zifferblaetter(od, fein, uhren, px=0.02):
+    """Fuer jede Uhr in uhren (dict wie audit/uhren_auto.json) das Zifferblatt-Relief rechnen -> audit/uhr_<fid>_<k>.npz, Eintrag U['zifferblatt'] (relativ zu audit/)."""
+    FF = {f["id"]: f for f in json.load(open(os.path.join(fein, "fassaden.json")))["fassaden"]}; n = 0
+    for fid, F in uhren.items():
+        R_ = (FF.get(fid) or {}).get("raster")
+        for k, U in enumerate(F.get("uhren", [])):
+            if not R_: continue
+            aus = os.path.join(od, "audit", f"uhr_{fid}_{k}.npz"); E = zifferblatt_aus_fotos(fein, fid, R_, U, aus, px=px)
+            if E is None: U["zifferblatt_fehlt"] = "weniger als 3 Einzelfotos zeigen die ganze Scheibe"; print(f"{fid}: Uhr {k}: kein Zifferblatt ({U['zifferblatt_fehlt']})"); continue
+            S = 0.5 * E["rel"].shape[0] * px
+            np.savez_compressed(aus, rel=E["rel"], a=np.asarray(F["o"], float), t=np.asarray(F["d"], float), n=np.asarray(F["n"], float), u0=float(U["u"]) - S, z0=float(U["z"]) - S, px=px,
+                                d_aussen=E["d_aussen"], d_innen=E["d_innen"], gold_anteil=E["gold_anteil"])
+            U["zifferblatt"] = os.path.basename(aus); U["zifferblatt_fotos"] = E["fotos"]; U["zeiger_foto"] = E["zeiger_foto"]; U["gold_anteil"] = round(E["gold_anteil"], 3); n += 1
+            print(f"{fid}: Uhr {k}: Zifferblatt aus {len(E['fotos'])} Einzelfotos (Gold {E['gold_anteil'] * 100:.0f} % der Scheibe, Zeiger aus {E['zeiger_foto']}) -> {aus}")
+    return n
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "--nur_zifferblatt":          # vorhandene audit/uhren_auto.json um die Zifferblaetter ergaenzen (ohne neue Erkennung)
+        ap = argparse.ArgumentParser(); ap.add_argument("uhren_json"); ap.add_argument("fein"); a = ap.parse_args(sys.argv[2:])
+        J = json.load(open(a.uhren_json)); n = zifferblaetter(os.path.dirname(os.path.dirname(os.path.abspath(a.uhren_json))), a.fein, J); json.dump(J, open(a.uhren_json, "w"), indent=1); return 0 if n else 3
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fein"); ap.add_argument("--elemente", required=True); ap.add_argument("--aus")
     ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--min_stuetze", type=float, default=0.85, help="21.11.: echte Uhr 98-100 %%, Scheinkreis im Erkerbild 77 %%"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); aus = a.aus or os.path.join(od, "audit", "uhren_auto.json")
@@ -63,7 +152,9 @@ def main():
             bilder.append(vis)
         for v in e_["verworfen"]: print(f"{fid}: verworfen {v['kasten']}: {v['grund']}")
         erg[fid] = e_
-    os.makedirs(os.path.dirname(aus), exist_ok=True); json.dump(erg, open(aus, "w"), indent=1)
+    os.makedirs(os.path.dirname(aus), exist_ok=True)
+    if n_uhr and os.environ.get("OHNE_ZIFFERBLATT") != "1": zifferblaetter(os.path.dirname(os.path.dirname(os.path.abspath(aus))), a.fein, erg)   # 21.11.2026: Zifferblatt-Relief aus den Einzelfotos
+    json.dump(erg, open(aus, "w"), indent=1)
     if bilder:
         h = max(b.shape[0] for b in bilder); cv2.imwrite(aus[:-5] + ".jpg", np.hstack([np.pad(b, ((0, h - b.shape[0]), (0, 6), (0, 0))) for b in bilder]))
     print(f"-> {aus}: {n_uhr} Uhren"); return 0 if n_uhr else 3

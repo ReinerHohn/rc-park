@@ -286,12 +286,17 @@ def korrekturen_aus_json(koerper, datei, art=None, ohne=None):
     Jede Korrektur setzt ein Rechteck einer Ebene auf die dort aus Fotokanten gemessene Tiefe: {fassade, o, d, n, u0, u1, z0, z1, w_ist, w_soll, grund}.
     w_soll > w_ist: Kasten von w_ist - 0,05 bis w_soll anfuegen; w_soll < w_ist: von w_soll bis w_ist + 0,05 abtragen. Nur Eintraege mit angenommen != false. Liefert (koerper, belege)."""
     if not os.path.exists(datei): return koerper, []
-    plus, minus, belege = [], [], []
-    for K in json.load(open(datei)).get("korrekturen", []):
+    plus, minus, belege = [], [], []; KL = json.load(open(datei)).get("korrekturen", [])
+    # 21.11.2026: ein Zusatzkasten reicht bis hinter die GEMESSENE Wand seiner Fassade (Wandversatz), nicht nur bis w_ist - 0,05: w_ist war die Lage des damaligen Reliefs
+    # (Putzwand 0,11 m vor der Ebene); seit das Relief auf der Koerperflaeche sitzt, schwebten die Kaesten (schwabentor-1120 f03: 2 freie Stuecke).
+    wv_ = {}
+    for K in KL:
+        if K.get("art") == "wandversatz" and K.get("angenommen") is not False: wv_[K.get("fassade")] = min(wv_.get(K.get("fassade"), 0.0), float(K["w_soll"]))
+    for K in KL:
         if K.get("angenommen") is False or (art and K.get("art") != art) or (ohne and K.get("art") == ohne): continue      # art='wandversatz': am GRUNDKOERPER vor dem Relief (1. Fassung trug das Relief mit ab: Modellkanten 208 000 -> 38 000)
         o = np.array(K["o"], float); d = np.array(K["d"], float); n = np.array(K["n"], float)
         P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
-        wa, wb = (K["w_ist"] - 0.05, K["w_soll"]) if K["w_soll"] > K["w_ist"] else (K["w_soll"], K["w_ist"] + 0.05)
+        wa, wb = (min(K["w_ist"], wv_.get(K.get("fassade"), 0.0)) - 0.05, K["w_soll"]) if K["w_soll"] > K["w_ist"] else (K["w_soll"], K["w_ist"] + 0.05)
         (plus if K["w_soll"] > K["w_ist"] else minus).append(M.hull_points([P(u, z, w) for u in (K["u0"], K["u1"]) for z in (K["z0"], K["z1"]) for w in (wa, wb)]))
         belege.append(dict(seite="wand", element=f"Korrektur {K.get('id', '')} {K.get('fassade', '')}: u {K['u0']:.2f}..{K['u1']:.2f} z {K['z0']:.2f}..{K['z1']:.2f} von {K['w_ist']:+.2f} auf {K['w_soll']:+.2f} m",
                            quelle="Abweichungsschleife tools/ebenen_schleife.py: " + K.get("grund", ""), kennzahl_vorher=K.get("vorher"), kennzahl_nachher=K.get("nachher")))
@@ -381,6 +386,18 @@ def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):    
         o = np.array(F["o"], float); W_ = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
         for U in F.get("uhren", []):
             da = float(U["d_aussen"]); di = float(U["d_innen"]) if U.get("d_innen") else 0.66 * da
+            zb_ = os.path.join(os.path.dirname(datei), U["zifferblatt"]) if U.get("zifferblatt") else ""
+            if zb_ and os.path.exists(zb_) and os.environ.get("OHNE_ZIFFERBLATT") != "1":
+                # 21.11.2026 (Nutzerbild: Uhr nur flacher Kreis): Zifferblatt-RELIEF aus dem Wandbild (tools/uhren_wandbild.zifferblatt_aus_fotos: Goldteile, Mehrheit der Einzelfotos,
+                # Striche auf >= 0,8 mm verbreitert). Hoehen ueber der GEMESSENEN Wandflaeche (Wandversatz der Abweichungsschleife), nicht ueber der alten Fassadenebene.
+                import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from relief_einsatz import koerper as _rk
+                b_ = wv_.get(fid, 0.0); t_ = 0.05 - b_
+                koerper = koerper + (_rk(zb_, tiefe=t_, flaeche=b_, rand_auslauf=False) ^ W_.scheibe(U["u"], U["z"], da, -t_ - 0.01, 1.0))
+                Zz_ = np.load(zb_)
+                belege.append(dict(seite="wand", element=f"Uhr {fid} (Durchmesser {da:.2f} m): Zifferblatt-Relief aus dem Wandbild", quelle="tools/uhren_wandbild.py (Kreis im 1-cm-Wandbild) + zifferblatt_aus_fotos (Goldteile aus " + str(len(U.get("zifferblatt_fotos", []))) + " Einzelfotos, Mehrheit)",
+                                   mitte_u=U["u"], mitte_z=U["z"], d_aussen=da, d_innen=di, gold_anteil=float(Zz_["gold_anteil"]), wand_w=b_, zeiger_foto=U.get("zeiger_foto"),
+                                   hinweis="Gestalt (Ziffernfelder, Randwulst, Zeiger) aus dem Wandbild; Zeiger aus dem schaerfsten Einzelfoto (Uhrzeit dieses Fotos); ANNAHME Hoehen: Feld 6 cm, Ring 10 cm, Gold +7 cm (0,8 mm); Striche auf 0,8 mm verbreitert; audit/" + U["zifferblatt"][:-4] + ".jpg ansehen"))
+                continue
             ring = W_.scheibe(U["u"], U["z"], da, min(-0.05, wv_.get(fid, 0.0) - 0.05), w_ring) - W_.scheibe(U["u"], U["z"], di, w_feld, w_ring + 0.05)
             koerper = koerper + ring
             if details: koerper = koerper + W_.zifferblatt(U["u"], U["z"], da, di)
