@@ -153,7 +153,7 @@ Lehre: Kanten messen genau, sind aber an glatten/gekachelten Flächen blind; die
   - Dachfläche weiterhin ohne Kanten.
 - Folgerung für die METHODE: „Ebenen in alle Richtungen“ = (a) Sweep-Ebenen auch senkrecht zur Wand, wo Kameras sie sehen, (b) immer zusätzlich Seitenriss und Grundriss der 3D-Kantenpunkte auswerten. Fotos von der Seite (schräg auf den Erker) würden die Seitenebenen füllen -> Fotoauftrag.
 
-## Nachtrag 02:40 - SCHICHTSTAPEL (Nutzer: „geht auf der GPU sehr schnell ... auf ganz vielen, aus allen Winkeln machen und so einen sehr detaillierten Bauplan“)
+## Nachtrag 02:33 (abgelesen) - SCHICHTSTAPEL (Nutzer: „geht auf der GPU sehr schnell ... auf ganz vielen, aus allen Winkeln machen und so einen sehr detaillierten Bauplan“)
 `ebenen_bauplan.py --stapel -1.05 2.85 0.3 --nur 'f00_s*' --seiten 0` -> `ebenen_stapeltest/` (von Hand angestoßen): 14 dünne Ebenen parallel zur Stadtseite, Band ±0,15 m, je 4-6 s.
 Kantenpunkte je Schicht (Tiefe gegen die Wand) und Gegenprobe „dichte Wolke ≤ 10 cm daneben“:
 - -0,15 m: 30 459 Punkte, 98 % | +0,15 m: 24 988, 95 %   -> die Wand
