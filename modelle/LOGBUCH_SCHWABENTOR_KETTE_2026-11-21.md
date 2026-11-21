@@ -67,3 +67,16 @@ Was daran neu ist (ehrlich): die Einzelteile gab es alle (Sweep 16.11., Wandbild
 - Beide Bilder sind scharf (die 5 besten Fotos stehen nah beieinander), aber auf der Wandebene liegt die Brüstung etwa 0,3 m zu hoch (Parallaxe). Auf der Erkerebene mit dem Auge abgelesen: Holm oben ≈ 11,5 m, Schwelle unten ≈ 10,35 m. Handstand: 11,42 / 10,22. Also trifft das feine Bild auf der eigenen Ebene den Handstand auf etwa 0,1 m (abgelesen, nicht mit Werkzeug gemessen).
 - Pfosten (3), Knaggen, Riegel, 6 Streben und Konsolen sind im Bild einzeln erkennbar -> Form daraus lesbar. Störer: Oberleitungsdrähte quer durchs Bild.
 - Nächster Schritt: diese Rechnung als Kettenstufe (Ebene aus `vorbauten_auto.json`), dann `gestalt()` darauf, Katalog-Galerie entfernen.
+
+## Rückfälle dieser Nacht (vermeidbar, keine Werkzeuglehre)
+1. Falsche Reihenfolge: Einzelteile repariert, statt zuerst Kette und Handstand zu vergleichen (~3 h).
+2. Katalog-Galerie und Katalog-Ziffern gegen die Regel „Form aus dem Wandbild“ (seit 17.11.).
+3. Um 00:50 ein von Hand erzeugtes Modell gezeigt statt eines Kettenlaufs.
+4. Kaufhaus-Gegenprobe begonnen, obwohl das Schwabentor nicht fertig war.
+5. Schwellen an einem Bauwerk eingestellt (Streuung 0,6 lag genau auf dem Messwert).
+
+## Nachtrag 02:40 - Form aus dem Bild der Erkerebene: zwei Proben (von Hand angestoßen, noch KEINE Kettenstufe)
+- **Probe A, Farbflächen + Sweep-Tiefe je Fläche** (`tools/ebenen_form.py`, erste Fassung; Bild `audit/ebenen_form.jpg`): Brüstung und Konsolen werden als Front erkannt, die Ränder sind aber ausgefranst. Fehler: die drei Pfosten fehlen (hängen farblich am dunklen Dachschatten, die geglättete Sweep-Tiefe sagt dort „Wand“), ein Stück des Wandbilds gilt fälschlich als Front (dort kreuzen die Oberleitungsdrähte, der Sweep misst die Drähte). Feine Sweep-Tiefe mit 2-cm-Zellen (`bauplan/tiefe_fein`) ist je Zelle zu verrauscht für eine Maske. URSACHE benannt: Farbklassen trennen Material nicht sauber, die Sweep-Tiefe löst unter ~0,4 m nicht auf.
+- **Probe B, triangulierte Fotokanten auf das Bild gelegt** (`kanten_vorbau/sweep.npz`, Bild `audit/erker_kantenpunkte_probe.jpg`): 7847 Kantenpunkte in Fronttiefe. Sie zeichnen den Holm (z ≈ 11,50) und die Unterkante der Brüstung samt den Aussparungen der Konsolen (z ≈ 10,25) auf wenige cm genau nach (Handstand 11,42 / 10,22). Kantenpunkte in Wandtiefe liegen an den Strebenfüßen. Senkrechte Kanten (Pfosten) fehlen fast ganz. ANNAHME zur Ursache: die Kameras stehen entlang der Straßenachse, das gibt Parallaxe in der Höhe, kaum seitlich; außerdem suchte der Sweep nur im 0,5-m-Band um das alte Modell mit begrenzter Punktzahl.
+- **Folgerung für die METHODE (Schritt 4 präzisiert):** Die Kanten kommen aus den triangulierten Fotokanten auf der Ebene (Kernmethode), nicht aus Farbflächen. Farbflächen taugen höchstens zum Füllen zwischen belegten Kanten.
+- Nächste Schritte: (1) Kanten-Sweep gezielt und dicht je gefundener Ebene (Box = Zone der Ebene). (2) Bänder (Brüstungskasten, Traufband) mit diesen Kanten begrenzen statt mit dem groben Raster. (3) Stäbe/Pfosten über den Mehrfoto-Sweep für Linien (Skill linien-features), nicht über Helligkeit. (4) Dann Kettenstufe und Katalog-Galerie entfernen.
