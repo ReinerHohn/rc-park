@@ -221,3 +221,11 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 - Masken am Bild geprueft (8 Beispiele, `masken_probe.jpg` gezeigt): Personen/Autos gut, Turm frei; Brunnenfigur und ein Fleck am Turm faelschlich maskiert.
   Nutzer 11:26: Strassenbahn nicht immer, Baum gar nicht maskiert. Ursache: das Netz (ADE20K-150) hat KEINE Klasse Strassenbahn (wird 'bus' oder 'building'); 'tree'/'plant' gibt es, stehen aber nicht in der Maskenliste.
 - 11:27 Job `mt_seiten_mapper_1121` (tools/versuche/mt_seiten_mapper_1121.sh): schrittweiser Mapper je Teil, Reihenfolge Sued 102, Sued 55, Nord 538.
+
+## Nachtrag 21.11. 11:32 - Suedmodell + hartes Blick-Tor
+- 11:26 Mapper-Job Fehlstart (libcudart nicht gefunden, Skript meldete rc 0 mit 0 Modellen - kein Dummy-Test, Rueckfall); 11:27 neu mit LD_LIBRARY_PATH.
+- 11:28 Sued (Teil 1): 99 von 102 Bildern in 81 s, 7044 Punkte, 0,94 px; enthaelt 43 Sued- und 0 Nord-Bezugsbilder. Auffaellig wenig Punkte (71 je Bild) - pruefen.
+- NEU `tools/seiten_blick_tor.py` (ohne Vorwissen: Gruppenpaare mit Urteil 'verwechselt' aus seiten.json duerfen im Modell nicht gleich blicken, Schwelle 60 Grad):
+  verklebtes Nachtmodell (eng/0, 983 Bilder): 29 von 29 pruefbaren Paaren VERKLEBT (Blickwinkel 2,7-...), rc 3. Suedmodell allein: kein pruefbares Paar, rc 0 mit Hinweis "nur eine Seite".
+  OFFEN: Gegenprobe am vereinten Modell (darf dort nicht anschlagen).
+- `handy_masken.py`: tree/plant standardmaessig maskiert (--kein_gruen), Test bestanden. Strassenbahn: keine Klasse im Netz, offen.
