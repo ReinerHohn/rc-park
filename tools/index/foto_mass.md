@@ -1,4 +1,4 @@
-# Werkzeuge: foto_mass (116)
+# Werkzeuge: foto_mass (117)
 - `tools/bauplan_aus_foto.py` [seg] bauplan_aus_foto.py — die beschriebene Methode als EINE Kette: 1) Gebäude aus Umgebung freistellen (ML-Maske, gebaeude_segment) 2) auf das Gebäude zuschneiden 3) PERSPEKTIVE raus (
 - `tools/bilder_einsortieren.py` [-] bilder_einsortieren.py - PIPELINE-SCHRITT nach bilder_holen.py: geerntete Fotos (fotos_eingang) in den Fotoordner des Objekts einsortieren.
 - `tools/bilder_holen.py` [seg] bilder_holen.py - PIPELINE-SCHRITT: Fotos einer Attraktion aus freien Quellen holen - nur die mit MEHRWERT fuer die Fotowolke.
@@ -70,6 +70,7 @@
 - `tools/giebel_stufen_zaehlen.py` [seg] giebel_stufen_zaehlen.py - Stufen eines Treppengiebels AUTOMATISCH am Foto zaehlen (Regel 9, Register CB), 2026-11-05.
 - `tools/haufen_am_foto.py` [seg] haufen_am_foto.py - Wolkenhaufen aus dem Grundriss-Tor AM FOTO klaeren (Regel: Haufen auf der Strasse nicht modellieren, erst am Foto ansehen).
 - `tools/helm_silhouette_foto.py` [seg] helm_silhouette_foto.py - Silhouettenabweichung eines Rotations-/Polygonhelms (Typ helm_geschweift) gegen Himmel in kalibrierten Fotos.
+- `tools/laibung_aus_fotos.py` [seg] laibung_aus_fotos.py - LAIBUNGSTIEFE von Fenstern aus der seitlich sichtbaren Laibung in Schraegfotos (21.11.2026 spaet, Kettenstufe 'bauplan' nach nischen_fenster).
 - `tools/luftbild_messen.py` [seg] luftbild_messen.py - Dachgeometrie aus dem Orthofoto (DOP20) messen: die einzige Quelle, die die Ost- und Westseite zeigt.
 - `tools/masse_aus_profilen.py` [-] masse_aus_profilen.py - STUFE C: Masse, die bisher von Hand aus Werkzeugausgaben in masse.json uebertragen wurden, schreibt das Werkzeug selbst - nach REGELN, die als Daten in obje
 - `tools/masse_bootstrap.py` [-] masse_bootstrap.py - Streuung der AUTOMATISCH abgeleiteten Masse (Baender -> masse_aus_profilen) innerhalb EINES Laufs messen (Register BO).

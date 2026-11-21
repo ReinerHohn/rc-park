@@ -1,4 +1,4 @@
-# Werkzeuge: test (104)
+# Werkzeuge: test (109)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
@@ -15,6 +15,7 @@
 - `tools/test_farbteile_neigung.py` [gen] test_farbteile_neigung.py - Schnelltest fuer tools/druck_farbteile.py: Plattentiefe folgt der OERTLICHEN Wand (18.11.2026). Synthetisch: Quader 12 x 8 x 10 m, um 2 Grad gegen die M
 - `tools/test_feinmass.py` [seg] test_feinmass.py - SYNTHETISCHER BEWEIS fuer f1_fein (modelle/archiv/SPEC_ORNAMENT_FEINMASS.md). Testflaeche mit aufgesetzten Rippen (bekannte Lage, Metrik in m) wird mit der echte
 - `tools/test_feinsuche.py` [seg] test_feinsuche.py - SYNTHETISCHER BEWEIS fuer foto_feinsuche (modelle/archiv/SPEC_FEINSUCHE.md, Beweis 1). Eine Testplatte mit aufgesetzten Rippen (bekannte Lage in Weltmetern) wir
+- `tools/test_fenster_form.py` [seg] test_fenster_form.py - fester synthetischer Test: FENSTERFORM aus Bildkanten + Einzelfotos, Form-Tor, hand_vergleich prueft die Form, Druckmindesttiefe (21.11.2026 spaet).
 - `tools/test_flaeche_ortho.py` [seg] test_flaeche_ortho.py - synthetische Pruefung von flaeche_ortho.py (18.11.2026): Zylinder, Kegel und n-Eck-Erker mit BEKANNTER Textur werden von Kameras ringsum analytisch gerender
 - `tools/test_flaechen_gegen_netz.py` [seg] test_flaechen_gegen_netz.py - synthetischer BEWEIS (bekannte Wahrheit) fuer flaechen_gegen_netz.py. Gate vor dem Kaufhaus (Nutzerregel Beweis zuerst). Szene (Meter): Wand 16 x 9 m,
 - `tools/test_flat_plates.py` [gen] test_flat_plates.py — Regression: die FLÄCHEN-Platten sind WIRKLICH EBEN (plan-gefittet) und damit laser-cutbar + in die Rippen integrierbar, und ihre Kontur folgt der Bruchkante (
@@ -47,6 +48,7 @@
 - `tools/test_konsens_urteil.py` [-] Test der Konsens-Annahme (global_mapper_konsens.urteil, 19.11.2026): gutes Modell traegt; duennes Rueckgrat / wenig Bilder / kein Clip -> Gruende + Ursache + Abhilfe.
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
 - `tools/test_konvergenz_logik.py` [-] test_konvergenz_logik.py - Trockenlauf der Konvergenzschleife OHNE GPU und OHNE Generatorbau (S3 Phase A, 2026-11-05). Prueft die STEUERUNG von qualitaetsstufen.v_konvergenz mit vo
+- `tools/test_laibung_aus_fotos.py` [seg] test_laibung_aus_fotos.py - fester synthetischer Test fuer tools/laibung_aus_fotos.py (21.11.2026 spaet), < 10 s, nur CPU.
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
@@ -60,6 +62,7 @@
 - `tools/test_pose_vertrauen.py` [-] Synthetischer Test fuer pose_vertrauen.py: /media/oem/scan/venv-colmap/bin/python -I tools/test_pose_vertrauen.py
 - `tools/test_profil_diff.py` [-] Beweis profil_diff: synthetische Wand + 2 Erker; Modell = Wahrheit -> 0 Abweichungen; rechter Erker um 0,8 m verschoben -> Abweichung erkannt (Exit-Logik, nicht Zufall).
 - `tools/test_putz_uhr.py` [seg] test_putz_uhr.py - fester synthetischer Test (21.11.2026, Nutzerbild schwabentor-1120 umgang_bau_ansicht: Kruemel auf dem Putz, Uhr nur flacher Kreis) fuer (1) putz_wandbild.glatt_
+- `tools/test_quader_raster.py` [-] Test tools/quader_raster.py (21.11.2026, Schwabentor Stadtseite: Quader 'geschmolzen', Eckquader 'Rauschen'). Synthetisch, numpy/scipy/PIL, < 30 s. A) Wandbild-Raster 1 cm, 4 x 4 m
 - `tools/test_quader_relief.py` [-] Beweis quader_relief an KUENSTLICHER SZENE (Wahrheit bekannt): Wand s=0, 2 Erker (0,8 m vor der Wand, z 5-11), 4 Segmentbogen-Arkaden (3,3 m breit, 3,9 m tief), Treppengiebel-Oberk
 - `tools/test_raster_block.py` [gen] (kein Docstring)
 - `tools/test_realitaet_form.py` [-] test_realitaet_form.py - Beweis zu tools/realitaet_form.py (Spec modelle/archiv/SPEC_FORMNOTE.md). 1. Fallen fallen alle durch (form < 0,5). 2. Bekannte Paare: besseres Teil hat ho
@@ -91,8 +94,10 @@
 - `tools/test_tor_gemeinsame_fotos.py` [-] Test Torluecke 3 (11.11.): Foto-Gewinn nur auf GEMEINSAMEN Fotos (bauteil_kreis.angleichen). 1) synthetisch: Nachher verliert ein schlechtes Foto -> scheinbarer Gewinn muss verschw
 - `tools/test_tor_verschiebung.py` [seg] test_tor_verschiebung.py - BEWEIS fuer tools/tor_verschiebung.py (Nullkontrolle des Foto-Tors) auf synthetischer Wahrheit.
 - `tools/test_umgang_eckquader.py` [gen] test_umgang_eckquader.py - fester synthetischer Test (21.11.2026) fuer (1) tools/umgang_aus_fotos.py: Zone unter der Traufe aus Zeilenkanten (dunkler Ruecksprung ueber heller Wand)
+- `tools/test_undefinierte_namen.py` [-] Undefinierte Namen in tools/*.py (pyflakes) - Lauf 1121t verlor die Feinrechnung, weil 'q5, q95 = ...' bei einem Agenten-Merge in einen Kommentar rutschte (NameError erst nach 20 m
 - `tools/test_versuch_log.py` [-] Test versuch_log: Eintrag, Identitaetswarnung (BS7-Fall), Fehlschlag, Liste. Exit 0 = ALLE BESTANDEN.
 - `tools/test_vis_mapping.py` [-] test_vis_mapping.py - Beweis und Dauerwaechter fuer die Zuordnung vis-Index -> Bild (Register CV/CW).
+- `tools/test_vordach_vorbau.py` [seg] test_vordach_vorbau.py - fester synthetischer Test (21.11.2026, schwabentor-1120 Stadtseite, Nutzerbild neben_eigen__IMG_20261106_113231) fuer (1) tools/vordach_profil.messen: Walm
 - `tools/test_vordergrund_quader.py` [-] test_vordergrund_quader.py - synthetischer Test (21.11.2026, Schwabentor w01, Lauf 1121s) fuer (1) tools/relief_vordergrund.py: Verkehrsschild (0,6 x 0,8 m, +15 cm) DIREKT auf eine
 - `tools/test_vorpruefen_cache.py` [-] Test Zwischenspeicher der Bildvorpruefung (bilder_vorpruefen.Speicher, 19.11.2026): Ergebnis bleibt ueber Neustart, geaenderte Datei = neue Kennung, anderer Referenzsatz = anderer 
 - `tools/test_wolke_carving.py` [gen] test_wolke_carving.py - Beweise fuer tools/wolke_carving.py (Koerper NUR aus der Wolke). unabhaengig : synthetische Wolke (Halle hinter 4 Arkaden) -> Koerper; jeder Zugriff auf *.s

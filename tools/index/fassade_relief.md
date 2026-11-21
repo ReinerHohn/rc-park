@@ -1,4 +1,4 @@
-# Werkzeuge: fassade_relief (62)
+# Werkzeuge: fassade_relief (64)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
 - `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
@@ -26,6 +26,7 @@
 - `tools/fenster_detail_check.py` [seg] fenster_detail_check.py — FEINE interne Kanten eines Fensters Foto↔Modell (Pfosten/Kämpfer/Bogenkopf).
 - `tools/fenster_einbauen.py` [gen] fenster_einbauen.py - Typfenster (fenster_fit.py, Ortho-Pixel) als 3D-Koerper ins Netz einbauen (manifold3d): Glasnische (Laibungstiefe aus Wolke) + Sprossen/Riegel. venv-seg/bin/p
 - `tools/fenster_fit.py` [seg] fenster_fit.py - parametrisches Fenster (Fassadenebene, 2 cm/px) per CMA-ES an ausgerichtete Wolken-Ortho-Ausschnitte fitten. venv-seg/bin/python -I tools/fenster_fit.py <fenster_a
+- `tools/fenster_form_tor.py` [seg] fenster_form_tor.py - FORM-TOR fuer gebaute Fenster/Nischen: stimmt die Formfamilie, die der Generator baut, mit den EINZELFOTOS ueberein? (21.11.2026 spaet)
 - `tools/fenster_ml.py` [seg] fenster_ml.py — ML-basierte Fenster-Erkennung per Fassaden-SEGMENTIERUNG (SegFormer, CMP- Facade-Datensatz). Robuster als heuristische Dunkel-/Gewände-Blobs: ein neuronales Netz, t
 - `tools/fenster_struktur.py` [-] fenster_struktur.py — STRUKTUR-REGULARISIERUNG von Fenster-Erkennungen (Abstands-/Formen-Fix).
 - `tools/fenster_zaehler.py` [seg] fenster_zaehler.py — VOLLAUTOMATISCHE Fenster-Erkennung & -Zählung aus einem Frontalfoto.
@@ -43,6 +44,7 @@
 - `tools/oeffnungen_wandbild.py` [seg] oeffnungen_wandbild.py - OEFFNUNGEN einer Wand aus ihrem Wandbild: Zone (Erkenner), TIEFE (Parallaxe der Einzelfoto-Orthos), UMRISS (Bildsegmentierung). 18.11.2026 (Agent Rueckwand
 - `tools/ortho_drape.py` [seg] ortho_drape.py — Oberfläche aus Daten: LGL-Orthophoto (DOP20) deckungsgleich zum Gelände-Modell zuschneiden und als MASSSTABSgenauer Druck-Bogen ausgeben. Über die Gips-Haut gelegt
 - `tools/putz_wandbild.py` [-] putz_wandbild.py - glatte Putzflaeche aus dem Wandbild (mehrere entzerrte Einzelfotos einig) und Netz-Relief dort glatt (21.11.2026).
+- `tools/quader_raster.py` [-] quader_raster.py - Quaderwerk als BAUPLAN aus dem Wandbild: Lagen + Fugen aus mehreren entzerrten Einzelfotos, je Stein eine ebene Stirnflaeche mit GEMESSENEM Vorsprung (Median der
 - `tools/quader_relief.py` [-] quader_relief.py - Fassade als ADAPTIVER QUADERBAUM aus der Punktwolke (Nutzeridee 6.11.: 'Modell aus Quadern, Diff gegen Wolke, je genauer es passt, desto feiner die Quader'). Rah
 - `tools/quader_relief_bauen.py` [gen] quader_relief_bauen.py - Quaderbaum-Relief einer Fassade aus der Wolke -> STL (Modellrahmen, mm im Massstab) + Kennzahlen. Nichts objektbezogen. venv-seg/bin/python -I tools/quader
 - `tools/relief.py` [gen] relief.py — SCHNELL von DEM-Crop zu 3D-Relief: druckbares STL + drehbare HTML + Hillshade.
