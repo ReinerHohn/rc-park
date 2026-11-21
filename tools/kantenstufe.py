@@ -71,10 +71,13 @@ def modellkanten(m, winkel=30.0, schritt=0.05):
     import trimesh
     adj = m.face_adjacency; ang = m.face_adjacency_angles; E = m.face_adjacency_edges[ang > np.radians(winkel)]
     rand = trimesh.grouping.group_rows(m.edges_sorted, require_count=1); E = np.vstack([E, m.edges_sorted[rand]]) if len(rand) else E
-    P = []
-    for a, b in E:
-        A, B = m.vertices[a], m.vertices[b]; L = np.linalg.norm(B - A); k = max(2, int(L / schritt) + 1); P.append(A + (B - A) * np.linspace(0, 1, k)[:, None])
-    return np.vstack(P) if P else np.zeros((0, 3))
+    if not len(E): return np.zeros((0, 3))
+    # 21.11.2026 (Tempo: ebenen_abweichung 150 s, davon 79 s hier - Python-Schleife mit 1,26 Mio. linspace): vektorisiert, gleiche Rechenschritte wie
+    # A + (B - A) * np.linspace(0, 1, k) je Kante (t_i = i * (1/(k-1)), letzter Punkt genau 1) -> bitgleich (tools/test_kette_tempo.py)
+    E = np.asarray(E); V = np.asarray(m.vertices, float); A = V[E[:, 0]]; D = V[E[:, 1]] - A
+    L = np.sqrt(np.einsum("ij,ij->i", D, D)); k = np.maximum(2, (L / schritt).astype(int) + 1); kante = np.repeat(np.arange(len(E)), k)
+    i = np.arange(int(k.sum())) - np.repeat(np.cumsum(k) - k, k); t = i * (1.0 / (k[kante] - 1)); t[np.cumsum(k) - 1] = 1.0
+    return A[kante] + D[kante] * t[:, None]
 
 
 def main():
