@@ -250,6 +250,37 @@ def fenster_fuer_bau(objekt_json, fenster_json, vorbau=0.3):
     return aus
 
 
+def koerper_flaeche(basis, a, t, n, felder, w_aussen=1.0, w_innen=-1.5, schritt=0.01):
+    """Lage der Koerperflaeche vor einer Wandebene (a, t, n) messen: je Probe (u, z) die aeusserste Tiefe w, bei der ein 10-cm-Stab von w bis w_aussen den Koerper trifft
+    (Halbierung). Liefert den Median der getroffenen Proben (Fensterloecher/Vorbauten fallen als Ausreisser heraus) oder None."""
+    from manifold3d import Manifold as M_
+    a = np.asarray(a, float); t = np.asarray(t, float); n = np.asarray(n, float); ws = []
+    for u, z in felder:
+        def trifft(w):
+            k = M_.hull_points([[*(a + uu * t + ww * n), zz] for uu in (u - 0.05, u + 0.05) for ww in (w, w_aussen) for zz in (z - 0.05, z + 0.05)])
+            return (basis ^ k).volume() > 1e-7
+        if not trifft(w_innen): continue
+        lo, hi = w_innen, w_aussen                       # trifft(lo) = True, trifft(hi) = False
+        while hi - lo > schritt:
+            m_ = 0.5 * (lo + hi)
+            if trifft(m_): lo = m_
+            else: hi = m_
+        ws.append(lo)
+    return float(np.median(ws)) if ws else None
+
+
+def wandende_ist_ecke(waende, w, ende, abstand=0.8, parallel=0.95):
+    """Gebaeudeecke = Wandende ('a'/'b'), an dem KEINE gleichgerichtete Nachbarwand weiterlaeuft (Ende an Anfang innerhalb 'abstand' m, |cos| >= parallel).
+    Wandabschnitte derselben Flucht (eine Fassade in mehrere LoD2-Stuecke zerlegt) sind so keine Ecke (21.11.2026, Eckquader-Erkennung)."""
+    p = np.asarray(w[ende], float); d = np.asarray(w["b"], float) - np.asarray(w["a"], float); d /= np.linalg.norm(d) + 1e-9
+    for v in waende:
+        if v is w or v.get("name") == w.get("name"): continue
+        e_ = np.asarray(v["b"], float) - np.asarray(v["a"], float); e_ /= np.linalg.norm(e_) + 1e-9
+        if abs(float(e_ @ d)) < parallel: continue
+        if min(np.linalg.norm(np.asarray(v["a"], float) - p), np.linalg.norm(np.asarray(v["b"], float) - p)) <= abstand: return False
+    return True
+
+
 def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
     """Fuer Generatoren: alle relief/*_voll.npz der Fassaden-Kette als Platten anfuegen, begrenzt auf die nach aussen verschobene Koerperhuelle.
     fenster = Pfad der Fensterliste (fenster_fuer_bau), wenn die Fenster VOR dem Relief geschnitten wurden: die Reliefplatte bleibt dann in den Fensterrechtecken offen.
@@ -301,7 +332,20 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
                 f = f2; belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']}: Restbrei auf Wandniveau, Bauteilflaechen ersetzt", quelle="fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
                                            hinweis=f"ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg {info['brei_weg'] * 100:.0f} %, durch Fotobauteile ersetzt {info['ersetzt'] * 100:.0f} %, {info['linienhaft_behalten']} linienhafte Stuecke behalten; Bild relief/{w['name']}_rein.jpg"))
         if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
-        if hat_foto: koerper = koerper + offen(relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
+        fl_ = None
+        if hat_foto and os.environ.get("FOTOSTEINE_NETZEBENE") != "1":   # 21.11.2026: Fotosteine auf die gemessene Koerperflaeche (Netzebene lag 0,24-0,5 m hinter der korrigierten Wand -> Steine unsichtbar)
+            zf0_ = np.load(ff); hh_, ww_ = zf0_["rel"].shape; px_ = float(zf0_["px"]); u0_, z0_ = float(zf0_["u0"]), float(zf0_["z0"])
+            fl_ = koerper_flaeche(basis, zf0_["a"], zf0_["t"], zf0_["n"], [(u0_ + fu * ww_ * px_, z0_ + fz * hh_ * px_) for fu in (0.3, 0.5, 0.7) for fz in (0.3, 0.6, 0.9)])
+        if hat_foto: koerper = koerper + offen(relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False, flaeche=fl_) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
+        if hat_foto and os.environ.get("OHNE_ECKQUADER_BELEG") != "1":     # 21.11.2026: Eckquader sind Teil des Fotoreliefs - hier benennen, was davon an einer Gebaeudeecke steht (nur gebaute Steine)
+            from bauteile import eckquader_aus_relief
+            zf_ = np.load(ff); WL_ = json.load(open(B))["waende"]
+            for q_ in eckquader_aus_relief(zf_["rel"], float(zf_["px"]), float(zf_["z0"]), float(zf_["putz_niveau_m"]) if "putz_niveau_m" in zf_.files else 0.0, wandende_ist_ecke(WL_, w, "a"), wandende_ist_ecke(WL_, w, "b")):
+                belege.append(dict(seite="wand", element=f"Eckquader Fassade {w['name']} am Wand{q_['ende']} (z {q_['z0']:.1f}..{q_['z1']:.1f}, {q_['lagen']} Lagen verzahnt)",
+                                   quelle="bauteile.eckquader_aus_relief auf dem gebauten Fotorelief relief/" + os.path.basename(ff) + " (tools/steine_aus_foto.py): Randstreifen Stein, Wandinneres Putz",
+                                   eck_z0=q_["z0"], eck_z1=q_["z1"], eck_lagen=q_["lagen"], breite_lang=q_["breite_lang"], breite_kurz=q_["breite_kurz"],
+                                   relief_auf_flaeche_m=None if fl_ is None else round(fl_, 3),
+                                   hinweis="Quader = Fotorelief (Fugenlage aus dem Foto, Bosse ANNAHME); Ecke = Wandende ohne gleichgerichtete Nachbarwand; Relief auf der gemessenen Koerperflaeche (fassaden_kette.koerper_flaeche)"))
         if mono_:
             koerper = koerper + offen(relief_koerper(fmo, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu)
             belege.append(dict(seite="wand", element=f"Feinrelief Fassade {w['name']} aus Einzelfotos (Feld u {feld_mo[0]:.1f}..{feld_mo[1]:.1f}, z {feld_mo[2]:.1f}..{feld_mo[3]:.1f})", quelle="Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",

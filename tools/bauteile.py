@@ -488,6 +488,69 @@ def umgang(koerper, ecken, z0, z1, tiefe=0.9, pfosten=4, b=0.24, riegel=0.25, vo
     return koerper - ab + zus
 
 
+def eckquader_aus_relief(rel, px, z0, putz_niveau, ecke_links, ecke_rechts, streifen=1.5, innen_ab=2.0, schwelle=0.01, min_hoehe=3.0):
+    """ECKQUADERUNG im gebauten Steinrelief erkennen (GENERISCH, 21.11.2026; Grundsatz WANDBILD = BAUPLAN - die Quader SIND schon das Fotorelief von steine_aus_foto.py,
+    hier wird nur benannt, was davon an einer Gebaeudeecke steht). rel: Reliefbild (Zeile 0 = oben, Spalte 0 = Wandanfang), px m/Zelle, z0 = Unterkante,
+    putz_niveau = Hoehe des glatten Putzes. Stein = |rel - putz_niveau| > schwelle, Anteil je Zelle im 0,5-m-Fenster gemittelt.
+    Je Wandende, das eine Gebaeudeecke ist (ecke_links/ecke_rechts): Zeilen, in denen der Randstreifen (streifen m) ueberwiegend Stein ist (>= 50 %) und das
+    Wandinnere (ab innen_ab m vom Rand) ueberwiegend Putz (<= 25 %) = Eckquaderzone. Verzahnung: Steinbreite ab der Ecke je Zeile, Wechsel lang/kurz = Quaderlagen.
+    Liefert Liste dict(ende, z0, z1, hoehe, lagen, breite_lang, breite_kurz) - nur Zonen >= min_hoehe m."""
+    def blur(a, ky, kx):                                     # Mittelwertfenster ky x kx (nur numpy: im Generator-venv ist OpenCV nicht ladbar)
+        a = np.asarray(a, np.float64)
+        for ax, k_ in ((0, ky), (1, kx)):
+            if k_ <= 1: continue
+            p_ = np.pad(a, [(k_ // 2, k_ - 1 - k_ // 2) if q == ax else (0, 0) for q in range(2)], mode='edge'); c_ = np.cumsum(p_, axis=ax)
+            c_ = np.concatenate([np.zeros_like(np.take(c_, [0], axis=ax)), c_], axis=ax); a = (np.take(c_, range(k_, c_.shape[ax]), axis=ax) - np.take(c_, range(0, c_.shape[ax] - k_), axis=ax)) / k_
+        return a
+    rel = np.asarray(rel, np.float32); h, w = rel.shape
+    if w * px < innen_ab + 0.5: return []
+    st = (np.abs(rel - putz_niveau) > schwelle).astype(np.float32)
+    k = max(3, int(0.5 / px) | 1); stg = blur(st, k, k)
+    ns, ni = int(streifen / px), int(innen_ab / px); erg = []
+    for ende, ok in (("anfang", ecke_links), ("ende", ecke_rechts)):
+        if not ok: continue
+        s_ = stg[:, :ns] if ende == "anfang" else stg[:, w - ns:][:, ::-1]          # Spalte 0 = Ecke
+        i_ = stg[:, ni:] if ende == "anfang" else stg[:, :w - ni]
+        zeile = (s_.mean(1) >= 0.5) & (i_.mean(1) <= 0.25)
+        lz = int(1.0 / px); zi = np.flatnonzero(zeile)
+        for a_, b_ in zip(zi[:-1], zi[1:]):                          # Luecken < 1 m schliessen
+            if 1 < b_ - a_ <= lz: zeile[a_:b_] = True
+        j = 0
+        while j < h:
+            if not zeile[j]: j += 1; continue
+            e = j
+            while e < h and zeile[e]: e += 1
+            if (e - j) * px >= min_hoehe:
+                roh = st[j:e, :ns * 2] if ende == "anfang" else st[j:e, w - 2 * ns:][:, ::-1]
+                roh = blur(roh, max(3, int(0.3 / px) | 1), max(3, int(0.3 / px) | 1))
+                breite = np.array([(np.argmin(r_ >= 0.5) if (r_ < 0.5).any() else len(r_)) * px for r_ in roh])     # Steinbreite ab der Ecke je Zeile
+                b_lang, b_kurz = float(np.percentile(breite, 80)), float(np.percentile(breite, 20)); mitte = 0.5 * (b_lang + b_kurz)
+                lagen = int(np.count_nonzero(np.diff((breite > mitte).astype(int)) != 0)) + 1 if b_lang - b_kurz >= 0.15 else 0
+                erg.append(dict(ende=ende, z0=round(z0 + (h - e) * px, 2), z1=round(z0 + (h - j) * px, 2), hoehe=round((e - j) * px, 2), lagen=lagen,
+                                breite_lang=round(b_lang, 2), breite_kurz=round(b_kurz, 2)))
+            j = e
+    return erg
+
+
+def umgang_aus_json(koerper, datei, tiefe=0.9):
+    """Offener Umgang aus der Kettenstufe 'bauplan' (tools/umgang_aus_fotos.py -> audit/umgang_auto.json: z0, z1, pfosten_je_seite, ecken). Baut nur bei gefunden=true.
+    Schwelle/Raehm hoechstens 1/5 der Zonenhoehe (ANNAHME Querschnitt), Ruecksprung 'tiefe' = ANNAHME. VOR aushoehlen aufrufen (die Hohlraumschale folgt dem Ruecksprung).
+    Liefert (koerper, belege)."""
+    import json, os
+    if not os.path.exists(datei): return koerper, []
+    J = json.load(open(datei))
+    if not J.get("gefunden"):
+        return koerper, [dict(seite="wand", element="Laufgang unter der Traufe NICHT gebaut", quelle="bauteile.umgang_aus_json; " + os.path.basename(datei), hinweis=str(J.get("grund", ""))[:200])]
+    z0, z1, p = float(J["z0"]), float(J["z1"]), int(J["pfosten_je_seite"]); h = z1 - z0
+    if h < 0.5 or p < 2 or len(J.get("ecken") or []) < 3:
+        return koerper, [dict(seite="wand", element="Laufgang unter der Traufe NICHT gebaut", quelle="bauteile.umgang_aus_json", hinweis="Zone %.2f m / %d Pfosten / Ecken ungueltig" % (h, p))]
+    ri = min(0.25, 0.2 * h)
+    koerper = umgang(koerper, [tuple(e) for e in J["ecken"]], z0, z1, tiefe=tiefe, pfosten=p, riegel=ri)
+    wz = "; ".join("%s: %s Pfosten, innen u %s (%d Fotos)" % (w["id"], w["pfosten"], w.get("pfosten_u_konsens"), w.get("pfosten_fotos", 0)) for w in J.get("waende", []) if w.get("pfosten"))
+    return koerper, [dict(seite="wand", element="Umgang unter der Traufe (offener Laufgang, %d Pfosten je Seite)" % p, quelle="Kettenstufe bauplan: tools/umgang_aus_fotos.py (%d Fotos, Zone aus Bildkanten, Pfosten gezaehlt) -> bauteile.umgang" % J.get("fotos_gut", 0),
+                          umgang_z0=z0, umgang_z1=z1, pfosten_je_seite=p, hinweis="ANNAHME: Ruecksprung %.2f m, Schwelle/Raehm %.2f m, Pfosten 0,24 m; %s; " % (tiefe, ri, wz) + "; ".join(J.get("annahmen", [])))]
+
+
 def laube(koerper, W, boegen, tiefe, decke, pfeiler_tiefe=0.8, u0=None, u1=None, vor=0.8, unten=-0.5, stirn=(), frei=None):
     """OFFENE LAUBE / ARKADENHALLE hinter einer Bogenreihe (GENERISCH, 17.11.2026 Kaufhaus: "Arkaden nur 10 cm Ruecksprung").
     W: Wand der Bogenreihe (Aussenflaeche w = 0). boegen: Liste dict(u, breite, kaempfer, scheitel, form) mit LICHTEN Massen der Oeffnungen (form 'rund'|'stich'|'spitz'|'korb');

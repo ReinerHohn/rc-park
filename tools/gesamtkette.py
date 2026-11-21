@@ -436,7 +436,7 @@ def main():
     # Von Hand eingetragene Werte (ohne "auto") bleiben unberuehrt (die Werkzeuge melden rc 3).
     if dran("bauplan") and os.path.exists(AU):
         fo = os.path.join(D, "fassade"); ffn = fo + "_fein"; bp_ = os.path.join(D, "bauplan"); os.makedirs(bp_, exist_ok=True); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); erg_ = {}
-        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "wolkenrest_koerper", "dach_aus_profil")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
+        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "wolkenrest_koerper", "dach_aus_profil", "umgang_aus_json")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
         if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
         else:
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
@@ -475,6 +475,7 @@ def main():
                 erg_["ebenen_masse_rc"] = lauf(B, "bauplan_ebenen_masse", [PY, "-W", "ignore", "-I", "tools/ebenen_masse.py", ZR, eb_], log, ok=(0, 3))[0]
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
+            if os.path.isdir(ffn): erg_["umgang_rc"] = lauf(B, "bauplan_umgang", [PY, "-I", "tools/umgang_aus_fotos.py", ZR, ffn], log, ok=(0, 3))[0]   # 21.11.2026: offener Umgang unter der Traufe aus den Einzelfotos (Wandbild endet unter dem Dachueberstand)
             if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
@@ -540,6 +541,7 @@ def main():
         if glob.glob(os.path.join(Z, "relief", "*_mono.npz")) and not ("anbauen" in gtxt and "_mono.npz" in fk_txt): sg_.append("relief/*_mono.npz (Feinrelief) - fassaden_kette.anbauen baut es nicht ein")
         if hat(os.path.join(Z, "audit", "oeffnungen_auto.json")) and "oeffnungen_aus_json" not in gtxt: sg_.append("audit/oeffnungen_auto.json (Boegen/Durchfahrten) - Generator ruft oeffnungen_aus_json nicht")
         if hat(os.path.join(Z, "audit", "uhren_auto.json")) and any(v.get("uhren") for v in json.load(open(os.path.join(Z, "audit", "uhren_auto.json"))).values()) and "uhren_aus_json" not in gtxt: sg_.append("audit/uhren_auto.json (Uhren) - Generator ruft bauteile.uhren_aus_json nicht")
+        if hat(os.path.join(Z, "audit", "umgang_auto.json")) and json.load(open(os.path.join(Z, "audit", "umgang_auto.json"))).get("gefunden") and "umgang_aus_json" not in gtxt: sg_.append("audit/umgang_auto.json (Umgang) - Generator ruft bauteile.umgang_aus_json nicht")
         if hat(os.path.join(Z, "audit", "fenster_auto.json")) and "fenster_aus_json" not in gtxt: sg_.append("audit/fenster_auto.json (Fenster) - Generator ruft fenster_aus_json nicht")
         fv_ = glob.glob(os.path.join(D, "fassade", "vorbauten_f*.json"))
         if any(json.load(open(f_)).get("kandidaten") for f_ in fv_) and not os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")): sg_.append("fassade/vorbauten_fNN.json mit Kandidaten, aber keine Bauliste (tools/vorbauten_bauplan.py lief nicht)")
