@@ -19,6 +19,11 @@ if [ "$2" != "--nur-pruefen" ]; then
   GEN=$($PY -c "import json;print(json.load(open('$OBJ'))['generator'])")
   echo "+ $GEN"; eval "$GEN"
 fi
+# 21.11.2026 (Tempo, Kettenlauf 1121o: 4 Zwischenbauten je ~125 s): RCPARK_NUR_BAUEN=1 = NUR der Generator (STL fuer die naechste Kettenstufe), Pruefstand/Tore/Bilder
+# folgen mit dem letzten Bau der Kette (tools/gesamtkette.py: abnahme_nachholen -> bauen_abnehmen.sh <obj> --nur-pruefen). Von Hand nie setzen - eine Abnahme braucht den vollen Lauf.
+if [ "${RCPARK_NUR_BAUEN:-0}" = "1" ] && [ "$2" != "--nur-pruefen" ]; then
+  echo "ERGEBNIS: nur gebaut (RCPARK_NUR_BAUEN=1, Zwischenbau der Kette) - KEINE Abnahme, die folgt mit dem letzten Bau"; rm -f "$MIT"; sleep 0.2; exit 0
+fi
 # Druckteilung (nur mit objekt.json "druck_teilung"): Teile/Lagen/Stifte zum aktuellen STL, Pruefung 'Ueberhang je Teil' liest teilung.json (Runde 5, 2026-11-09)
 if $PY -c "import json,sys; sys.exit(0 if 'druck_teilung' in json.load(open('$OBJ')) else 1)"; then $PY -W ignore -I tools/druck_teilung.py "$1" | tail -3 || echo "druck_teilung fehlgeschlagen (Pruefung Ueberhang je Teil faellt durch)"; fi
 $PY -W ignore -I tools/freiraum_audit.py "$OBJ" || echo "freiraum_audit fehlgeschlagen - Freiraumpruefung wird nan (FEHLER)"   # Sichtstrahlen gegen Modell (nur mit objekt.json "freiraum")
