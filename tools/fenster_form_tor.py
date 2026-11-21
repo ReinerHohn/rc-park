@@ -19,11 +19,20 @@ import nischen_fenster as NF
 
 
 
-def urteil(gebaut, st, min_fotos=NF.MIN_FOTOS):
-    """Urteil aus gebauter Familie und Stimmen {form: n}."""
+def vorzeichen_p(a, g):
+    """Einseitiger Vorzeichentest: Wahrscheinlichkeit, dass a oder mehr von a+g Stimmen bei Gleichstand (p = 1/2) auf die andere Familie fallen."""
+    from math import comb
+    n = a + g; return sum(comb(n, i) for i in range(a, n + 1)) / 2.0 ** n if n else 1.0
+
+
+def urteil(gebaut, st, min_fotos=NF.MIN_FOTOS, p_max=0.2):
+    """Urteil aus gebauter Familie und Stimmen {form: n}.
+    22.11.2026 (Kettenlauf 1121v, f00 rechte Nische: korb 7 / rund 6 / stich 1 -> FALSCH -> hand_vergleich 'rundbogenfenster FALSCH' trotz rund/rund):
+    eine knappe Mehrheit benachbarter Familien ist kein Beleg. FALSCH nur, wenn die andere Familie die gebaute im Vorzeichentest schlaegt (p < p_max = 0,2: 3:0 und 4:1 reichen, 7:6 und 8:5 nicht),
+    sonst UNBESTIMMT (Gleichstand, nicht belegt)."""
     n = sum(st.values()); g = st.get(gebaut, 0); andere = {f: v for f, v in st.items() if f != gebaut}
     best_a = max(andere.values()) if andere else 0
-    if best_a >= min_fotos and best_a > g: return "FALSCH", max(andere, key=andere.get)
+    if best_a >= min_fotos and best_a > g and vorzeichen_p(best_a, g) < p_max: return "FALSCH", max(andere, key=andere.get)
     if g >= min_fotos and g >= best_a: return "PASST", gebaut
     return "UNBESTIMMT", (max(st, key=st.get) if st else None)
 
