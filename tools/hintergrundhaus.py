@@ -305,7 +305,7 @@ def bauen(a):
     boden = M.extrude(g2.offset(0.5, JoinType.Miter), 0.36).translate((0, 0, zb - 0.3))
     # Hohlraum aus dem GLATTEN Koerper (ohne Nischen/Rahmen), wie bauteile.aushoehlen sonst: dort wird er aus dem Koerper MIT Fensternischen erodiert -> die
     # verschobenen Nischen kerben den Hohlraum genau an der Wandinnenseite ein = Kneifkanten an jeder Fensterecke (tv9v: 118 Kanten, 66 Teilnetze im STL, 17.11.2026).
-    cuts = [W_.kasten(u0, u1, z0, z1, wr - d - 0.25, wr + 0.002) for W_, u0, u1, z0, z1, wr in BT.DURCH] + [boden]; alle = BG.UNION(cuts); raum = None; v_h = 0.0
+    cuts = [W_.kasten(u0, u1, z0, z1, wr - d - 0.25, wr + 0.002) for W_, u0, u1, z0, z1, wr, *_ in BT.DURCH] + [boden]; alle = BG.UNION(cuts); raum = None; v_h = 0.0
     for t_ in BT.hohlraum(k_glatt, d, None, 0.003).decompose():
         if t_.volume() >= 0.2 and (t_ ^ alle).volume() > 1e-4: raum = t_ if raum is None else raum + t_; v_h += t_.volume()
     n_off = sum(1 for c_ in cuts if raum is not None and (c_ ^ raum).volume() > 1e-5)
