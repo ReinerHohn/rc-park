@@ -131,6 +131,7 @@ def attrappe(vereinen_rc=0, matrix=M_wahr):
             assert set(namen) == {b["name"] for b in (BN if nord else BS)}, "Bildliste des Teils falsch"; assert os.path.isfile(cmd[cmd.index("--database_path") + 1]), "Mapper ohne DB-Kopie"
             binaer((mA_b if aus.endswith("_b") else mA_txt) if nord else mB, os.path.join(aus, "0")) if nord else shutil.copytree(mB, os.path.join(aus, "0")); return 0
         if was == "dicht_modell.py":
+            assert "--ohne" not in cmd, "dichte Wolke einer Seite MIT Sperrliste (21.11.: Kettenlauf Martinstor, Sued ohne Dach -> Vereinen abgelehnt)"
             sp, dd = cmd[3], cmd[5]; r = pycolmap.Reconstruction(sp); nord = "eigen__n00.jpg" in {im.name for im in r.images.values()}
             for u in ("images", "stereo/depth_maps", "stereo/normal_maps"): os.makedirs(os.path.join(dd, u), exist_ok=True)
             shutil.copytree(sp, os.path.join(dd, "sparse"), dirs_exist_ok=True)
@@ -182,6 +183,11 @@ assert not os.path.exists(os.path.join(wa_, "seiten_modelle", "db_global.db")), 
 ZAHL.clear(); rc, aus, B2 = kette(wa_); n_neu = sum(ZAHL.get(k, 0) for k in ("global_mapper", "view_graph_calibrator", "dicht_modell.py", "seiten_vereinen.py", "modell_lage_vergleich.py", "brennweite_schaerfe.py"))
 assert rc == 0 and n_neu == 0 and B2["ergebnis"]["art"] == "vereint" and os.path.isdir(os.path.join(wa_, "sparse", "0")), f"zweiter Aufruf rechnete neu: {ZAHL}"
 assert len([d_ for d_ in os.listdir(wa_) if d_.startswith("sparse.alt_")]) == 1, "vorhandenes sparse/ nicht beiseitegelegt"
+# a2) alte Seitenwolke MIT Sperrliste (Kettenlauf 21.11.) wird nicht wiederverwendet, sondern beiseitegelegt und ohne Sperrliste neu gerechnet (dicht_modell nimmt sonst die alte Bildwahl)
+json.dump(dict(sekunden=1, sperrliste_angewandt=True), open(os.path.join(wa_, "seiten_modelle", "teil1", "dicht", "fertig.json"), "w"))
+ZAHL.clear(); rc, aus, B3 = kette(wa_); t1_ = [t for t in B3["teile"] if t.get("teil") == 1][0]
+assert rc == 0 and ZAHL.get("dicht_modell.py") == 1 and t1_["dicht"]["sperrliste_angewandt"] is False and B3["ergebnis"]["art"] == "vereint", f"alte Wolke mit Sperrliste: {ZAHL} {t1_.get('dicht')}"
+assert len([d_ for d_ in os.listdir(os.path.join(wa_, "seiten_modelle", "teil1")) if d_.startswith("dicht_alt_")]) == 1, "alte Wolke mit Sperrliste nicht beiseitegelegt"
 # b) abgelehnt
 wb_ = arbeit("kb"); rc, aus, B = kette(wb_, vereinen_rc=3); E = B["ergebnis"]
 assert rc == 0 and E["art"] == "teil_a_allein" and B["vereint"] == [0] and B["nicht_vereint"] == [1] and pycolmap.Reconstruction(os.path.join(wb_, "sparse", "0")).num_reg_images() == 14, f"rc 3: {E}"
