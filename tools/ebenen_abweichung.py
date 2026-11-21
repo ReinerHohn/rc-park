@@ -33,11 +33,12 @@ def flecken(u, z, w, zone, zelle, min_p):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ebenen"); ap.add_argument("--stl"); ap.add_argument("--tol", type=float, default=0.15); ap.add_argument("--zelle", type=float, default=0.25)
-    ap.add_argument("--min_p", type=int, default=12); ap.add_argument("--name", default=""); a = ap.parse_args()
+    ap.add_argument("--min_p", type=int, default=12); ap.add_argument("--name", default=""); ap.add_argument("--wolke", help="dichte Wolke im Modellrahmen (npy N x 3): GEGENPROBE der Form (nur grob, Kernmethode: Wolke = Lage-Veto/Gegenprobe)"); a = ap.parse_args()
     import trimesh, cv2
     from scipy.spatial import cKDTree
     from kantenstufe import modellkanten
     objp = os.path.abspath(a.objekt); od = os.path.dirname(objp); obj = json.load(open(objp)); stl = a.stl or os.path.join(ROOT, obj["stl"]); skala = float(obj.get("stl_massstab", 87)) / 1000.0
+    WO = np.asarray(np.load(a.wolke, mmap_mode="r")[::4, :3], dtype=np.float32) if a.wolke and os.path.exists(a.wolke) else None      # jeder 4. Punkt reicht fuer die Gegenprobe
     m = trimesh.load(stl); m.apply_scale(skala); EJ = json.load(open(os.path.join(a.ebenen, "ebenen.json")))["ebenen"]; A = os.path.join(od, "audit"); os.makedirs(A, exist_ok=True); ber = []
     for e in EJ:
         if not e.get("sweep") or not os.path.exists(e["sweep"]): continue
@@ -56,6 +57,11 @@ def main():
         L_form = flecken(u[form], z[form], w[form], zone, a.zelle, a.min_p); L_det = flecken(u[detail], z[detail], w[detail], zone, a.zelle, a.min_p * 3); L_erf = flecken(ku[erf], kz[erf], kw[erf], zone, a.zelle, a.min_p)
         b = dict(id=e["id"], art=e["art"], fassade=e["fassade"], w=e["w"], fotokanten=int(len(P)), an_flaeche=round(float((~form).mean()), 3), an_kante=round(float(trifft.mean()), 3), form_fehlt=round(float(form.mean()), 3),
                  detail_fehlt=round(float(detail.mean()), 3), modellkanten=int(len(K)), erfunden=round(float(erf.sum() / max(belegt.sum(), 1)), 3), liste_form=L_form[:15], liste_detail=L_det[:15], liste_erfunden=L_erf[:15])
+        if WO is not None:      # GEGENPROBE dichte Wolke (unabhaengig vom Kanten-Sweep, gleiche Kameras): liegt die Wolke an der Modellflaeche? Flecken > 0,3 m daneben = Form fehlt grob
+            wu, wz, wwq = uz(WO); wm = (wu >= u0) & (wu <= u1) & (wz >= z0) & (wz <= z1) & (np.abs(wwq) <= e["band"] + 0.5)
+            if wm.sum() >= 2000:
+                dw, _ = cKDTree(Q).query(WO[wm]); fern = dw > 0.30; Lw = flecken(wu[wm][fern], wz[wm][fern], wwq[wm][fern], zone, 0.5, 60)
+                b.update(wolke_punkte=int(wm.sum()), wolke_an_flaeche=round(float((dw <= a.tol).mean()), 3), wolke_grob_daneben=round(float(fern.mean()), 3), liste_wolke=Lw[:10])
         ber.append(b)
         px = 0.02 if (u1 - u0) * (z1 - z0) < 200 else 0.03; W_, H_ = int((u1 - u0) / px), int((z1 - z0) / px); vis = np.full((H_, W_, 3), 40, np.uint8)
         if e.get("bild") and os.path.exists(e["bild"]): vis = (cv2.resize(cv2.imread(e["bild"]), (W_, H_)) * 0.4).astype(np.uint8)
@@ -65,6 +71,8 @@ def main():
             cv2.rectangle(vis, (int((f_["u0"] - u0) / px), int((z1 - f_["z1"]) / px)), (int((f_["u1"] - u0) / px), int((z1 - f_["z0"]) / px)), (255, 255, 255), 1); cv2.putText(vis, str(i_ + 1), (int((f_["u0"] - u0) / px) + 2, int((z1 - f_["z1"]) / px) + 13), 0, 0.45, (255, 255, 255), 1)
         cv2.imwrite(os.path.join(A, f"abweichung_{e['id']}{a.name}.jpg"), vis, [1, 85])
         print(f"{e['id']:10s} {len(P):6d} Fotokanten: an der Modellflaeche {b['an_flaeche'] * 100:3.0f} %, an einer Modellkante {b['an_kante'] * 100:3.0f} % | FORM FEHLT {b['form_fehlt'] * 100:3.0f} % ({len(L_form)} Flecken), DETAIL FEHLT {b['detail_fehlt'] * 100:3.0f} %, ERFUNDEN {b['erfunden'] * 100:3.0f} % der Modellkanten")
+        if b.get("wolke_punkte"):
+            print(f"     Gegenprobe dichte Wolke ({b['wolke_punkte']} Punkte): an der Modellflaeche {b['wolke_an_flaeche'] * 100:.0f} %, > 0,3 m daneben {b['wolke_grob_daneben'] * 100:.0f} %" + "".join(f" | Fleck u {f_['u0']:.1f}..{f_['u1']:.1f} z {f_['z0']:.1f}..{f_['z1']:.1f} ({f_['punkte']} P., {f_['tiefe']:+.2f} m)" for f_ in b["liste_wolke"][:3]))
         for i_, f_ in enumerate(L_form[:4]): print(f"     Form fehlt {i_ + 1}: u {f_['u0']:.1f}..{f_['u1']:.1f}  z {f_['z0']:.1f}..{f_['z1']:.1f}  {f_['punkte']} Punkte, {f_['tiefe']:+.2f} m gegen die Ebene")
     try: rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=od).stdout.strip()
     except Exception: rev = "?"
@@ -73,7 +81,7 @@ def main():
         nP = sum(b["fotokanten"] for b in ber); ges.update(fotokanten=nP, an_flaeche=round(sum(b["an_flaeche"] * b["fotokanten"] for b in ber) / nP, 3), an_kante=round(sum(b["an_kante"] * b["fotokanten"] for b in ber) / nP, 3))
         print(f"GESAMT {nP} Fotokanten auf {len(ber)} Ebenen: an der Modellflaeche {ges['an_flaeche'] * 100:.0f} %, an einer Modellkante {ges['an_kante'] * 100:.0f} %")
     json.dump(ges, open(os.path.join(A, f"ebenen_abweichung{a.name}.json"), "w"), indent=1)
-    with open(os.path.join(A, "ebenen_abweichung_verlauf.jsonl"), "a") as f_: f_.write(json.dumps(dict(zeit=ges["zeit"], git=rev, name=a.name, an_flaeche=ges.get("an_flaeche"), an_kante=ges.get("an_kante"), ebenen={b["id"]: [b["an_flaeche"], b["an_kante"], b["erfunden"]] for b in ber})) + "\n")
+    with open(os.path.join(A, "ebenen_abweichung_verlauf.jsonl"), "a") as f_: f_.write(json.dumps(dict(zeit=ges["zeit"], git=rev, name=a.name, an_flaeche=ges.get("an_flaeche"), an_kante=ges.get("an_kante"), ebenen={b["id"]: [b["an_flaeche"], b["an_kante"], b["erfunden"], b.get("wolke_an_flaeche")] for b in ber})) + "\n")
     return 0
 
 

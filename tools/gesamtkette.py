@@ -444,7 +444,7 @@ def main():
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
             if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
-            if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_], log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
+            if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
             notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
     # --- Ende Stufe 'bauplan' ---
     # 18.11.2026: die Kantenstufe bewertet den LoD2-Klotz VOR den Fassaden (Kaufhaus gk2 F1 0,01 - Fotokanten im Fensterband, der Klotz hat dort keine). Zweite Bewertung am
