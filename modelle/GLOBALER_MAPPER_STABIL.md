@@ -226,3 +226,9 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
 - Gemessen: Wandrichtung im Grundriss (Normalen senkrechter Flaechen im Umkreis der Spitze, modulo 90 Grad) Nord 9,3, Sued 82,6 Grad -> Sued 16,7 Grad verdreht. `seiten_vereinen.wand_azimut` + kleinste Drehung von B um seine Spitze (Grenze 30 Grad, Buendelung > 0,3).
 - Nachher: Blick 15 -> 165 Grad (vorher 29 -> 151), Achse 0,60 % einig, Dach 1,02 / 1,01, Turmhoehen 3,0 % verschieden. Test bestanden. 3D-Seite Version 4.
 - LEHRE: die Klappung traegt verlaesslich nur den MASSSTAB; Lage (35 % daneben), Lot (4,5 Grad) und Drehung (16,7 Grad) kommen jetzt alle aus der Geometrie der dichten Wolken (Spitze, Waende).
+
+### 21.11. 15:05 - BELASTUNGSPROBE Vereinen (Nutzer: "beweise, dass du es bei jeder Wand richtig ausrichten wirst")
+- `tools/versuche/vereinen_robust_1121.py`: Klappung absichtlich verfaelscht (8 Laeufe, fester Zufallskeim: Kippung 2,0-7,5 Grad, Drehung um das Lot -10,4..+19,6 Grad, Verschiebung 9-24 % der Turmhoehe).
+  Alle 8 Laeufe: Urteil vereint; Endlage der Suedseite gegen den unverfaelschten Lauf: Lage 0,26-0,96 % der Bauhoehe (Median der Wolkenpunkte), Drehung 0,04-0,49 Grad.
+  -> Lage, Lot und Drehung haengen nicht mehr an der Klappung. NICHT belegt: Massstab (kommt weiter aus der Klappung), Bauten ohne Spitze, ohne rechte Winkel, Verfaelschung ueber 30 Grad / 30 %.
+- Recherche (Agent) `modelle/RECHERCHE_SEITEN_SFM_2026-11-21.md`. WICHTIG Lizenz: SegFormer-Gewichte (handy_masken, video_masken, gebaeude_segment) = NVIDIA Source Code License, nur nicht-kommerziell -> fuer die Verkaufskette ersetzen (Vorschlag RF-DETR-Seg, Apache-2.0; ungemessen).
