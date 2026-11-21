@@ -37,7 +37,7 @@ Worktree-Zweig (Attribution), nicht mergen. Bericht: Fehlerliste, Ursache, Fix, 
 1. Läuft: Agent „Kette beschleunigen“ (Wände parallel, Neubau nur am Ende) und Agent „zirkuläre Verdeckung/Vordach“ – nach Meldung mergen (Schritt 3).
 2. Vordach-Anschluss 16,74 statt 19,39 (Ursache: Uneinigkeitskarte mit eigenem Modell als Verdecker) – Agent läuft.
 3. Tor-Form schwankt zwischen Läufen (spitzbogen/sturz) – wenn im Lauf wieder falsch: Agent.
-4. Westwand w00 Wandgemälde: Netz-Krümel (Putz-Kriterium greift nicht).
+4. Westwand w00 (Putzwand, KEIN Wandgemälde - das sitzt auf f00 unter dem Vordach): Netz-Krümel aus unbelegten Netzinseln -> Fix tiefe_belegt (Agent 21.11. 21:30, Zweig worktree-agent-ad526fdb80742be1b).
 5. Süd/Ost glatt = keine Fotos (Fotoauftrag `/media/oem/scan/rc-park_daten/schwabentor-1120/fotoauftrag_schwabentor-1120.json`) – NICHT erfinden.
 6. Handstand-Vergleichswerte Uhr/Sohlbank/Laterne ~3,4 % zu tief (Kette nachweislich richtig) – NUR mit Nutzer-Ja ändern.
 
