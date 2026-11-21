@@ -347,14 +347,24 @@ def dach_aus_profil(koerper, datei):
     # 21.11.2026 (Nutzer "noch nicht gut", neben_eigen__IMG_20261106_113231.jpg: dicke dunkle Traufe im Foto, duenne 2-cm-Scheibe im Modell): Traufe der Seiten mit
     # Fotomessung (tools/traufe_aus_fotos.py, Block 'traufe_foto') als Traufkasten mit Untersicht + Stirn; Scheiben dort auf die Aussenkante begrenzt, Traufring eingefuegt.
     P, kaesten_tr, bel_tr = traufe_einbauen(P, D)
-    teile = [M.hull_points(R(a_, a_[0]) + R(b_, b_[0])) for a_, b_ in zip(P[:-1], P[1:])] + [M.hull_points(R(P[-1], P[-1][0]) + R(P[-1], P[-1][0] + dz))] + [M.hull_points(R(P[0], z0 - 0.02) + R(P[0], P[0][0]))]
+    # 22.11.2026 (Koordinator, Kontrollbild IMG_113056: Foto gerade Pyramide, Modell glockig gestuft + breiter Absatz unter dem Aufsatz): DACHFLAECHE aus den Foto-
+    # Silhouetten (tools/dachflaeche_aus_umriss.py, Block 'flaeche_foto': Profil g(t; c) von der Foto-Traufkante bis zum Fuss des Aufsatzes) statt Wolkenscheiben.
+    fl_, bel_fl = flaeche_aus_foto(P, D)
+    if fl_ is not None:
+        P = P[:fl_[0] + 1]; oben = [list(map(float, q)) for q in fl_[1][-1]]
+        teile = [M.hull_points(R(a_, a_[0]) + R(b_, b_[0])) for a_, b_ in zip(P[:-1], P[1:])] + [M.hull_points(R(P[0], z0 - 0.02) + R(P[0], P[0][0]))]
+        teile += [M.hull_points(np.vstack([a_, b_]).tolist()) for a_, b_ in zip(fl_[1][:-1], fl_[1][1:])]
+        ab = float(fl_[2]) if SF.get("gueltig") and SF.get("profil") and SF.get("angenommen") is not False else None
+    else:
+        oben = R(P[-1], P[-1][0] + dz)
+        teile = [M.hull_points(R(a_, a_[0]) + R(b_, b_[0])) for a_, b_ in zip(P[:-1], P[1:])] + [M.hull_points(R(P[-1], P[-1][0]) + R(P[-1], P[-1][0] + dz))] + [M.hull_points(R(P[0], z0 - 0.02) + R(P[0], P[0][0]))]
     if ab is not None:
-        A = SF["achse"]; FP = [p for p in SF["profil"] if p[0] >= ab - 1e-6]
+        A = SF["achse"]; FP = [p for p in SF["profil"] if p[0] >= ab - 1e-6] or SF["profil"][-1:]
         def ring(p, z):
             if len(p) > 6 and p[4] == "eckig":
                 t = math.radians(p[5]); a = p[6]; return [[A[0] + a * (sx * math.cos(t) - sy * math.sin(t)), A[1] + a * (sx * math.sin(t) + sy * math.cos(t)), z] for sx in (-1, 1) for sy in (-1, 1)]
             r = p[6] if len(p) > 6 else p[1]; return [[A[0] + r * math.cos(w), A[1] + r * math.sin(w), z] for w in np.linspace(0, 2 * math.pi, 24, endpoint=False)]
-        teile.append(M.hull_points(R(P[-1], P[-1][0] + dz) + ring(FP[0], FP[0][0])))                 # Anschluss Wolkendach -> erste Fotohoehe
+        teile.append(M.hull_points(list(oben) + ring(FP[0], FP[0][0])))                 # Anschluss Dach (Wolke bzw. Fotoflaeche) -> erste Fotohoehe des Aufsatzes
         teile += [M.hull_points(ring(a_, a_[0]) + ring(b_, b_[0])) for a_, b_ in zip(FP[:-1], FP[1:])]
         teile.append(M.hull_points(ring(FP[-1], FP[-1][0]) + [[A[0], A[1], float(SF["spitze_z"])]]))    # letzte Hoehe -> Spitze (Knauf/Nadel als Kegel, Durchmesser unter der Druckgrenze faellt beim Druck weg)
         nr_ = sum(1 for p in FP if len(p) > 6 and p[4] == "eckig")
@@ -366,7 +376,25 @@ def dach_aus_profil(koerper, datei):
     return koerper, [dict(seite="dach", element=f"Dach als Schichtprofil ab z {z0:.1f} m: Traufe halb {(P[0][2] - P[0][1]) / 2:.2f} x {(P[0][4] - P[0][3]) / 2:.2f} m (Wand {D['wand_halb'][0]:.2f} x {D['wand_halb'][1]:.2f}), Neigung ~{D.get('neigung_grad')} Grad, bis z {P[-1][0] + dz:.1f} m",
                           quelle=f"dichte Wolke, {len(P)} Scheiben je {dz} m (tools/dach_profil_wolke.py); ersetzt das LoD2/Laser-Dach (bis {D.get('modell_hoehe_vorher', 0):.1f} m)",
                           hinweis=f"ANNAHME: {ann} von {4 * len(P)} Scheibenseiten ohne Wolke an der gemessenen Achse gespiegelt (Dachflaeche von keinem Foto gesehen); Stufen von {dz} m statt glatter Flaeche; "
-                                  + ("Laterne/Spitze darueber aus Fotos" if bel_sp else "Spitze/Knauf ueber dem Wolkenende FEHLT") + "; Dach voll")] + bel_sp + bel_tr
+                                  + ("Laterne/Spitze darueber aus Fotos" if bel_sp else "Spitze/Knauf ueber dem Wolkenende FEHLT") + "; Dach voll" + ("; ueber der Traufe Dachflaeche aus Fotos (siehe Beleg)" if fl_ else ""))] + bel_sp + bel_tr + bel_fl
+
+
+def flaeche_aus_foto(P, D, n=12):
+    """Dachflaeche aus 'flaeche_foto' (tools/dachflaeche_aus_umriss.py): Ringe von der Traufe (Traufring aus traufe_einbauen, sonst oberste Scheibe unter der Traufe)
+    bis zum Fuss des Aufsatzes mit dem gemessenen Profil c. -> ((Index der Anschlussscheibe, Ringe, z_fuss) | None, Belege). Gueltigkeits-Guard: Fuss ueber der Traufe,
+    Fuss schmaler als die Traufe."""
+    FF = D.get("flaeche_foto") or {}
+    if not FF.get("gueltig") or FF.get("angenommen") is False or not FF.get("z_fuss") or not FF.get("fuss") or not P: return None, []
+    ir = next((k for k, p in enumerate(P) if len(p) > 6 and p[6] == "traufe_foto"), None)
+    if ir is None: ir = max([k for k, p in enumerate(P) if p[0] <= float(FF.get("z_traufe", P[0][0])) + 1e-6] or [0])
+    r_ = P[ir]; z_t, z_f = float(r_[0]), float(FF["z_fuss"]); a_f = float(FF["fuss"]["halb"])
+    if z_f < z_t + 1.0 or a_f >= 0.9 * min(r_[2] - r_[1], r_[4] - r_[3]) / 2: return None, [dict(seite="dach", element="Dachflaeche aus Fotos NICHT gebaut (Guard)", quelle="bauteile.flaeche_aus_foto", hinweis=f"Fuss z {z_f} / halb {a_f} gegen Traufe z {z_t}")]
+    from dachflaeche_aus_umriss import ringe as _ringe
+    A = np.array(FF.get("achse") or D["o"], float); c_ = 0.0 if FF.get("familie") == "gerade" else float(FF.get("c", 0.0))   # Familie 'gerade' -> Ebenen (Koordinator 22.11.), c innerhalb der Familie = Messrauschen
+    rs = _ringe((np.array(D["o"], float), np.array(D["d"], float), np.array(D["n"], float), r_[1], r_[2], r_[3], r_[4]), (A, a_f, None if FF["fuss"].get("theta") is None else float(FF["fuss"]["theta"])), z_t, z_f, c_, n=n)
+    return (ir, rs, z_f), [dict(seite="dach", element=f"Dachflaeche aus Foto-Silhouetten: {FF.get('familie')} (gemessen c {FF.get('c')}, gebaut c {c_}) von der Traufe z {z_t:.2f} bis zum Fuss des Aufsatzes z {z_f:.2f} (halb {a_f:.2f} m)",
+                                quelle=f"tools/dachflaeche_aus_umriss.py: Himmelskante in {FF.get('fotos_gut')} guten Fotos gegen gerenderte Profil-Hypothesen, Konsens {FF.get('konsens')}, Restfehler {FF.get('fehler_median')} m (gerade {FF.get('fehler_gerade_median')} m)",
+                                hinweis="ersetzt die Wolkenscheiben ueber der Traufe (Wolke/DOM1 dort glockig gestuft); ANNAHME: Fussquerschnitt " + str(FF["fuss"].get("quelle")) + ", Ecken der Traufe laufen gerade zu den Fussecken (Grate)")]
 
 
 TRAUF_SEITEN = {"-d": (1, -1), "+d": (2, 1), "-n": (3, -1), "+n": (4, 1)}      # Seite -> (Index in der Scheibe [z, u_lo, u_hi, v_lo, v_hi], Vorzeichen)
