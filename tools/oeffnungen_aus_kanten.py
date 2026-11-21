@@ -823,7 +823,14 @@ def uebernehmen(ber, auto_pfad, log=print):
         kand = [o for o in (ber["ebenen"].get(f"{fid}_wand") or {}).get("oeffnungen", []) if o.get("form_quelle") == "wandbild" and o.get("form") in FORM_KURZ]
         for x in F.get("oeffnungen", []):
             if not x.get("gebaut") or "breite" not in x: continue
-            k = [o for o in kand if abs(o["mitte_u"] - x["u"]) < x["breite"] / 2]
+            # 21.11.2026 (Kettenlauf 1121o: Tor f00 bekam die Masse des Fensters in 25 m Hoehe - nur u wurde verglichen): auch Hoehe und Breite muessen passen
+            z0_, z1_ = float(x.get("unten", 0.0)), float(x.get("scheitel", 0.0))
+            def passt_(o):
+                if abs(o["mitte_u"] - x["u"]) >= x["breite"] / 2 or o["scheitel"]["wert"] is None: return False
+                zo = (o.get("zone") or [0, 0, None, None])[2:4]; oz0 = zo[0] if zo[0] is not None else o["scheitel"]["wert"] - 1.0
+                ueber = min(z1_, o["scheitel"]["wert"]) - max(z0_, oz0)
+                return ueber > 0.5 * (z1_ - z0_) and 0.6 < o["breite"]["wert"] / x["breite"] < 1.6
+            k = [o for o in kand if passt_(o)]
             if not k: continue
             o = min(k, key=lambda o: abs(o["mitte_u"] - x["u"]))
             if o["kaempfer"]["wert"] is None or o["scheitel"]["wert"] is None: continue

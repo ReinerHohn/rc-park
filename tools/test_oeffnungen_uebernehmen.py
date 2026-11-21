@@ -5,13 +5,14 @@ import os, sys, json, tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import oeffnungen_aus_kanten as O
 
-def oe(i, form, q, u, b, k, s): return dict(id=i, form=form, form_quelle=q, mitte_u=u, breite=dict(wert=b, hinweis="lichte Weite"), kaempfer=dict(wert=k), scheitel=dict(wert=s))
+def oe(i, form, q, u, b, k, s): return dict(id=i, form=form, form_quelle=q, mitte_u=u, zone=[u - b / 2, u + b / 2, 0.0 if s < 10 else k - 1.5, s], breite=dict(wert=b, hinweis="lichte Weite"), kaempfer=dict(wert=k), scheitel=dict(wert=s))
+# 21.11.2026 'f' = Fenster in 25 m Hoehe auf derselben Achse wie das Tor (Kettenlauf 1121o nahm es faelschlich als Tor) - darf NICHT uebernommen werden
 with tempfile.TemporaryDirectory() as T:
     p = os.path.join(T, "oa.json")
     json.dump({"f00": {"oeffnungen": [dict(gebaut=True, form="rund", u=0.0, breite=4.9, kaempfer=3.2, scheitel=6.3, unten=-0.03),
                                        dict(gebaut=False, form="rund", u=3.0, breite=1.0, kaempfer=1, scheitel=2)]},
                "f01": {"oeffnungen": [dict(gebaut=True, form="rund", u=0.0, breite=2.0, kaempfer=2, scheitel=3)]}}, open(p, "w"))
-    ber = {"ebenen": {"f00_wand": {"oeffnungen": [oe("a", "spitzbogen", "wandbild", 0.17, 4.5, 3.0, 6.22), oe("b", "sturz", "wandbild", 3.0, 0.8, 9.8, 9.8),
+    ber = {"ebenen": {"f00_wand": {"oeffnungen": [oe("a", "spitzbogen", "wandbild", 0.17, 4.5, 3.0, 6.22), oe("b", "sturz", "wandbild", 3.0, 0.8, 9.8, 9.8), oe("f", "rundbogen", "wandbild", 0.05, 1.8, 24.4, 25.3),
                                                     oe("c", "rundbogen", "wandbild", 6.0, 1.0, 1, 2)]},
                       "f01_wand": {"oeffnungen": [oe("d", "rundbogen", "wolkenrand", 0.0, 1.5, 2, 3)]}}}
     n = O.uebernehmen(ber, p, log=lambda *a: None); A = json.load(open(p)); x = A["f00"]["oeffnungen"][0]
