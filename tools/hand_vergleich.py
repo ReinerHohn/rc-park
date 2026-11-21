@@ -54,7 +54,14 @@ def main():
         if e["urteil"] == "FALSCH": z += "  " + ", ".join(f"{k} {v['ist']} statt {v['soll']}" for k, v in e["masse"].items() if not v["ok"])
         print(z)
     print(f"HANDSTAND ERREICHT: {n_passt} von {len(erg)} Bauteilen passen ({100 * n_passt / len(erg):.0f} %)")
-    json.dump(dict(referenz=R["quelle"], passt=n_passt, gesamt=len(erg), bauteile=erg), open(os.path.join(A, "hand_vergleich.json"), "w"), indent=1, ensure_ascii=False); return 0
+    json.dump(dict(referenz=R["quelle"], passt=n_passt, gesamt=len(erg), bauteile=erg), open(os.path.join(A, "hand_vergleich.json"), "w"), indent=1, ensure_ascii=False)
+    import time, subprocess      # 21.11.2026 (Nutzer: "Loggst du deine ganzen Versuche mit, dass wir das spaeter nochmal nachspielen koennen?"): Verlauf je Lauf mit git-Stand
+    try: rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=od).stdout.strip()
+    except Exception: rev = "?"
+    with open(os.path.join(A, "hand_vergleich_verlauf.jsonl"), "a") as f_:
+        f_.write(json.dumps(dict(zeit=time.strftime("%Y-%m-%d %H:%M"), git=rev, passt=n_passt, gesamt=len(erg), urteile={e["bauteil"]: e["urteil"] for e in erg},
+                                 daneben={e["bauteil"]: {k: [v["ist"], v["soll"]] for k, v in e["masse"].items() if not v["ok"]} for e in erg if e["urteil"] == "FALSCH"}), ensure_ascii=False) + "\n")
+    return 0
 
 
 if __name__ == "__main__": sys.exit(main())

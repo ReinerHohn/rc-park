@@ -1,0 +1,162 @@
+{
+ "referenz": "modelle/schwab_v3/elemente.json - Handstand mit Foto-Triangulation (foto_mass.py), Nutzer 20.11.2026: 'beim Schwabentor mal einen richtig geilen Stand'. Hoehen und Groessen vergleichbar; u-Lagen NICHT (anderer Rahmen, Schaft x 0,933).",
+ "passt": 0,
+ "gesamt": 11,
+ "bauteile": [
+  {
+   "bauteil": "galerie",
+   "urteil": "FALSCH",
+   "masse": {
+    "schwelle_unten": {
+     "soll": 10.22,
+     "ist": 9.62,
+     "ok": false
+    },
+    "holm_oben": {
+     "soll": 11.42,
+     "ist": 12.02,
+     "ok": false
+    },
+    "ausladung": {
+     "soll": 1.45,
+     "ist": 1.15,
+     "ok": true
+    },
+    "breite": {
+     "soll": 8.06,
+     "ist": 9.08,
+     "ok": false
+    },
+    "pfosten": {
+     "soll": 3,
+     "ist": 2,
+     "ok": false
+    },
+    "streben": {
+     "soll": 6,
+     "ist": 6,
+     "ok": true
+    }
+   }
+  },
+  {
+   "bauteil": "vordach",
+   "urteil": "FALSCH",
+   "masse": {
+    "traufe_z": {
+     "soll": 16.09,
+     "ist": 16.02,
+     "ok": true
+    },
+    "anschluss_z": {
+     "soll": 19.43,
+     "ist": 19.39,
+     "ok": true
+    },
+    "ausladung": {
+     "soll": 1.54,
+     "ist": 1.1,
+     "ok": false
+    }
+   }
+  },
+  {
+   "bauteil": "uhr",
+   "urteil": "FALSCH",
+   "masse": {
+    "durchmesser": {
+     "soll": 5.0,
+     "ist": 5.127,
+     "ok": true
+    },
+    "mitte_z": {
+     "soll": 31.25,
+     "ist": 31.955,
+     "ok": false
+    }
+   }
+  },
+  {
+   "bauteil": "tor",
+   "urteil": "FALSCH",
+   "masse": {
+    "breite": {
+     "soll": 4.32,
+     "ist": 4.864,
+     "ok": false
+    },
+    "scheitel": {
+     "soll": 6.72,
+     "ist": 6.265,
+     "ok": false
+    },
+    "kaempfer": {
+     "soll": 3.97,
+     "ist": 3.238,
+     "ok": false
+    }
+   }
+  },
+  {
+   "bauteil": "rundbogenfenster",
+   "urteil": "FALSCH",
+   "masse": {
+    "anzahl": {
+     "soll": 2,
+     "ist": 1,
+     "ok": false
+    },
+    "sohlbank_z": {
+     "soll": 22.59,
+     "ist": 23.12,
+     "ok": false
+    },
+    "nische_breite": {
+     "soll": 1.95,
+     "ist": 0.59,
+     "ok": false
+    }
+   }
+  },
+  {
+   "bauteil": "laterne",
+   "urteil": "FEHLT",
+   "soll": {
+    "spitze_z": 51.76,
+    "krempe_z": 47.0
+   }
+  },
+  {
+   "bauteil": "zeltdach_ueberstand",
+   "urteil": "FEHLT",
+   "soll": {
+    "ueberstand": 0.9
+   }
+  },
+  {
+   "bauteil": "treppenturm",
+   "urteil": "FEHLT",
+   "soll": {
+    "radius": 1.555,
+    "traufe": 11.57
+   }
+  },
+  {
+   "bauteil": "umgang",
+   "urteil": "FEHLT",
+   "soll": {
+    "pfosten_je_seite": 4
+   }
+  },
+  {
+   "bauteil": "eckquader",
+   "urteil": "FEHLT",
+   "soll": {}
+  },
+  {
+   "bauteil": "tor_durchfahrt",
+   "urteil": "FEHLT",
+   "soll": {}
+  }
+ ]
+}
