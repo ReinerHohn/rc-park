@@ -180,7 +180,7 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
 - MESSFEHLER des neuen Werkzeugs, 1. Fassung: Ausgleich ueber "die besten 60 %" = Videobilder auf einer Geraden -> Drehung um die Fahrtlinie unbestimmt, scheinbar 12-14 % Abweichung. Jetzt RANSAC ueber Vierergruppen.
 - OFFEN: Nord (538 Bilder) global a/b gegen schrittweise; Vereinen aus den gefilterten globalen Stuecken; Ursache der Einzelfoto-Streuung (freie Brennweite je Foto, 231 von 286 Fotos ohne EXIF-Brennweite).
 
-### 21.11. 12:45 - Methode BRENNWEITEN-SCHAERFE (`tools/brennweite_schaerfe.py`) gegen wandernde Einzelfotos
+### 21.11. 12:44 - Methode BRENNWEITEN-SCHAERFE (`tools/brennweite_schaerfe.py`) gegen wandernde Einzelfotos
 - Befund DB martinstor-1120 (Kette): 2107 Bilder = 2107 Kameras - JEDES Videobild hat eine eigene Kamera mit geratener Brennweite (1,2 x Breite); EXIF-Brennweite nur bei 49 Bildern, darunter unsinnige Werte (f/Breite bis 2185, bekannter pycolmap-4.2.1-Fehler).
   Die Bereinigung des Konsens-Rezepts (`sfm_db_variante.py --priors loeschen --kamera-je-clip`) laeuft nur im Konsens-Mapper, nicht im schrittweisen Weg und nicht in den Tests von heute.
 - Verfahren (am fertigen Modell, ohne zweiten Lauf, ohne EXIF): je Kamera Brennweite in 25 Stufen 0,70-1,43 setzen, Lage je Stufe neu ausgleichen (PnP auf Punkten mit Spur >= 4), Breite des Bereichs mit Rest <= Minimum + 10 % = Schaerfe; scharf < 4 %, weich, unbestimmt >= 10 % oder offen.
