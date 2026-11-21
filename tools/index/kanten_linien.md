@@ -1,4 +1,4 @@
-# Werkzeuge: kanten_linien (58)
+# Werkzeuge: kanten_linien (59)
 - `tools/belichtung_sweep.py` [col] BS2: Belichtungs-/Kontrast-Sweep. Stufen: auswahl | varianten | merkmale | tri. Arbeitsordner (gross) nur unter /media/oem/scan/rc-park_null/belichtung_kh. Buendel nur gelesen, Kam
 - `tools/druck_rippen.py` [seg] druck_rippen.py <ein.stl> <aus.stl> [--abstand_mm 60] [--dicke_mm 0.9] [--tiefe_mm 6] [--schritt_mm 0.8] [--ecke_mm 0 (aus)] [--dick_mm 2.4] [--bild PFAD.png] Duenne Gebaeudewaende
 - `tools/epilinie.py` [seg] epilinie.py - Epipolarlinie eines Pixelpicks in weiteren Kameras (Hilfe fuer foto_mass.py --tri).
@@ -42,6 +42,7 @@
 - `tools/limap_proto_vor.py` [seg] LIMAP-Prototyp Stufe 1 (venv-seg, GPU): Vorbereitung fuer einen kleinen Ausschnitt (Minuten statt Stunden): Ausschnitt = Kugel um ein Zentrum, Fotos = die am besten sehenden, versc
 - `tools/limap_proto_zeigen.py` [col] LIMAP-Prototyp auswerten (venv-limap): limap_proto_zeigen.py OUTDIR PREFIX [--spur 3]. Schreibt Linien (npy) + Overlay auf 2 Fotos (gruen = Spurlaenge >= 5, gelb >= 3) + Frontansic
 - `tools/luecken_rippen.py` [seg] luecken_rippen.py - Rippen, die im Foto da sind (Rippenmaske-Skelett, siehe kanten_ketten --farbe band), aber von keinem Modellpfad gedeckt sind, als neue Pfade vorschlagen. Aufruf
+- `tools/oeffnungen_aus_kanten.py` [seg] oeffnungen_aus_kanten.py - OEFFNUNGEN einer Wand (Tor, Rundbogen-, Spitzbogen-, Rechteckfenster) finden und vermessen, ohne Vorwissen (21.11.2026).
 - `tools/rippen_abdeckung.py` [seg] rippen_abdeckung.py - Wie viel der sichtbaren Goldrippen eines Bauteils steckt im Modell? (Mass fuer feine Kanten, Nutzer 12.11.: foto_diff/Wolke sind fuer Rippen blind)
 - `tools/rippen_abstimmung.py` [seg] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
 - `tools/rippen_aeste_bild.py` [seg] rippen_aeste_bild.py - Rippenaeste im BILD des Referenzfotos bilden (Skelett zerlegt an Kreuzungen), Tiefe je Ast aus den guten Punkten robust interpoliert (13.11.2026). Aufruf: /m

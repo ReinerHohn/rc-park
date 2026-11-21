@@ -1,4 +1,4 @@
-# Werkzeuge: geometrie_flaechen (36)
+# Werkzeuge: geometrie_flaechen (37)
 - `tools/arkaden_fit.py` [seg] arkaden_fit.py - Arkadenboegen als FORMFAMILIE statt freier Kettenbildung (Koordinator 9.11., Runde 3). Eingabe: Gitter mit "saeulen" [{cx,cy,R,z_fuss,z_kopf}], ein oder mehrere Sw
 - `tools/auto_fit_alle.py` [-] auto_fit_alle.py <objekt> --wolke w.npy --fotos kam.json --bilder dir [--typen a,b,..] [--iter 40] Automatische Annaeherung ALLER parametrischen Bauteile an die Wolke (Nutzerwunsch
 - `tools/autofit.py` [seg] autofit.py — ARCHETYP-AGNOSTISCHER Autofit-Kern.
@@ -20,6 +20,7 @@
 - `tools/innenwaende_finden.py` [seg] innenwaende_finden.py <objekt.json> <fassaden-ordner> --arbeit DIR [--aus audit/innenwaende_auto.json] [--schreiben] [--nur f02,..] innenwaende_finden.py <objekt.json> --sicht_stl 
 - `tools/joint_fit_test.py` [-] joint_fit_test.py — ECHTER Steck-Test der Egg-Crate-Rippen (nicht abstrakte Schlitze!).
 - `tools/koerper_kette.sh` [sh] koerper_kette.sh GITTER.json AUSDIR [AUDITDIR] - Stufe 11 der Gitterkette: Gitter -> Rohkoerper -> Fenster/Erker-Analyse -> Flaeche-vs-Oeffnung (Laube) -> Konsolen-Wiederholung -> 
+- `tools/koerper_schleife.py` [-] koerper_schleife.py - KOERPER AUS DEM WOLKENREST FINDEN, BAUEN, NACHMESSEN, ANNEHMEN ODER VERWERFEN (21.11.2026).
 - `tools/koerper_v10.py` [gen] koerper_v10.py - Kaufhaus-Koerper v10 aus dem Kantengitter: Rohkoerper (gitter_koerper.baue mit korrigierten Enden/Staffelgiebeln) + Fensterfamilie + Erker mit senkrechtem Schaft u
 - `tools/koerper_v11.py` [gen] koerper_v11.py - Kaufhaus-Koerper v11 (druckfertiges Rohteil): wie v10, aber Rumpf + Verlaengerung als EIN Koerper (Fuenfeck ueber die volle Laenge, oberhalb der Traufe hinter den 
 - `tools/kontur_mittel.py` [seg] Konturen mitteln und Boegen anpassen (rein numerisch, ohne Objektbezug). - mittelform(): gleiche Elemente (z. B. 5 Fenster) ausrichten (Verschiebung, Skalierung, zyklische Startpun

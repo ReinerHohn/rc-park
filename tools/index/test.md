@@ -1,4 +1,4 @@
-# Werkzeuge: test (83)
+# Werkzeuge: test (85)
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
@@ -37,6 +37,7 @@
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
 - `tools/test_kette_stabil.py` [seg] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
+- `tools/test_koerper_schleife.py` [gen] test_koerper_schleife.py - fester Test ohne GPU fuer tools/wolke_rest.py (Grobformen, Nachbar-Abtrennung), bauteile.wolkenrest_koerper und tools/koerper_schleife.py (21.11.2026).
 - `tools/test_konsens_urteil.py` [-] Test der Konsens-Annahme (global_mapper_konsens.urteil, 19.11.2026): gutes Modell traegt; duennes Rueckgrat / wenig Bilder / kein Clip -> Gruende + Ursache + Abhilfe.
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
 - `tools/test_konvergenz_logik.py` [-] test_konvergenz_logik.py - Trockenlauf der Konvergenzschleife OHNE GPU und OHNE Generatorbau (S3 Phase A, 2026-11-05). Prueft die STEUERUNG von qualitaetsstufen.v_konvergenz mit vo
@@ -44,6 +45,7 @@
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
 - `tools/test_nullstart_schritte.py` [-] test_nullstart_schritte.py - BEWEIS, dass jede gelernte Erkenntnis ein fester Nullstart-Schritt mit Tor ist (2026-11-04, Nutzerregel beweis-pflicht-nullstart). Quelle der Pflicht: 
+- `tools/test_oeffnungen_aus_kanten.py` [-] test_oeffnungen_aus_kanten.py - fester Test (ohne GPU, ohne Daten) fuer tools/oeffnungen_aus_kanten.py.
 - `tools/test_ortho_vergleich.py` [seg] test_ortho_vergleich.py - zwei Ausgabeordner von fassade_ortho.py bildweise vergleichen (17.11.2026, fuer Beschleunigungen "bei gleichem Ergebnis").
 - `tools/test_paarvorwahl.py` [-] Test paarvorwahl.py (synthetisch): (1) Abstand stimmt (0,001 Grad Breite = 111,2 m), (2) ohne GPS bleibt jedes Paar, (3) Radius 0 = unveraendert, (4) Wahrheitspaare (Abstand < Radi
 - `tools/test_param_suche.py` [seg] test_param_suche.py - BEWEIS (bekannte Wahrheit) fuer param_suche.py (2026-11-04). Je Wahrheit w*: Generator mit <param> = w* -> Pruefbilder (Render mit der echten Kamera inkl. k1,
