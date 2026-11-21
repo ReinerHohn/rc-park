@@ -45,7 +45,7 @@ def main():
     if nur_gen and os.path.exists(gp):
         alt = open(gp).read()
         if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 90: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
-        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt and "vorbauten_aus_json" in alt and "uhren_aus_json" in alt and "korrekturen_aus_json" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt and "vorbauten_aus_json" in alt and "uhren_aus_json" in alt and "korrekturen_aus_json" in alt and "drehkoerper_aus_wolkenrest" in alt and "dach_aus_profil" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
         import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3

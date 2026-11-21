@@ -229,3 +229,8 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
   verklebtes Nachtmodell (eng/0, 983 Bilder): 29 von 29 pruefbaren Paaren VERKLEBT (Blickwinkel 2,7-...), rc 3. Suedmodell allein: kein pruefbares Paar, rc 0 mit Hinweis "nur eine Seite".
   OFFEN: Gegenprobe am vereinten Modell (darf dort nicht anschlagen).
 - `handy_masken.py`: tree/plant standardmaessig maskiert (--kein_gruen), Test bestanden. Strassenbahn: keine Klasse im Netz, offen.
+
+## Nachtrag 21.11. 13:38 - Wolkenkoerper in der Kette (Stufe bauplan)
+- `gesamtkette.py`: nach `bauen_mit_bauplan` -> `bauplan_wolkenrest` (wolke_rest --uebernehmen), `bauplan_dachprofil` (nur wenn audit/dach_profil.json fehlt, also gegen das LoD2-Dach), bei Neuem zweiter Bau `bauen_mit_wolkenkoerpern` + Nachmessung;
+  faellt die Zahl der Wolkenpunkte am Modell, meldet die Kette einen Fehler (Annahmeregel als Meldung, noch kein automatisches Zuruecknehmen). Generator-Aktualitaetspruefung kennt `drehkoerper_aus_wolkenrest` und `dach_aus_profil`.
+- NICHT durch einen Kettenlauf belegt (RAM belegt durch Martinstor-Laeufe) - offen.
