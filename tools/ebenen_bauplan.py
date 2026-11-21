@@ -20,7 +20,7 @@ HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassade"); ap.add_argument("kanten"); ap.add_argument("aus")
     ap.add_argument("--min_m2", type=float, default=40.0); ap.add_argument("--maxpx", type=int, default=150000); ap.add_argument("--refs", type=int, default=80); ap.add_argument("--nur", default="")
-    ap.add_argument("--bild", type=int, default=1); a = ap.parse_args()
+    ap.add_argument("--bild", type=int, default=1); ap.add_argument("--seiten", type=int, default=1, help="1 = je Vorbau auch die zwei Seitenebenen (senkrecht zur Wand)"); a = ap.parse_args()
     import trimesh
     od = os.path.dirname(os.path.abspath(a.objekt)); FA = json.load(open(os.path.join(a.fassade, "fassaden.json")))["fassaden"]; os.makedirs(a.aus, exist_ok=True)
     KW, SD = os.path.join(a.kanten, "kam_wahl.json"), os.path.join(a.kanten, "stabil")
@@ -36,6 +36,16 @@ def main():
             for k, g in enumerate(F["gruppen"]):
                 E.append(dict(id=f"f{F['nr']:02d}_vb{k}", art="vorbau", fassade=F["id"], o=F["o"], d=F["d"], n=F["n"], w=round(float(F.get("w_wand", 0.0)) + float(g["koerper"]["w_median"]), 3),
                               w_wand=round(float(F.get("w_wand", 0.0)), 3), zone=[g["u0"] - 0.6, g["u1"] + 0.6, g["z0"] - 1.6, g["z1"] + 1.0], band=0.8))
+    # 21.11.2026 (Nutzer: "Ebenen in alle Richtungen, nicht nur in der Frontansicht, sondern von der Seite auch"): je Vorbau zwei SEITENEBENEN (senkrecht zur Wand, an den Enden des
+    # Vorbaus). In-Ebenen-Achse u' = Tiefe ab der Fassadenebene (Richtung n), Normale = -d (links) / +d (rechts). Dort stehen Ausladung, Strebenschraege und Dachprofil als Kanten.
+    if os.path.exists(vp) and a.seiten:
+        for F in json.load(open(vp)).get("fassaden", []):
+            o_ = np.array(F["o"], float); d_ = np.array(F["d"], float); n_ = np.array(F["n"], float); ww_ = float(F.get("w_wand", 0.0))
+            for k, g in enumerate(F["gruppen"]):
+                Kb = (g.get("kanten_mass") or {}).get("kasten") or g["koerper"]; aus_ = float((g.get("kanten_mass") or {}).get("ausladung") or g["koerper"]["w_median"])
+                for nm, ue, vz in (("li", Kb["u0"], -1.0), ("re", Kb["u1"], 1.0)):
+                    E.append(dict(id=f"f{F['nr']:02d}_vb{k}_{nm}", art="seite", fassade=F["id"], o=[float(x) for x in (o_ + ue * d_)], d=[float(x) for x in n_], n=[float(x) for x in (vz * d_)], w=0.0, w_wand=round(ww_, 3),
+                                  zone=[ww_ - 0.4, ww_ + aus_ + 1.6, g["z0"] - 2.2, g["z1"] + 1.5], band=0.5, u_kante=round(float(ue), 2)))
     if a.nur: E = [e for e in E if e["id"] in a.nur.split(",")]
     PY = sys.executable; n_ok = 0
     for e in E:

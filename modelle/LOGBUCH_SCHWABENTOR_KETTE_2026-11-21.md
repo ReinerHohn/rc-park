@@ -144,3 +144,11 @@ Lehre: Kanten messen genau, sind aber an glatten/gekachelten Flächen blind; die
 1. Kennzahl je Ebene = Fotokanten an Modellkante (genau) + Wolke an Modellfläche (grob). Ein Umbau wird nur ANGENOMMEN, wenn die Kennzahl seiner Ebene steigt und keine andere Ebene um mehr als 1 %-Punkt fällt; sonst verworfen (mit Grund im Verlauf).
 2. Je Runde der größte offene Fleck der Arbeitsliste. Ein Fleck, der zweimal ohne Gewinn bearbeitet wurde, wird „offen“ gemeldet (Fotolücke oder Methode fehlt), nicht endlos wiederholt.
 3. Ende: kein Fleck über der Mindestgröße ODER zwei Runden ohne Gewinn ODER Rundengrenze. Verlauf je Runde in `audit/ebenen_abweichung_verlauf.jsonl`.
+
+## Nachtrag ~02:45 - Nutzer: keine dichte Wolke um ihrer selbst willen; Ebenen in ALLE Richtungen (auch von der Seite)
+- Kein „fein“-Lauf der dichten Wolke gestartet (Nutzer: Verbesserung nur für Geschwindigkeit; Ziel sind Modellkanten, Maße, Bauplan). Wolke bleibt grobe Gegenprobe.
+- `ebenen_bauplan.py --seiten 1` (Standard): je Vorbau zwei Seitenebenen senkrecht zur Wand (Achse = Tiefe ab Fassadenebene, Normale ∓d). Probe Erker (`ebenen_seitentest/`, Bild `audit/erker_seitenriss_probe.jpg`):
+  - Echte Seitenebenen: nur 1710 / 1838 Kantenpunkte (16 % / 59 % auf der Ebene). URSACHE: die Fotos der Stadtseite schauen frontal die Straße entlang, die Seitenflächen des Erkers sieht kaum eine Kamera.
+  - Aber: Die Kantenpunkte sind 3D. Der SEITENRISS aller Kantenpunkte des Erkers (Tiefe gegen Höhe) zeigt, was die Frontansicht nicht hergibt: Streben verlassen die Wand bei z ≈ 8,4 und laufen schräg nach vorn (bei z ≈ 9,4 etwa 0,5 m vor der Wand); Pfosten stehen auf der Frontlinie (z 14,1-15,5); Traufkante liegt bei z ≈ 15,9-16,6 etwa 0,3 m VOR der Front (Dachüberstand messbar, bisher ANNAHME 0,25).
+  - Dachfläche weiterhin ohne Kanten.
+- Folgerung für die METHODE: „Ebenen in alle Richtungen“ = (a) Sweep-Ebenen auch senkrecht zur Wand, wo Kameras sie sehen, (b) immer zusätzlich Seitenriss und Grundriss der 3D-Kantenpunkte auswerten. Fotos von der Seite (schräg auf den Erker) würden die Seitenebenen füllen -> Fotoauftrag.
