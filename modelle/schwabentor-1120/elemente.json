@@ -372,6 +372,13 @@
   "seite_name": "wand"
  },
  {
+  "seite": "dach",
+  "element": "Dach als Schichtprofil ab z 37.0 m: Traufe halb 6.55 x 5.89 m (Wand 6.07 x 5.90), Neigung ~52.1 Grad, bis z 50.0 m",
+  "quelle": "dichte Wolke, 26 Scheiben je 0.5 m (tools/dach_profil_wolke.py); ersetzt das LoD2/Laser-Dach (bis 50.7 m)",
+  "hinweis": "ANNAHME: 18 von 104 Scheibenseiten ohne Wolke an der gemessenen Achse gespiegelt (Dachflaeche von keinem Foto gesehen); Stufen von 0.5 m statt glatter Flaeche; Spitze/Knauf ueber dem Wolkenende FEHLT; Dach voll",
+  "seite_name": "dach"
+ },
+ {
   "seite": "wand",
   "element": "Uhr f00 (Durchmesser 5.13 m)",
   "quelle": "Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze im feinen Wandbild (1 cm)",

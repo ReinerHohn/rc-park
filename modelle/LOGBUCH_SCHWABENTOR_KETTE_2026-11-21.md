@@ -197,3 +197,13 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 - Nebenbefund: 162 Nord-Bezugsbilder stehen unter 'fremd'.
 - WIEDER DASSELBE MUSTER: `tools/handy_masken.py` / `video_masken.py` (Masken fuer Personen/Fahrzeuge) gibt es, `iphone_sfm.py` uebergibt aber kein mask_path -> nicht in der Kette.
 - 10:22 Job `masken-martinstor-1121` (Batch 4): OOM-Rueckfaelle auf der 8-GB-Karte -> gestoppt, 10:24 neu als `...1121b` mit Batch 2. Danach: Merkmale in den Masken aus den Paaren nehmen, Seitenerkennung neu, Erwartung: Teil 0 zerfaellt in Sued und Nord.
+
+## Nachtrag 21.11. 10:40 - Dach als Schichtprofil der Wolke (Schwabentor) + Maskenfilter (Martinstor)
+- NEU `tools/dach_profil_wolke.py` -> `audit/dach_profil.json` -> `bauteile.dach_aus_profil` (Generator + Vorlage): je 0,5-m-Scheibe das Rechteck der Wolke im Fassadenrahmen, je SEITE getrennt; Modell ueber dem Dachbeginn abgetragen.
+  Fassung 1 (Perzentile ueber alle Punkte): Sued-Dachflaeche fehlt in der Wolke -> Profil wanderte auf die Nordflaeche. Fassung 2 (je Seite, 97. Perzentil): Rauschen blaehte das Dach auf, Dachlinie der Wolke lag IM Modell, Kennzahl fiel -> nach der Annahmeregel VERWORFEN.
+  Fassung 3 (aeusserste dichte Schale je Seite; Seite ohne Wolke an der gemessenen Achse gespiegelt = ANNAHME, 18 von 104 Scheibenseiten): Dachbeginn z 37,0, Ueberstand, Neigung ~52 Grad, Laternenkoerper bis z 50,0; Haufen am Dach (3098 Punkte) verschwunden.
+- Messung auf gleicher Basis (935 436 Wolkenpunkte im alten Kasten): an der Modellflaeche 625 356 (Stand nach der Schleife) -> 653 817 mit Treppenturm + Dach (+28 461; Prozentwerte sind zwischen Bauten nicht vergleichbar, weil der Kasten mit dem Modell waechst - `wolke_rest` gibt jetzt die Anzahl aus).
+- OFFEN Dach: Stufen statt glatter Flaeche, Spitze/Knauf ueber z 50 fehlt (Modell vorher 50,7), Traufzone z 37-39 unruhig, Sued-Dachflaeche ungesehen (Fotoauftrag), Kantenkennzahlen und Abnahme nicht neu gelaufen.
+- Martinstor: Masken fertig 10:38 (2042 Bilder, 763 s, im Mittel 12,6 % maskiert). NEU `tools/db_masken_filter.py`: 71 488 Paare, 39 453 gekuerzt, 6281 geloescht (35 s).
+  Aber: Bruecke Gruppe 36 bleibt fast gleich (zu Sued 66 -> 59 Paare, zu Nord 26 -> 22) -> die Paare haengen am HINTERGRUND; die Gruppe selbst ist GEMISCHT (Bilder von beiden Torseiten, vermutlich nur ueber die Person zu einer Gruppe geworden).
+  Pruefung: Seitenerkennung neu auf der gefilterten DB (Job `seiten-martinstor-1121c`, Start 10:40) - zerfaellt Gruppe 36 auf ihre Seiten?

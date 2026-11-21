@@ -304,6 +304,23 @@ def drehkoerper_aus_wolkenrest(koerper, datei, nseg=48):
     return koerper, belege
 
 
+def dach_aus_profil(koerper, datei):
+    """Dach als SCHICHTKOERPER aus tools/dach_profil_wolke.py (audit/dach_profil.json, 21.11.2026): je Hoehenscheibe das Rechteck der dichten Wolke im Fassadenrahmen (Ueberstand, Neigung,
+    Laternenkoerper ohne Musterteil). Das bisherige Modell wird ueber z0 abgetragen, die Scheiben werden als Huellen aufeinanderfolgender Rechtecke aufgesetzt; oben flach, wo die Wolke endet.
+    Seiten ohne Wolke sind im Profil an der gemessenen Achse gespiegelt (ANNAHME, im Beleg)."""
+    if not os.path.exists(datei): return koerper, []
+    D = json.load(open(datei)); P = D.get("scheiben") or []
+    if len(P) < 4 or D.get("angenommen") is False: return koerper, []
+    o = np.array(D["o"], float); d = np.array(D["d"], float); n = np.array(D["n"], float); dz = float(D.get("schritt", 0.5)); z0 = float(D["z0"])
+    R = lambda p, z: [[o[0] + u * d[0] + v * n[0], o[1] + u * d[1] + v * n[1], z] for u in (p[1], p[2]) for v in (p[3], p[4])]
+    lo, hi = koerper.bounding_box()[:3], koerper.bounding_box()[3:]; koerper = koerper - M.cube((hi[0] - lo[0] + 20, hi[1] - lo[1] + 20, hi[2] - z0 + 20)).translate((lo[0] - 10, lo[1] - 10, z0))
+    teile = [M.hull_points(R(a_, a_[0]) + R(b_, b_[0])) for a_, b_ in zip(P[:-1], P[1:])] + [M.hull_points(R(P[-1], P[-1][0]) + R(P[-1], P[-1][0] + dz))] + [M.hull_points(R(P[0], z0 - 0.02) + R(P[0], P[0][0]))]
+    koerper = koerper + M.batch_boolean(teile, OpType.Add); ann = sum(len(p[6]) for p in P if len(p) > 6)
+    return koerper, [dict(seite="dach", element=f"Dach als Schichtprofil ab z {z0:.1f} m: Traufe halb {(P[0][2] - P[0][1]) / 2:.2f} x {(P[0][4] - P[0][3]) / 2:.2f} m (Wand {D['wand_halb'][0]:.2f} x {D['wand_halb'][1]:.2f}), Neigung ~{D.get('neigung_grad')} Grad, bis z {P[-1][0] + dz:.1f} m",
+                          quelle=f"dichte Wolke, {len(P)} Scheiben je {dz} m (tools/dach_profil_wolke.py); ersetzt das LoD2/Laser-Dach (bis {D.get('modell_hoehe_vorher', 0):.1f} m)",
+                          hinweis=f"ANNAHME: {ann} von {4 * len(P)} Scheibenseiten ohne Wolke an der gemessenen Achse gespiegelt (Dachflaeche von keinem Foto gesehen); Stufen von {dz} m statt glatter Flaeche; Spitze/Knauf ueber dem Wolkenende FEHLT; Dach voll")]
+
+
 def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):      # 21.11.2026: Katalog-Ziffern/Zeiger aus (Nutzer: kein Baukasten) - nur die gemessenen Kreise
     """Turmuhren aus tools/uhren_wandbild.py (audit/uhren_auto.json, Kettenstufe 'bauplan', 21.11.2026; vorher nur Hand-Generator schwab_v3/martinstor_v4).
     Gemessen: Mitte, Aussen- und (falls belegt) Innendurchmesser im feinen Wandbild. Ring bis w_ring vor der Wandebene, Innenfeld bis w_feld (ANNAHME 10 / 6 cm wie schwab_v3);

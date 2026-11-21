@@ -30,7 +30,7 @@ def main():
     objp = os.path.abspath(a.objekt); od = os.path.dirname(objp); obj = json.load(open(objp)); stl = a.stl or os.path.join(ROOT, obj["stl"]); m = trimesh.load(stl); m.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0)
     S = np.asarray(m.sample(1500000), np.float32); lo, hi = S.min(0), S.max(0); W = np.asarray(np.load(a.wolke, mmap_mode="r")[::a.jeder, :3], np.float32)
     ok = np.all((W > lo - a.weit) & (W < hi + a.weit), 1) & (W[:, 2] > lo[2] + a.boden); W = W[ok]; d, _ = cKDTree(S).query(W, workers=-1); R = W[(d > a.fern) & (d < a.weit)]; dR = d[(d > a.fern) & (d < a.weit)]
-    print(f"Wolke im Kasten: {len(W)} Punkte, an der Modellflaeche (<= {a.fern} m): {(d <= a.fern).mean() * 100:.0f} %, Rest bis {a.weit} m: {len(R)}")
+    print(f"Wolke im Kasten: {len(W)} Punkte, an der Modellflaeche (<= {a.fern} m): {int((d <= a.fern).sum())} = {(d <= a.fern).mean() * 100:.1f} % (Vergleich zwischen Bauten ueber die ANZAHL: der Kasten waechst mit dem Modell), Rest bis {a.weit} m: {len(R)}")
     g0 = R.min(0); I = ((R - g0) / a.zelle).astype(int); G = np.zeros(I.max(0) + 1, np.int32); np.add.at(G, tuple(I.T), 1); L, n = ndimage.label(G >= 3, structure=np.ones((3, 3, 3))); lab = L[tuple(I.T)]; H = []
     for k in range(1, n + 1):
         s = lab == k
@@ -56,7 +56,7 @@ def main():
         h["id"] = f"r{i:02d}"; k = h["kasten"]
         print(f"{h['id']}: {h['punkte']:6d} Punkte  x {k[0]:.1f}..{k[3]:.1f}  y {k[1]:.1f}..{k[4]:.1f}  z {k[2]:.1f}..{k[5]:.1f}  Abstand Median {h['abstand_median']} / 95 % {h['abstand_max']} m  Form: {h['form']}"
               + (f" (Kreis r {h['kreis']['r']} m, Rest {h['kreis']['rest']} m)" if h["kreis"] else ""))
-    A = os.path.join(od, "audit"); os.makedirs(A, exist_ok=True); json.dump(dict(quelle="tools/wolke_rest.py", stl=os.path.relpath(stl, ROOT), wolke=a.wolke, fern=a.fern, an_flaeche=round(float((d <= a.fern).mean()), 3), haufen=H),
+    A = os.path.join(od, "audit"); os.makedirs(A, exist_ok=True); json.dump(dict(quelle="tools/wolke_rest.py", stl=os.path.relpath(stl, ROOT), wolke=a.wolke, fern=a.fern, an_flaeche=round(float((d <= a.fern).mean()), 3), an_flaeche_punkte=int((d <= a.fern).sum()), haufen=H),
                                                                             open(os.path.join(A, "wolke_rest.json"), "w"), indent=1)
     if a.uebernehmen:                                                                         # gefundene Koerper DAUERHAFT ablegen: nach dem Bau liegt der Haufen am Modell und verschwindet aus dem Rest
         kp = os.path.join(A, "koerper_auto.json"); K = json.load(open(kp)).get("haufen", []) if os.path.exists(kp) else []
