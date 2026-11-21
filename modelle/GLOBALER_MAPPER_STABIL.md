@@ -168,3 +168,14 @@ Kosten: 2 x globaler Lauf + Stufe 2 (~5-10 min) = ~25-35 min Martinstor statt > 
 - Einzelversuche: `/media/oem/rcdaten/tmp/globmap/sparse_*` (Martinstor), `/media/oem/rcdaten/tmp/globmap/schwab/sparse_s*` (Schwabentor); Draufsichten `draufsicht_*.png`.
 - Geaenderte Werkzeuge (nicht committet, Auftrag Nutzer): `tools/iphone_sfm.py` (`--mapper konsens`), `tools/schnelltest.sh` (Test Konsens-Schnitt). Neue Werkzeuge committet.
 - Offen: Kette (`gesamtkette.py`/`pipeline_objekt.py`) reicht `--mapper` nicht an `iphone_sfm.py` durch (Aufruf ohne Mapper-Argument, pipeline_objekt.py:142); fuer den Einsatz in der Kette einen Schalter `RCPARK_MAPPER=konsens` oder ein Kettenargument nachziehen (nicht umgesetzt, Standard unveraendert).
+
+## Untersuchung 21.11.2026 (Nutzer: "untersuche tief, warum der globale Mapper gescheitert ist ... groesster Hebel") - laufend
+Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen --masken --streng`), Messwerkzeug `tools/modell_lage_vergleich.py` (RANSAC-Ausgleich, Abweichung je Bildquelle).
+- 12:23 Job `mt_global_gefiltert_1121` (tools/versuche/mt_global_gefiltert_1121.sh): globaler Mapper je Seite auf der gefilterten DB, je zwei Laeufe.
+- SUED (102 Bilder, je 130 s statt 81 s schrittweise): beide globalen Laeufe 101 Bilder. Lauf a gegen b: 92 von 101 Bildern auf <= 1 % der Szene gleich, Median 0,04 %, 8 Bilder > 2 % (alle Einzelfotos).
+  Global gegen schrittweise (gleiche DB): 74-77 von 99 auf <= 1 %, 20-22 Bilder > 2 % - fast nur Einzelfotos (eigen 14, fotos 3-5), Videobilder 0; Brennweite der Einzelfotos 2,4-6,4 % anders.
+  Schrittweise 21.11. gegen schrittweise 19.11.: 12 von 43 > 2 % (eigen 11), Brennweite 5,5 % anders -> die Einzelfoto-Streuung ist KEINE Eigenheit des globalen Mappers.
+- ALTE globale Laeufe (ungefiltert, 19./20.11.) mit dem neuen Werkzeug gegen den Nord-Bezug: var_sift 46 von 377 > 2 % (Median 0,32 %), var_sift_w 42/366 (0,24 %), var_flexglue 52/371 (0,49 %), var_flexglue_w 69/370 (0,65 %).
+  Am 20.11. hiess es fuer flexglue_w "VERFORMT, Median 2,48 %, 358 Kameras > 2 %" - das war der NICHT robuste Ausgleich ueber alle Kameras (Ausreisser ziehen die Abbildung). Robust ausgeglichen ist der Lauf nicht verformt.
+- MESSFEHLER des neuen Werkzeugs, 1. Fassung: Ausgleich ueber "die besten 60 %" = Videobilder auf einer Geraden -> Drehung um die Fahrtlinie unbestimmt, scheinbar 12-14 % Abweichung. Jetzt RANSAC ueber Vierergruppen.
+- OFFEN: Nord (538 Bilder) global a/b gegen schrittweise; Vereinen aus den gefilterten globalen Stuecken; Ursache der Einzelfoto-Streuung (freie Brennweite je Foto, 231 von 286 Fotos ohne EXIF-Brennweite).
