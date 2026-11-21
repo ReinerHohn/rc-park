@@ -45,7 +45,7 @@ def main():
     if nur_gen and os.path.exists(gp):
         alt = open(gp).read()
         if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 90: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
-        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt and "vorbauten_aus_json" in alt and "uhren_aus_json" in alt and "korrekturen_aus_json" in alt and "drehkoerper_aus_wolkenrest" in alt and "dach_aus_profil" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt and "vorbauten_aus_json" in alt and "uhren_aus_json" in alt and "korrekturen_aus_json" in alt and "wolkenrest_koerper" in alt and "dach_aus_profil" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
         import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
@@ -109,8 +109,8 @@ if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundris
         from bauteile import vorbauten_aus_json
         koerper, bel_v = vorbauten_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "vorbauten_auto.json"))
         for b_ in bel_v: beleg(**b_)
-        from bauteile import drehkoerper_aus_wolkenrest   # 21.11.2026: runde Anbauten (Treppenturm) aus dem Rest der dichten Wolke (tools/wolke_rest.py --uebernehmen -> audit/koerper_auto.json)
-        koerper, bel_d = drehkoerper_aus_wolkenrest(koerper, os.path.join(HERE, "{ob}", "audit", "koerper_auto.json"))
+        from bauteile import wolkenrest_koerper           # 21.11.2026: Koerper aus dem Rest der dichten Wolke (rund, Kasten, Ring/Band, Stab; tools/koerper_schleife.py -> audit/koerper_auto.json, nur angenommene)
+        koerper, bel_d = wolkenrest_koerper(koerper, os.path.join(HERE, "{ob}", "audit", "koerper_auto.json"))
         for b_ in bel_d: beleg(**b_)
         from bauteile import dach_aus_profil               # 21.11.2026: Dach mit Ueberstand/Laternenkoerper als Schichtprofil der dichten Wolke (tools/dach_profil_wolke.py -> audit/dach_profil.json)
         koerper, bel_p = dach_aus_profil(koerper, os.path.join(HERE, "{ob}", "audit", "dach_profil.json"))

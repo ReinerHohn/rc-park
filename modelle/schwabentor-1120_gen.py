@@ -59,8 +59,8 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         from bauteile import vorbauten_aus_json
         koerper, bel_v = vorbauten_aus_json(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "vorbauten_auto.json"))
         for b_ in bel_v: beleg(**b_)
-        from bauteile import drehkoerper_aus_wolkenrest   # 21.11.2026: runde Anbauten (Treppenturm) aus dem Rest der dichten Wolke (tools/wolke_rest.py --uebernehmen -> audit/koerper_auto.json)
-        koerper, bel_d = drehkoerper_aus_wolkenrest(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "koerper_auto.json"))
+        from bauteile import wolkenrest_koerper           # 21.11.2026: Koerper aus dem Rest der dichten Wolke (rund, Kasten, Ring/Band, Stab; tools/koerper_schleife.py -> audit/koerper_auto.json, nur angenommene)
+        koerper, bel_d = wolkenrest_koerper(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "koerper_auto.json"))
         for b_ in bel_d: beleg(**b_)
         from bauteile import dach_aus_profil               # 21.11.2026: Dach mit Ueberstand/Laternenkoerper als Schichtprofil der dichten Wolke (tools/dach_profil_wolke.py -> audit/dach_profil.json)
         koerper, bel_p = dach_aus_profil(koerper, os.path.join(HERE, "schwabentor-1120", "audit", "dach_profil.json"))

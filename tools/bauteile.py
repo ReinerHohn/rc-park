@@ -1374,3 +1374,82 @@ def netz_druckbar(V, F, zelle_m, vol_min=0.90, vol_max=1.00, sigma=0.5, max_unsi
             return np.asarray(t.vertices, float), np.asarray(t.faces, int), info
         info["anteil"] = round(float(r), 4)
     info["grund"] = f"Netz unter Druckaufloesung (letzter Versuch: Volumen {info.get('anteil', 0):.0%} ausserhalb {vol_min:.0%}-{vol_max:.0%} oder nicht wasserdicht nach Verschweissen: {info.get('grund', '')})"; return None, None, info
+
+
+# --- 21.11.2026: Koerper aus dem Rest der dichten Wolke (tools/wolke_rest.py -> audit/koerper_auto.json, Annahme je Kandidat durch tools/koerper_schleife.py) ---------------------------------
+def _wolkenrest_haufen(datei, formen):
+    """Eintraege der Formen aus koerper_auto.json, ohne verworfene (angenommen == false) und ohne solche ohne Masse."""
+    if not os.path.exists(datei): return []
+    return [H for H in json.load(open(datei)).get("haufen", []) if H.get("form") in formen and H.get("angenommen") is not False and H.get("mass")]
+
+
+def kastenkoerper_aus_wolkenrest(koerper, datei):
+    """Quader an einer Wand (Anbau, Erker, Risalit) aus tools/wolke_rest.py, Form 'kasten': Wandrahmen o/d/n aus der Normale der naechsten Modellflaeche, Aussenflaechen = Ebenen-Fit der
+    Wolkenpunkte (u0/u1 Seiten, w1 Front, z0/z1). Gebaut wird von 5 cm hinter der Wandflaeche (w0) bis zur Front; 'bis_boden': bis z 0 (Wolke am Boden abgeschnitten). Kein Musterteil:
+    nur der gemessene Quader - Dach, Gliederung, Oeffnungen kommen aus Fotokanten auf seinen Ebenen. Guard: jede Kante >= 0,2 m, sonst nicht gebaut (Beleg)."""
+    belege = []
+    for H in _wolkenrest_haufen(datei, ("kasten",)):
+        m = H["mass"]; o = np.array(m["o"], float); d = np.array(m["d"], float); n = np.array(m["n"], float); z0 = 0.0 if m.get("bis_boden") else float(m["z0"]); w0 = float(m["w0"]) - 0.05
+        if min(m["u1"] - m["u0"], m["w1"] - w0, m["z1"] - z0) < 0.2:
+            belege.append(dict(seite="wand", element=f"Kasten {H.get('id', '')} NICHT gebaut (Kante < 0,2 m)", quelle="tools/wolke_rest.py; Gueltigkeits-Guard bauteile.kastenkoerper_aus_wolkenrest")); continue
+        koerper = koerper + M.hull_points([[o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z] for u in (m["u0"], m["u1"]) for w in (w0, m["w1"]) for z in (z0, m["z1"])])
+        ohne = [k for k, v in (m.get("flaechen") or {}).items() if v < 0.03]
+        belege.append(dict(seite="wand", element=f"Kasten {H.get('id', '')}: breit {m['u1'] - m['u0']:.2f} m, {m['w1'] - m['w0']:.2f} m vor der Wand, z {z0:.2f}..{m['z1']:.2f} m (Mitte x {o[0] + 0.5 * (m['u0'] + m['u1']) * d[0]:.2f} y {o[1] + 0.5 * (m['u0'] + m['u1']) * d[1]:.2f})",
+                           quelle=f"dichte Wolke: Rest am Modell ({H['punkte']} Punkte), Punkte liegen im Median {m['rest']} m an den Aussenflaechen des Quaders, Front {m.get('winkel_front')} Grad zur Wand (tools/wolke_rest.py)",
+                           hinweis="ANNAHME: Quader (oben flach, keine Gliederung, voll)" + (", bis zum Boden verlaengert (Wolke unter 1 m abgeschnitten)" if m.get("bis_boden") else "") + (f"; Flaechen ohne Wolkenpunkte: {', '.join(ohne)} (Lage aus dem Rand der uebrigen Punkte)" if ohne else "") + "; Masse aus Fotokanten nachmessen (offen)"))
+    return koerper, belege
+
+
+def ringkoerper_aus_wolkenrest(koerper, datei):
+    """Umlaufende oder einseitige Auskragung auf einer Hoehe (Gesims, Umgang, Dachueberstand) aus tools/wolke_rest.py, Formen 'ring' / 'band': der QUERSCHNITT DES MODELLS in der Hoehenmitte
+    des Haufens wird um die gemessene Ausladung nach aussen versetzt und von z0 bis z1 ausgezogen (folgt jedem Grundriss, kein Musterprofil). Gebaut wird nur, wo die Wolke den Koerper zeigt:
+    'ring' in den belegten 15-Grad-Sektoren (+ je ein Nachbarsektor), 'band' im Grundriss-Rechteck des Haufens (+ 0,1 m). Fensternischen im Querschnitt werden mit 0,5 m geschlossen
+    (sonst folgte der Ring jeder Nische). Guard: leerer Querschnitt oder Ausladung < 5 cm -> nicht gebaut (Beleg)."""
+    belege = []
+    for H in _wolkenrest_haufen(datei, ("ring", "band")):
+        m = H["mass"]; z0, z1, a_ = float(m["z0"]), float(m["z1"]), float(m["ausladung"]); cs = koerper.slice(0.5 * (z0 + z1)); name = "Ring" if H["form"] == "ring" else "Band"
+        if not cs.is_empty(): cs = CrossSection([p for p in cs.to_polygons() if len(p) >= 3 and CrossSection([p]).area() > 0.01])      # nur Aussenumrisse (Hohlraeume der Schale zaehlen nicht)
+        if cs.is_empty() or a_ < 0.05 or z1 - z0 < 0.05:
+            belege.append(dict(seite="wand", element=f"{name} {H.get('id', '')} NICHT gebaut (kein Modellquerschnitt bei z {0.5 * (z0 + z1):.2f} m oder Ausladung/Hoehe < 5 cm)", quelle="tools/wolke_rest.py; Gueltigkeits-Guard bauteile.ringkoerper_aus_wolkenrest")); continue
+        cs = cs.offset(0.5, JoinType.Miter, 2.0).offset(-0.5, JoinType.Miter, 2.0); ring = cs.offset(a_, JoinType.Miter, 2.0) - cs.offset(-0.05, JoinType.Miter, 2.0); c = np.array(m["c"], float)
+        if H["form"] == "band" or not m.get("sektoren"):
+            g = m.get("grenzen") or [c[0] - 1e3, c[1] - 1e3, c[0] + 1e3, c[1] + 1e3]; ring = ring ^ CrossSection([[[g[0] - 0.1, g[1] - 0.1], [g[2] + 0.1, g[1] - 0.1], [g[2] + 0.1, g[3] + 0.1], [g[0] - 0.1, g[3] + 0.1]]]); wo = f"im Rechteck x {g[0]:.1f}..{g[2]:.1f} y {g[1]:.1f}..{g[3]:.1f}"
+        else:
+            S_ = m["sektoren"]; ns = len(S_); an = [bool(S_[i] or S_[(i - 1) % ns] or S_[(i + 1) % ns]) for i in range(ns)]; b = koerper.bounding_box(); R_ = float(np.hypot(b[3] - b[0], b[4] - b[1])) + a_ + 5.0
+            if not all(an):
+                keile = [CrossSection([[[c[0], c[1]]] + [[c[0] + R_ * math.cos(w), c[1] + R_ * math.sin(w)] for w in np.linspace(-math.pi + i * 2 * math.pi / ns - 0.01, -math.pi + (i + 1) * 2 * math.pi / ns + 0.01, 4)]]) for i in range(ns) if an[i]]
+                ring = ring ^ CrossSection.batch_boolean(keile, OpType.Add)
+            wo = f"{sum(S_)} von {ns} Sektoren belegt, {sum(an)} gebaut"
+        if ring.is_empty():
+            belege.append(dict(seite="wand", element=f"{name} {H.get('id', '')} NICHT gebaut (leer nach Beschnitt)", quelle="tools/wolke_rest.py; Gueltigkeits-Guard bauteile.ringkoerper_aus_wolkenrest")); continue
+        koerper = koerper + M.extrude(ring, z1 - z0).translate((0, 0, z0))
+        belege.append(dict(seite="wand", element=f"{name} {H.get('id', '')}: z {z0:.2f}..{z1:.2f} m, Ausladung {a_:.2f} m vor dem Modellquerschnitt, {wo}",
+                           quelle=f"dichte Wolke: Rest am Modell ({H['punkte']} Punkte), Ausladung = Median der aeusseren Punkte je Sektor, Streuung {m['rest']} m (tools/wolke_rest.py)",
+                           hinweis="ANNAHME: Rechteckprofil (kein Gesimsprofil, Unterseite waagrecht), voll; nur gebaut, wo die Wolke Punkte hat - uebrige Seiten FEHLEN (nicht gespiegelt); Profil/Hoehen aus Fotokanten nachmessen (offen)"))
+    return koerper, belege
+
+
+def stabkoerper_aus_wolkenrest(koerper, datei, nseg=16):
+    """Schlanker hoher Koerper (Stange, Fiale, Schornstein, Helmstange) aus tools/wolke_rest.py, Form 'stab': lotrechte Achse (x, y), gemessenes Radiusprofil r(z) in 0,25-m-Scheiben
+    als Kegelstuempfe. Unten um 0,4 m bis an das Modell verlaengert (Wolke naeher als 0,35 m am Modell zaehlt nicht zum Rest). Guard: Radius mindestens das halbe Druck-Mindestmass
+    (MINMM x SCALE, Vorgabe 0,8 mm x 87 = 3,5 cm) - duennere Staebe waeren nicht druckbar (im Beleg)."""
+    belege = []; rmin = 0.5 * float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
+    for H in _wolkenrest_haufen(datei, ("stab",)):
+        m = H["mass"]; P = [[float(z), max(float(r), rmin)] for z, r, _ in (m.get("profil") or [])]; x, y = float(m["x"]), float(m["y"])
+        if len(P) < 2: P = [[float(m["z0"]), max(float(m["r"]), rmin)], [float(m["z1"]), max(float(m["r"]), rmin)]]
+        z_u = max(float(m["z0"]) - 0.4, 0.0); teile = [M.cylinder(P[0][0] - z_u + 0.005, P[0][1], P[0][1], nseg).translate((x, y, z_u))]
+        for (za, ra), (zb, rb) in zip(P[:-1], P[1:]): teile.append(M.cylinder(zb - za + 0.005, ra, rb, nseg).translate((x, y, za)))
+        teile.append(M.cylinder(max(float(m["z1"]) - P[-1][0], 0.02), P[-1][1], P[-1][1], nseg).translate((x, y, P[-1][0]))); koerper = koerper + M.batch_boolean(teile, OpType.Add)
+        belege.append(dict(seite="wand", element=f"Stab {H.get('id', '')} bei x {x:.2f} y {y:.2f}: z {z_u:.2f}..{float(m['z1']):.2f} m, Radius {float(np.median([p[1] for p in P])):.2f} m",
+                           quelle=f"dichte Wolke: Rest am Modell ({H['punkte']} Punkte), Achse = Ausgleichsgerade, Radius = mittlerer Achsabstand je 0,25-m-Scheibe, Streuung {m['rest']} m, Neigung {m.get('neigung_grad')} Grad (tools/wolke_rest.py)",
+                           hinweis="ANNAHME: runder Querschnitt, lotrecht, voll, unten 0,4 m bis an das Modell verlaengert" + (f"; Radius auf Druck-Mindestmass {rmin:.3f} m angehoben (gemessen {m['r']} m)" if float(m["r"]) < rmin else "") + "; Kopf/Knauf nur, soweit die Wolke ihn zeigt"))
+    return koerper, belege
+
+
+def wolkenrest_koerper(koerper, datei, nseg=48):
+    """SAMMELAUFRUF fuer den Generator (eine Zeile): alle Koerper aus audit/koerper_auto.json (tools/wolke_rest.py, angenommen/verworfen durch tools/koerper_schleife.py) -
+    Ring/Band zuerst (Querschnitt des Modells OHNE die uebrigen Wolkenkoerper), dann rund (drehkoerper_aus_wolkenrest), Kasten, Stab. Liefert (koerper, belege)."""
+    belege = []
+    for f in (ringkoerper_aus_wolkenrest, lambda k, d: drehkoerper_aus_wolkenrest(k, d, nseg), kastenkoerper_aus_wolkenrest, stabkoerper_aus_wolkenrest):
+        koerper, b = f(koerper, datei); belege += b
+    return koerper, belege
