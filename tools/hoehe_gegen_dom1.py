@@ -8,6 +8,9 @@ Pixel, Median). Nur FLAECHEN-Pixel zaehlen: Laser > zmin, Modell getroffen, und 
 weg (Laser ist fuer duenne Bauteile blind). Ausgabe: Median Modell - Laser, Streuung, und der Massstab k = Median(Laser / Modell), um den die Hoehen
 (bei einheitlichem Massstabsfehler: der ganze Rahmen, tools/ausrichtung_massstab_korrigieren.py) zu aendern waeren. rc 3, wenn |Median| > tol.
 Schreibt audit/hoehe_gegen_dom1.json. STL im Rahmen (zentrierung 'achse').
+VORSICHT k (Lehre Schwabentor-1120 21.11.2026: +1,62 m / k 0,9605 sah aus wie 3,5 % Hoehenmassstab, war aber ein 1-1,3 m je Seite zu breites Wolken-Dachprofil):
+auf steilen Daechern ist "zu breit" von "zu hoch" auf Dachpixeln nicht zu trennen. Massstab erst, wenn auch Traufe/Wandoberkante (LoD2-Traufe, Wolken-Wandende)
+und Grundriss abweichen; sonst Dachform (tools/dach_profil_wolke.py, DOM1-Veto) pruefen.
 """
 import sys, os, json, argparse, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -52,7 +55,8 @@ def main():
     d = (Mo - L)[ok]; k = float(np.median((L / Mo)[ok])); med0 = float(np.median(d)); mad0 = float(np.median(np.abs(d - med0)))
     mad, vdx, vdy, med, _ = best if best else (mad0, 0.0, 0.0, med0, 0); k = float(np.median(Lk) / (np.median(Lk) + med))
     res = dict(werkzeug="hoehe_gegen_dom1.py", pixel=n, median_modell_minus_laser_m=round(med, 2), streuung_mad_m=round(mad, 2), p10_p90=[round(float(v), 2) for v in np.percentile(d, [10, 90])],
-               massstab_k=round(k, 4), versatz_modell_xy_m=[float(vdx), float(vdy)], median_ohne_versatz_m=round(med0, 2), hoehen_laser=[round(float(v), 1) for v in np.percentile(L[ok], [10, 50, 90])], tol_m=a.tol)
+               massstab_k=round(k, 4), versatz_modell_xy_m=[float(vdx), float(vdy)], median_ohne_versatz_m=round(med0, 2), hoehen_laser=[round(float(v), 1) for v in np.percentile(L[ok], [10, 50, 90])], tol_m=a.tol,
+               k_hinweis="k ist nur dann ein Massstab, wenn auch Traufe und Grundriss abweichen; auf steilen Daechern zuerst Dachbreite pruefen (dach_profil_wolke DOM1-Veto)")
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(res, open(os.path.join(od, "audit", "hoehe_gegen_dom1.json"), "w"), indent=1)
     print(f"HOEHEN-TOR: {n} Flaechenpixel (Laser {res['hoehen_laser'][0]}-{res['hoehen_laser'][2]} m): Modell - Laser Median {med:+.2f} m (MAD {mad:.2f}) beim Lageversatz des Modells ({vdx:+.2f}, {vdy:+.2f}) m; ohne Versatz {med0:+.2f}; Massstab k {k:.4f}"
           + ("  -> NICHT BESTANDEN" if abs(med) > a.tol else "  -> bestanden"))
