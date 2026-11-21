@@ -208,9 +208,45 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
                 continue
             ab, zu = W.fenster(f["u0"], f["u1"], f["z0"], f["z1"], 0.0, tiefe=tiefe, teiler=f.get("teiler", ()), kaempfer=f.get("kaempfer"), sprossen=f.get("sprossen", ())); koerper = koerper - ab + zu; n_ += 1
             formen["rechteck (Form nicht gemessen)"] = formen.get("rechteck (Form nicht gemessen)", 0) + 1
+        # 21.11.2026 spaet (Schwabentor f00: Leiste unter den Rundbogennischen fehlte): gemessene Sohlbaenke (tools/sohlbank_aus_fotos.py) NACH allen Schnitten anbauen
+        sb_ = [f["sohlbank"] for f in F["fenster"] if f.get("sohlbank") and f.get("stimmen_min", 0) >= min(min_stimmen, 2)]; n_sb = 0
+        for S_ in sb_:
+            k_neu, v_ = sohlbank(koerper, W, S_, DRUCK_MIN); ann += v_
+            if k_neu is not koerper: koerper = k_neu; n_sb += 1
+        if n_sb: belege.append(dict(seite="wand", element=f"{n_sb} Sohlbank/Sohlbaenke Fassade {fid} (aus Fotos gemessen)", quelle="tools/sohlbank_aus_fotos.py: " + "; ".join(str(S_.get("quelle", "")) for S_ in sb_[:2]),
+                                    masse=[{k: S_.get(k) for k in ("u0", "u1", "z0", "z1", "auskragung", "auskragung_streuung", "fotos")} for S_ in sb_], hinweis="Rueckseite in der gemessenen Koerperflaeche (bauteile.sohlbank)"))
         if n_: belege.append(dict(seite="wand", element=f"{n_} Fenster Fassade {fid} (automatisch erkannt)", formen=formen, **({"annahmen": "ANNAHME: " + "; ".join(ann)} if ann else {}), quelle="OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
                                   hinweis="ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME"))
     return koerper, belege
+
+
+def flaeche_w(koerper, W, u, z, w_aussen=1.0, w_innen=-1.0, schritt=0.002, halb=0.05):
+    """Lage der Koerperflaeche vor der Wandebene W an (u, z): aeusserste Tiefe w, bei der ein Stab (2*halb breit/hoch) von w bis w_aussen den Koerper trifft
+    (Halbierung, wie fassaden_kette.koerper_flaeche). None, wenn bis w_innen nichts getroffen wird (Loch, Oeffnung)."""
+    def trifft(w): return (koerper ^ W.kasten(u - halb, u + halb, z - halb, z + halb, w, w_aussen)).volume() > 1e-7
+    if trifft(w_aussen - schritt) or not trifft(w_innen): return None
+    lo, hi = w_innen, w_aussen
+    while hi - lo > schritt:
+        m_ = 0.5 * (lo + hi)
+        if trifft(m_): lo = m_
+        else: hi = m_
+    return lo
+
+
+def sohlbank(koerper, W, sb, druck_min=None, einbinden=0.10):
+    """SOHLBANK (vorspringende Leiste unter Fenster/Nische, 21.11.2026; Masse aus tools/sohlbank_aus_fotos.py: u0, u1, z0, z1, auskragung).
+    Die Rueckseite sitzt 'einbinden' m IN der gemessenen Koerperflaeche (Stab-Sonde je 3 Stellen 0,15 m unter der Sohlbank - das Relief liegt nicht immer in der
+    Fassadenebene), die Vorderkante 'auskragung' davor. Hoehe und Auskragung mindestens Druckmindestmass (MINMM x SCALE), sonst ANNAHME-Vermerk.
+    Liefert (koerper, vermerke); ohne getroffene Flaeche unveraendert (nichts schwebend anbauen)."""
+    if druck_min is None: druck_min = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
+    u0, u1, z0, z1, d = float(sb["u0"]), float(sb["u1"]), float(sb["z0"]), float(sb["z1"]), float(sb["auskragung"]); ann = []
+    if u1 - u0 < druck_min or d <= 0: return koerper, [f"Sohlbank u {u0:.2f}: unbrauchbar (Laenge {u1 - u0:.2f}, Auskragung {d:.3f})"]
+    ws = [w for w in (flaeche_w(koerper, W, u0 + f * (u1 - u0), z0 - 0.15) for f in (0.2, 0.5, 0.8)) if w is not None]
+    if not ws: return koerper, [f"Sohlbank u {u0:.2f}..{u1:.2f}: keine Wandflaeche unter der Sohlbank getroffen - nicht gebaut"]
+    wf = float(np.median(ws))
+    if d < druck_min: ann.append(f"Sohlbank u {u0:.2f}: Auskragung {d:.3f} -> {druck_min:.3f} m (Druckmindestmass)"); d = druck_min
+    if z1 - z0 < druck_min: ann.append(f"Sohlbank u {u0:.2f}: Hoehe {z1 - z0:.3f} -> {druck_min:.3f} m (Druckmindestmass, nach unten)"); z0 = z1 - druck_min
+    return koerper + W.kasten(u0, u1, z0, z1, wf - einbinden, wf + d), ann
 
 
 def _umriss_prisma(W, o, unten, w0, w1):

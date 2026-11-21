@@ -318,6 +318,11 @@ def quadern(f, objekt_json, Z_basis, art, ecken=(False, False)):
     if art == "foto": kw["nur_in"] = np.asarray(Zf["rel"]) > (float(Zf["putz_niveau_m"]) if "putz_niveau_m" in Zf.files else 0.0) + 0.01
     if art == "wand": kw["zone_unten"] = True
     if any(ecken): kw["rand_ecke"] = tuple(ecken)                         # Eckquader am Gebaeudeende: Bloecke mit gemessener Hoehe/Laenge
+    oa_ = os.path.join(od, "audit", "oeffnungen_auto.json")                # 21.11.2026 spaet: Boegen (Form/Lage aus Wandbild-Kanten) -> Keilsteine mit radialen Fugen
+    if os.path.exists(oa_) and os.environ.get("OHNE_KEILSTEINE") != "1":
+        try: kw["boegen"] = {fid: [x for x in F_.get("oeffnungen", []) if x.get("form", "gerade") != "gerade" and all(k in x for k in ("u", "breite", "kaempfer", "scheitel"))]
+                             for fid, F_ in json.load(open(oa_)).items() if isinstance(F_, dict)}
+        except Exception as e: print(f"    quader_raster: oeffnungen_auto.json nicht lesbar ({type(e).__name__}) - ohne Keilsteine", flush=True)
     try: p, info = quader_datei(f, ffn, **kw)
     except Exception as e: print(f"    quader_raster {os.path.basename(f)}: FEHLER {type(e).__name__}: {str(e)[:160]} - Relief unveraendert", flush=True); return f, None
     if p != f: print(f"    quader_raster {os.path.basename(f)}: {info.get('relief_steine')} Steine, Rillen {info.get('relief_rille_mm')} mm, Bild {os.path.basename(p)[:-4]}.jpg", flush=True)
@@ -424,7 +429,7 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
         for nm_, qi_ in qbel:
             if qi_: belege.append(dict(seite="wand", element=f"Quaderraster {nm_} Fassade {w['name']}: {qi_.get('relief_steine')} Steine eben, Rillen {qi_.get('relief_rille_mm')} mm (Breite, Tiefe H0)",
                                        quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
-                                       lagen_m=qi_.get("lagen_m", [])[:40], eckquader={k_: {kk: v_ for kk, v_ in e_.items() if kk != "bloecke"} | dict(n=len(e_.get("bloecke", []))) for k_, e_ in (qi_.get("eckquader") or {}).items()}, front_p5_p95_m=qi_.get("relief_front_p5_p95_m"), verworfen=qi_.get("verworfen"),
+                                       lagen_m=qi_.get("lagen_m", [])[:40], keilsteine=[{k_: v_ for k_, v_ in x_.items() if k_ not in ("ruecken_je_stein", "bogenbreite_je_stein_m")} for x_ in (qi_.get("keilsteine") or [])], eckquader={k_: {kk: v_ for kk, v_ in e_.items() if kk != "bloecke"} | dict(n=len(e_.get("bloecke", []))) for k_, e_ in (qi_.get("eckquader") or {}).items()}, front_p5_p95_m=qi_.get("relief_front_p5_p95_m"), verworfen=qi_.get("verworfen"),
                                        hinweis="ANNAHME: Rillenbreite/-tiefe = Druckmass (MINMM x SCALE), echte Fugen 1-3 cm; Stirnflaeche eben (Bossen nicht gemessen); Bild relief/<datei>_q.jpg ansehen"))
         if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else []), flaeche=fl_w) ^ hu)
         fl_ = None
