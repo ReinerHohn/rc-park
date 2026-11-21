@@ -41,6 +41,23 @@ def main():
             fid_ = next((k for k, F in UH.items() if isinstance(F, dict) and F.get("uhren")), None)       # Seite der Uhr = Stadtseite (Referenz)
             z_ = r["masse"]["sohlbank_z"]; fz = [q for k, F in FE.items() if isinstance(F, dict) and (fid_ is None or k == fid_) for q in F.get("fenster", []) if abs(q["z0"] - z_) < 2.0]
             if fz: ist["rundbogenfenster"] = dict(anzahl=len(fz), sohlbank_z=round(sum(q["z0"] for q in fz) / len(fz), 2), nische_breite=round(max(q["u1"] - q["u0"] for q in fz), 2))
+    # 21.11.2026: Bauteile aus der Wolke (Kettenstufen wolke_rest -> koerper_auto.json, dach_profil_wolke -> dach_profil.json) - vorher nur Stichwort in elemente.json,
+    # darum standen Treppenturm/Laterne/Ueberstand immer auf FEHLT, obwohl die Kette sie baut. Hier mit ihren gemessenen Massen.
+    KA = lade(os.path.join(A, "koerper_auto.json")) or {}
+    rd = [h for h in KA.get("haufen", []) if h.get("form") == "rund" and h.get("kreis") and h.get("urteil", "angenommen") != "verworfen"]
+    if rd:
+        h = max(rd, key=lambda h: h.get("punkte", 0)); ist["treppenturm"] = dict(radius=h["kreis"]["r"], traufe=h["kasten"][5])
+    DP = lade(os.path.join(A, "dach_profil.json")) or {}; sch = DP.get("scheiben") or []
+    if len(sch) >= 4 and DP.get("wand_halb"):
+        wh = DP["wand_halb"]; s_ = float(DP.get("schritt", 0.5))
+        unten = [s for s in sch if s[0] <= sch[0][0] + 2.0]                 # Traufzone: die untersten 2 m des Dachprofils
+        ue = [sorted([-s[1] - wh[0], s[2] - wh[0], -s[3] - wh[1], s[4] - wh[1]])[1:3] for s in unten]   # je Scheibe die zwei mittleren Seiten (robust gegen eine schiefe Seite)
+        ist["zeltdach_ueberstand"] = dict(ueberstand=round(max(sum(x) / 2 for x in ue), 2))
+        br = [(s[0], (s[2] - s[1] + s[4] - s[3]) / 4) for s in sch]; obere = [b for b in br if b[0] >= (br[0][0] + br[-1][0]) / 2]
+        if obere:
+            i_h = min(range(len(obere)), key=lambda i: obere[i][1]); hals = obere[i_h]
+            kr = next((b for b in obere[i_h + 1:] if b[1] > 1.2 * hals[1]), None)   # Krempe = erste Verbreiterung > 20 % ueber dem schmalsten Hals
+            if kr: ist["laterne"] = dict(spitze_z=round(br[-1][0] + s_ / 2, 2), krempe_z=kr[0])
     for k, w in (("laterne", "laterne"), ("treppenturm", "treppenturm"), ("umgang", "umgang"), ("eckquader", "eckquader"), ("zeltdach_ueberstand", "ueberstand")):
         if w in txt: ist.setdefault(k, {})
     erg = []; n_passt = 0

@@ -31,3 +31,4 @@
 - Z.245: ## Nachtrag 21.11. 15:10 - SEITENMODELLE IN DER KETTE: je Seite Mapper + dichte Wolke + Vereinen (Agent im Worktree, nur Code + feste Tests,
 - Z.264: ## Nachtrag 21.11. 15:24 - Kettenlaeufe als Beleg, Platz, Agenten
 - Z.271: ## UEBERGABE 21.11.2026 15:40
+- Z.274: ## 21.11. ~15:45 Merge koerper_schleife (Agent 992f43415) + Uhrring-Neubau

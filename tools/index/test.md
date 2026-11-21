@@ -1,4 +1,4 @@
-# Werkzeuge: test (85)
+# Werkzeuge: test (86)
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
@@ -29,6 +29,7 @@
 - `tools/test_gpu_knn.py` [-] test_gpu_knn.py - GPU-Nachbarsuche gleich CPU-KD-Baum? (min_abstand, naechster, ball_anzahl) auf Zufallsdaten und auf der echten Kaufhaus-Wolke. Exit 1 bei Abweichung. /media/oem/s
 - `tools/test_gpu_slot.py` [-] (kein Docstring)
 - `tools/test_grauzone_tor.py` [gen] test_grauzone_tor.py - BEWEIS des Grauzonen-Tors (Spec modelle/archiv/SPEC_GRAUZONE_TOR.md).
+- `tools/test_hand_vergleich.py` [-] test_hand_vergleich.py - fester synthetischer Test fuer tools/hand_vergleich.py (21.11.2026): Treppenturm aus koerper_auto.json (form rund), Ueberstand und Laterne aus dach_profil.
 - `tools/test_handy_kalibrieren.py` [-] Synthetischer Test fuer handy_kalibrieren.py / handy_zoom_verdacht.py: /media/oem/scan/venv-colmap/bin/python -I tools/test_handy_kalibrieren.py Beweis: (1) f_orig + k1 werden aus 
 - `tools/test_handy_masken.py` [seg] Test handy_masken: (1) Klassenableitung exakt (kein 'carpet' fuer 'car'), (2) Maskenlogik, (3) 3 Bilder echt durch GPU, Format/Konvention pruefen.
 - `tools/test_handy_masken_v2.py` [-] Test handy_masken_v2 (ohne GPU): Statue haengt an Fassade -> frei; Person am Boden -> maskiert; Box ohne Boden -> frei; Fleck im Pflaster -> verworfen; Fahrzeug immer.

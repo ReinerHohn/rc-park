@@ -1,6 +1,6 @@
 {
  "referenz": "modelle/schwab_v3/elemente.json - Handstand mit Foto-Triangulation (foto_mass.py), Nutzer 20.11.2026: 'beim Schwabentor mal einen richtig geilen Stand'. Hoehen und Groessen vergleichbar; u-Lagen NICHT (anderer Rahmen, Schaft x 0,933).",
- "passt": 2,
+ "passt": 4,
  "gesamt": 11,
  "bauteile": [
   {
@@ -120,25 +120,45 @@
   },
   {
    "bauteil": "laterne",
-   "urteil": "FEHLT",
-   "soll": {
-    "spitze_z": 51.76,
-    "krempe_z": 47.0
+   "urteil": "FALSCH",
+   "masse": {
+    "spitze_z": {
+     "soll": 51.76,
+     "ist": 49.69,
+     "ok": false
+    },
+    "krempe_z": {
+     "soll": 47.0,
+     "ist": 48.44,
+     "ok": false
+    }
    }
   },
   {
    "bauteil": "zeltdach_ueberstand",
-   "urteil": "FEHLT",
-   "soll": {
-    "ueberstand": 0.9
+   "urteil": "PASST",
+   "masse": {
+    "ueberstand": {
+     "soll": 0.9,
+     "ist": 1.15,
+     "ok": true
+    }
    }
   },
   {
    "bauteil": "treppenturm",
-   "urteil": "FEHLT",
-   "soll": {
-    "radius": 1.555,
-    "traufe": 11.57
+   "urteil": "PASST",
+   "masse": {
+    "radius": {
+     "soll": 1.555,
+     "ist": 1.73,
+     "ok": true
+    },
+    "traufe": {
+     "soll": 11.57,
+     "ist": 11.77,
+     "ok": true
+    }
    }
   },
   {
