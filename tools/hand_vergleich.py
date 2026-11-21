@@ -61,6 +61,8 @@ def main():
             i_h = min(range(len(obere)), key=lambda i: obere[i][1]); hals = obere[i_h]
             kr = next((b for b in obere[i_h + 1:] if b[1] > 1.2 * hals[1]), None)   # Krempe = erste Verbreiterung > 20 % ueber dem schmalsten Hals
             if kr: ist["laterne"] = dict(spitze_z=round(br[-1][0] + s_ / 2, 2), krempe_z=kr[0], _quelle="wolke")
+    SF = DP.get("spitze_foto") or {}          # 21.11.2026 tools/spitze_aus_umriss.py (Kettenstufe bauplan_spitze_umriss): Spitze/Krempe aus der Himmelskante der Fotos gehen vor
+    if SF.get("gueltig") and SF.get("spitze_z") is not None: ist["laterne"] = dict(spitze_z=SF["spitze_z"], krempe_z=SF.get("krempe_z"), _quelle="foto")
     for k, w in (("laterne", "laterne"), ("treppenturm", "treppenturm"), ("umgang", "umgang"), ("eckquader", "eckquader"), ("zeltdach_ueberstand", "ueberstand")):
         if w in txt: ist.setdefault(k, {})
     erg = []; n_passt = 0

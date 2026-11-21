@@ -306,3 +306,12 @@ Stand siehe `.claude/UEBERGABE.md` (Martinstor-Kette 1121a laeuft, Agent Oeffnun
 
 ## UEBERGABE 21.11.2026 17:20
 Stand in `.claude/UEBERGABE.md` (Merges Nischen-Fenster, leere Fassaden, Seiten vereinen; Tor-Wandbild-Stufe; naechster Kettenlauf ab fassaden).
+
+## 17:50 Agent Laterne + Durchfahrt (Worktree agent-a4b81dfb20a891c30)
+- LATERNE, Ursache: Dachprofil nur aus der dichten Wolke; oben duenn (Wolke endet 49,94, Knauf nicht drin), Hals im Bereich mit ~300 Punkten/Scheibe. rund_aus_umriss.py passt nicht (Kreis + Gradientenkanten; Laterne offen mit Pfosten, Zwiebelhaube, Fugen).
+  Neu tools/spitze_aus_umriss.py (Kettenstufe bauplan_spitze_umriss nach bauplan_dachprofil): Himmelskante der kalibrierten Fotos an der Dachachse -> Spitze (Gipfel der Silhouette auf der Achse, Traufe-verdeckt verworfen), Halbbreite je Hoehe, eckig/rund aus Blickrichtungs-Abhaengigkeit, Hals/Krempe (Plateau 93 % gegen Untersicht-Ellipse). Block 'spitze_foto' in dach_profil.json; bauteile.dach_aus_profil baut ab Laternenhals aus Fotos bis zur Spitze; hand_vergleich liest ihn.
+  Probe Schwabentor: 17 Fotos aus 3 Sektoren (0, 6, 7; 173 ohne Maske im Cache, 136 Bildkante), Spitze 53,44 (Streuung 0,30), Hals 47,59 halb 0,82, Krempe 48,79; Hand 51,76 / 47,0 -> beide ~+1,75 m. ANNAHME/Befund: hoehe_gegen_dom1 meldet Modell +1,62 m ueber Laser, massstab_k 0,9605 - x0,96 gaebe 51,3 / 46,8 (passt). Massstab/Hoehenbezug pruefen, nicht im Werkzeug ausgleichen.
+  Sackgasse: Untersicht-Korrektur r*tan(Hoehenwinkel) (waagrechte Scheibe) synthetisch richtig, am echten Turm +0,67 m zu viel (Krempe ausgestellt, Breite springt in 0,3 m) -> ersetzt durch Plateau-Regel.
+- DURCHFAHRT, Ursache: oeffnungen_bogen.py erkennt Durchfahrt nur mit Bogenkandidat auf der Gegenseite. Gegenseite von f00 ist f01 (nicht f02; Normalen entgegengesetzt, Dicke 11,68 m) mit 4 Fotos, kein Kandidat -> Nische 0,6 m.
+  Neu tools/durchfahrt_pruefen.py (Kettenstufe oeffnungen_durchfahrt nach oeffnungen_bogen): Laibung des Torwegs in der Wolke durchgehend bis zur Gegenseite mit Kontrast >= 2 gegen Kontrollstreifen beidseits + keine Rueckwand (Deckung <= 0,6). f00: Laibung rechts 100 %, links 60 %, Deckung 0,42 -> DURCHFAHRT, tiefe 12,28. Gegenproben echte Wolke: Wand neben dem Tor (u +-4,3) und 6 Stellen auf f02/f03 abgelehnt. Sackgasse 1. Fassung: alle Punkte im Querschnitt zaehlen -> massive Wand 'bestand' (Streupunkte im Turm).
+  Sichtblatt (Probe, nicht committet): Sued zeigt den Torbogen jetzt durchgehend. Test tools/test_spitze_durchfahrt.py im Schnelltest.

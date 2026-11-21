@@ -329,12 +329,40 @@ def dach_aus_profil(koerper, datei):
     if len(P) < 4 or D.get("angenommen") is False: return koerper, []
     o = np.array(D["o"], float); d = np.array(D["d"], float); n = np.array(D["n"], float); dz = float(D.get("schritt", 0.5)); z0 = float(D["z0"])
     R = lambda p, z: [[o[0] + u * d[0] + v * n[0], o[1] + u * d[1] + v * n[1], z] for u in (p[1], p[2]) for v in (p[3], p[4])]
-    lo, hi = koerper.bounding_box()[:3], koerper.bounding_box()[3:]; koerper = koerper - M.cube((hi[0] - lo[0] + 20, hi[1] - lo[1] + 20, hi[2] - z0 + 20)).translate((lo[0] - 10, lo[1] - 10, z0))
+    lo, hi = koerper.bounding_box()[:3], koerper.bounding_box()[3:]; koerper = koerper - M.cube((hi[0] - lo[0] + 20, hi[1] - lo[1] + 20, hi[2] - z0 + 40)).translate((lo[0] - 10, lo[1] - 10, z0))
+    SF = D.get("spitze_foto") or {}; ab = spitze_ab(SF); bel_sp = []
+    if ab is not None: P = [p for p in P if p[0] + dz <= ab + 1e-6] or P[:1]       # 21.11.2026: ueber 'ab' kommt die Laterne/Spitze aus den Foto-Silhouetten (tools/spitze_aus_umriss.py), die Wolke ist dort duenn
     teile = [M.hull_points(R(a_, a_[0]) + R(b_, b_[0])) for a_, b_ in zip(P[:-1], P[1:])] + [M.hull_points(R(P[-1], P[-1][0]) + R(P[-1], P[-1][0] + dz))] + [M.hull_points(R(P[0], z0 - 0.02) + R(P[0], P[0][0]))]
+    if ab is not None:
+        A = SF["achse"]; FP = [p for p in SF["profil"] if p[0] >= ab - 1e-6]
+        def ring(p, z):
+            if len(p) > 6 and p[4] == "eckig":
+                t = math.radians(p[5]); a = p[6]; return [[A[0] + a * (sx * math.cos(t) - sy * math.sin(t)), A[1] + a * (sx * math.sin(t) + sy * math.cos(t)), z] for sx in (-1, 1) for sy in (-1, 1)]
+            r = p[6] if len(p) > 6 else p[1]; return [[A[0] + r * math.cos(w), A[1] + r * math.sin(w), z] for w in np.linspace(0, 2 * math.pi, 24, endpoint=False)]
+        teile.append(M.hull_points(R(P[-1], P[-1][0] + dz) + ring(FP[0], FP[0][0])))                 # Anschluss Wolkendach -> erste Fotohoehe
+        teile += [M.hull_points(ring(a_, a_[0]) + ring(b_, b_[0])) for a_, b_ in zip(FP[:-1], FP[1:])]
+        teile.append(M.hull_points(ring(FP[-1], FP[-1][0]) + [[A[0], A[1], float(SF["spitze_z"])]]))    # letzte Hoehe -> Spitze (Knauf/Nadel als Kegel, Durchmesser unter der Druckgrenze faellt beim Druck weg)
+        nr_ = sum(1 for p in FP if len(p) > 6 and p[4] == "eckig")
+        bel_sp = [dict(seite="dach", element=f"Laterne/Spitze aus Foto-Silhouetten ab z {ab:.2f} bis Spitze z {SF['spitze_z']:.2f} m" + (f", Krempe z {SF['krempe_z']:.2f} (Hals z {SF['hals_z']:.2f})" if SF.get("krempe_z") else ""),
+                       quelle=f"tools/spitze_aus_umriss.py: Himmelskante in {SF.get('fotos')} kalibrierten Fotos aus Sektoren {SF.get('sektoren')}, Spitze Median (Streuung {SF.get('spitze_streuung')} m)",
+                       hinweis=f"ANNAHME: Querschnitt {nr_} von {len(FP)} Hoehen eckig, Rest rund (Blickrichtungs-Abhaengigkeit der Halbbreite); Laterne voll gebaut (offene Pfosten nicht aufgeloest); Spitze auf der Dachachse")]
     koerper = koerper + M.batch_boolean(teile, OpType.Add); ann = sum(len(p[6]) for p in P if len(p) > 6)
     return koerper, [dict(seite="dach", element=f"Dach als Schichtprofil ab z {z0:.1f} m: Traufe halb {(P[0][2] - P[0][1]) / 2:.2f} x {(P[0][4] - P[0][3]) / 2:.2f} m (Wand {D['wand_halb'][0]:.2f} x {D['wand_halb'][1]:.2f}), Neigung ~{D.get('neigung_grad')} Grad, bis z {P[-1][0] + dz:.1f} m",
                           quelle=f"dichte Wolke, {len(P)} Scheiben je {dz} m (tools/dach_profil_wolke.py); ersetzt das LoD2/Laser-Dach (bis {D.get('modell_hoehe_vorher', 0):.1f} m)",
-                          hinweis=f"ANNAHME: {ann} von {4 * len(P)} Scheibenseiten ohne Wolke an der gemessenen Achse gespiegelt (Dachflaeche von keinem Foto gesehen); Stufen von {dz} m statt glatter Flaeche; Spitze/Knauf ueber dem Wolkenende FEHLT; Dach voll")]
+                          hinweis=f"ANNAHME: {ann} von {4 * len(P)} Scheibenseiten ohne Wolke an der gemessenen Achse gespiegelt (Dachflaeche von keinem Foto gesehen); Stufen von {dz} m statt glatter Flaeche; "
+                                  + ("Laterne/Spitze darueber aus Fotos" if bel_sp else "Spitze/Knauf ueber dem Wolkenende FEHLT") + "; Dach voll")] + bel_sp
+
+
+def spitze_ab(SF):
+    """Ab welcher Hoehe die Foto-Silhouette (dach_profil.json 'spitze_foto', tools/spitze_aus_umriss.py) das Wolkendach ersetzt: Beginn des Laternenhalses (erste Fotohoehe,
+    deren Halbbreite hoechstens 10 % ueber dem Hals liegt - darunter misst die Wolke die Dachflaeche gut und der Querschnitt ist ein Rechteck), ohne Hals das Wolkenende.
+    None = kein gueltiger Fotoblock (Generator baut nur das Wolkendach)."""
+    if not SF.get("gueltig") or not SF.get("profil") or SF.get("angenommen") is False: return None
+    if SF.get("hals_halb"):
+        z = next((p[0] for p in SF["profil"] if p[1] <= 1.1 * SF["hals_halb"]), None)
+        if z is not None: return float(z)
+    z = next((p[0] for p in SF["profil"] if p[0] >= float(SF.get("wolke_ende_z", 1e9)) - 1e-6), None)
+    return None if z is None else float(z)
 
 
 def uhren_aus_json(koerper, datei, w_ring=0.10, w_feld=0.06, details=False):      # 21.11.2026: Katalog-Ziffern/Zeiger aus (Nutzer: kein Baukasten) - nur die gemessenen Kreise

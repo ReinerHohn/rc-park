@@ -423,6 +423,9 @@ def main():
                 if lauf(B, "oeffnungen_bogen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_bogen.py", fo, "--objekt", ZR, "--aus", os.path.join(Z, "audit", "oeffnungen_auto.json")], log, ok=(0,))[0] == 0 and os.path.exists(gp_) and "oeffnungen_aus_json" not in open(gp_).read():
                     lauf(B, "generator_erneuern_oeffnungen", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
                     if "oeffnungen_aus_json" not in open(gp_).read(): notiz(B, "generator_vorlage_oeffnungen", False, fehler=f"{os.path.basename(gp_)} ruft bauteile.oeffnungen_aus_json nicht auf - erkannte Tore/Bogenoeffnungen kommen NICHT ins Modell (Zeilen aus der Vorlage in tools/objekt_anlegen.py uebernehmen)")
+                # 21.11.2026 (Schwabentor: Tor f00 gebaut, aber nur Nische 0,6 m - Gegenseite f01 hat 4 Fotos und keinen Bogenkandidaten): Durchfahrt ueber die durchgehende Laibung im
+                # Torweg (dichte Wolke = Lage, keine Rueckwand) -> durchfahrt/tiefe_m in oeffnungen_auto.json (tools/durchfahrt_pruefen.py; Form bleibt aus Wandbild/Sweep).
+                if os.path.exists(W) and os.path.exists(os.path.join(Z, "audit", "oeffnungen_auto.json")): lauf(B, "oeffnungen_durchfahrt", [PY, "-W", "ignore", "-I", "tools/durchfahrt_pruefen.py", os.path.join(fo, "fassaden.json"), os.path.join(Z, "audit", "oeffnungen_auto.json"), "--wolke", W], log, ok=(0, 3))
                 lauf(B, "bauen_mit_fenstern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
             os.environ.clear(); os.environ.update(env_alt)
     if dran("fenster") and os.path.exists(os.path.join(Z, "messprotokoll")):
@@ -491,6 +494,9 @@ def main():
             if os.path.exists(W) and os.path.exists(gp_):
                 dp_, ks_ = (os.path.join(Z, "audit", n_) for n_ in ("dach_profil.json", "koerper_schleife.json")); dach_neu_ = False
                 if not os.path.exists(dp_) and os.path.exists(os.path.join(fo, "fassaden.json")): lauf(B, "bauplan_dachprofil", [PY, "-W", "ignore", "-I", "tools/dach_profil_wolke.py", ZR, W, os.path.join(fo, "fassaden.json")], log, ok=(0, 3)); dach_neu_ = os.path.exists(dp_)
+                # 21.11.2026 (KERNMETHODE; Schwabentor: Wolke endet 3,5 m unter dem Knauf, Laternenhals im duennen Wolkenbereich): Laterne/Spitze aus der HIMMELSKANTE der kalibrierten
+                # Fotos an der Dachachse (tools/spitze_aus_umriss.py -> Block 'spitze_foto' in dach_profil.json; bauteile.dach_aus_profil baut damit ueber dem Laternenhals). Masken aus dem Cache der Stufe 'dachfoto'.
+                sp_rc_ = lauf(B, "bauplan_spitze_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/spitze_aus_umriss.py", ZR], log, ok=(0, 3, 4))[0] if os.path.exists(dp_) else 3; erg_["spitze_umriss_rc"] = sp_rc_
                 rc_ = lauf(B, "bauplan_koerper_schleife", [PY, "-W", "ignore", "-I", "tools/koerper_schleife.py", ZR, W, "--bild", os.path.join(Z, "audit", "wolke_rest.jpg")] + (["--erst_bauen"] if dach_neu_ else []), log, ok=(0, 3))[0]
                 try: k_ = json.load(open(ks_)) if rc_ in (0, 3) else {}
                 except Exception: k_ = {}
@@ -499,7 +505,7 @@ def main():
                 # Beruehrlinien je Blickrichtung gewichtet) - ersetzt Wolkenradius/-profil (Schwabentor Treppenturm: Wolke r 1,73, Foto 1,585, Handstand 1,555; Traufe 11,25 / 11,57).
                 rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"], log, ok=(0, 3, 4))[0]
                 erg_["rund_umriss_rc"] = rr_
-                if k_.get("baulaeufe") or rr_ == 0: lauf(B, "bauen_mit_wolkenkoerpern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+                if k_.get("baulaeufe") or rr_ == 0 or sp_rc_ == 0: lauf(B, "bauen_mit_wolkenkoerpern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
                 if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
                     notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
