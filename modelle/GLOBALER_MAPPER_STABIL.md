@@ -221,3 +221,8 @@ Neu: gefilterte DB (Vordergrund-Masken `db_masken_filter.py` + `seiten_erkennen 
 - Gemessen: Sued-Waende in der vereinten Lage 4,52 Grad neben dem Nord-Lot (2294 Wandnormalen). `seiten_vereinen.py`: kleinste Drehung, die das Wand-Lot von B auf das Lot von A legt (vor dem Spitzenabgleich).
 - Nachher: Sued-Waende 0,05 Grad neben dem Nord-Lot; Achse 1,36 -> 0,50 % der Bauhoehe einig; Turmhoehen 3,9 -> 3,0 % verschieden; Dach 1,02 / 1,00. Test `test_seiten_vereinen.py` bestanden. 3D-Seite Version 3.
 - OFFEN: Massstab zwischen den Seiten (3 % Hoehenunterschied - Strassengefaelle oder Massstab?) -> Pruefung am LoD2-Grundriss (Turmtiefe).
+
+### 21.11. 14:59 - Drehung der zweiten Seite um das Lot aus den Wandrichtungen (Nutzerfund "von oben verdreht")
+- Gemessen: Wandrichtung im Grundriss (Normalen senkrechter Flaechen im Umkreis der Spitze, modulo 90 Grad) Nord 9,3, Sued 82,6 Grad -> Sued 16,7 Grad verdreht. `seiten_vereinen.wand_azimut` + kleinste Drehung von B um seine Spitze (Grenze 30 Grad, Buendelung > 0,3).
+- Nachher: Blick 15 -> 165 Grad (vorher 29 -> 151), Achse 0,60 % einig, Dach 1,02 / 1,01, Turmhoehen 3,0 % verschieden. Test bestanden. 3D-Seite Version 4.
+- LEHRE: die Klappung traegt verlaesslich nur den MASSSTAB; Lage (35 % daneben), Lot (4,5 Grad) und Drehung (16,7 Grad) kommen jetzt alle aus der Geometrie der dichten Wolken (Spitze, Waende).
