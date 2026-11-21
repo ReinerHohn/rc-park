@@ -213,3 +213,11 @@ Grenze ist nicht die Rechenzeit, sondern die Kamerasicht (Seitenebenen des Erker
 - Job `seiten-martinstor-1121c` (ohne Masken im Pruefer, Start 10:39) nach 17 min GESTOPPT (Ergebnis waere nicht aussagekraeftig gewesen) - Zeitverlust, ich haette den Pruefer vor dem Start anpassen muessen.
 - 10:56 neu `seiten-martinstor-1121d`: gefilterte DB + Masken im Pruefer. Gruppen auf der gefilterten DB: 190 (vorher 170), 119 Gruppenpaare, 2848 Pruefpaare.
 - Rueckfall: `pkill -f` mit Muster aus der eigenen Befehlszeile benutzt (Regel CLAUDE.md) - traf nur die eigene Shell (rc 144), kein Job betroffen.
+
+## Nachtrag 21.11. 11:27 - BELEG: mit Masken trennt die Seitenerkennung Sued und Nord am Martinstor
+- Job `seiten-martinstor-1121d` (gefilterte DB + Masken im Pruefer), fertig 11:25 (29 min): 190 Gruppen, 731 151 Paare geloescht, 4 Bildteile ohne echte Verbindung.
+  Gegen die Bezugsmodelle vom 19.11. (nur zur Kontrolle): Teil 0 = 538 Bilder, Nord 203 / Sued 0; Teil 1 = 102 Bilder, Sued 43 / Nord 0; Teil 2 = 55 Bilder, Sued 6 / Nord 0. KEIN gemischter Teil (ohne Masken: 750 Bilder mit Sued 52 + Nord 203).
+- OFFEN: 162 Nord- und 3 Sued-Bezugsbilder stehen unter 'fremd' (1362 fremde Bilder) - Regel "Teil ohne Objektfoto = fremd" pruefen; Sued zerfaellt in zwei Teile (102 + 55).
+- Masken am Bild geprueft (8 Beispiele, `masken_probe.jpg` gezeigt): Personen/Autos gut, Turm frei; Brunnenfigur und ein Fleck am Turm faelschlich maskiert.
+  Nutzer 11:26: Strassenbahn nicht immer, Baum gar nicht maskiert. Ursache: das Netz (ADE20K-150) hat KEINE Klasse Strassenbahn (wird 'bus' oder 'building'); 'tree'/'plant' gibt es, stehen aber nicht in der Maskenliste.
+- 11:27 Job `mt_seiten_mapper_1121` (tools/versuche/mt_seiten_mapper_1121.sh): schrittweiser Mapper je Teil, Reihenfolge Sued 102, Sued 55, Nord 538.
