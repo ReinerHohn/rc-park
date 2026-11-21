@@ -37,3 +37,11 @@ Nachspielen:
 6. Zweites Rundbogenfenster
 7. Treppenturm, Umgang, Eckquader, Dachüberstand
 8. Durchfahrt: Der Feldseite fehlen Fotos (f01: 4 Fotos, 18 % Abdeckung).
+
+## Nachtrag 01:40 - Lage geprüft: Annahme „Lagekorrektur fehlt“ WIDERLEGT
+- Beide Objekte haben denselben Rahmen (`objekt.json` rahmen identisch). schwab_v3 hat seine Rohmaße nachträglich pauschal mit 0,933 skaliert (alte Ausrichtung 7 % zu groß); die Kette von null hat eine eigene Ausrichtung, am Laser geprüft (Höhen-Tor k 0,9991).
+- Vordach stimmt zwischen beiden auf 7 und 4 cm (Traufe 16,02 / 16,09, Anschluss 19,39 / 19,43). Also kein Höhenversatz.
+- Uhrmitte: Kette 31,95 m (Kreis im Wandbild). Gegenprobe mit triangulierten Fotokanten (Kreis in den Sweep-Punkten, `kanten/` und `kanten_vorbau/`): 32,00 und 31,85 m. Handstand 31,25 m = 33,49 roh x 0,933. Die Kette liegt hier wahrscheinlich richtiger als der Handstand (beide Messungen in derselben Ausrichtung, daher nicht völlig unabhängig).
+- Folge: Der Handstand ist kein Sollwert für Höhen auf ±0,3 m; `hand_vergleich` zeigt zuverlässig nur FEHLT und grobe Abweichungen.
+- Echte Messschwäche der Kette: Bänder aus dem Sweep sind durch Raster und Glättung um etwa ±0,3 m verbreitert (Galerie 9,6–12,0 statt 10,2–11,4). Abhilfe (allgemein): Kanten des Bauteils auf seiner EIGENEN Ebene aus den Fotos triangulieren, wie von Hand mit foto_mass.
+- Nutzer 01:38: „es geht darum, eine generelle Methode zu finden“.
