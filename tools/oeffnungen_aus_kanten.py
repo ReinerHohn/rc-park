@@ -364,7 +364,19 @@ def wandbild_laden(fein_dir, e, objekt_json=None):
     if os.path.exists(rp):
         R = cv2.imread(rp, cv2.IMREAD_UNCHANGED)
         if R is not None and R.shape[:2] == im.shape[:2]: rel = np.where(R > 0, R.astype(np.float32) / 1000.0 - 10.0, 0.0).astype(np.float32)
-    W = wandbild_aus(F, bild, e, einz, quelle=" + ".join(n_ for n_, _ in bilder), relief=rel); W["bilder"] = [b_ for _, b_ in bilder]; return W
+    W = wandbild_aus(F, bild, e, einz, quelle=" + ".join(n_ for n_, _ in bilder), relief=rel); W["bilder"] = [b_ for _, b_ in bilder]
+    if objekt_json and not os.environ.get("OEFFNUNGEN_OHNE_FOTO"):          # 22.11.2026: Laibungskanten direkt aus den Fotos (siehe laibungskanten); Fotos erst bei Bedarf laden
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import laibung_aus_fotos as LF
+        try: obj_ = json.load(open(objekt_json))
+        except Exception: obj_ = {}
+        md = os.path.join(os.path.dirname(os.path.abspath(objekt_json)), "messprotokoll"); W["fotos"] = {}; W["foto_cache"] = {}
+        W["relief_da"] = (R > 0) if rel is not None else None
+        for nr, _, _ in einz:
+            pf = LF.foto_datei(obj_, nr, objekt_json); kf = os.path.join(md, f"K-{nr}.json")
+            if pf and os.path.exists(kf):
+                kk = json.load(open(kf)).get("kamera")
+                if isinstance(kk, dict) and "rvec" in kk and "f_px" in kk: W["fotos"][nr] = (pf, kk)
+    return W
 
 
 def wandbild_aus(F, bild, e, einzeln=(), quelle="bild", relief=None):
@@ -417,6 +429,31 @@ def _profil_spitzen(W, A, ua, ub, za, zb):
     return ue[ein], np.sign(P[pk][ein]), np.abs(P[pk][ein]) / rausch
 
 
+def _foto_flach(W, nr, g, ua, ub, za, zb, rand=0.25):
+    """22.11.2026 (Kettenlauf 1121v, Tor 5,23 statt 4,32; Verlauf hand_vergleich 21:50 PASST / 22:39 FALSCH / 23:27 PASST / 00:18 FALSCH): die Einzelfoto-Orthos liegen auf
+    dem Modell des VORIGEN Laufs. Hat das die lichte Oeffnung schon als Loch (Relief 0 -> Wandebene) neben dem Gewaendeband (-0,15), springt die Projektionsflaeche genau an
+    der gesuchten Innenkante - dort klebt die Kante in jedem Foto, ihre Parallaxe (Tiefe) wird unmessbar, der Ruecksprung unbestaetigt, und die Kette nimmt die Aussenkante.
+    Darum: Ausschnitt um ua..ub direkt aus dem FOTO auf die Fassadenebene (w = 0, Lp = 0) abtasten (laibung_aus_fotos.foto_feld, halbe Fotoaufloesung reicht fuer 1 cm).
+    Sicht aus dem Einzelortho: Foto ohne Abdeckung dort (> 90 % leer) -> None (alter Weg); leer, wo das Modell eine Flaeche hat (Verdeckung) -> 0.
+    Rueckgabe Graubild in Groesse des Rasters (0 = leer) oder None."""
+    if nr not in (W.get("fotos") or {}): return None
+    import cv2; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import laibung_aus_fotos as LF
+    r = W["F"]["raster"]; zl = r["zelle"]; f = sorted([float(W["u_f"](ua - rand)), float(W["u_f"](ub + rand))])
+    j0, j1 = max(int(np.floor((f[0] - r["u0"]) / zl)), 0), min(int(np.ceil((f[1] - r["u0"]) / zl)), g.shape[1]); i0, i1 = max(int(np.floor((r["z1"] - zb - rand) / zl)), 0), min(int(np.ceil((r["z1"] - za + rand) / zl)), g.shape[0])
+    if j1 - j0 < 5 or i1 - i0 < 5 or (g[i0:i1, j0:j1] == 0).mean() > 0.9: return None
+    pf, kk = W["fotos"][nr]; im = W["foto_cache"].get(nr)
+    if im is None:
+        im = cv2.imread(pf, cv2.IMREAD_REDUCED_GRAYSCALE_2)
+        if im is None: return None
+        W["foto_cache"][nr] = im
+    kh = dict(kk, f_px=float(kk["f_px"]) / 2.0, cx=float(kk.get("cx", im.shape[1])) / 2.0, cy=float(kk.get("cy", im.shape[0])) / 2.0)   # halbe Aufloesung: Pixelmasse halbieren (k1 wirkt auf normierte Koordinaten)
+    F = W["F"]; geo = (np.array(F["o"], float), np.array(F["d"], float), np.array(F["n"], float))
+    A = LF.foto_feld(im, kh, geo, (r["u0"] + j0 * zl, r["u0"] + j1 * zl, r["z1"] - i1 * zl, r["z1"] - i0 * zl), zl, 0.0)
+    if A is None or A.shape != (i1 - i0, j1 - j0) or (A == 0).mean() > 0.5: return None
+    if W.get("relief_da") is not None: A[(g[i0:i1, j0:j1] == 0) & W["relief_da"][i0:i1, j0:j1]] = 0
+    out = np.zeros(g.shape, np.uint8); out[i0:i1, j0:j1] = A; return out
+
+
 def laibungskanten(W, ua, ub, za, zb):
     """Durchgehende senkrechte Kanten im Fenster ua..ub mit LAGE und TIEFE: in jedem Einzelfoto-Ortho erscheint eine Kante in Tiefe L hinter der Wand bei u0 + L * ru
     (ru = (C - P).d / (C - P).n, Parallaxe). Hough ueber (u0, L): Stimmen = Fotos mit gleichsinniger Spitze <= EINZEL_TOL_M daneben; Kante ab FOTOS_MIN Fotos und FOTOS_MIN_ANTEIL
@@ -427,10 +464,11 @@ def laibungskanten(W, ua, ub, za, zb):
     for nr, g, C in W["einzeln"]:
         v = C - P; vn = float(v @ n3)
         if vn <= 0.5: continue                                                                           # Kamera hinter / in der Wand
-        sp = _profil_spitzen(W, g, ua, ub, za, zb)
+        fl = _foto_flach(W, nr, g, ua, ub, za, zb)
+        sp = _profil_spitzen(W, g if fl is None else fl, ua, ub, za, zb)
         if sp is None: continue
         ru = float(v @ d3) / vn * W["s"]; u_, s_, h_ = sp
-        bel.append((ru, u_ + _projektionstiefe(W, u_, za, zb) * ru, s_, h_))                            # Orthos sind auf das Relief projiziert: u_k = u + (L - Lp) ru -> u_k + Lp ru = u + L ru
+        bel.append((ru, u_ + (0.0 if fl is not None else _projektionstiefe(W, u_, za, zb)) * ru, s_, h_))   # Orthos sind auf das Relief projiziert: u_k = u + (L - Lp) ru -> u_k + Lp ru = u + L ru; Foto auf der Ebene: Lp = 0
     aus = []
     if len(bel) >= FOTOS_MIN:
         Ls = np.arange(L_BEREICH[0], L_BEREICH[1] + 1e-9, 0.01); U0 = np.arange(ua, ub + 1e-9, 0.005); frei = [np.ones(len(b[1]), bool) for b in bel]; n_min = max(FOTOS_MIN, int(np.ceil(FOTOS_MIN_ANTEIL * len(bel))))
