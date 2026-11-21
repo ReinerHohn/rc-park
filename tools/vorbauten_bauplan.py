@@ -71,7 +71,18 @@ def galerie_messen(feld, g, raster, w_wand, fein=None, fid=None):
     while i_oben - 1 in band: i_oben -= 1
     z_boden, z_holm = zr(i_unten) - raster / 2, zr(i_oben) + raster / 2
     if z_holm - z_boden < 0.6: return None
-    d_ = g.get("dach"); z_dach = d_["z0"] if d_ else min(g["z1"], z_holm + 3.0)
+    # 21.11.2026 (hand_vergleich gegen schwab_v3: 'Dach' bei z 18,2-19,2 / +2,3 m lag 2 m zu hoch = Oberleitung vor dem Turm): TRAUFE = erstes Band ueber dem Holm,
+    # in dem >= 40 % der Spalten Frontausladung haben (Traufkante/Raehm vor der Wand); das 'dach'-Kandidatenfeld zaehlt nur, wenn es direkt (<= 1 m) an dieses Band anschliesst.
+    trauf = [i for i in range(nz) if voll[i] >= 0.4 and zr(i) > z_holm + 1.0]; d_ = g.get("dach")
+    if trauf:
+        i_t = max(trauf); i_to = i_t
+        while i_to - 1 in trauf: i_to -= 1
+        z_tu, z_to = zr(i_t) - raster / 2, zr(i_to) + raster / 2
+        w_tr = float(np.median(feld[i_to:i_t + 1][feld[i_to:i_t + 1] >= 0.5 * front]))
+        if d_ and d_["z0"] > z_to + 1.0: d_ = None
+        if not d_: d_ = dict(z0=z_to, z1=z_to, w_median=w_tr, u0=g["koerper"]["u0"], u1=g["koerper"]["u1"], aus_traufband=True)
+    z_dach = d_["z0"] if d_ else min(g["z1"], z_holm + 3.0)
+    if d_ and d_.get("aus_traufband"): z_dach = z_tu
     oben = [i for i in range(nz) if z_holm + 0.3 < zr(i) < z_dach - 0.1]; spalten = []
     if oben:
         anteil = (feld[oben] >= 0.5 * front).mean(0); j = 0
@@ -106,8 +117,18 @@ def galerie_messen(feld, g, raster, w_wand, fein=None, fid=None):
                            streben_quelle=f"feines Wandbild {fid}: {len(pk)} starke dunkle Linien unter der Bruestung, Abstand {ab:.2f} m" + ("" if fuss else "; Fussende ANNAHME 1,0 m"))
         except Exception as e_: erg["streben_fehler"] = str(e_)[:120]
     if d_:
-        wt = w_wand + d_["w_median"]; erg["vordach"] = dict(z_traufe=round(d_["z0"], 2), w_traufe=round(wt, 2), z_anschluss=round(d_["z1"] + 0.6 * d_["w_median"], 2), u0=d_["u0"], u1=d_["u1"],
-                                                          annahme="Anschluss an der Wand = Oberkante Dachband + 0,6 x Ausladung (Dachneigung ~31 Grad, nicht gemessen); Breite = Galerie + 0,1 m")
+        wt = w_wand + d_["w_median"]; z_an = round(d_["z1"] + 0.6 * d_["w_median"], 2); an_q = "ANNAHME: Oberkante Dachband + 0,6 x Ausladung (Neigung ~31 Grad)"
+        if fein and fid:      # Anschluss an der Wand aus der Uneinigkeitskarte des feinen Wandbilds: die Dachflaeche vor der Wand macht die Fotos uneinig, die Wand darueber nicht
+            try:
+                import cv2
+                R_ = {f["id"]: f for f in json.load(open(os.path.join(fein, "fassaden.json")))["fassaden"]}[fid]["raster"]; un = cv2.imread(os.path.join(fein, f"uneinig_{fid}.png"), 0)
+                cz = float(R_["zelle"]) * float(R_["nz"]) / un.shape[0]; py = lambda z: int((R_["z1"] - z) / cz); px = lambda u: int((u - R_["u0"]) / cz)
+                zs = np.arange(d_["z0"] + 0.5, d_["z0"] + 4.0, 0.25); pr = np.array([un[py(z), px(g["koerper"]["u0"]):px(g["koerper"]["u1"])].mean() for z in zs]); sw = 0.4 * pr.max()
+                hoch = [k_ for k_ in range(len(zs) - 2) if pr[k_] >= sw and pr[k_ + 1] < sw and pr[k_ + 2] < sw]
+                if hoch: z_an = round(float(zs[max(hoch)]) + 0.125, 2); an_q = f"Uneinigkeitskarte {fid}: Dachflaeche endet bei z {z_an} (Schwelle 40 % der Spitze)"
+            except Exception as e_: an_q += f" (Karte nicht lesbar: {str(e_)[:60]})"
+        erg["vordach"] = dict(z_traufe=round(d_["z0"], 2), w_traufe=round(wt, 2), z_anschluss=z_an, u0=d_["u0"], u1=d_["u1"], quelle="Traufband im Ebenen-Sweep" if d_.get("aus_traufband") else "Dachkandidat im Ebenen-Sweep",
+                              annahme="Anschluss: " + an_q + "; Breite = Galerie + 0,1 m")
     return erg
 
 

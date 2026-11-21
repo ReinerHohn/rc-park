@@ -1,0 +1,16 @@
+{
+ "quelle": "modelle/schwab_v3/elemente.json - Handstand mit Foto-Triangulation (foto_mass.py), Nutzer 20.11.2026: 'beim Schwabentor mal einen richtig geilen Stand'. Hoehen und Groessen vergleichbar; u-Lagen NICHT (anderer Rahmen, Schaft x 0,933).",
+ "bauteile": [
+  {"bauteil": "galerie", "seite": "Stadtseite", "masse": {"schwelle_unten": 10.22, "holm_oben": 11.42, "ausladung": 1.45, "breite": 8.06, "pfosten": 3, "streben": 6}, "toleranz_m": 0.4},
+  {"bauteil": "vordach", "seite": "Stadtseite", "masse": {"traufe_z": 16.09, "anschluss_z": 19.43, "ausladung": 1.54}, "toleranz_m": 0.4},
+  {"bauteil": "uhr", "seite": "Stadtseite", "masse": {"durchmesser": 5.0, "mitte_z": 31.25}, "toleranz_m": 0.3},
+  {"bauteil": "tor", "seite": "Stadtseite", "masse": {"breite": 4.32, "scheitel": 6.72, "kaempfer": 3.97}, "toleranz_m": 0.4},
+  {"bauteil": "rundbogenfenster", "seite": "Stadtseite", "masse": {"anzahl": 2, "sohlbank_z": 22.59, "nische_breite": 1.95}, "toleranz_m": 0.4},
+  {"bauteil": "laterne", "seite": "Dach", "masse": {"spitze_z": 51.76, "krempe_z": 47.0}, "toleranz_m": 0.6},
+  {"bauteil": "zeltdach_ueberstand", "seite": "Dach", "masse": {"ueberstand": 0.9}, "toleranz_m": 0.3},
+  {"bauteil": "treppenturm", "seite": "Westseite", "masse": {"radius": 1.555, "traufe": 11.57}, "toleranz_m": 0.4},
+  {"bauteil": "umgang", "seite": "unter der Traufe", "masse": {"pfosten_je_seite": 4}, "toleranz_m": 0},
+  {"bauteil": "eckquader", "seite": "alle", "masse": {}, "toleranz_m": 0},
+  {"bauteil": "tor_durchfahrt", "seite": "beide", "masse": {}, "toleranz_m": 0}
+ ]
+}

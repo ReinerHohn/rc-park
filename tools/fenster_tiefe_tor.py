@@ -32,6 +32,10 @@ def main():
     roh = a.fenster[:-5] + "_roh.json"
     shutil.copy(a.fenster, roh)        # immer die aktuelle Liste als Eingang (Stufe 'fenster' schreibt sie neu; ein zweiter bauplan-Lauf auf der gefilterten Liste ist idempotent)
     J = json.load(open(roh)); E = json.load(open(os.path.join(a.ordner, "elemente.json")))["fassaden"]; bericht = {}
+    VB = {}; vj_ = os.path.join(os.path.dirname(os.path.abspath(a.fenster)), "vorbauten_auto.json")      # Vorbauten (Stufe bauplan): Bereich je Gruppe inkl. Streben bis z_fuss
+    if os.path.exists(vj_):
+        for F_ in json.load(open(vj_)).get("fassaden", []):
+            VB[F_["id"]] = [dict(u0=g_["u0"], u1=g_["u1"], z0=min(g_["z0"], (g_.get("galerie") or {}).get("z_fuss") or g_["z0"]), z1=g_["z1"]) for g_ in F_["gruppen"]]
     for fid, F in J.items():
         if not isinstance(F, dict) or "fenster" not in F: continue
         nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); vj = os.path.join(a.ordner, f"vorbauten_{fid}.json")
@@ -39,7 +43,9 @@ def main():
         npz = np.load(nz); ww = json.load(open(vj)).get("wand_versatz_m", 0.0) if os.path.exists(vj) else 0.0; neu = []; br = []
         for q in F["fenster"]:
             gu, hi, vo, ri = anteile(npz, ww, (q["u0"], q["u1"], q["z0"], q["z1"]))
-            weg = gu >= a.min_gut and ri >= a.ring_min and hi < a.hinten_min and vo >= a.vorn_max
+            weg = gu >= a.min_gut and ri >= a.ring_min and hi < a.hinten_min and (vo >= a.vorn_max or hi < 0.05)      # 21.11.: hi < 5 % = gar keine Nische (Konsolenfeld im Zweitlauf: hinten 0 %, vorn nur 14 %)
+            vb_ = [g_ for g_ in VB.get(fid, []) if min(q["u1"], g_["u1"]) > max(q["u0"], g_["u0"]) and min(q["z1"], g_["z1"]) > max(q["z0"], g_["z0"])]
+            if vb_ and not weg and hi < a.hinten_neu: weg = True      # Kasten liegt hinter/unter einem gebauten Vorbau (Galerie, Streben) und zeigt keine deutliche Nische
             br.append(dict(kasten=[q["u0"], q["u1"], q["z0"], q["z1"]], sicher=round(gu, 2), ring=round(ri, 2), hinten=round(hi, 2), vorn=round(vo, 2), urteil="VERWORFEN: etwas steht davor, keine Nische" if weg else ("bleibt" if ri >= a.ring_min else "bleibt (Sweep ringsum unsicher - kein Urteil)")))
             if not weg: neu.append(q)
         for e in (E.get(fid) or {}).get("elemente", []):

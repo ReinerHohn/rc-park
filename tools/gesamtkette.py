@@ -433,9 +433,9 @@ def main():
             vb_ = {}
             for i_ in range(len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])):
                 vb_[f"f{i_:02d}"] = lauf(B, f"bauplan_sweep_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
+            erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo] + (["--fein", ffn] if os.path.isdir(ffn) else []), log, ok=(0, 3))[0]
             fa_ = os.path.join(Z, "audit", "fenster_auto.json")      # 21.11.2026: Fensterliste am Sweep pruefen (Konsolenfelder als 'Fenster' verworfen, Nischen unter der Stimmenschwelle ergaenzt)
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
-            erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo] + (["--fein", ffn] if os.path.isdir(ffn) else []), log, ok=(0, 3))[0]
             if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
@@ -480,6 +480,7 @@ def main():
         if hat(os.path.join(Z, "audit", "fenster_auto.json")) and "fenster_aus_json" not in gtxt: sg_.append("audit/fenster_auto.json (Fenster) - Generator ruft fenster_aus_json nicht")
         fv_ = glob.glob(os.path.join(D, "fassade", "vorbauten_f*.json"))
         if any(json.load(open(f_)).get("kandidaten") for f_ in fv_) and not os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")): sg_.append("fassade/vorbauten_fNN.json mit Kandidaten, aber keine Bauliste (tools/vorbauten_bauplan.py lief nicht)")
+        if os.path.exists(os.path.join(Z, "referenz_hand.json")): lauf(B, "hand_vergleich", ["python3", "tools/hand_vergleich.py", ZR], log)      # 21.11.2026: Kettenergebnis gegen den frueheren Handstand (audit/hand_vergleich.json)
         notiz(B, "sackgassen", not sg_, offen=sg_, hinweis="Kettenergebnisse ohne Verbraucher im Generator; bekannte, noch nicht verbaute Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md")
     if dran("html"):
         args = [PY, "-I", "tools/modell_3d_html.py", ZR, os.path.join(D, f"{a.ziel}_3d.html")]
