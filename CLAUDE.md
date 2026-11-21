@@ -1,4 +1,6 @@
 # RC-Park Freiburg – Arbeitsregeln
+## 🔥💥 ZUERST LESEN: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` – GIGANTISCHE, BOMBENGEILE HARDCORE-ERFAHRUNG (Nutzer 22.11.2026) 💥🔥
+Kettenlauf -> Nebeneinander-Bild ansehen -> je Befund ein Agent (Vorlage, Worktree, opus, Kettenstufe+Test, nicht rechnen waehrend Kette) -> Merge nur bei Schnelltest 0 -> naechster Lauf. Bild schlaegt Zahl.
 Gesamtprojekt: Miniatur-Wunderland zum Selbersteuern (Konzept/Businessplan) + 3D-Pipeline Fotos -> SfM (COLMAP) -> druckbares H0-Modell (1:87), wird verkauft.
 Vision `KONZEPT.md`, Dokumentindex `README.md`. Deutsch, Anrede "mein grosser Meister", keine breiten Tabellen.
 WISSENSBAEUME (nie ganze Ordner/grosse Dateien lesen):
