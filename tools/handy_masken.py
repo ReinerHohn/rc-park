@@ -4,6 +4,8 @@ Wie video_masken.py (nicht geaendert), aber: CUDA fp16, Batch gleich grosser Bil
 Klassen werden aus id2label der Modellkarte (nvidia/segformer-b4-finetuned-ade-512-512, ADE20K-150) per Namensliste abgeleitet und im Bericht genannt:
   BEWEGT   person car bus truck van minibike bicycle boat ship animal
   MARKT    tent booth canopy box   (Zelte, Staende, Kisten)
+  GRUEN    tree plant (seit 21.11.2026 Standard AN; --kein_gruen)
+  NICHT ERFASST: Strassenbahn - ADE20K-150 hat keine Klasse dafuer (wird bus oder building); zweites Netz mit Schienenfahrzeug-Klasse noetig (offen, Lizenz pruefen)
   OPTIONAL awning (--markise): Markisen koennen Bauwerksteil sein -> Standard AUS
 Ausgabe <ausgabe>/<serie>/<bildname>.png (255 benutzen, 0 ignorieren, COLMAP) + <ausgabe>/<serie>/bericht.json (Anteil maskiert, Klassenanteile je Bild).
 Serie = Buchstabe aus h_<serie>_NN.jpg (sonst Unterordnername). GRENZEN: Segmentierung fehlerhaft (Transporter evtl. 'building', Stand als 'wall'); Schatten bleiben; Himmel nicht maskiert.
@@ -13,11 +15,12 @@ import sys, os, glob, json, re, argparse, time
 import numpy as np, cv2
 BEWEGT = ("person", "car", "bus", "truck", "van", "minibike", "bicycle", "boat", "ship", "animal")
 MARKT = ("tent", "booth", "canopy", "box")
+GRUEN = ("tree", "plant")   # 21.11.2026 (Nutzer am Maskenbild Martinstor: "den Baum gar nicht"): Baeume/Pflanzen verdecken das Bauwerk und sehen je Jahreszeit anders aus -> Standard AN, --kein_gruen schaltet ab
 MODELL = "nvidia/segformer-b4-finetuned-ade-512-512"
 
-def klassen_ids(id2label, markise=False):
+def klassen_ids(id2label, markise=False, gruen=True):
     """ADE20K-Labelzeilen sind 'a, b': erster Name muss GENAU passen (kein Teilstring wie 'carpet')."""
-    namen = BEWEGT + MARKT + (("awning",) if markise else ())
+    namen = BEWEGT + MARKT + (("awning",) if markise else ()) + (GRUEN if gruen else ())
     return {int(k): v for k, v in id2label.items() if v.split(",")[0].strip() in namen}
 
 def serie_von(name, ordner):
@@ -48,14 +51,14 @@ def segmentiere(model, proc_mean, proc_std, ims, breite, dev, fp16):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ordner", nargs="+"); ap.add_argument("--ausgabe", required=True)
     ap.add_argument("--breite", type=int, default=1536); ap.add_argument("--batch", type=int, default=4); ap.add_argument("--puffer", type=int, default=30)
-    ap.add_argument("--max", type=int); ap.add_argument("--markise", action="store_true"); ap.add_argument("--cpu", action="store_true"); ap.add_argument("--modell", default=MODELL); ap.add_argument("--kein_fp16", action="store_true")
+    ap.add_argument("--max", type=int); ap.add_argument("--markise", action="store_true"); ap.add_argument("--kein_gruen", action="store_true"); ap.add_argument("--cpu", action="store_true"); ap.add_argument("--modell", default=MODELL); ap.add_argument("--kein_fp16", action="store_true")
     a = ap.parse_args()
     import torch
     from transformers import SegformerForSemanticSegmentation
     dev = "cpu" if a.cpu or not torch.cuda.is_available() else "cuda"; fp16 = dev == "cuda" and not a.kein_fp16
     model = SegformerForSemanticSegmentation.from_pretrained(a.modell).eval().to(dev)
     if fp16: model = model.half()
-    ids = klassen_ids(model.config.id2label, a.markise); print("maskierte Klassen (aus id2label):", ids, flush=True)
+    ids = klassen_ids(model.config.id2label, a.markise, not a.kein_gruen); print("maskierte Klassen (aus id2label):", ids, flush=True)
     mean = np.array([0.485, 0.456, 0.406], np.float32); std = np.array([0.229, 0.224, 0.225], np.float32)
     fs = sorted(sum((glob.glob(os.path.join(o, "*.jpg")) + glob.glob(os.path.join(o, "*.png")) for o in a.ordner), []))
     if a.max: fs = fs[:a.max]

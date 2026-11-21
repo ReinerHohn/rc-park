@@ -2,6 +2,7 @@
 # mt_seiten_mapper_1121.sh - Beweis Seitenfolge Martinstor (21.11.2026): je erkannter Seite (seiten_erkennen auf maskengefilterter DB, Masken im Pruefer) ein schrittweiser Mapper.
 # Eingang: /media/oem/rcdaten/tmp/mt_seiten_1121/{db_maske_seiten.db, teil1.txt (Sued 102), teil2.txt (55), teil0.txt (Nord 538)}; kleine Seiten zuerst (fruehe Zwischenmeldung).
 A=/media/oem/rcdaten/tmp/mt_seiten_1121; S=/media/oem/scan/rc-park_daten/martinstor-1120; C=/media/oem/scan/colmap-build/prefix/bin/colmap
+export LD_LIBRARY_PATH=/media/oem/scan/cuda-toolkit-combo/lib64:/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib:/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib:/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib   # 11:26 erster Start ohne: libcudart fehlte, rc 0 trotz Fehler (kein Dummy-Test - Rueckfall)
 for t in 1 2 0; do
   mkdir -p $A/modell_teil$t; t0=$(date +%s)
   $C mapper --database_path $A/db_maske_seiten.db --image_path $S/fotos --output_path $A/modell_teil$t --Mapper.image_list_path $A/teil$t.txt --Mapper.num_threads -1 \
