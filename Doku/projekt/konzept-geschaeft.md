@@ -24,3 +24,4 @@ Kapitel: `Doku/konzept/` · `Doku/markt-kalkulation/` · `Doku/standort/`
 
 ## Offen
 - Pilot-Standort für das Display festmachen (Kandidaten: `Doku/standort/standort-display-pilot.md`) — Nutzer-Entscheidung
+- Team-/Standortstrategie (Enthusiasten finden, Workshop, Ganter, mehrstöckig): `Doku/konzept/team-und-gruendung.md` (22.11., Entscheidungen offen)
