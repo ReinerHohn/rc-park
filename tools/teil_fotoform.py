@@ -221,8 +221,8 @@ def main(argv=None):
             kp = FF.k_datei(objp, obj, R0, nr)
             if not kp: return
             K = json.load(open(kp)); kk = K["kamera"]
-            bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*"))
-            if not bild: return
+            bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*")) or glob.glob(os.path.join(R0, obj["fotos_dir"], nr + ".*"))   # 22.11.2026: Kettenobjekte heissen <foto>.jpg (K-<foto>.json), nicht <nr>_<name> - sonst still 0 Teile beurteilt
+            if not bild: erg["fotos"][nr] = "Foto nicht gefunden"; return
             im0, K = FD.foto_skalieren(cv2.imread(bild[0]), K); kk = K["kamera"]; H, W = im0.shape[:2]; im0_voll = im0   # RCPARK_FOTO_SKALA (Standard 1 = unveraendert)
             voll = os.path.join(tmp, f"voll_{W}x{H}.png"); cv2.imwrite(voll, np.full((H, W), 255, np.uint8)) if not os.path.exists(voll) else None
             npz = os.path.join(tmp, f"k_{nr}.npz")

@@ -66,17 +66,20 @@ def main(argv=None):
     if not teile: print("Export ohne Teile:", (r.stderr or r.stdout)[-300:]); return 3
     FA = {F.get("id", f"f{i:02d}"): F for i, F in enumerate(json.load(open(a.fassaden))["fassaden"])}
     import teil_fotoform as TF
+    wo_ = os.path.join(od, "sfm", f"punkte_modell_{a.objekt}.npy")      # eigene dichte Wolke als Verdecker (ohne kreis.wolke nimmt teil_fotoform sonst eine fremde Standardwolke)
+    if os.path.exists(wo_) and not (json.load(open(os.path.join(od, "objekt.json"))).get("kreis") or {}).get("wolke"): TF_WOLKE = ["--wolke", wo_]
+    else: TF_WOLKE = []
     bericht = dict(quelle="tools/vorbau_fototor.py (teil_fotoform je Vorbau-Gruppe)", praez_min=a.praez_min, min_fotos=a.min_fotos, gruppen={}); rc = 0
     for nm in teile:
         fid = nm.split("_")[1]; F = FA.get(fid) or {}
         fotos = [f_ for f_, _ in sorted((F.get("fotos") or {}).items(), key=lambda kv: -kv[1].get("zellen", 0))][:a.fotos]
         if not fotos: bericht["gruppen"][nm] = dict(urteil="KEIN URTEIL", grund="keine Fotos der Fassade"); continue
-        arg = [a.objekt, "--teile_dir", td, "--nur", nm, "--fotos", ",".join(fotos)] + (["--stl", a.stl] if a.stl else []) + (["--bilder", "--bilder_dir", a.bilder_dir] if a.bilder_dir else [])
+        arg = [a.objekt, "--teile_dir", td, "--nur", nm, "--fotos", ",".join(fotos)] + TF_WOLKE + (["--stl", a.stl] if a.stl else []) + (["--bilder", "--bilder_dir", a.bilder_dir] if a.bilder_dir else [])
         e_n = TF.main(arg + ["--etikett", "nachher"]); u_, g_ = urteil(e_n["teile"].get(nm), a.min_fotos, a.praez_min)
         b_ = dict(urteil=u_, nachher=g_, fotos=fotos, je_foto={k: dict(praez=v["praez"], recall=v["recall"]) for k, v in (e_n["teile"].get(nm) or {}).items() if k != "_gesamt"})
         if a.vorher_stl:      # Phantom: Teilbereich des neuen Teils, Modellkanten aus dem Stand OHNE Vorbau (teil_fotoform --bereich_von)
             tv = tempfile.mkdtemp(prefix="vbft_v_", dir=os.environ.get("TMPDIR") or None)
-            e_v = TF.main([a.objekt, "--teile_dir", tv, "--nur", nm, "--bereich_von", td, "--stl", a.vorher_stl, "--fotos", ",".join(fotos)] + (["--bilder", "--bilder_dir", a.bilder_dir, "--etikett", "vorher"] if a.bilder_dir else []))
+            e_v = TF.main([a.objekt, "--teile_dir", tv, "--nur", nm, "--bereich_von", td, "--stl", a.vorher_stl, "--fotos", ",".join(fotos)] + TF_WOLKE + (["--bilder", "--bilder_dir", a.bilder_dir, "--etikett", "vorher"] if a.bilder_dir else []))
             b_["vorher"] = (e_v["teile"].get(nm) or {}).get("_gesamt")
         bericht["gruppen"][nm] = b_
         f1n = (g_ or {}).get("f1"); f1v = (b_.get("vorher") or {}).get("f1")
