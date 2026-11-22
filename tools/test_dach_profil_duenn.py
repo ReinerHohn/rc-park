@@ -46,6 +46,14 @@ chk(r[1] is None and gr[1].startswith("keine dichte Schale"), f"T2b +d verstreut
 chk(r[2] is None and gr[2] == "leer", f"T2c -n leer -> {r[2]} '{gr[2]}'")
 chk(r[3] is None and gr[3].startswith("duenn"), f"T2d +n 8 Punkte -> {r[3]} '{gr[3]}'")
 
+# T5: Dachachse nur ueber dem Traufband (1122: Traufband-Rauschen schob die Achse 2,4 m neben die Wandmitte)
+from dach_profil_wolke import achse_messen
+PA = [[35.4, -5.6, 8.0, -7.4, 4.2, 100, []], [35.9, -5.7, 8.0, -7.4, 3.6, 100, []], [36.4, -5.7, 7.9, -7.4, 3.6, 100, []]]          # Traufband: Rauschen
+PA += [[z, -(5.0 - (z - 37.4) * 0.7) + 0.1, 5.0 - (z - 37.4) * 0.7 + 0.1, -4.0, 4.0, 100, ["-n"]] for z in np.arange(37.4, 41.5, 0.5)]   # Dach: u-Mitte +0,1, -n fehlt
+cu5, cv5, inf5 = achse_messen(PA, 35.4, 0.5)
+chk(abs(cu5 - 0.1) < 0.02, f"T5a u-Achse aus den Dachscheiben {cu5:+.2f} (Soll +0,10; Traufband-Rauschen nicht mitgezaehlt)")
+chk(cv5 == 0.0 and inf5["v"]["quelle"].startswith("ANNAHME"), f"T5b v ohne Scheiben mit beiden Seiten -> Wandmitte als ANNAHME ({inf5['v']['quelle'][:60]}); alt waere {np.median([(p[3] + p[4]) / 2 for p in PA if '-n' not in p[6]]):+.2f}")
+
 # T3: Ende-zu-Ende auf synthetischen Dateien (ohne Rahmen -> kein DOM1-Veto)
 import trimesh
 T = tempfile.mkdtemp(prefix="test_dach_profil_duenn_", dir=os.environ.get("TMPDIR", "/tmp"))

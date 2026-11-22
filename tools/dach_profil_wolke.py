@@ -48,6 +48,23 @@ def seiten_messen(u, v, z, z0, schritt, g, rand, mp):
     return r, int(k.sum()), gr
 
 
+ACHSE_AB_M = 2.0    # Achse erst ab z0 + 2 m: im Traufband (Umgang, Vordach, Nachbardach, Strassenrauschen) sind die Scheiben nicht die Dachflaeche
+ACHSE_MIN = 3       # so viele Scheiben mit beiden Seiten aus der Wolke je Richtung, sonst kein Urteil -> Wandmitte (0)
+
+
+def achse_messen(P, z0, schritt, ab_m=ACHSE_AB_M, n_min=ACHSE_MIN):
+    """Dachachse (u, v) relativ zur Wandmitte = Median der Scheibenmitten, in denen BEIDE Gegenseiten aus der Wolke kommen, nur ueber dem Traufband (z >= z0 + ab_m).
+    22.11.2026 (1122 nach dem Absturz-Fix): ueber alle Scheiben gab (u +1,08, v -2,18) - v kam fast nur aus den Traufband-Scheiben z 35,4-36,9 (Seiten -7,4 / +3,6 = Rauschen
+    + Umgang), die Achse lag 2,4 m neben der Wandmitte, spitze_aus_umriss suchte die Laterne am falschen Ort. Weniger als n_min Scheiben -> 0 (Wandmitte), als ANNAHME gemeldet.
+    Rueckgabe (cu, cv, info{u, v: Zahl der Scheiben, Quelle})."""
+    info = {}; erg = []
+    for nm, i, j, a_, b_ in (("u", 1, 2, "-d", "+d"), ("v", 3, 4, "-n", "+n")):
+        m = [(p[i] + p[j]) / 2 for p in P if p[0] >= z0 + ab_m - 1e-6 and a_ not in p[6] and b_ not in p[6]]
+        if len(m) >= n_min: erg.append(float(np.median(m))); info[nm] = dict(scheiben=len(m), quelle="Wolke (beide Seiten)")
+        else: erg.append(0.0); info[nm] = dict(scheiben=len(m), quelle=f"ANNAHME Wandmitte (nur {len(m)} Scheiben mit beiden Seiten ueber z0 + {ab_m:.1f} m, verlangt {n_min})")
+    return erg[0], erg[1], info
+
+
 def fotoluecken_zusammenfassen(P, schritt):
     """Seiten ohne Wolke (= von keinem Foto gesehene Dachflaeche) je Seite als Hoehenbereiche. P-Eintraege [z, u_lo, u_hi, v_lo, v_hi, punkte, [seiten ohne Wolke]]."""
     aus = {}
@@ -139,7 +156,7 @@ def main():
             continue
         leer = 0; P.append([round(float(z), 2)] + [round(x, 3) for x in wo] + [nw, que]); g = wo
     # Achse je Richtung = Median der Mitten aller Scheiben, in denen beide Seiten aus der Wolke kommen (nur LAGE, fuer spitze_aus_umriss/dachflaeche_aus_umriss).
-    cu = float(np.median([(p[1] + p[2]) / 2 for p in P if "-d" not in p[6] and "+d" not in p[6]] or [0.0])); cv_ = float(np.median([(p[3] + p[4]) / 2 for p in P if "-n" not in p[6] and "+n" not in p[6]] or [0.0])); n_sp = 0
+    cu, cv_, achse_info = achse_messen(P, z0, a.schritt); n_sp = 0
     # Seite ohne Wolke (Dachflaeche von keinem Foto gesehen): NICHT mehr an der Achse gespiegelt (22.11.2026, Regel "Ungesehenes nie spiegeln/erfinden"; 1122n: Wolke nur von
     # Teil A). Sie behaelt die Ausdehnung des bisherigen Modells = LoD2-Grundriss + DOM1-Laserdach (gemessen von oben, dann DOM1-Veto) und wird als FOTOLUECKE gemeldet
     # (Block 'fotoluecken', Bericht) - die Fotostufen (traufe_aus_fotos u. a.) lassen ungesehene Seiten ebenfalls bei Wolke/Laser. n_sp bleibt 0 (Feld fuer Altleser).
@@ -156,8 +173,8 @@ def main():
     print(f"Achse x {c[0]:.2f} y {c[1]:.2f}; Wand halb {(wand[1] - wand[0]) / 2:.2f} x {(wand[3] - wand[2]) / 2:.2f} m; Dachbeginn z {z0:.1f}: halb {e[0]:.2f} x {e[1]:.2f} m (Ueberstand {e[0] - (wand[1] - wand[0]) / 2:+.2f} / {e[1] - (wand[3] - wand[2]) / 2:+.2f} m)")
     print(f"{len(P)} Scheiben bis z {P[-1][0] + a.schritt:.1f} (Modell bisher bis {zt:.1f}); Neigung unteres Drittel ~{nei:.0f} Grad; oberste Scheibe halb {hb(P[-1])[0]:.2f} x {hb(P[-1])[1]:.2f} m")
     A = os.path.join(od, "audit"); json.dump(dict(quelle="tools/dach_profil_wolke.py", wolke=a.wolke, o=[float(c[0]), float(c[1])], d=d.tolist(), n=n.tolist(), z0=z0, schritt=a.schritt, wand_halb=[(wand[1] - wand[0]) / 2, (wand[3] - wand[2]) / 2],
-                                                 modell_hoehe_vorher=zt, seiten_aus_modell=n_mod, seiten_gespiegelt=n_sp, achse_uv=[cu, cv_], fotoluecken=fotoluecken, seiten_ohne_urteil=gruende, neigung_grad=round(nei, 1), dom1_veto=dict(version=VETO_VERSION, tol_m=a.dom1_tol, klippe_m=a.dom1_klippe, eingriffe=veto, aktiv=hl is not None, scheiben_vorher=P_vorher), scheiben=P), open(os.path.join(A, "dach_profil.json"), "w"), indent=1)
-    print(f"Seiten ohne Wolke: {n_mod} von {4 * len(P)} Scheibenseiten aus dem bisherigen Modell (LoD2 + DOM1-Laserdach), NICHT gespiegelt; Achse u {cu:+.2f}, v {cv_:+.2f}")
+                                                 modell_hoehe_vorher=zt, seiten_aus_modell=n_mod, seiten_gespiegelt=n_sp, achse_uv=[cu, cv_], achse_info=achse_info, fotoluecken=fotoluecken, seiten_ohne_urteil=gruende, neigung_grad=round(nei, 1), dom1_veto=dict(version=VETO_VERSION, tol_m=a.dom1_tol, klippe_m=a.dom1_klippe, eingriffe=veto, aktiv=hl is not None, scheiben_vorher=P_vorher), scheiben=P), open(os.path.join(A, "dach_profil.json"), "w"), indent=1)
+    print(f"Seiten ohne Wolke: {n_mod} von {4 * len(P)} Scheibenseiten aus dem bisherigen Modell (LoD2 + DOM1-Laserdach), NICHT gespiegelt; Achse u {cu:+.2f} ({achse_info['u']['quelle']}), v {cv_:+.2f} ({achse_info['v']['quelle']})")
     for nm, f in fotoluecken.items(): print(f"FOTOLUECKE Dach Seite {nm}: {f['scheiben']} von {len(P)} Scheiben (z {f['z_von']:.1f}..{f['z_bis']:.1f}) ohne Wolke - kein Fotourteil, Laser/LoD2; Grund {gruende.get(nm, {})}")
     print("->", os.path.join(A, "dach_profil.json")); return 0
 
