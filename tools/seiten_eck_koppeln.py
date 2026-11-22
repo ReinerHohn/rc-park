@@ -28,12 +28,12 @@ ABLAUF (beliebig viele Teile, Bruecken jeder Art):
 Danach (sfm_seiten_modelle): Blick-Tor + GPS-Seiten-Tor (Veto); wand_dicke/Grundriss als Tore der Kette nach der Ausrichtung."""
 import os, sys, json, argparse, sqlite3, subprocess, shutil, numpy as np
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
-from sim3_robust import sim3_meter, umeyama
+from sim3_robust import sim3_meter, umeyama, matrix, anwenden
 
 MAXID = 2147483647
 NACHBAR_MIN = 200        # wie DURCH_MIN_INLIER: nur starke Nachbarpaare ziehen Bilder ins Zwischenmodell
-NACHBARN_JE_BILD = 5     # ANNAHME: je Bild die 5 staerksten Nachbarn, zwei Schritte weit; alle Nachbarn >= 200 = 196 Bilder (1122, > 10 min), ein Schritt = 14 Bilder (nur 2 Teil-0-Bilder)
-NACHBAR_TIEFE = 2
+NACHBARN_JE_BILD = int(os.environ.get("RCPARK_ECK_NACHBARN", "5"))     # ANNAHME: je Bild die 5 staerksten Nachbarn, zwei Schritte weit; alle Nachbarn >= 200 = 196 Bilder (1122, > 10 min), ein Schritt = 14 Bilder (nur 2 Teil-0-Bilder)
+NACHBAR_TIEFE = int(os.environ.get("RCPARK_ECK_TIEFE", "2"))
 SCHWELLEN = (30, 20, 15, 12, 10)   # abs_pose_min_num_inliers: strengste verbindende gewinnt (Kopf 2)
 MIN_BILDER_TEIL = 3
 MIN_PUNKTE = 100
@@ -42,6 +42,8 @@ REST_REL = 0.005         # ANNAHME: 0,5 % der Zwischenmodell-Ausdehnung (1122: 0
 SCHWELLE_REL = 0.02      # Inlier-Schwelle der Sim3: 2 % der Ausdehnung
 MASS_REL = 0.02          # Massstab-Unsicherheit (Haelften-Probe) hoechstens 2 %
 KREIS_SIGMA = 3.0
+WIEDERHOLUNGEN = int(os.environ.get("RCPARK_ECK_WIEDERHOLUNGEN", "3"))   # Stabilitaetsmass: Laeufe mit weggelassenen Bildern
+WEGLASSEN = 0.2          # ANNAHME: je Wiederholung 20 % der Nicht-Brueckenbilder weg (Bruecke selbst bleibt)
 COLMAP = os.environ.get("RCPARK_COLMAP", "/media/oem/scan/colmap-build/prefix/bin/colmap")
 NAMEN = {}               # Teil -> registrierte Bildnamen (main)
 
@@ -58,33 +60,48 @@ def zerlegen(M):
     M = np.asarray(M, float); s = float(np.cbrt(np.linalg.det(M[:3, :3]))); return s, M[:3, :3] / s, M[:3, 3]
 
 
-def punkte(rE, rZ):
-    """Gemeinsame 3D-Punkte (Bildname + Keypoint-Index gemeinsamer Bilder, in beiden Modellen trianguliert) -> (X_eck, X_ziel, gemeinsame Bilder)."""
-    E = {im.name: im for im in rE.images.values() if im.has_pose}; Z = {im.name: im for im in rZ.images.values() if im.has_pose}; pe, pz, ges = [], [], set(); ns = sorted(set(E) & set(Z))
+def punkte(rE, rZ, mit_tiefe=False):
+    """Gemeinsame 3D-Punkte (Bildname + Keypoint-Index gemeinsamer Bilder, in beiden Modellen trianguliert) -> (X_eck, X_ziel, gemeinsame Bilder[, Tiefe im Eckmodell])."""
+    E = {im.name: im for im in rE.images.values() if im.has_pose}; Z = {im.name: im for im in rZ.images.values() if im.has_pose}; pe, pz, td, ges = [], [], [], set(); ns = sorted(set(E) & set(Z))
     for n in ns:
-        a_, b_ = E[n].points2D, Z[n].points2D
+        a_, b_ = E[n].points2D, Z[n].points2D; c = E[n].projection_center()
         for k in range(min(len(a_), len(b_))):
             if a_[k].has_point3D() and b_[k].has_point3D() and (a_[k].point3D_id, b_[k].point3D_id) not in ges:
-                ges.add((a_[k].point3D_id, b_[k].point3D_id)); pe.append(rE.points3D[a_[k].point3D_id].xyz); pz.append(rZ.points3D[b_[k].point3D_id].xyz)
-    return np.array(pe).reshape(-1, 3), np.array(pz).reshape(-1, 3), ns
+                ges.add((a_[k].point3D_id, b_[k].point3D_id)); x = rE.points3D[a_[k].point3D_id].xyz; pe.append(x); pz.append(rZ.points3D[b_[k].point3D_id].xyz); td.append(np.linalg.norm(x - c))
+    aus = (np.array(pe).reshape(-1, 3), np.array(pz).reshape(-1, 3), ns)
+    return aus + (np.array(td),) if mit_tiefe else aus
 
 
-def kopplung_pruefen(X, Y, ausd, ausd_ziel=None):
-    """Sim3 X -> Y (X im Zwischenmodell, Y im Teilmodell; ausd = Ausdehnung des Zwischenmodells, ausd_ziel = des Teils fuer den Hebel). -> (M, pruefung, ok, grund)."""
+def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None):
+    """Sim3 X -> Y (X im Zwischenmodell, Y im Teilmodell; ausd = Ausdehnung des Zwischenmodells, ausd_ziel = des Teils fuer den Hebel). -> (M, pruefung, ok, grund).
+    FEHLERMASS (22.11.2026, Selbsttest Martinstor): mit 'tiefe' (Abstand Punkt - beobachtende Kamera im Zwischenmodell) wird der Rest RELATIV ZUR TIEFE gemessen (= Blickstrahl-
+    Winkel, 2 % ~ 1,1 Grad). Relativ zur Ausdehnung bestrafte es ferne, schlecht triangulierte Punkte: ein nachweislich RICHTIGES Zwischenmodell stimmte gegen das Ursprungs-
+    modell nur zu 82 % (Teil A 65 %) - abgelehnt; tiefenbezogen 89-98 % (1122: 93 %). Grenzen (Anteil, Rest, Haelften) unveraendert."""
     if len(X) < MIN_PUNKTE: return None, dict(punkte=len(X)), False, f"nur {len(X)} gemeinsame Punkte (< {MIN_PUNKTE})"
     f = sim3_meter(X, Y, schwelle_m=float("inf"), min_anteil=0.0)                   # grobe Lage fuer den Massstab der Schwelle im Zielrahmen
     s_ = float(np.cbrt(abs(np.linalg.det(f["M"][:3, :3])))) if f else 1.0
     f = sim3_meter(X, Y, schwelle_m=SCHWELLE_REL * ausd * s_, min_anteil=0.0)
     if f is None: return None, dict(punkte=len(X)), False, "keine Sim3"
-    rest_rel = f["rest_median_m"] / max(ausd * s_, 1e-12); ant = f["n_inlier"] / len(X); i_ = np.flatnonzero(f["inlier"])
+    M = f["M"]; inl = f["inlier"]; mass = "ausdehnung"
+    if tiefe is not None and len(tiefe) == len(X):
+        mass = "tiefe"
+        for _ in range(5):                                                             # tiefenbezogene Inlier, Umeyama neu, bis stabil
+            s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
+            if inl.sum() < 3: break
+            M = matrix(*umeyama(X[inl], Y[inl]))
+        s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
+        rest_rel = float(np.median(r[inl])) if inl.any() else 1.0
+    else: rest_rel = f["rest_median_m"] / max(ausd * s_, 1e-12)
+    n_in = int(inl.sum()); ant = n_in / len(X); i_ = np.flatnonzero(inl)
+    if n_in < 3: return None, dict(punkte=len(X)), False, "keine Sim3"
     Q = X[i_]; _, _, Vt = np.linalg.svd(Q - Q.mean(0)); u = (Q - Q.mean(0)) @ Vt[0]
     hs = [umeyama(X[i_][w], Y[i_][w])[0] for w in (u < np.median(u), u >= np.median(u)) if w.sum() >= 3]
     hael = float(abs(hs[0] - hs[1]) / np.mean(hs)) if len(hs) == 2 else 1.0
-    pr = dict(punkte=len(X), stimmig=f["n_inlier"], anteil=round(ant, 3), rest_rel=round(rest_rel, 5), massstab_haelften_rel=round(hael, 4))
+    pr = dict(punkte=len(X), stimmig=n_in, anteil=round(ant, 3), rest_rel=round(rest_rel, 5), fehlermass=mass, massstab_haelften_rel=round(hael, 4))
     if ausd_ziel: pr["hebel"] = round(ausdehnung(Y[i_]) / max(ausd_ziel, 1e-12), 3)
-    gr = [x for x, schlecht in ((f"Anteil stimmig {ant:.0%} < {MIN_ANTEIL:.0%}", ant < MIN_ANTEIL), (f"stimmig {f['n_inlier']} < {MIN_PUNKTE}", f["n_inlier"] < MIN_PUNKTE),
-                                (f"Rest {rest_rel:.2%} der Ausdehnung > {REST_REL:.1%}", rest_rel > REST_REL), (f"Massstab nicht belegt (Haelften {hael:.1%} > {MASS_REL:.0%})", hael > MASS_REL)) if schlecht]
-    return f["M"], pr, not gr, "; ".join(gr) or "stimmig"
+    gr = [x for x, schlecht in ((f"Anteil stimmig {ant:.0%} < {MIN_ANTEIL:.0%}", ant < MIN_ANTEIL), (f"stimmig {n_in} < {MIN_PUNKTE}", n_in < MIN_PUNKTE),
+                                (f"Rest {rest_rel:.2%} > {REST_REL:.1%}", rest_rel > REST_REL), (f"Massstab nicht belegt (Haelften {hael:.1%} > {MASS_REL:.0%})", hael > MASS_REL)) if schlecht]
+    return M, pr, not gr, "; ".join(gr) or "stimmig"
 
 
 def nachbarn(db):
@@ -139,9 +156,9 @@ def koppeln(m, teile, R, P, ausd_teil):
     import pycolmap
     rE = pycolmap.Reconstruction(m); ausd = ausdehnung([p.xyz for p in rE.points3D.values()]); gut, alle = {}, {}
     for t in teile:
-        X, Y, ns = punkte(rE, R[t])
+        X, Y, ns, td = punkte(rE, R[t], mit_tiefe=True)
         if len(ns) < MIN_BILDER_TEIL: alle[t] = dict(bilder=len(ns), grund=f"nur {len(ns)} gemeinsame Bilder"); continue
-        M, pr, ok, g = kopplung_pruefen(X, Y, ausd, ausd_teil[t]); pr.update(bilder=len(ns), grund=g); alle[t] = pr
+        M, pr, ok, g = kopplung_pruefen(X, Y, ausd, ausd_teil[t], tiefe=td); pr.update(bilder=len(ns), grund=g); alle[t] = pr
         if ok: gut[t] = (M, pr)
     return dict(modell=m, ausdehnung=round(ausd, 4)), gut, alle
 
@@ -162,14 +179,34 @@ def zwischenmodell(k, i, db, fotos, aus, faeden, R, ausd_teil):
     if not treffer: erg["grund"] = f"kein Zwischenmodell mit >= {MIN_BILDER_TEIL} Bildern aus >= 2 Teilen (Schwellen {list(SCHWELLEN)})"; return erg
     s0, m0 = treffer[0]; info, gut, alle = koppeln(m0, k["teile"], R, None, ausd_teil); erg.update(schwelle=s0, kopplungen={str(t): v for t, v in alle.items()}, **info); erg["_gut"] = gut
     if len(treffer) > 1:
-        _, gut1, _ = koppeln(treffer[1][1], k["teile"], R, None, ausd_teil); sens = []
-        ts = sorted(set(gut) & set(gut1))
-        for x in ts[1:]:
-            D = (gut[ts[0]][0] @ np.linalg.inv(gut[x][0])) @ np.linalg.inv(gut1[ts[0]][0] @ np.linalg.inv(gut1[x][0])); s, Rr, t = zerlegen(D)
-            sens.append(dict(kante=[ts[0], x], drehung_grad=round(winkel(Rr), 3), massstab_rel=round(abs(s - 1), 4), versatz_rel=round(float(np.linalg.norm(t)) / max(ausd_teil[ts[0]], 1e-12), 4)))
-        erg["sensitivitaet"] = dict(schwelle=treffer[1][0], vergleich=sens or "zu wenige stimmige Kopplungen bei der lockereren Schwelle")
+        _, gut1, _ = koppeln(treffer[1][1], k["teile"], R, None, ausd_teil)
+        erg["sensitivitaet"] = dict(schwelle=treffer[1][0], vergleich=vergleich(gut, gut1, ausd_teil) or "zu wenige stimmige Kopplungen bei der lockereren Schwelle")
     else: erg["sensitivitaet"] = dict(schwelle=None, vergleich="keine lockerere Schwelle verbindet")
+    # WIEDERHOLBARKEIT (Stabilitaetsmass): WIEDERHOLUNGEN Laeufe mit je WEGLASSEN der Nicht-Brueckenbilder zufaellig weggelassen (feste Keime) -> Streuung der Kantenlage
+    kern = {d["a"] for d in k["paare"]} | {d["b"] for d in k["paare"]}; rest = [b for b in k["bilder"] if b not in kern]; wd = []
+    for w in range(WIEDERHOLUNGEN if len(gut) >= 2 else 0):
+        rng = np.random.default_rng(w); weg = set(rng.choice(rest, int(len(rest) * WEGLASSEN), replace=False)) if rest else set()
+        _, mods = mapper([b for b in k["bilder"] if b not in weg], db, fotos, os.path.join(aus, f"zwischen{i}_wdh{w}"), faeden, s0); gw = {}
+        for m in mods:
+            _, g_, _ = koppeln(m, k["teile"], R, None, ausd_teil)
+            if len(g_) > len(gw): gw = g_
+        wd.append(vergleich(gut, gw, ausd_teil) or [dict(kante=None, grund="Wiederholung koppelt nicht")])
+    if wd:
+        flach = [x for v in wd for x in v]
+        erg["wiederholbarkeit"] = dict(laeufe=len(wd), weggelassen=WEGLASSEN, je_lauf=wd, gekoppelt=sum(all(x.get("kante") for x in v) for v in wd),
+                                       max=dict(drehung_grad=max((x.get("drehung_grad", 0) for x in flach if x.get("kante")), default=None),
+                                                massstab_rel=max((x.get("massstab_rel", 0) for x in flach if x.get("kante")), default=None),
+                                                versatz_rel=max((x.get("versatz_rel", 0) for x in flach if x.get("kante")), default=None)))
     return erg
+
+
+def vergleich(g0, g1, ausd_teil):
+    """Kantenlagen zweier Kopplungssaetze desselben Zwischenstuecks vergleichen -> [dict(kante, drehung_grad, massstab_rel, versatz_rel)] (Versatz relativ zur Ausdehnung von Teil i)."""
+    ts = sorted(set(g0) & set(g1)); out = []
+    for x in ts[1:]:
+        D = (g0[ts[0]][0] @ np.linalg.inv(g0[x][0])) @ np.linalg.inv(g1[ts[0]][0] @ np.linalg.inv(g1[x][0])); s, Rr, t = zerlegen(D)
+        out.append(dict(kante=[ts[0], x], drehung_grad=round(winkel(Rr), 3), massstab_rel=round(abs(s - 1), 4), versatz_rel=round(float(np.linalg.norm(t)) / max(ausd_teil[ts[0]], 1e-12), 4)))
+    return out
 
 
 def spannbaum(teile, kanten, a):

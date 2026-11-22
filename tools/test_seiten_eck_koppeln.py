@@ -17,6 +17,11 @@ pruef(not ok, f"Zufallspunkte (andere Flaeche) abgelehnt ({g})")
 Yv = anwenden(M, X); Yv[X[:, 0] > 0] *= 1.08                                        # Verformung: eine Haelfte 8 % groesser
 _, pr, ok, g = EK.kopplung_pruefen(X, Yv, ausd)
 pruef(not ok, f"verformte/unbelegte Kopplung abgelehnt ({g})")
+tf = rng.uniform(2, 40, len(X)); Yt = anwenden(M, X) + rng.normal(0, 1, X.shape) * (0.3 * 0.003 * tf)[:, None]; Yt[:150] += rng.normal(0, 3, (150, 3))   # Rest ~ Tiefe, 10 % Ausreisser
+Mk, pr, ok, g = EK.kopplung_pruefen(X, Yt, ausd, tiefe=tf)
+pruef(ok and pr["fehlermass"] == "tiefe" and np.abs(Mk - M).max() < 0.02, f"tiefenbezogen: Rest ~ Tiefe + 10 % Ausreisser angenommen ({g}, {pr})")
+_, pr, ok, g = EK.kopplung_pruefen(X, rng.normal(0, 5, X.shape), ausd, tiefe=tf)
+pruef(not ok, f"tiefenbezogen: Zufallspunkte abgelehnt ({g})")
 _, pr, ok, g = EK.kopplung_pruefen(X[:50], Y[:50], ausd)
 pruef(not ok and "gemeinsame Punkte" in g, "zu wenige gemeinsame Punkte abgelehnt")
 # Brueckenwahl, drei Teile

@@ -53,13 +53,13 @@ def main():
         ej = json.load(open(os.path.join(o_, "stufe", "eck.json"))); t1 = (ej.get("teile") or {}).get("1") or {}
         z = dict(k=k, teil_a=len(A), teil_b=len(B), brueckenpaare=len(db_), rc=rc, urteil=ej.get("urteil"),
                  schwelle=[x.get("schwelle") for x in ej.get("zwischenmodelle", [])], sensitivitaet=[x.get("sensitivitaet") for x in ej.get("zwischenmodelle", [])],
-                 kopplungen=[x.get("kopplungen") for x in ej.get("zwischenmodelle", [])])
+                 kopplungen=[x.get("kopplungen") for x in ej.get("zwischenmodelle", [])], wiederholbarkeit=[(x.get("wiederholbarkeit") or {}).get("max") for x in ej.get("zwischenmodelle", [])])
         if t1.get("ok"):
             Mest = np.asarray(t1["M_nach_A"]); Mtrue = np.linalg.inv(MB); s, R_, _ = EK.zerlegen(np.linalg.inv(Mtrue) @ Mest)
             PB = np.array([p.xyz for p in pycolmap.Reconstruction(tb).points3D.values()]); d = np.linalg.norm(anwenden(Mest, PB) - anwenden(Mtrue, PB), axis=1) * m_je
             z.update(drehung_grad=round(winkel := EK.winkel(R_), 3), massstab_prozent=round(abs(s - 1) * 100, 3), lagefehler_m=dict(median=round(float(np.median(d)), 3), p90=round(float(np.percentile(d, 90)), 3)),
                      massstab_unsicher_gemeldet=t1.get("massstab_unsicher"))
-        erg["laeufe"].append(z); print(json.dumps({x: z.get(x) for x in ("k", "rc", "schwelle", "drehung_grad", "massstab_prozent", "lagefehler_m", "urteil")}, ensure_ascii=False))
+        erg["laeufe"].append(z); print(json.dumps({x: z.get(x) for x in ("k", "rc", "schwelle", "wiederholbarkeit", "drehung_grad", "massstab_prozent", "lagefehler_m", "urteil")}, ensure_ascii=False))
     json.dump(erg, open(os.path.join(a.aus, "selbsttest.json"), "w"), indent=1, ensure_ascii=False)
 
 
