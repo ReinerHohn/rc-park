@@ -32,6 +32,7 @@ BAND_MIN_PX = 4.0
 BAND_SIGMA = 3.0         # Bandbreite = 3 x Kopplungsunsicherheit (Winkel) x Brennweite
 TIEFE_RADIUS_PX = 15.0   # ANNAHME: Tiefe eines Merkmals aus den Spuren im Umkreis 15 px (Ebene 1/z linear im Bild), Rest <= 1 %
 TIEFE_REST = 0.01
+DIREKT_GEWICHTET = os.environ.get("RCPARK_ECK_DIREKT_GEWICHTET", "1") != "0"   # direkte Sim3 mit Gewicht 1/Tiefe^2 (Beleg in kopplung_pruefen)
 SIG_VERFORMUNG = 3.0
 VERFORMUNG_MAX = 0.15    # Gueltigkeits-Guard: |a| <= 15 %, |b| <= 0,15 rad (8,6 Grad) - mehr ist keine Mapper-Verformung, sondern ein falsches Teil
 
@@ -257,7 +258,7 @@ def direkt_koppeln(A, B, spuren):
     """Robuste Sim3 B -> A aus direkten Spuren (Annahmeregeln wie seiten_eck_koppeln). -> (M, pruefung, ok, grund, X_B, X_A, tiefe)."""
     if not spuren: return None, dict(punkte=0), False, "keine direkten Spuren", None, None, None
     X = np.array([s[1] for s in spuren]); Y = np.array([s[0] for s in spuren]); td = np.array([s[2] for s in spuren])
-    M, pr, ok, g = EK.kopplung_pruefen(X, Y, B.ausdehnung(), A.ausdehnung(), tiefe=td)
+    M, pr, ok, g = EK.kopplung_pruefen(X, Y, B.ausdehnung(), A.ausdehnung(), tiefe=td, gewicht=1.0 / np.maximum(td, 1e-12) ** 2 if DIREKT_GEWICHTET else None)
     if M is not None:
         inl = _rest(M, X, Y, td) <= EK.SCHWELLE_REL; pr["hebel_b"] = round(EK.ausdehnung(X[inl]) / max(B.ausdehnung(), 1e-12), 3)
         pr["bilder_b"] = len({s[3] for s, w in zip(spuren, inl) if w})

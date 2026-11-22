@@ -90,7 +90,7 @@ def punkte(rE, rZ, mit_tiefe=False):
     return aus + (np.array(td),) if mit_tiefe else aus
 
 
-def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None):
+def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewicht=None):
     """Sim3 X -> Y (X im Zwischenmodell, Y im Teilmodell; ausd = Ausdehnung des Zwischenmodells, ausd_ziel = des Teils fuer den Hebel). -> (M, pruefung, ok, grund).
     FEHLERMASS (22.11.2026, Selbsttest Martinstor): mit 'tiefe' (Abstand Punkt - beobachtende Kamera im Zwischenmodell) wird der Rest RELATIV ZUR TIEFE gemessen (= Blickstrahl-
     Winkel, 2 % ~ 1,1 Grad). Relativ zur Ausdehnung bestrafte es ferne, schlecht triangulierte Punkte: ein nachweislich RICHTIGES Zwischenmodell stimmte gegen das Ursprungs-
@@ -100,21 +100,24 @@ def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None):
     s_ = float(np.cbrt(abs(np.linalg.det(f["M"][:3, :3])))) if f else 1.0
     f = sim3_meter(X, Y, schwelle_m=SCHWELLE_REL * ausd * s_, min_anteil=0.0)
     if f is None: return None, dict(punkte=len(X)), False, "keine Sim3"
-    M = f["M"]; inl = f["inlier"]; mass = "ausdehnung"; fit = fitter or umeyama
-    if fitter is not None and inl.sum() >= 3: M = matrix(*fit(X[inl], Y[inl]))
+    M = f["M"]; inl = f["inlier"]; mass = "ausdehnung"
+    def fit(m):                                                                        # m: Maske/Indizes der verwendeten Punkte
+        if gewicht is not None: from sim3_robust import umeyama_w; return umeyama_w(X[m], Y[m], np.asarray(gewicht)[m])
+        return (fitter or umeyama)(X[m], Y[m])
+    if (fitter is not None or gewicht is not None) and inl.sum() >= 3: M = matrix(*fit(inl))
     if tiefe is not None and len(tiefe) == len(X):
         mass = "tiefe"
         for _ in range(5):                                                             # tiefenbezogene Inlier, Umeyama neu, bis stabil
             s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
             if inl.sum() < 3: break
-            M = matrix(*fit(X[inl], Y[inl]))
+            M = matrix(*fit(inl))
         s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
         rest_rel = float(np.median(r[inl])) if inl.any() else 1.0
     else: rest_rel = f["rest_median_m"] / max(ausd * s_, 1e-12)
     n_in = int(inl.sum()); ant = n_in / len(X); i_ = np.flatnonzero(inl)
     if n_in < 3: return None, dict(punkte=len(X)), False, "keine Sim3"
     Q = X[i_]; _, _, Vt = np.linalg.svd(Q - Q.mean(0)); u = (Q - Q.mean(0)) @ Vt[0]
-    hs = [fit(X[i_][w], Y[i_][w])[0] for w in (u < np.median(u), u >= np.median(u)) if w.sum() >= 3]
+    hs = [fit(i_[w])[0] for w in (u < np.median(u), u >= np.median(u)) if w.sum() >= 3]
     hael = float(abs(hs[0] - hs[1]) / np.mean(hs)) if len(hs) == 2 else 1.0
     pr = dict(punkte=len(X), stimmig=n_in, anteil=round(ant, 3), rest_rel=round(rest_rel, 5), fehlermass=mass, massstab_haelften_rel=round(hael, 4))
     if ausd_ziel: pr["hebel"] = round(ausdehnung(Y[i_]) / max(ausd_ziel, 1e-12), 3)
