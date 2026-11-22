@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# 22.11.2026 KREISFALL (Kantenstufe suchte nur +-0,5 m um das VORMODELL): --vorn V = Suchraum asymmetrisch -V .. +band (Meter senkrecht zur getroffenen Flaeche, je Pixel
+#   mit 1/max(|cos|, 0.5) auf den Strahl umgerechnet; ausserhalb +-band Schritt --schritt_vorn, Standard 0,02) -> Vorbauten/Vordach/Traufe bis V vor der Flaeche;
+#   --huelle: Strahlen, die die Flaeche verfehlen, suchen die ersten V+band m in der um V vergroesserten Huellbox (Traufe/Vordach vor dem Himmel);
+#   --geraet cpu (Waechter-Test ohne GPU). Ohne --vorn/--huelle: alter Weg bitgleich (ebenen_bauplan).
 # Variante von kanten_tiefe_sweep.py (12.11.): --ref_namen, --dziel (Tiefenband um Ziel), --flaeche STL --band m (Sweep je Pixel nur +-band um die Modellflaeche = keine Mehrdeutigkeit durch parallele Rippenkanten), --ziel, --nbdist, --eind. Ausgabe wie Original; Weiterverarbeitung: kanten_features.py --farbe stabil --sweep
 """Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen;
 je Tiefe zaehlen, in wie vielen Nachbarfotos an der Projektion wieder eine stabile Kante steht; Peak = 3D-Kantenpunkt. Keine Linienpaare, keine Wolke noetig.
@@ -6,7 +10,7 @@ Aufruf: kanten_tiefe_sweep.py KAM.json STABILDIR OUT.npz [--refs 40] [--nb 12] [
 import sys, os, json, time, numpy as np, cv2, torch, torch.nn.functional as Fn
 def opt(n, d, t=float): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.argv else d
 NREF = opt("--refs", 40, int); NB = opt("--nb", 12, int); VMIN = opt("--vmin", 0.6); HIT = opt("--hit", 0.4); SMIN = opt("--smin", 0.7); DMIN = opt("--dmin", 4.0); DMAX = opt("--dmax", 90.0); BZ = opt("--basis_ziel", 6.0); BMAX = opt("--basis_max", 25.0); TOLPX = opt("--tolpx", 1, int); BREL = opt("--basis_rel", 0.0); DZ = opt("--dz", 0.0); MAXPX = opt("--maxpx", 40000, int)
-dev = "cuda"; KAM = json.load(open(sys.argv[1])); sd = sys.argv[2]; fs = [f for f in sorted(KAM) if os.path.exists(os.path.join(sd, os.path.splitext(f)[0] + ".png"))]; J = len(fs); t0 = time.time()
+dev = opt("--geraet", "cuda", str); KAM = json.load(open(sys.argv[1])); sd = sys.argv[2]; fs = [f for f in sorted(KAM) if os.path.exists(os.path.join(sd, os.path.splitext(f)[0] + ".png"))]; J = len(fs); t0 = time.time()
 V = []; 
 for f in fs:
     v = cv2.imread(os.path.join(sd, os.path.splitext(f)[0] + ".png"), 0); V.append(torch.from_numpy(v).to(dev))
@@ -27,6 +31,7 @@ if "--ref_prefix" in sys.argv: pool = np.array([i for i in pool if fs[i].startsw
 if "--ref_namen" in sys.argv: refs = np.array([fs.index(n) for n in opt("--ref_namen", "", str).split(",")])   # gezielte Referenzfotos (Diagnose)
 DIAG = opt("--diag", "", str); ds = torch.linspace(DMIN, DMAX, int((DMAX - DMIN) / opt('--schritt', 0.01)), device=dev); out = []
 ZENTRUM = np.median(np.load(opt("--box", "", str))[:, :3], 0) if "--box" in sys.argv else None   # Szenenmitte fuer relative Basis
+VORN = opt("--vorn", 0.0); HUELLE = "--huelle" in sys.argv; NHUELLE = [0]; SK = None
 ZAUTO = "--ziel_auto" in sys.argv; MM = None   # 15.11.: allgemein (Gesamtkette): Flaechen-Massstab per --flaeche_skala (Standard 0,087 = Kaufhaus), Blickziel je Referenz aus der Flaeche
 if "--flaeche" in sys.argv:
     import trimesh; mm = trimesh.load(opt('--flaeche', '', str)); mm.apply_scale(opt('--flaeche_skala', 0.087)); bxs = np.array([float(v_) for v_ in opt('--box3', '14,3,6,27,12,8.4', str).split(',')]); ct = mm.triangles_center; mm = trimesh.Trimesh(mm.vertices, mm.faces[np.all((ct >= bxs[:3]) & (ct <= bxs[3:]), axis=1)], process=False); MM = mm
@@ -52,22 +57,37 @@ for a in refs:
     u = xs.float() + 0.5; v = ys.float() + 0.5
     if '--flaeche' in sys.argv:
         mm = MM
-        rr = strahl(a, u, v).cpu().numpy(); oo = np.repeat(Cn[a][None], len(rr), 0); loc, ir, _ = mm.ray.intersects_location(oo, rr, multiple_hits=False); tz0 = np.full(len(rr), np.nan); tz0[ir] = np.linalg.norm(loc - Cn[a], axis=1)
+        rr = strahl(a, u, v).cpu().numpy(); oo = np.repeat(Cn[a][None], len(rr), 0); loc, ir, it = mm.ray.intersects_location(oo, rr, multiple_hits=False); tz0 = np.full(len(rr), np.nan); tz0[ir] = np.linalg.norm(loc - Cn[a], axis=1)
+        BAND = opt('--band', 0.25)
+        if VORN > 0:                                                             # 22.11.2026: Suchraum vor der Flaeche (modellfreier Messkoerper), je Pixel auf den Strahl umgerechnet
+            sk = np.ones(len(rr)); cs = np.abs(np.einsum("ij,ij->i", rr[ir], np.asarray(mm.face_normals)[it])); sk[ir] = 1.0 / np.maximum(cs, 0.5)
+            if HUELLE:                                                           # Strahlen ohne Treffer: Eintritt in die um VORN vergroesserte Huellbox, dort die ersten VORN + band m
+                lo3, hi3 = mm.bounds[0] - VORN, mm.bounds[1] + VORN; fe = np.isnan(tz0); d_ = rr[fe]; d_ = np.where(np.abs(d_) < 1e-9, 1e-9, d_)
+                t1 = (lo3 - Cn[a]) / d_; t2 = (hi3 - Cn[a]) / d_; tin = np.minimum(t1, t2).max(1); tout = np.maximum(t1, t2).min(1); ok_ = (tout > tin) & (tin > 0.5)
+                ix_ = np.flatnonzero(fe)[ok_]; tz0[ix_] = tin[ok_] + VORN; sk[ix_] = 1.0; NHUELLE[0] += len(ix_)
+            kn = ~np.isnan(tz0); SK = torch.from_numpy(sk[kn]).float().to(dev)
         kk = torch.from_numpy(~np.isnan(tz0)).to(dev); ys, xs, u, v = ys[kk], xs[kk], u[kk], v[kk]; T0 = torch.from_numpy(tz0[~np.isnan(tz0)]).float().to(dev)
-        ds = torch.linspace(-opt('--band', 0.25), opt('--band', 0.25), int(2 * opt('--band', 0.25) / opt('--schritt', 0.01)) + 1, device=dev)
+        if VORN > 0:
+            st, stv = opt('--schritt', 0.01), opt('--schritt_vorn', 0.02); nv_ = int(round((VORN - BAND) / stv)) if VORN > BAND else 0
+            ds = torch.cat([torch.linspace(-VORN, -BAND, nv_ + 1, device=dev)[:-1] if nv_ else torch.zeros(0, device=dev), torch.linspace(-BAND, BAND, int(2 * BAND / st) + 1, device=dev)])
+        else: ds = torch.linspace(-BAND, BAND, int(2 * BAND / opt('--schritt', 0.01)) + 1, device=dev)
     else: T0 = torch.zeros(len(xs), device=dev)
+    if not (VORN > 0 and '--flaeche' in sys.argv): SK = None
     best = torch.zeros(len(xs), device=dev); bd = torch.zeros(len(xs), device=dev); second = torch.zeros(len(xs), device=dev)
     for c0 in range(0, len(xs), 4000):
-        sl = slice(c0, c0 + 4000); r = strahl(a, u[sl], v[sl]); N = len(r); Q = (C[a][None, None] + r[:, None] * (T0[sl][:, None] + ds[None, :])[:, :, None]).reshape(-1, 3); hit = torch.zeros(N * len(ds), device=dev); vis = torch.zeros(N * len(ds), device=dev)
+        sl = slice(c0, c0 + 4000); r = strahl(a, u[sl], v[sl]); N = len(r); dsp = ds[None, :] * SK[sl][:, None] if SK is not None else ds[None, :]; Q = (C[a][None, None] + r[:, None] * (T0[sl][:, None] + dsp)[:, :, None]).reshape(-1, 3); hit = torch.zeros(N * len(ds), device=dev); vis = torch.zeros(N * len(ds), device=dev)
         for b in nb:
             uu, vv, z = proj(Q, b); ui = uu.round().long(); vi = vv.round().long(); Hb, Wb = HW[b]; ok = (z > 1) & (ui >= 0) & (ui < Wb) & (vi >= 0) & (vi < Hb)
             hit += (HITM[b][vi.clamp(0, Hb - 1), ui.clamp(0, Wb - 1)].float() * ok.float()); vis += ok.float()
         sc = (hit / vis.clamp(min=1)).view(N, len(ds)); sc = sc * (vis.view(N, len(ds)) >= 5).float()
-        m, i = sc.max(1); sc2 = sc.clone(); lo = (i[:, None] - 12).clamp(min=0); hi = (i[:, None] + 12); ar = torch.arange(len(ds), device=dev)[None]; sc2[(ar >= lo) & (ar <= hi)] = 0; s2 = sc2.max(1).values
-        best[sl] = m; bd[sl] = T0[sl] + ds[i]; second[sl] = s2
+        m, i = sc.max(1); sc2 = sc.clone()
+        if VORN > 0: sc2[(ds[None, :] - ds[i][:, None]).abs() <= 0.125] = 0           # Nebengipfel-Sperre in Metern (+-12 Schritte zu 1 cm), auch bei groeberem Schritt vor der Flaeche
+        else: lo = (i[:, None] - 12).clamp(min=0); hi = (i[:, None] + 12); ar = torch.arange(len(ds), device=dev)[None]; sc2[(ar >= lo) & (ar <= hi)] = 0
+        s2 = sc2.max(1).values
+        best[sl] = m; bd[sl] = T0[sl] + (dsp[torch.arange(N, device=dev), i] if SK is not None else ds[i]); second[sl] = s2
     ok = (best >= SMIN) & (second <= opt('--eind', 0.8) * best)
     if DIAG:                                                                     # Diagnosebild: gruen = Peak gefunden, rot = kein eindeutiger Peak, grau = Karte
         im = cv2.cvtColor(V[a].cpu().numpy(), cv2.COLOR_GRAY2BGR); yy = ys.cpu().numpy(); xx = xs.cpu().numpy(); okn = ok.cpu().numpy(); im[yy[~okn], xx[~okn]] = (0, 0, 255); im[yy[okn], xx[okn]] = (0, 255, 0); cv2.imwrite(DIAG.replace(".png", "_%s.png" % os.path.splitext(fs[a])[0]), im)
     r = strahl(a, u[ok], v[ok]); P3 = C[a][None] + r * bd[ok][:, None]; out.append((P3.cpu().numpy(), best[ok].cpu().numpy(), np.full(int(ok.sum()), a)))
     print("Ref %s: Pixel %d, eindeutiger Peak %d (%.0fs)" % (fs[a], len(xs), int(ok.sum()), time.time() - t0), flush=True)
-P = np.vstack([o[0] for o in out]); S = np.concatenate([o[1] for o in out]); A = np.concatenate([o[2] for o in out]); np.savez(sys.argv[3], P=P, s=S, ref=A, fotos=np.array(fs)); print("fertig", len(P), "Punkte")
+P = np.vstack([o[0] for o in out]); S = np.concatenate([o[1] for o in out]); A = np.concatenate([o[2] for o in out]); np.savez(sys.argv[3], P=P, s=S, ref=A, fotos=np.array(fs)); print("fertig", len(P), "Punkte" + (f" (Suchraum {VORN:.2f} m vor bis {opt('--band', 0.25):.2f} m hinter der Flaeche, {NHUELLE[0]} Strahlen ueber die Huelle)" if VORN > 0 else ""))

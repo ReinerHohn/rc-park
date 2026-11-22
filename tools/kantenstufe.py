@@ -3,19 +3,25 @@
 Allgemein fuer jedes Objekt (keine Kaufhaus-Pfade). Die dichte Wolke wird NICHT benutzt.
 
   /media/oem/scan/venv-seg/bin/python -I tools/kantenstufe.py modelle/<obj>/objekt.json --ausrichtung <SFM-AUSRICHTUNG.json> --bilder <ORDNER> --aus <DIR>
-        [--max_fotos 80] [--refs 30] [--band 0.5] [--tol 0.15] [--nur_bewerten]
+        [--max_fotos 80] [--refs 30] [--band 0.5] [--vorn 2.0] [--tol 0.15] [--nur_bewerten] [--suchraum messkoerper|modell] [--messkoerper STL] [--wolke W.npy] [--geraet cuda]
 Schritte:
   1. Kameras aus der Ausrichtung (X_sfm = ..., je Kamera R, t im Modellrahmen = STL-Meter) -> DIR/kam.json (kam_lot2-Format: Rn, tn, C, f, cx, cy, W, H, modell, params).
-     Auswahl: Kameras, die das Modell sehen (Anteil projizierter Modellpunkte im Bild, Abstand < 80 m), gleichmaessig ueber 12 Blickrichtungen -> DIR/kam_wahl.json.
+     Auswahl: Kameras, die den Messkoerper sehen (Anteil projizierter Modellpunkte im Bild, Abstand < 80 m), gleichmaessig ueber 12 Blickrichtungen -> DIR/kam_wahl.json.
   2. tools/stabil_alle.py (GPU) -> DIR/stabil/<foto>.png
-  3. tools/kanten_tiefe_sweep_flaeche.py --flaeche STL --flaeche_skala --band --ziel_auto (Blickziel je Referenz aus der Flaeche) -> DIR/sweep.npz
+  3. tools/kanten_tiefe_sweep_flaeche.py --flaeche MESSKOERPER --flaeche_skala --band --vorn --huelle --ziel_auto (Blickziel je Referenz aus der Flaeche) -> DIR/sweep.npz
   4. Bewertung in 3D (gpu_knn): Modellkanten (Knick > 30 Grad + Rand, alle 5 cm) gegen Sweep-Kantenpunkte:
        Praezision = Anteil Modellkanten-Proben (im von Kanten belegten Bereich) mit Fotokante < tol  (rot = erfundene Kante)
        Recall     = Anteil Sweep-Punkte mit Modellkante < tol                                        (gelb = Fotokante ohne Modell = fehlendes Feature)
      Fehlende Kanten als Haufen (Raster 0,5 m, >= 30 Punkte) mit Seite/Hoehe -> Arbeitsliste fuer Generator-Features (kanten_features.py --sweep).
 Ausgabe: DIR/kanten_bericht.json, modelle/<obj>/audit/kanten3d.png (Seitenansichten). Exit 0; rc 4 = zu wenig Kantenpunkte (Kameras/Stabilkarten pruefen).
-Grenzen: Der Sweep sucht nur +-band um die vorhandene Modellflaeche - Teile, die weiter als band vor/hinter der Flaeche liegen (Erker, Dachueberstand), fehlen
-in den Punkten; dafuer zeigt sie das Foto-Tor (teil_fotoform/foto_diff). Bei grobem Modell (LoD2) band groesser waehlen.
+22.11.2026 KREISFALL (0_DURCHBRUCH_AGENTEN_SCHLEIFE.md "Zirkulaere Messung"): bisher suchte der Sweep nur +-0,5 m um das STL des VORMODELLS und die Kameras wurden gegen
+das Vormodell gewaehlt - Kanten > 0,5 m vor dem Vormodell (Vordach, Erker, Traufe) fand die Kette nie, Strahlen durch gebaute Oeffnungen suchten an der Rueckwand,
+und ohne Vorlauf gab es keinen Suchraum. Jetzt (--suchraum messkoerper, Standard): Suchraum, Blickziel, Kameraauswahl und Box nur aus dem MODELLFREIEN Messkoerper
+(tools/fassade_ortho.py --nur-messkoerper: LoD2 flach + Wandversatz aus Fotokanten, geschlossen), Band asymmetrisch --vorn 2,0 m vor bis --band 0,5 m hinter der Flaeche
+(senkrecht, je Strahl umgerechnet), Strahlen am Messkoerper vorbei ueber die Huelle (--huelle); Tiefe = Triangulation ueber die Nachbarfotos (unveraendert);
+dichte Wolke nur als Lage-Veto (--wolke, Punkte weiter als --veto_m von jeder Wolkenstelle fallen weg). Das gebaute Modell wird NUR noch bewertet (Schritt 4).
+Waechter: tools/test_kantenstufe_kreis.py (zwei Vormodelle -> bitgleiche Kanten, Vordachkante 1,2 m vor der Wand gefunden). --suchraum modell = alter Weg (nur Vergleich).
+Grenze: Teile weiter als --vorn vor der Messflaeche fehlen weiterhin (dafuer Foto-Tor teil_fotoform/foto_diff).
 """
 import sys, os, json, glob, argparse, subprocess, time, numpy as np
 
@@ -67,6 +73,39 @@ def waehlen(K, V, n):
     return out, {str(a * 30): len(s) for a, s in sorted(sek.items())}
 
 
+def messkoerper_laden(a, obj, objp, skala):
+    """Suchraum der Kantenstufe (22.11.2026 Kreisfall): (Netz in Meter/Modellrahmen oder None, STL-Pfad, Quelle). Nie das gebaute Modell (ausser --suchraum modell)."""
+    import trimesh
+    if a.suchraum == "modell":
+        p = os.path.join(ROOT, obj["stl"]); m = trimesh.load(p); m.apply_scale(skala); return m, p, "modell (ALTER WEG, zirkulaer: Suchraum = Vormodell)"
+    mk = os.path.abspath(a.messkoerper) if a.messkoerper else os.path.join(os.path.abspath(a.aus), "messkoerper.stl")
+    if not a.messkoerper:
+        r = subprocess.run([PY, "-W", "ignore", "-I", os.path.join(ROOT, "tools/fassade_ortho.py"), objp, "--nur-messkoerper", mk], capture_output=True, text=True)
+        if r.returncode != 0 or not os.path.exists(mk):
+            return None, mk, "kein Messkoerper: " + ((r.stdout + r.stderr).strip().splitlines() or ["?"])[-1][:200]
+    m = trimesh.load(mk); m.apply_scale(skala)
+    return (m, mk, "messkoerper (modellfrei: LoD2 flach + Wandversatz aus Fotokanten)") if len(m.faces) else (None, mk, "Messkoerper leer")
+
+
+def abstand(A, B, geraet):
+    """Abstand jedes Punkts aus A zum naechsten aus B (GPU gpu_knn; cpu = cKDTree fuer den Waechter-Test)."""
+    if geraet == "cpu":
+        from scipy.spatial import cKDTree
+        return cKDTree(np.asarray(B, float)).query(np.asarray(A, float))[0]
+    from gpu_knn import min_abstand
+    return np.asarray(min_abstand(A, B))
+
+
+def wolke_veto(P, wolke, veto_m, lo, hi, geraet):
+    """Lage-Veto aus der dichten Wolke (nur grobe Ausreisser weg, nie Form): Kantenpunkte weiter als veto_m von jeder Wolkenstelle (Raster 0,1 m in der Box) fallen weg."""
+    W = np.load(wolke, mmap_mode="r"); st = max(1, len(W) // 2_000_000); W = np.asarray(W[::st, :3], np.float32)
+    W = W[np.all((W >= lo) & (W <= hi), 1)]
+    if len(W) < 1000: return np.ones(len(P), bool), f"zu wenig Wolkenpunkte in der Box ({len(W)}) - kein Veto"
+    W = np.unique(np.floor(W / 0.1).astype(np.int32), axis=0).astype(np.float32) * 0.1 + 0.05
+    ok = abstand(P, W, geraet) <= veto_m
+    return ok, f"{int((~ok).sum())} von {len(P)} Kantenpunkten weiter als {veto_m} m von der Wolke (verworfen)"
+
+
 def modellkanten(m, winkel=30.0, schritt=0.05):
     import trimesh
     adj = m.face_adjacency; ang = m.face_adjacency_angles; E = m.face_adjacency_edges[ang > np.radians(winkel)]
@@ -83,26 +122,46 @@ def modellkanten(m, winkel=30.0, schritt=0.05):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ausrichtung", required=True); ap.add_argument("--bilder", required=True)
     ap.add_argument("--aus", required=True); ap.add_argument("--max_fotos", type=int, default=80); ap.add_argument("--refs", type=int, default=30)
+    ap.add_argument("--suchraum", choices=("messkoerper", "modell"), default="messkoerper", help="messkoerper = modellfrei (Standard, Kreisfall 22.11.2026); modell = alter, zirkulaerer Weg um das Vormodell")
+    ap.add_argument("--messkoerper", default="", help="fertiger Messkoerper-STL (mm wie das Objekt-STL); Standard: tools/fassade_ortho.py --nur-messkoerper DIR/messkoerper.stl")
+    ap.add_argument("--vorn", type=float, default=2.0, help="Suchraum vor der Messflaeche (m, senkrecht): Vordach/Erker/Traufe; nur --suchraum messkoerper")
+    ap.add_argument("--wolke", default="", help="dichte Wolke (npy N x 3, Modellrahmen) nur als LAGE-VETO"); ap.add_argument("--veto_m", type=float, default=1.5)
+    ap.add_argument("--geraet", default="cuda", help="cpu nur fuer den Waechter-Test"); ap.add_argument("--stabil_vorhanden", action="store_true", help="Stabilkarten liegen schon in DIR/stabil (Test)")
     ap.add_argument("--band", type=float, default=0.5); ap.add_argument("--tol", type=float, default=0.15); ap.add_argument("--nur_bewerten", action="store_true"); ap.add_argument("--name", default="", help="Zusatz fuer Bericht/Bild (z.B. _fertig: Bewertung des fertigen Modells nach Fassaden/Bauplan mit dem Sweep der Kantenstufe)")
     a = ap.parse_args(); import trimesh
     objp = os.path.abspath(a.objekt); obj = json.load(open(objp)); od = os.path.dirname(objp); os.makedirs(a.aus, exist_ok=True)
     A = json.load(open(a.ausrichtung if os.path.isabs(a.ausrichtung) else os.path.join(ROOT, a.ausrichtung)))
-    skala = float(obj.get("stl_massstab", 87)) / 1000.0; stl = os.path.join(ROOT, obj["stl"]); m = trimesh.load(stl); m.apply_scale(skala)   # Modellrahmen = STL-Meter (kameras_aus_buendel)
-    lo, hi = m.bounds; box = ",".join(f"{x:.2f}" for x in np.r_[lo - 1.0, hi + 1.0]); bericht = dict(objekt=os.path.relpath(objp, ROOT), stl=obj["stl"], ausrichtung=a.ausrichtung, start=time.strftime("%Y-%m-%d %H:%M"))
+    skala = float(obj.get("stl_massstab", 87)) / 1000.0; stl = os.path.join(ROOT, obj["stl"])   # Modellrahmen = STL-Meter (kameras_aus_buendel)
+    bericht = dict(objekt=os.path.relpath(objp, ROOT), stl=obj["stl"], ausrichtung=a.ausrichtung, start=time.strftime("%Y-%m-%d %H:%M"))
     KJ, KW, SD, SW = (os.path.join(a.aus, n) for n in ("kam.json", "kam_wahl.json", "stabil", "sweep.npz"))
+    def ende(fehler):
+        bericht["fehler"] = fehler; json.dump(bericht, open(os.path.join(a.aus, f"kanten_bericht{a.name}.json"), "w"), indent=1, ensure_ascii=False); print(fehler, flush=True); return 4
     if not a.nur_bewerten:
+        S, sq, squelle = messkoerper_laden(a, obj, objp, skala); bericht.update(suchraum=a.suchraum, suchraum_quelle=squelle, suchraum_stl=os.path.relpath(sq, ROOT))
+        print(f"Suchraum: {squelle}", flush=True)
+        if S is None: return ende(f"KEIN modellfreier Suchraum ({squelle}) - LoD2/rahmen im Objekt pruefen; --suchraum modell waere der zirkulaere alte Weg")
+        vorn = a.vorn if a.suchraum == "messkoerper" else 0.0; slo, shi = S.bounds; box = ",".join(f"{x:.2f}" for x in np.r_[slo - vorn - 1.0, shi + vorn + 1.0])
         K = kameras(A, a.bilder); json.dump(K, open(KJ, "w"))
-        V = m.sample(4000) if len(m.faces) else m.vertices; wahl, sek = waehlen(K, np.asarray(V), a.max_fotos)
-        json.dump({f: K[f] for f in wahl}, open(KW, "w")); bericht.update(kameras=len(K), gewaehlt=len(wahl), sektoren=sek)
+        V = S.sample(4000, seed=0) if len(S.faces) else S.vertices; wahl, sek = waehlen(K, np.asarray(V), a.max_fotos)      # Kameraauswahl gegen den Messkoerper (nicht das Vormodell)
+        json.dump({f: K[f] for f in wahl}, open(KW, "w")); bericht.update(kameras=len(K), gewaehlt=len(wahl), sektoren=sek, vorn_m=vorn)
         print(f"Kameras {len(K)}, gewaehlt {len(wahl)} (Sektoren {sek})", flush=True)
-        if len(wahl) < 6: bericht["fehler"] = "weniger als 6 Kameras sehen das Modell"; json.dump(bericht, open(os.path.join(a.aus, "kanten_bericht.json"), "w"), indent=1); return 4
-        subprocess.run([PY, "-I", os.path.join(ROOT, "tools/stabil_alle.py"), KW, a.bilder, SD], check=True)
-        subprocess.run([PY, "-I", os.path.join(ROOT, "tools/kanten_tiefe_sweep_flaeche.py"), KW, SD, SW, "--flaeche", stl, "--flaeche_skala", str(skala), "--box3", box,
-                        "--band", str(a.band), "--ziel_auto", "--nbdist", "80", "--refs", str(a.refs), "--nb", "12", "--maxpx", "40000"], check=True)
+        if len(wahl) < 6: return ende("weniger als 6 Kameras sehen den Messkoerper")
+        if not a.stabil_vorhanden: subprocess.run([PY, "-I", os.path.join(ROOT, "tools/stabil_alle.py"), KW, a.bilder, SD], check=True)
+        subprocess.run([PY, "-I", os.path.join(ROOT, "tools/kanten_tiefe_sweep_flaeche.py"), KW, SD, SW, "--flaeche", sq, "--flaeche_skala", str(skala), "--box3", box,
+                        "--band", str(a.band), "--ziel_auto", "--nbdist", "80", "--refs", str(a.refs), "--nb", "12", "--maxpx", "40000", "--geraet", a.geraet]
+                       + (["--vorn", str(vorn), "--huelle"] if vorn > 0 else []), check=True)
+        if a.wolke and os.path.exists(a.wolke):                                 # Lage-Veto (KERNMETHODE: Wolke nie Form, nur Lage)
+            try:
+                Z = dict(np.load(SW)); ok, txt = wolke_veto(Z["P"].astype(float), a.wolke, a.veto_m, slo - vorn - 1.0, shi + vorn + 1.0, a.geraet)
+                if not ok.all(): np.savez(SW, **{k: (v[ok] if k in ("P", "s", "ref") else v) for k, v in Z.items()})
+                bericht["wolke_veto"] = txt
+            except Exception as e_: bericht["wolke_veto"] = f"ausgefallen ({type(e_).__name__}: {str(e_)[:150]}) - Kanten ohne Veto"
+            print("Wolke-Veto:", bericht["wolke_veto"], flush=True)
     Z = np.load(SW); P = Z["P"].astype(float); bericht["sweep_punkte"] = int(len(P))
-    if len(P) < 2000: bericht["fehler"] = f"nur {len(P)} Kantenpunkte"; json.dump(bericht, open(os.path.join(a.aus, "kanten_bericht.json"), "w"), indent=1); print(bericht["fehler"]); return 4
-    from gpu_knn import min_abstand
-    E = modellkanten(m); dP = np.asarray(min_abstand(P, E)); dE = np.asarray(min_abstand(E, P))
+    if len(P) < 2000: return ende(f"nur {len(P)} Kantenpunkte")
+    if not os.path.exists(stl): return ende(f"Kanten gefunden ({len(P)} Punkte), aber kein Modell {obj['stl']} zum Bewerten")
+    m = trimesh.load(stl); m.apply_scale(skala); lo, hi = m.bounds                # das gebaute Modell wird nur BEWERTET, es bestimmt keine Kante
+    E = modellkanten(m); dP = abstand(P, E, a.geraet); dE = abstand(E, P, a.geraet)
     belegt = dE < 1.0                                                          # nur Modellkanten, in deren Naehe ueberhaupt Fotokanten gefunden wurden (sonst ungesehen)
     prae = float((dE[belegt] < a.tol).mean()) if belegt.any() else 0.0; rec = float((dP < a.tol).mean()); f1 = 2 * prae * rec / max(prae + rec, 1e-9)
     from dach_bauen import seiten_aus_rahmen
