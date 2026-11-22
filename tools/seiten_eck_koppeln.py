@@ -42,7 +42,15 @@ SCHWELLEN = (30, 20, 15, 12, 10)   # abs_pose_min_num_inliers: strengste verbind
 MIN_BILDER_TEIL = 3
 MIN_PUNKTE = 100
 MIN_ANTEIL = 0.8
-REST_REL = 0.005         # ANNAHME: 0,5 % der Zwischenmodell-Ausdehnung (1122: 0,21-0,34 %)
+REST_REL = 0.005         # Rest-Median (tiefenbezogen) hoechstens 0,5 % - EICHUNG unten
+# EICHUNG 22.11.2026 (tools/versuche/eck_rest_eichung.py, /media/oem/rcdaten/tmp/durchblick/eichung_rest.json; 20 richtige Kopplungen aus Selbsttests Martinstor_gk +
+# Kaufhaus_gk, k = 3/5/10, mit/ohne Nachmatchen, je gegen falsche Faelle am selben Paar):
+#   richtig: Rest 0,12-0,59 %, Anteil 0,77-0,98, Trend (Rest fern/nah) 0,29-2,6;  Spiegel (Seitenverwechslung): Rest 0,32-0,94 %, Anteil 0,28-0,72 -> alle abgelehnt;
+#   Zufall: keine Sim3. Der REST trennt richtig/falsch NICHT (Bereiche ueberlappen), der ANTEIL trennt (0,72 | 0,77; Grenze 0,80 lehnt 4 richtige ab, keine falsche an).
+#   Grenze 0,5 % bleibt: 0,63 % (1122 mit Nachmatchen) liegt ueber ALLEN richtigen Faellen (max 0,59 %) und im Spiegelbereich -> nicht sicher -> abgelehnt.
+#   VERFORMUNG EINES TEILS ueber seine Laenge (Massstabsverlauf 2/5 %, Biegung 1/3 Grad) besteht die Kopplung meist (16/20 bzw. 13/20): die gemeinsamen Punkte
+#   decken nur einen Teil des Teils ab, lokal ist die Verformung fast eine Aehnlichkeit. Das kann KEINE Kopplungspruefung sehen -> unabhaengige Tore noetig
+#   (Kreisschluss, Innenflaechen, GPS-Veto, Grundriss). Ein Trend-Kriterium (Rest waechst mit Abstand) trennt in den Daten ebenfalls nicht (richtig bis 2,6).
 SCHWELLE_REL = 0.02      # Inlier-Schwelle der Sim3: 2 % der Ausdehnung
 MASS_REL = 0.02          # Massstab-Unsicherheit (Haelften-Probe) hoechstens 2 %
 KREIS_SIGMA = 3.0
@@ -171,10 +179,22 @@ def koppeln(m, teile, R, P, ausd_teil):
 
 
 def zwischenmodell(k, i, db, fotos, aus, faeden, R, ausd_teil):
-    """Strengste verbindende Schwelle + Sensitivitaet an der naechst lockereren. -> dict"""
+    """Beide Varianten: SIFT (Kettendatenbank) und - wenn NACHMATCHEN - mit ALIKED+LightGlue nachgematcht. Gewaehlt wird die Nachmatchen-Variante, wenn sie mindestens
+    so viele Teile stimmig koppelt wie SIFT, sonst SIFT. Beide im JSON ('varianten'), Unterschied der Kantenlage als Stabilitaetsangabe. -> dict wie _zwischen."""
+    z0 = _zwischen(k, f"{i}", db, fotos, aus, faeden, R, ausd_teil, False)
+    if not NACHMATCHEN: return z0
+    z1 = _zwischen(k, f"{i}lg", db, fotos, aus, faeden, R, ausd_teil, True); g0, g1 = z0.get("_gut", {}), z1.get("_gut", {})
+    wahl = "nachmatchen" if len(g1) >= 2 and len(g1) >= len(g0) else "sift"; z = dict(z1 if wahl == "nachmatchen" else z0)
+    kurz = lambda zz: {x: zz.get(x) for x in ("bilder", "schwelle", "modell", "kopplungen", "nachmatchen", "zeitnachbarn") if x in zz}
+    z["varianten"] = dict(gewaehlt=wahl, sift=kurz(z0), nachmatchen=kurz(z1), unterschied=vergleich(g0, g1, ausd_teil) or "nicht beide gekoppelt")
+    return z
+
+
+def _zwischen(k, i, db, fotos, aus, faeden, R, ausd_teil, nachmatchen):
+    """Strengste verbindende Schwelle + Sensitivitaet an der naechst lockereren + Wiederholbarkeit. -> dict"""
     import pycolmap
     erg = dict(teile=k["teile"], brueckenpaare=len(k["paare"]), bilder=len(k["bilder"]), versuche=[]); treffer = []
-    if NACHMATCHEN:                                                                   # mehr und breiter verteilte Zuordnungen im Brueckenbereich (Kette: SIFT)
+    if nachmatchen:                                                                   # mehr und breiter verteilte Zuordnungen im Brueckenbereich (Kette: SIFT)
         zeit = zeitnachbarn(k, fotos); k = dict(k, bilder=sorted(set(k["bilder"]) | zeit)); erg.update(bilder=len(k["bilder"]), zeitnachbarn=len(zeit))
         lo = os.path.join(aus, f"zwischen{i}_lg"); os.makedirs(lo, exist_ok=True); lp = os.path.join(lo, "bilder.txt"); open(lp, "w").write("\n".join(k["bilder"]) + "\n")
         rc = subprocess.call([os.path.join(T, "py"), os.path.join(T, "bruecke_nachmatchen.py"), db, fotos, lp, "--aus", lo, "--vram-mb", str(NACHMATCH_VRAM_MB), "--faeden", str(faeden)],
