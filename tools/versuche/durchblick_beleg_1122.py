@@ -41,7 +41,16 @@ def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("--modell", required=True); ap.add_argument("--seiten-alt", required=True); ap.add_argument("--ausrichtung", required=True)
     ap.add_argument("--objekt", required=True); ap.add_argument("--bilder", required=True); ap.add_argument("--aus", required=True); ap.add_argument("--tol-m", type=float, default=1.0)
     ap.add_argument("--kette-modell"); ap.add_argument("--kette-fused"); ap.add_argument("--durch-fused")
+    ap.add_argument("--sparse-ply", nargs=2, metavar=("MODELL", "PLY"), help="nur: Punkte eines dünnen Modells als binaere PLY (Format sfm_seiten_modelle.PLY_SATZ) schreiben und Ende "
+                    "(Ersatz der dichten Wolke fuer wand_dicke_tor, wenn keine GPU frei ist - schwaecherer Beleg)")
     a = ap.parse_args(argv); import pycolmap; os.makedirs(a.aus, exist_ok=True)
+    if a.sparse_ply:
+        from sfm_seiten_modelle import PLY_SATZ
+        rr = pycolmap.Reconstruction(a.sparse_ply[0]); X = np.array([p.xyz for p in rr.points3D.values()], np.float32); d = np.zeros(len(X), PLY_SATZ); d["p"] = X
+        with open(a.sparse_ply[1], "wb") as f:
+            f.write((f"ply\nformat binary_little_endian 1.0\nelement vertex {len(X)}\nproperty float x\nproperty float y\nproperty float z\nproperty float nx\nproperty float ny\nproperty float nz\n"
+                     "property uchar red\nproperty uchar green\nproperty uchar blue\nend_header\n").encode()); f.write(d.tobytes())
+        print(f"{len(X)} Punkte -> {a.sparse_ply[1]}"); return
     sj = json.load(open(a.seiten_alt)); g = sj["gemeinschaft"]; teil = {k: t for t, s in enumerate(sj["seiten"]) for k in s["gruppen"]}
     alt = lambda n: teil.get(g.get(n))
     eltern = os.path.dirname(a.modell.rstrip("/")); mod = sorted((d for d in os.listdir(eltern) if d.isdigit()), key=int)
@@ -56,6 +65,9 @@ def main(argv=None):
     M = lambda X: (s * (R @ np.asarray(X).T)).T + t
     rest = np.linalg.norm(M(np.array([C[n] for n in n0])) - np.array([st[os.path.splitext(n)[0]] for n in n0]), axis=1)
     erg["sim3_teil0"] = dict(gemeinsam=len(n0), inlier=int(len(inl)), rest_median_inlier_m=round(float(np.median(rest[inl])), 3), rest_median_alle_m=round(float(np.median(rest)), 3), tol_m=a.tol_m)
+    # wand_dicke_tor legt jeden Teil per NICHT robustem Sim3 ueber alle gemeinsamen Kameras (1. Lauf: Rest 4372 m wegen einer Kamera 'am Mond') -> Ausrichtung nur mit den Inliern
+    au_i = dict(au); ok_ = {os.path.splitext(n0[i])[0] for i in inl}; au_i["kameras"] = {k: v for k, v in au["kameras"].items() if k in ok_}
+    json.dump(au_i, open(os.path.join(a.aus, "ausrichtung_inlier.json"), "w"))
     print(f"Sim3 Teil 0 -> Ketten-Ausrichtung: {len(inl)}/{len(n0)} Inlier (Schwelle {a.tol_m} m), Rest Median Inlier {np.median(rest[inl]):.3f} m, alle {np.median(rest):.3f} m")
     # 3. GPS
     from paarvorwahl import gps_aus_exif; from netz_fotos_holen import geo; from seiten_erkennen import richtung
