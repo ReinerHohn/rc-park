@@ -1,4 +1,4 @@
-# Werkzeuge: test (109)
+# Werkzeuge: test (115)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
@@ -9,6 +9,7 @@
 - `tools/test_buendel_synthetisch.py` [-] test_buendel_synthetisch.py - BEWEIS mit bekannter Wahrheit: alte gegen neue Kamera-/Buendelkette (Kaufhaus 2026-11-04, Nutzerauftrag "beweise, dass es bei einem neuen Objekt besse
 - `tools/test_dach_dom1_veto.py` [-] test_dach_dom1_veto.py - DOM1-Veto des Wolken-Dachprofils (tools/dach_profil_wolke.dom1_veto, 21.11.2026). Anlass Schwabentor-1120: Hoehen-Tor meldete Dach +1,62 m ueber DOM1 (k 0,
 - `tools/test_dach_veto_traufe.py` [-] test_dach_veto_traufe.py - DOM1-Veto darf den DACHUEBERSTAND nicht abschneiden (tools/dach_profil_wolke.dom1_veto + dom1_kachel.dom1_bilinear(klippe), 21.11.2026). Anlass Schwabent
+- `tools/test_dachflaeche_aus_umriss.py` [-] Test dachflaeche_aus_umriss.py + bauteile.flaeche_aus_foto (synthetisch, Sekunden): Profil-Familie aus gerenderten Silhouetten zurueckgewinnen, Formfamilie nur aus >= 3 einigen Fot
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
 - `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
 - `tools/test_element_einpassen.py` [seg] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
@@ -42,6 +43,8 @@
 - `tools/test_kamera_lod2.py` [seg] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
+- `tools/test_keilsteine.py` [-] test_keilsteine.py - fester synthetischer Test fuer quader_raster.keilsteine (21.11.2026 spaet), < 20 s, nur CPU.
+- `tools/test_kette_kreis_orthos.py` [seg] test_kette_kreis_orthos.py - fester Test (CPU, < 20 s, ohne Daten) fuer den KREISFALL der Kette (22.11.2026, Kettenlauf schwabentor 1121v).
 - `tools/test_kette_stabil.py` [seg] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
 - `tools/test_kette_tempo.py` [gen] test_kette_tempo.py - Tempo-Umbau der Kette (21.11.2026) ohne Rechenlast pruefen: 1. fassaden_kette._waende_parallel: Ausgabe in Wandreihenfolge (wie seriell), GPU-Teil (_gpu_run) 
 - `tools/test_koerper_schleife.py` [gen] test_koerper_schleife.py - fester Test ohne GPU fuer tools/wolke_rest.py (Grobformen, Nachbar-Abtrennung), bauteile.wolkenrest_koerper und tools/koerper_schleife.py (21.11.2026).
@@ -49,6 +52,7 @@
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
 - `tools/test_konvergenz_logik.py` [-] test_konvergenz_logik.py - Trockenlauf der Konvergenzschleife OHNE GPU und OHNE Generatorbau (S3 Phase A, 2026-11-05). Prueft die STEUERUNG von qualitaetsstufen.v_konvergenz mit vo
 - `tools/test_laibung_aus_fotos.py` [seg] test_laibung_aus_fotos.py - fester synthetischer Test fuer tools/laibung_aus_fotos.py (21.11.2026 spaet), < 10 s, nur CPU.
+- `tools/test_laterne_aus_fotos.py` [gen] test_laterne_aus_fotos.py - feste synthetische Tests fuer tools/laterne_aus_fotos.py und bauteile.laterne (22.11.2026). Ohne Dateien, Sekunden.
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
@@ -78,6 +82,7 @@
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
 - `tools/test_seiten_vereinen_robust.py` [-] Fester Test: BELASTUNGSPROBE fuer seiten_vereinen.vereinen OHNE echte Daten (Vorbild tools/versuche/vereinen_robust_1121.py, dort an den Martinstor-Wolken: 8 verfaelschte Laeufe en
 - `tools/test_selbstbau_verdecker.py` [seg] test_selbstbau_verdecker.py - MESSFEHLER 21.11.2026 (zirkulaere Messung): Messungen gegen das eigene Modell duerfen selbst gebaute Vorbauten nicht als Verdecker nutzen.
+- `tools/test_sohlbank.py` [seg] test_sohlbank.py - fester synthetischer Test fuer tools/sohlbank_aus_fotos.py + bauteile.sohlbank (21.11.2026 spaet), < 20 s, nur CPU.
 - `tools/test_speicher_wiederholung.py` [-] Stufe, die am Speicher scheitert, wird im Lauf wiederholt (Nutzer 21.11.2026; Lauf 1121p: w03 Signal 6 nach Kernel-OOM blieb weg).
 - `tools/test_spitze_durchfahrt.py` [seg] test_spitze_durchfahrt.py - feste synthetische Tests fuer tools/spitze_aus_umriss.py und tools/durchfahrt_pruefen.py (21.11.2026). Ohne Dateien, < 30 s.
 - `tools/test_spitze_hoehe.py` [-] test_spitze_hoehe.py - synthetischer Beweis der Spitzen-Triangulation (2026-11-05): 12 Kameras im Kreis sehen eine Spitze bei (1, 2, 16); 5 davon liefern Fehlspuren (Giebelstufe/Ka
@@ -93,6 +98,7 @@
 - `tools/test_tor_elementbuch.py` [-] test_tor_elementbuch.py - Beweise fuer Uebernahmetor + Elementbuch (SPEC_S1b_TOR_ELEMENTBUCH Abschnitt 4, 2026-11-06).
 - `tools/test_tor_gemeinsame_fotos.py` [-] Test Torluecke 3 (11.11.): Foto-Gewinn nur auf GEMEINSAMEN Fotos (bauteil_kreis.angleichen). 1) synthetisch: Nachher verliert ein schlechtes Foto -> scheinbarer Gewinn muss verschw
 - `tools/test_tor_verschiebung.py` [seg] test_tor_verschiebung.py - BEWEIS fuer tools/tor_verschiebung.py (Nullkontrolle des Foto-Tors) auf synthetischer Wahrheit.
+- `tools/test_traufe_aus_fotos.py` [seg] test_traufe_aus_fotos.py - Traufe des Hauptdachs aus Fotokanten (tools/traufe_aus_fotos.py, bauteile.traufkasten/traufe_einbauen, hand_vergleich), 21.11.2026. Anlass Schwabentor-11
 - `tools/test_umgang_eckquader.py` [gen] test_umgang_eckquader.py - fester synthetischer Test (21.11.2026) fuer (1) tools/umgang_aus_fotos.py: Zone unter der Traufe aus Zeilenkanten (dunkler Ruecksprung ueber heller Wand)
 - `tools/test_undefinierte_namen.py` [-] Undefinierte Namen in tools/*.py (pyflakes) - Lauf 1121t verlor die Feinrechnung, weil 'q5, q95 = ...' bei einem Agenten-Merge in einen Kommentar rutschte (NameError erst nach 20 m
 - `tools/test_versuch_log.py` [-] Test versuch_log: Eintrag, Identitaetswarnung (BS7-Fall), Fehlschlag, Liste. Exit 0 = ALLE BESTANDEN.

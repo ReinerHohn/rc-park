@@ -1,4 +1,4 @@
-# Werkzeuge: foto_mass (117)
+# Werkzeuge: foto_mass (120)
 - `tools/bauplan_aus_foto.py` [seg] bauplan_aus_foto.py — die beschriebene Methode als EINE Kette: 1) Gebäude aus Umgebung freistellen (ML-Maske, gebaeude_segment) 2) auf das Gebäude zuschneiden 3) PERSPEKTIVE raus (
 - `tools/bilder_einsortieren.py` [-] bilder_einsortieren.py - PIPELINE-SCHRITT nach bilder_holen.py: geerntete Fotos (fotos_eingang) in den Fotoordner des Objekts einsortieren.
 - `tools/bilder_holen.py` [seg] bilder_holen.py - PIPELINE-SCHRITT: Fotos einer Attraktion aus freien Quellen holen - nur die mit MEHRWERT fuer die Fotowolke.
@@ -71,6 +71,7 @@
 - `tools/haufen_am_foto.py` [seg] haufen_am_foto.py - Wolkenhaufen aus dem Grundriss-Tor AM FOTO klaeren (Regel: Haufen auf der Strasse nicht modellieren, erst am Foto ansehen).
 - `tools/helm_silhouette_foto.py` [seg] helm_silhouette_foto.py - Silhouettenabweichung eines Rotations-/Polygonhelms (Typ helm_geschweift) gegen Himmel in kalibrierten Fotos.
 - `tools/laibung_aus_fotos.py` [seg] laibung_aus_fotos.py - LAIBUNGSTIEFE von Fenstern aus der seitlich sichtbaren Laibung in Schraegfotos (21.11.2026 spaet, Kettenstufe 'bauplan' nach nischen_fenster).
+- `tools/laterne_aus_fotos.py` [seg] laterne_aus_fotos.py - LATERNE (Dachreiter) auf der Dachspitze aus den Fotos: Eckenzahl der Pfosten und der Haube, Pfostenbreite, Zonenhoehen, Haubenform, Knauf, Nadel (22.11.2026,
 - `tools/luftbild_messen.py` [seg] luftbild_messen.py - Dachgeometrie aus dem Orthofoto (DOP20) messen: die einzige Quelle, die die Ost- und Westseite zeigt.
 - `tools/masse_aus_profilen.py` [-] masse_aus_profilen.py - STUFE C: Masse, die bisher von Hand aus Werkzeugausgaben in masse.json uebertragen wurden, schreibt das Werkzeug selbst - nach REGELN, die als Daten in obje
 - `tools/masse_bootstrap.py` [-] masse_bootstrap.py - Streuung der AUTOMATISCH abgeleiteten Masse (Baender -> masse_aus_profilen) innerhalb EINES Laufs messen (Register BO).
@@ -97,10 +98,12 @@
 - `tools/reproj_je_foto.py` [col] reproj_je_foto.py - Reprojektionsfehler JE FOTO aus einem COLMAP-Modell (Kamera-Qualitaet; Nutzerauftrag 7.11.). /media/oem/scan/venv-colmap/bin/python -I tools/reproj_je_foto.py S
 - `tools/sam_mehrfoto_3d.py` [seg] 3D-Objekte aus der Wolke per SAM auf vielen kalibrierten Fotos (Nutzer 9.11.: 'das reale 3D-Objekt so wie es die Wolke darstellt'). Je Foto SAM-Masken (grob->fein, kleinere uebersc
 - `tools/schwerkraft_je_bild.py` [col] schwerkraft_je_bild.py - Schwerkraft (Richtung 'unten') JE BILD aus den senkrechten Kanten, fuer den globalen Mapper (GlobalMapper.ra_use_gravity 1).
+- `tools/sohlbank_aus_fotos.py` [seg] sohlbank_aus_fotos.py - SOHLBANK (vorspringende Leiste unter Fenster/Nische) aus den Einzelfoto-Orthos + SfM-Kameras (21.11.2026 spaet, Kettenstufe 'bauplan' nach laibung_aus_fotos
 - `tools/sonne_fotos.py` [-] sonne_fotos.py - Sonnenstand + Sonnenschein je Foto (2026-11-05, Nutzeridee: Schattenkarte aus Datum/Zeit, mit Wetter abgleichen).
 - `tools/teil_foto_overlay.py` [seg] teil_foto_overlay.py <objekt> <typ> --fotos kameras_netz.json --bilder dir --shift du,dn,dz [--mit carrier] [--n 3] --out png Kanten (Knickkanten) des Bauteils (um shift verschoben
 - `tools/teil_fotoform.py` [seg] teil_fotoform.py - FORMPRUEFUNG JE BAUTEIL GEGEN DIE EINZELFOTOS (Regel 9d b, L-KR24).
 - `tools/teil_render_foto.py` [seg] teil_render_foto.py - schattiertes Teil-Render aus der kalibrierten Fotokamera NEBEN dem Fotoausschnitt (Pruefbild fuer Agenten/Pruefer). Warum (11.11., modelle/archiv/SPEC_ORNAMEN
+- `tools/traufe_aus_fotos.py` [seg] traufe_aus_fotos.py - TRAUFE DES HAUPTDACHS aus FOTOKANTEN (Mehrfoto-Kanten-Sweep mit den SfM-Kameras), 21.11.2026.
 - `tools/tsdf_netz.py` [seg] tsdf_netz.py - TSDF-Fusion aus COLMAP-Tiefenkarten (geometric.bin) + Posen -> Netz (open3d), Modellrahmen, STL mm. Kandidat fuer tools/modell_wettbewerb.py. venv-o3d/bin/python -I 
 - `tools/umgang_aus_fotos.py` [seg] umgang_aus_fotos.py <objekt.json> <fassade_fein-Ordner> [--aus audit/umgang_auto.json] [--bilder DIR] - OFFENER UMGANG unter der Traufe aus den Fotos (Kettenstufe 'bauplan').
 - `tools/video_frames.py` [seg] video_frames.py — Fotos AUS VIDEOS für Photogrammetrie/Fassadenmessung. Ein Touristen-Video, das um ein Wahrzeichen schwenkt, liefert dutzende Blickwinkel in Sekunden — ideal für S

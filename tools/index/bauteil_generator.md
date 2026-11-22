@@ -1,4 +1,4 @@
-# Werkzeuge: bauteil_generator (61)
+# Werkzeuge: bauteil_generator (62)
 - `tools/_test_baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baum_erzeugen.py` [-] baum_erzeugen.py - Wissensbaum fuer KI-Suche (Nutzer 20.11.2026: "Informationen baumartig, damit der Kontext nicht vollballert"). Erzeugt (nie von Hand pflegen, nach neuen Dateien 
@@ -15,6 +15,7 @@
 - `tools/dach_optimieren.py` [seg] dach_optimieren.py — autonome Varianten-Schleife mit dem OVERLAY-IoU als Zielfunktion. Variiert Dach-Sweep (ROOF_SWEEP) + First-Länge/Spitzigkeit (ROOF_INSET), baut Massing+Hybrid 
 - `tools/dach_params_ndom.py` [seg] dach_params_ndom.py — Dach-FORM-Parameter direkt aus dem LASER (nDOM = DOM1-DGM1) messen: First-Höhe, Trauf-Höhe (Dach-Unterkante am Gebäuderand), First-LÄNGE (→ Walm-Inset/Spitzig
 - `tools/dach_vermessen.py` [seg] dach_vermessen.py <objekt.json> [--wolke npy] - Dachform je LoD2-Grundflaeche aus Laser DOM1 (allgemein, je Objekt; Nullstart-Schritt 'dach').
+- `tools/dachflaeche_aus_umriss.py` [seg] dachflaeche_aus_umriss.py - FORM DER HAUPTDACHFLAECHE (gerade / geschweift / gewoelbt) und FUSSPUNKT DES AUFSATZES aus den Foto-Silhouetten, 21.11.2026.
 - `tools/ebenen_form.py` [seg] ebenen_form.py - GESTALT eines Vorbaus aus dem feinen Wandbild AUF SEINER EIGENEN EBENE (21.11.2026, Kettenstufe 'bauplan').
 - `tools/erker_finden.py` [seg] erker_finden.py — ERKER robust lokalisieren über die HELMSPITZEN (ragen über den First).
 - `tools/formen_zusammen.py` [-] Formsegmente (helm_fit/gauben_fit/baluster_fit-Ausgaben) an ein Kantengitter anhaengen: formen_zusammen.py GITTER.json OUT.json FORM1.json [FORM2.json ...] Jede Formdatei traegt 's
