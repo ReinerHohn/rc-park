@@ -94,9 +94,9 @@
  ],
  "rueckwand": {
   "tiefe": 0.15,
-  "quelle": "ANNAHME: 0.15 m (nur 1 belastbare Fenstertiefen < 3; Anhalt Kaufhaus-Fotomass 0,14 / 0,19 m an einem anderen Haus, modelle/kaufhaus_gk/objekt.json rueckwand)",
+  "quelle": "ANNAHME: 0.15 m (nur 0 belastbare Fenstertiefen < 3; Anhalt Kaufhaus-Fotomass 0,14 / 0,19 m an einem anderen Haus, modelle/kaufhaus_gk/objekt.json rueckwand)",
   "hinweis": "nicht gemessen - mit Fotomass (foto_mass --kamera, zwei Gegenrichtungen) ersetzen",
-  "auto": "bauplan 2026-11-21",
-  "n": 1
+  "auto": "bauplan 2026-11-22",
+  "n": 0
  }
 }

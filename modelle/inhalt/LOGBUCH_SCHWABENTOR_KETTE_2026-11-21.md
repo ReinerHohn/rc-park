@@ -32,3 +32,17 @@
 - Z.264: ## Nachtrag 21.11. 15:24 - Kettenlaeufe als Beleg, Platz, Agenten
 - Z.271: ## UEBERGABE 21.11.2026 15:40
 - Z.274: ## 21.11. ~15:45 Merge koerper_schleife (Agent 992f43415) + Uhrring-Neubau
+- Z.284: ## Nachtrag 17:10 - Zweites Rundbogenfenster / Nische als eigene Ebene (Agent, Worktree; tools/nischen_fenster.py)
+- Z.292: ## Nachtrag 21.11. 17:15 - Warum Fassaden glatt bleiben (Agent, Worktree): Ursachen benannt, Werkzeuge repariert
+- Z.307: ## UEBERGABE 21.11.2026 17:20
+- Z.310: ## Nachtrag 21.11. 17:41 - Tor/Uhr/Fenster-Hoehen: kein gemeinsamer Hoehenbezugsfehler der Kette (Agent, Worktree)
+- Z.318: ## 17:50 Agent Laterne + Durchfahrt (Worktree agent-a4b81dfb20a891c30)
+- Z.326: ## 17:55 Agent Umgang + Eckquader (hand_vergleich: beide FEHLT -> PASST, 4 -> 6 von 11 bei Probebau im Worktree)
+- Z.329: ## 18:15 Agent Hoehenmassstab (Frage: Kette in der HOEHE 3,5 % zu gross?) -> NEIN, Ursache = zu breites Wolken-Dachprofil
+- Z.344: ## 18:35 Agent Putz/Uhr (Nutzerbild umgang_bau_ansicht: Kruemel auf dem Putz der Stadtseite w02, Uhr nur flacher Kreis)
+- Z.354: ## UEBERGABE 21.11.2026 18:50
+- Z.357: ## 18:47 Agent Verdecker/Selbstbau (Vordach-Anschluss 19,39 -> ANNAHME 16,74 in Lauf 1121o)
+- Z.373: ## 19:02 Agent Kettentempo (fassaden_kette parallel, Zwischenbau ohne Abnahme, modellkanten vektorisiert)
+- Z.381: ## 21.11. Agent Anschluss-Stufe (Vordach f00: ANNAHME 16,74 -> gemessen 19,67-19,73)
+- Z.395: ## 19:35 Agent Feinrechnung (tiefe_lokal 'fein 0 %' + Signal 6)
+- Z.401: ## 20:30 Agent Dachueberstand-Rueckschritt (1121p PASST -> 1121q 0,12 statt 0,9 m)
