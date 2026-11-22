@@ -556,7 +556,7 @@ def erstellen(objekt, daten=None, neben=None, bericht=None, ab_schritt=0, log=No
     zonen = bauteil_zonen(audit); bild_dir = os.path.join(audit, "befunde")
     if os.path.isdir(bild_dir):
         for p in glob.glob(os.path.join(bild_dir, "b*.jpg")): os.remove(p)        # nur eigene Ausschnitte des vorigen Laufs
-    neben = neben if neben is not None else sorted(glob.glob(os.path.join(audit, "neben_*.jpg")))
+    neben = neben if neben is not None else sorted(p_ for p_ in glob.glob(os.path.join(audit, "neben_*.jpg")) if not os.path.basename(p_).startswith(("neben_detail_", "neben_details")))   # Detailansichten (neben_details.py) sind Ausschnitte ohne eigene K-Datei
     befunde = []; bilder = []; ungesehen_B, ungesehen, sl_da = seiten_ohne_fotos(audit, fassaden)
     for p in neben:
         foto = re.sub(r"^neben_", "", os.path.splitext(os.path.basename(p))[0]); K = kamera_laden(od, foto)
