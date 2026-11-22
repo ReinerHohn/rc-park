@@ -123,10 +123,15 @@ Rz = np.diag([-1.0, -1.0, 1.0, 1.0]); M_kleb = Rz @ M_wahr                      
 ZAHL = {}
 
 
-def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr):
+def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr, ausgleich=None):
     def lauf(cmd, log=None):
         was = os.path.basename(cmd[2]) if cmd[0] == SM.PYC else cmd[1]; ZAHL[was] = ZAHL.get(was, 0) + 1
         if was == "view_graph_calibrator": return 0
+        if was == "sfm_gps_ausgleich.py" and ausgleich is not None:                       # 22.11.2026 GPS-Ausgleich; ausgleich None = echtes Werkzeug (Fotoordner ohne GPS -> rc 2, unveraendert)
+            aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); assert json.load(open(cmd[cmd.index("--teile") + 1])), "Teile-Zuordnung leer"
+            shutil.copytree(cmd[3], os.path.join(aus, "sparse"), dirs_exist_ok=True); D1 = np.diag([1.05, 1.05, 1.05, 1.0])
+            json.dump(dict(ok=True, urteil="uebernommen (Attrappe)", sparse=os.path.join(aus, "sparse"), anker_teil="0", teile={"0": dict(delta=np.eye(4).tolist(), dicht_gueltig=True),
+                      "1": dict(delta=D1.tolist(), dicht_gueltig=ausgleich != "verformt")}), open(os.path.join(aus, "gps_ausgleich.json"), "w")); return 0
         if was == "seiten_gps_vereinen.py" and gps_rc is not None:                   # 22.11.2026 Rueckfall GPS; gps_rc None = das echte Werkzeug laeuft (Fotoordner ohne GPS -> rc 2)
             assert "--bilder" in cmd and cmd[3] != cmd[4], "GPS-Vereinen ohne Fotoordner oder mit gleichem Modell"
             aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); v = dict(art="gps", ok=gps_rc == 0, urteil="vereint ueber das Foto-GPS" if gps_rc == 0 else "GPS zu ungenau", pruefung=dict(dreh_sd_grad=2.0, mass_sd_rel=0.08))
@@ -232,9 +237,23 @@ finally: SM.code_stand = cs_echt
 teuer = {k: ZAHL.get(k) for k in ("global_mapper", "view_graph_calibrator", "dicht_modell.py", "modell_lage_vergleich.py", "brennweite_schaerfe.py") if ZAHL.get(k)}
 assert not teuer and ZAHL.get("seiten_vereinen.py") == 1 and ZAHL.get("seiten_gps_vereinen.py") is None and B["ergebnis"]["art"] == "vereint", f"Codeaenderung Klappung: teuer {teuer}, Aufrufe {ZAHL}"
 ZAHL.clear(); rc, aus, B = kette(wf, vereinen_rc=3, gps_rc=0); assert ZAHL.get("seiten_vereinen.py") == 1 and not ZAHL.get("dicht_modell.py"), f"Rueckkehr zum echten Code: {ZAHL}"   # Stand trug "geaendert0000"
+# g) GPS-Ausgleich nach dem Vereinen (22.11.2026): ohne GPS (echtes Werkzeug, Fall a) unveraendert + gemeldet; uebernommen -> Modell aus dem Werkzeug, Tiefenkarten von B mit
+#    delta_B * B_nach_A (Massstab 1,05/0,7), A unveraendert verknuepft; Teil verformt -> keine vereinte dichte Wolke (Kette rechnet neu)
+assert any("GPS-Ausgleich nicht uebernommen: zu wenig GPS" in m for m in B2["meldungen"]) and B2["gps_ausgleich"]["ok"] is False, f"GPS-Ausgleich ohne GPS: {B2.get('gps_ausgleich')}"
+wh = arbeit("kh"); ZAHL.clear(); rc, aus, B = kette(wh, ausgleich="ok"); E = B["ergebnis"]
+assert rc == 0 and ZAHL.get("sfm_gps_ausgleich.py") == 1 and B["gps_ausgleich"]["ok"] and E["art"] == "vereint" and E.get("fused"), f"GPS-Ausgleich uebernommen: {B.get('gps_ausgleich')} {E}"
+tk = lambda n: float(np.frombuffer(open(os.path.join(E["dicht"], "stereo", "depth_maps", n + ".photometric.bin"), "rb").read()[6:], "<f4")[0])
+assert abs(tk("eigen__n00.jpg") - 10.0) < 1e-6 and abs(tk("eigen__s07.jpg") - 10.0 * 1.05 / 0.7) < 1e-3 and os.path.islink(os.path.join(E["dicht"], "stereo", "depth_maps", "eigen__n00.jpg.photometric.bin")), f"Tiefenkarten nach GPS-Ausgleich: A {tk('eigen__n00.jpg')}, B {tk('eigen__s07.jpg')}"
+ZAHL.clear(); rc, aus, B = kette(wh, ausgleich="ok"); assert ZAHL.get("sfm_gps_ausgleich.py") is None and B["gps_ausgleich"]["ok"], f"GPS-Ausgleich nicht wiederverwendet: {ZAHL}"
+wh2 = arbeit("kh2"); rc, aus, B = kette(wh2, ausgleich="verformt"); E = B["ergebnis"]
+assert rc == 0 and E["art"] == "vereint" and not E.get("fused") and any("innerlich verformt" in m for m in B["meldungen"]), f"verformter Teil: {E} {B['meldungen']}"
+wh3 = arbeit("kh3"); SM.GPS_AUSGLEICH = False; ZAHL.clear()
+try: rc, aus, B = kette(wh3, ausgleich="ok")
+finally: SM.GPS_AUSGLEICH = True
+assert not ZAHL.get("sfm_gps_ausgleich.py") and "abgeschaltet" in B["gps_ausgleich"]["urteil"], "RCPARK_GPS_AUSGLEICH=0 wirkt nicht"
 # d) nur ein grosser Teil
 wd_ = arbeit("kd", teile=((0, BN),)); ZAHL.clear(); rc, aus, B = kette(wd_); assert rc == 2 and B.get("grund") and not ZAHL and not os.path.isdir(os.path.join(wd_, "sparse")), f"ein Teil: rc {rc}, {ZAHL}"
-print("ok 4: Kette - vereint (24 Bilder, Wolke, Tiefenkarten, Wiederverwendung), abgelehnt/zu wenig -> Teil A allein gemeldet, verklebt -> Blick-Tor, Klappung abgelehnt -> Foto-GPS (vereint / geklebt / zu ungenau / abgeschaltet), ein Teil -> nichts gerechnet")
+print("ok 4: Kette - vereint (24 Bilder, Wolke, Tiefenkarten, Wiederverwendung), abgelehnt/zu wenig -> Teil A allein gemeldet, verklebt -> Blick-Tor, Klappung abgelehnt -> Foto-GPS (vereint / geklebt / zu ungenau / abgeschaltet), GPS-Ausgleich (ohne GPS / uebernommen / verformt / abgeschaltet), ein Teil -> nichts gerechnet")
 
 # ---------- 5 Verdrahtung
 q = lambda n: open(os.path.join(T, n)).read()
