@@ -17,6 +17,8 @@ Ausgaben in <arbeitsordner>/seiten_modelle/: teil<i>.txt, teil<i>_a/, teil<i>_b/
   --einsetzen: 'ergebnis.sparse' nach <arbeitsordner>/sparse/0 kopieren (vorhandenes sparse/ wird beiseitegelegt, nichts geloescht) - das macht tools/iphone_sfm.py.
   Die dichte Wolke uebernimmt tools/pipeline_objekt.py (Verknuepfung dicht -> 'ergebnis.dicht'), damit sie nicht doppelt gerechnet wird.
 Zwischenstaende werden wiederverwendet (Stand-Dateien mit Groesse + Zeit der Eingaben); aendern sich Datenbank oder seiten.json, wird seiten_modelle/ beiseitegelegt.
+  Vereinen (Klappung, Foto-GPS) traegt zusaetzlich den CODE-STAND seines Werkzeugs (tools/code_stand.py) -> nach einer Codeaenderung laeuft nur das Vereinen neu; der Bericht
+  traegt 'nachstufe_code' (NACHSTUFE), an dem tools/pipeline_objekt.py erkennt, dass sparse/0 zu altem Code gehoert.
 WIE DAS VEREINTE MODELL ENTSTEHT (modelle_zusammen): pycolmap 4.2.1 kann Bilder eines zweiten Modells nicht per add_image uebernehmen ("Check failed: frame.RigPtr() == &rig" -
   Bild/Frame zeigen auf Rig-Objekte des alten Modells). Sauberer Weg: Modell B mit Reconstruction.transform(Sim3d aus 'B_nach_A') umrechnen, dann NEUES Modell aufbauen:
   Kamera + triviales Rig (add_camera_with_trivial_rig), Bild als NEUES Image (Name, Bildpunkte, Kamera-ID, Bild-ID) + trivialer Frame mit Lage (add_image_with_trivial_frame),
@@ -33,6 +35,7 @@ import numpy as np
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
 from pfade import PY, COLMAP
 from sfm_seiten_vorstufe import _stand, _aktuell
+from code_stand import code_stand
 
 PYC = PY["col"]
 CUDA_LIBS = ["/media/oem/scan/cuda-toolkit-combo/lib64", "/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib", "/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib",
@@ -50,6 +53,16 @@ DICHT_MIT_SPERRLISTE = False
 # 22.11.2026 Rueckfall GPS: scheitert die Klappung (seiten_vereinen.py), legt tools/seiten_gps_vereinen.py den Teil ueber das Foto-GPS auf Teil A (Schwabentor: Teil 1 mit
 # 24 von 26 GPS-Kameras; Blick-Tor 168 Grad, GPS-Seiten-Tor 4 % ueber 12 m am vereinten Modell). Abschalten: RCPARK_SEITEN_GPS=0.
 GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
+# CODE-STAND DER NACHSTUFE (22.11.2026, Nulllauf kette-schwabentor-null-1122c: der GPS-Rueckfall war in main, lief aber nie - sparse/0 und seiten_modelle.json von 02:39 galten
+# weiter, weil nur die Eingaben im Stand standen). Teuer und nur an Eingaben gebunden: Mapper je Teil, a/b-Vergleich, Sperrliste, dichte Wolke je Teil. Billig und an den CODE
+# gebunden: Vereinen (Klappung, Foto-GPS), Zusammenlegen, Blick-/GPS-Seiten-Tor, Einsetzen. Die Werkzeuge der Nachstufe (samt ihrer Hilfsmodule, tools/code_stand.py) ergeben
+# 'nachstufe_code' in seiten_modelle.json; tools/pipeline_objekt.py rechnet iphone_sfm.py erneut (nur die Nachstufe), wenn er nicht mehr zum Code passt.
+NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py")
+
+
+def nachstufe_code():
+    """Code-Stand der Nachstufe (Vereinen, Zusammenlegen, Tore, Einsetzen) - 12 Hex-Zeichen."""
+    return code_stand(*NACHSTUFE, wurzel=T)
 
 
 def _lauf(cmd, log=None):
@@ -317,6 +330,7 @@ def dicht_zusammen(teile, ziel):
 def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
     """Phase 2 -> ber ergaenzt um 'teil_a', 'vereint', 'nicht_vereint', 'ergebnis' (sparse, dicht, fused, art = 'vereint' | 'teil_a_allein')."""
     arb = ber["arbeit"]; M_ = ber["meldungen"]; mit = [e for e in ber["teile"] if e.get("modell")]
+    ber["nachstufe_code"] = nachstufe_code(); ber["db_ursprung"] = os.path.abspath(db_ursprung)
     if not mit: ber["fehler"] = "kein Teilmodell entstanden"; return ber
     for e in mit if not ohne_dicht else []:                                              # je Teil eine dichte Wolke (gleiche Einstellungen wie die Stufe 'dicht' der Kette)
         dd = os.path.join(arb, f"teil{e['teil']}", "dicht"); fu = os.path.join(dd, "fused.ply"); dj = os.path.join(dd, "fertig.json"); sek = 0; rc = 0; wieder = True
@@ -338,7 +352,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
     vz = os.path.join(arb, "vereint"); os.makedirs(vz, exist_ok=True); stand_sparse = None
     for B in mit[1:]:
         fb = (B.get("dicht") or {}).get("fused"); vo = os.path.join(arb, f"vereinen_{A['teil']}_{B['teil']}"); vj = os.path.join(vo, "vereinen.json"); vs = os.path.join(vo, "stand.json")
-        st = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), db_ursprung, *(x for x in (fa, fb) if x)); alt = None
+        st = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), db_ursprung, *(x for x in (fa, fb) if x)) + [code_stand("seiten_vereinen.py", wurzel=T)]; alt = None
         try: alt = json.load(open(vs)) if os.path.isfile(vj) else None
         except Exception: alt = None
         if alt and alt.get("stand") == st: rc = alt["rc"]
@@ -353,7 +367,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
             # RUECKFALL GPS (22.11.2026, Nulllauf schwabentor-1122): die Klappung von seiten_vereinen setzt gleich aussehende Gegenseiten voraus (Martinstor). Am Schwabentor
             # lieferte sie Massstab 0,012 -> "keine hoechsten Bauteile" -> Teil A allein -> einseitige Wolke, Ausrichtung 20 Grad gedreht, Abbruch. Haben beide Teile genug
             # Foto-GPS, legt tools/seiten_gps_vereinen.py B ueber das GPS auf A; danach dieselben Tore wie oben (Blick-Tor) + GPS-Seiten-Tor am vereinten Modell.
-            vg = vo + "_gps"; vgj = os.path.join(vg, "vereinen.json"); stg = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), *(x for x in (fa, fb) if x)); altg = None
+            vg = vo + "_gps"; vgj = os.path.join(vg, "vereinen.json"); stg = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), *(x for x in (fa, fb) if x)) + [code_stand("seiten_gps_vereinen.py", wurzel=T)]; altg = None
             try: altg = json.load(open(os.path.join(vg, "stand.json"))) if os.path.isfile(vgj) else None
             except Exception: altg = None
             if altg and altg.get("stand") == stg: rg = altg["rc"]

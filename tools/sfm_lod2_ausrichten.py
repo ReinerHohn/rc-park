@@ -31,9 +31,11 @@ def lod2_ziel(obj, radius, dichte=0.35):
     import lod2_gebaeude as LG
     R = obj["rahmen"]; c0 = np.array(R["mitte_utm"]); xh, yh = np.array(R["xhat_utm"]), np.array(R["yhat_utm"]); gel = R["gelaende"]
     gml = obj["lod2"]["gml"]
-    # Cache: das Einlesen des amtlichen GML ist reines Textparsen (~2 min). Schluessel: Datei (Groesse, Zeit), Mitte, Radius.
+    # Cache: das Einlesen des amtlichen GML ist reines Textparsen (~2 min). Schluessel: Datei (Groesse, Zeit), Mitte, Radius + CODE-STAND des Lesers (22.11.2026, tools/code_stand.py:
+    # ein geaenderter lod2_gebaeude.py liest neu statt still den alten Cache zu nehmen).
     import pickle, hashlib
-    st = os.stat(gml); schl = hashlib.sha1(f"{gml}|{st.st_size}|{int(st.st_mtime)}|{c0.tolist()}|{radius}".encode()).hexdigest()[:16]
+    from code_stand import code_stand
+    st = os.stat(gml); schl = hashlib.sha1(f"{gml}|{st.st_size}|{int(st.st_mtime)}|{c0.tolist()}|{radius}|{code_stand('lod2_gebaeude.py')}".encode()).hexdigest()[:16]
     cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "modelle", ".cache_lod2"); os.makedirs(cache_dir, exist_ok=True)
     cpfad = os.path.join(cache_dir, f"lod2_{schl}.pkl")
     if os.path.exists(cpfad):
