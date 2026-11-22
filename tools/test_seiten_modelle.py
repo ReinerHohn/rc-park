@@ -10,9 +10,10 @@ in einem eigenen System (gedreht, 0,7-fach, verschoben); die wahre Abbildung B -
                          a) rc 0 -> 'vereint': sparse 24 Bilder, vereinte dichte Wolke + Arbeitsordner (Tiefenkarte B skaliert), einsetzen -> sparse/0; zweiter Aufruf rechnet nichts neu
                          b) rc 3 -> Teil A allein, Meldung mit Pruefwerten      c) rc 0 mit GEKLEBTER Abbildung -> Blick-Tor faellt durch, Teil wieder heraus
                          d) nur ein grosser Teil -> 'grund', nichts gerechnet   e) kleiner Teil wird gemeldet
+                         f) CODE-STAND (22.11.2026): Codeaenderung im Vereinen -> nur das Vereinen laeuft neu, Mapper/dichte Wolken je Teil nicht; GPS zugeschaltet -> GPS neu
   5 Verdrahtung          iphone_sfm.py, pipeline_objekt.py und gesamtkette.py rufen das Werkzeug bzw. lesen seinen Bericht (Werkzeug ohne Aufrufer = Fehler);
                          pipeline_objekt.seiten_dicht_uebernehmen: dicht/ wird Verknuepfung auf die fertige Wolke (keine zweite Rechnung); vorhandenes dicht/ bleibt; Wolke aelter
-                         als das Netz oder leer -> nicht uebernommen
+                         als das Netz oder leer -> nicht uebernommen; Verknuepfung auf eine FRUEHERE Seitenwolke -> umgehaengt; seiten_nachstufe_veraltet (Code-Stand)
 Python: /media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_modelle.py (pycolmap)."""
 import os, sys, json, tempfile, shutil, io, contextlib
 import pycolmap
@@ -217,6 +218,20 @@ wg4 = arbeit("kg4"); SM.GPS_VEREINEN = False; ZAHL.clear()
 try: rc, aus, B = kette(wg4, vereinen_rc=3, gps_rc=0)
 finally: SM.GPS_VEREINEN = True
 assert B["ergebnis"]["art"] == "teil_a_allein" and not ZAHL.get("seiten_gps_vereinen.py"), "RCPARK_SEITEN_GPS=0 wirkt nicht"
+# f) CODE-STAND (22.11.2026, Nulllauf schwabentor-1122c): Zwischenstand "Klappung abgelehnt, Teil A allein" von ALTEM Code (GPS-Rueckfall noch aus) - danach kommt der neue Code.
+#    Erwartet: Mapper je Teil und dichte Wolken je Teil werden wiederverwendet, die Klappung laeuft nur bei geaendertem seiten_vereinen.py neu, der GPS-Rueckfall laeuft, Ergebnis vereint.
+wf = arbeit("kf"); SM.GPS_VEREINEN = False
+try: rc, aus, B = kette(wf, vereinen_rc=3, gps_rc=0)
+finally: SM.GPS_VEREINEN = True
+c_alt = B["nachstufe_code"]; assert B["ergebnis"]["art"] == "teil_a_allein" and len(c_alt) == 12 and c_alt == SM.nachstufe_code(), f"Bericht ohne Code-Stand: {B.get('nachstufe_code')}"
+ZAHL.clear(); rc, aus, B = kette(wf, vereinen_rc=3, gps_rc=0)                        # gleicher Code (Klappung), GPS jetzt an: Klappung NICHT neu, GPS neu
+assert ZAHL.get("seiten_vereinen.py") is None and ZAHL.get("seiten_gps_vereinen.py") == 1 and B["ergebnis"]["art"] == "vereint", f"GPS nach Zuschalten: {ZAHL} {B['ergebnis']['art']}"
+cs_echt = SM.code_stand; SM.code_stand = lambda *w, **k: "geaendert0000" if w == ("seiten_vereinen.py",) else cs_echt(*w, **k)   # seiten_vereinen.py "geaendert"
+try: ZAHL.clear(); rc, aus, B = kette(wf, vereinen_rc=3, gps_rc=0)
+finally: SM.code_stand = cs_echt
+teuer = {k: ZAHL.get(k) for k in ("global_mapper", "view_graph_calibrator", "dicht_modell.py", "modell_lage_vergleich.py", "brennweite_schaerfe.py") if ZAHL.get(k)}
+assert not teuer and ZAHL.get("seiten_vereinen.py") == 1 and ZAHL.get("seiten_gps_vereinen.py") is None and B["ergebnis"]["art"] == "vereint", f"Codeaenderung Klappung: teuer {teuer}, Aufrufe {ZAHL}"
+ZAHL.clear(); rc, aus, B = kette(wf, vereinen_rc=3, gps_rc=0); assert ZAHL.get("seiten_vereinen.py") == 1 and not ZAHL.get("dicht_modell.py"), f"Rueckkehr zum echten Code: {ZAHL}"   # Stand trug "geaendert0000"
 # d) nur ein grosser Teil
 wd_ = arbeit("kd", teile=((0, BN),)); ZAHL.clear(); rc, aus, B = kette(wd_); assert rc == 2 and B.get("grund") and not ZAHL and not os.path.isdir(os.path.join(wd_, "sparse")), f"ein Teil: rc {rc}, {ZAHL}"
 print("ok 4: Kette - vereint (24 Bilder, Wolke, Tiefenkarten, Wiederverwendung), abgelehnt/zu wenig -> Teil A allein gemeldet, verklebt -> Blick-Tor, Klappung abgelehnt -> Foto-GPS (vereint / geklebt / zu ungenau / abgeschaltet), ein Teil -> nichts gerechnet")
@@ -237,5 +252,18 @@ with contextlib.redirect_stdout(io.StringIO()):
     d_, sp = daten("po2", alter_wolke=60); assert not PO.seiten_dicht_uebernehmen(d_, sp) and not os.path.lexists(os.path.join(d_, "dicht")), "Wolke aelter als das Netz uebernommen"
     d_, sp = daten("po3", leer=True); assert not PO.seiten_dicht_uebernehmen(d_, sp), "leere Wolke uebernommen"
     d_, sp = daten("po4"); os.remove(os.path.join(d_, "sfm", "seiten_modelle.json")); assert not PO.seiten_dicht_uebernehmen(d_, sp), "ohne Bericht uebernommen"
+    # 22.11.2026 (Nulllauf 1122c): dicht/ zeigt noch auf die fruehere Seitenwolke teil0/dicht, das Ergebnis ist jetzt 'vereint' -> Verknuepfung beiseite, neu auf vereint/dicht
+    d_, sp = daten("po5"); t0d = os.path.join(d_, "sfm", "seiten_modelle", "teil0", "dicht"); os.makedirs(t0d); os.symlink(t0d, os.path.join(d_, "dicht"))
+    assert PO.seiten_dicht_uebernehmen(d_, sp) and os.path.realpath(os.path.join(d_, "dicht")).endswith(os.path.join("vereint", "dicht")) and [x for x in os.listdir(d_) if x.startswith("dicht.alt_")], "alte Seitenwolke nicht umgehaengt"
+    d_, sp = daten("po6"); fremd_ = os.path.join(S, "fremde_wolke"); os.makedirs(fremd_, exist_ok=True); os.symlink(fremd_, os.path.join(d_, "dicht"))
+    assert not PO.seiten_dicht_uebernehmen(d_, sp) and os.path.realpath(os.path.join(d_, "dicht")) == os.path.realpath(fremd_), "fremde Verknuepfung (nicht aus den Seitenmodellen) angefasst"
+    # Code-Stand der Nachstufe: Bericht ohne / mit altem / mit aktuellem 'nachstufe_code'; ohne 'ergebnis' nichts nachzuholen; RCPARK_SEITEN_NACHSTUFE=0 = alter Stand
+    d_, sp = daten("po7"); smj_ = os.path.join(d_, "sfm", "seiten_modelle.json"); assert "ohne Code-Stand" in (PO.seiten_nachstufe_veraltet(d_) or ""), "Bericht ohne Code-Stand gilt als aktuell"
+    json.dump(dict(ergebnis=dict(art="teil_a_allein"), nachstufe_code="000000000000"), open(smj_, "w")); assert "geaendert" in (PO.seiten_nachstufe_veraltet(d_) or ""), "alter Code-Stand nicht erkannt"
+    json.dump(dict(ergebnis=dict(art="teil_a_allein"), nachstufe_code=SM.nachstufe_code()), open(smj_, "w")); assert PO.seiten_nachstufe_veraltet(d_) is None, "aktueller Code-Stand gilt als veraltet"
+    json.dump(dict(grund="ein Teil", nachstufe_code="0"), open(smj_, "w")); assert PO.seiten_nachstufe_veraltet(d_) is None, "ohne Ergebnis nachgerechnet"
+    json.dump(dict(ergebnis=dict(art="vereint")), open(smj_, "w")); os.environ["RCPARK_SEITEN_NACHSTUFE"] = "0"
+    try: assert PO.seiten_nachstufe_veraltet(d_) is None, "RCPARK_SEITEN_NACHSTUFE=0 wirkt nicht"
+    finally: os.environ.pop("RCPARK_SEITEN_NACHSTUFE")
 print("ok 5: Verdrahtung in iphone_sfm.py, pipeline_objekt.py, gesamtkette.py; dichte Wolke wird uebernommen statt doppelt gerechnet")
 shutil.rmtree(S, ignore_errors=True)

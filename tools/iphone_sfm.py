@@ -9,6 +9,9 @@ SEITENMODELLE (21.11.2026, Standard AN, tools/sfm_seiten_modelle.py): trennt die
   davon >= 30 Bilder (RCPARK_SEITEN_MIN_BILDER), rechnet statt EINES Mappers je Teil der globale Mapper zweimal, danach je Teil eine dichte Wolke und tools/seiten_vereinen.py;
   sparse/0 ist dann das VEREINTE Modell (oder, gemeldet, Teil A allein). Bericht seiten_modelle.json, Arbeitsordner seiten_modelle/. Bei genau einem Teil bleibt alles wie bisher.
   RCPARK_SEITEN_MODELLE=0 = Stand davor (ein Mapper, fehlende Seite nur gemeldet). Gilt fuer --mapper auto|auto_alt|global; ein erzwungener anderer Mapper bleibt erzwungen.
+NUR NACHSTUFE (22.11.2026, RCPARK_SFM_NUR_NACHSTUFE=1, setzt tools/pipeline_objekt.py, wenn 'nachstufe_code' in seiten_modelle.json nicht mehr zum Code passt): alles
+  Teure MUSS aus dem Zwischenstand kommen (Merkmale/Paare aus db.db, Seitenmodelle je Teil, dichte Wolken je Teil); passt db.db nicht zum Fotoordner oder sind die Seiten nicht
+  getrennt, bricht der Lauf VOR jedem Mapper ab (sparse/ bleibt unberuehrt) - neu rechnen dann bewusst mit --neu sfm. Neu laufen Vereinen, Tore, Einsetzen, mapper_wahl.json.
 DB-BEREINIGUNG vor JEDEM Mapper (Kamera je Videoclip, EXIF-Prioren weg, tools/sfm_db_variante.py -> db_mapper.db; der Konsens-Weg bereinigt selbst). RCPARK_DB_BEREINIGEN=0 = alter Stand.
 Ausgaben in <arbeitsordner>: db.db, paare.txt (ab > 300 Bildern), sparse/<n>/ (COLMAP-Modelle), mapper_wahl.json (Mapperwahl + GPS-Tor + 'seiten': Bildteile, fehlende Seiten),
   masken/, masken_colmap/, seiten.json, db_seiten.db, db_mapper.db, seiten_modelle.json + seiten_modelle/ (nur bei mehreren Bildteilen).
@@ -65,6 +68,8 @@ if os.path.exists(db):
         _db_ok = (_ni == _n_fotos and _nm > 0)
     except Exception:
         _db_ok = False
+NUR_NACHSTUFE = os.environ.get("RCPARK_SFM_NUR_NACHSTUFE") == "1"
+if NUR_NACHSTUFE and not _db_ok: raise SystemExit(f"NUR NACHSTUFE: db.db passt nicht zum Fotoordner ({_n_fotos} Dateien) - Merkmale wuerden neu gerechnet; bewusst neu: --neu sfm")
 if _db_ok:
     print(f"Merkmale und Paare aus Cache ({_ni} Bilder, {_nm} Paare)", flush=True)
 else:
@@ -166,6 +171,8 @@ if _e0.get("getrennt"):
             print("SEITENMODELLE: " + (_sm.get("grund") or "FEHLER " + _sm["fehler"]) + " - Mapperwahl wie bisher", flush=True); SM.schreiben(w, _sm)
             wahl["seiten_modelle"] = dict(gerechnet=False, grund=_sm.get("grund") or _sm.get("fehler"), meldungen=_sm.get("meldungen")); _sm = None; _t0 = time.time()
         else: wahl["gewaehlt"] = "seiten_global"; _fertig = True
+if NUR_NACHSTUFE and not _sm: raise SystemExit("NUR NACHSTUFE: kein Seitenmodell-Weg (Seiten nicht getrennt, abgeschaltet oder kein Teilmodell) - ein Mapper wuerde neu rechnen; bewusst neu: --neu sfm")
+if NUR_NACHSTUFE: print("NUR NACHSTUFE: Seitenmodelle aus dem Zwischenstand - Vereinen, Tore und Einsetzen laufen mit dem aktuellen Code", flush=True)
 if not _fertig and MAPPER in ("auto", "konsens"):                                         # 19.11.2026 (Nutzer 'Ja, mach es als Standard'): Konsens-Mapper zuerst
     ok_k = _konsens(f"{w}/sparse_konsens"); wahl["konsens_sek"] = round(time.time() - _t0); ku = _konsens_urteil(ok_k); wahl["konsens"] = ku
     print("Mapper konsens:", "ok" if ok_k else "FEHLGESCHLAGEN", wahl["konsens_sek"], "s, Rueckgrat", ku["rueckgrat"], "von", ku["gemeinsam"], "im Modell", ku["im_modell"], "von", ku["bilder"], flush=True)
