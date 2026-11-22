@@ -14,6 +14,7 @@
 - `tools/flaechen_gegen_netz.py` [seg] flaechen_gegen_netz.py - "Geraffel"-Melder (Nutzeridee 2026-11-07): Im FOTO sind Fenster-/Wandflaechen einfarbig, im 3D-Netz sind dort Beulen. Ablauf je Foto (K-Kamera wie foto_dif
 - `tools/flaechen_mass.py` [seg] flaechen_mass.py - FLAECHENMASS (Spec modelle/archiv/SPEC_FLAECHENMASS.md, Nutzerentscheid 11.11.): Formvergleich ueber FLAECHEN statt Kanten.
 - `tools/foto_auftrag.py` [seg] foto_auftrag.py <objekt.json> <fassaden-ordner> <aus.html> [--wunsch wuensche.json] [--mpp 0.01] [--extra-umriss x0 y0 x1 y1 ...]
+- `tools/foto_auftrag_skizze.py` [seg] Fotoauftrag als Skizze aus den Kettendaten (LoD2-Grundriss, Wandbelegung je Wand aus der Wolke, Fotoluecken aus seiten_modelle.json -> nummerierte Standpunkte Uebereck/Frontal/Fern mit WGS84, audit/foto_auftrag.png/.json/.md); --pruefen <json> <foto> = Foto-GPS gegen Standpunkte. Kette: nach SfM und am Laufende
 - `tools/foto_auswahl.py` [col] foto_auswahl.py - Automatische Bildauswahl: Kennzahlen je Foto VOR dem Netz + Pruefung, welche davon die Registrierung wirklich vorhersagen (Register BK).
 - `tools/foto_auto_pose.py` [seg] foto_auto_pose.py — VOLLAUTOMATISCH die Kamera-Pose eines bekannten 3D-Modells in einem Foto finden (keine Hand-Korrespondenzen, kein Klicken).
 - `tools/foto_breitenprofil.py` [seg] foto_breitenprofil.py - BREITE JE HOEHE IN METERN, automatisch aus Foto und Modell (kalibrierte Kamera, keine Handpicks).

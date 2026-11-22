@@ -10,3 +10,6 @@ EXTRA=$(ls $ROOT/modelle/stl/*_1-87.stl 2>/dev/null | grep -v "/${OBJ}_1-87.stl"
 AUS=${TMPDIR:-/tmp}/check_$(basename "${FOTO%.*}").jpg
 /media/oem/scan/venv-seg/bin/python -W ignore -I $ROOT/tools/foto_schnellcheck.py $ROOT/modelle/$OBJ/objekt.json $FAS $ROOT/modelle/$OBJ/audit/fotoauftrag.json "$FOTO" ${EXTRA:+--stl $EXTRA} ${NR:+--auftrag-nr $NR} --aus "$AUS" || true
 echo "Bild: $AUS"
+# 22.11.2026: Foto-GPS (+ Kompass) gegen die Standpunkte der Skizze (tools/foto_auftrag_skizze.py, audit/foto_auftrag.json): "erfuellt Standpunkt N" / "bitte X m nach links"
+AJ=$ROOT/modelle/$OBJ/audit/foto_auftrag.json
+if [ -f "$AJ" ]; then /media/oem/scan/venv-seg/bin/python -W ignore -I $ROOT/tools/foto_auftrag_skizze.py --pruefen "$AJ" "$FOTO" || true; fi
