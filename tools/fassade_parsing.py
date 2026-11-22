@@ -102,6 +102,48 @@ class Erkenner:
         return out, len(ks)
 
 
+def abstimmen(je_foto, masken, r, mind_stimmen=2, anteil=0.4):
+    """Abstimmung ueber die Fotos je Klasse: Kaesten (Meter, je Foto nach NMS) per IoU > 0,5 clustern, Stimmen = Fotos mit Treffer, gesehen = Fotos, deren Sichtmaske
+    (Raster r, Zelle r['zelle']) den Kasten zu > 70 % abdeckt. Element gilt ab mind_stimmen UND anteil x gesehen. Rueckgabe Liste der Elemente (u0,u1,z0,z1 in m)."""
+    z_ = r["zelle"]; elemente = []
+    for kl in KLASSEN:
+        alle = [dict(k, foto=nr) for nr, L in je_foto.items() for k in L if k["klasse"] == kl]; cl = []
+        for k in sorted(alle, key=lambda k: -k["score"]):
+            for c in cl:
+                if iou(k["box"], c["kern"]) > 0.5 and k["foto"] not in c["fotos"]: c["m"].append(k); c["fotos"].add(k["foto"]); break
+            else: cl.append(dict(kern=k["box"], m=[k], fotos={k["foto"]}))
+        for c in cl:
+            B = np.median(np.array([k["box"] for k in c["m"]]), 0); gesehen = 0
+            for nr, mk in masken.items():
+                x0, x1 = int((B[0] - r["u0"]) / z_), int(math.ceil((B[1] - r["u0"]) / z_)); y0, y1 = int((r["z1"] - B[3]) / z_), int(math.ceil((r["z1"] - B[2]) / z_))
+                sub = mk[max(0, y0):y1, max(0, x0):x1]; gesehen += int(sub.size > 0 and sub.mean() > 0.7)
+            st = len(c["fotos"])
+            if st >= mind_stimmen and st >= anteil * max(1, gesehen):
+                elemente.append(dict(klasse=kl, u0=float(B[0]), u1=float(B[1]), z0=float(B[2]), z1=float(B[3]), stimmen=st, gesehen=gesehen,
+                                     score=round(float(np.median([k["score"] for k in c["m"]])), 3), texte=sorted({k["text"] for k in c["m"]})))
+    return elemente
+
+
+def boegen_vereinen(elemente, z_luecke=0.3):
+    """Der Erkenner liefert je Bogen oft ZWEI Kaesten (nur Bogenfeld / ganze Oeffnung bis zum Boden) -> eine Oeffnung, Kaempfer = Unterkante des Bogenfelds.
+    Zwei Bogenkaesten gehoeren zusammen, wenn sie sich waagerecht zu > 60 % der schmaleren Breite UND senkrecht ueberdecken (Luecke <= z_luecke: Bogenfeld sitzt auf der Oeffnung).
+    22.11.2026 (Kettenlauf schwabentor 1122c): vorher nur die waagerechte Bedingung - die linke Rundbogennische in 23 m Hoehe (u -3,07..-0,86) lag ueber dem Tor
+    (u -2,48..2,22, z 0..6,8) und wurde mit ihm zu EINEM 'Bogen' z -0,03..25,57 verschmolzen; das linke Fenster verlor seine Zone (rundbogenfenster 1 statt 2).
+    Rueckgabe: vereinte Bogen-Elemente (andere Klassen unberuehrt, nicht enthalten)."""
+    bo = sorted([e for e in elemente if e["klasse"] == "bogen"], key=lambda e: -(e["z1"] - e["z0"])); gr = []
+    for e in bo:
+        for g in gr:
+            h = g[0]; ue = min(e["u1"], h["u1"]) - max(e["u0"], h["u0"])
+            zl = max(e["z0"], min(x["z0"] for x in g)) - min(e["z1"], max(x["z1"] for x in g))          # > 0 = senkrechte Luecke zwischen Kasten und Gruppe
+            if ue > 0.6 * min(e["u1"] - e["u0"], h["u1"] - h["u0"]) and zl <= z_luecke: g.append(e); break
+        else: gr.append([e])
+    neu = []
+    for g in gr:
+        h = g[0]; kae = max(x["z0"] for x in g); e = dict(h, z0=min(x["z0"] for x in g), z1=max(x["z1"] for x in g), stimmen=max(x["stimmen"] for x in g), teile=len(g))
+        e["kaempfer"] = kae if kae > e["z0"] + 0.5 else None; neu.append(e)
+    return neu
+
+
 def felder_zaehlen(e, r, bilder, sw=0.8, abst_m=0.3, rand=0.08):
     """Fensterfelder AM FOTO zaehlen (Regel 9; 2026-11-05: param_suche wollte 4 statt 3, weil Zusatzpfosten auf Masswerkkanten fallen):
     je Einzelfoto-Ortho das Helligkeitsprofil quer durch das mittlere Fensterband, helle Steinpfosten = lokale Maxima > sw Standardabweichungen,
@@ -200,22 +242,7 @@ def main(argv=None):
             je_foto[nr] = [k for kl in KLASSEN for k in nms([k for k in kk if k["klasse"] == kl], a.nms)]
             print(f"  {fid} Foto {nr}: {len(je_foto[nr])} Kaesten, {nk} Kacheln ({time.time() - t0:.0f} s)", flush=True)
         # Abstimmung ueber die Fotos (je Klasse): Cluster per IoU, Stimmen = Fotos mit Treffer, gesehen = Fotos mit >= 70 % Abdeckung im Kasten
-        elemente = []
-        for kl in KLASSEN:
-            alle = [dict(k, foto=nr) for nr, L in je_foto.items() for k in L if k["klasse"] == kl]; cl = []
-            for k in sorted(alle, key=lambda k: -k["score"]):
-                for c in cl:
-                    if iou(k["box"], c["kern"]) > 0.5 and k["foto"] not in c["fotos"]: c["m"].append(k); c["fotos"].add(k["foto"]); break
-                else: cl.append(dict(kern=k["box"], m=[k], fotos={k["foto"]}))
-            for c in cl:
-                B = np.median(np.array([k["box"] for k in c["m"]]), 0); gesehen = 0
-                for nr, mk in masken.items():
-                    x0, x1 = int((B[0] - r["u0"]) / z_), int(math.ceil((B[1] - r["u0"]) / z_)); y0, y1 = int((r["z1"] - B[3]) / z_), int(math.ceil((r["z1"] - B[2]) / z_))
-                    sub = mk[max(0, y0):y1, max(0, x0):x1]; gesehen += int(sub.size > 0 and sub.mean() > 0.7)
-                st = len(c["fotos"])
-                if st >= a.mind_stimmen and st >= a.anteil * max(1, gesehen):
-                    elemente.append(dict(klasse=kl, u0=float(B[0]), u1=float(B[1]), z0=float(B[2]), z1=float(B[3]), stimmen=st, gesehen=gesehen,
-                                         score=round(float(np.median([k["score"] for k in c["m"]])), 3), texte=sorted({k["text"] for k in c["m"]})))
+        elemente = abstimmen(je_foto, masken, r, a.mind_stimmen, a.anteil)
         # verschachtelte Kaesten gleicher Klasse (Sammelkasten ueber mehrere Elemente) weg: Kasten, der >= 2 andere zu > 80 % enthaelt
         def enthaelt(A, B_):
             w = min(A["u1"], B_["u1"]) - max(A["u0"], B_["u0"]); h = min(A["z1"], B_["z1"]) - max(A["z0"], B_["z0"])
@@ -232,16 +259,7 @@ def main(argv=None):
                 z0, z1 = float(np.median([x["z0"] for x in rr])), float(np.median([x["z1"] for x in rr]))
                 for e in rr: e.update(reihe=i, z0_roh=e["z0"], z1_roh=e["z1"], z0=z0, z1=z1)
         # Boegen: der Erkenner liefert je Bogen oft ZWEI Kaesten (nur Bogenfeld / ganze Oeffnung bis zum Boden) -> eine Oeffnung, Kaempfer = Unterkante des Bogenfelds
-        bo = sorted([e for e in elemente if e["klasse"] == "bogen"], key=lambda e: -(e["z1"] - e["z0"])); gr = []
-        for e in bo:
-            for g in gr:
-                h = g[0]; ue = min(e["u1"], h["u1"]) - max(e["u0"], h["u0"])
-                if ue > 0.6 * min(e["u1"] - e["u0"], h["u1"] - h["u0"]): g.append(e); break
-            else: gr.append([e])
-        neu = []
-        for g in gr:
-            h = g[0]; kae = max(x["z0"] for x in g); e = dict(h, z0=min(x["z0"] for x in g), z1=max(x["z1"] for x in g), stimmen=max(x["stimmen"] for x in g), teile=len(g))
-            e["kaempfer"] = kae if kae > e["z0"] + 0.5 else None; neu.append(e)
+        neu = boegen_vereinen(elemente)
         elemente = [e for e in elemente if e["klasse"] != "bogen"] + neu
         for e in elemente:                                                                            # Fenster/Tueren IN einer Bogenoeffnung liegen auf der Rueckwand (Arkade) -> markieren
             if e["klasse"] in ("fenster", "tuer"):

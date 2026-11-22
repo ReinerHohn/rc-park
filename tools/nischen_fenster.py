@@ -367,6 +367,28 @@ def fassade_auswerten(B, kaesten, npz, a, vorbauten=(), bilder=None, liste=()):
         if "fehler" not in n: form_bestaetigen(n, bil, A[:4], innen=fi, **kw)
         t = tiefen(npz, n, f) if (npz is not None and "fehler" not in n) else dict(nische=None, fenster=None); r["tiefe"] = t
         E.append(_eintrag(f, n, t, I[4], a, "nischen_fenster: Erkennerzone -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep", r)); br.append(r)
+    # 22.11.2026 (Kettenlauf schwabentor 1122c: rundbogenfenster 1 statt 2): die linke Nische hatte nur den Bogenkasten des Erkenners (4/6 Stimmen), das Fenster darin
+    # nur 2 von 7 Stimmen -> kein Paar -> kein Fenster. Gegenstueck zur Geschwister-Regel unten: eine Zone OHNE inneren Kasten, so gross wie die Nische eines vermessenen
+    # Paars derselben Wand (Breite/Hoehe +-25 %, Sohlbank +-25 % der Hoehe), bekommt dessen Fenster, um die Nischenlage verschoben, als SUCHZONE; Umriss, Form und Tiefe
+    # kommen nur aus den Kanten/Fotos/Sweep HIER (kein Mass vom Geschwister).
+    for Z in zonen(kaesten):
+        Zb = Z[:4]
+        if any(_ueber(Zb, (x["u0"], x["u1"], x["z0"], x["z1"])) or (x.get("nische") and _ueber(Zb, (x["nische"]["u0"], x["nische"]["u1"], x["nische"]["z0"], x["nische"]["z1"]))) for x in E): continue
+        bz, hz = Zb[1] - Zb[0], Zb[3] - Zb[2]
+        gs = [x for x in E if x.get("nische") and abs((x["nische"]["u1"] - x["nische"]["u0"]) - bz) <= 0.25 * bz and abs((x["nische"]["z1"] - x["nische"]["z0"]) - hz) <= 0.25 * hz
+              and abs(x["nische"]["z0"] - Zb[2]) <= 0.25 * hz]
+        if not gs: continue
+        x = min(gs, key=lambda x: abs(x["nische"]["z0"] - Zb[2])); N = x["nische"]; du = (Zb[0] + Zb[1] - N["u0"] - N["u1"]) / 2; dz = Zb[2] - N["z0"]
+        I_ = (x["u0"] + du, x["u1"] + du, x["z0"] + dz, x["z1"] + dz)
+        r = dict(zone_aussen=[round(v, 2) for v in Zb], zone_innen=[round(v, 2) for v in I_], stimmen=[Z[4], 0], art="nische_geschwister", geschwister=[x["u0"], x["u1"], x["z0"], x["z1"]])
+        if vor(Zb): r["urteil"] = "nische_geschwister uebersprungen: hinter einem Vorbau"; br.append(r); continue
+        f = form_aus_kanten(B, I_, anteil_min=a.anteil_min, kante=a.kante); r["fenster"] = f
+        if "fehler" in f: r["urteil"] = "nische_geschwister: kein Fenster: " + f["fehler"]; br.append(r); continue
+        bil = lade(Zb); form_bestaetigen(f, bil, I_, **kw); fi = (f["u0"], f["u1"], f["z0"], f["z1"])
+        n = form_aus_kanten(B, Zb, innen=fi, anteil_min=a.anteil_min, kante=a.kante); r["nische"] = n
+        if "fehler" not in n: form_bestaetigen(n, bil, Zb, innen=fi, **kw)
+        t = tiefen(npz, n, f) if (npz is not None and "fehler" not in n) else dict(nische=None, fenster=None); r["tiefe"] = t
+        E.append(_eintrag(f, n, t, Z[4], a, "nischen_fenster (Nischenzone, Fenster-Suchzone vom Geschwister): Erkennerzone -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep", r)); br.append(r)
     # 21.11.2026 (Nutzer 'Das ist noch nicht gut', Schwabentor f00 Lauf 1121s): das LINKE Rundbogenfenster hatte keinen Nischenkasten im Erkenner -> kein Paar -> blieb Rechteck.
     for q in liste:
         Q = (q["u0"], q["u1"], q["z0"], q["z1"])
