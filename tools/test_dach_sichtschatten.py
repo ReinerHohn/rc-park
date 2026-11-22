@@ -78,7 +78,7 @@ pruef(u3 and u3["urteil"] == "offen", f"T3 aehnliche Entfernungen -> {u3 and u3[
 pruef(D.gruppe_ursache([1, 1, 1], [10, 50, 100]) is None, "T3 zu wenige Fotos -> None")
 
 # --- T4 ---
-tmp = tempfile.mkdtemp(prefix="test_dach_sichtschatten_")
+import pfade; tmp = pfade.temp_ordner("test_dach_sichtschatten_")
 try:
     W, H, f = 800, 600, 700.0
     def kamera(name, C, ziel):
