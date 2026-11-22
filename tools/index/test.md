@@ -1,4 +1,4 @@
-# Werkzeuge: test (124)
+# Werkzeuge: test (127)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -8,6 +8,7 @@
 - `tools/test_bogenform.py` [gen] test_bogenform.py — Regression + Methodik-Schutz: die GEBAUTE Bogenform muss der FOTO-gemessenen Form entsprechen. Soll den Fehler "Bögen zu flach" dauerhaft verhindern.
 - `tools/test_brennweite_waehlen.py` [-] Test brennweite_waehlen: Martinstor-061-Fall (Canon A650, 3601x2757 aus 4000x3000, EXIF 9,855 mm, 541,17 Pixel/mm), Seitenverhaeltnis-Regel, GPS-Abstand. Aufruf: python3 tools/test
 - `tools/test_buendel_synthetisch.py` [-] test_buendel_synthetisch.py - BEWEIS mit bekannter Wahrheit: alte gegen neue Kamera-/Buendelkette (Kaufhaus 2026-11-04, Nutzerauftrag "beweise, dass es bei einem neuen Objekt besse
+- `tools/test_code_stand.py` [-] Fester Test (Sekunden, nur Standardbibliothek) fuer tools/code_stand.py (22.11.2026, Nulllauf kette-schwabentor-null-1122c: Zwischenstaende ohne Code-Stand -> Fix lief nie). 1 Hilf
 - `tools/test_dach_dom1_veto.py` [-] test_dach_dom1_veto.py - DOM1-Veto des Wolken-Dachprofils (tools/dach_profil_wolke.dom1_veto, 21.11.2026). Anlass Schwabentor-1120: Hoehen-Tor meldete Dach +1,62 m ueber DOM1 (k 0,
 - `tools/test_dach_veto_traufe.py` [-] test_dach_veto_traufe.py - DOM1-Veto darf den DACHUEBERSTAND nicht abschneiden (tools/dach_profil_wolke.dom1_veto + dom1_kachel.dom1_bilinear(klippe), 21.11.2026). Anlass Schwabent
 - `tools/test_dachflaeche_aus_umriss.py` [-] Test dachflaeche_aus_umriss.py + bauteile.flaeche_aus_foto (synthetisch, Sekunden): Profil-Familie aus gerenderten Silhouetten zurueckgewinnen, Formfamilie nur aus >= 3 einigen Fot
@@ -31,6 +32,7 @@
 - `tools/test_generator_elemente_schleife.py` [gen] test_generator_elemente_schleife.py - BEWEIS (bekannte Wahrheit) fuer generator_elemente_schleife.py. Synthetisch, ohne Fotos (Foto-Tor = eigener Lauf auf Kaufhaus). A Wahrheit = H
 - `tools/test_generator_schleife.py` [seg] test_generator_schleife.py - BEWEIS (bekannte Wahrheit, OHNE echte Fotos) fuer generator_schleife.py (2026-11-06).
 - `tools/test_gitter_kurven.py` [-] Beweistest gitter_kurven.py (synthetisch): Gerade, Kreisbogen (R 1,9 m, 150 Grad), kubische Bezier, Bogen in 2 Fragmenten (Luecke 33 cm) und Gerade in 2 Fragmenten (Luecke 20 cm) -
+- `tools/test_gps_anker.py` [-] Fester Test (Sekunden, ohne GPU) fuer den GPS-ANKER der LoD2-Ausrichtung (22.11.2026, Nulllauf kette-schwabentor-null-1122d: vereinte Seiten 0+1, GPS-Fit der Kameras gut, aber der 
 - `tools/test_gps_seiten_pruefen.py` [-] Fester Test gps_seiten_pruefen.urteil_2d: Kameras im Halbkreis vor und hinter einem Turm (GPS mit 4 m Rauschen), Modell gedreht+skaliert. Richtig -> GPS-STIMMIG; Rueckseite durch d
 - `tools/test_gpu_gleichwertig.py` [-] test_gpu_gleichwertig.py - BEWEIS: Ist die GPU-Fassung von foto_diff gleichwertig zur CPU-Fassung? (2026-11-04, Nutzerauftrag)
 - `tools/test_gpu_knn.py` [-] test_gpu_knn.py - GPU-Nachbarsuche gleich CPU-KD-Baum? (min_abstand, naechster, ball_anzahl) auf Zufallsdaten und auf der echten Kaufhaus-Wolke. Exit 1 bei Abweichung. /media/oem/s
@@ -58,6 +60,7 @@
 - `tools/test_konvergenz_logik.py` [-] test_konvergenz_logik.py - Trockenlauf der Konvergenzschleife OHNE GPU und OHNE Generatorbau (S3 Phase A, 2026-11-05). Prueft die STEUERUNG von qualitaetsstufen.v_konvergenz mit vo
 - `tools/test_laibung_aus_fotos.py` [seg] test_laibung_aus_fotos.py - fester synthetischer Test fuer tools/laibung_aus_fotos.py (21.11.2026 spaet), < 10 s, nur CPU.
 - `tools/test_laterne_aus_fotos.py` [gen] test_laterne_aus_fotos.py - feste synthetische Tests fuer tools/laterne_aus_fotos.py und bauteile.laterne (22.11.2026). Ohne Dateien, Sekunden.
+- `tools/test_leistung_messen.py` [-] test_leistung_messen.py - Kurztest fuer tools/leistung_messen.py (22.11.2026): synthetische numpy-Schleife (~1 s, ~120 MB, 1-2 Threads), Sweep mit Platzhalter, Auswertung 'kleinste
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_messflaeche_kreis.py` [seg] test_messflaeche_kreis.py - WAECHTER gegen zirkulaere Messung (CPU, wenige Sekunden, ohne Daten; 22.11.2026, Kreisfall Einzelorthos schwabentor-1120).
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
@@ -123,4 +126,3 @@
 - `tools/test_wolke_verdeckung.py` [-] Synthetischer Beweis fuer wolke_verdeckung.py (L-KR26): Teil (Wand in 10 m) hinter einer Wolken-'Decke' (6 m), die nicht im Modell ist. Aufruf: /media/oem/scan/venv-seg/bin/python 
 - `tools/test_zusatzfotos_kameras.py` [-] Test zusatzfotos_registrieren.kamera_gruppen: Gruppen aus Format UND Zoomklasse, f/k1/cy aus Parameter-JSON (f in Bildpixeln = f_orig*skala), Hauptpunkt auf das UNGECROPPTE Origina
 - `tools/test_zusatzfotos_lightglue.py` [-] Test zusatzfotos_lightglue.py: Stufen/Argumente vorhanden, Modul ohne torch/pycolmap importierbar, GPU-Werkzeugliste enthaelt es; bei vorhandenem Ergebnis (kaufhaus_handy/lg) Plaus
-- `tools/test_code_stand.py` [-] Fester Test fuer tools/code_stand.py (Nulllauf schwabentor-1122c: Zwischenstaende ohne Code-Stand -> Fix lief nie)
