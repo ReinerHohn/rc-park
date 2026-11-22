@@ -22,6 +22,45 @@ import sys, os, json, argparse, numpy as np
 from scipy import ndimage as ndi
 
 
+def wand_ebene_w(we, u, z):
+    """Wandtiefe der geneigten Wandebene (fassade_tiefe 'wand_ebene') an (u, z); ohne Ebene 0."""
+    if not we: return 0.0 * np.asarray(u, float)
+    return we["a"] + we["b_u"] * (np.asarray(u, float) - we["u_ref"]) + we["c_z"] * (np.asarray(z, float) - we["z_ref"])
+
+
+def wand_ebene_schaetzen(U, Z, w, gut, u_ref, z_ref, tol=0.08, max_neigung=0.10, min_gewinn=1.2, min_hub=0.2, min_anteil=0.2, n_iter=600, seed=0):
+    """22.11.2026 (Schwabentor-1122 f00, Lotfehler ~2,6 Grad: Wand 0 m am Fuss, -1,4 m bei z 33): Wand als GENEIGTE Ebene w = a + b_u*(u-u_ref) + c_z*(z-z_ref)
+    aus den sicheren Sweep-Zellen (RANSAC + kleinste Quadrate auf den Treffern, Treffer = |Rest| < tol). GUARD - nur wenn alle gelten, sonst None (konstanter Versatz wie bisher):
+      Neigung |b_u|, |c_z| <= max_neigung; Hub der Ebene ueber die Fassade >= min_hub (sonst reicht konstant); Treffer >= min_gewinn x Treffer der besten Konstanten;
+      Treffer >= min_anteil der sicheren Zellen. Vorbauten/Nischen liegen ausserhalb tol und ziehen die Ebene nicht (die Wand ist die groesste Flaeche)."""
+    U = np.asarray(U, float); Z = np.asarray(Z, float); w = np.asarray(w, float); g = np.asarray(gut, bool)
+    u, z, ww = U[g], Z[g], w[g]
+    if len(ww) < 200: return None
+    rng = np.random.default_rng(seed)
+    if len(ww) > 30000: s = rng.choice(len(ww), 30000, replace=False); u, z, ww = u[s], z[s], ww[s]
+    du, dz = u - u_ref, z - z_ref
+    ks = np.arange(ww.min(), ww.max() + tol, tol / 2); konst = max(int((np.abs(ww - k) < tol).sum()) for k in ks)
+    A = np.c_[np.ones_like(du), du, dz]; best = (0, None)
+    for _ in range(n_iter):
+        i = rng.choice(len(ww), 3, replace=False)
+        try: p = np.linalg.solve(A[i], ww[i])
+        except np.linalg.LinAlgError: continue
+        if abs(p[1]) > max_neigung or abs(p[2]) > max_neigung: continue
+        k = int((np.abs(A @ p - ww) < tol).sum())
+        if k > best[0]: best = (k, p)
+    if best[1] is None: return None
+    p = best[1]
+    for _ in range(3):
+        m = np.abs(A @ p - ww) < tol
+        if m.sum() < 3: return None
+        p = np.linalg.lstsq(A[m], ww[m], rcond=None)[0]
+    k = int((np.abs(A @ p - ww) < tol).sum()); hub = abs(p[1]) * (U.max() - U.min()) + abs(p[2]) * (Z.max() - Z.min())
+    if abs(p[1]) > max_neigung or abs(p[2]) > max_neigung or hub < min_hub or k < min_gewinn * konst or k < min_anteil * len(ww): return None
+    return dict(a=round(float(p[0]), 3), b_u=round(float(p[1]), 4), c_z=round(float(p[2]), 4), u_ref=round(float(u_ref), 3), z_ref=round(float(z_ref), 3), inlier=k, inlier_konst=konst,
+                hub_m=round(float(hub), 2), neigung_grad=round(float(np.degrees(np.arctan(np.hypot(p[1], p[2])))), 2),
+                quelle="fassade_tiefe: RANSAC-Ebene der sicheren Sweep-Zellen (Lot-/Lagefehler oder echter Anzug - die Ebene sagt nicht, welches)")
+
+
 def gruppen_bilden(kand, w_min, streuung, min_m2, dach_abstand, w_grenze=9.0):
     vb = [k for k in kand if k.get("art") == "Vorbau"]
     # w_grenze: Front bis 0,25 m an den Rand des Suchbereichs = kein echtes Kostenminimum (Himmel, Dachkante, Bildrand; Schwabentor f03 20.11.: zwei Scheinkoerper bei +2,2 m)
@@ -240,7 +279,7 @@ def main():
                   + (f"  Dach z {g['dach']['z0']:.2f}..{g['dach']['z1']:.2f} w {g['dach']['w_median']:+.2f}" if g["dach"] else "  (ohne Dach)")
                   + f"  max {feld.max():.2f} m")
             bilder.append((f"f{i:02d}", feld))
-        if fg: erg.append(dict(id=f.get("id", f"f{i:02d}"), nr=i, o=f["o"], d=f["d"], n=f["n"], w_wand=v["wand_versatz_m"], gruppen=fg))
+        if fg: erg.append(dict(id=f.get("id", f"f{i:02d}"), nr=i, o=f["o"], d=f["d"], n=f["n"], w_wand=v["wand_versatz_m"], wand_ebene=v.get("wand_ebene"), gruppen=fg))   # wand_ebene: Kamerarahmen (Kanten-Stufen), w_wand: Bau (LoD2-Wand)
     os.makedirs(os.path.dirname(aus), exist_ok=True)
     json.dump(dict(quelle="tools/vorbauten_bauplan.py aus fassade_tiefe (Ebenen-Sweep) - Hoehenfeld je Zelle", fassaden=erg), open(aus, "w"), indent=0)
     if bilder:

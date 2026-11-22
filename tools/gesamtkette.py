@@ -590,6 +590,9 @@ def main():
             vb_ = {}
             for i_ in range(len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])):
                 vb_[f"f{i_:02d}"] = lauf(B, f"bauplan_sweep_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
+            # 22.11.2026 (1122n, Bilderker fehlte): Wand im Kamerarahmen geneigt (Lotfehler ~2,6 Grad) -> fassade_tiefe schaetzt die geneigte Wandebene; Neigung je Fassade in den Bericht
+            erg_["wand_neigung"] = {i_: json.load(open(p_))["wand_ebene"].get("neigung_grad") for i_ in vb_ for p_ in [os.path.join(fo, f"vorbauten_{i_}.json")] if os.path.exists(p_) and json.load(open(p_)).get("wand_ebene")}
+            if erg_["wand_neigung"]: print(f"WARNUNG Wandebene geneigt gegen LoD2 (Grad je Fassade) {erg_['wand_neigung']} - Lot der Ausrichtung pruefen (gegenueberliegende Waende gleichsinnig = Lotfehler, gegensinnig = Anzug)", flush=True)
             erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo] + (["--fein", ffn] if os.path.isdir(ffn) else []), log, ok=(0, 3))[0]
             fa_ = os.path.join(Z, "audit", "fenster_auto.json")      # 21.11.2026: Fensterliste am Sweep pruefen (Konsolenfelder als 'Fenster' verworfen, Nischen unter der Stimmenschwelle ergaenzt)
             # 21.11.2026 SCHLEIFE Schritt 1+2 (Leitbild Nutzer: Bauplaene auf mehreren Ebenen, Masse aus Kanten): dichte triangulierte Fotokanten je Wand-/Sweep-Ebene, daraus die Masse der Vorbauten
@@ -614,6 +617,10 @@ def main():
                 erg_["oeffnungen_wandbild_rc"] = lauf(B, "bauplan_oeffnungen_wandbild", [PY, "-u", "-W", "ignore", "-I", "tools/oeffnungen_aus_kanten.py", ZR, eb_, "--uebernehmen", oa_]
                                                       + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3))[0]
             if os.path.exists(gp_): bauen(B, "bauen_mit_bauplan", a.ziel, log)
+            # 22.11.2026 (1122n: Bilderker fehlte ohne Meldung): Foto-F1 je gebautem Vorbau (teil_fotoform) - rc 2 = NICHT BELEGT (Praezision < 0,5), rc 3 = nichts zu pruefen
+            vba_ = os.path.join(Z, "audit", "vorbauten_auto.json")
+            if os.path.exists(gp_) and os.path.exists(vba_) and json.load(open(vba_)).get("fassaden"):
+                erg_["vorbau_fototor_rc"] = lauf(B, "bauplan_vorbau_fototor", [PY, "-W", "ignore", "-I", "tools/vorbau_fototor.py", a.ziel, os.path.join(fo, "fassaden.json")], log, ok=(0, 2, 3))[0]
             # 21.11.2026 (ANALYSE_SACKGASSEN: Koerper, die auf keiner Wandebene liegen - Treppenturm, Dachueberstand, Laterne - kamen im Handlauf aus der dichten Wolke): Rest der Wolke am
             # gebauten Modell -> Dach-Schichtprofil (audit/dach_profil.json, nur einmal gegen das LoD2-Dach) und KOERPER-SCHLEIFE (tools/koerper_schleife.py: Haufen benennen, Nachbarn/Hohlraeume
             # abtrennen, Kandidaten bauen, JE KANDIDAT nachmessen, annehmen/verwerfen -> audit/koerper_auto.json) -> volle Abnahme, wenn die Schleife gebaut hat.
