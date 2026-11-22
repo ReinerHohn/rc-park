@@ -158,6 +158,32 @@ def gps_dreh_massstab(Xm, G, grenze=12.0):
 
 GPS_MAX_DREH, GPS_MAX_MASS = 15.0, 0.15   # wie die Grenzen des GPS-Tors (lage_gps_pruefen.py --max_dreh 15 --max_skala 0.15) - die Ausrichtung waehlt keine Lage, die das Tor sicher verwirft
 
+# 22.11.2026 GPS-ANKER (Nulllauf schwabentor-1122d, vereinte Seiten 0+1, 507 Bilder): der GPS-Fit der Kameras war gut (148 Kameras, Rest 4,5 m, GPS-SEITEN-Tor stimmig),
+# aber der LoD2-Feinfit dreht die Lage mit freier Drehung 22 Grad weg und schrumpft den Massstab auf 0,81 (Guete aller Loesungen nur 5-6 %, bester gegen zweitbesten
+# Rasterwert 6 gegen 5 %: LoD2 bestimmt die Lage dieser Wolke kaum - Wolke reicht ueber dem Objekt nur bis ~19-23 m von 46 m LoD2, 2/3 der Punkte nicht an LoD2-Flaechen).
+# Alle GPS-Startkandidaten erbten denselben Rastermassstab -> nur EINE unterscheidbare Loesung, sie fiel durchs GPS-Veto. Jetzt: ist das Foto-GPS als Lagebeleg stark
+# (>= GPS_ANKER_MIN_KAM Kameras, Rest < 8 m), liefert der GPS-Fit die Startlage UND die Grenzen eines zusaetzlichen Feinfits (Drehung um das Lot, Massstab, Versatz, Kippung
+# begrenzt, enger als das GPS-Tor); LoD2/DGM1 verfeinern nur innerhalb dieses Kastens (Hoehe bleibt frei: kommt aus DGM1/Kamerahoehe, nicht aus GPS - Quellen getrennt).
+# Wenige Geotags (Martinstor 15-17, Objektstandort statt Kamerastandort) -> kein Anker, Verhalten wie bisher. Abschalten zum Vergleich: AUSR_GPS_ANKER=0.
+GPS_ANKER_MIN_KAM, GPS_ANKER_MAX_REST = 40, 8.0
+GPS_ANKER_DREH, GPS_ANKER_MASS, GPS_ANKER_VERSATZ, GPS_ANKER_KIPP = 8.0, 0.08, 4.0, 3.0
+
+
+def gps_anker_aktiv(n_kam, rest_m, det_pos=True):
+    """Traegt das Foto-GPS die Lage allein (genug Kameras im robusten Fit, kleiner Rest, nicht gespiegelt)? Abschaltbar per AUSR_GPS_ANKER=0."""
+    if os.environ.get("AUSR_GPS_ANKER") == "0": return False
+    return bool(det_pos) and int(n_kam) >= GPS_ANKER_MIN_KAM and math.isfinite(rest_m) and float(rest_m) < GPS_ANKER_MAX_REST
+
+
+def gps_anker_grenzen(p0, dreh=GPS_ANKER_DREH, mass=GPS_ANKER_MASS, versatz=GPS_ANKER_VERSATZ, kipp=GPS_ANKER_KIPP):
+    """Kasten fuer den Feinfit um die GPS-Startlage p0 = [log s, rotvec (3), t (3)] (Parameter von zu_modell): Drehung um das Lot +-dreh Grad, Kippung +-kipp Grad,
+    Massstab +-mass (relativ), Lage waagerecht +-versatz m, Hoehe frei. Liefert (lo, hi) fuer least_squares."""
+    p0 = np.asarray(p0, float); lo = np.full(7, -np.inf); hi = np.full(7, np.inf)
+    lo[0], hi[0] = p0[0] + math.log(1 - mass), p0[0] + math.log(1 + mass)
+    for i, w in ((1, kipp), (2, kipp), (3, dreh)): lo[i], hi[i] = p0[i] - math.radians(w), p0[i] + math.radians(w)
+    for i in (4, 5): lo[i], hi[i] = p0[i] - versatz, p0[i] + versatz
+    return lo, hi
+
 
 def loesung_index(loesung, n, schreiben):
     """Welche der n unterscheidbaren Loesungen wird geschrieben, und mit welchem rc endet der Lauf? -> (Index oder None, rc).
@@ -369,7 +395,7 @@ def main():
         if not any(abs(math.log(b[1] / t[1])) < 0.15 for t in top): top.append(b)
         # KEINE Obergrenze (Martinstor 2026-11-04): mit 'top 12' fiel das richtige Band (s = 0,071, alte Pick-Kette) heraus, weil die Grobsumme kleine
         # Modelle bevorzugt -> Turm 0,66-fach. Jedes Massstabsband (Abstand 0,15 in log s, ~19 Baender) bekommt eine Feinloesung; entschieden wird dort.
-    GPS_PRUEF = None
+    GPS_PRUEF = None; GPS_ANKER = None
     if sum(_nah[i] for i, _ in GPS_KAM) >= 15:                                               # 15.11.: GPS-Startkandidat (v2: LoD2-Grobsuche verfehlte Lage; 190 Kameras mit GPS)
         R_ = obj["rahmen"]; c0_ = np.array(R_["mitte_utm"], float); xh_, yh_ = np.array(R_["xhat_utm"], float), np.array(R_["yhat_utm"], float)
         _gk = [(i, u) for i, u in GPS_KAM if _nah[i]]                                         # nur Kamerakern: globaler Mapper setzt einzelne Kameras tausende Einheiten weit weg
@@ -396,6 +422,11 @@ def main():
             print(f"GPS-Startkandidat: Massstab {1 / k_:.4f} SfM-Einheiten/m, Drehung {math.degrees(thg):.0f} Grad, Rest Median {np.median(res):.1f} m ({int(w_.sum())} von {len(w_)} Kameras)")
         else: print(f"GPS-Startkandidat nicht benutzt: Rest Median {np.median(res):.1f} m, {int(w_.sum())} Kameras")
         if np.linalg.det(Rg) > 0 and np.median(res) < 8 and int(w_.sum()) >= 15: GPS_PRUEF = (np.array([i for i, _ in _gk]), Mxy, 1.0 / k_)   # guter GPS-Fit -> Veto fuer Loesungen (unabhaengiger Lagebeleg)
+        if GPS_PRUEF is not None and gps_anker_aktiv(int(w_.sum()), float(np.median(res[w_])) if w_.any() else float("inf"), np.linalg.det(Rg) > 0):
+            GPS_ANKER = dict(s=1.0 / k_, drehung=math.atan2(Rg[1, 0], Rg[0, 0]), t=[float(tg[0]), float(tg[1])], kameras=int(w_.sum()), rest_m=float(np.median(res[w_])))
+            print(f"GPS-ANKER: Foto-GPS traegt die Lage ({GPS_ANKER['kameras']} Kameras, Rest Median {GPS_ANKER['rest_m']:.1f} m) - zusaetzlicher LoD2-Feinfit nur im Kasten Drehung +-{GPS_ANKER_DREH:.0f} Grad, "
+                  f"Massstab +-{100 * GPS_ANKER_MASS:.0f} %, Versatz +-{GPS_ANKER_VERSATZ:.0f} m, Kippung +-{GPS_ANKER_KIPP:.0f} Grad um den GPS-Fit (Hoehe frei: DGM1/Kamerahoehe)", flush=True)
+        elif GPS_PRUEF is not None: print(f"GPS-ANKER nicht aktiv: {int(w_.sum())} Kameras im GPS-Fit (noetig >= {GPS_ANKER_MIN_KAM}) oder Rest >= {GPS_ANKER_MAX_REST:.0f} m - bisheriges Verhalten")
     print("Grobsuche (Anteil nahe LoD2-Wand, Massstab, Drehung, Verschiebung): " + "; ".join(f"{b[0]:.2f} s={b[1]:.3f} {math.degrees(b[2]):.0f} Grad" for b in top[:4]))
 
     # 3. Fein: 7 Parameter, Punkt-zu-Flaeche, getrimmt; Startwerte aus den besten Grobloesungen
@@ -417,7 +448,7 @@ def main():
     def zu_modell(p, X):                                                                      # X im lotrechten Netzsystem -> Modell
         s = math.exp(p[0]); return Rot.from_rotvec(p[1:4]).apply(X) / s + p[4:7]
 
-    def fein(p0, X, schwellen=(3.0, 1.5, 0.8), band=0.35):
+    def fein(p0, X, schwellen=(3.0, 1.5, 0.8), band=0.35, grenzen=None):
         p = np.array(p0, float); ls0 = p[0]
         for sw in schwellen:
             for _ in range(3):
@@ -446,6 +477,7 @@ def main():
                         rk = (Yc[:, 2] - a.kamerahoehe[0]) / a.kamerahoehe[1] * math.exp(_ls0) * _wk
                         return torch.cat([rp, rk]).cpu().numpy()
                 lo = np.full(7, -np.inf); hi = np.full(7, np.inf); lo[0], hi[0] = ls0 - band, ls0 + band   # Massstab begrenzt (+-40 % um den Start): sonst Kollaps aller Punkte auf eine Flaeche
+                if grenzen is not None: lo, hi = np.asarray(grenzen[0], float), np.asarray(grenzen[1], float)   # GPS-Anker: Kasten um den GPS-Fit
                 p = least_squares(r, np.clip(p, lo + 1e-9, hi - 1e-9), loss="huber", f_scale=sw / 3 * math.exp(ls0), max_nfev=200, bounds=(lo, hi)).x
         M = zu_modell(p, X); d, _ = nn(M); ok = d * math.exp(p[0]) < schwellen[-1] * s0      # Inlier-Schwelle in SfM-Einheiten (massstabsneutral)
         return p, ok.mean(), float(np.sqrt(np.mean(d[ok] ** 2))) if ok.any() else np.inf, ok
@@ -491,7 +523,15 @@ def main():
                         _p2, _f2, _r2, _o2 = fein(_p1, Q, band=0.12); _a2 = abdeckung(_p2, Q); _q2 = _hq(_p2); _g2 = _f2 * _a2 * (min(_q2, 1 / _q2) if _q2 else 0.5); loes.append((_g2, _r2, _p2, _o2, _f2, _a2))
                         print(f"      Hoehenkorrektur: Massstab {math.exp(_p2[0]):.4f}: Inlier {100 * _f2:.0f} %, Abdeckung {100 * _a2:.0f} %, RMS {_r2:.2f} m, Hoehenverhaeltnis {(_q2 or 0):.2f} -> Guete {100 * _g2:.0f} %")
             except Exception as _e: print("      HINWEIS Hoehenprobe nicht moeglich:", _e)
-    if GPS_PRUEF is not None:                                                                 # 15.11.: GPS-Veto (v2: Loesung mit 2,5-fach zu grossem Modell gewann mit Guete 4 %)
+    _anker_p = []                                                                             # GPS-Anker: Startlage = GPS-Fit, LoD2 verfeinert nur im Kasten
+    if GPS_ANKER is not None:
+        _pa = [math.log(GPS_ANKER["s"]), 0.0, 0.0, GPS_ANKER["drehung"], GPS_ANKER["t"][0], GPS_ANKER["t"][1], 1.6 - float(np.median(Cq[:, 2])) / GPS_ANKER["s"]]
+        _gr = gps_anker_grenzen(_pa); _pp, _fr, _rm, _ok = fein(_pa, Q, grenzen=_gr); _ab = abdeckung(_pp, Q); loes.append((_fr * _ab, _rm, _pp, _ok, _fr, _ab)); _anker_p.append((_pp, _gr))
+        print(f"   GPS-Anker-Feinfit: Inlier {100 * _fr:.0f} %, Objektwand-Abdeckung {100 * _ab:.0f} %, RMS {_rm:.2f} m, Massstab {math.exp(_pp[0]):.4f} (GPS {GPS_ANKER['s']:.4f}), "
+              f"Drehung {math.degrees(_pp[3] - _pa[3]):+.1f} Grad gegen GPS, Versatz {np.hypot(_pp[4] - _pa[4], _pp[5] - _pa[5]):.1f} m", flush=True)
+        _rand = [nm_ for i_, nm_ in enumerate(("Massstab", "Kippung x", "Kippung y", "Drehung", "Versatz x", "Versatz y")) if min(_pp[i_] - _gr[0][i_], _gr[1][i_] - _pp[i_]) < 1e-4]
+        if _rand: print(f"   HINWEIS GPS-Anker: LoD2 drueckt gegen den Kastenrand ({', '.join(_rand)}) - LoD2 und Foto-GPS widersprechen sich dort; Lage-Tore + Hoehe (DOM1) entscheiden, nicht mitteln", flush=True)
+    if GPS_PRUEF is not None:                                                                # 15.11.: GPS-Veto (v2: Loesung mit 2,5-fach zu grossem Modell gewann mit Guete 4 %)
         _gi, _gm, _gs = GPS_PRUEF
         def _gps_rest(p_): return float(np.median(np.linalg.norm(zu_modell(p_, Cq[_gi])[:, :2] - _gm, axis=1)))
         _kons = [l for l in loes if _gps_rest(l[2]) < 12 and abs(l[2][0] - math.log(_gs)) < 0.25]
@@ -522,10 +562,12 @@ def main():
         if i_loes is None: sys.exit(5)
     elif a.loesung: print(f"Korrekturkreislauf: nehme unterscheidbare Loesung {a.loesung} von {len(_verschieden)} (Guete {100 * _verschieden[a.loesung][0]:.1f} % statt {100 * loes[0][0]:.1f} %)")
     guete, rms, p, ok, frac, ab = _verschieden[i_loes]
+    _gr_wahl = next((g_ for p_, g_ in _anker_p if p_ is p), None)                               # gewaehlt wurde die GPS-verankerte Loesung -> Bootstrap im selben Kasten
+    if _gr_wahl is not None: print("GEWAEHLT: GPS-verankerte Loesung (Lage aus Foto-GPS, LoD2/DGM1 nur verfeinert)")
     # Bootstrap: Massstab-/Lage-Streuung aus Teilstichproben
     rng = np.random.default_rng(1); bs = []
     for _ in range(8):
-        sub = rng.choice(len(Q), len(Q) // 2, replace=False); pb, *_ = fein(p, Q[sub], schwellen=(1.5, 0.8)); bs.append(pb)
+        sub = rng.choice(len(Q), len(Q) // 2, replace=False); pb, *_ = fein(p, Q[sub], schwellen=(1.5, 0.8), grenzen=_gr_wahl); bs.append(pb)
     bs = np.array(bs); s_sig = 100 * np.std(np.exp(bs[:, 0])) / math.exp(p[0]); t_sig = np.std(bs[:, 4:7], 0)
     zweit = loes[1][0] if len(loes) > 1 else 0; frac = guete                                   # Guete = Inlier x Abdeckung
     _anders = [l for l in loes[1:] if np.degrees((Rot.from_rotvec(l[2][1:4]).inv() * Rot.from_rotvec(p[1:4])).magnitude()) > 10
@@ -551,7 +593,8 @@ def main():
                            k=[float(v) for v in pr[3:]] if cam.model.name in ("SIMPLE_RADIAL", "RADIAL") else [], bild_b=cam.width, bild_h=cam.height, hinweis="f/cx/cy in SfM-Bildpixeln (fak nicht bestimmt)")
         out = dict(verfahren="sfm_lod2_ausrichten.py (ohne Picks: Kameraebene -> Lot, LoD2-Wandlinien -> Grob, Punkt-zu-Flaeche LoD2+DGM1 -> Fein)", sparse=a.sparse, fotos_sfm=sorted(kam), fotos_mit_picks=[],
                    transformation=dict(beschreibung="X_sfm = s * R @ X_modell + t ; Modellsystem = objekt.json rahmen (anker3d.json)", s=s, s_sigma_prozent=float(s_sig), rvec=Rot.from_matrix(R_s).as_rotvec().tolist(),
-                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig, loesung_nr=i_loes, loesungen_unterscheidbar=len(_verschieden)),
+                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig, loesung_nr=i_loes, loesungen_unterscheidbar=len(_verschieden),
+                                       gps_anker=(dict(GPS_ANKER, gewaehlt=_gr_wahl is not None, grenzen=dict(drehung_grad=GPS_ANKER_DREH, massstab=GPS_ANKER_MASS, versatz_m=GPS_ANKER_VERSATZ, kippung_grad=GPS_ANKER_KIPP)) if GPS_ANKER else None)),
                    ziel=dict(lod2_gebaeude=nb, radius_m=a.radius, boden=gq), kameras=kam,
                    kamerahoehen=dict(median=float(np.median(hz)), auf_strassenniveau=int(np.sum((hz > -1) & (hz < 6))), n=len(hz)),
                    wolke=dict(n=len(Pm), z_p1=float(np.percentile(Pm[:, 2], 1)), z_p999=float(np.percentile(Pm[:, 2], 99.9))), annahmen=dict(kamerahoehe=dict(h0=a.kamerahoehe[0], sigma=a.kamerahoehe[1], gewicht=a.kamera_gewicht, hinweis="ANNAHME Strassenfotos, robuste Bedingung (Huber)")))
