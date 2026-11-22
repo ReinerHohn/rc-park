@@ -82,7 +82,8 @@ def eintrag(stufe, einheit, rein, raus, verloren=(), quelle="", seit=None, je=No
 
 
 def _schritt_fehler(B, name, n_start=0):
-    for e in reversed((B or {}).get("schritte", [])[n_start:]):
+    """Fehlertext der LETZTEN Stufe <name> im Bericht (ueber alle Laeufe: ein Einstieg --ab tore rechnet die Clips nicht neu, ihr Fehler stand im frueheren Lauf); '' = ok/nicht da."""
+    for e in reversed((B or {}).get("schritte", [])):
         if e.get("stufe") == name:
             if e.get("ok") is False or e.get("rc") not in (0, None): return f"Stufe {name} rc {e.get('rc')}: " + str(e.get("fehler") or " | ".join(e.get("ende", [])))[:150]
             return ""
