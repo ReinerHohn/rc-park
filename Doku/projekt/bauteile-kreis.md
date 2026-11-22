@@ -28,6 +28,7 @@ Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` 
 - 05.11. · Details als Restfeld-Schleife statt Bauteil-Grammatik → ↺ Bauteil-Kreis mit Prüfer je Teil · Konvergenzmass je Teil fehlte [Memory konvergenz-schleife-restfeld, konvergenz-kreis-bestaetigt]
 
 **Formfamilien (Erker, Helm, Baldachin, Speier, Dach, Laube)**
+- 23.11. · Fotodach (`dach_aus_fotos.py`) bei Fotos nur von 2 Seiten: Sichthülle roh → ✗ Artefakt · „First 49,9 m“ = Sichtschatten hinter dem Turm (b+ am Gitterrand, Ü 3,83 m, Kerbe Achse b); Fix Mittelschnitt + offene Seite + Schattenschichten weg → First 46,7, Gegenprobe 28/101 → 65/89, „48 Kameras −1,40 m“ war Form, keine Seitenverwechslung (1 Stück, Fehler entfernungsunabhängig) [LOGBUCH_SCHWABENTOR_KETTE 23.11., `test_dach_sichtschatten`]
 - 09.11. · EG als Wand mit Bogenausschnitten („Tunnel“) → ↺ offene Laube: runde Säulen + Halle bis Rückwand · Fehler der Formfamilie, nicht der Maße [Memory feedback-koerper-laube-offen]
 - 18.11. · Laube automatisch aus Wandbild (`bauteile.laube_aus_wandbild`, Bögen = Bildumrisse) → ✓ Methode · Kaufhaus 4 Bögen; Bögen ohne Tür als eigene Zone [ZIEL_PIPELINE_H0 V7, 1e2caee0f]
 - 17.11. · Katalog generisch erweitert (korbbogen, laube, staffelgiebel, schleppgaube, erker_polygon) → ✓ Methode · alle Maße als Parameter, Werte in objekt.json `bauteile_foto` [PIPELINE_FASSADEN Nachtrag 17.11.]

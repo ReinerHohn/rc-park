@@ -18,6 +18,10 @@ Verfahren (Sichtkegel-Schnitt, allgemein fuer jedes Kettenobjekt mit dach.json u
      aus genug Richtungen passen. DOM1/LoD2-Werte stehen daneben; Widerspruch wird GEMELDET (rc 3), nicht gemittelt.
 Ausgabe: audit/dach_foto.json, audit/dach_foto.jpg (Profil + Fotos mit Kante - ANSEHEN); --schreiben traegt den Block 'foto' in dach.json des Teils ein (tools/dach_bauen.py
 baut dann das Fotodach, wenn 'belegt'). rc 0 belegt und ohne Widerspruch, 2 nicht belegt (zu wenige Fotos/Richtungen, Huelle unbrauchbar), 3 belegt, aber Widerspruch zu DOM1/LoD2.
+23.11.2026 (Kette 1122o): Fotos nur von zwei Seiten -> hinter dem Dach 'Sichtschatten' bis an den Gitterrand und ueber den First (First +4,4 m, Ueberstand 3,83 m,
+Kerbe). Seitdem: Ausdehnung je Achse aus dem Schnitt durch die Grundrissmitte, Seite am Gitterrand = OFFEN (kein Beleg, Ersatz aus Gegenseite/anderer Achse),
+Schichten ohne Mittelschnitt am Gitterrand = Schatten (kein Dach), Dachflaeche ohne Aufsatz nach oben nie breiter, Traufe = oberste gleich breite Schicht,
+Gegenprobe ohne Kameras ueber der Traufe, abweichende Kameragruppe nach Form/Ausrichtung getrennt (gruppe_ursache: Meterfehler waechst mit der Entfernung?).
 Grenzen: Sichthuelle >= wahrer Koerper (Einbuchtungen unsichtbar; mit wenigen Richtungen zu dick an den Ecken). Kameras nur vom Boden: die Dachflaeche selbst sieht nur,
 wer seitlich an ihr entlang schaut. Massstab und Hoehenbezug kommen aus den Kameras - ist deren Ausrichtung falsch skaliert, ist es das Fotodach auch (deshalb die Meldung
 gegen DOM1/LoD2 und tools/lage_gps_pruefen.py lesen).
@@ -141,24 +145,60 @@ def kante_im_foto(P, kam, s, sk, punkt_m):
     return dict(n=int(g.sum()), med=float(np.median(dm[g])), mad=float(np.median(np.abs(dm[g]))), ym=ym, yf=yf, gueltig=g, dm=dm)
 
 
-def profil_aus_huelle(K, gitter, c, ea, ha, hb):
-    """Je Hoehenschicht das Rechteck der Huelle in den Grundrissachsen. -> (ext [nz, 4] = a0, a1, b0, b1 (m, relativ zur Mitte; nan = leer), flaeche [nz], Koerpermaske)."""
+def _ausdehnung(X, m, dv):
+    """Ausdehnung [lo, hi] der Zellen m entlang X (Einzelzellen = Rauschen zaehlen nicht: je Bin >= 3 Zellen). -> (lo, hi) oder None."""
+    if m.sum() < 4: return None
+    h, kanten = np.histogram(X[m], bins=np.arange(X.min() - dv, X.max() + 2 * dv, dv)); gut = np.where(h >= 3)[0]
+    return (float(kanten[gut[0]]), float(kanten[gut[-1] + 1])) if len(gut) else None
+
+
+def profil_aus_huelle(K, gitter, c, ea, ha, hb, band_zellen=3, rand_zellen=2):
+    """Je Hoehenschicht das Rechteck der Huelle in den Grundrissachsen.
+    -> (ext [nz, 4] = a0, a1, b0, b1 (m, relativ zur Mitte; nan = leer), flaeche [nz], Koerpermaske, offen [nz, 4] bool, info dict).
+
+    23.11.2026 (Kette 1122o, Befund First +4,4 m / Kerbe Achse b): Fotos gab es nur von zwei Seiten (Nord fern, West nah). Hinter dem Turm (von den Kameras aus)
+    sieht KEIN Foto Himmel - die Huelle laeuft dort als 'Sichtschatten' bis an den Gitterrand (b+ 9,71 = Gitterrand 9,88, 'Ueberstand' 3,83 m) und ragt hinter
+    dem Dach bis 49,9 m auf; die obersten Schichten (47-49,9 m) lagen ganz NEBEN der Turmachse (b 1..9,7). Darum:
+      - Ausdehnung je Achse nur im SCHNITT durch die Grundrissmitte (Band +-band_zellen um die andere Achse): Schattenzellen weit hinter dem Dach
+        verbreitern die Querachse nicht mehr (Schatten in Hoehe z ist so breit wie das Dach tiefer unten).
+      - Seite, deren Huelle an den Gitterrand stoesst = OFFEN (nicht gemessen, kein Foto begrenzt sie) -> offen[k, s].
+      - Schicht, deren Schnitt durch die Mitte leer ist: nur dann (als Aufsatz neben der Mitte) behalten, wenn sie nirgends an den Gitterrand stoesst - sonst ist
+        sie Sichtschatten, kein Dach; darueber wird nichts mehr gezaehlt."""
     from scipy import ndimage as ndi
     us, vs, zs = gitter; dv = float(us[1] - us[0]); eb = np.array([-ea[1], ea[0]])
     UU, VV = np.meshgrid(us, vs, indexing="ij"); A = (UU - c[0]) * ea[0] + (VV - c[1]) * ea[1]; B = (UU - c[0]) * eb[0] + (VV - c[1]) * eb[1]
+    nu, nv = UU.shape; rand = np.zeros((nu, nv), bool); r_ = max(1, int(rand_zellen))
+    rand[:r_] = rand[-r_:] = True; rand[:, :r_] = rand[:, -r_:] = True
     lab, n = ndi.label(K, np.ones((3, 3, 3)))                               # auch ueber Ecken verbunden (duenne Aufsaetze haengen sonst nicht am Dach)
-    if n == 0: return None, None, None
+    if n == 0: return None, None, None, None, None
     innen = (np.abs(A) < ha) & (np.abs(B) < hb); ix = np.arange(1, n + 1); zahl = ndi.sum(np.broadcast_to(innen[:, :, None], K.shape), lab, index=ix); gr = ndi.sum(K, lab, index=ix)
     behalten = 1 + np.where((ix == 1 + int(np.argmax(zahl))) | ((gr >= 100) & (zahl >= 0.9 * gr)))[0]      # Hauptkoerper + frei schwebende Stuecke ganz ueber dem Grundriss (offene Laterne: Himmel scheint zwischen den Stuetzen durch, der Helm darueber haengt in der Huelle nicht am Dach)
     K = np.isin(lab, behalten)
-    ext = np.full((len(zs), 4), np.nan); fl = np.zeros(len(zs))
+    ext = np.full((len(zs), 4), np.nan); fl = np.zeros(len(zs)); offen = np.zeros((len(zs), 4), bool)
+    band = max(1, int(band_zellen)) * dv + 0.5 * dv; schnitt_a = np.abs(B) <= band; schnitt_b = np.abs(A) <= band
+    seite_n = np.stack([-A, A, -B, B], -1)                                  # Richtung jeder Zelle nach a-, a+, b-, b+
+    info = dict(schatten_ab_z=None, neben_mitte=[], offen_schichten=0)
     for k in range(len(zs)):
-        m = K[:, :, k]; fl[k] = m.sum() * dv * dv
+        m = K[:, :, k]
         if m.sum() < 4: continue
-        for j, X in ((0, A), (2, B)):
-            h, kanten = np.histogram(X[m], bins=np.arange(X.min() - dv, X.max() + 2 * dv, dv)); gut = np.where(h >= 3)[0]      # Einzelzellen (Rauschen) zaehlen nicht
-            if len(gut): ext[k, j] = kanten[gut[0]]; ext[k, j + 1] = kanten[gut[-1] + 1]
-    return ext, fl, K
+        am_rand = m & rand
+        if am_rand.any():                                                   # Seite(n), auf der die Huelle den Gitterrand erreicht: dort begrenzt kein Foto den Koerper
+            s_ = np.argmax(seite_n[am_rand], 1); offen[k, np.unique(s_)] = True
+        ea_ = _ausdehnung(A, m & schnitt_a, dv); eb_ = _ausdehnung(B, m & schnitt_b, dv)
+        if ea_ is None or eb_ is None:                                      # Schnitt durch die Mitte leer
+            if am_rand.any():
+                if info["schatten_ab_z"] is None: info["schatten_ab_z"] = round(float(zs[k]), 2)
+                offen[k] = True; continue                                   # Sichtschatten hinter dem Dach - kein Koerper
+            ea_ = ea_ or _ausdehnung(A, m, dv); eb_ = eb_ or _ausdehnung(B, m, dv)
+            if ea_ is None or eb_ is None: continue
+            info["neben_mitte"].append(round(float(zs[k]), 2))
+        if info["schatten_ab_z"] is not None and zs[k] > info["schatten_ab_z"]: offen[k] = True; continue      # ueber dem Schatten haengt nichts mehr am Dach
+        ext[k] = [ea_[0], ea_[1], eb_[0], eb_[1]]
+        w = [(ea_[1] - ea_[0]) if not offen[k, 0:2].any() else 2 * min(abs(ea_[j]) for j in (0, 1) if not offen[k, j]) if not offen[k, 0:2].all() else np.nan,
+             (eb_[1] - eb_[0]) if not offen[k, 2:4].any() else 2 * min(abs(eb_[j]) for j in (0, 1) if not offen[k, 2 + j]) if not offen[k, 2:4].all() else np.nan]
+        fl[k] = w[0] * w[1] if np.isfinite(w).all() else 0.0             # Flaeche ohne offene Seite (dort die Gegenseite) - eine offene Seite macht keine Schicht 'breiteste'
+    info["offen_schichten"] = int(offen.any(1).sum())
+    return ext, fl, K, offen, info
 
 
 def seiten_belege(ext, zs, kams, cache_dir, c, ea, dv, log=print):
@@ -197,7 +237,7 @@ def _dp(z, Y, tol):
     return sorted(halten)
 
 
-def dach_aus_profil(ext, fl, bel, zs, teil, dv, traufe_dicke=0.3, tol=0.12, luecke_max=3.0, einpassen=None, log=print):
+def dach_aus_profil(ext, fl, bel, zs, teil, dv, traufe_dicke=0.3, tol=0.12, luecke_max=3.0, einpassen=None, offen=None, log=print):
     """Huellprofil -> Dachparameter + Stuetzstellen. Regeln (jede nicht gemessene Groesse steht in 'annahmen'):
       Traufe   = breiteste Schicht der Huelle im Suchband um die LoD2-Wandoberkante (-3 .. +6 m; LoD2 hier nur Suchhilfe).
       Seiten   = Huellkante, wo >= 2 Fotos an der Seite entlang Himmel sehen; sonst gespiegelt von der Gegenseite, sonst im Verhaeltnis der anderen Achse - nie weiter als die Huelle.
@@ -207,7 +247,9 @@ def dach_aus_profil(ext, fl, bel, zs, teil, dv, traufe_dicke=0.3, tol=0.12, luec
     zw = float(teil.get("wand_oberkante_lod2") or zs[0] + 8); ha, hb = float(teil["halb_a"]), float(teil["halb_b"]); nz = len(zs)
     band = np.where((zs >= zw - 3) & (zs <= zw + 6) & np.isfinite(ext).all(1))[0]
     if len(band) < 5: return None, "Huelle im Traufband leer"
-    ke = int(band[np.argmax(fl[band])])
+    km = int(band[np.argmax(fl[band])]); toleranz = 2.0 * dv * 2.0 * np.sqrt(max(fl[km], 0.0))       # je Seite eine Zelle Rasterung (2 dv je Achse, Flaeche ~ 2 dv (wa + wb), wa + wb ~ 2 sqrt(F)): gleich breite Schichten -> die OBERSTE ist die Traufe (die Huelle laeuft unter dem Ueberstand schraeg aus)
+    ke = km
+    while ke + 1 <= band[-1] and fl[ke + 1] >= fl[km] - toleranz: ke += 1
     if ke == band[0]: return None, f"Huelle wird nach unten immer breiter (keine Traufe im Band {zw - 3:.1f}..{zw + 6:.1f} m gefunden) - Nachbarn/Verdecker oder zu wenige Fotos"
     voll = np.where(np.isfinite(ext).all(1))[0]; kt = ke; ann = []; dv_ = float(zs[1] - zs[0])
     for k in voll[voll > ke]:
@@ -218,20 +260,29 @@ def dach_aus_profil(ext, fl, bel, zs, teil, dv, traufe_dicke=0.3, tol=0.12, luec
     ks = np.arange(ke, kt + 1); z = zs[ks]; E = ext[ks].copy(); B = bel[ks] >= 2; da = np.isfinite(E).all(1)
     for j in range(4): E[:, j] = np.interp(z, z[da], E[da, j])
     B[~da] = False
-    roh = E.copy(); verh = ha / hb
-    # Seiten ohne Beleg: Gegenseite spiegeln, sonst andere Achse im Verhaeltnis des Grundrisses, nie ueber die Huelle hinaus
-    ersatz = np.zeros(4, int)
+    roh = E.copy(); verh = ha / hb; O = (offen[ks] if offen is not None else np.zeros_like(B)) & ~B
+    # Seiten ohne Beleg: Gegenseite spiegeln, sonst andere Achse im Verhaeltnis des Grundrisses, nie ueber die Huelle hinaus.
+    # OFFENE Seite (Huelle am Gitterrand, 1122o b+ 'Ueberstand' 3,83 m): die Huelle ist dort keine Grenze -> ohne Beleg Gegenseite bzw. andere Achse aus der
+    # (nicht offenen) Huelle; bleibt nichts, wird zwischen den Nachbarschichten gerade verbunden - nie der Gitterrand.
+    ersatz = np.zeros(4, int); unbestimmt = np.zeros_like(B)
     for k in range(len(ks)):
         for s_ in range(4):
             if B[k, s_]: continue
-            geg = s_ ^ 1; vz = -1.0 if s_ % 2 == 0 else 1.0
+            geg = s_ ^ 1; vz = -1.0 if s_ % 2 == 0 else 1.0; andere_j = (2, 3) if s_ < 2 else (0, 1); fv = verh if s_ < 2 else 1.0 / verh
             if B[k, geg]: wert = abs(roh[k, geg])
-            else:
-                andere = [abs(roh[k, j]) for j in ((2, 3) if s_ < 2 else (0, 1)) if B[k, j]]
-                if not andere: continue
-                wert = float(np.mean(andere)) * (verh if s_ < 2 else 1.0 / verh)
+            elif any(B[k, j] for j in andere_j): wert = float(np.mean([abs(roh[k, j]) for j in andere_j if B[k, j]])) * fv
+            elif O[k, s_] and not O[k, geg]: wert = abs(roh[k, geg])
+            elif O[k, s_] and any(not O[k, j] for j in andere_j): wert = float(np.mean([abs(roh[k, j]) for j in andere_j if not O[k, j]])) * fv
+            elif O[k, s_]: unbestimmt[k, s_] = True; continue
+            else: continue
+            if O[k, s_]: E[k, s_] = vz * wert; ersatz[s_] += 1; continue          # offene Seite: Huelle ist keine Obergrenze
             wert = min(wert, abs(roh[k, s_]) if roh[k, s_] * vz > 0.3 else max(abs(roh[k, s_]), abs(roh[k, geg])))      # nie ueber die Huelle hinaus; liegt die Huellschicht ganz auf der anderen Seite der Mitte (duenne schiefe Schicht), gilt ihre weitere Seite
             if abs(wert - abs(roh[k, s_])) > 1e-6 or roh[k, s_] * vz < 0: E[k, s_] = vz * wert; ersatz[s_] += 1
+    for s_ in range(4):                                                      # offen ohne jeden Ersatz: zwischen bestimmten Schichten gerade verbinden
+        u_ = unbestimmt[:, s_]
+        if u_.any():
+            if u_.all(): return None, f"Seite {('a-', 'a+', 'b-', 'b+')[s_]} in allen Dachschichten offen (kein Foto begrenzt sie, keine Gegenseite) - Dach nicht bestimmbar"
+            E[u_, s_] = np.interp(z[u_], z[~u_], E[~u_, s_]); ersatz[s_] += int(u_.sum())
     ohne = ~B.any(1)
     if ohne.mean() > 0.5: return None, f"{ohne.mean() * 100:.0f} % der Dachschichten hat an keiner Seite ein Foto, das an ihr entlang Himmel sieht"
     ant = B.mean(0); achse_bel = [max(ant[0], ant[1]) >= 0.5, max(ant[2], ant[3]) >= 0.5]
@@ -262,6 +313,11 @@ def dach_aus_profil(ext, fl, bel, zs, teil, dv, traufe_dicke=0.3, tol=0.12, luec
     kff = kf[jb]; steig = (z[kff] - z[0]) / max(0.5 * (br[0, jb] - br[kff, jb]), 1e-3); z_spitz = z[kff] + steig * 0.5 * br[kff, jb]
     aufsatz = bool(z[-1] > z_spitz + 1.0 and kff < len(ks) - 1); z_first = float(z[kff]) if aufsatz else float(z[-1])
     if aufsatz and kff < 3: return None, "Koerper ueber der Traufe ist nur ein schmaler Aufsatz (keine Dachflaeche gefunden)"
+    # Dachflaeche ohne Aufsatz wird nach oben nie breiter (23.11.2026, 1122o: Zacken/Kerbe an der Spitze aus Huellrauschen + Ersatzseiten); mit Aufsatz nur bis zum
+    # Aufsatzfuss - darueber darf er auskragen (Laternenkrempe, Zwiebel)
+    bis = len(ks) if not aufsatz else kff + 1; vz4 = np.array([-1.0, 1.0, -1.0, 1.0])
+    for s_ in range(4):
+        w_ = np.maximum(vz4[s_] * E[:bis, s_], 0.0); E[:bis, s_] = vz4[s_] * np.minimum.accumulate(w_)
     # Stuetzstellen
     ix = _dp(z, E, tol); kn = [[round(float(z[0] - traufe_dicke), 2)] + [round(float(x), 2) for x in E[0]]] + [[round(float(z[i]), 2)] + [round(float(x), 2) for x in E[i]] for i in ix]
     kn[-1][0] = round(float(z[-1] + 0.5 * dv), 2)
@@ -294,6 +350,7 @@ def einpasser(kams, cache_dir, c, ea, max_fotos=40, stufen=np.arange(0.0, 2.41, 
         bilder = []
         P0 = profil_punkte(profil([0, 0, 0, 0])[0], c, ea, 0.2)
         for kam in sorted(kams, key=lambda k: -k["abstand"]):
+            if float(kam["C"][2]) >= z[0]: continue                          # Kamera ueber der Traufe: Dach vor Stadt/Hang, nicht vor dem Himmel
             sk, s = himmel_laden(kam, cache_dir, nur_cache=True)
             if sk is None: continue
             sk = cv2.morphologyEx(sk.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8)).astype(bool); r = kante_im_foto(P0, kam, s, sk, 0.2)
@@ -341,16 +398,37 @@ def profil_punkte(profil, c, ea, schritt=0.12):
     return np.vstack(P)
 
 
-def gegenprobe(P, kams, cache_dir, punkt_m, grenze=0.5, min_spalten=40):
-    """Profilkoerper gegen die Himmelskante jedes Fotos. -> Liste dict(foto, n, med, mad, sektor, abstand, passt)."""
+def gegenprobe(P, kams, cache_dir, punkt_m, grenze=0.5, min_spalten=40, z_kamera_max=None):
+    """Profilkoerper gegen die Himmelskante jedes Fotos. -> Liste dict(foto, n, med, mad, sektor, abstand, passt).
+    z_kamera_max (Traufhoehe): Kameras darueber (Schlossberg, Nachbarturm) sehen das Dach VON OBEN vor Stadt/Hang, nicht vor dem Himmel - ihre Himmelskante ist
+    nicht die Dachkante (1122o: 15 Fotos aus 323 m, Kamerahoehe 61 m, 'Abweichung' +20..+98 m) -> nicht beurteilbar, zaehlen nicht."""
     aus = []
     for kam in kams:
+        if z_kamera_max is not None and float(kam["C"][2]) >= z_kamera_max: continue
         sk, s = himmel_laden(kam, cache_dir, nur_cache=True)
         if sk is None: continue
         sk = cv2.morphologyEx(sk.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8)).astype(bool); r = kante_im_foto(P, kam, s, sk, punkt_m)
         if r is None or r["n"] < min_spalten: continue
         aus.append(dict(foto=kam["name"], n=r["n"], med=round(r["med"], 2), mad=round(r["mad"], 2), sektor=kam["sektor"], abstand=round(kam["abstand"], 1), passt=bool(r["mad"] <= grenze)))
     return aus
+
+
+def gruppe_ursache(meds, abstaende, min_fotos=3, min_verhaeltnis=2.0):
+    """Abweichende Kameragruppe: Form oder Ausrichtung? Eine falsch stehende/gedrehte Kamera hat einen WINKELfehler -> die Abweichung in Metern waechst mit der
+    Entfernung (proportional). Ein Formfehler des Dachs ist in Metern fuer nahe und ferne Fotos gleich. Die Gruppe wird am Median der Entfernung geteilt; liegt das
+    Verhaeltnis der Abweichungen (fern/nah) naeher an 1 als am Entfernungsverhaeltnis (geometrische Mitte sqrt(r)), ist es Form, sonst Ausrichtung.
+    Unterscheidbar erst, wenn die fernen Fotos >= min_verhaeltnis mal so weit weg sind wie die nahen (sonst 'offen').
+    1122o: 48 Fotos 300-360 Grad, -1,40 m von 34 bis 139 m Entfernung gleich -> Form (Sichtschatten hinter dem Turm), nicht Teil-/Seitenverwechslung.
+    -> dict(urteil 'form'|'ausrichtung'|'offen', verhaeltnis_abstand, verhaeltnis_abweichung, text) oder None (zu wenige Fotos)."""
+    m = np.abs(np.asarray(meds, float)); a = np.asarray(abstaende, float)
+    if len(m) < 2 * min_fotos: return None
+    nah = a <= np.median(a); fern = ~nah
+    if nah.sum() < min_fotos or fern.sum() < min_fotos: return None
+    an, af = float(np.median(a[nah])), float(np.median(a[fern])); mn, mf = float(np.median(m[nah])), float(np.median(m[fern]))
+    rd = af / max(an, 1e-6); re = mf / max(mn, 1e-6)
+    urteil = "offen" if rd < min_verhaeltnis else ("form" if re <= np.sqrt(rd) else "ausrichtung")
+    return dict(urteil=urteil, verhaeltnis_abstand=round(rd, 2), verhaeltnis_abweichung=round(re, 2),
+                text=f"nah {mn:.2f} m bei {an:.0f} m, fern {mf:.2f} m bei {af:.0f} m Entfernung")
 
 
 def bild_schreiben(pfad, erg, ext, zs, teil, kams, cache_dir, P, c, ea):
@@ -412,14 +490,18 @@ def main():
     K, n_h, n_s, ben, verw = huelle_schneiden(kams, gitter, cache, a.min_fotos)
     erg.update(fotos_abgestimmt=len(ben), fotos_widerspruch=len(verw), sektoren=sorted({k["sektor"] for k in ben}))
     if len(ben) < 5 or len(erg["sektoren"]) < 2: return ende(2, f"{len(ben)} Fotos aus {len(erg['sektoren'])} Richtungssektoren sehen das Dach gegen den Himmel - zu wenig fuer einen Sichtkegel-Schnitt")
-    ext, fl, Kk = profil_aus_huelle(K, gitter, c, ea, float(t["halb_a"]), float(t["halb_b"]))
+    ext, fl, Kk, offen, hinfo = profil_aus_huelle(K, gitter, c, ea, float(t["halb_a"]), float(t["halb_b"]))
     if ext is None: return ende(2, "Sichthuelle leer")
     for j in range(4): ext[:, j] = __import__("scipy.ndimage", fromlist=["x"]).median_filter(np.where(np.isfinite(ext[:, j]), ext[:, j], 0.0), 5, mode="nearest") + np.where(np.isfinite(ext[:, j]), 0.0, np.nan)
     bel = seiten_belege(ext, gitter[2], ben, cache, c, ea, a.voxel)
-    d, grund = dach_aus_profil(ext, fl, bel, gitter[2], t, a.voxel, einpassen=einpasser(ben, cache, c, ea))
+    bel[offen] = 0                                                           # Seite am Gitterrand: Himmel jenseits des Gitters ist kein Beleg fuer die Lage der Seite
+    erg["huelle_offen"] = dict(zip(("a-", "a+", "b-", "b+"), [round(float(x), 2) for x in offen.mean(0)])); erg["huelle_schatten_ab_z"] = hinfo["schatten_ab_z"]
+    if hinfo["schatten_ab_z"] is not None or offen.any():
+        print(f"Sichthuelle OFFEN (an den Gitterrand, kein Foto begrenzt sie) je Seite Anteil der Schichten {erg['huelle_offen']}; Sichtschatten ohne Schnitt durch die Mitte ab z {hinfo['schatten_ab_z']} m (nicht als Dach gezaehlt)")
+    d, grund = dach_aus_profil(ext, fl, bel, gitter[2], t, a.voxel, einpassen=einpasser(ben, cache, c, ea), offen=offen)
     if d is None: return ende(2, grund)
     erg.update(d); erg.update(mitte_uv=t["mitte_uv"], achse_a=t["achse_a"])
-    P = profil_punkte(d["profil"], c, ea); gp = gegenprobe(P, ben, cache, 0.12, a.grenze); erg["gegenprobe"] = gp
+    P = profil_punkte(d["profil"], c, ea); gp = gegenprobe(P, ben, cache, 0.12, a.grenze, z_kamera_max=d["traufe_z"]); erg["gegenprobe"] = gp
     passt = [x for x in gp if x["passt"]]; sp = sorted({x["sektor"] for x in passt}); mads = [x["mad"] for x in gp]
     erg["gegenprobe_kurz"] = dict(fotos=len(gp), passt=len(passt), sektoren_passt=sp, median_abweichung_m=(round(float(np.median(mads)), 2) if mads else None), grenze_m=a.grenze)
     # Vergleich mit DOM1/LoD2: melden, nicht mitteln
@@ -435,9 +517,23 @@ def main():
     erg["belegt"] = bool(len(passt) >= 3 and len(sp) >= 2 and len(breit) >= 3 and sum(x["passt"] for x in breit) > 0.5 * len(breit))      # Mehrheit der Fotos mit viel Dachkante
     gruppen = {}                                                             # Fotos, die NICHT passen, nach Blickrichtung: eine einige Gruppe = Kameras dieser Richtung stehen anders als die Mehrheit
     for x in breit:
-        if not x["passt"] and abs(x["med"]) < 5.0: gruppen.setdefault(x["sektor"] // 3, []).append(x["med"])
-    erg["kameragruppen_abweichend"] = [dict(richtung_grad=[q * 60, q * 60 + 60], fotos=len(v), median_m=round(float(np.median(v)), 2)) for q, v in sorted(gruppen.items()) if len(v) >= 3 and (np.sign(v) == np.sign(np.median(v))).mean() >= 0.8]
-    for q in erg["kameragruppen_abweichend"]: wid.append(f"Kameras aus Richtung {q['richtung_grad'][0]}-{q['richtung_grad'][1]} Grad ({q['fotos']} Fotos) sehen die Dachkante im Median {q['median_m']:+.2f} m anders als die Mehrheit - Ausrichtung dieser Kameras pruefen (nicht gemittelt)")
+        if not x["passt"] and abs(x["med"]) < 5.0: gruppen.setdefault(x["sektor"] // 3, []).append((x["med"], x["abstand"]))
+    erg["kameragruppen_abweichend"] = []
+    for q, v in sorted(gruppen.items()):
+        me = [m_ for m_, _ in v]
+        if len(v) < 3 or (np.sign(me) == np.sign(np.median(me))).mean() < 0.8: continue
+        ur = gruppe_ursache(me, [a_ for _, a_ in v])
+        erg["kameragruppen_abweichend"].append(dict(richtung_grad=[q * 60, q * 60 + 60], fotos=len(v), median_m=round(float(np.median(me)), 2), ursache=ur))
+    for q in erg["kameragruppen_abweichend"]:
+        ur = q["ursache"] or {}
+        if ur.get("urteil") == "form":
+            wid.append(f"Kameras aus Richtung {q['richtung_grad'][0]}-{q['richtung_grad'][1]} Grad ({q['fotos']} Fotos) sehen die Dachkante im Median {q['median_m']:+.2f} m anders - die Abweichung "
+                       f"waechst NICHT mit der Entfernung ({ur['text']}): FORMFEHLER des Fotodachs auf der von ihnen gesehenen Seite, keine falsch stehende Kameragruppe")
+        else:
+            wid.append(f"Kameras aus Richtung {q['richtung_grad'][0]}-{q['richtung_grad'][1]} Grad ({q['fotos']} Fotos) sehen die Dachkante im Median {q['median_m']:+.2f} m anders als die Mehrheit"
+                       + (f" ({ur['text']})" if ur.get("text") else "")
+                       + (" - Fehler waechst mit der Entfernung: Ausrichtung dieser Kameras pruefen (nicht gemittelt)" if ur.get("urteil") == "ausrichtung" else
+                          " - Form oder Ausrichtung NICHT trennbar (Entfernungen zu aehnlich oder zu wenige Fotos); Kontrollbild ansehen (Fahrdraht/Laterne in der Himmelskante?)"))
     print(f"Fotodach Teil {t['teil']}: Traufe {d['traufe_z']:.2f} m ({d['traufe_breite_a']:.2f} x {d['traufe_breite_b']:.2f} m), First/Dachende {d['first_z']:.2f} m, Neigung a/b {d['neigung_grad'][0]:.0f}/{d['neigung_grad'][1]:.0f} Grad, "
           + (f"Aufsatz {d['aufsatz']['fuss_z']:.2f}..{d['aufsatz']['oben_z']:.2f} m ({d['aufsatz']['breite_a']:.1f} x {d['aufsatz']['breite_b']:.1f} m)" if d["aufsatz"] else "kein Aufsatz") + f", hoechster Punkt {d['hoechster_punkt_z']:.2f} m, {len(d['profil'])} Stuetzstellen")
     print(f"Seiten belegt (Anteil der Schichten): {d['seiten_belegt_anteil']}")
