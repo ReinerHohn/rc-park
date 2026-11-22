@@ -82,6 +82,7 @@ def dgm_ziel(obj, halb):
 
 
 GPS_KAM = []   # (Kameraindex, UTM) aus gps_massstab - fuer den GPS-Startkandidaten
+GPS_KAM_ALLE = []   # (Kameraindex, UTM): ALLE Kameras mit GPS (gleiche Auswahl wie das GPS-Tor, GU.gps_kameras) - fuer gps_fit und Veto, ohne den 3D-RANSAC-Vorfilter
 GPS_ZEIT = {}  # Kameraindex -> EXIF-Aufnahmezeit (Sitzungen der ehrlichen GPS-Unsicherheit, tools/gps_unsicherheit.py)
 
 
@@ -92,15 +93,15 @@ def gps_massstab(ims, C, obj, od, fotos=""):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from gps_ausrichtung import gps_exif; from bilder_holen import wgs84_zu_utm
     except Exception as e: print("GPS-Massstab: Hilfsmodule fehlen:", type(e).__name__); return None
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); ds = [d for d in (fotos, obj.get("fotos_dir", "")) if d]; ds = [d if os.path.isabs(d) else os.path.join(root, d) for d in ds]
-    U, X = [], []; GPS_KAM.clear(); GPS_ZEIT.clear()
-    for _i, (im, c) in enumerate(zip(ims, C)):
-        nm = os.path.splitext(os.path.basename(im.name))[0]; kand = [nm] + ([nm.split("__", 1)[1]] if "__" in nm else [])
-        hit = [p for d in ds for n_ in kand for p in glob.glob(os.path.join(d, glob.escape(n_) + ".*")) if p.lower().endswith((".jpg", ".jpeg"))]
-        g = gps_exif(hit[0]) if hit else None
-        if g:
-            u_ = np.asarray(wgs84_zu_utm(*g), float)
-            if not np.isfinite(u_).all(): continue                                  # Kaufhaus 15.11.: einzelne EXIF-GPS ergeben NaN -> vergifteten Median/Fit (Rest 'nan', 0 Kameras)
-            U.append(u_); X.append(c); GPS_KAM.append((_i, u_)); GPS_ZEIT[_i] = GU.exif_zeit(hit[0])
+    U, X = [], []; GPS_KAM.clear(); GPS_ZEIT.clear(); GPS_KAM_ALLE.clear()
+    # 22.11.2026 EINE Kameraauswahl (Lage-Pruefstand: Ausrichtung kannte nur <name>.*, das Tor auch <name>_* und *__<name>.*): gps_unsicherheit.gps_kameras wie im GPS-Tor.
+    # Kaufhaus 15.11.: NaN-/0,0-Geotags fallen dort heraus. Ohne mitte_utm, damit der Startmassstab (Paarmedian) wie bisher alle Geotags sieht; GPS_KAM_ALLE (gps_fit, Veto)
+    # nimmt wie das Tor alle < GU.GPS_FERN_MAX_M von der Objektmitte.
+    _nm = [os.path.splitext(os.path.basename(im.name))[0] for im in ims]
+    _sel = GU.gps_kameras(_nm, ds, gps_lesen=gps_exif); _mu = np.asarray(((obj.get("rahmen") or {}).get("mitte_utm") or [np.nan, np.nan])[:2], float)
+    for _i, u_, z_ in zip(_sel["i"], _sel["utm"], _sel["zeiten"]):
+        U.append(u_); X.append(C[_i]); GPS_KAM.append((_i, u_)); GPS_ZEIT[_i] = z_
+        if not np.isfinite(_mu).all() or np.hypot(*(u_ - _mu)) < GU.GPS_FERN_MAX_M: GPS_KAM_ALLE.append((_i, u_))
     if len(U) < 8: print(f"GPS-Massstab: nur {len(U)} Kameras mit GPS - Startmassstab aus Wolkenausdehnung"); return None   # 8: Kaufhaus hatte 10 (Chat-Kopien ohne EXIF)
     U = np.array(U, float); X = np.array(X, float); i, j = np.triu_indices(len(U), 1); dg = np.hypot(*(U[i] - U[j]).T); dx = np.linalg.norm(X[i] - X[j], axis=1); m = dg > 15
     if m.sum() < 15: return None
@@ -251,10 +252,20 @@ def gps_start_aus_fit(f):
 def gps_tor_urteil(namen, Xm, Gm, zeiten):
     """GPS-Veto je Loesung = das GPS-Tor selbst (lage_gps_pruefen.urteil: Median-Abstand, Fit + ehrliches Band, Fernfotos) auf den Kamerastandorten der Loesung
     (Modellsystem m) gegen ihr Foto-GPS (Modellsystem m; Ursprung = Objektmitte wie im Tor, das Tor rechnet in UTM relativ zur Mitte - Drehung des Rahmens kuerzt sich).
-    -> (rc 0/3, erg) - stumm."""
+    -> (rc 0/3, erg) - stumm.
+    22.11.2026 (Lage-Pruefstand): das Tor liest die GESCHRIEBENEN Standorte (standort_runden, 0,01 m), das Veto rechnete ungerundet - jetzt dieselbe Rundung hier, damit ein
+    Grenzfall in Veto und Tor gleich urteilt."""
     import io, contextlib
     import lage_gps_pruefen as LGP
-    with contextlib.redirect_stdout(io.StringIO()): return LGP.urteil(list(namen), np.asarray(Xm, float), np.asarray(Gm, float), zeiten=list(zeiten))
+    with contextlib.redirect_stdout(io.StringIO()): return LGP.urteil(list(namen), standort_runden(Xm), np.asarray(Gm, float), zeiten=list(zeiten))
+
+
+STANDORT_NACHKOMMA = 2   # Kamerastandorte in SFM-AUSRICHTUNG 'kameras.<foto>.standort' (Meter, 1 cm) - Schreiben UND GPS-Veto
+
+
+def standort_runden(X):
+    """Kamerastandorte so runden, wie sie in die Ausrichtungsdatei geschrieben werden (das GPS-Tor liest sie von dort)."""
+    return np.round(np.asarray(X, float), STANDORT_NACHKOMMA)
 
 
 def lage_widerspruch_gps(ent, anker_faehig, veto_ok):
@@ -444,20 +455,24 @@ def ausrichten(argv=None):
     #     alle Lage-Tore rot, 3D-Seite 'Muell'). Fotos werden fast immer waagerecht gehalten: die Bild-x-Achse jeder Kamera liegt horizontal, egal wie steil sie blickt.
     #     Lot = Richtung, die auf moeglichst vielen x-Achsen senkrecht steht (kleinster Singulaervektor, Ausreisser wie Hochformat/gerollte Bilder iterativ raus).
     #     Gilt nur, wenn er der Kameraebene um > 15 Grad widerspricht und >= 50 % der Kameras ihn stuetzen - sonst bleibt das bisherige Lot (alte Laeufe unveraendert).
+    # 22.11.2026 EIN LOT (Lage-Pruefstand: Ausrichtung = Kameraebene, seiten_gps_vereinen/gps_seiten_pruefen/sfm_gps_ausgleich = Bild-x-Achsen, auf 1120 2,3 Grad
+    #     auseinander -> GPS-Fit der Ausrichtung ohne die Fernfotos, 'legt nicht fest', das Tor auf derselben Lage 'kann ankern'): das Netzsystem kommt jetzt aus
+    #     seiten_gps_vereinen.lot_info (Bild-x-Achsen, Begruendung mit Zahlen dort). Kameraebene nur noch Bericht. AUSR_LOT=ebene = alte Regel (Ebene, ausser > 15 Grad).
     try:
+        import seiten_gps_vereinen as _SG
         _cwf = lambda im: im.cam_from_world() if callable(im.cam_from_world) else im.cam_from_world
-        _Rm = np.array([np.asarray(_cwf(im).rotation.matrix(), float) for im in ims]); _X = _Rm[:, 0, :]; _in = np.ones(len(_X), bool)
-        for _ in range(5):
-            up_b = np.linalg.svd(_X[_in], full_matrices=False)[2][2]; _in = np.abs(_X @ up_b) < np.sin(np.radians(15))
-            if _in.sum() < 8: break
-        if _in.sum() >= 8:
-            if np.median(_Rm[_in, 1, :] @ up_b) > 0: up_b = -up_b                                  # Bild-y zeigt nach unten -> Lot entgegengesetzt
-            _w = float(np.degrees(np.arccos(min(1.0, abs(float(up @ up_b)))))); _ant = float(_in.mean())
-            print(f"Lot aus Kamerablick: {_in.sum()} von {len(_X)} Kameras waagerecht gehalten ({100 * _ant:.0f} %), Winkel zum Lot der Kameraebene {_w:.1f} Grad")
-            LOT.update(blick=up_b.tolist(), blick_anteil=_ant, winkel_ebene_blick_grad=_w)
-            if _w > 15 and _ant >= 0.5:
+        _li = _SG.lot_info([np.asarray(_cwf(im).rotation.matrix(), float) for im in ims]); up_b = np.asarray(_li["oben"], float); _ant = _li["stuetzend"]
+        _w = float(np.degrees(np.arccos(min(1.0, abs(float(up @ up_b))))))
+        print(f"Lot aus Kamerablick (Bild-x-Achsen, {_li['quelle']}): {100 * _ant:.0f} % von {_li['n']} Kameras waagerecht gehalten, Winkel zum Lot der Kameraebene {_w:.1f} Grad")
+        LOT.update(blick=up_b.tolist(), blick_anteil=_ant, winkel_ebene_blick_grad=_w)
+        if os.environ.get("AUSR_LOT") == "ebene":
+            if _li["quelle"] == "bildachsen" and _w > 15 and _ant >= 0.5:
                 print(f"ACHTUNG LOT: Kameraebene und Kamerablick widersprechen sich um {_w:.0f} Grad (Kameras nicht in einer Ebene: Drohne/Hoehenunterschiede?) - es gilt das Lot aus dem Kamerablick", flush=True)
                 up = up_b; LOT["quelle"] = "kamerablick"
+        elif _li["quelle"] == "bildachsen":
+            up = up_b; LOT["quelle"] = "bildachsen"
+            if _w > 15: print(f"ACHTUNG LOT: Kameraebene weicht {_w:.0f} Grad vom Bild-x-Lot ab (Kameras nicht in einer Ebene: Drohne/Hoehenunterschiede?) - es gilt das Bild-x-Lot", flush=True)
+        else: print("HINWEIS Lot: zu wenige waagerecht gehaltene Kameras fuer das Bild-x-Lot - es bleibt das Lot der Kameraebene", flush=True)
     except Exception as _e: print("HINWEIS Lot aus Kamerablick nicht bestimmbar:", _e)
     # Basis: e3 = up, e1/e2 beliebig senkrecht
     e1 = np.cross(up, [1, 0, 0]); e1 = e1 if np.linalg.norm(e1) > 0.1 else np.cross(up, [0, 1, 0]); e1 /= np.linalg.norm(e1); e2 = np.cross(up, e1)
@@ -609,7 +624,7 @@ def ausrichten(argv=None):
             # kein Anker, nur Veto; dann entscheiden unabhaengige Proben (tools/lage_proben.py) zwischen den LoD2-Loesungen.
             # 22.11.2026 (1122j) EINE QUELLE: GPS-Fit + Band auf ALLEN GPS-Kameras (auch Fernfotos) mit GU.gps_fit - bitgleich mit dem GPS-Tor (gps_kameras_alle oben).
             if eine_quelle_an():
-                _ia, _Ma, _Ca = gps_kameras_alle(GPS_KAM, Cq, R_["mitte_utm"], R_["xhat_utm"], R_["yhat_utm"])
+                _ia, _Ma, _Ca = gps_kameras_alle(GPS_KAM_ALLE, Cq, R_["mitte_utm"], R_["xhat_utm"], R_["yhat_utm"])   # 22.11.: ohne 3D-RANSAC-Vorfilter (wie Tor)
                 _za = [GPS_ZEIT.get(int(i)) for i in _ia]; GPS_FIT = GU.gps_fit(_Ca, _Ma, _za, GU.NAH_M) if len(_ia) >= 10 else dict(ok=False, grund="unter 10 GPS-Kameras")
                 print(GU.gps_fit_text(GPS_FIT), flush=True)
             if GPS_FIT is not None and GPS_FIT["ok"]:
@@ -727,10 +742,18 @@ def ausrichten(argv=None):
         pz, fr_, rm_, okb = w_; return np.array(pz, float), fr_, rm_, np.unpackbits(okb, count=len(X_)).astype(bool)   # beide Wege dieselben Typen -> bitgleich
     def _zw_sichern(): ZW.sichern()
 
+    # 22.11.2026 Sichtbarkeit je Kamera (lage_proben.wand_gesehen, dieselbe Funktion wie der Wandfit der Lageproben) statt 'zum Kameraschwerpunkt gewandt': bei Kameras
+    # rundum lag der Schwerpunkt im Gebaeude -> 0 % Abdeckung fuer jede Loesung (Lage-Pruefstand). AUSR_ABDECKUNG=schwerpunkt = alte Regel (Vergleich).
+    _cwf3 = lambda im: im.cam_from_world() if callable(im.cam_from_world) else im.cam_from_world
+    _Vq_ab = np.array([np.asarray(_cwf3(im).rotation.matrix(), float)[2] for im in ims]) @ B0.T
+    _fov_ab = np.array([math.degrees(math.atan(CAMS[im.camera_id].width / 2.0 / max(float(list(CAMS[im.camera_id].params)[0]), 1e-6))) for im in ims]) if CAMS else np.full(len(ims), 35.0)
+    _ab_alt = os.environ.get("AUSR_ABDECKUNG") == "schwerpunkt"
+
     def abdeckung(p, X):
-        """Anteil der zur Kamera gewandten Objektwand-Flaeche (unter der Traufe) mit einem Netzpunkt im Umkreis 0,6 m: ein geschrumpftes Netz deckt nur einen Fleck."""
+        """Anteil der von den Kameras gesehenen Objektwand-Flaeche (unter der Traufe) mit einem Netzpunkt im Umkreis 0,6 m: ein geschrumpftes Netz deckt nur einen Fleck."""
         M = zu_modell(p, X); Cm_ = zu_modell(p, Cq); cz = Cm_.mean(0)
-        sicht = ((cz - Wo) * Wn).sum(1) > 0
+        if _ab_alt: sicht = ((cz - Wo) * Wn).sum(1) > 0
+        else: sicht = LP.wand_gesehen(Wo[:, :2], Wn[:, :2], Cm_, Rot.from_rotvec(p[1:4]).apply(_Vq_ab), _fov_ab)
         if sicht.sum() < 20: return 0.0
         d, _ = cKDTree(M).query(Wo[sicht]); return float((d < 0.6).mean())
 
@@ -931,7 +954,7 @@ def ausrichten(argv=None):
         for im, c in zip(ims, Cm):
             nr = os.path.splitext(im.name)[0]; cw = im.cam_from_world(); Rc = cw.rotation.matrix() @ R_s; tc = (cw.rotation.matrix() @ t_s + np.array(cw.translation)) / s
             cam = CAMS[im.camera_id]; pr = list(cam.params)
-            kam[nr] = dict(standort=c.round(2).tolist(), f_px_original=float(pr[0]), fak=1.0, off=[0.0, 0.0], R=Rc.tolist(), t=tc.tolist(), cx=float(pr[2] if cam.model.name in ("PINHOLE", "OPENCV", "FULL_OPENCV") else pr[1]), cy=float(pr[3] if cam.model.name in ("PINHOLE", "OPENCV", "FULL_OPENCV") else pr[2]),
+            kam[nr] = dict(standort=standort_runden(c).tolist(), f_px_original=float(pr[0]), fak=1.0, off=[0.0, 0.0], R=Rc.tolist(), t=tc.tolist(), cx=float(pr[2] if cam.model.name in ("PINHOLE", "OPENCV", "FULL_OPENCV") else pr[1]), cy=float(pr[3] if cam.model.name in ("PINHOLE", "OPENCV", "FULL_OPENCV") else pr[2]),
                            k=[float(v) for v in pr[3:]] if cam.model.name in ("SIMPLE_RADIAL", "RADIAL") else [], bild_b=cam.width, bild_h=cam.height, hinweis="f/cx/cy in SfM-Bildpixeln (fak nicht bestimmt)")
         out = dict(verfahren="sfm_lod2_ausrichten.py (ohne Picks: Kameraebene -> Lot, LoD2-Wandlinien -> Grob, Punkt-zu-Flaeche LoD2+DGM1 -> Fein)", sparse=a.sparse, fotos_sfm=sorted(kam), fotos_mit_picks=[],
                    transformation=dict(beschreibung="X_sfm = s * R @ X_modell + t ; Modellsystem = objekt.json rahmen (anker3d.json)", s=s, s_sigma_prozent=float(s_sig), rvec=Rot.from_matrix(R_s).as_rotvec().tolist(),

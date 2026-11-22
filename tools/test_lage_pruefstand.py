@@ -102,7 +102,7 @@ try:
     E1, log1 = lauf(p); au = os.path.join(os.path.dirname(p["objekt"]), "messprotokoll", "SFM-AUSRICHTUNG-testtor.json"); au1 = open(au, "rb").read()
     err = np.linalg.norm(np.asarray(E1["kameras_gewaehlt"]) - Cm, axis=1)
     pruef(E1["rc"] == 0 and np.median(err) < 0.3, f"1 ausrichten() findet die Lage: rc {E1['rc']}, Kameras Median {np.median(err):.3f} m daneben, {E1['n_unterscheidbar']} unterscheidbare Loesung(en)")
-    pruef(len(E1["loesungen"]) == E1["n_unterscheidbar"] and all(np.asarray(l["kameras_modell"]).shape == Cm.shape for l in E1["loesungen"]) and E1["lot"]["quelle"] in ("kameraebene", "kamerablick"),
+    pruef(len(E1["loesungen"]) == E1["n_unterscheidbar"] and all(np.asarray(l["kameras_modell"]).shape == Cm.shape for l in E1["loesungen"]) and E1["lot"]["quelle"] in ("kameraebene", "kamerablick", "bildachsen"),
           "1 Ergebnis traegt alle Loesungen mit Kamerastandorten + Lot")
     z1 = E1["zwischenstand"]; pruef(z1["an"] and z1["neu"].get("grob", 0) >= 1 and z1["neu"].get("fein", 0) >= 5 and not z1["treffer"], f"2 kalt: alles gerechnet und abgelegt {z1['neu']}")
     E2, log2 = lauf(p); au2 = open(au, "rb").read(); z2 = E2["zwischenstand"]

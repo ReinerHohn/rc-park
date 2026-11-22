@@ -71,14 +71,33 @@ def lot_aus_bild_achsen(Rs):
     Kamera nach oben (Median +16/+18 Grad je Seite); die Bild-oben-Richtung kippt um genau diese Neigung vom Lot weg, auf gegenueberliegenden Seiten in entgegengesetzte
     Richtung. Gemessen: Bild-oben-Lot 12,8 Grad (Teil 0) und 16,3 Grad (Teil 1) neben dem Bild-x-Lot -> Teil 1 gegen Teil 0 ~28 Grad gekippt, die Suedwand stand im
     vereinten Modell 23 Grad schraeg (Median-x von -8,7 m in 1 m Hoehe bis -3,6 m in 13 m Hoehe) = das 'zwei Streifen'-Bild. Die Bild-x-Achse bleibt beim Neigen
-    waagerecht (Fotos werden nicht gerollt) - so rechnet tools/sfm_lod2_ausrichten.py das Lot seit 19.11. Rueckfall (< 8 Kameras stuetzen es): Mittel der Bild-oben-Richtungen."""
+    waagerecht (Fotos werden nicht gerollt) - so rechnet tools/sfm_lod2_ausrichten.py das Lot seit 19.11. Rueckfall (< 8 Kameras stuetzen es): Mittel der Bild-oben-Richtungen.
+    22.11.2026 EIN LOT (Lage-Pruefstand): seit heute rechnet auch die Ausrichtung (sfm_lod2_ausrichten) ihr Netzsystem mit DIESER Funktion (lot_info), Begruendung dort
+    und in lot_info. Vorzeichen jetzt per MEDIAN der Bild-oben-Komponente (wie bisher die Ausrichtung) statt per Mittelwert: wenige kopfstehende/gedrehte Bilder kippen den
+    Median nicht (auf 1120/1122/Kaufhaus gk/gk2/Martinstor gk3 beide gleich)."""
+    return lot_info(Rs)["oben"]
+
+
+def lot_info(Rs):
+    """DAS Lot aus den Kameradrehungen (cam_from_world, je 3x3) mit Begleitwerten -> dict(oben, stuetzend (Anteil der Kameras mit Bild-x < LOT_X_GRAD neben der Waagerechten),
+    n, quelle 'bildachsen' | 'bild_oben_mittel' (Rueckfall)).
+    WARUM Bild-x-Achsen und nicht die Normale der Kameraebene (Entscheid 22.11.2026 an Daten; tools/versuche/lage_eine_funktion/lot_vergleich.py, lot_wand.py):
+      Bezug 1 = Hochachse des LoD2+DGM1-Feinfits der geschriebenen Ausrichtung (Kippung frei), Bezug 2 = Lot aus den Wandnormalen der dichten Wolke (unabhaengig von LoD2).
+      Winkel Kameraebene / Bild-x-Achsen gegen Bezug 1 und 2:  schwabentor-1120 (gute Lage) 6,6/5,9 gegen 4,4/4,1 Grad;  schwabentor-1122 2,9/1,6 gegen 4,6/3,3;
+      kaufhaus_gk2 0,7/1,9 gegen 1,9/0,9;  martinstor_gk3 (Drohnenclips) 68/85 gegen 16/1,8.  Beide Kameralote liegen 1-6 Grad daneben, die Kameraebene kann aber
+      KATASTROPHAL falsch sein (Drohne, Hoehenunterschiede, Teilmodelle einer Wand: Kameras auf einer Linie -> Ebenennormale unbestimmt); die Bild-x-Achsen nie.
+      Am GPS gemessen (Fixture test_gps_eine_quelle_fixture.json + kameras.json 1120): GPS-Fit der Ausrichtung im Kameraebenen-Rahmen 105 von 174 Fotos, KEIN
+      Fernfoto, +-11,2 Grad 'legt nicht fest' (18 von 20 Zufallsstarts), im Bild-x-Rahmen 125 von 174, 10 Fernfotos, +-1,0 Grad 'kann ankern' (20 von 20) = genau das
+      GPS-Tor auf der fertigen Lage. Die 63 m hoch stehenden Fernkameras machen den RANSAC-Konsens empfindlich fuer 2,3 Grad Lotfehler.
+      Feiner als ~2-4 Grad ist kein Kameralot: das richtet der LoD2/DGM1-Feinfit (Kippung frei) bzw. nach der dichten Wolke das Wandnormalen-Lot."""
     Rs = np.asarray(Rs, float).reshape(-1, 3, 3); ob = np.mean(-Rs[:, 1, :], 0); ob /= max(np.linalg.norm(ob), 1e-12)
     X = Rs[:, 0, :]; inn = np.ones(len(X), bool); up = None
     for _ in range(5):
         if inn.sum() < 8: break
         up = np.linalg.svd(X[inn], full_matrices=False)[2][2]; inn = np.abs(X @ up) < np.sin(np.radians(LOT_X_GRAD))
-    if up is None or inn.sum() < 8: return ob
-    return up if up @ ob > 0 else -up
+    if up is None or inn.sum() < 8: return dict(oben=ob, stuetzend=float(inn.mean()) if len(X) else 0.0, n=int(len(X)), quelle="bild_oben_mittel")
+    up = up if np.median(-Rs[inn, 1, :] @ up) > 0 else -up                                      # Bild-y zeigt nach unten -> Bild-oben = -y
+    return dict(oben=up, stuetzend=float(inn.mean()), n=int(len(X)), quelle="bildachsen")
 
 
 def kameras(modell):
