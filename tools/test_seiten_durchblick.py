@@ -32,7 +32,7 @@ m = S.paar_staerke(p0, p1, WH, WH)
 pruefe("GPS-Veto: Standorte 170 Grad auseinander -> abgelehnt; 40 Grad / ohne GPS -> durchblick", S.durchblick_ok(m, 170)[0] == "abgelehnt" and S.durchblick_ok(m, 40)[0] == "durchblick" and S.durchblick_ok(m, None)[0] == "durchblick")
 
 # Stufe auf einer Mini-Datenbank: Gruppen 0 und 1 (Teile mit Objektfotos), 2 (fremd); Paare 0-1 flaechig, 0-1 Einblendung, 0-2 flaechig, 0-1 schwach
-d = tempfile.mkdtemp(dir=os.environ.get("TMPDIR")); db = sqlite3.connect(os.path.join(d, "t.db"))
+d = __import__("pfade").temp_ordner("test_durchblick_"); db = sqlite3.connect(os.path.join(d, "t.db"))
 db.executescript("create table cameras (camera_id integer primary key, model integer, width integer, height integer, params blob, prior_focal_length integer);"
                  "create table images (image_id integer primary key, name text, camera_id integer);"
                  "create table keypoints (image_id integer primary key, rows integer, cols integer, data blob);"

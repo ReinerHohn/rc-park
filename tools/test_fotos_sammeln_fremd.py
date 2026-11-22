@@ -5,7 +5,7 @@ T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
 import fotos_sammeln as FS
 fehler = []
 def pruef(ok, text): print(("ok   " if ok else "FEHL ") + text); ok or fehler.append(text)
-tmp = tempfile.mkdtemp(dir=os.environ.get("TMPDIR")); O = os.path.join(tmp, "rc-park_daten", "objx"); rng = np.random.default_rng(3)
+tmp = __import__("pfade").temp_ordner("test_fremd_"); O = os.path.join(tmp, "rc-park_daten", "objx"); rng = np.random.default_rng(3)
 def bild(p):
     os.makedirs(os.path.dirname(p), exist_ok=True); cv2.imwrite(p, (rng.random((240, 320, 3)) * 255).astype(np.uint8)); return p
 eig = bild(f"{O}/fotos_eigen/IMG_1.jpg"); vf = bild(f"{O}/video_frames/clipA/vf_001.jpg"); vf2 = bild(f"{O}/video_frames/clipB/vf_001.jpg"); co = bild(f"{O}/commons/orig/c1.jpg")

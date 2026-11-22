@@ -19,7 +19,7 @@ pruef(not ok, f"verformte/unbelegte Kopplung abgelehnt ({g})")
 _, pr, ok, g = EK.kopplung_pruefen(X[:50], Y[:50], ausd)
 pruef(not ok and "gemeinsame Punkte" in g, "zu wenige gemeinsame Punkte abgelehnt")
 # Brueckenwahl
-d = tempfile.mkdtemp(dir=os.environ.get("TMPDIR")); db = os.path.join(d, "t.db"); c_ = sqlite3.connect(db)
+d = __import__("pfade").temp_ordner("test_eck_"); db = os.path.join(d, "t.db"); c_ = sqlite3.connect(db)
 c_.executescript("create table images (image_id integer primary key, name text); create table two_view_geometries (pair_id integer primary key, rows integer)")
 for i, n in enumerate(["a1", "a2", "b1", "b2", "e1", "n1"], 1): c_.execute("insert into images values (?, ?)", (i, n))
 for x, y, r in ((5, 6, 300), (1, 2, 500), (3, 6, 50)): c_.execute("insert into two_view_geometries values (?, ?)", (x * EK.MAXID + y, r))
