@@ -29,8 +29,8 @@ Das ist keine Rechtsberatung. Offen ist immer, ob Messwerte/Ergebnisse, die mit 
 | Bauforschung BW, Texte | – | nur Maßangabe gelesen | – |
 | YouTube-Videos Martinstor/Freiburg (`/media/oem/scan/rc-park_daten/martinstor/videos/`, Frames in `video_frames/`) | Standard-YouTube-Lizenz (urheberrechtlich geschuetzt); nur 1 Zeitraffer CC BY (nicht genutzt). Drohnenclips: Kanal 'Black Forest Stock' (Stockmaterial, Wasserzeichen) | ⚠ nur private Messvorlage (2026-11-02) | Frames NICHT ins Repo, NICHT verteilen; vor Verkauf Rechte beim Anbieter klaeren oder Masse aus lizenzfreien Quellen belegen. Werkzeug: tools/video_frames.py, tools/video_sfm.py |
 | MASt3R/DUSt3R, MVSAnywhere, Inria-3DGS (+2DGS, GOF, RaDe-GS, SuGaR), VGGT-1B Standard, Building3D-Datensatz, ETH3D, Tanks and Temples | NC bzw. Forschungslizenz laut Recherche 2026-11-02 (teils nur Sekundaerquellen) | ⚠ nur zum Testen | nicht in ein Verkaufsprodukt; vor Einsatz LICENSE an der Primaerquelle lesen |
-| MapAnything (Apache-Gewichte `map-anything-apache`), Depth-Anything-3 (BASE/SMALL/METRIC-LARGE), SAM 2, Grounding-DINO, hloc/ALIKED/DISK/RoMa | laut Recherche Apache-2.0/MIT/BSD (Gewichte je Modell, GIANT/LARGE/NESTED und `map-anything` sind NC) | ? vor Einsatz pruefen | noch nicht eingebaut; Details Roadmap |
-| VGGT-1B-Commercial | `vggt-aup-license` (kommerziell ausser Militaer, Zugang gesperrt/Meta-Login) | ? Lizenztext lesen | noch nicht eingebaut |
+| MapAnything (Apache-Gewichte `map-anything-apache`), Depth-Anything-3 (BASE/SMALL/METRIC-LARGE), SAM 2, Grounding-DINO, hloc/ALIKED/DISK/RoMa | laut Recherche Apache-2.0/MIT/BSD (Gewichte je Modell, GIANT/LARGE/NESTED und `map-anything` sind NC) | ? vor Einsatz pruefen (22.11.: an der Quelle geprueft, siehe Nachtrag 2026-11-22; DA3 SMALL/MONO-LARGE ebenfalls Apache; MapAnything-Apache auf ScanNet++ trainiert) | noch nicht eingebaut; Details Roadmap |
+| VGGT-1B-Commercial | `vggt-aup-license` (kommerziell ausser Militaer, Zugang gesperrt/Meta-Login) | ? Lizenztext lesen (22.11.: Text OHNE Login lesbar = VGGT License v1, kommerziell ausser AUP-Verboten; siehe Nachtrag 2026-11-22) | noch nicht eingebaut |
 | CGAL/PolyFit/City3D | GPL v3, City3D braucht Gurobi (kommerzielle Lizenz) | ⚠ meiden fuer Verkauf | Alternative: eigenes RANSAC/Open3D, 2.5D Dual Contouring (MIT) |
 | Mapillary-Bilder | **CC BY-NC-SA** laut Terms of Use (Stand 2024-02-15), NICHT BY-SA (Recherche 2026-11-01) | ⚠ nicht benutzen | für ein Verkaufsprodukt unbrauchbar; ausserdem erreicht Street-Level die verdeckten Turmseiten ohnehin nicht |
 
@@ -95,7 +95,7 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 | Metric3D | widerspruechlich (BSD-2 / "non-commercial") | ⚠ meiden bis geklaert | – | Treffer |
 | DINOv3 | eigene Meta-Lizenz (Pflichthinweis, Kuendigungsrecht) | ⚠ umstaendlich; DINOv2 Apache | – | geprueft (Recherche-Agent) |
 | **FlexGlue** (cvg/FlexGlue v0.1, in COLMAP seit 1.11.2026) | Code + Matcher/Deskriptor-Koepfe MIT; Grundnetz DINOv3-ConvNeXt-B unter DINOv3 License (an der Quelle gelesen 2026-11-19: Nutzung inkl. kommerziell erlaubt; verboten Militaer/Waffen/ITAR, Exportverstoesse, Rueckentwicklung; Weitergabe der GEWICHTE nur mit Lizenztext) | ✓ fuer Verkaufsmodelle (wir geben nur Modelle, keine Gewichte weiter) | Test Seitenverwechslung Martinstor `/media/oem/rcdaten/tmp/flexglue` | geprueft |
-| **LoMa** (COLMAP LOMA_B/R/L/G, Gewichte github.com/davnords/storage `loma_*.onnx`) | laut Recherche 2026-11-19 auch auf ScanNet++/Map-free/Mapillary-Tiefen trainiert = Lizenzfalle; Autoren bieten seit 26.09.2026 getrennt `commercial_loma_B/L/G.pt` (nur .pt, ONNX-Export noetig); DINOv2 selbst Apache-2.0 | ⚠ COLMAP-Standardgewichte NICHT fuer Verkauf, bis an der Quelle geprueft | – | Recherche-Agent, Download-URL in resources.h bestaetigt |
+| **LoMa** (COLMAP LOMA_B/R/L/G, Gewichte github.com/davnords/storage `loma_*.onnx`) | laut Recherche 2026-11-19 auch auf ScanNet++/Map-free/Mapillary-Tiefen trainiert = Lizenzfalle; Autoren bieten seit 26.09.2026 getrennt `commercial_loma_B/L/G.pt` (nur .pt, ONNX-Export noetig); DINOv2 selbst Apache-2.0 | ⚠ COLMAP-Standardgewichte NICHT fuer Verkauf, bis an der Quelle geprueft (22.11. geprueft: Standard/ONNX nein, commercial_* ja mit Auflage; kein Widerspruch zu "Code MIT", siehe Nachtrag 2026-11-22) | – | Recherche-Agent, Download-URL in resources.h bestaetigt |
 | PolyFit / KSR (CGAL) / City3D | GPL (bindet nur Weitergabe der Software, nicht erzeugte Modelle); City3D braucht Gurobi | ✓ als Werkzeug denkbar | – | Treffer |
 | **Fototextur** | Textur aus CC-BY-SA-Fotos wird ShareAlike; Mapillary NC; YouTube geschuetzt | ⚠ Textur/Farbe nur aus CC-BY/PD/eigenen Fotos | geplante Farbstufe | Einschaetzung |
 
@@ -117,8 +117,8 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 |---|---|---|
 | 2DGS Original (hbb1), PGSR (zju3dv), MILo, GOF, 3DGS Inria | Forschungs-/Nicht-kommerzielle Lizenz (PGSR nur ueber Index "other" gesehen, LICENSE.md vor Einsatz lesen) | ⚠ NUR Test (Stufe A), nie in die Verkaufs-Pipeline |
 | gsplat (nerfstudio) | Apache-2.0 | ✓ fuer Stufe B (Eigenbau); 2DGS-Training/Mesh-Extraktion dort nicht dokumentiert |
-| Depth Anything 3 | BASE/SMALL/METRIC/MONO Apache-2.0; GIANT/LARGE/NESTED CC BY-NC | nur BASE/METRIC erlaubt; PyPI-Name ungeprueft |
-| MoGe | Code MIT, Gewichtslizenz OFFEN | ungeprueft |
+| Depth Anything 3 | BASE/SMALL/METRIC/MONO Apache-2.0; GIANT/LARGE/NESTED CC BY-NC | nur BASE/METRIC erlaubt; PyPI-Name ungeprueft (22.11. korrigiert: SMALL und MONO-LARGE auch Apache, an der Quelle geprueft) |
+| MoGe | Code MIT, Gewichtslizenz OFFEN (22.11.: MoGe-2-Gewichte vitl/vitb/vits MIT laut Modellkarte, siehe Nachtrag 2026-11-22) | ungeprueft |
 | SAM2 | Apache-2.0 (Code+Gewichte laut Recherche; SA-1B nur Forschung) | ✓ (Hinweis SA-1B) |
 | OpenMVS | AGPL-3.0 | Code nicht ins Produkt (Register CP: Ansatz bereits verworfen) |
 | Open3D TSDF | MIT | ✓ |
@@ -153,3 +153,60 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 ## 2026-11-11 Relief aus Einzelbild (Beweistest, tools/relief_aus_foto.py)
 - Depth Anything V2 **SMALL** (`depth-anything/Depth-Anything-V2-Small-hf`, 95 MB, HF_HOME=/media/oem/scan/hf_depth): Apache-2.0 (HF-API-Metadaten + README am Primaerort 11.11. gelesen; Base/Large/Giant sind CC-BY-NC = NICHT nutzen). Trainingsdaten (595K synthetisch + 62M unbeschriftete Fotos) nicht geprueft. Code: transformers (Apache-2.0), kein neues Paket, venv-seg unveraendert.
 - Nicht eingesetzt: Apple Depth Pro (LICENSE nicht gelesen), Marigold.
+
+## Nachtrag 2026-11-22: Primaerquellen-Pruefung Code UND Gewichte (9 Werkzeuge)
+Alle Angaben an der Primaerquelle gelesen am 2026-11-22 (GitHub-LICENSE/README, Hugging-Face-Modellkarte bzw. HF-API `api/models/<id>`, arXiv-Paper). Zitate woertlich (Auszug). Keine Rechtsberatung.
+Gemeinsamer Vorbehalt: Wo Gewichte permissiv lizenziert sind, aber auf Daten mit NC-Bedingungen trainiert wurden (ScanNet++, Map-free), steht "mit Auflage" - der Rechteinhaber der Gewichte erlaubt es, das Restrisiko aus den Trainingsdaten ist rechtlich offen.
+
+**1. MapAnything** (facebookresearch/map-anything)
+- Code: Apache-2.0 - "This code is licensed under an open-source Apache 2.0 license." (https://github.com/facebookresearch/map-anything, README)
+- Gewichte: `facebook/map-anything-apache` = apache-2.0 ("This is the Apache 2.0 variant of the model.", https://huggingface.co/facebook/map-anything-apache, HF-API apache-2.0, nicht gated); `facebook/map-anything` = cc-by-nc-4.0 ("This is the CC-BY-NC-4.0 variant of the model.", https://huggingface.co/facebook/map-anything).
+- Trainingsdaten (Paper https://arxiv.org/html/2509.13414): Apache-Variante "trained on six datasets" = BlendedMVS, Mapillary Planet-Scale Depth, **ScanNet++ v2**, Spring, TartanAirV2-WB, UnrealStereo4K. ScanNet++-Nutzungsbedingungen (https://scannetpp.mlsg.cit.tum.de/scannetpp//static/scannetpp-terms-of-use.pdf, gelesen): "Researcher shall use the Database only for non-commercial research and educational purposes. Commercial use is strictly prohibited." Mapillary-Depth-Lizenz: ungeprueft (mapillary.com/dataset/depth liefert ohne JavaScript keinen Text).
+- Bewertung: `map-anything-apache` **verkaufstauglich mit Auflage** (Apache-Hinweis; Trainingsdaten-Restrisiko ScanNet++ benannt, Meta lizenziert trotzdem Apache). `map-anything` **nein** (NC).
+
+**2. Depth Anything 3** (ByteDance-Seed/Depth-Anything-3)
+- Code: Apache-2.0 (Repo-Lizenz, https://github.com/ByteDance-Seed/Depth-Anything-3).
+- Gewichte laut README-Tabelle "Model Cards" + HF-API: DA3-BASE, DA3-SMALL, DA3METRIC-LARGE, DA3MONO-LARGE = "Apache 2.0"; DA3-GIANT(-1.1), DA3-LARGE(-1.1), DA3NESTED-GIANT-LARGE(-1.1) = "CC BY-NC 4.0".
+- Zitat Modellkarte https://huggingface.co/depth-anything/DA3-BASE: "All models are trained exclusively on public academic datasets." (DA3METRIC-LARGE: "License: apache-2.0", Trainingsdaten "Public academic datasets only"; welche Datensaetze: ungeprueft).
+- Bewertung: BASE/SMALL/METRIC-LARGE/MONO-LARGE **ja, mit Auflage** (Apache-Hinweis; "academic datasets" nicht einzeln geprueft). GIANT/LARGE/NESTED **nein**. Korrektur zu Zeile 2026-11-06 ("nur BASE/METRIC erlaubt"): SMALL und MONO-LARGE sind ebenfalls Apache.
+
+**3. MoGe-2** (microsoft/MoGe)
+- Code: MIT - "MoGe code is released under the MIT license, except for DINOv2 code in `moge/model/modules/dinov2`" "which is released by Meta AI under the Apache 2.0 license." (https://github.com/microsoft/MoGe)
+- Gewichte: Modellkarten `Ruicheng/moge-2-vitl-normal`, `moge-2-vitb-normal`, `moge-2-vits-normal` je "License: mit" (HF-Seiten + HF-API, nicht gated). Kein weiterer Lizenzsatz auf den Karten; Trainingsdaten dort nicht genannt (ungeprueft).
+- Bewertung: **ja** (MIT + Apache fuer DINOv2-Teil). Loest "MoGe Gewichtslizenz OFFEN" (2026-11-06) und "Gewichte laut Mirrors MIT" (2026-11-05) auf: an der Originalkarte MIT.
+
+**4. VGGT-1B-Commercial + VGGT-Omega**
+- Code VGGT: "VGGT License" v1 (29.07.2025), https://github.com/facebookresearch/vggt/blob/main/LICENSE.txt; README: "We've updated the license for VGGT to permit commercial use (excluding military applications)." und "only the newly released checkpoint VGGT-1B-Commercial is licensed for commercial usage".
+- Gewichte `facebook/VGGT-1B-Commercial`: HF-API `gated: manual`, license other/`vggt-aup-license`. Der Lizenztext https://huggingface.co/facebook/VGGT-1B-Commercial/blob/main/LICENSE ist **OHNE Login lesbar** und ist dieselbe "VGGT License" v1 (nur die Gewichtsdatei braucht Antrag). Grant: "You are granted a non-exclusive, worldwide, non-transferable and royalty-free limited license under Meta's intellectual property ... to use, reproduce, distribute, copy, create derivative works of, and make modifications to the Research Materials." Keine NC-Klausel im Text; die Acceptable Use Policy verbietet u. a. "Military, warfare, nuclear industries or applications, espionage" und ITAR. Meta "may modify this Agreement from time to time" (wirksam bei Weiternutzung); Weitergabe nur mit Lizenzkopie; Kuendigung bei Verstoss -> Loeschpflicht. Vertragspartner EU: Meta Platforms Ireland.
+- Bewertung VGGT-1B-Commercial: **ja, mit Auflage** (Antrag, AUP, Aenderungsvorbehalt Metas). VGGT-1B Standard: weiterhin **nein** (NC).
+- VGGT-Omega existiert (arXiv 2605.15195, Gewichte Mai 2026, https://github.com/facebookresearch/vggt-omega): Code- UND Gewichtelizenz "FAIR Noncommercial Research License" (Repo-LICENSE und https://huggingface.co/facebook/VGGT-Omega/blob/main/LICENSE.txt, HF-API `fair-noncommercial-research-license`, gated manual): "You will not use the Research Materials or any outputs or results of the Research Materials in connection with any commercial or for any uses other than Noncommercial Research Uses". Bewertung: **nein** (auch Ergebnisse/Outputs NC).
+
+**5. LoMa** (davnords/loma, PyPI lomatch, in COLMAP)
+- Code: "All our code except the matcher, which inherits its license from LightGlue, is MIT license." / "LightGlue has an Apache-2.0 license." (https://github.com/davnords/loma, README) - betrifft nur den CODE.
+- Gewichte: liegen in https://github.com/davnords/storage (Repo-LICENSE MIT, "Copyright (c) 2026 David Nordström"), Release-Tag `loma` (https://api.github.com/repos/davnords/storage/releases/tags/loma, Beschreibung leer). README: "Weights trained on only commercially licensed datasets have been released" (Update 26.09.). Dateien `commercial_loma_B.pt`, `commercial_loma_L.pt`, `commercial_loma_G.pt`, `commercial_loma_descriptor_G.pt` (26./27.09.2026, nur .pt) gegenueber Standard `loma_B.pt`, `loma_B128.pth`, `loma_L.pth`, `loma_G.pth`, `loma_R.pth`, `loma_B64.pth` und allen `loma_matcher_*.onnx`/`loma_descriptor_*.onnx`/`loma_detector.onnx` (ONNX fuer COLMAP nicht als commercial gekennzeichnet; fuer B128 und R keine commercial-Variante).
+- Trainingsdaten Standard (README, 16 Datensaetze): u. a. ScanNet++, Map-Free, Mapillary Planet-scale, MegaDepth, Aria Synthetic Environments. ScanNet++: "Commercial use is strictly prohibited." (s. o.). Map-free (https://github.com/nianticlabs/map-free-reloc/blob/main/LICENSE): "Non-commercial use expressly excludes any profit-making or commercial activities" (gilt fuer die Software; Datensatzlizenz dort nicht gesondert -> ungeprueft).
+- WIDERSPRUCH GEKLAERT (22.11.2026): "Code MIT / Matcher Apache" und "LoMa-Gewichte nicht kommerziell nutzbar" (Register 19./20.11.) widersprechen sich nicht - die Autoren trennen selbst "commercial_*" (nur kommerziell lizenzierte Trainingsdaten) von den Standardgewichten (u. a. ScanNet++ = NC). Eine Lizenzzeile je Gewichtsdatei gibt es nicht (nur MIT-LICENSE des storage-Repos); Datensatzliste der commercial-Gewichte: an keiner Quelle genannt (ungeprueft).
+- Bewertung: Standard/COLMAP-ONNX (B, B128, L, G, R) **nein fuer Verkauf**. `commercial_loma_B/L/G` **ja, mit Auflage** (MIT/Apache-Hinweis; eigener ONNX-Export fuer COLMAP noetig; Datensatzliste unveroeffentlicht).
+
+**6. RoMa v2** (Parskatt/RoMaV2)
+- Code: "MIT License", "Copyright (c) 2025 Johan Edstedt" (https://github.com/Parskatt/RoMaV2/blob/main/LICENSE); README: "All our code except DINOv3 is MIT license. DINOv3 has a custom license".
+- Gewichte: README nennt **keine** Gewichtslizenz, keine Datensaetze (nur "inspired by" UFM und MapAnything "particularly for the datasets used to train the models"), keine Download-URL -> **Gewichtelizenz ungeprueft - Quelle nennt sie nicht**. Grundnetz DINOv3: DINOv3 License (19.11. gelesen: kommerziell mit Auflagen).
+- Bewertung: Code ja; Gewichte **ungeprueft**, nicht fuer Verkauf bis geklaert. ANNAHME (nicht belegt): MapAnything-aehnliche Datensaetze koennten ScanNet++ einschliessen.
+
+**7. gsplat** (nerfstudio-project/gsplat)
+- Code: "Apache License, Version 2.0", "Copyright 2025 Nerfstudio Team" (https://github.com/nerfstudio-project/gsplat/blob/main/LICENSE). Keine Gewichte.
+- Inria-Code? `.gitmodules`: nur glm und googletest. 2DGS-Kerne (`gsplat/cuda/csrc/*2DGS*.cu`, gelesen RasterizeToPixels2DGSSerialBatchFwd.cu): "SPDX-FileCopyrightText: Copyright 2025 the Regents of the University of California, Nerfstudio Team and contributors." + "SPDX-License-Identifier: Apache-2.0"; kein Verweis auf Inria/hbb1/diff-surfel-rasterization. `rendering.py` nennt Inria nur als Vergleich ("make it apple-to-apple with Inria's CUDA Backend"). `rasterization_2dgs()` dokumentiert (https://docs.gsplat.studio/main/apis/rasterization.html).
+- Patente: kein Patenthinweis im Repo; Patentrecherche 3DGS/2DGS **ungeprueft**.
+- Bewertung: **ja** (Apache; Inria-Lizenz gilt nicht fuer gsplat, kein Inria-Code gefunden - Stichprobe, nicht jede Datei).
+
+**8. LiP-Map + LIMAP**
+- LiP-Map (arXiv 2602.01296, 01.02.2026): "Our code is released at https://github.com/calmke/LiPMAP for reproducible research." Repo oeffentlich, aber **keine LICENSE-Datei** (GitHub-API https://api.github.com/repos/calmke/LiPMAP: `license: null`), nur LEGAL.md (Sprachvorrang chinesischer Kommentare). Ohne Lizenz = alle Rechte vorbehalten. Nutzt laut README PlanarSplatting, Omnidata, Metric3D v2, VGGT, MoGe, HAWP, DeepLSD, ScaleLSD (eigene Lizenzen, ungeprueft; VGGT-Standard NC).
+- Bewertung LiP-Map: **nein** (keine Lizenz erteilt), nur Test; ggf. Autoren anfragen.
+- LIMAP (cvg/limap): "BSD 3-Clause License", "Copyright (c) Shaohui Liu" (https://github.com/cvg/limap/blob/main/LICENSE). Drittkomponenten (DeepLSD, SOLD2, HAWP, GlueStick, SuperPoint, RoMa, Progressive-X) - README nennt keine Lizenzen -> ungeprueft; SuperPoint laut Eintrag 01.11. restriktiv.
+- Bewertung LIMAP: Code **ja**; nur mit LSD (OpenCV) oder geprueften Detektoren/Matchern, kein SuperPoint.
+
+**9. GS4Buildings** (Zhang/Wysocki/Jutzi, TUM; arXiv 2508.07355, eingereicht 10.08.2025 - nicht 2026)
+- Code veroeffentlicht: https://github.com/zqlin0521/GS4Buildings. LICENSE.md "Gaussian-Splatting License": "The Software may be used "non-commercially", i.e., for research and/or evaluation purposes only." README: "Gaussian-Splatting non-commercial research license, inherited from Inria/MPII's original 2D/3D Gaussian Splatting code".
+- Bewertung: **nein** (NC, Inria). Idee (LoD2-Punkte als Startwerte, Tiefen-/Normalen-Prior aus Ebenen) ggf. selbst auf gsplat nachbauen (Patentlage ungeprueft).
+
+Ungeprueft geblieben (22.11.): Datensatzlizenz Mapillary Planet-Scale Depth und Map-free-Datensatz; Datensatzliste der LoMa-commercial-Gewichte; RoMa-v2-Gewichte (keine Angabe an der Quelle); DA3-/MoGe-2-Trainingsdatensaetze im Einzelnen; Patente 3DGS/2DGS; Lizenzen der LiP-Map-Abhaengigkeiten.
