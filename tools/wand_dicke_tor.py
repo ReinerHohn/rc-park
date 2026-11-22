@@ -22,6 +22,7 @@ import os, sys, json, argparse
 import numpy as np
 
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from sim3_robust import sim3_meter, SCHWELLE_M, MIN_ANTEIL
 Z_BAND = (1.5, 9.0)      # ANNAHME (Vorlage): Wandfuss-Band in Metern ueber dem Modellboden
 ABSTAND_M = 3.0          # ANNAHME (Vorlage): Wandpunkte hoechstens 3 m von der LoD2-Kante
 MIN_KANTE_M = 4.0        # kuerzere Kanten (Rundungen, Versaetze) nicht werten
@@ -109,10 +110,12 @@ def teile_laden(sm, au, n_max=N_MAX):
             nm = os.path.splitext(im.name)[0]
             if im.has_pose and (nm in st or im.name in st): X.append(im.projection_center()); Y.append(st.get(nm, st.get(im.name)))
         if len(X) < 5 or not fu or ply_kopf(fu)[0] <= 0: I[str(e["teil"])] = dict(grund=f"{len(X)} Kameras in der Ausrichtung, dichte Wolke {'da' if fu else 'fehlt'}"); continue
-        X, Y = np.array(X), np.array(Y); M = sim3_fit(X, Y); rest = np.linalg.norm(X @ M[:3, :3].T + M[:3, 3] - Y, axis=1)
+        X, Y = np.array(X), np.array(Y); fit = sim3_meter(X, Y)       # robust, feste Meter-Schwelle (sim3_robust.py): EINE Kamera "am Mond" legte 22.11. ein Modell 4372 m daneben
+        if fit is None: I[str(e["teil"])] = dict(grund=f"keine robuste Sim3 der {len(X)} Kameras auf die Ausrichtung (< {MIN_ANTEIL:.0%} innerhalb {SCHWELLE_M} m)"); continue
+        M = fit["M"]; rest = np.linalg.norm(X @ M[:3, :3].T + M[:3, 3] - Y, axis=1)[fit["inlier"]]
         n, h, _ = ply_kopf(fu); f = open(fu, "rb"); f.seek(h); d = np.frombuffer(f.read(n * 27), PLY_SATZ)["p"]
         idx = np.random.default_rng(0).choice(n, min(n, n_max), replace=False); P[str(e["teil"])] = d[idx].astype(float) @ M[:3, :3].T + M[:3, 3]
-        I[str(e["teil"])] = dict(kameras=len(X), rest_median_m=round(float(np.median(rest)), 3), punkte=int(len(idx)))
+        I[str(e["teil"])] = dict(kameras=len(X), kameras_stimmig=fit["n_inlier"], rest_median_m=round(float(np.median(rest)), 3), punkte=int(len(idx)))
     return P, I
 
 

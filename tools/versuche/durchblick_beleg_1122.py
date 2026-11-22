@@ -107,6 +107,23 @@ def main(argv=None):
         zid = (obj.get("lod2") or {}).get("id"); LB = [(b["id"] == zid, np.asarray(gf)[:, :2]) for b in WG.grundrisse(obj, 60.0) for gf in b["ground"]]
     except Exception as ex: print("LoD2 nicht gezeichnet:", ex); LB = []
     ziel = [g_ for z, g_ in LB if z]; mz = np.vstack(ziel).mean(0) if ziel else np.median(Q, 0)
+    # Wandwinkel je LoD2-Kante (keine Schaetzung nach Augenmass): Punkte z 1,5-9 m, <= 3 m von der Kante, innerhalb der Kantenlaenge -> Hauptrichtung (PCA) gegen Kante
+    P3 = M(np.array([p.xyz for p in r.points3D.values()])) if r.num_points3D() else np.zeros((0, 3)); erg["wandwinkel"] = []
+    try:
+        import wand_dicke_tor as WD
+        for z_, g_ in LB:
+            if not z_: continue
+            for p0, p1 in WD.kanten_zusammenfassen(g_):
+                L_ = float(np.linalg.norm(p1 - p0))
+                if L_ < 4: continue
+                e = (p1 - p0) / L_; nrm = np.array([e[1], -e[0]]); q = P3[:, :2] - p0; s_ = q @ e; d_ = q @ nrm
+                w = (P3[:, 2] > 1.5) & (P3[:, 2] < 9) & (s_ > 0.5) & (s_ < L_ - 0.5) & (np.abs(d_) < 3)
+                if w.sum() < 30: erg["wandwinkel"].append(dict(von=np.round(p0, 2).tolist(), bis=np.round(p1, 2).tolist(), n=int(w.sum()))); continue
+                Q = np.c_[s_[w], d_[w]]; Q = Q - np.median(Q, 0); _, _, Vt = np.linalg.svd(Q - Q.mean(0)); ang = math.degrees(math.atan2(Vt[0, 1], Vt[0, 0]))
+                ang = (ang + 90) % 180 - 90
+                erg["wandwinkel"].append(dict(von=np.round(p0, 2).tolist(), bis=np.round(p1, 2).tolist(), n=int(w.sum()), winkel_grad=round(ang, 1), lage_m=round(float(np.median(d_[w])), 2)))
+        print("WANDWINKEL gegen LoD2-Kante:", "; ".join(f"{x['von']}->{x['bis']}: " + (f"{x['winkel_grad']:+.1f} Grad, Lage {x['lage_m']:+.2f} m (n {x['n']})" if "winkel_grad" in x else f"n {x['n']}") for x in erg["wandwinkel"]))
+    except Exception as ex: print("Wandwinkel nicht gemessen:", ex)
     for name, lo, hi in (("grundriss.png", np.percentile(Q, 2, 0) - 10, np.percentile(Q, 98, 0) + 10), ("grundriss_nah.png", mz - 35, mz + 35)):
         gr = 1000; k_ = (gr - 40) / max(hi - lo); px = lambda v: (int(20 + (v[0] - lo[0]) * k_), int(gr - 20 - (v[1] - lo[1]) * k_)); im = np.full((gr, gr, 3), 255, np.uint8)
         for v in P[::max(1, len(P) // 60000)]:
