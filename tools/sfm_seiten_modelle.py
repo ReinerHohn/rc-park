@@ -395,11 +395,13 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         except Exception: v = {}
         e = B["vereinen"] = dict(mit=A["teil"], rc=rc, ordner=vo, urteil=v.get("urteil"), pruefung=v.get("pruefung"), spitzen=v.get("spitzen"), lot_b=v.get("lot_b"), paare=v.get("paare"), inlier=v.get("inlier"), mit_dichten_wolken=bool(fa and fb), weg="klappung")
         if not (rc == 0 and "B_nach_A" in v) and ECK_KOPPELN and ber.get("db_mapper"):
-            ek = eck_stufe(vo + "_eck", A, B, ber["db_mapper"], sj, fotos)
-            e["eckmodell"] = {k: ek.get(k) for k in ("rc", "ok", "urteil", "pruefung", "ordner") if k in ek}
-            if ek.get("ok") and "B_nach_A" in ek:
-                v = dict(ek); rc = 0; e.update(weg="eckmodell", urteil=ek.get("urteil")); M_.append(f"Teil {B['teil']}: Klappung gescheitert - ueber das Eckmodell an Teil {A['teil']} gekoppelt: {ek.get('urteil')}")
-            elif ek.get("rc") != 2: M_.append(f"Teil {B['teil']}: Eck-Kopplung NICHT uebernommen: {ek.get('urteil')}")
+            if "eck" not in ber: ber["eck"] = eck_stufe(os.path.join(arb, f"eck_{A['teil']}"), A, mit, ber["db_mapper"], sj, fotos)   # einmal fuer ALLE Teile
+            ek = ber["eck"]; et = (ek.get("teile") or {}).get(str(B["teil"])) or {}
+            e["eckmodell"] = dict(rc=ek.get("rc"), urteil=ek.get("urteil"), ordner=ek.get("ordner"), teil=et)
+            if ek.get("rc") == 0 and et.get("ok"):
+                v = dict(B_nach_A=et["M_nach_A"]); rc = 0; e.update(weg="eckmodell", urteil=f"ueber Brueckenmodelle gekoppelt, Weg {et.get('weg')}, Massstab-Unsicherheit {et.get('massstab_unsicher')}")
+                M_.append(f"Teil {B['teil']}: Klappung gescheitert - ueber Brueckenmodelle an Teil {A['teil']} gekoppelt (Weg {et.get('weg')})")
+            elif ek.get("rc") != 2: M_.append(f"Teil {B['teil']}: Brueckenkopplung NICHT uebernommen: {et.get('grund') or ek.get('urteil')}")
         if not (rc == 0 and "B_nach_A" in v) and GPS_VEREINEN:
             # RUECKFALL GPS (22.11.2026, Nulllauf schwabentor-1122): die Klappung von seiten_vereinen setzt gleich aussehende Gegenseiten voraus (Martinstor). Am Schwabentor
             # lieferte sie Massstab 0,012 -> "keine hoechsten Bauteile" -> Teil A allein -> einseitige Wolke, Ausrichtung 20 Grad gedreht, Abbruch. Haben beide Teile genug
@@ -510,16 +512,17 @@ def gps_ausgleich_stufe(vz, sparse, fotos, sj, A, ang, M_):
     except Exception as ex: return dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, {ao}/log.txt)")
 
 
-def eck_stufe(eo, A, B, db_mapper, sj, fotos):
-    """TEILE UEBER EIN ECKMODELL KOPPELN (tools/seiten_eck_koppeln.py). Zwischenstand an Modelle, Mapper-DB, seiten.json und Code gebunden. -> eck.json als dict mit 'rc', 'ordner'."""
-    ej = os.path.join(eo, "eck.json"); sf = os.path.join(eo, "stand.json")
-    st = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), db_mapper, sj) + [code_stand("seiten_eck_koppeln.py", wurzel=T)]
+def eck_stufe(eo, A, mit, db_mapper, sj, fotos):
+    """TEILE UEBER BRUECKENMODELLE KOPPELN (tools/seiten_eck_koppeln.py), EINMAL fuer alle Teile (A zuerst). Zwischenstand an Modelle, Mapper-DB, seiten.json und Code gebunden.
+    -> eck.json als dict mit 'rc', 'ordner', 'teile' {N: ok, M_nach_A, weg}."""
+    ej = os.path.join(eo, "eck.json"); sf = os.path.join(eo, "stand.json"); tl = [A] + [x for x in mit if x is not A]
+    st = _stand(*(os.path.join(x["modell"], "images.bin") for x in tl), db_mapper, sj) + [code_stand("seiten_eck_koppeln.py", wurzel=T)]
     try: alt = json.load(open(sf)) if os.path.isfile(ej) else None
     except Exception: alt = None
     if alt and alt.get("stand") == st: rc = alt["rc"]
     else:
-        os.makedirs(eo, exist_ok=True); sag(f"SEITENMODELLE: Teil {B['teil']} ueber ein Eckmodell an Teil {A['teil']} koppeln (tools/seiten_eck_koppeln.py) ...")
-        rc = LAUF([PYC, "-I", os.path.join(T, "seiten_eck_koppeln.py"), A["modell"], B["modell"], db_mapper, sj, fotos, "--aus", eo], os.path.join(eo, "log.txt"))
+        os.makedirs(eo, exist_ok=True); sag(f"SEITENMODELLE: Teile {[x['teil'] for x in tl[1:]]} ueber Brueckenmodelle an Teil {A['teil']} koppeln (tools/seiten_eck_koppeln.py) ...")
+        rc = LAUF([PYC, "-I", os.path.join(T, "seiten_eck_koppeln.py"), db_mapper, sj, fotos, "--aus", eo] + [f"--teil={x['teil']}={x['modell']}" for x in tl], os.path.join(eo, "log.txt"))
         json.dump(dict(stand=st, rc=rc), open(sf, "w"))
     try: d = json.load(open(ej))
     except Exception as ex: d = dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, rc {rc}, {eo}/log.txt)")
