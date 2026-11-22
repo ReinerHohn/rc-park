@@ -107,6 +107,9 @@ def einlesen(a):
     pycolmap.verify_matches(db, pf, verification_options=vo) if False else pycolmap.verify_matches(db, pf)
     # Referenz: Posen behalten, Punkte NEU aus SIFT+ALIKED (alte Punkt-IDs haengen an den alten Merkmalsindizes - die Indizes sind gleich geblieben, ALIKED ist angehaengt)
     ref = pycolmap.Reconstruction(a.ref_sparse); td = os.path.join(lg, "ref_tri"); shutil.rmtree(td, ignore_errors=True); os.makedirs(td)
+    import colmap_rig_abgleich      # 22.11.2026 (schwabentor-1120, Laeufe 1122c/d): Modell teilt Kameras (Videobilder), DB-Kopie hat je Bild Kamera+Rig -> triangulate_points brach mit
+    n_ = colmap_rig_abgleich.angleichen(db, ref)      # "existing_frame.RigId() == frame.RigId()" ab, jedes Mal nach ~44 min. Zuordnung des Modells in die KOPIE schreiben (Referenz-DB unberuehrt)
+    if n_: print(f"Datenbank-Kopie an das Referenzmodell angeglichen: {n_} Bilder auf Kamera/Rig des Modells umgehaengt (tools/colmap_rig_abgleich.py)", flush=True)
     rec = pycolmap.triangulate_points(ref, db, os.path.join(lg, "bilder"), td, clear_points=True)
     rec.write(td); print("Referenz neu trianguliert:", rec.num_points3D(), "Punkte (vorher", ref.num_points3D(), ")")
 
