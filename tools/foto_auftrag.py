@@ -12,6 +12,8 @@ Je Bedarf: alle Messkameras (K-*.json), die den Bereich sehen -> bestes vorhande
   Ausschnitt des besten Fotos mit rot markiertem Zielbereich ("so, aber schaerfer/naeher"). Bereiche ganz ohne Foto: bestes Fremdfoto als Vorbild, falls eines da ist.
 Ausgabe: <aus.html> (eine Seite mit Karte und Karten je Auftrag, Bilder eingebettet) und <aus>.json. Die Seite ist zum Mitnehmen aufs Handy gedacht.
 Grenzen: kennt keine Strassen/Zaeune - Standorte sind Orte, an denen schon einmal fotografiert wurde, oder eine Richtung; Verdeckung nur ueber vorhandene Fotos.
+Seitenteile mit nicht belegter Lage (22.11.2026, tools/seiten_lage_beleg.py): --seiten-modelle pipe/sfm/seiten_modelle.json -> je 'fotoluecken'-Eintrag ein Auftrag fuer die ganze Wand dieser
+  Himmelsrichtung (Brueckenfotos schraeg ueber Eck / Fernfotos), vor den uebrigen Auftraegen.
 Weitere Optionen: --min_m2 8, --mit-uneinig. Fotowunschliste ueblich: modelle/<objekt>/fotowuensche.json. Stadtplan: OpenStreetMap-Kacheln (Netz noetig, sonst ohne).
 Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/foto_auftrag.py ... (oder `tools/py seg tools/foto_auftrag.py ...`; ohne 'seg' waehlt tools/py ~/.venvs/rcpark, dort fehlt cv2).
 """
@@ -59,8 +61,27 @@ def proj(k, X):
     p = np.atleast_2d(X) @ k["R"].T + k["t"]; return np.c_[k["f"] * p[:, 0] / p[:, 2] + k["cx"], k["f"] * p[:, 1] / p[:, 2] + k["cy"]], p[:, 2]
 
 
+def seiten_bedarf(FA, luecken, xh, yh, mpp, max_grad=60.0):
+    """22.11.2026 REGEL "Teil nur bei belegter Lage" (tools/seiten_lage_beleg.py): weggelassene Seitenteile aus seiten_modelle.json 'fotoluecken' -> Auftraege. Je Luecke die Fassade,
+    deren Aussennormale (Modellrahmen -> UTM ueber xhat/yhat) am naechsten am Azimut der Seite liegt (hoechstens max_grad daneben), ganze Wand, gilt als ungesehen (auto).
+    Ohne Azimut oder ohne passende Fassade: kein Auftrag, Meldung. -> (bedarf, meldungen)."""
+    bed, mel = [], []
+    for L in luecken or []:
+        az = L.get("azimut_grad")
+        if az is None: mel.append(f"Fotoluecke Teil {L.get('teil')}: Richtung unbekannt - kein Auftrag mit Standort ({L.get('text')})"); continue
+        best = None
+        for i, F in enumerate(FA):
+            vv = F["n"][0] * np.asarray(xh, float) + F["n"][1] * np.asarray(yh, float); a_ = math.degrees(math.atan2(vv[0], vv[1])) % 360; d_ = abs((a_ - az + 180) % 360 - 180)
+            if d_ <= max_grad and (best is None or (d_, -F.get("flaeche_m2", 0)) < best[0]): best = ((d_, -F.get("flaeche_m2", 0)), i)
+        if best is None: mel.append(f"Fotoluecke Teil {L.get('teil')}: keine Fassade innerhalb {max_grad:.0f} Grad von {az} Grad - kein Auftrag ({L.get('text')})"); continue
+        F = FA[best[1]]
+        bed.append(dict(wand=best[1], u=list(F["u"]), z=list(F["z"]), mpp=mpp, titel=f"{L.get('seite')}: Lage nicht belegt, nicht gebaut", auto=True, seite_lage=True,
+                        warum=f"Das Seitenmodell dieser Seite (Teil {L.get('teil')}, {L.get('bilder')} Bilder) liess sich nicht unabhaengig an das Hauptmodell binden ({str(L.get('grund'))[:300]}). Gebraucht: " + " / ".join(L.get("fotos_noetig") or [])))
+    return bed, mel
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ordner"); ap.add_argument("aus"); ap.add_argument("--wunsch"); ap.add_argument("--mpp", type=float, default=0.01, help="Soll-Auflösung fuer automatisch gefundene Luecken (m je Pixel)")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ordner"); ap.add_argument("aus"); ap.add_argument("--wunsch"); ap.add_argument("--seiten-modelle", help="pipe/sfm/seiten_modelle.json: weggelassene Seitenteile (fotoluecken) als Auftraege"); ap.add_argument("--mpp", type=float, default=0.01, help="Soll-Auflösung fuer automatisch gefundene Luecken (m je Pixel)")
     ap.add_argument("--min_m2", type=float, default=8.0); ap.add_argument("--mit-uneinig", action="store_true", help="widerspruechliche Zonen als ungesehen zaehlen. NICHT Standard: das Mass trennt saubere Wand und Mosaik nicht verlaesslich (Turm Sued sauber = 30, Mosaik Zeile = 18; 16.11.2026)"); ap.add_argument("--stl", help="Modell-STL(s): Auftraege ohne Foto vom Standort bekommen ein gerendertes Modellbild mit rot markiertem Ziel"); ap.add_argument("--extra-umriss", nargs="*", type=float, default=[], help="weitere Rechtecke x0 y0 x1 y1 (Nachbargebaeude) fuer die Karte"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll"); FA = json.load(open(os.path.join(a.ordner, "fassaden.json")))["fassaden"]; KAM = kameras(mp, fd)
     def seite(F): n_ = F["n"]; return ("Nordseite" if n_[0] > 0 else "Südseite") if abs(n_[0]) > abs(n_[1]) else ("Westseite" if n_[1] > 0 else "Ostseite")      # Rahmen: +x Nord, +y West (objekt.json seiten_konvention)
@@ -86,6 +107,9 @@ def main():
             bedarf.append(dict(wand=i, u=[F["u"][0] + sl[1].start * c, F["u"][0] + sl[1].stop * c], z=[F["z"][1] - sl[0].stop * c, F["z"][1] - sl[0].start * c], mpp=a.mpp, titel=f"{seite(F)}: {fl:.0f} m² ohne Fotodaten", warum="Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.", auto=True))
     if a.wunsch: bedarf += json.load(open(a.wunsch))
     rm = obj["rahmen"]; M0 = np.array(rm["mitte_utm"]); xh = np.array(rm["xhat_utm"]); yh = np.array(rm["yhat_utm"])
+    if a.seiten_modelle and os.path.isfile(a.seiten_modelle):
+        sb, sm_ = seiten_bedarf(FA, json.load(open(a.seiten_modelle)).get("fotoluecken"), xh, yh, a.mpp); bedarf = sb + bedarf
+        for m_ in sm_: print("ACHTUNG foto_auftrag: " + m_, flush=True)
     def geo(x, y): e, n_ = M0 + x * xh + y * yh; return utm32_nach_geo(float(e), float(n_))
     def bilder(k, ex):
         im = cv2.imread(k["pfad"]); x0, y0 = ex.min(0); x1, y1 = ex.max(0); st = max(4, int(max(im.shape[:2]) / 250)); ganz = im.copy(); cv2.rectangle(ganz, (int(x0), int(y0)), (int(x1), int(y1)), (0, 0, 255), st)
