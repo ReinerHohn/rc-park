@@ -80,6 +80,7 @@
     9.3
    ],
    "radius_m": 6.0,
+   "punkte": 44105,
    "befund": "echte Umgebung auf dem Platz vor der Stadtseite (Laterne, Schildermast, Oberleitung, Fahrzeuge/Passanten, auskragender Bilderker), kein versetztes Teilnetz",
    "quelle": "20.11.2026: audit/haufen_0.jpg + audit/haufen_0_schnitt.jpg angesehen; Querschnitt: Ostwand in allen Hoehen einfach bei x 3-4 m; tools/haufen_herkunft.py: 99 % der Punkte von im Mittel 7 Tiefenkarten aus 8 Quellen getragen (64 % eigene Fotos); Hoehen 51 % in 1,5-3,5 m; GPS-Tor und Eindeutigkeit bestanden",
    "datum": "2026-11-20",
