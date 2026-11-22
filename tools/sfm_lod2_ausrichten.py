@@ -185,6 +185,39 @@ def gps_anker_grenzen(p0, dreh=GPS_ANKER_DREH, mass=GPS_ANKER_MASS, versatz=GPS_
     return lo, hi
 
 
+# 22.11.2026 (Lauf kette-schwabentor-anker-1122e): der feste Kasten +-8 Grad / +-8 % wurde von LoD2 bis an den Rand gedrueckt (Ergebnis +8,0 Grad x1,089 gegen GPS),
+# obwohl der GPS-Fit selbst auf +-0,4 Grad / +-1,3 % (1 Sigma, Bootstrap ueber 135 Kameras) bestimmt ist und LoD2 die Drehung kaum festlegt (Wandabdeckung 18-25 %, beste
+# Naehe-Identitaet 33 % gegen 29 %). Eine Verfeinerung, die 18 Sigma vom GPS-Fit am Rand klebt, ist kein Messwert, sondern ein Mittel zweier widersprechender Quellen
+# (KERNMETHODE: nicht mitteln). Jetzt: Kasten Drehung/Massstab = GPS_ANKER_K x Bootstrap-Sigma des GPS-Fits, nach unten begrenzt (ANNAHME: raeumlich korrelierte GPS-Fehler
+# in Gassen, die der Bootstrap nicht sieht - 2 Grad / 3 %), nach oben die alten festen Werte. Versatz bleibt fest (+-4 m): ein gemeinsamer GPS-Versatz aller Kameras
+# veraendert Drehung/Massstab nicht, steckt aber auch nicht in der Bootstrap-Streuung.
+GPS_ANKER_K, GPS_ANKER_DREH_MIN, GPS_ANKER_MASS_MIN = 3.0, 2.0, 0.03
+
+
+def gps_fit_streuung(Cxy, Mxy, w, n=200, seed=0):
+    """Bootstrap-Streuung (1 Sigma) des 2D-GPS-Fits Mxy ~ k Rg Cxy + tg auf den Kameras w: (Sigma Drehung in Grad, Sigma Massstab relativ). None bei < 8 Kameras."""
+    iw = np.flatnonzero(np.asarray(w, bool))
+    if len(iw) < 8: return None
+    rng = np.random.default_rng(seed); dr, ks = [], []
+    for _ in range(n):
+        i = rng.choice(iw, len(iw)); mc, cc = Mxy[i].mean(0), Cxy[i].mean(0)
+        try: U, S, V = np.linalg.svd((Mxy[i] - mc).T @ (Cxy[i] - cc))
+        except np.linalg.LinAlgError: continue
+        D = np.diag([1, np.sign(np.linalg.det(U @ V))]); Rg = U @ D @ V; dr.append(math.atan2(Rg[1, 0], Rg[0, 0])); ks.append((S * np.diag(D)).sum() / max(((Cxy[i] - cc) ** 2).sum(), 1e-12))
+    if len(dr) < 20: return None
+    dr = np.asarray(dr); dr = (dr - dr[0] + math.pi) % (2 * math.pi) - math.pi                   # Winkel um eine Probe abwickeln
+    return float(math.degrees(np.std(dr))), float(np.std(ks) / max(np.mean(ks), 1e-12))
+
+
+def gps_anker_kasten(streuung):
+    """Halbbreiten (Drehung Grad, Massstab relativ) des Anker-Kastens aus der Bootstrap-Streuung des GPS-Fits: K x Sigma, begrenzt auf [Minimum, alte feste Werte].
+    Ohne Streuung (None) die alten festen Werte."""
+    if streuung is None: return GPS_ANKER_DREH, GPS_ANKER_MASS
+    sd, sm = streuung
+    if not (math.isfinite(sd) and math.isfinite(sm)): return GPS_ANKER_DREH, GPS_ANKER_MASS
+    return float(min(max(GPS_ANKER_K * sd, GPS_ANKER_DREH_MIN), GPS_ANKER_DREH)), float(min(max(GPS_ANKER_K * sm, GPS_ANKER_MASS_MIN), GPS_ANKER_MASS))
+
+
 def loesung_index(loesung, n, schreiben):
     """Welche der n unterscheidbaren Loesungen wird geschrieben, und mit welchem rc endet der Lauf? -> (Index oder None, rc).
     17.11.2026 (Durchsicht): der Korrekturkreislauf der Kette ruft --loesung 1, 2, ... --schreiben, bis die Lage-Tore bestehen. Fiel auch die letzte durch, blieb SIE liegen
@@ -423,9 +456,12 @@ def main():
         else: print(f"GPS-Startkandidat nicht benutzt: Rest Median {np.median(res):.1f} m, {int(w_.sum())} Kameras")
         if np.linalg.det(Rg) > 0 and np.median(res) < 8 and int(w_.sum()) >= 15: GPS_PRUEF = (np.array([i for i, _ in _gk]), Mxy, 1.0 / k_)   # guter GPS-Fit -> Veto fuer Loesungen (unabhaengiger Lagebeleg)
         if GPS_PRUEF is not None and gps_anker_aktiv(int(w_.sum()), float(np.median(res[w_])) if w_.any() else float("inf"), np.linalg.det(Rg) > 0):
-            GPS_ANKER = dict(s=1.0 / k_, drehung=math.atan2(Rg[1, 0], Rg[0, 0]), t=[float(tg[0]), float(tg[1])], kameras=int(w_.sum()), rest_m=float(np.median(res[w_])))
-            print(f"GPS-ANKER: Foto-GPS traegt die Lage ({GPS_ANKER['kameras']} Kameras, Rest Median {GPS_ANKER['rest_m']:.1f} m) - zusaetzlicher LoD2-Feinfit nur im Kasten Drehung +-{GPS_ANKER_DREH:.0f} Grad, "
-                  f"Massstab +-{100 * GPS_ANKER_MASS:.0f} %, Versatz +-{GPS_ANKER_VERSATZ:.0f} m, Kippung +-{GPS_ANKER_KIPP:.0f} Grad um den GPS-Fit (Hoehe frei: DGM1/Kamerahoehe)", flush=True)
+            _str = gps_fit_streuung(Cxy, Mxy, w_); _kd, _km = gps_anker_kasten(_str)           # Kasten aus der Bootstrap-Unsicherheit des GPS-Fits (22.11.2026, 1122e)
+            GPS_ANKER = dict(s=1.0 / k_, drehung=math.atan2(Rg[1, 0], Rg[0, 0]), t=[float(tg[0]), float(tg[1])], kameras=int(w_.sum()), rest_m=float(np.median(res[w_])),
+                             sigma_drehung_grad=(_str[0] if _str else None), sigma_massstab=(_str[1] if _str else None), kasten_drehung_grad=_kd, kasten_massstab=_km)
+            print(f"GPS-ANKER: Foto-GPS traegt die Lage ({GPS_ANKER['kameras']} Kameras, Rest Median {GPS_ANKER['rest_m']:.1f} m"
+                  + (f", Bootstrap-Sigma {_str[0]:.2f} Grad / {100 * _str[1]:.1f} %" if _str else "") + f") - zusaetzlicher LoD2-Feinfit nur im Kasten Drehung +-{_kd:.1f} Grad, "
+                  f"Massstab +-{100 * _km:.1f} %, Versatz +-{GPS_ANKER_VERSATZ:.0f} m, Kippung +-{GPS_ANKER_KIPP:.0f} Grad um den GPS-Fit (Hoehe frei: DGM1/Kamerahoehe)", flush=True)
         elif GPS_PRUEF is not None: print(f"GPS-ANKER nicht aktiv: {int(w_.sum())} Kameras im GPS-Fit (noetig >= {GPS_ANKER_MIN_KAM}) oder Rest >= {GPS_ANKER_MAX_REST:.0f} m - bisheriges Verhalten")
     print("Grobsuche (Anteil nahe LoD2-Wand, Massstab, Drehung, Verschiebung): " + "; ".join(f"{b[0]:.2f} s={b[1]:.3f} {math.degrees(b[2]):.0f} Grad" for b in top[:4]))
 
@@ -526,7 +562,7 @@ def main():
     _anker_p = []                                                                             # GPS-Anker: Startlage = GPS-Fit, LoD2 verfeinert nur im Kasten
     if GPS_ANKER is not None:
         _pa = [math.log(GPS_ANKER["s"]), 0.0, 0.0, GPS_ANKER["drehung"], GPS_ANKER["t"][0], GPS_ANKER["t"][1], 1.6 - float(np.median(Cq[:, 2])) / GPS_ANKER["s"]]
-        _gr = gps_anker_grenzen(_pa); _pp, _fr, _rm, _ok = fein(_pa, Q, grenzen=_gr); _ab = abdeckung(_pp, Q); loes.append((_fr * _ab, _rm, _pp, _ok, _fr, _ab)); _anker_p.append((_pp, _gr))
+        _gr = gps_anker_grenzen(_pa, dreh=GPS_ANKER["kasten_drehung_grad"], mass=GPS_ANKER["kasten_massstab"]); _pp, _fr, _rm, _ok = fein(_pa, Q, grenzen=_gr); _ab = abdeckung(_pp, Q); loes.append((_fr * _ab, _rm, _pp, _ok, _fr, _ab)); _anker_p.append((_pp, _gr))
         print(f"   GPS-Anker-Feinfit: Inlier {100 * _fr:.0f} %, Objektwand-Abdeckung {100 * _ab:.0f} %, RMS {_rm:.2f} m, Massstab {math.exp(_pp[0]):.4f} (GPS {GPS_ANKER['s']:.4f}), "
               f"Drehung {math.degrees(_pp[3] - _pa[3]):+.1f} Grad gegen GPS, Versatz {np.hypot(_pp[4] - _pa[4], _pp[5] - _pa[5]):.1f} m", flush=True)
         _rand = [nm_ for i_, nm_ in enumerate(("Massstab", "Kippung x", "Kippung y", "Drehung", "Versatz x", "Versatz y")) if min(_pp[i_] - _gr[0][i_], _gr[1][i_] - _pp[i_]) < 1e-4]
@@ -594,15 +630,23 @@ def main():
         out = dict(verfahren="sfm_lod2_ausrichten.py (ohne Picks: Kameraebene -> Lot, LoD2-Wandlinien -> Grob, Punkt-zu-Flaeche LoD2+DGM1 -> Fein)", sparse=a.sparse, fotos_sfm=sorted(kam), fotos_mit_picks=[],
                    transformation=dict(beschreibung="X_sfm = s * R @ X_modell + t ; Modellsystem = objekt.json rahmen (anker3d.json)", s=s, s_sigma_prozent=float(s_sig), rvec=Rot.from_matrix(R_s).as_rotvec().tolist(),
                                        t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig, loesung_nr=i_loes, loesungen_unterscheidbar=len(_verschieden),
-                                       gps_anker=(dict(GPS_ANKER, gewaehlt=_gr_wahl is not None, grenzen=dict(drehung_grad=GPS_ANKER_DREH, massstab=GPS_ANKER_MASS, versatz_m=GPS_ANKER_VERSATZ, kippung_grad=GPS_ANKER_KIPP)) if GPS_ANKER else None)),
+                                       gps_anker=(dict(GPS_ANKER, gewaehlt=_gr_wahl is not None, grenzen=dict(drehung_grad=GPS_ANKER["kasten_drehung_grad"], massstab=GPS_ANKER["kasten_massstab"], versatz_m=GPS_ANKER_VERSATZ, kippung_grad=GPS_ANKER_KIPP)) if GPS_ANKER else None)),
                    ziel=dict(lod2_gebaeude=nb, radius_m=a.radius, boden=gq), kameras=kam,
                    kamerahoehen=dict(median=float(np.median(hz)), auf_strassenniveau=int(np.sum((hz > -1) & (hz < 6))), n=len(hz)),
                    wolke=dict(n=len(Pm), z_p1=float(np.percentile(Pm[:, 2], 1)), z_p999=float(np.percentile(Pm[:, 2], 99.9))), annahmen=dict(kamerahoehe=dict(h0=a.kamerahoehe[0], sigma=a.kamerahoehe[1], gewicht=a.kamera_gewicht, hinweis="ANNAHME Strassenfotos, robuste Bedingung (Huber)")))
         pth = ergebnis_schreiben(od, sfx, usfx, out, Pm, FARBEN); print("geschrieben:", pth, "+ sfm/punkte_modell, punkte_farben (ein Stand, atomar)")
-        try:
-            sim = pycolmap.Sim3d(1.0 / s, pycolmap.Rotation3d(Rm), tm - Rm @ cm / s); rec.transform(sim); ziel = os.path.join(od, "sfm", f"sparse_modell{usfx}"); os.makedirs(ziel, exist_ok=True); rec.write(ziel)
-            print("geschrieben:", ziel, "(COLMAP-Modell im Modellsystem, Meter)")
-        except Exception as e: print("sparse_modell nicht geschrieben:", type(e).__name__, e)
+        # 22.11.2026 (1122e loesung0_zurueck: "AttributeError 'NoneType' object has no attribute 'Sim3d'"): die Kette ruft mit --kameras/--dicht in der GPU-Umgebung
+        # (ohne pycolmap); dann ist auch kein COLMAP-Modell geladen (rec None) - schreiben ging in diesem Modus NIE. Die Kette braucht sfm/sparse_modell_<name> nicht
+        # (gesamtkette.tore() liest pipe/sfm/sparse/0 + die Ausrichtungs-JSON); Verbraucher sind nur Handwerkzeuge (sfm_lod2_buendel, foto_auswahl, abdeckung,
+        # nullstart-Verzerrung). Fuer sie: tools/sparse_modell_schreiben.py (venv-colmap) aus der geschriebenen Transformation.
+        if rec is None or pycolmap is None:
+            print(f"sparse_modell nicht geschrieben (Modus --kameras/--dicht bzw. ohne pycolmap: kein COLMAP-Modell geladen; die Kette braucht es nicht). Bei Bedarf: "
+                  f"/media/oem/scan/venv-colmap/bin/python -I tools/sparse_modell_schreiben.py {a.objekt} {pth} <pipe/sfm/sparse/0>")
+        else:
+            try:
+                sim = pycolmap.Sim3d(1.0 / s, pycolmap.Rotation3d(Rm), tm - Rm @ cm / s); rec.transform(sim); ziel = os.path.join(od, "sfm", f"sparse_modell{usfx}"); os.makedirs(ziel, exist_ok=True); rec.write(ziel)
+                print("geschrieben:", ziel, "(COLMAP-Modell im Modellsystem, Meter)")
+            except Exception as e: print("sparse_modell nicht geschrieben:", type(e).__name__, e)
     if rc_ende: sys.exit(rc_ende)
 
 
