@@ -20,9 +20,32 @@ Grenze: Schritt 1 braucht einen fassade_ortho-Lauf; ob ein Kandidat die Wand wir
 Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/seiten_luecken.py ... (oder `tools/py tools/seiten_luecken.py ...`); SEITEN_NEU=1 erzwingt
 erneutes Nachholen derselben Kandidaten. Exit: 0 = alle Waende gesehen, 2 = Einrichtungsfehler (Fassadenbild fehlt, keine Wand >= --min_m2, kein Foto),
 3 = Wand ungesehen (Auftrag), 5 = Nachhol-Skript abgebrochen.
+SCHNELL SCHEITERN (22.11.2026, schwabentor-1120 1122c/1122d: zweimal 44 min bis zum selben RigId-Absturz in zusatzfotos_lightglue einlesen):
+  - Vorpruefung im Skript ganz vorn und nach 'merkmale': tools/colmap_rig_abgleich.py probe (Lade-Check von triangulate_points auf Mini-DB, Sekunden);
+  - Zwischenstaende je Teilschritt (<daten>/seiten_nachholen/stand/<schritt>.ok, Schluesselkette, schritt_helfer) - ein Fehler im letzten Schritt verwirft die GPU-Paare nicht;
+  - Fehlschlag-Marke fehlschlag_<schluessel>.json mit CODE-STAND der Nachhol-Werkzeuge (tools/code_stand.py): gleicher Fehlschlag bei unveraendertem Code -> sofort rc 5.
 """
-import time
+import time, hashlib
 import sys, os, json, glob, struct, argparse, subprocess, numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from code_stand import code_stand
+# Werkzeuge des Nachhol-Skripts (Unterprozesse - die Importsuche von code_stand sieht sie nicht, darum hier genannt): CODE-STAND der Fehlschlag-Marke
+NACHHOL_WERKZEUGE = ("seiten_luecken.py", "colmap_rig_abgleich.py", "zusatzfotos_registrieren.py", "zusatzfotos_lightglue.py", "kameras_nachtragen.py", "kamera_verfeinern.py",
+                     "commons_harvest.py", "online_ansichten_holen.py", "openverse_holen.py")
+
+
+def schritt_helfer(Z, T):
+    """Bash-Funktionen fuer ZWISCHENSTAENDE je Teilschritt des Nachhol-Skripts (22.11.2026: ein Absturz im 6. Schritt verwarf jedes Mal ~44 min Merkmale/LightGlue).
+    Schluessel je Schritt = Kette (vorheriger Schluessel | Name | CODE-STAND der genannten Werkzeuge | Befehls-Hash); Kettenbeginn = Kandidatenbestand roh/.
+    Passt <Z>/stand/<name>.ok zum Schluessel -> Schritt uebersprungen, sonst gerechnet (und alle folgenden, weil sich die Kette aendert).
+    Teure Schritte (Merkmale, Paare) nennen keine Werkzeuge -> haengen nur an Eingaben + Befehl; billige Folgeschritte tragen ihren CODE-STAND (tools/code_stand.py)."""
+    return [f"ST={Z}/stand",
+            'schritt_noetig() {   # schritt_noetig <name> "<werkzeuge fuer CODE-STAND>" <befehls-hash>: 0 = rechnen, 1 = Zwischenstand passt',
+            f'  local cs=""; [ -n "$2" ] && cs=$(python3 -I {T}/code_stand.py $2 | tail -1)',
+            '  KETTE=$(printf "%s|%s|%s|%s" "$KETTE" "$1" "$cs" "$3" | sha1sum | cut -c1-16); echo "$1" > $ST/aktuell',
+            '  if [ "$(cat $ST/$1.ok 2>/dev/null)" = "$KETTE" ]; then echo "SCHRITT $1: Zwischenstand uebernommen ($KETTE)"; return 1; fi',
+            '  echo "SCHRITT $1: rechnen ($KETTE)"; rm -f $ST/$1.ok; return 0; }',
+            'schritt_fertig() { echo "$KETTE" > $ST/$1.ok; }']
 
 
 def utm32_nach_geo(e, n):
@@ -70,8 +93,9 @@ def main():
     if not waende: print(f"FEHLER: KEINE Wand geprueft (keine Fassade >= {a.min_m2:g} m2 unter {len(FJ['fassaden'])} in fassaden.json) - das ist KEIN 'alle Waende gesehen'; --min_m2 senken oder fassade_ortho pruefen"); return 2      # 17.11.2026: lief mit rc 0 und 'alle Waende gesehen' durch
     if not alle: print(f"FEHLER: kein Foto in fotos_dir {fd} - Einrichtungsfehler, keine Luecken-Aussage"); return 2
     kand = [f for f in alle if os.path.splitext(os.path.basename(f))[0] not in reg]; print(f"Fotobestand {len(alle)}, im SfM registriert {len(alle) - len(kand)}, NICHT registriert {len(kand)}")
-    ung = [w for w in waende if w["ungesehen"]]; daten = os.path.join("/media/oem/scan/rc-park_daten", os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
-    zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh", f"rm -rf {Z}/bilder {Z}/vorbereitet.json {Z}/merkmale.json {Z}/db.db {Z}/lg   # Zwischenstaende eines frueheren Laufs (Downloads und roh/ bleiben)"]
+    ung = [w for w in waende if w["ungesehen"]]; daten = os.path.join(os.environ.get("SEITEN_LUECKEN_DATEN", "/media/oem/scan/rc-park_daten"), os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
+    zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh {Z}/stand", f"rm -f {Z}/stand/aktuell",
+              f"{VC} {T}/colmap_rig_abgleich.py probe --db {a.ref_db} --sparse {a.sparse}   # 22.11.2026 SCHNELL SCHEITERN: Lade-Check von triangulate_points (Kamera/Rig Modell vs. DB) in Sekunden statt nach 44 min"] + schritt_helfer(Z, T)
     if a.download and obj.get("koordinate_utm"):
         lat, lon = utm32_nach_geo(*obj["koordinate_utm"][:2])
         zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 60 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons || echo \"Commons: nichts geholt (rc $?) - weiter mit den anderen Quellen\"   # freie Lizenzen, manifest.json; 17.11.2026: rc 2 bei 0 Bildern darf das Nachholen (set -e) nicht abbrechen")
@@ -80,10 +104,22 @@ def main():
         zeilen.append(f"python3 {T}/openverse_holen.py --aus {Z}/openverse --suche \"{nm}\" \"{obj.get('name', '')}\" \"{ort} Altstadt Blick\" --max 150 || true   # Flickr u. a. ueber Openverse, nur CC0/BY/BY-SA")
         zeilen.append(f"for f in {Z}/commons/*.jpg {Z}/hochblick/orig/*.jpg {Z}/openverse/*.jpg; do [ -e \"$f\" ] && ln -sf \"$f\" {Z}/roh/dl_$(basename $(dirname \"$f\"))__$(basename \"$f\"); done")
     zeilen += [f"ln -sf \"{f}\" {Z}/roh/" for f in kand]
-    zeilen += [f"{VC} {T}/zusatzfotos_registrieren.py vorbereiten --fotos {Z}/roh --aus {Z} --unten 0.0", f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}",
-               f"{VC} {T}/zusatzfotos_lightglue.py refnamen --ziel {Z} --ref-sparse {a.sparse}", f"{VS} {T}/zusatzfotos_lightglue.py paare --ziel {Z} --ref-sparse {a.sparse} --ref-bilder {fd}",
-               f"{VC} {T}/zusatzfotos_lightglue.py einlesen --ziel {Z} --ref-sparse {a.sparse}", f"{VC} {T}/zusatzfotos_registrieren.py registrieren --sparse {Z}/lg/ref_tri --aus {Z}/lg --je-bild --kalibrieren", f"{VC} {T}/kameras_nachtragen.py {os.path.abspath(a.objekt)} {Z}/lg/sparse_handy/0 --bilder {Z}/roh   # neue Posen als K-Dateien in den Modellrahmen (Gegenprobe gegen vorhandene Kameras)", f"for n in $(python3 -c \"import json; print(' '.join(e['foto'] for e in json.load(open('{audit}/kameras_nachtragen.json'))['neu']))\"); do {VS} -W ignore {T}/kamera_verfeinern.py {os.path.abspath(a.objekt)} {os.path.join(os.path.abspath(a.fassaden), 'fassaden.json')} $n --schreiben || true; done   # neue Kameras am Modell nachziehen (rc 3 = bleibt unsicher)", "echo NACHHOLEN_FERTIG"]
-    zeilen.append(f"rm -rf {Z}/lg {Z}/db.db {Z}/db.db-shm {Z}/db.db-wal   # 17.11.2026: Zwischenstaende nach dem letzten Schritt wegraeumen (am Kettenturm 3,2 GB; der naechste Lauf loescht und rechnet sie ohnehin neu) - die Datenplatte fiel dadurch unter die 5-GB-Grenze")
+    vf = f"for n in $(python3 -c \"import json; print(' '.join(e['foto'] for e in json.load(open('{audit}/kameras_nachtragen.json'))['neu']))\"); do {VS} -W ignore {T}/kamera_verfeinern.py {os.path.abspath(a.objekt)} {os.path.join(os.path.abspath(a.fassaden), 'fassaden.json')} $n --schreiben || true; done   # neue Kameras am Modell nachziehen (rc 3 = bleibt unsicher)"
+    # (name, Werkzeuge im CODE-STAND (nur billige Folgeschritte, tools/code_stand.py), vor dem Neurechnen loeschen, Befehl) - teure Schritte haengen nur an den Eingaben
+    schritte = [("vorbereiten", "", f"{Z}/bilder {Z}/vorbereitet.json {Z}/merkmale.json {Z}/db.db {Z}/lg", f"{VC} {T}/zusatzfotos_registrieren.py vorbereiten --fotos {Z}/roh --aus {Z} --unten 0.0"),
+                ("merkmale", "", f"{Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/merkmale.json", f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}"),
+                ("probe_db", "colmap_rig_abgleich.py", "", f"{VC} {T}/colmap_rig_abgleich.py probe --db {Z}/db.db --sparse {a.sparse}   # zweite Vorpruefung auf der erweiterten DB, VOR den GPU-Paaren"),
+                ("refnamen", "", "", f"{VC} {T}/zusatzfotos_lightglue.py refnamen --ziel {Z} --ref-sparse {a.sparse}"),
+                ("paare", "", "", f"{VS} {T}/zusatzfotos_lightglue.py paare --ziel {Z} --ref-sparse {a.sparse} --ref-bilder {fd}"),
+                ("einlesen", "zusatzfotos_lightglue.py colmap_rig_abgleich.py", "", f"{VC} {T}/zusatzfotos_lightglue.py einlesen --ziel {Z} --ref-sparse {a.sparse}"),
+                ("registrieren", "zusatzfotos_registrieren.py", "", f"{VC} {T}/zusatzfotos_registrieren.py registrieren --sparse {Z}/lg/ref_tri --aus {Z}/lg --je-bild --kalibrieren"),
+                ("kameras_nachtragen", "kameras_nachtragen.py", "", f"{VC} {T}/kameras_nachtragen.py {os.path.abspath(a.objekt)} {Z}/lg/sparse_handy/0 --bilder {Z}/roh   # neue Posen als K-Dateien in den Modellrahmen (Gegenprobe gegen vorhandene Kameras)"),
+                ("kamera_verfeinern", "kamera_verfeinern.py", "", vf)]
+    zeilen.append(f"KETTE=$(ls -lL {Z}/roh | sha1sum | cut -c1-16)   # Kette der Schritt-Schluessel beginnt mit dem Kandidatenbestand (Downloads aendern ihn)")
+    for n_, cw, weg, cmd in schritte:
+        zeilen += [f"if schritt_noetig {n_} '{cw}' {hashlib.sha1(cmd.encode()).hexdigest()[:12]}; then"] + ([f"  rm -rf {weg}"] if weg else []) + [f"  {cmd}", f"  schritt_fertig {n_}", "fi"]
+    zeilen.append("echo NACHHOLEN_FERTIG")
+    zeilen.append(f"rm -rf {Z}/lg {Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/stand   # 17.11.2026: Zwischenstaende nach dem letzten Schritt wegraeumen (am Kettenturm 3,2 GB; der naechste Lauf loescht und rechnet sie ohnehin neu) - die Datenplatte fiel dadurch unter die 5-GB-Grenze")
     sk = os.path.join(audit, "seiten_luecken_holen.sh"); open(sk, "w").write("\n".join(zeilen) + "\n"); os.chmod(sk, 0o755)
     if ung and kand:                                                          # Kontaktbogen der Kandidaten zum Ansehen
         Tn = 200; kacheln = []
@@ -100,13 +136,28 @@ def main():
         print("keine Wand ganz ungesehen" + ("; ABER " + ", ".join(f"f{w['nr']:02d} {w['ohne_daten_m2']:.0f} m2" for w in teil) + " ohne Bilddaten (Ziele: tools/foto_auftrag.py)" if teil else " - alle Waende gesehen")); return 0
     print(f"UNGESEHEN: {', '.join('f%02d' % w['nr'] for w in ung)} -> {len(kand)} nicht registrierte Fotos als Kandidaten; Skript {sk}" + ("" if a.holen else "  (mit --holen ausfuehren; --download holt zusaetzlich Commons-Fotos)"))
     if a.holen:
-        import hashlib      # 16.11.2026 (Stabilisierung): jeder Kettenlauf wiederholte ~30 min Nachregistrieren derselben Kandidaten mit demselben Ergebnis
-        marke = os.path.join(Z, "versucht_" + hashlib.sha1(("|".join(sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)) + "|" + ",".join(str(w["nr"]) for w in ung) + "|" + open(sk).read()).encode()).hexdigest()[:16] + ".txt")
+        # 16.11.2026 (Stabilisierung): jeder Kettenlauf wiederholte ~30 min Nachregistrieren derselben Kandidaten mit demselben Ergebnis
+        schl = hashlib.sha1(("|".join(sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)) + "|" + ",".join(str(w["nr"]) for w in ung) + "|" + open(sk).read()).encode()).hexdigest()[:16]
+        marke = os.path.join(Z, "versucht_" + schl + ".txt"); fmarke = os.path.join(Z, "fehlschlag_" + schl + ".json"); cs = code_stand(*NACHHOL_WERKZEUGE)
         if os.path.exists(marke) and os.environ.get("SEITEN_NEU") != "1":
             print(f"Nachholen UEBERSPRUNGEN: dieselben {len(kand)} Kandidaten fuer dieselben Waende wurden schon versucht ({open(marke).read().strip()}); neu erzwingen: SEITEN_NEU=1"); return 3
-        rc = subprocess.call(["bash", sk])
-        if rc: print(f"FEHLER: Nachholen abgebrochen, rc {rc} (Skript {sk})"); return 5      # 17.11.2026: endete mit rc 3 wie 'Wand ungesehen, Nachholen gelaufen' - die Kette wertete das abgebrochene Skript als in Ordnung
-        else: os.makedirs(Z, exist_ok=True); open(marke, "w").write(time.strftime("%Y-%m-%d %H:%M") + f", {len(kand)} Kandidaten")
+        # 22.11.2026 FEHLSCHLAG-MARKE: 1122c und 1122d stuerzten an derselben Stelle ab (RigId, 44 min) - die Erfolgsmarke fehlte, also rechnete jeder Lauf alles neu.
+        # Gleiche Eingaben + gleicher CODE-STAND der Nachhol-Werkzeuge -> derselbe Fehler, sofort rc 5 (in 1 s). Nach einer Codeaenderung laeuft es wieder (Zwischenstaende je Schritt bleiben).
+        try: F = json.load(open(fmarke)) if os.path.exists(fmarke) else None
+        except ValueError: F = None
+        if F and F.get("code_stand") == cs and os.environ.get("SEITEN_NEU") != "1":
+            print(f"FEHLER: Nachholen UEBERSPRUNGEN - bekannter Fehlschlag ({F.get('zeit')}, rc {F.get('rc')}, Schritt {F.get('schritt')}) bei gleichen Eingaben und gleichem CODE-STAND {cs}; "
+                  f"erst Werkzeug beheben (dann laeuft es von selbst neu) oder SEITEN_NEU=1 erzwingen. Marke {fmarke}"); return 5
+        if os.environ.get("SEITEN_NEU") == "1": subprocess.call(["rm", "-rf", os.path.join(Z, "stand")])      # erzwungen: auch die Zwischenstaende je Schritt verwerfen
+        t0 = time.time(); rc = subprocess.call(["bash", sk])
+        if rc:
+            try: schritt = open(os.path.join(Z, "stand", "aktuell")).read().strip()
+            except OSError: schritt = "vor dem ersten Schritt (Vorpruefung/Download)"
+            os.makedirs(Z, exist_ok=True); __import__("json_sicher").schreiben(fmarke, dict(zeit=time.strftime("%Y-%m-%d %H:%M"), rc=rc, schritt=schritt, sekunden=round(time.time() - t0), code_stand=cs, werkzeuge=list(NACHHOL_WERKZEUGE), skript=sk))
+            print(f"FEHLER: Nachholen abgebrochen, rc {rc} im Schritt {schritt} nach {time.time() - t0:.0f} s (Skript {sk}); Fehlschlag-Marke {fmarke} (CODE-STAND {cs})"); return 5      # 17.11.2026: endete mit rc 3 wie 'Wand ungesehen, Nachholen gelaufen' - die Kette wertete das abgebrochene Skript als in Ordnung
+        else:
+            os.makedirs(Z, exist_ok=True); open(marke, "w").write(time.strftime("%Y-%m-%d %H:%M") + f", {len(kand)} Kandidaten")
+            if os.path.exists(fmarke): os.remove(fmarke)
     return 3
 
 
