@@ -16,7 +16,10 @@ VERFAHREN (nach seiten_gps_vereinen, vor dem Zusammenlegen in tools/sfm_seiten_m
      Die beste Hypothese OHNE Korridor wird mitgemeldet (zeigt, ob eine starke Fremdlage in den Paaren steckt).
   4. GUETE (jede einzeln, 'ok' nur wenn alle bestehen): Paare nach Blick-Filter, Inlier-Zahl und -Anteil, Zahl der Bildpaare, die Inlier tragen, raeumliche Ausdehnung
      der Inlier (zweitgroesste Hauptachse >= MIN_AUSDEHNUNG_M: kein Fleck, keine Linie; Ebenheit wird gemeldet - eine Ebene legt eine Sim3 fest), Bootstrap-Streuung der
-     Querspur-Sim3 hoechstens MAX_SD_ANTEIL der GPS-Streuung (sonst bringt die Bindung nichts), Doppelwand danach nicht groesser.
+     Querspur-Sim3 hoechstens MAX_SD_ANTEIL der GPS-Streuung (sonst bringt die Bindung nichts), Doppelwand danach nicht groesser, und KEINE Fremdlage ausserhalb des
+     Korridors mit mindestens so vielen Inliern (dann sind die Querpaare mehrheitlich Verwechslung).
+  BEFUND SCHWABENTOR 1122 (Voragent auf DB-Kopie, 22.11.): 559 Querpaare teil0/teil1, nur 39 unter 110 Grad, 1691 3D-3D-Paare im Median 8,3 m auseinander, Konsens
+     167 Grad x1,21 = Gegenseiten-Verwechslung -> hier ABGELEHNT (Test 7). Die Stufe ist dort eine PRUEFUNG, nicht die Bindung; Hauptweg offen: LoD2 je Teil.
   5. PRUEFMASS DOPPELWAND (ins JSON): Abstand der Teil-Wolken an gemeinsam gesehenen Flaechen - A-Punkte (dichte Wolke, sonst duenne) im Umkreis UEBERLAPP_M um die
      A-Seite der Inlier, je Punkt Abstand zum naechsten B-Punkt; Median/P90 in Metern VOR (GPS-Lage) und NACH (Querspur-Lage), gleiche Punktauswahl.
 Ausgabe <aus>/querspur.json (ok, urteil, B_nach_A nur bei ok, B_nach_A_gps, pruefung{...}, doppelwand{vor, nach}). rc 0 = gebunden, 2 = zu wenig/keine Eingabe (nichts getan),
@@ -48,7 +51,8 @@ MIN_PAARE_INLIER = 3     # Inlier aus mindestens 3 verschiedenen Bildpaaren (nic
 MIN_AUSDEHNUNG_M = 1.0   # ANNAHME: zweitgroesste Hauptachse (Wurzel des Eigenwerts) der Inlier >= 1 m
 MAX_SD_ANTEIL = 0.5      # ANNAHME: Querspur-Streuung hoechstens halb so gross wie die GPS-Streuung
 UEBERLAPP_M = 1.5        # Umkreis um die Inlier fuer die Doppelwand-Probe
-DOPPEL_TOL = 1.05        # Doppelwand nachher <= vorher * 1,05 + 0,02 m
+FREMD_ANTEIL = 1.0       # ANNAHME: Fremdlage ausserhalb des Korridors mit >= 100 % der Korridor-Inlier = Querpaare mehrheitlich Verwechslung -> ablehnen
+DOPPEL_TOL = 1.05       # Doppelwand nachher <= vorher * 1,05 + 0,02 m
 
 
 # ---------- Geometrie
@@ -208,6 +212,12 @@ def binden(KA, KB, XA, XB, paare, G, lot, ref_b, DA=None, DB=None, max_azimut=MA
     if ev[1] < MIN_AUSDEHNUNG_M: gr.append(f"Inlier auf einem Fleck/einer Linie (zweite Hauptachse {ev[1]:.2f} m, noetig {MIN_AUSDEHNUNG_M:.1f})")
     if pr["querspur_sd"]["dreh_grad"] > MAX_SD_ANTEIL * G["dreh_sd"] and pr["querspur_sd"]["dreh_grad"] > 0.2: gr.append(f"Querspur-Drehung nur auf +-{pr['querspur_sd']['dreh_grad']:.2f} Grad (GPS +-{G['dreh_sd']:.2f}) - kein Gewinn")
     if pr["querspur_sd"]["massstab_rel"] > MAX_SD_ANTEIL * G["mass_sd"] and pr["querspur_sd"]["massstab_rel"] > 0.005: gr.append(f"Querspur-Massstab nur auf +-{100 * pr['querspur_sd']['massstab_rel']:.1f} % (GPS +-{100 * G['mass_sd']:.1f} %) - kein Gewinn")
+    bo = pr.get("bester_ohne_gps")
+    if bo and not bo["im_korridor"] and bo["inlier"] >= FREMD_ANTEIL * n:
+        # 22.11.2026 Schwabentor 1122 (Voragent auf DB-Kopie): 559 Querpaare teil0/teil1, nur 39 unter 110 Grad; 1691 3D-3D-Paare unter der GPS-Lage im Median 8,3 m
+        # auseinander, Konsens-Sim3 167 Grad x1,21 = Gegenseiten-Verwechslung. Traegt eine Lage AUSSERHALB des GPS-Korridors mindestens so viele Inlier wie die Lage darin,
+        # sind die Querpaare mehrheitlich Verwechslung - dann ist auch die Korridor-Lage nicht belegt (Zufallstreffer in Verwechslungs-Paaren).
+        gr.append(f"Querpaare mehrheitlich Gegenseite: ohne GPS-Veto {bo['inlier']} Inlier bei {bo['dreh_lot_grad']:+.0f} Grad / {bo['lage_m']:.1f} m neben GPS, im Korridor nur {n}")
     if dw and dw["nach"]["median_m"] > dw["vor"]["median_m"] * DOPPEL_TOL + 0.02: gr.append(f"Doppelwand nachher groesser ({dw['vor']['median_m']:.2f} -> {dw['nach']['median_m']:.2f} m)")
     if gr: erg.update(ok=False, urteil="ABGELEHNT: " + "; ".join(gr) + " - GPS-Lage bleibt"); return erg
     erg.update(ok=True, B_nach_A=M.tolist(), urteil=f"gebunden ueber {n} Querspuren aus {len(pi)} Bildpaaren (Rest {rest:.2f} m); gegen GPS {k['dreh_lot_grad']:+.1f} Grad, Massstab {100 * k['massstab_rel']:+.1f} %, Lage {k['lage_m']:.1f} m"

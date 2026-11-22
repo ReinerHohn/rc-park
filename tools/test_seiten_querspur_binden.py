@@ -62,11 +62,11 @@ def echte_paare(anzahl=8, falsch_anteil=0.15):
     return L
 
 
-def gegenseiten_paare(anzahl=8):
+def gegenseiten_paare(anzahl=8, anteil=1.0):
     L = []
     for k in range(anzahl):
         a, b = KA[f"a_nord{k % 8}"], KB[f"b_sued{k % 8}"]; ja = {w: j for j, w in enumerate(a["welt"])}
-        m = [(ja[nord_von[tuple(np.round(W[w], 6))]], j) for j, w in enumerate(b["welt"]) if nord_von.get(tuple(np.round(W[w], 6))) in ja]
+        m = [(ja[nord_von[tuple(np.round(W[w], 6))]], j) for j, w in enumerate(b["welt"]) if nord_von.get(tuple(np.round(W[w], 6))) in ja and (j % 100) < 100 * anteil]
         L.append((f"a_nord{k % 8}", f"b_sued{k % 8}", np.array(m)))
     return L
 
@@ -94,13 +94,15 @@ assert e["pruefung"]["paare_blick_ok"] == 8 and e["pruefung"]["paare_gesamt"] ==
 dw = e["doppelwand"]; assert dw and dw["nach"]["median_m"] < 0.15 and dw["vor"]["median_m"] > 3 * dw["nach"]["median_m"], f"1: Doppelwand {dw}"
 print(f"ok 1: gemischt -> gebunden ({w:.3f} Grad, {d:.3f} m, Massstab {100 * s:+.2f} %; GPS lag {w0:.1f} Grad / {d0:.1f} m / {100 * s0:+.0f} % daneben), Doppelwand {dw['vor']['median_m']} -> {dw['nach']['median_m']} m")
 
-# 2 Blick-Filter aus, Gegenseiten-Block mindestens so stark
-e = Q.binden(KA, KB, XA, XB, echte_paare(4) + gegenseiten_paare(8), G, lot, ref_b, max_azimut=180.0)
-assert e["ok"], f"2: nicht gebunden: {e['urteil']}"
-w, d, s = lage_fehler(np.array(e["B_nach_A"])); bo = e["pruefung"]["bester_ohne_gps"]
-assert w < 0.3 and d < 0.15 and abs(s) < 0.005, f"2: GPS-Veto fand die wahre Lage nicht: {w:.3f} Grad, {d:.3f} m"
-assert not bo["im_korridor"] and bo["inlier"] >= e["pruefung"]["inlier"], f"2: Testaufbau - Gegenseite sollte ohne Veto mindestens gleich stark sein: {bo}"
-print(f"ok 2: Blick-Filter aus, Gegenseite staerker ({bo['inlier']} gegen {e['pruefung']['inlier']} Inlier, {bo['dreh_lot_grad']:+.0f} Grad) -> GPS-Veto haelt die wahre Lage")
+# 2 Blick-Filter aus: Gegenseiten-Block mindestens so stark wie die echten -> ABGELEHNT (Querpaare mehrheitlich Verwechslung, Korridor-Lage nicht belegt);
+#   Gegenseiten-Block schwaecher (ein Viertel der Punkte) -> das GPS-Veto allein haelt die wahre Lage
+e = Q.binden(KA, KB, XA, XB, echte_paare(4) + gegenseiten_paare(8), G, lot, ref_b, max_azimut=180.0); bo = e["pruefung"]["bester_ohne_gps"]
+assert not e["ok"] and "B_nach_A" not in e and "mehrheitlich Gegenseite" in e["urteil"] and not bo["im_korridor"], f"2a: Gegenseiten-Mehrheit nicht abgelehnt: {e['urteil']} {bo}"
+e = Q.binden(KA, KB, XA, XB, echte_paare(4) + gegenseiten_paare(8, anteil=0.25), G, lot, ref_b, max_azimut=180.0); bo = e["pruefung"]["bester_ohne_gps"]
+assert e["ok"], f"2b: nicht gebunden: {e['urteil']}"
+w, d, s = lage_fehler(np.array(e["B_nach_A"]))
+assert w < 0.3 and d < 0.15 and abs(s) < 0.005 and bo["im_korridor"], f"2b: GPS-Veto fand die wahre Lage nicht: {w:.3f} Grad, {d:.3f} m, {bo}"
+print("ok 2: Blick-Filter aus - Gegenseiten-Mehrheit abgelehnt; Gegenseite in der Minderheit -> wahre Lage gebunden")
 
 # 3 nur Gegenseiten-Paare, Blick-Filter an
 e = Q.binden(KA, KB, XA, XB, gegenseiten_paare(), G, lot, ref_b)
@@ -109,6 +111,25 @@ assert not e["ok"] and e.get("zu_wenig") and "B_nach_A" not in e and e["pruefung
 e = Q.binden(KA, KB, XA, XB, gegenseiten_paare(), G, lot, ref_b, max_azimut=180.0)
 assert not e["ok"] and "B_nach_A" not in e and "GPS-Korridor" in e["urteil"], f"4: {e['urteil']}"
 print("ok 3/4: nur Gegenseiten-Paare -> nichts uebernommen (Blick-Filter: zu wenig; ohne Filter: keine Lage im GPS-Korridor)")
+
+# 7 SCHWABENTOR 1122 nachgestellt (Voragent auf DB-Kopie): 559 Querpaare, nur 39 unter 110 Grad Blickunterschied, 1691 3D-3D-Paare, deren Konsens 167 Grad x1,21 neben
+#   der GPS-Lage liegt (Gegenseiten-Verwechslung) -> nichts uebernehmen, mit und ohne Blick-Filter
+r7 = np.random.default_rng(11); F7 = np.eye(4); F7[:3, :3] = 1.21 * rot_z(167.0)
+KA7, KB7, XA7, XB7, P7 = {}, {}, {}, {}, []
+for i in range(1691):
+    w_ = np.array([r7.uniform(-5, 5), r7.choice([-5.0, 5.0]), r7.uniform(0.5, 19.5)]) if i % 2 else np.array([r7.choice([-5.0, 5.0]), r7.uniform(-5, 5), r7.uniform(0.5, 19.5)])
+    XB7[300000 + i] = Q.anwenden(MB, w_[None])[0]; XA7[200000 + i] = Q.anwenden(MA @ F7, (w_ + r7.normal(0, 0.03, 3))[None])[0]
+for j in range(559):
+    ids = [i for i in range(1691) if i % 559 == j]; az = 60.0 if j < 39 else 170.0; ba = np.array([1.0, 0, 0]); bw = rot_z(az) @ ba
+    KA7[f"a{j}"] = dict(p3d=np.array([200000 + i for i in ids], np.int64), blick=ba); KB7[f"b{j}"] = dict(p3d=np.array([300000 + i for i in ids], np.int64), blick=Q.zerlege(M_gps)[1].T @ bw)
+    P7.append((f"a{j}", f"b{j}", np.c_[np.arange(len(ids)), np.arange(len(ids))]))
+ref7 = np.array([Q.anwenden(MB, np.array([[-25.0, y, 1.6]]))[0] for y in range(-8, 9, 2)])
+for ma in (Q.MAX_AZIMUT_GRAD, 180.0):
+    e = Q.binden(KA7, KB7, XA7, XB7, P7, G, lot, ref7, max_azimut=ma); pr = e["pruefung"]
+    assert not e["ok"] and "B_nach_A" not in e, f"7: Schwabentor-Verwechslung uebernommen (Blick {ma}): {e['urteil']}"
+    assert pr["paare_blick_ok"] == (39 if ma < 180 else 559), f"7: Blick-Filter {pr}"
+    bo = pr.get("bester_ohne_gps") or {}; assert bo and not bo["im_korridor"] and abs(abs(bo["dreh_lot_grad"]) - 164) < 2, f"7: Fremdlage nicht als 167 Grad (gegen die 3 Grad verdrehte GPS-Lage: 164) erkannt: {bo}"
+print(f"ok 7: Schwabentor-1122-Lage (559 Querpaare, 39 unter 110 Grad, 1691 Zuordnungen, Konsens 167 Grad x1,21) -> abgelehnt: {e['urteil'][:110]}")
 
 # 5 GPS fehlt; Datenbank lesen
 assert isinstance(Q.gps_unsicherheit(dict(ok=True, B_nach_A=np.eye(4).tolist(), pruefung=dict(dreh_sd_grad=2.0, mass_sd_rel=0.08))), str), "GPS-Rahmen fehlt, trotzdem Veto"

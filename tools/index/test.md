@@ -89,6 +89,8 @@
 - `tools/test_seiten_erkennen.py` [-] test_seiten_erkennen.py - feste Erwartungen fuer tools/seiten_erkennen.py (ohne GPU, ohne Bilder): Gemeinschaften, Zusammenhangsteile, Urteil.
 - `tools/test_seiten_gps_vereinen.py` [-] Fester Test (Sekunden, ohne GPU, ohne echte Daten) fuer den 22.11.2026-Fix nach dem Nulllauf schwabentor-1122 (Lage-Tore: 20 Grad gegen GPS, Teil 1 mit 130 Bildern fehlte). 1 seite
 - `tools/test_sfm_gps_ausgleich.py` [-] Fester Test (synthetisch, Sekunden): zwei Seitenteile 3 Grad / 9 % daneben + GPS 4 m + falsche/eingefrorene Geotags -> sfm_gps_ausgleich bringt sie zurueck; wenig GPS -> unveraendert
+- `tools/test_seiten_querspur_binden.py` [col] Fester Test (synthetisch, Sekunden): Turm, B 4 m/3 Grad/5 % daneben; echte Querspuren + Gegenseiten-Block -> wahre Lage; nur Gegenseite / Gegenseiten-Mehrheit / Schwabentor-1122-Zahlen (167 Grad x1,21) -> nichts
+- `tools/test_wand_dicke_tor.py` [-] Fester Test (synthetisch): Seitenteile an der Westwand 1,6 m versetzt -> doppelwand; Vordach ueber dem Band zaehlt nicht; ein Teil in sich dick -> dick
 - `tools/test_seiten_kette.py` [col] Fester Test (ohne GPU, Sekunden) fuer die Seitenfolge der Kette vom 21.11.2026 - synthetische Mini-Modelle (COLMAP-Textformat) und Mini-Datenbanken: 1 seiten_blick_tor.py zwei 'ver
 - `tools/test_seiten_modelle.py` [col] Fester Test (ohne GPU, Sekunden) fuer tools/sfm_seiten_modelle.py (21.11.2026: je Seite ein Kameramodell, je Seite eine dichte Wolke, vereinen). Synthetischer Turm: 14 Nordbilder (
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
