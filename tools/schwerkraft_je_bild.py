@@ -120,8 +120,11 @@ def lot_welt(kameras, ordner, n_max=150, min_inlier=12, seed=0, oben_ref=None):
         if inn.sum() < 5: break
         m = W[inn].mean(0); m /= np.linalg.norm(m)
     if oben_ref is not None and m @ np.asarray(oben_ref, float) < 0: m = -m
-    a = np.degrees(np.arccos(np.clip(W @ m, -1, 1)))
-    return dict(oben=m.tolist(), n=int(len(W)), getragen=int((a < 3.0).sum()), streuung_median_grad=float(np.median(a)), streuung_p90_grad=float(np.percentile(a, 90)))
+    a = np.degrees(np.arccos(np.clip(W @ m, -1, 1))); ig = a < 3.0
+    # sigma_mittel_grad (22.11.2026, Lot-Zwang der Brueckenkopplung tools/bruecke_hebel.py): Zufallsfehler des Mittels = Streuung der tragenden Bilder (RMS-Winkel / Wurzel 2
+    # je Achse) / Wurzel n; systematische Fehler (Brennweite, Objektiv) sind NICHT enthalten
+    sm = float(np.sqrt(np.mean(a[ig] ** 2) / 2) / np.sqrt(max(int(ig.sum()), 1))) if ig.any() else None
+    return dict(oben=m.tolist(), n=int(len(W)), getragen=int(ig.sum()), streuung_median_grad=float(np.median(a)), streuung_p90_grad=float(np.percentile(a, 90)), sigma_mittel_grad=sm)
 
 
 def main(argv=None):

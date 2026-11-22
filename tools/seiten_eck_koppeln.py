@@ -87,7 +87,7 @@ def punkte(rE, rZ, mit_tiefe=False):
     return aus + (np.array(td),) if mit_tiefe else aus
 
 
-def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None):
+def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None):
     """Sim3 X -> Y (X im Zwischenmodell, Y im Teilmodell; ausd = Ausdehnung des Zwischenmodells, ausd_ziel = des Teils fuer den Hebel). -> (M, pruefung, ok, grund).
     FEHLERMASS (22.11.2026, Selbsttest Martinstor): mit 'tiefe' (Abstand Punkt - beobachtende Kamera im Zwischenmodell) wird der Rest RELATIV ZUR TIEFE gemessen (= Blickstrahl-
     Winkel, 2 % ~ 1,1 Grad). Relativ zur Ausdehnung bestrafte es ferne, schlecht triangulierte Punkte: ein nachweislich RICHTIGES Zwischenmodell stimmte gegen das Ursprungs-
@@ -97,20 +97,21 @@ def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None):
     s_ = float(np.cbrt(abs(np.linalg.det(f["M"][:3, :3])))) if f else 1.0
     f = sim3_meter(X, Y, schwelle_m=SCHWELLE_REL * ausd * s_, min_anteil=0.0)
     if f is None: return None, dict(punkte=len(X)), False, "keine Sim3"
-    M = f["M"]; inl = f["inlier"]; mass = "ausdehnung"
+    M = f["M"]; inl = f["inlier"]; mass = "ausdehnung"; fit = fitter or umeyama
+    if fitter is not None and inl.sum() >= 3: M = matrix(*fit(X[inl], Y[inl]))
     if tiefe is not None and len(tiefe) == len(X):
         mass = "tiefe"
         for _ in range(5):                                                             # tiefenbezogene Inlier, Umeyama neu, bis stabil
             s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
             if inl.sum() < 3: break
-            M = matrix(*umeyama(X[inl], Y[inl]))
+            M = matrix(*fit(X[inl], Y[inl]))
         s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
         rest_rel = float(np.median(r[inl])) if inl.any() else 1.0
     else: rest_rel = f["rest_median_m"] / max(ausd * s_, 1e-12)
     n_in = int(inl.sum()); ant = n_in / len(X); i_ = np.flatnonzero(inl)
     if n_in < 3: return None, dict(punkte=len(X)), False, "keine Sim3"
     Q = X[i_]; _, _, Vt = np.linalg.svd(Q - Q.mean(0)); u = (Q - Q.mean(0)) @ Vt[0]
-    hs = [umeyama(X[i_][w], Y[i_][w])[0] for w in (u < np.median(u), u >= np.median(u)) if w.sum() >= 3]
+    hs = [fit(X[i_][w], Y[i_][w])[0] for w in (u < np.median(u), u >= np.median(u)) if w.sum() >= 3]
     hael = float(abs(hs[0] - hs[1]) / np.mean(hs)) if len(hs) == 2 else 1.0
     pr = dict(punkte=len(X), stimmig=n_in, anteil=round(ant, 3), rest_rel=round(rest_rel, 5), fehlermass=mass, massstab_haelften_rel=round(hael, 4))
     if ausd_ziel: pr["hebel"] = round(ausdehnung(Y[i_]) / max(ausd_ziel, 1e-12), 3)
@@ -288,6 +289,23 @@ def kreise_pruefen(kanten, lage, weg, baum, ausd_teil):
     return aus
 
 
+LEITER = os.environ.get("RCPARK_ECK_LEITER", "1") != "0"   # 22.11.2026 Eskalationsleiter je Kante (tools/bruecke_hebel.py); 0 = Stand vor der Leiter
+_LOT = {}
+
+
+def leiter_kante(z, i, j, Mi, Mj, pi, pj, R, a):
+    """Kante i-j des Zwischenmodells z durch die Leiter (bruecke_hebel.leiter): -> dict(M (j -> i), leiter{stufe, urteil, stufen, lot_pruefung, fotoauftrag})."""
+    import pycolmap, bruecke_hebel as BH
+    for t in (i, j):
+        if t not in _LOT:
+            try: _LOT[t] = BH.lot_modell(R[t], a.fotos, cache=os.path.join(a.aus, f"lot_teil{t}.json"))
+            except Exception as ex: _LOT[t] = dict(oben=None, hinweis=str(ex)[:200])
+    lot = (_LOT[i]["oben"], _LOT[j]["oben"]) if _LOT[i].get("oben") and _LOT[j].get("oben") and all(_LOT[t].get("quelle") == "fluchtpunkte" for t in (i, j)) else None
+    wd = ((z.get("wiederholbarkeit") or {}).get("max") or {}).get("drehung_grad")
+    lt = BH.leiter(BH.Modell(pycolmap.Reconstruction(z["modell"])), BH.Modell(R[i]), BH.Modell(R[j]), Mi, Mj, pi, pj, a.fotos, os.path.join(a.aus, f"leiter_{i}_{j}"), lot=lot, wdh_grad=wd)
+    M = lt.pop("M"); return dict(M=M, leiter=json.loads(json.dumps(lt, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o))))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0]); [ap.add_argument(k) for k in ("db", "seiten", "fotos")]; ap.add_argument("--aus", required=True)
     ap.add_argument("--teil", action="append", required=True, help="N=<modell>, erster = Teil A"); ap.add_argument("--faeden", type=int, default=max(1, (os.cpu_count() or 2) // 2))
@@ -314,8 +332,11 @@ def main(argv=None):
             for y in range(x + 1, len(ts)):
                 (Mi, pi), (Mj, pj) = gut[ts[x]], gut[ts[y]]
                 sig = float(np.sqrt(sum(p_["rest_rel"] ** 2 + p_["massstab_haelften_rel"] ** 2 for p_ in (pi, pj))))
-                kanten.append(dict(i=ts[x], j=ts[y], M=Mi @ np.linalg.inv(Mj), zwischenmodell=i, sigma=sig,
-                                   guete=float(min(pi["stimmig"] * pi.get("hebel", 1), pj["stimmig"] * pj.get("hebel", 1)))))
+                kd = dict(i=ts[x], j=ts[y], M=Mi @ np.linalg.inv(Mj), zwischenmodell=i, sigma=sig, guete=float(min(pi["stimmig"] * pi.get("hebel", 1), pj["stimmig"] * pj.get("hebel", 1))))
+                if LEITER and z.get("modell"):                                          # Eskalationsleiter (tools/bruecke_hebel.leiter): Ausgleich, Urteil, gefuehrtes Nachmessen
+                    try: kd.update(leiter_kante(z, ts[x], ts[y], Mi, Mj, pi, pj, R, a))
+                    except Exception as ex: kd["leiter"] = dict(fehler=str(ex)[:300])
+                kanten.append(kd)
     lage, weg, baum = spannbaum([t for t, _ in tl], kanten, A); kr = kreise_pruefen(kanten, lage, weg, baum, ausd_teil)
     raus = set()
     for c in kr:
@@ -326,7 +347,7 @@ def main(argv=None):
         if t in lage and t not in raus:
             teile[str(t)] = dict(ok=True, M_nach_A=lage[t].tolist(), weg=[[kanten[n]["i"], kanten[n]["j"]] for n in weg[t]], massstab_unsicher=round(float(np.sqrt(sum(kanten[n]["sigma"] ** 2 for n in weg[t]))), 4))
         else: teile[str(t)] = dict(ok=False, grund="Kreisschluss-Widerspruch" if t in raus else "keine stimmige Kopplung")
-    kj = [dict(i=k["i"], j=k["j"], zwischenmodell=k["zwischenmodell"], guete=round(k["guete"], 1), sigma=round(k["sigma"], 5), im_baum=n in baum) for n, k in enumerate(kanten)]
+    kj = [dict(i=k["i"], j=k["j"], zwischenmodell=k["zwischenmodell"], guete=round(k["guete"], 1), sigma=round(k["sigma"], 5), im_baum=n in baum, leiter=k.get("leiter")) for n, k in enumerate(kanten)]
     erreicht = {A} | {int(t) for t, v in teile.items() if v["ok"]}
     fl = luecke(erreicht, {t: f"Bruecke zu Teil(en) {[x for x in z['teile'] if x != t]} vorhanden, Kopplung nicht stimmig ({z.get('grund') or '; '.join(f'Teil {tk}: ' + str(v.get('grund')) for tk, v in (z.get('kopplungen') or {}).items() if v.get('grund') != 'stimmig')}) - mehr Fotos dieses Uebergangs"
                            for z in zw for t in z["teile"]})
