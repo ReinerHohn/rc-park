@@ -40,6 +40,9 @@ VERSATZ_MAX_M = 0.5
 KNICK_GRAD = 8.0         # ANNAHME: Kantenstuecke mit weniger Knick gehoeren zu einer Wand (Schwabentor-Zwischenecken < 3 Grad, echte Ecken ~90 Grad)
 NEIGUNG_MAX_GRAD = 5.0   # ANNAHME: Wandneigung je Teil (Lage oben gegen unten) - ab hier ist 'dick' eher Kippung als Relief
 N_MAX = 600000           # Punkte je Teil (feste Zufallsauswahl)
+NORMAL_GRAD = 45.0       # ANNAHME: Punkt gehoert zur Kante nur, wenn seine waagerechte Normale hoechstens 45 Grad von der Kantennormale abweicht (Wand
+NORMAL_WAAG_MIN = 0.5    # parallel zur Kante); Normalen mit waagerechtem Anteil < 0,5 (Boden, Decke, Gesims-Unterseite) zaehlen nicht. 22.11.2026 Eck-Kopplung 1122:
+                         # die Querwand eines Teils fiel ins 3-m-Band der Kante -> "doppelwand/versetzt" ohne zweite Wand. Ohne Normalen (n x 3 / alle 0): nur Band.
 
 
 def sim3_fit(X, Y):
@@ -70,6 +73,9 @@ def kanten_messen(grundflaeche, teile, z_band=Z_BAND, abstand=ABSTAND_M, min_kan
         k = dict(von=np.round(p0, 2).tolist(), bis=np.round(p1, 2).tolist(), laenge_m=round(L, 2), teile={}); alle = []
         for name, P in teile.items():
             P = np.asarray(P, float); w = (P[:, 2] > z_band[0]) & (P[:, 2] < z_band[1]); q = P[w, :2] - p0; s = q @ e; d = q @ n; m = (s > 0.5) & (s < L - 0.5) & (np.abs(d) < abstand)
+            if P.shape[1] >= 6 and np.abs(P[w, 3:5]).sum() > 0:                   # mit Normalen: nur Wandpunkte parallel zur Kante (Querwaende im Eckband zaehlen nicht)
+                nh = P[w, 3:5]; nl = np.linalg.norm(nh, axis=1); nz = np.abs(P[w, 5])
+                waag = nl / np.maximum(np.sqrt(nl ** 2 + nz ** 2), 1e-9); m &= (waag >= NORMAL_WAAG_MIN) & ((nh @ n) >= np.cos(np.radians(NORMAL_GRAD)) * nl)   # nach AUSSEN (n zeigt von der Mitte weg; COLMAP-Normalen zur Kamera): Innenwaende der Tordurchfahrt zaehlen nicht
             if m.sum() < min_punkte: k["teile"][str(name)] = dict(n=int(m.sum()), urteil="kein_urteil"); continue
             k["teile"][str(name)] = dict(n=int(m.sum()), lage_m=round(float(np.median(d[m])), 3), dicke_m=round(float(np.percentile(d[m], 90) - np.percentile(d[m], 10)), 3)); alle.append(d[m])
             zz = P[w, 2][m]; zm = float(np.median(zz)); u, o = zz < zm, zz >= zm                 # Neigung: Lage der oberen gegen die untere Haelfte des Bandes
@@ -114,7 +120,9 @@ def teile_laden(sm, au, n_max=N_MAX):
         if fit is None: I[str(e["teil"])] = dict(grund=f"keine robuste Sim3 der {len(X)} Kameras auf die Ausrichtung (< {MIN_ANTEIL:.0%} innerhalb {SCHWELLE_M} m)"); continue
         M = fit["M"]; rest = np.linalg.norm(X @ M[:3, :3].T + M[:3, 3] - Y, axis=1)[fit["inlier"]]
         n, h, _ = ply_kopf(fu); f = open(fu, "rb"); f.seek(h); d = np.frombuffer(f.read(n * 27), PLY_SATZ)["p"]
-        idx = np.random.default_rng(0).choice(n, min(n, n_max), replace=False); P[str(e["teil"])] = d[idx].astype(float) @ M[:3, :3].T + M[:3, 3]
+        idx = np.random.default_rng(0).choice(n, min(n, n_max), replace=False); f.seek(h); dn = np.frombuffer(f.read(n * 27), PLY_SATZ)["n"]
+        Rn = M[:3, :3] / max(np.cbrt(abs(np.linalg.det(M[:3, :3]))), 1e-12)          # reine Drehung fuer die Normalen
+        P[str(e["teil"])] = np.c_[d[idx].astype(float) @ M[:3, :3].T + M[:3, 3], dn[idx].astype(float) @ Rn.T]
         I[str(e["teil"])] = dict(kameras=len(X), kameras_stimmig=fit["n_inlier"], rest_median_m=round(float(np.median(rest)), 3), punkte=int(len(idx)))
     return P, I
 
