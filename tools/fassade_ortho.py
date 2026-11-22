@@ -15,12 +15,32 @@ Ausgabe in --aus: ortho_<id>.png (fusioniert), abdeckung_<id>.png, ortho_<id>_ei
   /media/oem/scan/venv-seg/bin/python -I tools/fassade_ortho.py modelle/kaufhaus_null4/objekt.json --stl <modell.stl> --aus DIR [--zelle 0.05]
 Weitere Argumente: --tol 0.10, --max-winkel 70, --fotos <a,b,..>, --max-fotos 40, --waende-stl, --ohne-gpu, --gpu-mb 2600, --einzeln.
 Umgebung: cv2/trimesh/torch -> venv-seg (s.o.) oder `tools/py tools/fassade_ortho.py ...`. Exit 0 = fertig; Abbruch mit Text (z. B. zentrierung huelle).
+
+--messflaeche eben (22.11.2026, KREISFALL: Einzelfoto-Orthos auf dem STL des VORIGEN Kettenlaufs - dessen Oeffnungen/Relief waren Naehte, an denen Kanten in jedem
+Foto klebten; das Tor-Mass wechselte je Lauf zwischen 4,3 und 5,2 m): Projektionsflaeche UND Verdecker = modellfreier Messkoerper (messkoerper(): LoD2-Fassaden flach in
+der Wandebene aus Fotokanten, wandversatz(), sonst LoD2; Dach/Boden aus LoD2), kein --stl noetig (Lauf von null). Fuer alle MESSUNGEN Pflicht (Kette: fenster_ortho,
+fenster_ortho_fein); --messflaeche modell (Standard) = alter Weg fuer Anzeige-/Sichtbilder (z. B. Innenwaende durch gebaute Oeffnungen, Stufe bauplan_innen_ortho).
+--nur-messkoerper DATEI.stl schreibt nur den Messkoerper (STL in mm wie das Objekt-STL) fuer andere Stufen (Kette: mono).
 """
 import os, sys, json, glob, math, argparse, time
 import numpy as np, cv2, trimesh
 from concurrent.futures import ThreadPoolExecutor
 TOOLS = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(TOOLS); sys.path.insert(0, TOOLS)
 import fehlteile_finden as FF
+
+
+def lod2_eigen(obj):
+    """Alle LoD2-Flaechen des eigenen Gebaeudes im Modellrahmen: [(typ, P (k, 3))], Ring ohne Schlusspunkt (Wall/Roof/GroundSurface ...)."""
+    import lod2_gebaeude as LG
+    R = obj["rahmen"]; C0 = np.array(R["mitte_utm"]); XH = np.array(R["xhat_utm"]); YH = np.array(R["yhat_utm"]); Z0 = float(R["gelaende"])
+    lok = lambda P: np.c_[(P[:, :2] - C0) @ XH, (P[:, :2] - C0) @ YH, P[:, 2] - Z0]
+    picked = LG.extract(obj["lod2"]["gml"], center=tuple(C0), radius=60.0)
+    eig = [(m, p) for m, p in picked if m.get("id") == obj["lod2"]["id"]]
+    _, polys = eig[0]; out = []
+    for t, P in polys:
+        P = np.asarray(P, float); P = P[:-1] if np.allclose(P[0], P[-1]) else P
+        out.append((t, lok(P)))
+    return out
 
 
 def lod2_waende(obj):
@@ -36,6 +56,59 @@ def lod2_waende(obj):
         if t == "WallSurface": out.append(lok(P))
     gr = np.vstack([lok(np.asarray(P, float)) for t, P in polys if t == "GroundSurface"])[:, :2].mean(0)
     return out, gr
+
+
+def wandversatz(objekt, F, winkel=5.0, abstand=0.3):
+    """Gemessene Lage der Wandebene einer Fassade gegen die LoD2-Ebene (m, + = nach aussen) - MODELLFREI (22.11.2026, Kreisfall Einzelorthos).
+    Quelle: audit/schleife_korrekturen.json (tools/ebenen_schleife.py, Wandebene aus triangulierten FOTOKANTEN), Eintraege art 'wandversatz' mit angenommen != false,
+    zugeordnet ueber Normale (< winkel Grad) und Ebenenabstand der Bezugspunkte (< abstand m) - nie ueber die Fassadennummer allein.
+    Ohne Eintrag: 0 (LoD2-Ebene). Liest NICHT das gebaute Modell. Rueckgabe (versatz, quelle)."""
+    p = os.path.join(os.path.dirname(os.path.abspath(objekt)), "audit", "schleife_korrekturen.json")
+    if not os.path.exists(p): return 0.0, "LoD2-Ebene (keine audit/schleife_korrekturen.json)"
+    try: KK = json.load(open(p)).get("korrekturen", [])
+    except Exception as e_: return 0.0, f"LoD2-Ebene (schleife_korrekturen.json unlesbar: {e_})"
+    n = np.asarray(F["n"], float)[:2]; o = np.asarray(F["o"], float)[:2]; ws = []
+    for K in KK:
+        if K.get("art") != "wandversatz" or K.get("angenommen") is False or "w_soll" not in K: continue
+        try: nk = np.asarray(K["n"], float)[:2]; ok_ = np.asarray(K["o"], float)[:2]
+        except Exception: continue
+        if nk @ n > math.cos(math.radians(winkel)) and abs((ok_ - o) @ n) < abstand: ws.append((float(K["w_soll"]) + float((ok_ - o) @ n), K.get("id", "?")))
+    if not ws: return 0.0, "LoD2-Ebene (kein Wandversatz fuer diese Fassade)"
+    w_ = float(np.median([w for w, _ in ws])); return round(w_, 3), "Wandversatz aus Fotokanten (schleife_korrekturen " + ",".join(str(i) for _, i in ws) + ")"
+
+
+def _netz(polys):
+    """Ebene Polygone (Liste (k, 3)) -> trimesh (Ohrenschnitt in der eigenen Ebene)."""
+    import mapbox_earcut as EC
+    V, Fc = [], []; nv = 0
+    for P in polys:
+        P = np.asarray(P, float)
+        if len(P) < 3: continue
+        c = P.mean(0); _, _, Vt = np.linalg.svd(P - c); q = (P - c) @ Vt[:2].T
+        tri = np.asarray(EC.triangulate_float64(q, np.array([len(q)], np.uint32))).reshape(-1, 3)
+        if not len(tri): continue
+        V.append(P); Fc.append(tri + nv); nv += len(P)
+    return trimesh.Trimesh(np.vstack(V), np.vstack(Fc), process=False) if V else None
+
+
+def messkoerper(eigen, fas, winkel=5.0, abstand=0.3):
+    """MODELLFREIER Messkoerper (22.11.2026, Kreisfall Einzelorthos): Projektionsflaeche und Verdecker fuer Messorthos, OHNE Oeffnungen und Relief des gebauten Modells.
+    Je Fassade F (LoD2-Gruppe aus fassaden_gruppieren) ihre Wandstuecke polys_uz flach in der Fassadenebene + F['messflaeche']['versatz'] (Fotokanten, sonst 0);
+    dazu die uebrigen LoD2-Flaechen des eigenen Gebaeudes (Dach, Boden, kleine Wandstuecke ohne Fassade) unveraendert. Eingabe nur LoD2 + Kantenmessung -> das
+    Ergebnis jeder Messung auf diesem Koerper ist vom vorigen Kettenlauf unabhaengig (Wächter tools/test_messflaeche_kreis.py)."""
+    polys = []
+    for F in fas:
+        n = np.array(list(F["n"]) + [0.0]); d = np.array(list(F["d"]) + [0.0]); o = np.array(list(F["o"]) + [0.0]); s0 = float((F.get("messflaeche") or {}).get("versatz", 0.0))
+        for poly in F["polys_uz"]:
+            q = np.asarray(poly, float); polys.append(o[None] + q[:, :1] * d[None] + s0 * n[None] + q[:, 1:2] * np.array([[0, 0, 1.0]]))
+    for t, P in eigen:
+        if t == "WallSurface":
+            c = P.mean(0); _, _, Vt = np.linalg.svd(P - c); nw = Vt[2].copy(); nw[2] = 0
+            if np.linalg.norm(nw) > 0.9:
+                nw /= np.linalg.norm(nw)
+                if any(abs(float(nw[:2] @ np.asarray(F["n"], float))) > math.cos(math.radians(winkel)) and abs(float((c[:2] - np.asarray(F["o"], float)) @ np.asarray(F["n"], float))) < abstand for F in fas): continue   # Stueck einer Fassade: schon flach drin
+        polys.append(P)
+    return _netz(polys)
 
 
 def nachbarn_netz(obj, radius=120.0):
@@ -148,7 +221,8 @@ def erster_treffer(ray, ursprung, richtung, roh=False):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl", required=True); ap.add_argument("--aus", required=True)
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl", help="Stufenmodell (Pflicht ausser --messflaeche eben / --nur-messkoerper)"); ap.add_argument("--aus")
+    ap.add_argument("--messflaeche", choices=("modell", "eben"), default="modell", help="eben = modellfreier Messkoerper (LoD2 flach + Wandversatz aus Fotokanten) als Projektionsflaeche und Verdecker - Pflicht fuer Messungen (Kreisfall 22.11.2026)"); ap.add_argument("--nur-messkoerper", help="nur den Messkoerper als STL (mm, Objekt-Massstab) schreiben und enden")
     ap.add_argument("--zelle", type=float, default=0.05); ap.add_argument("--tol", type=float, default=0.10); ap.add_argument("--relief-vorn", type=float, default=3.0); ap.add_argument("--relief-hinten", type=float, default=6.0); ap.add_argument("--max-mpp", type=float, default=0.06)
     ap.add_argument("--max-winkel", type=float, default=70.0); ap.add_argument("--fotos", help="Komma-Liste (Standard: alle mit K-Datei und buendel_tor ok)")
     ap.add_argument("--waende-stl", action="store_true", help="Fassaden aus senkrechten Modelldreiecken, die keine LoD2-Ebene sind (Erker/Vorbauten)"); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--ohne-innenwaende", action="store_true", help="objekt.json innenwaende (Laube/Arkade-Rueckwand) nicht als Fassaden i00.. mitrechnen"); ap.add_argument("--einzeln", action="store_true"); ap.add_argument("--ohne-nachbarn", action="store_true"); ap.add_argument("--beste", type=int, default=5, help="je Zelle nur die k Fotos mit der besten Guete (cos/mpp) mitteln: 61 Fotos im Median verschmierten Kanten (Kamerareste 1-4 px)"); ap.add_argument("--arbeiter", type=int, default=6, help="parallele Fotos (RAM: Vollbilder bis 0,3 GB je Foto)"); ap.add_argument("--rand", type=float, default=0.5, help="Rand um die Wand (m) fuer Vorsprung/Traufe")
@@ -167,7 +241,12 @@ def main(argv=None):
         try: import torch; torch.cuda.is_available() and torch.zeros(1, device="cuda")
         except Exception: pass                                                                       # der Fehler wird unten beim eigentlichen Einschalten gemeldet
     gpu_vor = threading.Thread(target=_gpu_vor, daemon=True)
-    obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); os.makedirs(a.aus, exist_ok=True)
+    EBEN = a.messflaeche == "eben" or bool(a.nur_messkoerper)
+    if EBEN and a.waende_stl: sys.exit("--messflaeche eben / --nur-messkoerper und --waende-stl schliessen sich aus (Vorbau-Fassaden kommen aus dem Modell)")
+    if not EBEN and not a.stl: sys.exit("--stl fehlt (ohne Modell nur --messflaeche eben)")
+    if not a.nur_messkoerper and not a.aus: sys.exit("--aus fehlt")
+    obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt))
+    if a.aus: os.makedirs(a.aus, exist_ok=True)
     waende, mitte = lod2_waende(obj)
     if a.waende_stl:                                                                                # 2026-11-05: Vorbauten (Erker) haben keine LoD2-Wand -> Fassaden aus den senkrechten Modelldreiecken;
         ms_ = trimesh.load(a.stl); ms_.apply_scale(obj.get("stl_massstab", 87) / 1000.0)            # nur Flaechen, die KEINE LoD2-Fassade sind (Ebenenabstand > 0,3 m), mit eigener Kennung e00..
@@ -186,7 +265,16 @@ def main(argv=None):
         print(f"  Vorbau-Fassaden aus STL: {len(fas)} (von {len(fs)} senkrechten Ebenen >= {a.min_flaeche} m2; Rest = LoD2-Ebenen)")
     else: fas = fassaden_gruppieren(waende, mitte)
     for i_, F_ in enumerate(fas): F_["_id"] = F_.get("id_vorbau") or f"f{i_:02d}"
-    if not a.ohne_innenwaende: fas += innenwaende(obj)                                              # 18.11.2026 (Rueckwand/Laube): zurueckgesetzte Waende (Laube/Arkade) als eigene Fassaden i00..
+    if EBEN:                                                                                         # 22.11.2026 KREISFALL: Messflaeche ohne das gebaute Modell (siehe Kopf, messkoerper())
+        for F_ in fas: w_, q_ = wandversatz(a.objekt, F_); F_["messflaeche"] = dict(art="eben", versatz=w_, quelle=q_)
+        MK = messkoerper(lod2_eigen(obj), fas)
+        print("Messflaeche eben (modellfrei): " + ", ".join(f"{F_['_id']} {F_['messflaeche']['versatz']:+.2f} m" for F_ in fas) + f"; Messkoerper {len(MK.faces) if MK is not None else 0} Dreiecke", flush=True)
+        if a.nur_messkoerper:
+            if MK is None: sys.exit("Messkoerper leer (keine LoD2-Flaechen)")
+            mk_ = MK.copy(); mk_.apply_scale(1000.0 / float(obj.get("stl_massstab", 87))); os.makedirs(os.path.dirname(os.path.abspath(a.nur_messkoerper)), exist_ok=True); mk_.export(a.nur_messkoerper)
+            print(f"Messkoerper -> {a.nur_messkoerper}"); return 0
+        if not a.ohne_innenwaende and obj.get("innenwaende"): print(f"  Innenwaende ({len(obj['innenwaende'])}) entfallen: der Messkoerper ist geschlossen (Sicht durch Oeffnungen nur mit --messflaeche modell)", flush=True)
+    elif not a.ohne_innenwaende: fas += innenwaende(obj)                                            # 18.11.2026 (Rueckwand/Laube): zurueckgesetzte Waende (Laube/Arkade) als eigene Fassaden i00..
     if a.nur: fas = [F_ for F_ in fas if F_["_id"] in set(a.nur.split(","))]
     def _kam(k_): c_ = json.load(open(k_)).get("kamera"); return c_ if isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ else None
     alle_k = {os.path.basename(k)[2:-5]: _kam(k) for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))}; alle_k = {n_: c_ for n_, c_ in alle_k.items() if c_}
@@ -197,11 +285,15 @@ def main(argv=None):
         return (not mit_tor) and not n_.startswith("video")
     fotos = a.fotos.split(",") if a.fotos else sorted(n_ for n_, c_ in alle_k.items() if _ok(n_, c_))
     print(f"{len(fotos)} Messkameras" + ("" if mit_tor else " (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)"), flush=True)
-    m = trimesh.load(a.stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
+    if EBEN:
+        if MK is None: sys.exit("Messkoerper leer (keine LoD2-Flaechen)")
+        m = MK; VSB = dict(zustand="messkoerper", gruppen=0, dreiecke=0)
+    else: m = trimesh.load(a.stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
     # 21.11.2026 MESSFEHLER (zirkulaer): das gebaute Vordach verdeckte genau die Fotostellen, aus denen vorbauten_bauplan seinen Wandanschluss misst (uneinig_f00: 19,39 -> ANNAHME 16,74).
     # Selbst gebaute Vorbauten (audit/vorbauten_auto.json) sind weder Verdecker noch Messflaeche; --mit-selbstbau = alter Weg. Bei --waende-stl sind sie die Fassaden selbst -> bleiben.
     from selbstbau_verdecker import selbstbau_boxen, ohne_selbstbau
-    _sb = selbstbau_boxen(a.objekt); VSB = dict(zustand="keiner", gruppen=len(_sb), dreiecke=0)
+    _sb = [] if EBEN else selbstbau_boxen(a.objekt)
+    if not EBEN: VSB = dict(zustand="keiner", gruppen=len(_sb), dreiecke=0)
     if _sb and (a.mit_selbstbau or a.waende_stl): VSB["zustand"] = "im_modell"
     elif _sb:
         m, VSB["dreiecke"] = ohne_selbstbau(m, _sb); VSB["zustand"] = "entfernt" if VSB["dreiecke"] else "keiner"
@@ -224,7 +316,13 @@ def main(argv=None):
     _ma = trimesh.util.concatenate([m, nb]) if nb is not None else m; FN_ALLE = np.asarray(_ma.face_normals, float); P0_ALLE = np.asarray(_ma.triangles[:, 0], float)
     ray_alle = RI(_ma) if nb is not None else ray                     # Sicht: Modell + Nachbarn; Relief (Ortho-Flaeche): nur Modell
     FN_M = np.asarray(m.face_normals, float); P0_M = np.asarray(m.triangles[:, 0], float)
+    def relief_eben(F):                                                                             # 22.11.2026: Messflaeche = Fassadenebene + Wandversatz, nur innerhalb der LoD2-Wandstuecke; keine Oeffnung, kein Relief
+        X = F["_X"]; n3 = np.array(F["n"] + [0.0]); r_ = F["raster"]; mp_ = np.zeros((r_["nz"], r_["nu"]), np.uint8)
+        for poly in F["polys_uz"]: cv2.fillPoly(mp_, [np.array([[(u_ - r_["u0"]) / r_["zelle"], (r_["z1"] - z_) / r_["zelle"]] for u_, z_ in poly], np.int32)], 1)
+        rel = np.where(mp_.ravel() > 0, float(F["messflaeche"]["versatz"]), np.nan)
+        F["_loch"] = np.zeros(len(rel), bool); F["_S"] = X + n3 * np.nan_to_num(rel, nan=0.0)[:, None]; F["_rel"] = rel
     def relief(F):                                                                                  # echtes Orthobild: je Zelle die VORDERSTE Modellflaeche entlang -Normale (Erker, Galerie, Arkadenrueckwand)
+        if EBEN: return relief_eben(F)
         X = F["_X"]; n3 = np.array(F["n"] + [0.0]); vorn = F.get("relief_vorn", a.relief_vorn)          # Innenwand: nur kurz davor suchen, sonst traefe der Strahl die Bogenwand davor
         ur_ = X + n3 * vorn; dn_ = trimesh.util.unitize(-n3[None])[0]                               # 17.11.2026 (2): Strahlkern direkt, Trefferort mit derselben trimesh-Formel (planes_lines) -> bitgleich zu intersects_location
         ti, ri = erster_treffer(ray, ur_, dn_)
@@ -454,8 +552,9 @@ def main(argv=None):
     if GPU["paare"]: GPU["gpu_mb_spitze"] = round(torch.cuda.max_memory_reserved() / 2 ** 20)
     print(f"Zellrechnung: {GPU['weg']} ({GPU['paare']} Foto-Fassaden-Paare GPU, {GPU['cpu_paare']} CPU" + (f", {GPU['strahlen'] / 1e6:.0f} Mio. Sichtstrahlen, GPU-Rechenzeit {GPU['gpu_s']:.1f} s, GPU-Speicher Spitze {GPU['gpu_mb_spitze']} MiB" if GPU["paare"] else "") + (f"; Grund CPU: {GPU['grund']}" if GPU["grund"] else "") + ")", flush=True)
     print("Zeiten (s): " + ", ".join(f"{k_} {v_}" for k_, v_ in ZT.items()), flush=True)
-    json.dump(dict(objekt=a.objekt, stl=os.path.abspath(a.stl), zelle_m=a.zelle, tol_m=a.tol, max_mpp=a.max_mpp, fotos=fotos, fassaden=fas,
-                   beste_k=a.beste, nachbarn_lod2=n_nb, verdecker_selbstbau=VSB, quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1), zeiten_s=ZT, zellrechnung={k_: (round(v_, 1) if isinstance(v_, float) else v_) for k_, v_ in GPU.items() if k_ not in ("an", "cache")}),
+    json.dump(dict(objekt=a.objekt, stl=None if EBEN else os.path.abspath(a.stl), zelle_m=a.zelle, tol_m=a.tol, max_mpp=a.max_mpp, fotos=fotos, fassaden=fas,
+                   beste_k=a.beste, nachbarn_lod2=n_nb, verdecker_selbstbau=VSB, messflaeche=a.messflaeche if not EBEN else "eben",
+                   quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + " + ("modellfreier Messkoerper (LoD2 flach + Wandversatz aus Fotokanten, unabhaengig vom vorigen Lauf)" if EBEN else "Sichtbarkeit gegen Stufenmodell") + " + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1), zeiten_s=ZT, zellrechnung={k_: (round(v_, 1) if isinstance(v_, float) else v_) for k_, v_ in GPU.items() if k_ not in ("an", "cache")}),
               open(os.path.join(a.aus, "fassaden.json"), "w"), indent=1)
     print(f"{len(fas)} Fassaden, {len(fotos)} Fotos, {time.time() - t0:.0f} s"); print("\n".join(bericht))
 
