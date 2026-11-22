@@ -28,11 +28,17 @@ def form_ist(fz, tor, fid):
     Kein Form-Tor-Bericht = 'unsicher' (die Form ist dann nicht an den Fotos geprueft)."""
     fo = sorted({(q.get("bogen") or {}).get("form", "gerade") for q in fz})
     L = [t for k, v in ((tor.get("fassaden") or {}).items() if tor else []) if (fid is None or k == fid) and isinstance(v, list) for t in v]
-    ur = []
+    ur = []; hinweis = []
     for q in fz:
         t = next((t for t in L if isinstance(t, dict) and max(abs(a - b) for a, b in zip(t["kasten"], (q["u0"], q["u1"], q["z0"], q["z1"]))) < 0.05), None)
-        ur.append(t["urteil"] if t else "FEHLT")
+        if t and isinstance(t.get("fenster"), dict):    # 22.11.2026 (1121v): der Bauteilname sagt die Form des FENSTERS; die Nische zaehlt nur, wenn das Tor sie belegt FALSCH nennt
+            u_ = t["fenster"].get("urteil", "FEHLT"); n_ = (t.get("nische") or {}).get("urteil")
+            if n_ == "FALSCH": u_ = "FALSCH"
+            elif n_ and n_ != "PASST": hinweis.append(f"Nische u {q['u0']:+.2f}: Form-Tor {n_} {t['nische'].get('stimmen')}")
+            ur.append(u_)
+        else: ur.append(t["urteil"] if t else "FEHLT")
     e = dict(ist=fo[0] if len(fo) == 1 else ",".join(fo), tor=ur)
+    if hinweis: e["hinweis"] = "; ".join(hinweis)
     if "FALSCH" in ur: e["tor_falsch"] = True; e["grund"] = "Form-Tor: Einzelfotos sagen eine andere Formfamilie"
     elif any(u != "PASST" for u in ur): e["unsicher"] = True; e["grund"] = "Form-Tor fehlt/unbestimmt (< 3 Fotos) - Form nicht an Fotos belegt"
     if any(q.get("form_unsicher") for q in fz): e["unsicher"] = True; e["grund"] = "nischen_fenster: " + next(q["form_unsicher"] for q in fz if q.get("form_unsicher"))
@@ -115,6 +121,7 @@ def main():
         sf = soll_form(b); fi_ = ist[b].get("_form")
         if sf and fi_ is not None:          # Formfamilie: gebaute Form aller gezaehlten Umrisse UND Form-Tor an den Einzelfotos (tools/fenster_form_tor.py)
             ab["form"] = dict(soll=sf, ist=fi_.get("ist"), ok=fi_.get("ist") == sf and not fi_.get("tor_falsch") and not fi_.get("unsicher"), grund=fi_.get("grund"))
+            if fi_.get("hinweis"): ab["form"]["hinweis"] = fi_["hinweis"]
         u = "PASST" if all(x["ok"] for x in ab.values()) else "FALSCH"; n_passt += u == "PASST"; erg.append(dict(bauteil=b, urteil=u, masse=ab, quelle=q_))
         if ann and u == "PASST": erg[-1]["hinweis"] = "ohne Handannahme(n): " + ", ".join(f"{k} Hand {r['masse'][k]} / Kette {ist[b].get(k)}" for k in ann if k in r["masse"])
     for e in erg:
