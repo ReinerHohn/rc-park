@@ -57,7 +57,11 @@ GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
 # weiter, weil nur die Eingaben im Stand standen). Teuer und nur an Eingaben gebunden: Mapper je Teil, a/b-Vergleich, Sperrliste, dichte Wolke je Teil. Billig und an den CODE
 # gebunden: Vereinen (Klappung, Foto-GPS), Zusammenlegen, Blick-/GPS-Seiten-Tor, Einsetzen. Die Werkzeuge der Nachstufe (samt ihrer Hilfsmodule, tools/code_stand.py) ergeben
 # 'nachstufe_code' in seiten_modelle.json; tools/pipeline_objekt.py rechnet iphone_sfm.py erneut (nur die Nachstufe), wenn er nicht mehr zum Code passt.
-NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py")
+NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py")
+# 22.11.2026 GEMEINSAMER AUSGLEICH MIT GPS-PRIOREN nach dem Vereinen (tools/sfm_gps_ausgleich.py, gps_ausgleich_stufe). Nur ab 40 unabhaengigen Geotags, nur wenn Bildfehler nicht
+# schlechter und GPS-Rest kleiner; sonst unveraendert (gemeldet). Abschalten: RCPARK_GPS_AUSGLEICH=0. VERFORM_MAX_PROZ nur fuer die Meldung (Grenze steht im Werkzeug).
+GPS_AUSGLEICH = os.environ.get("RCPARK_GPS_AUSGLEICH", "1") != "0"
+VERFORM_MAX_PROZ = 0.002
 
 
 def nachstufe_code():
@@ -404,11 +408,24 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
                       + (f"; Foto-GPS: {e['gps']['urteil']}" if e.get("gps") else ""))
         ber["nicht_vereint"].append(B["teil"])
     if ang:                                                                              # das letzte angenommene Zwischenmodell ist das Ergebnis
-        ziel = os.path.join(vz, "sparse")
+        ziel = os.path.join(vz, "sparse"); dichte = [(A, None)] + ang; dicht_ok = True
+        ga = gps_ausgleich_stufe(vz, stand_sparse, fotos, sj, A, ang, M_) if GPS_AUSGLEICH else dict(ok=False, urteil="abgeschaltet (RCPARK_GPS_AUSGLEICH=0)")
+        ber["gps_ausgleich"] = {k: v for k, v in ga.items() if k != "teile"}
+        if ga.get("ok") and ga.get("sparse") and os.path.isfile(os.path.join(ga["sparse"], "images.bin")):
+            D = {k: np.array(v["delta"]) for k, v in (ga.get("teile") or {}).items()}
+            if all(str(x["teil"]) in D for x, _ in dichte):                              # dichte Wolken der Teile nachlegen: neu = delta_Teil * (B_nach_A bzw. Einheit fuer A)
+                # Anker (meiste Bilder = Teil A) bleibt per Bau an seinem Ort (delta = Einheit bis auf die Verformung): None behalten, sonst kopiert dicht_zusammen alle Tiefenkarten von A
+                dichte = [(x, None if (m is None and ga.get("anker_teil") == str(x["teil"])) else (D[str(x["teil"])] @ (np.eye(4) if m is None else np.asarray(m, float))).tolist()) for x, m in dichte]
+                schlecht = [k for k, v in ga["teile"].items() if not v.get("dicht_gueltig")]
+                if schlecht: dicht_ok = False; M_.append(f"GPS-Ausgleich: Teile {schlecht} innerlich verformt (> {100 * VERFORM_MAX_PROZ:.1f} % ihrer Ausdehnung) - ihre dichten Wolken passen nicht mehr, die Kette rechnet die dichte Wolke neu")
+                stand_sparse = os.path.join(vz, "gps_ausgleich_sparse"); shutil.rmtree(stand_sparse, ignore_errors=True); shutil.copytree(ga["sparse"], stand_sparse)
+                sag(f"SEITENMODELLE: GPS-Ausgleich uebernommen ({ga.get('urteil')})")
+            else: M_.append(f"GPS-Ausgleich: Teil-Abbildungen fehlen ({sorted(D)}) - NICHT uebernommen")
+        else: M_.append(f"GPS-Ausgleich nicht uebernommen: {ga.get('urteil')}")
         if os.path.isdir(ziel): shutil.rmtree(ziel)
         os.rename(stand_sparse, ziel); ber["ergebnis"] = dict(art="vereint", sparse=ziel, dicht=None, fused=None)
-        dichte = [(A, None)] + ang
-        if all((x.get("dicht") or {}).get("fused") for x, _ in dichte):
+        if not dicht_ok: pass
+        elif all((x.get("dicht") or {}).get("fused") for x, _ in dichte):
             try:
                 dz = dicht_zusammen([(x["dicht"]["ordner"], m) for x, m in dichte], os.path.join(vz, "dicht")); ber["ergebnis"].update(dicht=os.path.join(vz, "dicht"), fused=os.path.join(vz, "dicht", "fused.ply"), punkte=dz["punkte"])
             except Exception as ex: M_.append(f"vereinte dichte Wolke NICHT geschrieben ({ex}) - die Kette rechnet die dichte Wolke auf dem vereinten Modell selbst")
@@ -417,6 +434,23 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         ber["ergebnis"] = dict(art="teil_a_allein", sparse=A["modell"], dicht=(A.get("dicht") or {}).get("ordner") if fa else None, fused=fa, punkte=(A.get("dicht") or {}).get("punkte"))
         M_.append(f"KEIN Teil vereint - die Kette verwendet Teil {A['teil']} ({A['im_modell']} Bilder) ALLEIN; es fehlen die Teile {ber['nicht_vereint']}")
     return ber
+
+
+def gps_ausgleich_stufe(vz, sparse, fotos, sj, A, ang, M_):
+    """GEMEINSAMER AUSGLEICH MIT GPS-PRIOREN nach dem Vereinen (22.11.2026, Nulllauf schwabentor-1122: Teile per GPS-Sim3 einzeln gelegt, kein gemeinsamer Ausgleich).
+    tools/sfm_gps_ausgleich.py auf dem vereinten Modell; Waechter dort (>= 40 unabhaengige Geotags, Bildfehler nicht schlechter, GPS-Rest sinkt). Zwischenstand an Eingaben +
+    Code gebunden (Modelle der Teile, B_nach_A, Code-Stand). -> gps_ausgleich.json (dict; ok False = Modell unveraendert)."""
+    ao = os.path.join(vz, "gps_ausgleich"); aj = os.path.join(ao, "gps_ausgleich.json"); sf = os.path.join(ao, "stand.json")
+    st = _stand(os.path.join(A["modell"], "images.bin"), *(os.path.join(x["modell"], "images.bin") for x, _ in ang)) + [np.round(np.asarray([m for _, m in ang], float), 9).tolist(), os.path.abspath(fotos), code_stand("sfm_gps_ausgleich.py", wurzel=T)]
+    try: alt = json.load(open(sf)) if os.path.isfile(aj) else None
+    except Exception: alt = None
+    if not (alt and alt.get("stand") == st):
+        os.makedirs(ao, exist_ok=True); tj = os.path.join(ao, "teile.json"); json.dump({n: t["teil"] for t in teile_lesen(sj) for n in t["bilder"]}, open(tj, "w"))
+        sag("SEITENMODELLE: gemeinsamer Ausgleich mit GPS-Prioren (tools/sfm_gps_ausgleich.py) ...")
+        rc = LAUF([PYC, "-I", os.path.join(T, "sfm_gps_ausgleich.py"), sparse, "--bilder", fotos, "--aus", ao, "--teile", tj], os.path.join(ao, "log.txt"))
+        json.dump(dict(stand=st, rc=rc), open(sf, "w"))
+    try: return json.load(open(aj))
+    except Exception as ex: return dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, {ao}/log.txt)")
 
 
 def _frei(p):

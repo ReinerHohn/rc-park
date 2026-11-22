@@ -39,6 +39,7 @@
 - `tools/schleife_ausrichten.py` [-] schleife_ausrichten.py <objekt> --wolke w.npy --fotos k.json --bilder dir [--foto ip_IMG_6161.jpg] [--runden 4] [--tol 0.003] Aeussere ITERATIVE, KONVERGIERENDE Schleife (Nutzer 8.
 - `tools/seiten_geometrie.py` [-] STAND 19.11.2026: NICHT IN DER KETTE - Messung am Martinstor trennt nicht (siehe unten ERGEBNIS). Nur als Messwerkzeug behalten. ERGEBNIS Martinstor (25 gemessene Verbindungen): Si
 - `tools/seiten_gps_vereinen.py` [col] seiten_gps_vereinen.py <modell_a> <modell_b> --bilder <fotoordner> --aus <ordner> [--dicht-a fused.ply --dicht-b fused.ply]
+- `tools/sfm_gps_ausgleich.py` [col] sfm_gps_ausgleich.py <modell> --bilder <fotoordner> --aus <ordner> [--teile teile.json] - gemeinsamer Buendelausgleich mit GPS-Positions-Prioren nach dem Vereinen (ab 40 unabhaengigen Geotags; Waechter Bildfehler/GPS-Rest)
 - `tools/seiten_vereinen.py` [col] seiten_vereinen.py <modell_A> <modell_B> <db.db> --aus <ordner> [--min-paare 60] [--rel 0.02]
 - `tools/stadt_lod2_schneiden.py` [gen] stadt_lod2_schneiden.py - Stadt-Freiburg-LoD2 (Quellentyp 18, STADT_LOD2) auf ein Objekt zuschneiden (Auftrag G4).
 - `tools/teile_lage_pruefen.py` [gen] teile_lage_pruefen.py <objekt> [wolke.npy] - je aktivem Bauteil (NUR_BAUTEIL) Median-Abstand Wolke->Teil und Hoehe/Lage; markiert Teile ohne Wolkenstuetzung und Doppelungen. Sichtf

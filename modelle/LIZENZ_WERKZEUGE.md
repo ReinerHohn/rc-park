@@ -38,6 +38,7 @@ Das ist keine Rechtsberatung. Offen ist immer, ob Messwerte/Ergebnisse, die mit 
 manifold3d (Apache-2.0), trimesh (MIT), numpy/scipy/scikit-image (BSD), PyTorch (BSD), OpenCV (Apache-2.0), shapely (BSD),
 COLMAP (BSD), PrusaSlicer (AGPL; **erzeugte G-Code-Dateien sind frei**), OpenMVS (AGPL-3.0, Ergebnisse frei).
 Eigener Code (`tools/`, `modelle/*_gen.py`) gehört dem Projekt.
+Pose-Prior-Buendelausgleich (`pycolmap.create_pose_prior_bundle_adjuster`, `PosePrior`, genutzt in `tools/sfm_gps_ausgleich.py`, 22.11.2026): COLMAP-Quelltext `estimators/bundle_adjustment_ceres.cc` traegt `SPDX-License-Identifier: BSD-3-Clause` (an der Quelle gelesen, eigener Bau 4.3.dev ce2b5ab); Ceres Solver BSD-3 (nicht an der Quelle geprueft). Verkaufstauglich.
 
 ## Testmodus (Nutzerfreigabe 2026-10-31)
 Alles darf zum **Testen** benutzt werden, auch die ⚠-Werkzeuge. Jedes benutzte Werkzeug wird hier mit Datum und Zweck eingetragen.
