@@ -62,6 +62,7 @@ def lage_belegt(e):
     weg = e.get("weg") or "?"; pr = {}
     if weg == "klappung": return True, "Klappung (seiten_vereinen) + Blick-Tor - Regel gilt nur fuer den GPS-Weg", pr
     if weg == "gps+querspur": return True, "Querspur-Bindung bestanden (eigene Bildpunkt-Probe im GPS-Korridor): " + str((e.get("querspur") or {}).get("urteil")), pr
+    if weg == "eckmodell": return True, "Eck-Kopplung (seiten_eck_koppeln: gemeinsame 3D-Punkte beider Seiten stimmig, Massstab belegt): " + str((e.get("eckmodell") or {}).get("urteil")), pr
     if weg == "gps+lod2": return True, "LoD2 je Teil uebernommen (beide Teile eindeutig, Wanddicke besser, GPS-Korridor, widerspruchsfrei): " + str((e.get("lod2_je_teil") or {}).get("urteil")), pr
     if weg != "gps": return False, f"unbekannter Weg '{weg}'", pr
     p = e.get("pruefung") or {}

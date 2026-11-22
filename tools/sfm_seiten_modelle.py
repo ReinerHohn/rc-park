@@ -59,7 +59,7 @@ GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
 # weiter, weil nur die Eingaben im Stand standen). Teuer und nur an Eingaben gebunden: Mapper je Teil, a/b-Vergleich, Sperrliste, dichte Wolke je Teil. Billig und an den CODE
 # gebunden: Vereinen (Klappung, Foto-GPS), Zusammenlegen, Blick-/GPS-Seiten-Tor, Einsetzen. Die Werkzeuge der Nachstufe (samt ihrer Hilfsmodule, tools/code_stand.py) ergeben
 # 'nachstufe_code' in seiten_modelle.json; tools/pipeline_objekt.py rechnet iphone_sfm.py erneut (nur die Nachstufe), wenn er nicht mehr zum Code passt.
-NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py", "seiten_querspur_binden.py",
+NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_eck_koppeln.py", "sim3_robust.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py", "seiten_querspur_binden.py",
              "seiten_lod2_je_teil.py", "seiten_lage_beleg.py")
 # 22.11.2026 TEILE UEBER QUERSPUREN BINDEN nach dem GPS-Vereinen (tools/seiten_querspur_binden.py, querspur_stufe; Nulllauf 1122f: GPS-Lage von Teil 1 nur +-3,6 Grad/+-12 %,
 # Ostwand 1-2,5 m ausserhalb LoD2, Westwand doppelt). Querpaare der Ursprungs-DB -> 3D-3D -> RANSAC-Sim3 NUR im GPS-Korridor (GPS = Veto, nicht gemittelt). NUR auf dem GPS-Weg:
@@ -79,6 +79,11 @@ VERFORM_MAX_PROZ = 0.002
 # RCPARK_SEITEN_OBJEKT (setzt tools/pipeline_objekt.py); fehlt es, wird die Stufe gemeldet und uebersprungen. NUR auf dem GPS-Weg (Martinstor: Klappung, Kaufhaus: ein Teil).
 # Abschalten: RCPARK_LOD2_JE_TEIL=0.
 LOD2_JE_TEIL = os.environ.get("RCPARK_LOD2_JE_TEIL", "1") != "0"
+# 22.11.2026 TEILE UEBER EIN ECKMODELL KOPPELN (tools/seiten_eck_koppeln.py, eck_stufe; schwabentor-1122: seiten_erkennen --durchblick fand echte Brueckenpaare um die
+# Turmecke, der globale Mapper knickte Teil 1 dort um 25 Grad). Nach gescheiterter Klappung und VOR dem GPS-Weg: gibt es in seiten.json bestaetigte Brueckenpaare zwischen
+# A und B, wird ein kleines Eckmodell gebaut und B ueber gemeinsame 3D-Punkte an A gekoppelt (beide Kopplungen stimmig, Massstab belegt). Danach Blick-Tor + GPS-Seiten-Tor
+# (Veto) wie beim GPS-Weg. Ohne Brueckenpaare (Martinstor, alle Laeufe ohne --durchblick) aendert sich nichts. Abschalten: RCPARK_ECK_KOPPELN=0.
+ECK_KOPPELN = os.environ.get("RCPARK_ECK_KOPPELN", "1") != "0"
 # 22.11.2026 REGEL "TEIL NUR BEI BELEGTER LAGE EINSETZEN" (tools/seiten_lage_beleg.py; schwabentor-1122: Teil 1 nur ueber GPS gelegt, 3-4 m versetzt -> Grundriss-Tor A 17,6 %,
 # Wanddicke 'doppelwand'). Ein Teil auf dem GPS-Weg wird nur eingesetzt, wenn eine eigene Probe seine Lage belegt (Querspur, LoD2 je Teil, oder GPS ehrlich belegt UND
 # Wanddicke der GPS-Lage widerspruchsfrei); sonst WEGGELASSEN und als FOTOLUECKE gemeldet (ber['fotoluecken']). Abschalten: RCPARK_TEIL_NUR_BELEGT=0 (steht im Code-Stand).
@@ -389,6 +394,12 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         try: v = json.load(open(vj))
         except Exception: v = {}
         e = B["vereinen"] = dict(mit=A["teil"], rc=rc, ordner=vo, urteil=v.get("urteil"), pruefung=v.get("pruefung"), spitzen=v.get("spitzen"), lot_b=v.get("lot_b"), paare=v.get("paare"), inlier=v.get("inlier"), mit_dichten_wolken=bool(fa and fb), weg="klappung")
+        if not (rc == 0 and "B_nach_A" in v) and ECK_KOPPELN and ber.get("db_mapper"):
+            ek = eck_stufe(vo + "_eck", A, B, ber["db_mapper"], sj, fotos)
+            e["eckmodell"] = {k: ek.get(k) for k in ("rc", "ok", "urteil", "pruefung", "ordner") if k in ek}
+            if ek.get("ok") and "B_nach_A" in ek:
+                v = dict(ek); rc = 0; e.update(weg="eckmodell", urteil=ek.get("urteil")); M_.append(f"Teil {B['teil']}: Klappung gescheitert - ueber das Eckmodell an Teil {A['teil']} gekoppelt: {ek.get('urteil')}")
+            elif ek.get("rc") != 2: M_.append(f"Teil {B['teil']}: Eck-Kopplung NICHT uebernommen: {ek.get('urteil')}")
         if not (rc == 0 and "B_nach_A" in v) and GPS_VEREINEN:
             # RUECKFALL GPS (22.11.2026, Nulllauf schwabentor-1122): die Klappung von seiten_vereinen setzt gleich aussehende Gegenseiten voraus (Martinstor). Am Schwabentor
             # lieferte sie Massstab 0,012 -> "keine hoechsten Bauteile" -> Teil A allein -> einseitige Wolke, Ausrichtung 20 Grad gedreht, Abbruch. Haben beide Teile genug
@@ -436,7 +447,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
             except Exception as ex:
                 e["zusammenlegen"] = f"gescheitert: {ex}"; M_.append(f"Teil {B['teil']}: seiten_vereinen rc 0, aber das Zusammenlegen der Modelle scheiterte ({ex}) - Teil NICHT im Ergebnis"); ber["nicht_vereint"].append(B["teil"]); continue
             rt = LAUF([PYC, "-I", os.path.join(T, "seiten_blick_tor.py"), kand, sj, "--aus", tj], os.path.join(vo, "seiten_blick.log")); e["blick_tor"] = rt
-            if rt == 0 and e["weg"].startswith("gps"):                                        # GPS-Lage: zweites unabhaengiges Tor - alle GPS-Fotos des vereinten Modells muessen zusammen passen
+            if rt == 0 and (e["weg"].startswith("gps") or e["weg"] == "eckmodell"):                                        # GPS-Lage: zweites unabhaengiges Tor - alle GPS-Fotos des vereinten Modells muessen zusammen passen
                 rgs = LAUF([PYC, "-I", os.path.join(T, "gps_seiten_pruefen.py"), kand, "--bilder", fotos], os.path.join(vo + "_gps", "gps_seiten.log")); e["gps_seiten_tor"] = rgs
                 if rgs == 3:
                     M_.append(f"Teil {B['teil']}: ueber das Foto-GPS gelegt, aber das GPS-Seiten-Tor am vereinten Modell fiel DURCH ({vo}_gps/gps_seiten.log) - Teil wieder herausgenommen"); ber["nicht_vereint"].append(B["teil"]); continue
@@ -497,6 +508,24 @@ def gps_ausgleich_stufe(vz, sparse, fotos, sj, A, ang, M_):
         json.dump(dict(stand=st, rc=rc), open(sf, "w"))
     try: return json.load(open(aj))
     except Exception as ex: return dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, {ao}/log.txt)")
+
+
+def eck_stufe(eo, A, B, db_mapper, sj, fotos):
+    """TEILE UEBER EIN ECKMODELL KOPPELN (tools/seiten_eck_koppeln.py). Zwischenstand an Modelle, Mapper-DB, seiten.json und Code gebunden. -> eck.json als dict mit 'rc', 'ordner'."""
+    ej = os.path.join(eo, "eck.json"); sf = os.path.join(eo, "stand.json")
+    st = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), db_mapper, sj) + [code_stand("seiten_eck_koppeln.py", wurzel=T)]
+    try: alt = json.load(open(sf)) if os.path.isfile(ej) else None
+    except Exception: alt = None
+    if alt and alt.get("stand") == st: rc = alt["rc"]
+    else:
+        os.makedirs(eo, exist_ok=True); sag(f"SEITENMODELLE: Teil {B['teil']} ueber ein Eckmodell an Teil {A['teil']} koppeln (tools/seiten_eck_koppeln.py) ...")
+        rc = LAUF([PYC, "-I", os.path.join(T, "seiten_eck_koppeln.py"), A["modell"], B["modell"], db_mapper, sj, fotos, "--aus", eo], os.path.join(eo, "log.txt"))
+        json.dump(dict(stand=st, rc=rc), open(sf, "w"))
+    try: d = json.load(open(ej))
+    except Exception as ex: d = dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, rc {rc}, {eo}/log.txt)")
+    d.update(rc=rc, ordner=eo)
+    if rc != 0: d["ok"] = False
+    return d
 
 
 def querspur_stufe(qo, A, B, db_ursprung, fa, fb, vgj):
@@ -575,6 +604,7 @@ def main(argv=None):
     for p, was in ((sj, "seiten.json"), (dbm, "Mapper-Datenbank (--db-mapper)"), (dbu, "Ursprungs-Datenbank (--db-ursprung)")):
         if not p or not os.path.isfile(p): sag(f"FEHLER: {was} fehlt: {p}"); return 4
     ber = modelle(w, a.fotos, sj, dbm, a.min_bilder)
+    ber["db_mapper"] = os.path.abspath(dbm)
     if ber.get("grund"): sag("SEITENMODELLE: " + ber["grund"]); schreiben(w, ber); return 2
     if not ber.get("fehler") and not a.nur_modelle:
         dicht_vereinen(w, a.fotos, sj, dbu, ber, ohne_dicht=a.ohne_dicht)
