@@ -74,8 +74,9 @@ def anwenden(M, X): return np.asarray(X, float) @ np.asarray(M)[:3, :3].T + np.a
 
 
 def lot_aus_kameras(Rs):
-    """Lot = Mittel der Bild-oben-Richtungen (wie seiten_gps_vereinen.kameras)."""
-    o = np.mean([-np.asarray(R)[1] for R in Rs], 0); return o / np.linalg.norm(o)
+    """Lot wie seiten_gps_vereinen.kameras (seit 22.11.2026 aus den Bild-x-Achsen: das Mittel der Bild-oben-Richtungen kippt um die Kameraneigung, 13-16 Grad am Schwabentor)."""
+    from seiten_gps_vereinen import lot_aus_bild_achsen
+    return lot_aus_bild_achsen(Rs)
 
 
 def azimut_unterschied(v1, v2, lot):

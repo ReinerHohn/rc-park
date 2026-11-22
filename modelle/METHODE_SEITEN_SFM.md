@@ -63,6 +63,8 @@ Entstehung, alle Läufe und Zahlen: `modelle/GLOBALER_MAPPER_STABIL.md` (ab „U
 - FlexGlue trennt die Seiten nicht besser (19./20.11., alle 4 Varianten gleich).
 - Schwabentor 22.11. (Nulllauf 1122b): Klappung gibt bei verschiedenen Gegenseiten Unsinn (Massstab 0,012) -> Teil A allein -> Lage 20 Grad gedreht. Rückfall Foto-GPS (`tools/seiten_gps_vereinen.py`, in `sfm_seiten_modelle.py`) legt Teil 1 an echten Daten richtig an (Blick-Tor 168 Grad, GPS-Seiten 4 %); Massstab der zweiten Seite nur ±12 %. Globaler Mapper über alles ist KEIN Ausweg: 1120 war verklebt (Blick-Tor 3 von 4). Logbuch `LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` 22.11. 05:30.
 
+- Schwabentor 22.11. (14:30): Lot der GPS-Vereinigung aus dem Mittel der Bild-oben-Richtungen kippt um die Kameraneigung (Turmfotos +16/+18 Grad) -> Teil 1 gegen Teil 0 ~28 Grad gekippt, Suedwand 23 Grad schraeg = "2,5 m Doppelflaeche". Jetzt Lot aus den Bild-x-Achsen (`seiten_gps_vereinen.lot_aus_bild_achsen`). LoD2 je Teil (`tools/seiten_lod2_je_teil.py`) eingebaut, am Schwabentor KEIN Urteil (Teil 0 am Kastenrand Drehung/Massstab, Teil 1 sieht nur eine Wand).
+
 ## Offen
 Aus `ERKENNTNISSE.md` (Zeilen mit „offen“):
 1. Kontaktbogen je Brückengruppe nach der Seitenerkennung.

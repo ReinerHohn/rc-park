@@ -6,6 +6,7 @@ Bild-oben-Richtungen) robust per 2D-Aehnlichkeit (Drehung, Massstab, Verschiebun
 Verklebte Seiten (Rueckseite auf die Vorderseite geklappt) sitzen dann zig Meter neben ihrem GPS -> Anteil Ausreisser ueber --grenze (Handy-GPS ~5 m).
 Ausgabe: Zahl GPS-Bilder, Median-Rest in m, Anteil > grenze, Urteil. rc 3 = verdaechtig (>= 15 % Ausreisser bei >= 25 GPS-Bildern im 150-m-Umkreis), rc 2 = zu wenig GPS."""
 import os, sys, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 def gps_enu(ordner, namen):
@@ -32,7 +33,8 @@ def aehnlich2d(X, Y):
 def pruefen(modell, ordner, grenze=12.0, rng=np.random.default_rng(0)):
     import pycolmap
     r = pycolmap.Reconstruction(modell); ims = list(r.images.values())
-    oben = np.mean([-im.cam_from_world().rotation.matrix()[1] for im in ims], 0); oben /= np.linalg.norm(oben)
+    from seiten_gps_vereinen import lot_aus_bild_achsen                                  # 22.11.2026: Lot aus Bild-x-Achsen (Bild-oben-Mittel kippt um die Kameraneigung, Schwabentor 13-16 Grad)
+    oben = lot_aus_bild_achsen([im.cam_from_world().rotation.matrix() for im in ims if im.has_pose])
     e1 = np.cross(oben, [1, 0, 0] if abs(oben[0]) < 0.9 else [0, 1, 0]); e1 /= np.linalg.norm(e1); e2 = np.cross(oben, e1)
     G = gps_enu(ordner, [im.name for im in ims]); n = [im.name for im in ims if im.name in G and np.linalg.norm(G[im.name]) < 150]
     # 20.11.: Martinstor hat nur 16 GPS-Bilder (Wikimedia, Fernaufnahmen bis 300 m, gemischte Guete) -> falscher Alarm 'verdaechtig'. Daher >= 25 Bilder im 150-m-Umkreis.
