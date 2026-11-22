@@ -67,6 +67,7 @@ Details: `modelle/archiv/STAND_2026-11-14.md` · `modelle/LOGBUCH_KETTENTEST_202
 - 22.11. · GPS-Anker mit Kasten 3 x Bootstrap (nur Zufallsfehler) → ⚠ Falle · Nah-GPS einer Sitzung ist systematisch verzerrt (1122: +9,4 Grad / x0,867); ehrliches Band je Sitzung x Ring, Fernfotos mit langem Hebel zaehlen [LOGBUCH_SCHWABENTOR_KETTE 22.11.]
 - 22.11. · Tor und Ausrichtung mit verschiedenen GPS-Mengen/Lot-Formeln → ⚠ Falle · eine gemeinsame Funktion (gps_unsicherheit.gps_fit, lot_aus_bild_achsen); Lage-Pruefstand offen [LOGBUCH 22.11.]
 - 22.11. · Grundriss-Tor A klaert Strassenhaufen selbst (`tools/haufen_klaeren.py`, Merkmal "Wandblatt": Band z 1,5-9 m lueckenlos >= 3 m, geeicht an eigenen Waenden) → ✓ · 1120/1122k geklaert (0,5/1,5 m), falsche Lagen rot (5,5-18,5 m); Grenze L_eich/3 ✗ (haette +8 Grad x1,089 durchgewunken); kleine Drehungen <= 5 Grad sieht A nicht [LOGBUCH_SCHWABENTOR_KETTE 22.11. 17:30]
+- 22.11. · Fotoluecke nur als Text im Bericht (Nutzer erfuhr erst auf Nachfrage) → ↺ Skizze `tools/foto_auftrag_skizze.py` nach SfM + Laufende: LoD2-Grundriss, Wandbelegung je Wand (Wolke), nummerierte Standpunkte Uebereck/Frontal/Fern mit WGS84, Foto-GPS-Pruefung; 1122: Bogen Sued/West + Frontalreihe Sued + Fern 153 m; Ostseite LoD2-angebaut (Tvdv), Bruecke Sued/Ost nur ueber den Block (ungeprueft vor Ort)
 - 22.11. · Seiten-Teil ohne belegte Lage per GPS ansetzen → ✗ 3-4 m Versatz, Doppelwand · Teil weglassen + Fotoluecke (seiten_lage_beleg.py); Bindung ueber Querspuren ✗ (Gegenseiten-Verwechslung 167 Grad) [LOGBUCH 22.11.]
 
 ## Offen

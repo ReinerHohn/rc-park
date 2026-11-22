@@ -14,6 +14,7 @@ Ausgabe: <aus.html> (eine Seite mit Karte und Karten je Auftrag, Bilder eingebet
 Grenzen: kennt keine Strassen/Zaeune - Standorte sind Orte, an denen schon einmal fotografiert wurde, oder eine Richtung; Verdeckung nur ueber vorhandene Fotos.
 Seitenteile mit nicht belegter Lage (22.11.2026, tools/seiten_lage_beleg.py): --seiten-modelle pipe/sfm/seiten_modelle.json -> je 'fotoluecken'-Eintrag ein Auftrag fuer die ganze Wand dieser
   Himmelsrichtung (Brueckenfotos schraeg ueber Eck / Fernfotos), vor den uebrigen Auftraegen.
+Skizze statt Seite (22.11.2026): tools/foto_auftrag_skizze.py - ohne Fassadenbilder, schon nach der SfM (Grundriss, Wandbelegung, nummerierte Standpunkte mit GPS, Foto pruefen).
 Weitere Optionen: --min_m2 8, --mit-uneinig. Fotowunschliste ueblich: modelle/<objekt>/fotowuensche.json. Stadtplan: OpenStreetMap-Kacheln (Netz noetig, sonst ohne).
 Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/foto_auftrag.py ... (oder `tools/py seg tools/foto_auftrag.py ...`; ohne 'seg' waehlt tools/py ~/.venvs/rcpark, dort fehlt cv2).
 """
