@@ -366,6 +366,11 @@ def main():
             erg["seiten_blick"] = _sb[0]
         if os.path.isdir(sp): erg["insel"] = lauf(B, f"tor_insel{tag}", [PYC, "-I", "tools/kette_insel_pruefen.py", ZR, sp], log, ok=(0, 3))[0]   # 15.11. (Schwabentor): Bildketten ohne Fremdstuetze (Videoclip) = Faecher/Geisterwolke; schreibt audit/kette_insel.json
         erg["grundriss"] = lauf(B, f"tor_grundriss{tag}", [PY, "-I", "tools/wolke_grundriss_pruefen.py", ZR, "--wolke", W], log)[0] if os.path.exists(W) else None
+        # 22.11.2026 (Nulllauf schwabentor-1122f: Westwand ~3 m dick aus zwei per GPS vereinten Seitenteilen): je LoD2-Kante Wanddicke + Lageversatz der Seitenteile ->
+        # audit/wand_dicke.json. NUR MESSUNG (kein Abbruch, Grenzen noch ANNAHME); abschalten: RCPARK_WANDDICKE=0.
+        smj_ = os.path.join(P, "sfm", "seiten_modelle.json")
+        if os.environ.get("RCPARK_WANDDICKE", "1") != "0" and os.path.isfile(smj_) and os.path.exists(AU):
+            erg["wand_dicke"] = lauf(B, f"tor_wanddicke{tag}", [PYC, "-I", "tools/wand_dicke_tor.py", ZR, "--seiten", smj_, "--ausrichtung", AU, "--aus", os.path.join(Z, "audit", "wand_dicke.json")], log, ok=(0, 2, 3))[0]
         if os.path.isdir(sp) and os.path.exists(AU):                       # 19.11.2026 (Martinstor, schiefe uebergrosse Haeuserzeile aus einem Fernclip): setzt eine Bildgruppe Punkte hoch ueber die LoD2-Hoehe? -> audit/wolke_gruppen.json
             erg["gruppen"] = lauf(B, f"tor_gruppen{tag}", [PYC, "-I", "tools/wolke_gruppen_pruefen.py", ZR, os.path.relpath(AU, ROOT), sp, "--schreiben"], log, ok=(0, 3))[0]
         return erg
