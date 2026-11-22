@@ -185,10 +185,14 @@ def main():
                 return rc, round(time.time() - t0)
             sek = None
             if not os.path.isfile(ej_p): os.makedirs(stufe, exist_ok=True); _, sek = stufe_laufen(tb, stufe)
-            ej = json.load(open(ej_p)); zw = (ej.get("zwischenmodelle") or [{}])[0]
-            varianten = {"sift": zw.get("modell")}
-            if zw.get("varianten"): varianten = {"sift": zw["varianten"]["sift"].get("modell"), "nachmatchen": zw["varianten"]["nachmatchen"].get("modell")}
-            elif (zw.get("nachmatchen") or {}).get("rc") == 0: varianten = {"nachmatchen": zw.get("modell")}
+            ej = json.load(open(ej_p)); varianten = {}
+            # ALLE Zwischenmodelle der Stufe (23.11.: nur [0] genommen -> Kaufhaus koppelte in der Stufe ueber zwischen1, die Neukopplung meldete 'nicht gekoppelt')
+            for zi, zw in enumerate(ej.get("zwischenmodelle") or []):
+                if zw.get("varianten"): kand = {"sift": zw["varianten"]["sift"].get("modell"), "nachmatchen": zw["varianten"]["nachmatchen"].get("modell")}
+                elif (zw.get("nachmatchen") or {}).get("rc") == 0: kand = {"nachmatchen": zw.get("modell")}
+                else: kand = {"sift": zw.get("modell")}
+                for v, mod in kand.items():
+                    if mod: varianten.setdefault(v, []).append(mod)
             for vf in a.verformung:
                 art, wert = (vf.split(":") + ["0"])[:2]; wert = float(wert)
                 if art == "keine": tbv = tb
@@ -205,9 +209,12 @@ def main():
                     if not os.path.isfile(os.path.join(z_, "eck.json")): os.makedirs(z_, exist_ok=True); stufe_laufen(tbv, z_)
                     e2 = json.load(open(os.path.join(z_, "eck.json"))); t1 = (e2.get("teile") or {}).get("1") or {}
                     ergebnisse["stufe"] = bewerten(rA, rB, np.asarray(t1["M_nach_A"]) if t1.get("ok") else None, wahr, brk, m_je, up)
-                for v, mod in varianten.items():
-                    if not mod: continue
-                    M, pr = kopplung_neu(mod, rA, rB); z = bewerten(rA, rB, M, wahr, brk, m_je, up); z["pruefung"] = pr; ergebnisse[v] = z
+                for v, mods in varianten.items():
+                    M, prs = None, {}
+                    for mod in mods:                                           # erstes Zwischenmodell, das A und B stimmig koppelt (wie die Stufe)
+                        M, pr = kopplung_neu(mod, rA, rB); prs[os.path.basename(os.path.dirname(os.path.dirname(mod)))] = pr
+                        if M is not None: break
+                    z = bewerten(rA, rB, M, wahr, brk, m_je, up); z["pruefung"] = prs; ergebnisse[v] = z
                 lf = None
                 if a.lotfeld:
                     bb, roh = TV.messen(rB, a.fotos, 4, None, roh); json.dump(roh, open(lot_roh, "w"))
