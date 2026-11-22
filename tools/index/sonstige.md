@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (108)
+# Werkzeuge: sonstige (109)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -8,6 +8,7 @@
 - `tools/brennweite_schaerfe.py` [col] brennweite_schaerfe.py <sparse-modell> [--aus bericht.json] [--liste datei.txt] [--sperrliste datei.txt --vereinen liste.txt ...] [--weich 4] [--unbestimmt 10]
 - `tools/brennweite_waehlen.py` [-] brennweite_waehlen.py - Pixel-Brennweite eines Einzelfotos aus EXIF herleiten und durch das Foto-GPS absichern (18.11.2026). Anlass Martinstor K-061: EXIF 9,855 mm, Bild 3601x2757 
 - `tools/buendel_stuetz.py` [seg] buendel_stuetz.py - GENERISCH: Buendelausgleich eines COLMAP-Netzes MIT STUETZTERMEN (LoD2-Gebaeudekanten im Foto, Foto-GPS, robuste Verluste), GPU (torch).
+- `tools/code_stand.py` [-] code_stand.py <werkzeug.py> [...] - CODE-STAND fuer Zwischenstaende: Fingerabdruck der beteiligten Werkzeuge (Inhalt, nicht Zeit) samt ihrer Hilfsmodule aus tools/.
 - `tools/db_masken_filter.py` [seg] db_masken_filter.py <db.db> <masken-ordner> --aus <kopie.db> [--min 15]
 - `tools/dom_full_prep.py` [-] dom_full_prep.py — baut dom025_full.npy EXAKT auf dem Raster von dgm025_full.npy (4000x4000, 0.25 m), aus den georeferenzierten DOM1-Kacheln (bilinear resampled). Damit kann terrai
 - `tools/doppelschicht.py` [-] doppelschicht.py - Doppelschicht-Detektor (Plan 2.4): enthaelt eine Wandflaeche der Punktwolke ZWEI Ebenen (Doppeldach = Clip-Versatz/Doming) statt einer?

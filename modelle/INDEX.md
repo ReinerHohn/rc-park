@@ -50,6 +50,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/BELEUCHTUNG.md` (3 kB) Beleuchtung — „geile" Monument-Lichttechnik (Miniatur-Wunderland)
 - `modelle/CPU_LEISTUNG.md` (13 kB) CPU/GPU maximal auslasten - Messung, Werkzeuge, Einrichtung (Stand 2026-11-06)
 - `modelle/ERKENNTNISSE.md` (6 kB) Erkenntnis-Register (destilliert; Ablauf: allgemeiner Skill `erkenntnis` (~/git/claude-mds) + `.claude/erkenntnis.md`; Einzelheiten in den Logbuechern
+- `modelle/MESSPLAN_LEISTUNG.md` (9 kB) Messplan Leistung (22.11.2026): Thread-Sweep Ausrichtung, SfM-Teilstufen, Zeitfresser-Ideen mit Codestellen (Werkzeug tools/leistung_messen.py)
 - `modelle/ERKLAERUNG_DRAHTGITTER.md` (3 kB) Wie das Kanten-Drahtgitter entsteht (einfach erklaert, Stand 9.11.2026 abends)
 - `modelle/ERKLAERUNG_FOTO_ZU_PUNKTWOLKE.md` (2 kB) Foto -> Punktwolke: wie es funktioniert (Kurzfassung zum Nachlesen)
 - `modelle/GPU_LUECKEN_2026-11-08.md` (8 kB) GPU-Luecken (Suche 8.11., Nutzerauftrag) - nach Code-Durchsicht, Laufzeiten NOCH NICHT gemessen
