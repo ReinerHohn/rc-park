@@ -65,6 +65,7 @@ Entstehung, alle Läufe und Zahlen: `modelle/GLOBALER_MAPPER_STABIL.md` (ab „U
 
 - Schwabentor 22.11. (14:30): Lot der GPS-Vereinigung aus dem Mittel der Bild-oben-Richtungen kippt um die Kameraneigung (Turmfotos +16/+18 Grad) -> Teil 1 gegen Teil 0 ~28 Grad gekippt, Suedwand 23 Grad schraeg = "2,5 m Doppelflaeche". Jetzt Lot aus den Bild-x-Achsen (`seiten_gps_vereinen.lot_aus_bild_achsen`). LoD2 je Teil (`tools/seiten_lod2_je_teil.py`) eingebaut, am Schwabentor KEIN Urteil (Teil 0 am Kastenrand Drehung/Massstab, Teil 1 sieht nur eine Wand).
 - Schwabentor 22.11. (12:45): Hypothese "Seitenteil in sich verbogen (Kameras unter Gelaende, Intrinsik)" widerlegt - Teile in drei SfM-Laeufen starr (0,06-0,10 m), Entfernen + BA aendert den GPS/LoD2-Widerspruch nicht (+10 Grad/x0,91); Ursache = Nah-GPS systematisch +9,4 Grad/x0,87 verzerrt, GPS-Anker-Kasten zu eng (Logbuch 21.11., Eintrag 12:45).
+- Schwabentor 22.11. (17:00): Seitenteil nur ueber Foto-GPS eingesetzt (Teil 1, 127 Bilder, eine Wand) lag 3-4 m daneben -> REGEL in der Kette: Teil auf dem GPS-Weg nur mit eigener Lageprobe (Querspur, LoD2 je Teil, oder GPS ehrlich belegt UND Wanddicke der GPS-Lage ohne versetzt/doppelwand), sonst weggelassen + Fotoluecke (`tools/seiten_lage_beleg.py`, `RCPARK_TEIL_NUR_BELEGT=0` aus). Bindung ueber Gebaeudekanten fuer Teil 1 nicht belegbar (kein Massstab, zweites Wandende verdeckt/Nachbar).
 
 ## Offen
 Aus `ERKENNTNISSE.md` (Zeilen mit „offen“):
