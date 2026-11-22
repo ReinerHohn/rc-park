@@ -84,48 +84,23 @@ def urteil(namen, MU, G, nah_m=100.0, max_abstand=15.0, max_dreh=15.0, max_skala
     if d_med is not None:
         print(f"1 Kamera-Median <-> GPS-Median (Torfotos, n {int(nah.sum())}): {d_med:.1f} m (Grenze {max_abstand})")
         if d_med > max_abstand: warn.append(f"Kamera-Median {d_med:.1f} m vom GPS-Median")
-    _dm = np.hypot(*(MU - np.median(MU, 0)).T); w = _dm <= np.percentile(_dm, 75)   # 15.11.: Start nur mit dem Kamerakern - einzelne km-weit versetzte Kameras (globaler Mapper) kippten den Fit (Drehung -140 Grad, Massstab 0,016 bei richtiger Lage)
-    for _ in range(5):
-        if w.sum() < 3 or not np.isfinite(MU[w]).all():                       # 15.11.: Absturz (SVD) statt Urteil bei entarteter Lage -> als Widerspruch werten
-            print("WARNUNG: GPS-Fit nicht moeglich (zu wenige vertraegliche Kameras) - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit nicht moeglich"; erg["geprueft"] = True
-            return 3, erg
-        try: s, R, t = fit2d(MU[w], G[w])
-        except np.linalg.LinAlgError:
-            print("WARNUNG: GPS-Fit konvergiert nicht - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit konvergiert nicht"; erg["geprueft"] = True      # 17.11.2026: hier blieb die lage_gps.json eines frueheren Laufs liegen
-            return 3, erg
-        res = np.hypot(*(MU @ R.T * s + t - G).T); w = res < max(np.percentile(res, 80), 15)
-    # 18.11.2026 (Kaufhaus gk2h: 42 von 110 Geotags falsch - alte/Commons-Fotos; das 80-%-Trimmen liess sie im Fit -> Massstab 0,80, obwohl 68 Fotos mit 2,4 m Rest passen):
-    # robuster Konsens-Fit (RANSAC, Inlier < 10 m); gilt, wenn >= 40 % und >= 10 Fotos zustimmen, sonst bleibt der getrimmte Fit. Grenzen (max_dreh, max_skala) UNVERAENDERT.
-    rng = np.random.default_rng(0); best = None; n_ = len(G)
-    for _ in range(3000):
-        i3 = rng.choice(n_, 2, replace=False)
-        if np.hypot(*(G[i3[0]] - G[i3[1]])) < 10 or np.hypot(*(MU[i3[0]] - MU[i3[1]])) < 1e-6: continue
-        try: s_, R_, t_ = fit2d(MU[i3], G[i3])
-        except np.linalg.LinAlgError: continue
-        inl = np.hypot(*(MU @ R_.T * s_ + t_ - G).T) < 10.0
-        if best is None or inl.sum() > best.sum(): best = inl
-    erg["ransac"] = None
-    if best is not None and best.sum() >= max(10, 0.4 * n_):
-        for _ in range(3): s, R, t = fit2d(MU[best], G[best]); res = np.hypot(*(MU @ R.T * s + t - G).T); best = res < 10.0
-        if best.sum() >= max(10, 0.4 * n_):
-            w = best; erg["ransac"] = dict(inlier=int(best.sum()), von=int(n_)); print(f"   robuster Konsens-Fit: {int(best.sum())} von {n_} Geotags stimmen ueberein (< 10 m) - die anderen gelten als falsche Geotags")
-    s, R, t = fit2d(MU[w], G[w]); res = np.hypot(*(MU @ R.T * s + t - G).T)
-    ys, ss = [], []
-    iw = np.flatnonzero(w)
-    for _ in range(400):
-        i = rng.choice(iw, len(iw)); s_, R_, _ = fit2d(MU[i], G[i]); ys.append(winkel(R_)); ss.append(s_)
-    yb = np.percentile(ys, [5, 50, 95]); sb = np.percentile(ss, [5, 50, 95])
+    # 22.11.2026 EINE QUELLE: der GPS-Fit (Kamerakern-Start, getrimmt, robuster Konsens RANSAC < 10 m, Bootstrap, ehrliches Band Zufall + Sitzung x Ring) steht jetzt
+    # in tools/gps_unsicherheit.gps_fit - dieselbe Funktion rechnet die Ausrichtung (sfm_lod2_ausrichten: Startlage, GPS-Anker, Veto). Bisherige Lehren unveraendert dort:
+    # 15.11. Kamerakern-Start (km-weit versetzte Kameras kippten den Fit), 18.11. Kaufhaus robuster Konsens (42 von 110 Geotags falsch), 22.11. ehrliches Band.
+    f = GU.gps_fit(MU, G, zeiten, nah_m)
+    if not f["ok"]:
+        print(f"WARNUNG: GPS-Fit nicht moeglich ({f['grund']}) - Lage widerspricht dem GPS"); erg["ergebnis"] = f["grund"]; erg["geprueft"] = True
+        return 3, erg
+    s, R, t, w, res, yb, sb, yb_e, sb_e, sd_d, sd_m, ak, sy = (f[k_] for k_ in ("s", "R", "t", "w", "res", "drehung_90", "massstab_90", "drehung_90_ehrlich", "massstab_90_ehrlich",
+                                                                                "sd_drehung_grad", "sd_massstab", "anker", "systematik"))
+    erg["ransac"] = f["ransac"]
+    if f["ransac"]: print(f"   robuster Konsens-Fit: {f['ransac']['inlier']} von {f['ransac']['von']} Geotags stimmen ueberein (< 10 m) - die anderen gelten als falsche Geotags")
     print(f"2 GPS-Fit: Drehung {winkel(R):.1f} Grad (90 % Zufall: {yb[0]:.1f} .. {yb[2]:.1f}), Massstab {s:.3f} (90 % Zufall: {sb[0]:.3f} .. {sb[2]:.3f}), Rest Median {np.median(res[w]):.1f} m")
-    # 22.11.2026 EHRLICHES Band (tools/gps_unsicherheit.py, schwabentor-1122: Nah-GPS EINER Sitzung systematisch +9,4 Grad / x0,867 verzerrt, der Bootstrap sah +-0,4 Grad):
-    # das 90-%-Band enthaelt jetzt den systematischen Anteil je Fotositzung/Ring (Hebel der Kamerastandorte). Dasselbe Mass nimmt die Ausrichtung (GPS-Anker/Veto).
     # Grenzen max_dreh/max_skala UNVERAENDERT; das Tor wird nur dort milder, wo das GPS die Lage nachweislich nicht festlegt.
-    sy = GU.systematik(G, GU.gruppen(G, zeiten, nah_m), w, M=MU)
-    yb_e = GU.band(yb[1], (yb[2] - yb[0]) / 2, sy["dreh_sd_grad"]); sb_e = GU.band(sb[1], (sb[2] - sb[0]) / 2, sy["mass_sd_rel"])
-    sd_d, sd_m = GU.gesamt((yb[2] - yb[0]) / (2 * GU.Z90), (sb[2] - sb[0]) / (2 * GU.Z90 * max(sb[1], 1e-9)), sy); ak = GU.anker_kasten(sd_d, sd_m)
     print(f"   ehrlich (Zufall + systematisch {sy['dreh_sd_grad']:.1f} Grad / {100 * sy['mass_sd_rel']:.1f} % aus {sy['n_gruppen']} Gruppe(n) Sitzung x Ring, n_eff {sy['n_eff']}, "
           f"Sigma {sy['sigma_m']:.1f} m {sy['sigma_quelle']}): Drehung 90 % {yb_e[0]:.1f} .. {yb_e[1]:.1f}, Massstab 90 % {sb_e[0]:.3f} .. {sb_e[1]:.3f}"
           + (" - GPS kann ankern" if ak else " - GPS legt die Lage NICHT fest (nur grobes Veto)"))
-    warn += GU.widerspruch(float(yb[1]), yb_e, float(sb[1]), sb_e, max_dreh, max_skala)
+    warn += GU.gps_fit_widerspruch(f, max_dreh, max_skala)
     fe = fernfotos_pruefen(MU, G, s, R, t, fern, namen, max_skala, max_dreh, warn)
     erg.update(geprueft=True, median_abstand_m=d_med, gps_fit=dict(drehung_grad=winkel(R), drehung_90=[float(yb[0]), float(yb[2])], massstab=float(s),
                massstab_90=[float(sb[0]), float(sb[2])], rest_median_m=float(np.median(res[w])), drehung_90_ehrlich=[float(yb_e[0]), float(yb_e[1])],

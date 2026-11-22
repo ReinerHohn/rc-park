@@ -78,7 +78,7 @@ pruef(not SA.gps_anker_aktiv(16, 3.0), "Martinstor (16 Geotags): kein GPS-Anker"
 q = open(os.path.join(T, "sfm_lod2_ausrichten.py")).read()
 pruef("GU.ehrlich(" in q and "GPS_EHRLICH[\"anker\"] is None" in q and "LP.entscheiden(" in q and "_zw_sichern()" in q, "sfm_lod2_ausrichten: ehrliche Unsicherheit/Proben/Zwischenstand nicht verdrahtet")
 pruef("if GPS_PRUEF is not None:\n            # 22.11.2026 EHRLICHE" in q, "ehrliche Unsicherheit darf nur mit GPS-Fit (GPS_PRUEF) rechnen - Martinstor ohne GPS bleibt unveraendert")
-pruef("GU.systematik(" in open(os.path.join(T, "lage_gps_pruefen.py")).read() and "GU.systematik(" in open(os.path.join(T, "seiten_gps_vereinen.py")).read(), "Tor/Seiten-GPS muessen dasselbe Mass nehmen")
+pruef("GU.gps_fit(" in open(os.path.join(T, "lage_gps_pruefen.py")).read() and "systematik(" in open(os.path.join(T, "gps_unsicherheit.py")).read().split("def gps_fit(")[1] and "GU.systematik(" in open(os.path.join(T, "seiten_gps_vereinen.py")).read(), "Tor/Seiten-GPS muessen dasselbe Mass nehmen")
 qg = open(os.path.join(T, "gesamtkette.py")).read()
 pruef('e.get("lage_proben") in (0, None)' in qg, "gesamtkette: Lageproben 'keine/mehrdeutig' muessen die Lage-Tore verwerfen")
 
