@@ -1,4 +1,4 @@
-# Werkzeuge: test (120)
+# Werkzeuge: test (121)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -81,6 +81,7 @@
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_erkennen.py` [-] test_seiten_erkennen.py - feste Erwartungen fuer tools/seiten_erkennen.py (ohne GPU, ohne Bilder): Gemeinschaften, Zusammenhangsteile, Urteil.
+- `tools/test_seiten_gps_vereinen.py` [-] Fester Test (Sekunden, ohne GPU, ohne echte Daten) fuer den 22.11.2026-Fix nach dem Nulllauf schwabentor-1122 (Lage-Tore: 20 Grad gegen GPS, Teil 1 mit 130 Bildern fehlte). 1 seite
 - `tools/test_seiten_kette.py` [col] Fester Test (ohne GPU, Sekunden) fuer die Seitenfolge der Kette vom 21.11.2026 - synthetische Mini-Modelle (COLMAP-Textformat) und Mini-Datenbanken: 1 seiten_blick_tor.py zwei 'ver
 - `tools/test_seiten_modelle.py` [col] Fester Test (ohne GPU, Sekunden) fuer tools/sfm_seiten_modelle.py (21.11.2026: je Seite ein Kameramodell, je Seite eine dichte Wolke, vereinen). Synthetischer Turm: 14 Nordbilder (
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm

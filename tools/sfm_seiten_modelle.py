@@ -47,6 +47,9 @@ SPERR_MAX = 0.5          # ANNAHME wie pipeline_objekt.py: sperrt die Schaerfe-L
 # Beleg: Kettenmodelle + Klappung unveraendert, nur die Sued-Wolke ohne Sperrliste -> vereint, Turmhoehen 1,9 % (Hand: Sperrliste nie fuer die dichte Wolke benutzt).
 # Die Sperrliste wird weiter berechnet und gemeldet, fuer die dichten Wolken der Seiten aber nicht angewandt (alle Teile gleich, damit die Hoehenprobe Gleiches vergleicht).
 DICHT_MIT_SPERRLISTE = False
+# 22.11.2026 Rueckfall GPS: scheitert die Klappung (seiten_vereinen.py), legt tools/seiten_gps_vereinen.py den Teil ueber das Foto-GPS auf Teil A (Schwabentor: Teil 1 mit
+# 24 von 26 GPS-Kameras; Blick-Tor 168 Grad, GPS-Seiten-Tor 4 % ueber 12 m am vereinten Modell). Abschalten: RCPARK_SEITEN_GPS=0.
+GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
 
 
 def _lauf(cmd, log=None):
@@ -345,7 +348,27 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
             if os.path.isdir(vo): json.dump(dict(stand=st, rc=rc), open(vs, "w"))
         try: v = json.load(open(vj))
         except Exception: v = {}
-        e = B["vereinen"] = dict(mit=A["teil"], rc=rc, ordner=vo, urteil=v.get("urteil"), pruefung=v.get("pruefung"), spitzen=v.get("spitzen"), lot_b=v.get("lot_b"), paare=v.get("paare"), inlier=v.get("inlier"), mit_dichten_wolken=bool(fa and fb))
+        e = B["vereinen"] = dict(mit=A["teil"], rc=rc, ordner=vo, urteil=v.get("urteil"), pruefung=v.get("pruefung"), spitzen=v.get("spitzen"), lot_b=v.get("lot_b"), paare=v.get("paare"), inlier=v.get("inlier"), mit_dichten_wolken=bool(fa and fb), weg="klappung")
+        if not (rc == 0 and "B_nach_A" in v) and GPS_VEREINEN:
+            # RUECKFALL GPS (22.11.2026, Nulllauf schwabentor-1122): die Klappung von seiten_vereinen setzt gleich aussehende Gegenseiten voraus (Martinstor). Am Schwabentor
+            # lieferte sie Massstab 0,012 -> "keine hoechsten Bauteile" -> Teil A allein -> einseitige Wolke, Ausrichtung 20 Grad gedreht, Abbruch. Haben beide Teile genug
+            # Foto-GPS, legt tools/seiten_gps_vereinen.py B ueber das GPS auf A; danach dieselben Tore wie oben (Blick-Tor) + GPS-Seiten-Tor am vereinten Modell.
+            vg = vo + "_gps"; vgj = os.path.join(vg, "vereinen.json"); stg = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), *(x for x in (fa, fb) if x)); altg = None
+            try: altg = json.load(open(os.path.join(vg, "stand.json"))) if os.path.isfile(vgj) else None
+            except Exception: altg = None
+            if altg and altg.get("stand") == stg: rg = altg["rc"]
+            else:
+                sag(f"SEITENMODELLE: Teil {B['teil']} nicht ueber die Klappung vereint (rc {rc}) - versuche das Foto-GPS (tools/seiten_gps_vereinen.py) ...")
+                rg = LAUF([PYC, "-I", os.path.join(T, "seiten_gps_vereinen.py"), A["modell"], B["modell"], "--bilder", fotos, "--aus", vg] + (["--dicht-a", fa, "--dicht-b", fb] if fa and fb else []), os.path.join(vg, "log.txt"))
+                if os.path.isdir(vg): json.dump(dict(stand=stg, rc=rg), open(os.path.join(vg, "stand.json"), "w"))
+            try: vgd = json.load(open(vgj))
+            except Exception: vgd = {}
+            e["gps"] = dict(rc=rg, ordner=vg, urteil=vgd.get("urteil"), pruefung=vgd.get("pruefung"))
+            if rg == 0 and "B_nach_A" in vgd:
+                M_.append(f"Teil {B['teil']}: Klappung gescheitert ({v.get('urteil') or 'rc ' + str(rc)}) - ueber das Foto-GPS gelegt: {vgd.get('urteil')}")
+                v = vgd; rc = 0; e.update(weg="gps", urteil=vgd.get("urteil"), pruefung=vgd.get("pruefung"))
+                if (vgd.get("pruefung") or {}).get("mass_sd_rel", 0) > 0.05:
+                    M_.append(f"ACHTUNG Teil {B['teil']}: Massstab gegen Teil A nur auf +-{100 * vgd['pruefung']['mass_sd_rel']:.0f} % belegt (Foto-GPS) - Masse dieser Seite nicht ohne Gegenprobe (LoD2-Grundriss, foto_mass) verwenden")
         if rc == 0 and "B_nach_A" in v:
             kand = os.path.join(vz, f"versuch_{B['teil']}"); tj = os.path.join(vo, "seiten_blick.json")
             try:
@@ -353,13 +376,18 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
             except Exception as ex:
                 e["zusammenlegen"] = f"gescheitert: {ex}"; M_.append(f"Teil {B['teil']}: seiten_vereinen rc 0, aber das Zusammenlegen der Modelle scheiterte ({ex}) - Teil NICHT im Ergebnis"); ber["nicht_vereint"].append(B["teil"]); continue
             rt = LAUF([PYC, "-I", os.path.join(T, "seiten_blick_tor.py"), kand, sj, "--aus", tj], os.path.join(vo, "seiten_blick.log")); e["blick_tor"] = rt
+            if rt == 0 and e["weg"] == "gps":                                          # GPS-Lage: zweites unabhaengiges Tor - alle GPS-Fotos des vereinten Modells muessen zusammen passen
+                rgs = LAUF([PYC, "-I", os.path.join(T, "gps_seiten_pruefen.py"), kand, "--bilder", fotos], os.path.join(vo + "_gps", "gps_seiten.log")); e["gps_seiten_tor"] = rgs
+                if rgs == 3:
+                    M_.append(f"Teil {B['teil']}: ueber das Foto-GPS gelegt, aber das GPS-Seiten-Tor am vereinten Modell fiel DURCH ({vo}_gps/gps_seiten.log) - Teil wieder herausgenommen"); ber["nicht_vereint"].append(B["teil"]); continue
             if rt == 0:
                 ang.append((B, v["B_nach_A"])); ber["vereint"].append(B["teil"]); stand_sparse = kand; e["zusammenlegen"] = me
                 sag(f"SEITENMODELLE: Teil {B['teil']} VEREINT mit Teil {A['teil']} ({v.get('urteil')}); vereintes Modell {me['bilder']} Bilder, {me['punkte']} Punkte, Blick-Tor bestanden"); continue
             M_.append(f"Teil {B['teil']}: seiten_vereinen rc 0, aber das Seiten-Blick-Tor auf dem vereinten Modell " + ("fiel DURCH (Seiten aufeinander, " if rt == 3 else f"stuerzte ab (rc {rt}, ") + f"{tj}) - Teil wieder herausgenommen")
         else:
             was = {3: "ABGELEHNT (Pruefung nicht bestanden)", 2: "zu wenige Verbindungen zwischen den Seitenmodellen"}.get(rc, f"gescheitert (rc {rc}, {vo}/log.txt)")
-            M_.append(f"Teil {B['teil']} ({B['im_modell']} Bilder) NICHT vereint mit Teil {A['teil']}: {was}; Urteil: {v.get('urteil')}; Pruefwerte: {json.dumps(v.get('pruefung'), ensure_ascii=False)[:500]}")
+            M_.append(f"Teil {B['teil']} ({B['im_modell']} Bilder) NICHT vereint mit Teil {A['teil']}: {was}; Urteil: {v.get('urteil')}; Pruefwerte: {json.dumps(v.get('pruefung'), ensure_ascii=False)[:500]}"
+                      + (f"; Foto-GPS: {e['gps']['urteil']}" if e.get("gps") else ""))
         ber["nicht_vereint"].append(B["teil"])
     if ang:                                                                              # das letzte angenommene Zwischenmodell ist das Ergebnis
         ziel = os.path.join(vz, "sparse")

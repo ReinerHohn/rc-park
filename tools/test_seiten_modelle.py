@@ -122,10 +122,15 @@ Rz = np.diag([-1.0, -1.0, 1.0, 1.0]); M_kleb = Rz @ M_wahr                      
 ZAHL = {}
 
 
-def attrappe(vereinen_rc=0, matrix=M_wahr):
+def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr):
     def lauf(cmd, log=None):
         was = os.path.basename(cmd[2]) if cmd[0] == SM.PYC else cmd[1]; ZAHL[was] = ZAHL.get(was, 0) + 1
         if was == "view_graph_calibrator": return 0
+        if was == "seiten_gps_vereinen.py" and gps_rc is not None:                   # 22.11.2026 Rueckfall GPS; gps_rc None = das echte Werkzeug laeuft (Fotoordner ohne GPS -> rc 2)
+            assert "--bilder" in cmd and cmd[3] != cmd[4], "GPS-Vereinen ohne Fotoordner oder mit gleichem Modell"
+            aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); v = dict(art="gps", ok=gps_rc == 0, urteil="vereint ueber das Foto-GPS" if gps_rc == 0 else "GPS zu ungenau", pruefung=dict(dreh_sd_grad=2.0, mass_sd_rel=0.08))
+            if gps_rc == 0: v["B_nach_A"] = gps_matrix.tolist()
+            json.dump(v, open(os.path.join(aus, "vereinen.json"), "w")); return gps_rc
         if was == "global_mapper":
             aus = cmd[cmd.index("--output_path") + 1]; namen = open(cmd[cmd.index("--GlobalMapper.image_list_path") + 1]).read().split(); nord = namen[0] in {b["name"] for b in BN}
             assert set(namen) == {b["name"] for b in (BN if nord else BS)}, "Bildliste des Teils falsch"; assert os.path.isfile(cmd[cmd.index("--database_path") + 1]), "Mapper ohne DB-Kopie"
@@ -197,9 +202,24 @@ wb2 = arbeit("kb2"); rc, aus, B = kette(wb2, vereinen_rc=2); assert B["ergebnis"
 # c) geklebt
 wc_ = arbeit("kc"); rc, aus, B = kette(wc_, matrix=M_kleb); t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
 assert B["ergebnis"]["art"] == "teil_a_allein" and t1["vereinen"]["blick_tor"] == 3 and any("Blick-Tor" in m and "DURCH" in m for m in B["meldungen"]) and pycolmap.Reconstruction(os.path.join(wc_, "sparse", "0")).num_reg_images() == 14, f"verklebte Abbildung nicht abgefangen: {B['meldungen']}"
+# c2) Klappung abgelehnt -> Rueckfall Foto-GPS (22.11.2026, Nulllauf schwabentor-1122): richtig -> vereint (Blick-Tor + GPS-Seiten-Tor), Massstab-Warnung; geklebt -> Blick-Tor
+#     faellt durch; GPS zu ungenau -> Teil A allein mit GPS-Urteil in der Meldung; RCPARK_SEITEN_GPS=0 -> kein GPS-Versuch
+wg = arbeit("kg"); ZAHL.clear(); rc, aus, B = kette(wg, vereinen_rc=3, gps_rc=0); t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
+assert rc == 0 and B["ergebnis"]["art"] == "vereint" and B["vereint"] == [0, 1] and t1["vereinen"]["weg"] == "gps" and t1["vereinen"]["blick_tor"] == 0 and t1["vereinen"]["gps_seiten_tor"] == 2, f"GPS-Rueckfall: {B['ergebnis']} {t1.get('vereinen')}\n{aus[-1200:]}"
+assert ZAHL.get("seiten_gps_vereinen.py") == 1 and ZAHL.get("gps_seiten_pruefen.py") == 1 and pycolmap.Reconstruction(os.path.join(wg, "sparse", "0")).num_reg_images() == 24, f"Aufrufe {ZAHL}"
+assert any("ueber das Foto-GPS gelegt" in m for m in B["meldungen"]) and any("Massstab gegen Teil A nur auf +-8 %" in m for m in B["meldungen"]), f"GPS-Weg nicht gemeldet: {B['meldungen']}"
+ZAHL.clear(); rc, aus, B = kette(wg, vereinen_rc=3, gps_rc=0); assert ZAHL.get("seiten_gps_vereinen.py") is None and B["ergebnis"]["art"] == "vereint", f"GPS-Vereinen nicht wiederverwendet: {ZAHL}"
+wg2 = arbeit("kg2"); rc, aus, B = kette(wg2, vereinen_rc=3, gps_rc=0, gps_matrix=M_kleb); t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
+assert B["ergebnis"]["art"] == "teil_a_allein" and t1["vereinen"]["weg"] == "gps" and t1["vereinen"]["blick_tor"] == 3, f"verklebte GPS-Abbildung nicht abgefangen: {t1.get('vereinen')}"
+wg3 = arbeit("kg3"); rc, aus, B = kette(wg3, vereinen_rc=3, gps_rc=3)
+assert B["ergebnis"]["art"] == "teil_a_allein" and any("NICHT vereint" in m and "Foto-GPS: GPS zu ungenau" in m for m in B["meldungen"]), f"GPS-Ablehnung nicht gemeldet: {B['meldungen']}"
+wg4 = arbeit("kg4"); SM.GPS_VEREINEN = False; ZAHL.clear()
+try: rc, aus, B = kette(wg4, vereinen_rc=3, gps_rc=0)
+finally: SM.GPS_VEREINEN = True
+assert B["ergebnis"]["art"] == "teil_a_allein" and not ZAHL.get("seiten_gps_vereinen.py"), "RCPARK_SEITEN_GPS=0 wirkt nicht"
 # d) nur ein grosser Teil
 wd_ = arbeit("kd", teile=((0, BN),)); ZAHL.clear(); rc, aus, B = kette(wd_); assert rc == 2 and B.get("grund") and not ZAHL and not os.path.isdir(os.path.join(wd_, "sparse")), f"ein Teil: rc {rc}, {ZAHL}"
-print("ok 4: Kette - vereint (24 Bilder, Wolke, Tiefenkarten, Wiederverwendung), abgelehnt/zu wenig -> Teil A allein gemeldet, verklebt -> Blick-Tor, ein Teil -> nichts gerechnet")
+print("ok 4: Kette - vereint (24 Bilder, Wolke, Tiefenkarten, Wiederverwendung), abgelehnt/zu wenig -> Teil A allein gemeldet, verklebt -> Blick-Tor, Klappung abgelehnt -> Foto-GPS (vereint / geklebt / zu ungenau / abgeschaltet), ein Teil -> nichts gerechnet")
 
 # ---------- 5 Verdrahtung
 q = lambda n: open(os.path.join(T, n)).read()
