@@ -36,7 +36,7 @@ import os, sys, json, argparse
 import numpy as np
 
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
-from seiten_gps_vereinen import gps_roh, enu, aehnlich2d, basis, RADIUS_M, GRENZE_M, MIN_GPS
+from seiten_gps_vereinen import gps_roh, enu, aehnlich2d, basis, lot_aus_bild_achsen, RADIUS_M, GRENZE_M, MIN_GPS
 from lage_gps_pruefen import GPS_GLEICH_M
 
 MIN_UNABH = 40           # ANNAHME wie GPS_ANKER_MIN_KAM (sfm_lod2_ausrichten.py): erst ab 40 stimmigen Kameras traegt das GPS die Lage allein. Martinstor (15-17) bleibt unberuehrt.
@@ -85,7 +85,7 @@ def stuecke(rec):
 def startrahmen(rec, G, rng):
     """Robuste 2D-Aehnlichkeit Kamerazentren -> GPS um das Lot -> (M0 4x4 Modell -> ENU [Hoehe = Modellhoehe * s], Inlier-Namen, Reste, Lot) oder Grund (str)."""
     ims = [im for im in rec.images.values() if im.has_pose]
-    oben = np.mean([-im.cam_from_world().rotation.matrix()[1] for im in ims], 0); oben /= np.linalg.norm(oben); e1, e2 = basis(oben)
+    oben = lot_aus_bild_achsen([im.cam_from_world().rotation.matrix() for im in ims]); e1, e2 = basis(oben)   # 22.11.2026: Bild-x-Lot statt Bild-oben-Mittel (kippt um die Kameraneigung)
     k = [im for im in ims if im.name in G and np.linalg.norm(G[im.name]) < RADIUS_M]
     if len(k) < 3: return f"nur {len(k)} Geotags im {RADIUS_M:.0f}-m-Umkreis"
     C = np.array([im.projection_center() for im in k]); X = np.c_[C @ e1, C @ e2]; Y = np.array([G[im.name] for im in k]); inl = None

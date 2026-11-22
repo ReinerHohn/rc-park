@@ -57,11 +57,31 @@ def winkel(R):
     return float(np.degrees(np.arctan2(R[1, 0], R[0, 0])))
 
 
+LOT_X_GRAD = 15.0       # wie sfm_lod2_ausrichten.py (Lot aus Kamerablick): Bild-x-Achse hoechstens 15 Grad neben der Waagerechten = Kamera stuetzt das Lot
+
+
+def lot_aus_bild_achsen(Rs):
+    """Lot aus den Kameradrehungen (cam_from_world, je 3x3): Richtung, auf der die Bild-x-Achsen moeglichst senkrecht stehen (kleinster Singulaervektor, gerollte Bilder
+    iterativ raus), Vorzeichen aus dem Mittel der Bild-oben-Richtungen.
+    22.11.2026 (Nulllauf schwabentor-1122f, Sued-'Doppelflaeche' 2,5 m): vorher war das Lot das MITTEL der Bild-oben-Richtungen. Wer einen 50-m-Turm fotografiert, neigt die
+    Kamera nach oben (Median +16/+18 Grad je Seite); die Bild-oben-Richtung kippt um genau diese Neigung vom Lot weg, auf gegenueberliegenden Seiten in entgegengesetzte
+    Richtung. Gemessen: Bild-oben-Lot 12,8 Grad (Teil 0) und 16,3 Grad (Teil 1) neben dem Bild-x-Lot -> Teil 1 gegen Teil 0 ~28 Grad gekippt, die Suedwand stand im
+    vereinten Modell 23 Grad schraeg (Median-x von -8,7 m in 1 m Hoehe bis -3,6 m in 13 m Hoehe) = das 'zwei Streifen'-Bild. Die Bild-x-Achse bleibt beim Neigen
+    waagerecht (Fotos werden nicht gerollt) - so rechnet tools/sfm_lod2_ausrichten.py das Lot seit 19.11. Rueckfall (< 8 Kameras stuetzen es): Mittel der Bild-oben-Richtungen."""
+    Rs = np.asarray(Rs, float).reshape(-1, 3, 3); ob = np.mean(-Rs[:, 1, :], 0); ob /= max(np.linalg.norm(ob), 1e-12)
+    X = Rs[:, 0, :]; inn = np.ones(len(X), bool); up = None
+    for _ in range(5):
+        if inn.sum() < 8: break
+        up = np.linalg.svd(X[inn], full_matrices=False)[2][2]; inn = np.abs(X @ up) < np.sin(np.radians(LOT_X_GRAD))
+    if up is None or inn.sum() < 8: return ob
+    return up if up @ ob > 0 else -up
+
+
 def kameras(modell):
-    """-> (Namen, Zentren n x 3, Lot oben) eines COLMAP-Modells; Lot = Mittel der Bild-oben-Richtungen (Strassenfotos werden waagerecht gehalten)."""
+    """-> (Namen, Zentren n x 3, Lot oben) eines COLMAP-Modells; Lot aus den Bild-x-Achsen (lot_aus_bild_achsen: Strassenfotos werden nicht gerollt, aber geneigt)."""
     import pycolmap
     r = pycolmap.Reconstruction(modell); ims = [im for im in r.images.values() if im.has_pose]
-    oben = np.mean([-im.cam_from_world().rotation.matrix()[1] for im in ims], 0); oben /= np.linalg.norm(oben)
+    oben = lot_aus_bild_achsen([im.cam_from_world().rotation.matrix() for im in ims])
     return [im.name for im in ims], np.array([im.projection_center() for im in ims]), oben
 
 

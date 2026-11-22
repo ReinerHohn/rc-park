@@ -14,8 +14,9 @@ WANDDICKE / TEILVERSATZ JE LoD2-KANTE (22.11.2026, Nulllauf schwabentor-1122f: a
      Teil selbst: zweite Wand/Durchfahrt oder Geister), 'versetzt' (Lageunterschied > VERSATZ_MAX_M), 'ok', 'kein_urteil' (< MIN_PUNKTE je Teil = zu wenig Wandbeleg).
 Ausgabe JSON (kanten[], teile{}, urteil, rc). rc 0 = keine Kante doppelwand/versetzt, 3 = mindestens eine, 2 = nicht messbar (keine Seitenteile, kein LoD2, keine Kameras).
 MESSWERKZEUG, KEIN ABBRUCH in der Kette (gesamtkette ruft es mit ok=(0, 2, 3) und schreibt nur die Zahlen).
-GRENZEN (ANNAHMEN): DICKE_MAX_M 1,2 m und VERSATZ_MAX_M 0,5 m aus der Vorlage gesetzt, NOCH NICHT aus einem guten Kontrollobjekt abgeleitet (schwabentor-1120 besteht das
-  Grundriss-Tor - dort messen und hier eintragen). Z_BAND im Modellrahmen (Boden ~0 = DGM); nur Teile mit eigenen Kameras in der Ausrichtung.
+GRENZEN: DICKE_MAX_M 1,2 m und VERSATZ_MAX_M 0,5 m am Kontrollobjekt schwabentor-1120 gemessen (Kommentar bei den Konstanten); 'dick' allein ist nur ein Hinweis
+  (Torseiten sind echt dick). Je Teil und Kante zusaetzlich neigung_grad (schraege Wand = Kippung des Teils). Z_BAND im Modellrahmen (Boden ~0 = DGM); nur Teile mit
+  eigenen Kameras in der Ausrichtung.
 Test: tools/test_wand_dicke_tor.py. Python: /media/oem/scan/venv-colmap/bin/python -I (pycolmap)."""
 import os, sys, json, argparse
 import numpy as np
@@ -25,8 +26,18 @@ Z_BAND = (1.5, 9.0)      # ANNAHME (Vorlage): Wandfuss-Band in Metern ueber dem 
 ABSTAND_M = 3.0          # ANNAHME (Vorlage): Wandpunkte hoechstens 3 m von der LoD2-Kante
 MIN_KANTE_M = 4.0        # kuerzere Kanten (Rundungen, Versaetze) nicht werten
 MIN_PUNKTE = 200         # ANNAHME: weniger Wandpunkte eines Teils an einer Kante = kein Urteil fuer diesen Teil
-DICKE_MAX_M = 1.2        # ANNAHME (Vorlage, nicht aus Kontrollobjekt abgeleitet)
-VERSATZ_MAX_M = 0.5      # ANNAHME (Vorlage, nicht aus Kontrollobjekt abgeleitet)
+# GRENZEN AM KONTROLLOBJEKT schwabentor-1120 GEMESSEN (22.11.2026, Grundriss-Tor bestanden, nur gelesen; Skript im Logbuch):
+#  Dicke (P90-P10, dichte Wolke, z 1,5-9 m): Westwand 0,11 m, Nordwand 0,99 m (Treppentuermchen/Relief), Ostwand 3,15 m (Torseite: durch den Bogen sieht man die
+#   Durchfahrtswaende 3,5 m tiefer - ECHT). 'dick' ist darum nur ein Hinweis (rc 0), nie ein Fehler; 1,2 m trennt glatte Wand (<= 1,0) von Tiefe/zweiter Flaeche.
+#  Versatz: EIN Modell, Punkte nach Kamerahaelften (gerade/ungerade Bild-ID bzw. Nord/Sued-Kameras) getrennt: Lageunterschied 0,002-0,11 m je Kante (Rauschboden).
+#   0,5 m = gut 4x davon und ~6 mm im H0-Modell (sichtbar) -> bleibt.
+#  Schwabentor-1122 'Teil 1 in sich 2,51 m dick' war KEINE Doppelwand und keine Durchfahrt: die Suedwand stand 23 Grad schraeg (Median-x -8,7 m in 1 m Hoehe, -3,6 m
+#   in 13 m, P10-P90 je Hoehe < 1 m; dieselben 95 Bilder sehen beide 'Streifen') - Ursache Lot aus Bild-oben-Mittel (tools/seiten_gps_vereinen.lot_aus_bild_achsen).
+#   Eine schraege Wand erscheint im Band Z_BAND als Dicke = Bandhoehe x tan(Kippung); das Tor meldet darum zusaetzlich die Neigung je Teil und Kante (neigung_grad).
+DICKE_MAX_M = 1.2
+VERSATZ_MAX_M = 0.5
+KNICK_GRAD = 8.0         # ANNAHME: Kantenstuecke mit weniger Knick gehoeren zu einer Wand (Schwabentor-Zwischenecken < 3 Grad, echte Ecken ~90 Grad)
+NEIGUNG_MAX_GRAD = 5.0   # ANNAHME: Wandneigung je Teil (Lage oben gegen unten) - ab hier ist 'dick' eher Kippung als Relief
 N_MAX = 600000           # Punkte je Teil (feste Zufallsauswahl)
 
 
@@ -35,10 +46,23 @@ def sim3_fit(X, Y):
     s = float((S * np.diag(D)).sum() / max(((X - mx) ** 2).sum(), 1e-18)); M = np.eye(4); M[:3, :3] = s * R; M[:3, 3] = my - s * R @ mx; return M
 
 
+def kanten_zusammenfassen(g, winkel=KNICK_GRAD):
+    """Aufeinanderfolgende fast gerade Kantenstuecke (Knick < winkel Grad) zu EINER Kante zusammenlegen -> Liste (p0, p1).
+    22.11.2026: die LoD2-Grundflaeche des Schwabentors hat Zwischenecken (Sued 3,7 + 4,6 + 3,8 m, Nord 3,5 + 5,0 + 3,7 m); mit MIN_KANTE_M = 4 wurden nur die
+    Mittelstuecke gewertet, zwei Drittel jeder Wand fielen still heraus."""
+    g = np.asarray(g, float)
+    if len(g) > 1 and np.allclose(g[0], g[-1]): g = g[:-1]
+    n = len(g); r = lambda i: (g[(i + 1) % n] - g[i]) / max(np.linalg.norm(g[(i + 1) % n] - g[i]), 1e-9)
+    knick = [i for i in range(n) if np.degrees(np.arccos(np.clip(r(i - 1) @ r(i), -1, 1))) >= winkel]   # Ecke i = Knick zwischen Stueck i-1 und i
+    if not knick: return [(g[i], g[(i + 1) % n]) for i in range(n)]
+    return [(g[a], g[b]) for a, b in zip(knick, knick[1:] + knick[:1])]
+
+
 def kanten_messen(grundflaeche, teile, z_band=Z_BAND, abstand=ABSTAND_M, min_kante=MIN_KANTE_M, min_punkte=MIN_PUNKTE):
-    """grundflaeche = Ecken (n x 2) der Zielgebaeude-Grundflaeche, teile = {Name: Punkte n x 3 im Modellrahmen}. -> Liste je Kante (dict)."""
+    """grundflaeche = Ecken (n x 2) der Zielgebaeude-Grundflaeche, teile = {Name: Punkte n x 3 im Modellrahmen}. -> Liste je Kante (dict).
+    Kante = gerade Folge von LoD2-Stuecken (kanten_zusammenfassen); gemessen wird der Normalabstand zur Geraden durch Anfang und Ende."""
     g = np.asarray(grundflaeche, float); c = g.mean(0); L_ = []
-    for p0, p1 in zip(g, np.roll(g, -1, 0)):
+    for p0, p1 in kanten_zusammenfassen(g):
         L = float(np.linalg.norm(p1 - p0))
         if L < min_kante: continue
         e = (p1 - p0) / L; n = np.array([e[1], -e[0]]); n = n if (p0 - c) @ n > 0 else -n
@@ -47,12 +71,19 @@ def kanten_messen(grundflaeche, teile, z_band=Z_BAND, abstand=ABSTAND_M, min_kan
             P = np.asarray(P, float); w = (P[:, 2] > z_band[0]) & (P[:, 2] < z_band[1]); q = P[w, :2] - p0; s = q @ e; d = q @ n; m = (s > 0.5) & (s < L - 0.5) & (np.abs(d) < abstand)
             if m.sum() < min_punkte: k["teile"][str(name)] = dict(n=int(m.sum()), urteil="kein_urteil"); continue
             k["teile"][str(name)] = dict(n=int(m.sum()), lage_m=round(float(np.median(d[m])), 3), dicke_m=round(float(np.percentile(d[m], 90) - np.percentile(d[m], 10)), 3)); alle.append(d[m])
+            zz = P[w, 2][m]; zm = float(np.median(zz)); u, o = zz < zm, zz >= zm                 # Neigung: Lage der oberen gegen die untere Haelfte des Bandes
+            if u.sum() >= 30 and o.sum() >= 30:
+                dz = float(np.median(zz[o]) - np.median(zz[u]))
+                if dz > 0.5: k["teile"][str(name)]["neigung_grad"] = round(float(np.degrees(np.arctan2(np.median(d[m][o]) - np.median(d[m][u]), dz))), 1)
         gueltig = [v for v in k["teile"].values() if "lage_m" in v]
         if not gueltig: k["urteil"] = "kein_urteil"; L_.append(k); continue
         D = np.concatenate(alle); k["dicke_gesamt_m"] = round(float(np.percentile(D, 90) - np.percentile(D, 10)), 3); k["lage_gesamt_m"] = round(float(np.median(D)), 3)
         k["lageunterschied_m"] = round(max(v["lage_m"] for v in gueltig) - min(v["lage_m"] for v in gueltig), 3) if len(gueltig) > 1 else None
         dick = k["dicke_gesamt_m"] > DICKE_MAX_M; vers = (k["lageunterschied_m"] or 0) > VERSATZ_MAX_M
-        k["urteil"] = "doppelwand" if dick and vers else ("versetzt" if vers else ("dick" if dick else "ok")); L_.append(k)
+        k["urteil"] = "doppelwand" if dick and vers else ("versetzt" if vers else ("dick" if dick else "ok"))
+        schraeg = [t for t, v in k["teile"].items() if abs(v.get("neigung_grad", 0)) > NEIGUNG_MAX_GRAD]
+        if schraeg: k["schraeg_teile"] = schraeg
+        L_.append(k)
     return L_
 
 
@@ -61,8 +92,9 @@ def zusammenfassen(kanten):
     schlecht = [k for k in kanten if k["urteil"] in ("doppelwand", "versetzt")]; gemessen = [k for k in kanten if k["urteil"] != "kein_urteil"]
     if not gemessen: return 2, "keine Kante mit genug Wandbeleg - kein Urteil"
     if schlecht: return 3, "; ".join(f"Kante {k['von']}->{k['bis']}: {k['urteil']} (Dicke {k['dicke_gesamt_m']} m, Teile {k['lageunterschied_m']} m auseinander)" for k in schlecht)
-    dick = [k for k in gemessen if k["urteil"] == "dick"]
-    return 0, f"{len(gemessen)} Kanten gemessen, keine Doppelwand" + (f"; {len(dick)} Kante(n) dick in sich (Teil selbst: zweite Wand oder Geister)" if dick else "")
+    dick = [k for k in gemessen if k["urteil"] == "dick"]; schraeg = [k for k in gemessen if k.get("schraeg_teile")]
+    return 0, f"{len(gemessen)} Kanten gemessen, keine Doppelwand" + (f"; {len(dick)} Kante(n) dick in sich (Torbogen/Tiefe, zweite Wand oder Kippung)" if dick else "") \
+        + (f"; {len(schraeg)} Kante(n) mit schraeger Wand (> {NEIGUNG_MAX_GRAD:.0f} Grad: Lot des Teils pruefen)" if schraeg else "")
 
 
 def teile_laden(sm, au, n_max=N_MAX):
@@ -86,7 +118,7 @@ def teile_laden(sm, au, n_max=N_MAX):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0]); ap.add_argument("objekt"); ap.add_argument("--seiten", required=True); ap.add_argument("--ausrichtung", required=True); ap.add_argument("--aus")
-    a = ap.parse_args(argv); aus = a.aus or os.path.join(os.path.dirname(os.path.abspath(a.objekt)), "audit", "wand_dicke.json"); erg = dict(werkzeug="wand_dicke_tor.py", grenzen=dict(dicke_max_m=DICKE_MAX_M, versatz_max_m=VERSATZ_MAX_M, z_band=Z_BAND, abstand_m=ABSTAND_M, herkunft="ANNAHME (Vorlage 1122f), nicht aus Kontrollobjekt abgeleitet"))
+    a = ap.parse_args(argv); aus = a.aus or os.path.join(os.path.dirname(os.path.abspath(a.objekt)), "audit", "wand_dicke.json"); erg = dict(werkzeug="wand_dicke_tor.py", grenzen=dict(dicke_max_m=DICKE_MAX_M, versatz_max_m=VERSATZ_MAX_M, z_band=Z_BAND, abstand_m=ABSTAND_M, herkunft="Kontrollobjekt schwabentor-1120 (22.11.2026): glatte Wand Dicke 0,11-0,99 m, Torseite 3,15 m echt; Versatz-Rauschboden 0,00-0,11 m"))
     def ende(rc, urteil):
         erg.update(rc=rc, urteil=urteil); os.makedirs(os.path.dirname(aus), exist_ok=True); json.dump(erg, open(aus, "w"), indent=1, ensure_ascii=False)
         for k in erg.get("kanten", []): print(f"Kante {k['von']}->{k['bis']} ({k['laenge_m']} m): {k['urteil']}" + (f", Dicke {k.get('dicke_gesamt_m')} m, Teile {k.get('lageunterschied_m')} m auseinander" if "dicke_gesamt_m" in k else "") + " | " + "; ".join(f"Teil {t}: " + (f"Lage {v['lage_m']:+.2f} m, Dicke {v['dicke_m']:.2f} m" if "lage_m" in v else f"{v['n']} Pkt") for t, v in k["teile"].items()))

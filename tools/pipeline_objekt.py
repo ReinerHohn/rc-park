@@ -185,13 +185,13 @@ def main():
     nach_grund = seiten_nachstufe_veraltet(daten) if os.path.isdir(sparse_dir) else None
     if nach_grund:                                                        # 22.11.2026: billige Nachstufe mit aktuellem Code, teure Teile aus dem Zwischenstand (iphone_sfm.py NUR NACHSTUFE)
         print(f"SEITENMODELLE NACHSTUFE NEU: {nach_grund} - iphone_sfm.py rechnet Vereinen/Tore/Einsetzen neu (Merkmale, Mapper je Teil, dichte Wolken je Teil aus dem Zwischenstand)", flush=True)
-        rc_n, out_n = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")], log, env=dict(os.environ, RCPARK_SFM_NUR_NACHSTUFE="1"))
+        rc_n, out_n = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")], log, env=dict(os.environ, RCPARK_SFM_NUR_NACHSTUFE="1", RCPARK_SEITEN_OBJEKT=oj))
         if rc_n != 0 or seiten_nachstufe_veraltet(daten):
             stufe(bericht, "sfm", "FEHLER", f"Nachstufe der Seitenmodelle mit neuem Code gescheitert (rc {rc_n}): {(out_n.strip().splitlines() or [''])[-1][:200]} - sparse/0 gehoert zu altem Code; bewusst neu: --neu sfm"); sichern(); return 2
         stufe(bericht, "seiten_nachstufe", "OK", nach_grund + " -> Vereinen/Einsetzen neu gerechnet"); sichern()
     if not os.path.isdir(sparse_dir):
         mapper_wahl = sys.argv[sys.argv.index("--mapper") + 1] if "--mapper" in sys.argv and sys.argv.index("--mapper") + 1 < len(sys.argv) else ""   # 19.11.2026: auto (Standard von iphone_sfm) | global | inkrementell | konsens (modelle/GLOBALER_MAPPER_STABIL.md); leer = nichts durchreichen
-        rc, out = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")] + (["--mapper", mapper_wahl] if mapper_wahl else []), log)
+        rc, out = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")] + (["--mapper", mapper_wahl] if mapper_wahl else []), log, env=dict(os.environ, RCPARK_SEITEN_OBJEKT=oj))   # 22.11.2026: objekt.json fuer die Stufe LoD2 je Teil (sfm_seiten_modelle.lod2_stufe)
     rc_ok = os.path.isdir(sparse_dir)
     reg = None
     if rc_ok:
