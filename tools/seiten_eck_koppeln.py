@@ -43,8 +43,11 @@ SCHWELLE_REL = 0.02      # Inlier-Schwelle der Sim3: 2 % der Ausdehnung
 MASS_REL = 0.02          # Massstab-Unsicherheit (Haelften-Probe) hoechstens 2 %
 KREIS_SIGMA = 3.0
 WIEDERHOLUNGEN = int(os.environ.get("RCPARK_ECK_WIEDERHOLUNGEN", "3"))   # Stabilitaetsmass: Laeufe mit weggelassenen Bildern
+NACHMATCHEN = os.environ.get("RCPARK_ECK_NACHMATCHEN", "1") != "0"   # Brueckenbilder mit ALIKED+LightGlue nachmatchen (tools/bruecke_nachmatchen.py, GPU)
+ZEIT_FENSTER_S = float(os.environ.get("RCPARK_ECK_ZEITFENSTER", "30"))  # ANNAHME: eigene Fotos (EXIF-Zeit) bis 30 s um ein Brueckenbild = Rundgang-Nachbarn
 WEGLASSEN = 0.2          # ANNAHME: je Wiederholung 20 % der Nicht-Brueckenbilder weg (Bruecke selbst bleibt)
 COLMAP = os.environ.get("RCPARK_COLMAP", "/media/oem/scan/colmap-build/prefix/bin/colmap")
+NACHMATCH_VRAM_MB = int(os.environ.get("RCPARK_ECK_VRAM_MB", "4500"))
 NAMEN = {}               # Teil -> registrierte Bildnamen (main)
 
 
@@ -167,6 +170,13 @@ def zwischenmodell(k, i, db, fotos, aus, faeden, R, ausd_teil):
     """Strengste verbindende Schwelle + Sensitivitaet an der naechst lockereren. -> dict"""
     import pycolmap
     erg = dict(teile=k["teile"], brueckenpaare=len(k["paare"]), bilder=len(k["bilder"]), versuche=[]); treffer = []
+    if NACHMATCHEN:                                                                   # mehr und breiter verteilte Zuordnungen im Brueckenbereich (Kette: SIFT)
+        zeit = zeitnachbarn(k, fotos); k = dict(k, bilder=sorted(set(k["bilder"]) | zeit)); erg.update(bilder=len(k["bilder"]), zeitnachbarn=len(zeit))
+        lo = os.path.join(aus, f"zwischen{i}_lg"); os.makedirs(lo, exist_ok=True); lp = os.path.join(lo, "bilder.txt"); open(lp, "w").write("\n".join(k["bilder"]) + "\n")
+        rc = subprocess.call([os.path.join(T, "py"), os.path.join(T, "bruecke_nachmatchen.py"), db, fotos, lp, "--aus", lo, "--vram-mb", str(NACHMATCH_VRAM_MB), "--faeden", str(faeden)],
+                             stdout=open(os.path.join(lo, "log.txt"), "w"), stderr=subprocess.STDOUT)
+        if rc == 0 and os.path.isfile(os.path.join(lo, "db.db")): db = os.path.join(lo, "db.db"); erg["nachmatchen"] = dict(rc=0, db=db)
+        else: erg["nachmatchen"] = dict(rc=rc, grund="Nachmatchen gescheitert/gesperrt - SIFT-Datenbank", log=os.path.join(lo, "log.txt"))
     for s in SCHWELLEN:
         rc, mods = mapper(k["bilder"], db, fotos, os.path.join(aus, f"zwischen{i}_s{s}"), faeden, s); best = None
         for m in mods:
@@ -207,6 +217,25 @@ def vergleich(g0, g1, ausd_teil):
         D = (g0[ts[0]][0] @ np.linalg.inv(g0[x][0])) @ np.linalg.inv(g1[ts[0]][0] @ np.linalg.inv(g1[x][0])); s, Rr, t = zerlegen(D)
         out.append(dict(kante=[ts[0], x], drehung_grad=round(winkel(Rr), 3), massstab_rel=round(abs(s - 1), 4), versatz_rel=round(float(np.linalg.norm(t)) / max(ausd_teil[ts[0]], 1e-12), 4)))
     return out
+
+
+def exif_zeit(pfad):
+    try:
+        from PIL import Image; import datetime
+        v = Image.open(pfad).getexif().get_ifd(0x8769).get(36867) or Image.open(pfad).getexif().get(306)
+        return datetime.datetime.strptime(v, "%Y:%m:%d %H:%M:%S").timestamp() if v else None
+    except Exception: return None
+
+
+def zeitnachbarn(k, fotos):
+    """Bilder mit EXIF-Aufnahmezeit bis ZEIT_FENSTER_S um ein Brueckenbild (ein Rundgang ist eine Kette) - auch ohne Paar in der Kettenliste; nur Bilder mit EXIF-Zeit."""
+    kern = {d["a"] for d in k["paare"]} | {d["b"] for d in k["paare"]}; tz = {}
+    for n in os.listdir(fotos):
+        if n.lower().endswith((".jpg", ".jpeg", ".png")):
+            z = exif_zeit(os.path.join(fotos, n))
+            if z is not None: tz[n] = z
+    kz = [tz[n] for n in kern if n in tz]
+    return {n for n, z in tz.items() if any(abs(z - x) <= ZEIT_FENSTER_S for x in kz)} - set(k["bilder"])
 
 
 def spannbaum(teile, kanten, a):
