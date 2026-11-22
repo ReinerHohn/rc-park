@@ -24,14 +24,40 @@ SCHNELL SCHEITERN (22.11.2026, schwabentor-1120 1122c/1122d: zweimal 44 min bis 
   - Vorpruefung im Skript ganz vorn und nach 'merkmale': tools/colmap_rig_abgleich.py probe (Lade-Check von triangulate_points auf Mini-DB, Sekunden);
   - Zwischenstaende je Teilschritt (<daten>/seiten_nachholen/stand/<schritt>.ok, Schluesselkette, schritt_helfer) - ein Fehler im letzten Schritt verwirft die GPU-Paare nicht;
   - Fehlschlag-Marke fehlschlag_<schluessel>.json mit CODE-STAND der Nachhol-Werkzeuge (tools/code_stand.py): gleicher Fehlschlag bei unveraendertem Code -> sofort rc 5.
+  - 23.11.2026: Speichermangel im abgebrochenen Schritt (tools/speicher_muster.py, z. B. SiftGPU 'out of memory') gibt Marke art='speicher' - die SPERRT NICHT
+    (Kette 1122n/o: voruebergehend belegte GPU sperrte Wiederholung und Folgelauf). Ausgabe des Skripts auch in <daten>/seiten_nachholen/nachholen_letzter_lauf.log.
 """
 import time, hashlib
 import sys, os, json, glob, struct, argparse, subprocess, numpy as np, cv2
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from code_stand import code_stand
+from code_stand import code_stand, dateien as code_dateien
+from speicher_muster import speicher_fehler
 # Werkzeuge des Nachhol-Skripts (Unterprozesse - die Importsuche von code_stand sieht sie nicht, darum hier genannt): CODE-STAND der Fehlschlag-Marke
 NACHHOL_WERKZEUGE = ("seiten_luecken.py", "colmap_rig_abgleich.py", "zusatzfotos_registrieren.py", "zusatzfotos_lightglue.py", "kameras_nachtragen.py", "kamera_verfeinern.py",
                      "commons_harvest.py", "online_ansichten_holen.py", "openverse_holen.py")
+
+
+def sperrt(F, cs):
+    """Sperrt die Fehlschlag-Marke <F> einen neuen Versuch? Nur ein FESTER Fehler (nicht Speichermangel) bei gleichem CODE-STAND.
+    23.11.2026 (Kette schwabentor-null-1122n/o): SiftGPU 'out of memory' (fremde GPU-Jobs) wurde als 'bekannter Fehlschlag' gemerkt - die Speicher-Wiederholung der Kette lief
+    nach 8 s in die Sperre, der naechste Kettenlauf ebenso; Sued- und Ostwand blieben leer, obwohl am Code nichts falsch war."""
+    return F.get("code_stand") == cs and F.get("art", "fest") != "speicher"
+
+
+def skript_laufen(sk, logpfad, rest_zeilen=4000):
+    """Nachhol-Skript ausfuehren, Ausgabe ZEILENWEISE weiterreichen (die Kette liest sie) und nach <logpfad> schreiben.
+    Rueckgabe (rc, Ausgabe seit der letzten 'SCHRITT '-Zeile) - nur der abgebrochene Schritt entscheidet ueber 'Speichermangel' (ein frueherer, aufgefangener
+    SiftGPU-Speicherfehler darf einen festen Fehler spaeter im Skript nicht als voruebergehend tarnen)."""
+    import collections
+    schluss = collections.deque(maxlen=rest_zeilen); os.makedirs(os.path.dirname(logpfad), exist_ok=True)
+    with open(logpfad, "w", encoding="utf-8", errors="replace") as lg:
+        p = subprocess.Popen(["bash", sk], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        for b in p.stdout:
+            z = b.decode("utf-8", "replace"); sys.stdout.write(z); sys.stdout.flush(); lg.write(z)
+            if z.startswith("SCHRITT "): schluss.clear()
+            schluss.append(z)
+        sys.stdout.flush(); rc = p.wait()
+    return rc, "".join(schluss)
 
 
 def schritt_helfer(Z, T):
@@ -46,6 +72,25 @@ def schritt_helfer(Z, T):
             '  if [ "$(cat $ST/$1.ok 2>/dev/null)" = "$KETTE" ]; then echo "SCHRITT $1: Zwischenstand uebernommen ($KETTE)"; return 1; fi',
             '  echo "SCHRITT $1: rechnen ($KETTE)"; rm -f $ST/$1.ok; return 0; }',
             'schritt_fertig() { echo "$KETTE" > $ST/$1.ok; }']
+
+
+def kontaktboegen(dateien, pfad, je_seite=120, Tn=200):
+    """ALLE Kandidaten als Kontaktboegen (je Seite 120 Kacheln, laufende Nummer + Namensende): <pfad>, dann <pfad ohne .jpg>_2.jpg, _3.jpg ...
+    23.11.2026 (Kette 1122o): der Bogen zeigte nur die ersten 120 von 372 Kandidaten - die eigenen Nahaufnahmen der Feldseite (St.-Georg-Bild) lagen dahinter und
+    waren nicht 'anzusehen', wie es der Hinweis der Stufe verlangt. Rueckgabe: Liste der geschriebenen Dateien."""
+    raus = []
+    for s0 in range(0, len(dateien), je_seite):
+        kacheln = []
+        for i, f in enumerate(dateien[s0:s0 + je_seite]):
+            im = cv2.imread(f); c = np.zeros((Tn, Tn, 3), np.uint8)
+            if im is not None:
+                s = Tn / max(im.shape[:2]); im = cv2.resize(im, (max(int(im.shape[1] * s), 1), max(int(im.shape[0] * s), 1)), interpolation=cv2.INTER_AREA); c[:im.shape[0], :im.shape[1]] = im
+            cv2.rectangle(c, (0, 0), (34, 15), (0, 0, 0), -1); cv2.putText(c, str(s0 + i), (2, 12), 0, 0.4, (0, 255, 255), 1)
+            cv2.putText(c, os.path.splitext(os.path.basename(f))[0][-14:] + ("" if im is not None else " UNLESBAR"), (2, Tn - 5), 0, 0.4, (0, 255, 255), 1); kacheln.append(c)
+        while len(kacheln) % 10: kacheln.append(np.zeros((Tn, Tn, 3), np.uint8))
+        p = pfad if s0 == 0 else pfad[:-4] + f"_{s0 // je_seite + 1}.jpg"
+        cv2.imwrite(p, np.vstack([np.hstack(kacheln[i:i + 10]) for i in range(0, len(kacheln), 10)])); raus.append(p)
+    return raus
 
 
 def utm32_nach_geo(e, n):
@@ -121,15 +166,8 @@ def main():
     zeilen.append("echo NACHHOLEN_FERTIG")
     zeilen.append(f"rm -rf {Z}/lg {Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/stand   # 17.11.2026: Zwischenstaende nach dem letzten Schritt wegraeumen (am Kettenturm 3,2 GB; der naechste Lauf loescht und rechnet sie ohnehin neu) - die Datenplatte fiel dadurch unter die 5-GB-Grenze")
     sk = os.path.join(audit, "seiten_luecken_holen.sh"); open(sk, "w").write("\n".join(zeilen) + "\n"); os.chmod(sk, 0o755)
-    if ung and kand:                                                          # Kontaktbogen der Kandidaten zum Ansehen
-        Tn = 200; kacheln = []
-        for f in kand[:120]:
-            im = cv2.imread(f)
-            if im is None: continue
-            s = Tn / max(im.shape[:2]); im = cv2.resize(im, (max(int(im.shape[1] * s), 1), max(int(im.shape[0] * s), 1)), interpolation=cv2.INTER_AREA); c = np.zeros((Tn, Tn, 3), np.uint8); c[:im.shape[0], :im.shape[1]] = im
-            cv2.putText(c, os.path.splitext(os.path.basename(f))[0][-14:], (2, Tn - 5), 0, 0.4, (0, 255, 255), 1); kacheln.append(c)
-        while len(kacheln) % 10: kacheln.append(np.zeros((Tn, Tn, 3), np.uint8))
-        if kacheln: cv2.imwrite(os.path.join(audit, "seiten_luecken_kandidaten.jpg"), np.vstack([np.hstack(kacheln[i:i + 10]) for i in range(0, len(kacheln), 10)]))
+    for alt in glob.glob(os.path.join(audit, "seiten_luecken_kandidaten_*.jpg")): os.remove(alt)      # Folgeseiten eines frueheren Laufs
+    if ung and kand: kontaktboegen(kand, os.path.join(audit, "seiten_luecken_kandidaten.jpg"))
     sys.path.insert(0, T); __import__("json_sicher").schreiben(os.path.join(audit, "seiten_luecken.json"), dict(waende=waende, ungesehen=[w["nr"] for w in ung], fotobestand=len(alle), nicht_registriert=[os.path.basename(f) for f in kand], skript=sk, zielordner=Z))
     if not ung:
         teil = [w for w in waende if w["ohne_daten_m2"] >= 30]      # 16.11.2026: "alle Waende gesehen" stand neben einem Fotoauftrag ueber 240 m2 - die Wandschwelle (20 %) sieht grosse Loecher in einer sonst gesehenen Wand nicht
@@ -145,16 +183,21 @@ def main():
         # Gleiche Eingaben + gleicher CODE-STAND der Nachhol-Werkzeuge -> derselbe Fehler, sofort rc 5 (in 1 s). Nach einer Codeaenderung laeuft es wieder (Zwischenstaende je Schritt bleiben).
         try: F = json.load(open(fmarke)) if os.path.exists(fmarke) else None
         except ValueError: F = None
-        if F and F.get("code_stand") == cs and os.environ.get("SEITEN_NEU") != "1":
-            print(f"FEHLER: Nachholen UEBERSPRUNGEN - bekannter Fehlschlag ({F.get('zeit')}, rc {F.get('rc')}, Schritt {F.get('schritt')}) bei gleichen Eingaben und gleichem CODE-STAND {cs}; "
+        if F and sperrt(F, cs) and os.environ.get("SEITEN_NEU") != "1":
+            print(f"FEHLER: Nachholen UEBERSPRUNGEN - bekannter Fehlschlag ({F.get('zeit')}, rc {F.get('rc')}, Schritt {F.get('schritt')}) bei gleichen Eingaben und gleichem CODE-STAND {cs} "
+                  f"(eingerechnet: {', '.join(os.path.basename(p) for p in code_dateien(*NACHHOL_WERKZEUGE))}); "
                   f"erst Werkzeug beheben (dann laeuft es von selbst neu) oder SEITEN_NEU=1 erzwingen. Marke {fmarke}"); return 5
+        if F and not sperrt(F, cs): print(f"Fehlschlag-Marke {os.path.basename(fmarke)} sperrt nicht ({'Speichermangel - voruebergehend' if F.get('art') == 'speicher' else 'CODE-STAND geaendert ' + str(F.get('code_stand')) + ' -> ' + cs}): neuer Versuch", flush=True)
         if os.environ.get("SEITEN_NEU") == "1": subprocess.call(["rm", "-rf", os.path.join(Z, "stand")])      # erzwungen: auch die Zwischenstaende je Schritt verwerfen
-        t0 = time.time(); rc = subprocess.call(["bash", sk])
+        t0 = time.time(); rc, schluss = skript_laufen(sk, os.path.join(Z, "nachholen_letzter_lauf.log"))
         if rc:
             try: schritt = open(os.path.join(Z, "stand", "aktuell")).read().strip()
             except OSError: schritt = "vor dem ersten Schritt (Vorpruefung/Download)"
-            os.makedirs(Z, exist_ok=True); __import__("json_sicher").schreiben(fmarke, dict(zeit=time.strftime("%Y-%m-%d %H:%M"), rc=rc, schritt=schritt, sekunden=round(time.time() - t0), code_stand=cs, werkzeuge=list(NACHHOL_WERKZEUGE), skript=sk))
-            print(f"FEHLER: Nachholen abgebrochen, rc {rc} im Schritt {schritt} nach {time.time() - t0:.0f} s (Skript {sk}); Fehlschlag-Marke {fmarke} (CODE-STAND {cs})"); return 5      # 17.11.2026: endete mit rc 3 wie 'Wand ungesehen, Nachholen gelaufen' - die Kette wertete das abgebrochene Skript als in Ordnung
+            art = "speicher" if speicher_fehler(rc, schluss) else "fest"
+            os.makedirs(Z, exist_ok=True); __import__("json_sicher").schreiben(fmarke, dict(zeit=time.strftime("%Y-%m-%d %H:%M"), rc=rc, schritt=schritt, sekunden=round(time.time() - t0), code_stand=cs, art=art,
+                                                                                          werkzeuge=list(NACHHOL_WERKZEUGE), skript=sk, log=os.path.join(Z, "nachholen_letzter_lauf.log")))
+            print(f"FEHLER: Nachholen abgebrochen, rc {rc} im Schritt {schritt} nach {time.time() - t0:.0f} s (Skript {sk}); Fehlschlag-Marke {fmarke} (CODE-STAND {cs}"
+                  + (", SPEICHERMANGEL im Schritt - Marke sperrt NICHT, Wiederholung rechnet neu)" if art == "speicher" else ")")); return 5      # 17.11.2026: endete mit rc 3 wie 'Wand ungesehen, Nachholen gelaufen' - die Kette wertete das abgebrochene Skript als in Ordnung
         else:
             os.makedirs(Z, exist_ok=True); open(marke, "w").write(time.strftime("%Y-%m-%d %H:%M") + f", {len(kand)} Kandidaten")
             if os.path.exists(fmarke): os.remove(fmarke)

@@ -82,7 +82,7 @@ def fein_paar(P, FV):
     dd = os.path.join(P, "dicht")
     if os.path.exists(os.path.join(dd, "sparse", "images.bin")) and os.path.isdir(os.path.join(dd, "images")): return ["--fein", os.path.join(dd, "sparse"), os.path.join(dd, "images")]
     return []
-SPEICHER_MUSTER = re.compile(r"CUDA out of memory|OutOfMemoryError|MemoryError|std::bad_alloc|cudaErrorMemoryAllocation|out of memory|vom System beendet \(Signal (9|6)|Signal (9|6)\b|Killed\b", re.I)
+from speicher_muster import SPEICHER_MUSTER      # 23.11.2026: gemeinsames Muster mit der Fehlschlag-Marke von seiten_luecken (Speichermangel sperrt dort nicht mehr)
 
 
 def speichermangel(rc, ausgabe, kernel_oom=False):
