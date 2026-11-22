@@ -41,10 +41,10 @@ def fremd_anzahl(seiten_json):
     fr = (seiten_json or {}).get("fremd") or 0
     return len(fr) if isinstance(fr, (list, tuple, dict)) else int(fr)
 
-def run(cmd, log=None):
+def run(cmd, log=None, env=None):
     print("+", " ".join(cmd), flush=True)
     # 18.11.2026 (Kaufhaus gk2e: Fusion 1 h ohne jede Zeile im Log): Ausgabe zeilenweise ins Log statt erst am Ende - Fortschritt (z. B. 'Fusing image [n/N]') sichtbar
-    p = subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1); zeilen = []
+    p = subprocess.Popen(cmd, cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1); zeilen = []
     f = open(log, "a") if log else None
     for z in p.stdout:
         zeilen.append(z)
@@ -79,12 +79,30 @@ def seiten_dicht_uebernehmen(daten, sparse_dir):
     try: e = (json.load(open(smj)).get("ergebnis") or {}) if os.path.isfile(smj) else {}
     except Exception as ex: print(f"HINWEIS {smj} nicht lesbar ({ex}) - dichte Wolke wird wie bisher gerechnet", flush=True); return False
     q = e.get("dicht"); ib = os.path.join(sparse_dir, "images.bin")
+    if e and os.path.islink(ziel) and (not q or os.path.realpath(ziel) != os.path.realpath(q)) and os.path.realpath(ziel).startswith(os.path.realpath(os.path.join(daten, "sfm", "seiten_modelle")) + os.sep):
+        z = f"{ziel}.alt_{time.strftime('%Y%m%d_%H%M%S')}"; os.rename(ziel, z)   # 22.11.2026: eigene Verknuepfung auf eine FRUEHERE Seitenwolke (z. B. teil0/dicht, jetzt vereint) -> beiseite
+        print(f"Seitenmodelle: dicht/ zeigte auf eine fruehere Seitenwolke - Verknuepfung beiseitegelegt ({z})" + (f", neu auf {q}" if q else " - Stufe 'dicht' rechnet auf sparse/0"), flush=True)
     if not q or os.path.lexists(ziel) or not os.path.isfile(ib): return False
     qf = os.path.join(q, "fused.ply"); n = ply_punkte(qf)
     if n == 0 or os.path.getmtime(qf) < os.path.getmtime(ib) - 2:
         print(f"HINWEIS Seitenmodelle: dichte Wolke {qf} leer oder aelter als das Netz - NICHT uebernommen, Stufe 'dicht' rechnet auf sparse/0", flush=True); return False
     os.symlink(os.path.abspath(q), ziel)
     print(f"dichte Wolke aus den Seitenmodellen uebernommen ({e.get('art')}, {n} Punkte): {ziel} -> {q} - keine zweite Rechnung", flush=True); return True
+
+
+def seiten_nachstufe_veraltet(daten):
+    """22.11.2026 (Nulllauf kette-schwabentor-null-1122c: Stufe 'sfm' nahm sparse/0 + seiten_modelle.json von 02:39, der GPS-Rueckfall von 05:40 lief nie): kam sparse/0 aus den
+    Seitenmodellen (sfm/seiten_modelle.json mit 'ergebnis') und passt dessen 'nachstufe_code' nicht zum aktuellen Code der Nachstufe (sfm_seiten_modelle.NACHSTUFE, tools/code_stand.py)
+    -> Grund (Text), sonst None. Dann rechnet iphone_sfm.py mit RCPARK_SFM_NUR_NACHSTUFE=1 nur Vereinen/Tore/Einsetzen neu (Merkmale, Mapper je Teil, Wolken je Teil aus dem Stand).
+    RCPARK_SEITEN_NACHSTUFE=0 = Stand davor (vorhandenes sparse/0 gilt)."""
+    smj = os.path.join(daten, "sfm", "seiten_modelle.json")
+    if os.environ.get("RCPARK_SEITEN_NACHSTUFE", "1") == "0" or not os.path.isfile(smj): return None
+    try: d = json.load(open(smj))
+    except Exception as ex: return f"{smj} nicht lesbar ({ex})"
+    if not d.get("ergebnis"): return None                                 # Seitenweg nicht bis zum Ergebnis gelaufen (Mapperwahl wie bisher) - nichts nachzuholen
+    import sfm_seiten_modelle as SM
+    alt, neu = d.get("nachstufe_code"), SM.nachstufe_code()
+    return None if alt == neu else f"Code der Nachstufe geaendert ({alt or 'ohne Code-Stand'} -> {neu}; {', '.join(SM.NACHSTUFE)})"
 
 
 def stand_pruefen(daten, fotos):
@@ -164,6 +182,13 @@ def main():
             os.symlink(os.path.abspath(quelle), ziel)
             print(f"Fotowolke wiederverwendet aus {quelle}", flush=True)
     sparse_dir = os.path.join(daten, "sfm", "sparse", "0")
+    nach_grund = seiten_nachstufe_veraltet(daten) if os.path.isdir(sparse_dir) else None
+    if nach_grund:                                                        # 22.11.2026: billige Nachstufe mit aktuellem Code, teure Teile aus dem Zwischenstand (iphone_sfm.py NUR NACHSTUFE)
+        print(f"SEITENMODELLE NACHSTUFE NEU: {nach_grund} - iphone_sfm.py rechnet Vereinen/Tore/Einsetzen neu (Merkmale, Mapper je Teil, dichte Wolken je Teil aus dem Zwischenstand)", flush=True)
+        rc_n, out_n = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")], log, env=dict(os.environ, RCPARK_SFM_NUR_NACHSTUFE="1"))
+        if rc_n != 0 or seiten_nachstufe_veraltet(daten):
+            stufe(bericht, "sfm", "FEHLER", f"Nachstufe der Seitenmodelle mit neuem Code gescheitert (rc {rc_n}): {(out_n.strip().splitlines() or [''])[-1][:200]} - sparse/0 gehoert zu altem Code; bewusst neu: --neu sfm"); sichern(); return 2
+        stufe(bericht, "seiten_nachstufe", "OK", nach_grund + " -> Vereinen/Einsetzen neu gerechnet"); sichern()
     if not os.path.isdir(sparse_dir):
         mapper_wahl = sys.argv[sys.argv.index("--mapper") + 1] if "--mapper" in sys.argv and sys.argv.index("--mapper") + 1 < len(sys.argv) else ""   # 19.11.2026: auto (Standard von iphone_sfm) | global | inkrementell | konsens (modelle/GLOBALER_MAPPER_STABIL.md); leer = nichts durchreichen
         rc, out = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")] + (["--mapper", mapper_wahl] if mapper_wahl else []), log)
@@ -196,6 +221,7 @@ def main():
     sichern()
 
     # Bildbestand und abgeleitete Staende (17.11.2026): passt das vorhandene Netz noch zum Fotoordner, passen Kameras/Bildwahl/Tiefenkarten/Wolke zum Netz?
+    seiten_dicht_uebernehmen(daten, sparse_dir)                           # 22.11.2026: vor stand_pruefen - eine fruehere Seitenwolke wird erst umgehaengt, dann geprueft
     st = stand_pruefen(daten, fotos)
     if st["neu"] or st["fehlend"]:
         txt = (f"{len(st['neu'])} Bilder im Fotoordner sind NICHT im SfM-Netz (nie gesehen; z. B. {', '.join(st['neu'][:3])})" if st["neu"] else "") + (" und " if st["neu"] and st["fehlend"] else "") + \

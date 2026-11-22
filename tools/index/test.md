@@ -123,3 +123,4 @@
 - `tools/test_wolke_verdeckung.py` [-] Synthetischer Beweis fuer wolke_verdeckung.py (L-KR26): Teil (Wand in 10 m) hinter einer Wolken-'Decke' (6 m), die nicht im Modell ist. Aufruf: /media/oem/scan/venv-seg/bin/python 
 - `tools/test_zusatzfotos_kameras.py` [-] Test zusatzfotos_registrieren.kamera_gruppen: Gruppen aus Format UND Zoomklasse, f/k1/cy aus Parameter-JSON (f in Bildpixeln = f_orig*skala), Hauptpunkt auf das UNGECROPPTE Origina
 - `tools/test_zusatzfotos_lightglue.py` [-] Test zusatzfotos_lightglue.py: Stufen/Argumente vorhanden, Modul ohne torch/pycolmap importierbar, GPU-Werkzeugliste enthaelt es; bei vorhandenem Ergebnis (kaufhaus_handy/lg) Plaus
+- `tools/test_code_stand.py` [-] Fester Test fuer tools/code_stand.py (Nulllauf schwabentor-1122c: Zwischenstaende ohne Code-Stand -> Fix lief nie)
