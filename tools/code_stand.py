@@ -22,6 +22,9 @@ def _importe(pfad, wurzel):
     for k in ast.walk(baum):
         if isinstance(k, ast.Import): n.update(a.name.split(".")[0] for a in k.names)
         elif isinstance(k, ast.ImportFrom) and k.module and not k.level: n.add(k.module.split(".")[0])
+        elif (isinstance(k, ast.Call) and k.args and isinstance(k.args[0], ast.Constant) and isinstance(k.args[0].value, str)      # 23.11.2026: __import__("json_sicher") und
+              and ((isinstance(k.func, ast.Name) and k.func.id == "__import__") or (isinstance(k.func, ast.Attribute) and k.func.attr == "import_module"))):   # importlib.import_module("x") zaehlten nicht mit
+            n.add(k.args[0].value.split(".")[0])
     return sorted(m for m in n if os.path.isfile(os.path.join(wurzel, m + ".py")))
 
 
