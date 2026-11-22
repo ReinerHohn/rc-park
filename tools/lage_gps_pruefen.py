@@ -111,22 +111,13 @@ def urteil(namen, MU, G, nah_m=100.0, max_abstand=15.0, max_dreh=15.0, max_skala
     print("Lage passt zum GPS."); return 0, erg
 
 
-def gps_daten(kam, fd):
+def gps_daten(kam, fd, mitte_utm=None):
     """Kameras der Ausrichtung (SFM-AUSRICHTUNG 'kameras': name -> standort) + Fotoordner -> (namen, M Standorte im Modellsystem, G Foto-GPS UTM absolut, Z EXIF-Zeiten,
-    gefunden = Zahl der gefundenen Fotos). DIE Kameraauswahl des GPS-Tors (Namen mit/ohne Quellpraefix, Kaufhaus-Endung _<quelle>, NaN/0,0-Geotags weg) - als Funktion,
-    damit der Lage-Pruefstand (tools/lage_pruefstand.py) sie gegen die Auswahl der Ausrichtung (sfm_lod2_ausrichten.gps_massstab) halten kann."""
-    namen, M, G, Z = [], [], [], []; gefunden = 0
-    for nr, k in kam.items():
-        kand = [nr] + ([nr.split("__", 1)[1]] if "__" in nr else [])          # 15.11.: Gesamtkette benennt eigen__IMG_... (Quellpraefix) -> auch ohne Praefix suchen
-        hit = [p for n_ in kand for p in glob.glob(os.path.join(fd, glob.escape(n_) + ".*")) + glob.glob(os.path.join(fd, glob.escape(n_) + "_*")) + glob.glob(os.path.join(fd, "*__" + glob.escape(n_) + ".*"))
-               if p.lower().endswith((".jpg", ".jpeg"))]   # Kaufhaus: 122 -> 122_<quelle>.jpg
-        gefunden += bool(hit); g = gps_exif(hit[0]) if hit else None
-        if not g: continue
-        try:
-            if not all(math.isfinite(float(x)) for x in g) or (abs(float(g[0])) < 1e-6 and abs(float(g[1])) < 1e-6): continue   # 15.11. Kaufhaus: EXIF-GPS NaN/0,0 liess den Fit abstuerzen
-        except Exception: continue
-        namen.append(nr); M.append(k["standort"]); G.append(np.array(wgs84_zu_utm(*g))); Z.append(GU.exif_zeit(hit[0]))
-    return namen, M, G, Z, gefunden
+    gefunden = Zahl der gefundenen Fotos). Die Auswahl selbst ist seit 22.11.2026 gps_unsicherheit.gps_kameras - DIESELBE Funktion rechnet die Ausrichtung
+    (sfm_lod2_ausrichten.gps_massstab): Namen mit/ohne Quellpraefix (15.11.), Kaufhaus-Endung _<quelle>, NaN/0,0-Geotags weg (15.11. Kaufhaus), mit mitte_utm auch Geotags
+    > GU.GPS_FERN_MAX_M (5 km) von der Objektmitte (wie bisher nur in der Ausrichtung). Der Lage-Pruefstand haelt beide Mengen gegeneinander (Zeile 'eine Funktion')."""
+    sel = GU.gps_kameras(list(kam), fd, mitte_utm=mitte_utm, gps_lesen=gps_exif)
+    return list(sel["namen"]), [kam[n]["standort"] for n in sel["namen"]], [np.asarray(u, float) for u in sel["utm"]], list(sel["zeiten"]), sel["gefunden"]
 
 
 def main(argv=None):
@@ -146,7 +137,7 @@ def main(argv=None):
     if a.lage:
         pf, fn = a.lage.split(":"); sp = importlib.util.spec_from_file_location("lage_mod", pf); md = importlib.util.module_from_spec(sp)
         sys.path.insert(0, os.path.dirname(os.path.abspath(pf))); sp.loader.exec_module(md); korr = getattr(md, fn)
-    namen, M, G, Z, gefunden = gps_daten(kam, fd); G = [g_ - m0 for g_ in G]
+    namen, M, G, Z, gefunden = gps_daten(kam, fd, mitte_utm=m0); G = [g_ - m0 for g_ in G]
     erg = dict(werkzeug="lage_gps_pruefen.py", ausrichtung=a.ausrichtung, lage=a.lage or None, n_kameras=len(kam), n_gps=len(G))
     if len(G) < 10:
         erg["fotos_gefunden"] = gefunden

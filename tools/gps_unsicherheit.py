@@ -33,6 +33,49 @@ ANKER_K = 3.0              # Kasten = ANKER_K x Sigma (wie GPS_ANKER_K / K_SIGMA
 ANKER_MAX_DREH, ANKER_MAX_MASS = 8.0, 0.08   # ist der ehrliche Kasten breiter, TRAEGT das GPS die Lage nicht (kein Anker, nur Veto) - alte feste Werte des Ankers
 
 
+GPS_FERN_MAX_M = 5000.0    # Geotags weiter weg von der Objektmitte sind keine Kamerastandorte dieses Objekts (Kaufhaus 15.11.: unsinnige EXIF-GPS); gilt in Tor UND Ausrichtung
+
+
+def foto_pfad(name, ordner):
+    """DIE Fotosuche zu einem Kameranamen (Ausrichtung UND GPS-Tor, 22.11.2026): Name mit und ohne Quellpraefix (Kette: eigen__IMG_x -> IMG_x), Muster <name>.*, <name>_*
+    (Kaufhaus: 122 -> 122_<quelle>.jpg) und *__<name>.* - nur .jpg/.jpeg. ordner = ein Ordner oder eine Liste (der erste mit Treffer gewinnt). -> Pfad oder None.
+    WARUM: die Ausrichtung (sfm_lod2_ausrichten.gps_massstab) kannte nur <name>.*, das Tor alle drei Muster - Lage-Pruefstand 22.11.: zwei Kameramengen fuer dasselbe GPS.
+    Reihenfolge der Treffer wie bisher im Tor (lage_gps_pruefen.gps_daten): Kandidatenname aussen, Muster innen, glob-Reihenfolge - das Tor bleibt bitgleich."""
+    import glob, os
+    for d in ([ordner] if isinstance(ordner, str) else list(ordner or [])):
+        if not d: continue
+        kand = [name] + ([name.split("__", 1)[1]] if "__" in name else [])
+        hit = [p for n_ in kand for p in glob.glob(os.path.join(d, glob.escape(n_) + ".*")) + glob.glob(os.path.join(d, glob.escape(n_) + "_*")) + glob.glob(os.path.join(d, "*__" + glob.escape(n_) + ".*"))
+               if p.lower().endswith((".jpg", ".jpeg"))]
+        if hit: return hit[0]
+    return None
+
+
+def gps_kameras(namen, ordner, mitte_utm=None, max_m=GPS_FERN_MAX_M, gps_lesen=None):
+    """DIE GPS-Kameramenge (EINE Funktion fuer sfm_lod2_ausrichten und lage_gps_pruefen, 22.11.2026): je Kameraname das Foto (foto_pfad), EXIF-GPS -> UTM; weg sind
+    Fotos ohne GPS, NaN-/0,0-Geotags (15.11. Kaufhaus: liessen den Fit abstuerzen) und - mit mitte_utm - Geotags > max_m von der Objektmitte (keine Kamerastandorte).
+    KEIN Inlier-Filter hier: falsche Geotags wirft der robuste Konsens in gps_fit heraus, in Tor und Ausrichtung gleich (vorher filterte die Ausrichtung bei streuenden
+    Paarverhaeltnissen vorab per 3D-RANSAC und rechnete gps_fit nur noch auf dessen Inliern).
+    gps_lesen(pfad) -> (lat, lon) oder None (Standard gps_ausrichtung.gps_exif; Tests geben eine Attrappe). -> dict(i = Indizes in namen, namen, utm (n x 2), zeiten, pfade, gefunden)."""
+    import os, sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from bilder_holen import wgs84_zu_utm
+    if gps_lesen is None: from gps_ausrichtung import gps_exif as gps_lesen
+    I, N, U, Z, PF = [], [], [], [], []; gefunden = 0
+    for i, nr in enumerate(namen):
+        p = foto_pfad(nr, ordner); gefunden += p is not None
+        g = gps_lesen(p) if p else None
+        if not g: continue
+        try:
+            if not all(math.isfinite(float(x)) for x in g) or (abs(float(g[0])) < 1e-6 and abs(float(g[1])) < 1e-6): continue
+            u = np.asarray(wgs84_zu_utm(*g), float)[:2]
+        except Exception: continue
+        if not np.isfinite(u).all(): continue
+        if mitte_utm is not None and np.hypot(*(u - np.asarray(mitte_utm, float)[:2])) >= max_m: continue
+        I.append(i); N.append(nr); U.append(u); Z.append(exif_zeit(p)); PF.append(p)
+    return dict(i=I, namen=N, utm=np.array(U, float).reshape(-1, 2), zeiten=Z, pfade=PF, gefunden=gefunden)
+
+
 def exif_zeit(pfad):
     """Aufnahmezeit (Sekunden seit 1970, Ortszeit ohne Zone) aus EXIF DateTimeOriginal (Exif-IFD 36867), sonst DateTime (306); None ohne Zeit."""
     try:

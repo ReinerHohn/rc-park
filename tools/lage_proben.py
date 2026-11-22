@@ -19,7 +19,7 @@ ENTSCHEIDUNG (entscheiden): gewaehlt wird eine Lage, die ALLE urteilsfaehigen Pr
 (> Toleranz voneinander) -> benannte Ursache, keine Lage. Ohne jedes Urteil -> 'kein Urteil' (nur GPS reicht nicht). MONOTON mit alt: die bisherige Wahl bleibt, solange
 keine Probe sie verwirft ('bestaetigt'/'kein Urteil') - nur widerlegte Lagen werden ersetzt.
 Verwendet von tools/sfm_lod2_ausrichten.py. Test: tools/test_lage_proben.py. Nur numpy/scipy (+ dom1_kachel, wolke_grundriss_pruefen fuer LoD2-Grundrisse)."""
-import math
+import math, os
 import numpy as np
 
 # ---------- ANNAHMEN (je Zeile begruendet)
@@ -151,6 +151,24 @@ def probe_kamerahoehe(P, C, r=KAMERA_BODEN_R):
 
 
 # ---------- c) Wandfit mit Nachbarn
+def wand_gesehen(S, N, C, V, halb_fov_grad, max_m=SICHT_MAX_M, min_kameras=SICHT_MIN_KAMERAS, block=2048):
+    """DIE Sichtbarkeit einer Wandprobe (22.11.2026, eine Funktion fuer lage_proben.gesehene_kanten UND die Objektwand-Abdeckung der Ausrichtung):
+    S = Wandproben (m x 2, waagerecht), N = Aussennormalen (m x 2), C = Kamerazentren (n x >=2), V = Blickrichtungen (n x >=2, waagerechter Anteil zaehlt),
+    halb_fov_grad = halber waagerechter Bildwinkel je Kamera. Gesehen = mindestens min_kameras Kameras stehen VOR der Wand (Normale), <= max_m entfernt und haben
+    die Probe im waagerechten Bildwinkel. -> bool (m).
+    WARUM (Lage-Pruefstand 22.11.): die Abdeckung der Ausrichtung nahm 'zur Kamera gewandt' als Blick vom KAMERASCHWERPUNKT - stehen die Kameras rundum (vereinte
+    Seiten, Tor mit Durchgang), liegt der Schwerpunkt IM Gebaeude, keine Wand zeigt zu ihm -> Abdeckung 0 % fuer jede Loesung. Je Kamera ist das richtig.
+    ANNAHME wie gesehene_kanten: keine Verdeckungsrechnung."""
+    S = np.asarray(S, float)[:, :2]; N = np.asarray(N, float)[:, :2]; N = N / np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-9)
+    C = np.asarray(C, float)[:, :2]; V = np.asarray(V, float)[:, :2]; V = V / np.maximum(np.linalg.norm(V, axis=1, keepdims=True), 1e-9)
+    cf = np.cos(np.radians(np.broadcast_to(np.asarray(halb_fov_grad, float), (len(C),)))); out = np.zeros(len(S), bool)
+    for a in range(0, len(S), block):
+        D = C[None, :, :] - S[a:a + block, None, :]; dist = np.linalg.norm(D, axis=2); vorn = (D * N[a:a + block, None, :]).sum(2) > 0
+        blick = (-(D / np.maximum(dist[..., None], 1e-9)) * V[None]).sum(2) >= cf[None]
+        out[a:a + block] = ((dist <= max_m) & vorn & blick).sum(1) >= min_kameras
+    return out
+
+
 def gesehene_kanten(polys, C, V, halb_fov_grad, max_m=SICHT_MAX_M, schritt=0.5):
     """Grundrisskanten (alle Gebaeude), die die Kameras sehen: Kantenprobe vor der Wand (Aussennormale), Kamera <= max_m, im waagerechten Bildwinkel, nicht in einem
     anderen Grundriss (Brandwand). V = Blickrichtungen (n x 3), halb_fov_grad = halber waagerechter Bildwinkel je Kamera. -> Liste 2-Punkt-Segmente (je 2 x 2).
@@ -167,10 +185,7 @@ def gesehene_kanten(polys, C, V, halb_fov_grad, max_m=SICHT_MAX_M, schritt=0.5):
             probe = S + 0.3 * n; brand = np.zeros(m, bool)
             for j, h in enumerate(alle):
                 if j != k and np.all(h.min(0) - 1 <= probe.max(0)) and np.all(h.max(0) + 1 >= probe.min(0)): brand |= in_polygon(probe, h)
-            D = C[None, :, :] - S[:, None, :]; dist = np.linalg.norm(D, axis=2); vorn = (D @ n) > 0
-            blick = (-(D / np.maximum(dist[..., None], 1e-9)) * V[None]).sum(2) >= cf[None]
-            sicht = ((dist <= max_m) & vorn & blick).sum(1) >= SICHT_MIN_KAMERAS
-            ok = sicht & ~brand
+            ok = wand_gesehen(S, np.broadcast_to(n, S.shape), C, V, halb_fov_grad, max_m) & ~brand
             if ok.mean() >= 0.5: seg.append(np.array([p0, p1]))
     return seg
 
@@ -347,6 +362,19 @@ def tor_rc(transformation):
     return rc, f"Lageproben: {lp.get('ergebnis')} - {str(lp.get('grund'))[:300]}"
 
 
+def lot_rc(rc):
+    """rc des Lot-Tors Wandneigung (tools/lot_wandneigung.py: 0 lotrecht, 3 kippt, 4 kein Urteil, 1/None Absturz/fehlt) -> 0 | 3 | None fuer lage_bestanden."""
+    return rc if rc in (0, 3) else None
+
+
 def lage_bestanden(erg):
-    """Lage-Urteil der Kette aus den rc der Tore (None = Tor lief nicht / kein Urteil): GPS, Seiten-Blick und Lageproben 0 oder None, Grundriss genau 0."""
-    return erg.get("gps") in (0, None) and erg.get("grundriss") == 0 and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None)
+    """Lage-Urteil der Kette aus den rc der Tore (None = Tor lief nicht / kein Urteil): GPS, Seiten-Blick, Lageproben und Lot (Wandneigung) 0 oder None, Grundriss genau 0.
+    22.11.2026 Lot-Tor (Kettenlauf 1122n: 3,2 Grad gekippt, alle anderen Tore gruen): 'lot' = lot_rc(rc von tools/lot_wandneigung.py); RCPARK_LOT_TOR=hinweis = nur melden."""
+    lot_ok = erg.get("lot") in (0, None) or os.environ.get("RCPARK_LOT_TOR") == "hinweis"
+    return erg.get("gps") in (0, None) and erg.get("grundriss") == 0 and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None) and lot_ok
+
+
+def lage_frueh_bestanden(erg):
+    """Urteil der Vorstufe 'Lage frueh' (tools/lage_frueh.py, vor der dichten Wolke): DIESELBE Regel wie lage_bestanden ohne das Grundriss-Tor (braucht die dichte Wolke;
+    eine sparse-Fassung ist nicht als gleichurteilend belegt, 22.11.2026). Nur rc 3 eines geprueften Tors verwirft - None/kein Urteil laesst durch."""
+    return erg.get("gps") in (0, None) and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None)
