@@ -66,7 +66,25 @@ def main(argv=None):
     ib = dict(gemeinsame_kameras=len(set(E) & set(B)), punkte=len(Ye), stimmig=fb["n_inlier"], rest_m=round(fb["rest_median_m"] * m_je, 3))
     print("Ecke -> A (Meter):", ia); print("B -> Ecke:", ib)
     M_b = fa["M"] @ fb["M"]                                                          # B -> Ecke -> Ausrichtung
-    out = dict(ecke_a=ia, ecke_b=ib, a_ausrichtung=dict(n=f["n"], stimmig=f["n_inlier"], rest_m=f["rest_median_m"]), M_b_nach_ausrichtung=M_b.tolist(), M_a_nach_ausrichtung=f["M"].tolist())
+    # MASSSTAB-UNSICHERHEIT: Bootstrap ueber die stimmigen Punkte beider Kopplungen; Hebel = Ausdehnung der gemeinsamen Punkte / Ausdehnung von Teil B
+    from sim3_robust import umeyama
+    rng = np.random.default_rng(0); sc = []; ia_, ib_ = np.flatnonzero(fa["inlier"]), np.flatnonzero(fb["inlier"]); XA = anwenden(f["M"], Xa)
+    for _ in range(200):
+        a1 = rng.choice(ia_, len(ia_)); b1 = rng.choice(ib_, len(ib_))
+        sa, _, _ = umeyama(Xe[a1], XA[a1]); sb, _, _ = umeyama(Yb[b1], Ye[b1]); sc.append(sa * sb)
+    s0 = float(np.cbrt(np.linalg.det(M_b[:3, :3]))); sc = np.array(sc)
+    ausd = lambda X: float(np.percentile(np.linalg.norm(X - np.median(X, 0), axis=1), 90))
+    PB = np.array([p.xyz for p in rb.points3D.values()])
+    hebel = ausd(Yb[fb["inlier"]]) / max(ausd(PB), 1e-12)
+    # Haelften-Probe (Bootstrap misst nur Rauschen): gemeinsame Punkte B<->Ecke entlang ihrer Hauptachse in nahe/ferne Haelfte teilen, Massstab je Haelfte
+    Q = Yb[ib_]; _, _, Vt = np.linalg.svd(Q - Q.mean(0)); u = (Q - Q.mean(0)) @ Vt[0]; hs = []
+    for wahl in (u < np.median(u), u >= np.median(u)):
+        hs.append(umeyama(Yb[ib_][wahl], Ye[ib_][wahl])[0])
+    haelften = abs(hs[0] - hs[1]) / np.mean(hs)
+    unsicher = max(float(sc.std() / s0), float(haelften))
+    massstab = dict(wert=s0, bootstrap_sd_rel=round(float(sc.std() / s0), 4), haelften_rel=round(float(haelften), 4), hebel=round(hebel, 3), belegt=bool(unsicher <= 0.02))
+    print("Massstab der Kopplung:", massstab)
+    out = dict(ecke_a=ia, ecke_b=ib, massstab=massstab, a_ausrichtung=dict(n=f["n"], stimmig=f["n_inlier"], rest_m=f["rest_median_m"]), M_b_nach_ausrichtung=M_b.tolist(), M_a_nach_ausrichtung=f["M"].tolist())
     nb = [n for n in B if os.path.splitext(n)[0] in st]
     if nb:
         d = np.linalg.norm(anwenden(M_b, np.array([B[n].projection_center() for n in nb])) - np.array([st[os.path.splitext(n)[0]] for n in nb]), axis=1)
