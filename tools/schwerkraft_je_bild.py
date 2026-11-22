@@ -95,6 +95,35 @@ def pruefen(sparse, ordner, unten_welt, min_inlier=12, max_n=None):
                                f"ueber 5 Grad {(e > 5).sum()}, ueber 20 Grad {(e > 20).sum()}"); return e
 
 
+def lot_welt(kameras, ordner, n_max=150, min_inlier=12, seed=0, oben_ref=None):
+    """LOT IM WELTRAHMEN aus den Fluchtpunkten der Senkrechten (22.11.2026, Lot-Runde: Gegenprobe zum Lot der Ausrichtung, unabhaengig von Wolke und LoD2).
+    kameras: Liste dict(name, R (cam_from_world 3x3), f, cx, cy, breite, hoehe) in den Pixeln des SfM-Bilds; die Datei in <ordner> darf eine andere Groesse haben
+    (Massstab je Achse, nur wenn das Seitenverhaeltnis passt, sonst uebersprungen). -> dict(oben (3), n, streuung_median_grad, streuung_p90_grad) oder None.
+    Robust: Median der Weltrichtungen je Bild, dann Mittel der Bilder < 3 Grad daneben (Ausreisser: Rollen, Fehl-Fluchtpunkte). Vorzeichen nach oben_ref, sonst 'Bild-oben'."""
+    rng = np.random.default_rng(seed); ks = list(kameras)
+    if n_max and len(ks) > n_max: ks = [ks[i] for i in sorted(rng.choice(len(ks), n_max, replace=False))]
+    W = []
+    for k in ks:
+        g = bild(ordner, k["name"])
+        if g is None: continue
+        sy, sx = g.shape[0] / float(k["hoehe"]), g.shape[1] / float(k["breite"])
+        if abs(sx / sy - 1) > 0.02: continue                                              # anderes Bild (gedreht/beschnitten) - nicht raten
+        vp, _ = fluchtpunkt_senkrecht(g, rng, min_inlier)
+        if vp is None: continue
+        d = unten_kamera(vp, k["f"] * sx, k["cx"] * sx, k["cy"] * sy)
+        if not plausibel(d): continue
+        W.append(-(np.asarray(k["R"], float).T @ d))                                     # 'oben' in Weltkoordinaten
+    if len(W) < 8: return None
+    W = np.array(W); m = np.median(W, 0); m /= np.linalg.norm(m)
+    for _ in range(3):
+        a = np.degrees(np.arccos(np.clip(W @ m, -1, 1))); inn = a < 3.0
+        if inn.sum() < 5: break
+        m = W[inn].mean(0); m /= np.linalg.norm(m)
+    if oben_ref is not None and m @ np.asarray(oben_ref, float) < 0: m = -m
+    a = np.degrees(np.arccos(np.clip(W @ m, -1, 1)))
+    return dict(oben=m.tolist(), n=int(len(W)), getragen=int((a < 3.0).sum()), streuung_median_grad=float(np.median(a)), streuung_p90_grad=float(np.percentile(a, 90)))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("--db"); ap.add_argument("--pruefen"); ap.add_argument("--bilder", required=True); ap.add_argument("--unten")
     ap.add_argument("--min-inlier", type=int, default=12); ap.add_argument("--max-n", type=int); a = ap.parse_args(argv)

@@ -19,7 +19,7 @@ ENTSCHEIDUNG (entscheiden): gewaehlt wird eine Lage, die ALLE urteilsfaehigen Pr
 (> Toleranz voneinander) -> benannte Ursache, keine Lage. Ohne jedes Urteil -> 'kein Urteil' (nur GPS reicht nicht). MONOTON mit alt: die bisherige Wahl bleibt, solange
 keine Probe sie verwirft ('bestaetigt'/'kein Urteil') - nur widerlegte Lagen werden ersetzt.
 Verwendet von tools/sfm_lod2_ausrichten.py. Test: tools/test_lage_proben.py. Nur numpy/scipy (+ dom1_kachel, wolke_grundriss_pruefen fuer LoD2-Grundrisse)."""
-import math
+import math, os
 import numpy as np
 
 # ---------- ANNAHMEN (je Zeile begruendet)
@@ -362,9 +362,16 @@ def tor_rc(transformation):
     return rc, f"Lageproben: {lp.get('ergebnis')} - {str(lp.get('grund'))[:300]}"
 
 
+def lot_rc(rc):
+    """rc des Lot-Tors Wandneigung (tools/lot_wandneigung.py: 0 lotrecht, 3 kippt, 4 kein Urteil, 1/None Absturz/fehlt) -> 0 | 3 | None fuer lage_bestanden."""
+    return rc if rc in (0, 3) else None
+
+
 def lage_bestanden(erg):
-    """Lage-Urteil der Kette aus den rc der Tore (None = Tor lief nicht / kein Urteil): GPS, Seiten-Blick und Lageproben 0 oder None, Grundriss genau 0."""
-    return erg.get("gps") in (0, None) and erg.get("grundriss") == 0 and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None)
+    """Lage-Urteil der Kette aus den rc der Tore (None = Tor lief nicht / kein Urteil): GPS, Seiten-Blick, Lageproben und Lot (Wandneigung) 0 oder None, Grundriss genau 0.
+    22.11.2026 Lot-Tor (Kettenlauf 1122n: 3,2 Grad gekippt, alle anderen Tore gruen): 'lot' = lot_rc(rc von tools/lot_wandneigung.py); RCPARK_LOT_TOR=hinweis = nur melden."""
+    lot_ok = erg.get("lot") in (0, None) or os.environ.get("RCPARK_LOT_TOR") == "hinweis"
+    return erg.get("gps") in (0, None) and erg.get("grundriss") == 0 and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None) and lot_ok
 
 
 def lage_frueh_bestanden(erg):

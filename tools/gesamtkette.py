@@ -379,6 +379,11 @@ def main():
             erg["seiten_blick"] = _sb[0]
         if os.path.isdir(sp): erg["insel"] = lauf(B, f"tor_insel{tag}", [PYC, "-I", "tools/kette_insel_pruefen.py", ZR, sp], log, ok=(0, 3))[0]   # 15.11. (Schwabentor): Bildketten ohne Fremdstuetze (Videoclip) = Faecher/Geisterwolke; schreibt audit/kette_insel.json
         erg["grundriss"] = lauf(B, f"tor_grundriss{tag}", [PY, "-I", "tools/wolke_grundriss_pruefen.py", ZR, "--wolke", W], log)[0] if os.path.exists(W) else None
+        # 22.11.2026 LOT-TOR Wandneigung (Kettenlauf 1122n: Modell 3,2 Grad gekippt, alle Lage-Tore gruen -> Tiefensweep 'nicht belastbar', Bilderker fehlt): gemeinsame
+        # Kippung der Waende des Zielgebaeudes in der dichten Wolke, rc 3 = kippt > 2 cm/m -> Lage nicht bestanden (lage_proben.lage_bestanden, RCPARK_LOT_TOR=hinweis = nur melden).
+        if os.path.exists(W):
+            _rl = lauf(B, f"tor_lot{tag}", [PY, "-I", "tools/lot_wandneigung.py", ZR, "--wolke", W, "--ausrichtung", AU], log, ok=(0, 4))[0]
+            erg["lot"] = __import__("lage_proben").lot_rc(_rl)
         # 22.11.2026 (Nulllauf schwabentor-1122f: Westwand ~3 m dick aus zwei per GPS vereinten Seitenteilen): je LoD2-Kante Wanddicke + Lageversatz der Seitenteile ->
         # audit/wand_dicke.json. NUR MESSUNG (kein Abbruch, Grenzen noch ANNAHME); abschalten: RCPARK_WANDDICKE=0.
         smj_ = os.path.join(P, "sfm", "seiten_modelle.json")

@@ -179,9 +179,19 @@ def gps_anker_aktiv(n_kam, rest_m, det_pos=True):
     return bool(det_pos) and int(n_kam) >= GPS_ANKER_MIN_KAM and math.isfinite(rest_m) and float(rest_m) < GPS_ANKER_MAX_REST
 
 
+def kipp_rotvec(kipp_rad, drehung_rad):
+    """Halbe Kastenbreite JE ACHSE in rotvec-Einheiten (p[1], p[2] von zu_modell), damit die Hochachse um hoechstens kipp_rad (auch in der Kastenecke) kippt.
+    Rotvec (rx, ry, theta) mit kleinem (rx, ry): die Hochachse kippt um |(rx, ry)| * 2 sin(theta/2) / theta (isotrop) - bei theta = 165 Grad nur 0,69 x;
+    der alte Kasten (gps_anker_grenzen, +-3 'Grad' je Achse) erlaubt deshalb je nach Drehung 2,1..3 Grad je Achse, in der Ecke x1,41 (1122n: 2,9 Grad vom Start)."""
+    th = abs(float(drehung_rad)); f = 2 * math.sin(th / 2) / th if th > 1e-6 else 1.0
+    return kipp_rad / max(abs(f), 1e-3) / math.sqrt(2)
+
+
 def gps_anker_grenzen(p0, dreh=GPS_ANKER_DREH, mass=GPS_ANKER_MASS, versatz=GPS_ANKER_VERSATZ, kipp=GPS_ANKER_KIPP):
     """Kasten fuer den Feinfit um die GPS-Startlage p0 = [log s, rotvec (3), t (3)] (Parameter von zu_modell): Drehung um das Lot +-dreh Grad, Kippung +-kipp Grad,
-    Massstab +-mass (relativ), Lage waagerecht +-versatz m, Hoehe frei. Liefert (lo, hi) fuer least_squares."""
+    Massstab +-mass (relativ), Lage waagerecht +-versatz m, Hoehe frei. Liefert (lo, hi) fuer least_squares.
+    ACHTUNG (Lot-Runde 22.11.2026): 'kipp' ist in rotvec-Einheiten je Achse, nicht die echte Kippung (siehe kipp_rotvec); unveraendert gelassen (Rueckfallweg ohne
+    Fluchtpunkt-Lot), mit Fluchtpunkt-Lot gilt der feste Kipp-Kasten in fein (AUSR_KIPP_FEST)."""
     p0 = np.asarray(p0, float); lo = np.full(7, -np.inf); hi = np.full(7, np.inf)
     lo[0], hi[0] = p0[0] + math.log(1 - mass), p0[0] + math.log(1 + mass)
     for i, w in ((1, kipp), (2, kipp), (3, dreh)): lo[i], hi[i] = p0[i] - math.radians(w), p0[i] + math.radians(w)
@@ -474,6 +484,28 @@ def ausrichten(argv=None):
             if _w > 15: print(f"ACHTUNG LOT: Kameraebene weicht {_w:.0f} Grad vom Bild-x-Lot ab (Kameras nicht in einer Ebene: Drohne/Hoehenunterschiede?) - es gilt das Bild-x-Lot", flush=True)
         else: print("HINWEIS Lot: zu wenige waagerecht gehaltene Kameras fuer das Bild-x-Lot - es bleibt das Lot der Kameraebene", flush=True)
     except Exception as _e: print("HINWEIS Lot aus Kamerablick nicht bestimmbar:", _e)
+    # 22.11.2026 LOT-RUNDE (Kettenlauf schwabentor-1122n: alle Lage-Tore gruen, Modell 3,2 Grad gekippt -> Tiefensweep 'nicht belastbar', Bilderker fehlt): das Lot TRAGEN
+    #     jetzt die Fluchtpunkte der Senkrechten (seiten_gps_vereinen.lot_ausrichtung, Zahlen dort: Kippung 0,44/0,63 Grad auf 1120/1122 gegen 4,9/2,7 Bild-x, 7,1/1,4 Ebene),
+    #     und die Feinfits halten die Kippung FEST (+-AUSR_KIPP_FEST Grad, Standard 0,1): der LoD2/DGM1-Feinfit kippte 1122 vom besseren Start 2,9 Grad weg an die Kastenecke.
+    #     Bild-x bleibt Rueckfall/Veto; ohne Fluchtpunkt-Lot bleibt die Kippung frei wie bisher. AUSR_LOT=bildachsen = Stand vor der Lot-Runde, AUSR_KIPP_FEST=frei = Kippung frei.
+    KIPP_FEST = None
+    if os.environ.get("AUSR_LOT") not in ("ebene", "bildachsen") and a.fotos:
+        try:
+            import seiten_gps_vereinen as _SG
+            _cwf2 = lambda im: im.cam_from_world() if callable(im.cam_from_world) else im.cam_from_world
+            _lf = _SG.lot_ausrichtung([np.asarray(_cwf2(im).rotation.matrix(), float) for im in ims], _SG.kameras_fuer_lot(ims, CAMS), a.fotos,
+                                      cache=os.path.join(od, "messprotokoll", f".lot_fluchtpunkte{('-' + a.name) if a.name else ''}.json"))
+            _fl = _lf.get("fluchtpunkte") or {}
+            LOT.update(fluchtpunkte=dict(_fl, oben=_fl.get("oben")), winkel_flucht_bildachsen_grad=_lf.get("winkel_bildachsen_grad"), hinweis_flucht=_lf.get("hinweis"))
+            if _lf["quelle"] == "fluchtpunkte":
+                up = np.asarray(_lf["oben"], float); LOT["quelle"] = "fluchtpunkte"
+                _kf = os.environ.get("AUSR_KIPP_FEST", "0.1"); KIPP_FEST = None if _kf == "frei" else math.radians(float(_kf))
+                print(f"Lot aus Fluchtpunkten der Senkrechten: {_fl.get('getragen')} von {_fl.get('n')} Bildern tragen (Streuung Median {_fl.get('streuung_median_grad', 0):.2f} Grad), "
+                      f"{_lf['winkel_bildachsen_grad']:.2f} Grad neben dem Bild-x-Lot - es gilt das Fluchtpunkt-Lot, Kippung im Feinfit "
+                      + ("FREI (AUSR_KIPP_FEST=frei)" if KIPP_FEST is None else f"fest (+-{math.degrees(KIPP_FEST):.2f} Grad)"), flush=True)
+            else: print(f"HINWEIS Lot: {_lf.get('hinweis')} - Kippung im Feinfit frei wie bisher", flush=True)
+        except Exception as _e: print("HINWEIS Lot aus Fluchtpunkten nicht bestimmbar:", type(_e).__name__, _e, flush=True)
+    LOT["kipp_fest_grad"] = None if KIPP_FEST is None else math.degrees(KIPP_FEST)
     # Basis: e3 = up, e1/e2 beliebig senkrecht
     e1 = np.cross(up, [1, 0, 0]); e1 = e1 if np.linalg.norm(e1) > 0.1 else np.cross(up, [0, 1, 0]); e1 /= np.linalg.norm(e1); e2 = np.cross(up, e1)
     B0 = np.vstack([e1, e2, up])                                                              # Zeilen: SfM -> lotrechtes Netzsystem
@@ -719,6 +751,10 @@ def ausrichten(argv=None):
                         return torch.cat([rp, rk]).cpu().numpy()
                 lo = np.full(7, -np.inf); hi = np.full(7, np.inf); lo[0], hi[0] = ls0 - band, ls0 + band   # Massstab begrenzt (+-40 % um den Start): sonst Kollaps aller Punkte auf eine Flaeche
                 if grenzen is not None: lo, hi = np.asarray(grenzen[0], float), np.asarray(grenzen[1], float)   # GPS-Anker: Kasten um den GPS-Fit
+                if KIPP_FEST is not None:                                                     # Lot-Runde 22.11.2026: Kippung fest um den Start (Fluchtpunkt-Lot traegt)
+                    lo, hi = lo.copy(), hi.copy(); _k = kipp_rotvec(KIPP_FEST, p0[3])
+                    lo[1:3] = np.maximum(lo[1:3], np.asarray(p0[1:3], float) - _k); hi[1:3] = np.minimum(hi[1:3], np.asarray(p0[1:3], float) + _k)
+                    hi[1:3] = np.maximum(hi[1:3], lo[1:3] + 1e-7)
                 p = least_squares(r, np.clip(p, lo + 1e-9, hi - 1e-9), loss="huber", f_scale=sw / 3 * math.exp(ls0), max_nfev=200, bounds=(lo, hi)).x
         M = zu_modell(p, X); d, _ = nn(M); ok = d * math.exp(p[0]) < schwellen[-1] * s0      # Inlier-Schwelle in SfM-Einheiten (massstabsneutral)
         return p, ok.mean(), float(np.sqrt(np.mean(d[ok] ** 2))) if ok.any() else np.inf, ok
@@ -731,7 +767,7 @@ def ausrichten(argv=None):
     except Exception: _vers = (np.__version__,)
     from code_stand import code_stand as _cs
     _fein_ktx = wert_hash(code_abschnitt("fein"), _cs("gpu_knn.py"), Tall, Nall, Cq, float(s0), int(a.fein_punkte), float(a.kamera_gewicht), [float(x_) for x_ in a.kamerahoehe],
-                          bool(GPU_FFT), _KNN_WEG, _vers)
+                          bool(GPU_FFT), _KNN_WEG, _vers, KIPP_FEST)
     _fein_rechnen = fein
     def fein(p0, X, schwellen=(3.0, 1.5, 0.8), band=0.35, grenzen=None):
         X_ = np.ascontiguousarray(X); k_ = wert_hash(_fein_ktx, np.round(np.asarray(p0, float), 10), X_, tuple(schwellen), float(band), None if grenzen is None else np.asarray(grenzen, float))

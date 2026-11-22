@@ -108,7 +108,9 @@ def lage_vergleich(kam, ref, nah_m=150.0):
     a = {namen_schluessel(k): v for k, v in kam.items()}; b = {namen_schluessel(k): v for k, v in ref.items()}
     gem = sorted(k for k in a if k in b and np.isfinite(np.asarray(a[k], float)).all() and np.isfinite(np.asarray(b[k], float)).all())
     A = np.array([a[k] for k in gem], float).reshape(-1, 3); B = np.array([b[k] for k in gem], float).reshape(-1, 3)
-    if len(gem): nah = np.hypot(B[:, 0], B[:, 1]) < nah_m; A, B = A[nah], B[nah]
+    # Lot-Runde 22.11.2026: auch die NEUE Lage auf nah_m begrenzen - eine Kamera "am Mond" (2277 km, globaler Mapper) in A riss die Umeyama-Startloesung weg
+    # (Ref 1120 fuer 1122: Massstab x43790). Spaeter durch sim3_robust.sim3_meter (feste 1-m-Schwelle, Zweig worktree-agent-a0747560562618247) ersetzen.
+    if len(gem): nah = (np.hypot(B[:, 0], B[:, 1]) < nah_m) & (np.hypot(A[:, 0], A[:, 1]) < nah_m); A, B = A[nah], B[nah]
     if len(A) < 6: return dict(n=int(len(A)), grund=f"nur {len(A)} gemeinsame Kameras (< 6) - kein Vergleich")
     f = aehnlichkeit3d(A, B)
     if f is None: return dict(n=int(len(A)), grund="Aehnlichkeit nicht bestimmbar")
@@ -124,14 +126,35 @@ def kameras_aus_au(pfad):
 
 
 # ---------- Gegenproben zwischen den Stufen
-def lot_vergleich(E, kameras_json):
-    """Lot der Ausrichtung (E['lot']) gegen seiten_gps_vereinen.lot_aus_bild_achsen auf denselben Kameras (beides SfM-System). -> dict (Grad)."""
+def lot_vergleich(E, kameras_json, fotos=None, cache=None):
+    """Lot der Ausrichtung (E['lot']) gegen seiten_gps_vereinen.lot_ausrichtung (DIESELBE Funktion: Fluchtpunkte, Rueckfall Bild-x) und gegen die Bild-x-Achsen auf
+    denselben Kameras (beides SfM-System). -> dict (Grad). 'ausrichtung_gegen_bildachsen_grad' (Name wie vor der Lot-Runde) = gegen lot_ausrichtung (eine Funktion)."""
     import seiten_gps_vereinen as SG
     KJ = json.load(open(kameras_json)); Rs = np.array([np.asarray(d["R"], float) for d in KJ["bilder"]]); ach = np.asarray(SG.lot_aus_bild_achsen(Rs), float)
+    la = SG.lot_ausrichtung(Rs, SG.kameras_fuer_lot_json(KJ), fotos, cache=cache) if fotos else SG.lot_info(Rs); ref = np.asarray(la["oben"], float)
     w = lambda u, v: None if u is None else round(float(math.degrees(math.acos(min(1.0, abs(float(np.dot(np.asarray(u, float) / np.linalg.norm(u), v / np.linalg.norm(v)))))))), 3)
     L = E.get("lot") or {}
-    return dict(quelle_ausrichtung=L.get("quelle"), ausrichtung_gegen_bildachsen_grad=w(L.get("oben"), ach), ebene_gegen_bildachsen_grad=w(L.get("ebene"), ach),
-                blick_gegen_bildachsen_grad=w(L.get("blick"), ach), ebene_gegen_blick_grad=L.get("winkel_ebene_blick_grad"), flach=L.get("flach"))
+    return dict(quelle_ausrichtung=L.get("quelle"), quelle_lot_funktion=la.get("quelle"), ausrichtung_gegen_bildachsen_grad=w(L.get("oben"), ref), ausrichtung_gegen_bild_x_grad=w(L.get("oben"), ach),
+                ebene_gegen_bildachsen_grad=w(L.get("ebene"), ach), blick_gegen_bildachsen_grad=w(L.get("blick"), ach), ebene_gegen_blick_grad=L.get("winkel_ebene_blick_grad"),
+                flach=L.get("flach"), kipp_fest_grad=L.get("kipp_fest_grad"))
+
+
+def lot_cache(od, z):
+    """Fluchtpunkt-Cache der Ausrichtung im Pruefstand-Ordner (sfm_lod2_ausrichten: messprotokoll/.lot_fluchtpunkte-<name>.json) - gleicher Schluessel, nur einmal rechnen."""
+    return os.path.join(od, "messprotokoll", f".lot_fluchtpunkte-{z['ziel']}.json")
+
+
+def lot_wand(ok_, wolke, au):
+    """ZEILE 'lot/wandneigung' (Lot-Runde 22.11.2026): gemeinsame Kippung der Waende der neuen Lage (tools/lot_wandneigung.py, dieselbe Funktion wie das Ketten-Tor)."""
+    import lot_wandneigung as LW
+    if not os.path.isfile(wolke): return dict(rc=None, farbe="grau", wert=f"Wolke fehlt {wolke}")
+    obj = json.load(open(ok_)); k = LW.pruefen(np.load(wolke, mmap_mode="r"), obj)
+    try: k["kamera_gefaelle"] = LW.kamera_gefaelle(obj, au)
+    except Exception as e: k["kamera_gefaelle"] = dict(fehler=f"{type(e).__name__}: {e}")
+    wert = (f"{k['betrag_cm_m']:.1f} cm/m ({k['betrag_grad']:.2f} Grad +-{k['sigma_cm_m']:.1f}) Richtung {k['richtung_grad']:.0f}" if k.get("betrag_cm_m") is not None else str(k.get("grund")))
+    kg = k.get("kamera_gefaelle") or {}
+    if kg.get("kipp_cm_m") is not None: wert += f"; Gegenprobe Kamerahoehe/DGM1 {kg['betrag_cm_m']:.1f} cm/m Richtung {kg['richtung_grad']:.0f}"
+    return dict(rc=k["rc"], farbe="gruen" if k["rc"] == 0 else "rot" if k["rc"] == 3 else "grau", wert=wert, messung=k)
 
 
 def gps_vergleich(E, au_pfad, fotos, lgp_json, mitte_utm=None):
@@ -246,7 +269,10 @@ def tore(z, ok_, au, wolke, cfg, log):
                                    wert=", ".join(f"Teil {x['teil']} {'belegt' if x['belegt'] else 'weg'}{'' if x['gleich'] else ' (ANDERS als gespeichert)'}" for x in sb) or "kein GPS-Teil")
         except Exception as e: g["teil_beleg"] = dict(rc=None, farbe="grau", wert=f"nicht lesbar: {type(e).__name__} {e}")
     else: g["teil_beleg"] = dict(rc=None, farbe="grau", wert="fehlt: keine seiten_modelle.json")
-    g["bestanden"] = LPR.lage_bestanden(dict(gps=g["gps"]["rc"], grundriss=g["grundriss"]["rc"], lage_proben=rc_p, seiten_blick=None))
+    # Lot-Tor Wandneigung (Lot-Runde 22.11.2026, dieselbe Funktion wie gesamtkette.tore)
+    try: g["lot"] = lot_wand(ok_, wolke, au)
+    except Exception as e: g["lot"] = dict(rc=None, farbe="grau", wert=f"nicht pruefbar: {type(e).__name__}: {e}")
+    g["bestanden"] = LPR.lage_bestanden(dict(gps=g["gps"]["rc"], grundriss=g["grundriss"]["rc"], lage_proben=rc_p, seiten_blick=None, lot=LPR.lot_rc(g["lot"]["rc"])))
     return g
 
 
@@ -298,7 +324,7 @@ def pruefe_stand(name, st, cfg, a):
                 _mu = ((json.load(open(ok_)).get("rahmen") or {}).get("mitte_utm"))
                 lauf["gps_vergleich"] = gps_vergleich(E, au, z["fotos"], os.path.join(od, "audit", "lage_gps.json"), mitte_utm=_mu)
             except Exception as e: lauf["gps_vergleich"] = dict(fehler=f"{type(e).__name__}: {e}")
-            try: lauf["eine_funktion"] = eine_funktion(lauf.get("gps_vergleich"), lot_vergleich(E, z["kameras"]))
+            try: lauf["eine_funktion"] = eine_funktion(lauf.get("gps_vergleich"), lot_vergleich(E, z["kameras"], z["fotos"], lot_cache(od, z)))
             except Exception as e: lauf["eine_funktion"] = dict(farbe="rot", abweichungen=[f"nicht pruefbar: {type(e).__name__}: {e}"], je={})
         R["laeufe"].append(lauf)
         if ks is None: k += 1; ks_ok = k < E["n_unterscheidbar"]
@@ -306,7 +332,7 @@ def pruefe_stand(name, st, cfg, a):
         else: ks = ks[1:]; ks_ok = bool(ks); k = ks[0] if ks else k
         if not ks_ok or E["rc"] == 5: break
     if E0 is not None:
-        try: R["lot"] = lot_vergleich(E0, z["kameras"])
+        try: R["lot"] = lot_vergleich(E0, z["kameras"], z["fotos"], lot_cache(od, z))
         except Exception as e: R["lot"] = dict(fehler=f"{type(e).__name__}: {e}")
         R["loesungen"] = [loesung_kurz(E0, l, refs) for l in E0["loesungen"]]
         gf = (E0.get("gps") or {}).get("fit") or {}
@@ -327,7 +353,7 @@ def zeile(R):
         for n, v in (l.get("referenz") or {}).items():
             s.append(f"Ref {n}: " + (f"{v['versatz_median_m']:.2f} m / {v['drehung_grad']:+.2f} Grad / x{v['massstab']:.3f}" if "massstab" in v else v.get("grund", "?")))
         tg = l.get("tore") or {}
-        for n in ("gps", "lage_proben", "grundriss", "wand_dicke", "teil_beleg"):
+        for n in ("gps", "lage_proben", "grundriss", "lot", "wand_dicke", "teil_beleg"):
             if n in tg: s.append(f"{n} {tg[n]['farbe'].upper()} ({tg[n].get('wert')})")
         if tg: s.append("LAGE " + ("BESTANDEN" if tg.get("bestanden") else "NICHT bestanden"))
         gv = (l.get("gps_vergleich") or {}).get("kameras")
