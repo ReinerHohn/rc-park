@@ -56,7 +56,7 @@ chk(cv5 == 0.0 and inf5["v"]["quelle"].startswith("ANNAHME"), f"T5b v ohne Schei
 
 # T3: Ende-zu-Ende auf synthetischen Dateien (ohne Rahmen -> kein DOM1-Veto)
 import trimesh
-T = tempfile.mkdtemp(prefix="test_dach_profil_duenn_", dir=os.environ.get("TMPDIR", "/tmp"))
+T = __import__("pfade").temp_ordner("test_dach_profil_duenn_")      # Temp auf der Datenplatte, raeumt selbst auf (Waechter test_temp_ordner)
 try:
     os.makedirs(os.path.join(T, "audit"))
     A_, B_, ZT, UE = 6.0, 5.0, 37.0, 0.8                                       # Wand halb (u=x, v=y), Traufe, Ueberstand der echten Dachflaeche

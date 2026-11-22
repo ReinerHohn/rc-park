@@ -173,7 +173,11 @@ def messen(F, g, KA, fdir, max_fotos=16, min_fotos=3, log=print):
     """Ein Vordach (Gruppe g der Fassade F aus vorbauten_auto.json mit kanten_mass.kasten und galerie.vordach) messen. dict oder None."""
     KM = g.get("kanten_mass") or {}; G = g.get("galerie") or {}; V = G.get("vordach"); Kb = KM.get("kasten")
     if not (V and Kb): return None
-    o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0))
+    o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float)
+    # 22.11.2026 (Schwabentor-1122: Wand im Kamerarahmen geneigt, fassade_tiefe 'wand_ebene'): gemessen wird im Kamerarahmen an der OERTLICHEN Wand (Versatz kipp_),
+    # ausgegeben im Baurahmen (w_wand der Fassade) - sonst saesse das Vordach um Neigung x Hoehe versetzt.
+    NE_ = F.get("wand_ebene"); kipp_ = float(NE_["b_u"] * (0.5 * (Kb["u0"] + Kb["u1"]) - NE_["u_ref"]) + NE_["c_z"] * (float(V["z_traufe"]) - NE_["z_ref"])) if NE_ else 0.0
+    ww = float(F.get("w_wand", 0.0)) + kipp_
     welt = lambda P: np.stack([o[0] + P[:, 0] * d[0] + P[:, 2] * n[0], o[1] + P[:, 0] * d[1] + P[:, 2] * n[1], P[:, 1]], 1)
     aussen = lambda C: float((C[:2] - o) @ n)
     wf = ww + float(KM.get("ausladung", g["koerper"]["w_median"])); z_t, z_a = float(V["z_traufe"]), float(V["z_anschluss"])
@@ -252,6 +256,7 @@ def messen(F, g, KA, fdir, max_fotos=16, min_fotos=3, log=print):
     log(f"  Profil: {fam} ({n_fam}/{len(FO)} Fotos einzeln gleich), Kontrast {g_b:.3f} gegen gerade {gerade:.3f}")
     if not belegt: c_b = 0.0
     w_t, z_t, z_a, As_b, s_ = q["w_t"], q["z_t"], q["z_a"], round(q["k"] + q["s"], 3), q["s"]; u0, u1 = Kb["u0"] - s_, Kb["u1"] + s_; A = w_t - ww
+    ww, w_t, wf = ww - kipp_, w_t - kipp_, wf - kipp_      # zurueck in den Baurahmen (A und Hoehen unveraendert)
     t = np.linspace(0, 1, 13); prof = [[round(float(w_t - x * A), 3), round(float(z_t + (z_a - z_t) * g_profil(x, c_b)), 3)] for x in t]
     return dict(id=F.get("id"), u0=round(u0, 3), u1=round(u1, 3), w_wand=ww, w_t=round(float(w_t), 3), z_t=round(z_t, 3), z_a=round(z_a, 3), c=c_b, As=As_b, familie=fam if belegt else "gerade",
                 familie_gemessen=fam, fotos_familie=n_fam, fotos=[f_.name for f_ in FO], guete=round(g_b, 3), guete_gerade=round(gerade, 3),

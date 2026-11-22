@@ -36,7 +36,9 @@ def main():
             o = np.array(e["o"]); d = np.array(e["d"]); n = np.array(e["n"]); ww = float(e.get("w_wand", 0.0)); P = np.load(e["sweep"])["P"].astype(float)
             ew = EJ.get(f"f{F['nr']:02d}_wand")                                # Kanten der Wandebene derselben Fassade dazu (Strebenfuesse liegen an der Wand, ausserhalb des Bands der Vorbau-Ebene)
             if ew and ew.get("sweep") and os.path.exists(ew["sweep"]): P = np.vstack([P, np.load(ew["sweep"])["P"].astype(float)])
-            u = (P[:, :2] - o) @ d; z = P[:, 2]; w = (P[:, :2] - o) @ n - ww; u0, u1, z0, z1 = e["zone"]; ok = (u >= u0) & (u <= u1) & (z >= z0) & (z <= z1); u, z, w = u[ok], z[ok], w[ok]
+            u = (P[:, :2] - o) @ d; z = P[:, 2]; ne = e.get("neigung")
+            w = (P[:, :2] - o) @ n - ww - ((ne["b_u"] * (u - ne["u_ref"]) + ne["c_z"] * (z - ne["z_ref"])) if ne else 0.0)      # 22.11.2026: Tiefe gegen die oertliche (geneigte) Wand
+            u0, u1, z0, z1 = e["zone"]; ok = (u >= u0) & (u <= u1) & (z >= z0) & (z <= z1); u, z, w = u[ok], z[ok], w[ok]
             vorn = w > 0.4
             if vorn.sum() < 500: continue
             h, ed = np.histogram(w[vorn], bins=np.arange(0.4, max(w.max(), 0.6) + 0.05, 0.05)); wp = float(ed[h.argmax()] + 0.025); fr = np.abs(w - wp) < 0.2; aus = float(np.median(w[fr]))

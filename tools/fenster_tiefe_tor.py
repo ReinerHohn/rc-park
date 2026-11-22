@@ -35,7 +35,12 @@ def main():
     VB = {}; vj_ = os.path.join(os.path.dirname(os.path.abspath(a.fenster)), "vorbauten_auto.json")      # Vorbauten (Stufe bauplan): Bereich je Gruppe inkl. Streben bis z_fuss
     if os.path.exists(vj_):
         for F_ in json.load(open(vj_)).get("fassaden", []):
-            VB[F_["id"]] = [dict(u0=g_["u0"], u1=g_["u1"], z0=min(g_["z0"], (g_.get("galerie") or {}).get("z_fuss") or g_["z0"]), z1=g_["z1"]) for g_ in F_["gruppen"]]
+            # 22.11.2026 (1122n: 'Fenster' zwischen den Erker-Streben): Vorbau-Raum reicht bis zum tiefsten gemessenen Teil darunter - Strebenfuss/Konsolen aus den Fotokanten
+            # (kanten_mass, ebenen_masse) ebenso wie aus der Galerie-Messung; vorher nur galerie.z_fuss (Katalogzweig, im Kantenzweig leer).
+            def _unten(g_):
+                km_ = g_.get("kanten_mass") or {}
+                return min([g_["z0"]] + [x_ for x_ in ((g_.get("galerie") or {}).get("z_fuss"), (km_.get("streben") or {}).get("z_fuss"), (km_.get("konsolen") or {}).get("z_unten")) if x_ is not None])
+            VB[F_["id"]] = [dict(u0=g_["u0"], u1=g_["u1"], z0=_unten(g_), z1=g_["z1"]) for g_ in F_["gruppen"]]
     for fid, F in J.items():
         if not isinstance(F, dict) or "fenster" not in F: continue
         nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); vj = os.path.join(a.ordner, f"vorbauten_{fid}.json")
