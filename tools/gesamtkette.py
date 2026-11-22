@@ -17,7 +17,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
              sfm_lod2_ausrichten --loesung 1..max probieren, die erste Loesung, die ALLE Tore besteht, gilt; sonst Abbruch mit Bericht
   dach       tools/dach_vermessen.py (DOM1, mit Wolke)
   bauen      tools/bauen_abnehmen.sh <ziel> (Generator aus Vorlage = LoD2 + Dach)
-  kanten     KERNMETHODE (15.11.): tools/kantenstufe.py - SfM-Kameras -> Stabilkarten -> Kanten-Tiefen-Sweep um die Modellflaeche -> 3D-Kanten-F1 + Liste fehlender Kanten
+  kanten     KERNMETHODE (15.11.): tools/kantenstufe.py - SfM-Kameras -> Stabilkarten -> Kanten-Tiefen-Sweep um den MODELLFREIEN Messkoerper (22.11.: 2 m vor bis 0,5 m hinter LoD2-flach + Wandversatz, Wolke nur Lage-Veto; vorher Vormodell = Kreis) -> 3D-Kanten-F1 + Liste fehlender Kanten
   fototor    tools/kameras_aus_buendel.py (K-<foto>.json) -> tools/foto_diff.py auf den Fotos mit bester Modellsicht (Foto-Tor)
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
@@ -426,7 +426,7 @@ def main():
     KD = os.path.join(D, "kanten")
     if dran("kanten"):
         if os.path.exists(AU):
-            if lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD], log, ok=(0, 4))[0] == 4:      # 17.11.2026: rc 4 (< 6 Kameras sehen das Modell / < 2000 Kantenpunkte) stand als 'in Ordnung' im Bericht -
+            if lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD] + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 4))[0] == 4:      # 22.11.2026 KREISFALL: Suchraum = modellfreier Messkoerper (Standard der Kantenstufe), Wolke nur Lage-Veto      # 17.11.2026: rc 4 (< 6 Kameras sehen das Modell / < 2000 Kantenpunkte) stand als 'in Ordnung' im Bericht -
                 notiz(B, "kanten_ergebnis", False, fehler="Kantenstufe OHNE Ergebnis (rc 4: zu wenige Kameras oder Kantenpunkte, kein Kanten-F1) - Kernmethode nicht erfuellt; Kameras/Stabilkarten pruefen (kanten_bericht.json 'fehler')")      # die Kernmethode (Fotokanten) lief leer
         else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
     for s_ in ("fototor", "fassaden", "seiten"):                         # 17.11.2026: ohne Ausrichtung fielen diese Stufen STILL aus ("alle in Ordnung" bei 0 Stufen)
@@ -469,7 +469,8 @@ def main():
             if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + fein_paar(P, FV), log)[0] == 0: bauen(B, "bauen_mit_fassaden", a.ziel, log)   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
         else: notiz(B, "fassaden", False, fehler=f"kein dichter Ordner ({dd}/fused.ply) oder Netzstufe ohne neues Ergebnis ({nz})")
     if dran("fassaden") and os.path.exists(os.path.join(Z, "audit", "fassaden_kette.json")) and os.environ.get("RCPARK_OHNE_MONO") != "1":      # 17.11.2026 Stufe 'mono' (nach relief_putz/steine der Fassaden-Kette): Feinrelief aus Einzelfotos,
-        fkj = os.path.join(Z, "audit", "fassaden_kette.json"); FK = json.load(open(fkj)); stl_m = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); mono_w = []      # tools/relief_aus_fotos_mono.py (Depth Anything V2 Small, Apache-2.0), Feld = Wand bis 10 m
+        fkj = os.path.join(Z, "audit", "fassaden_kette.json"); FK = json.load(open(fkj)); stl_m = os.path.join(D, "messkoerper.stl"); mono_w = []
+        if lauf(B, "mono_messkoerper", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--nur-messkoerper", stl_m], log)[0] != 0 and os.path.exists(stl_m): os.remove(stl_m)      # 22.11.2026 KREISFALL: Fotowahl (Sicht) gegen den modellfreien Messkoerper statt gegen das gebaute Modell      # tools/relief_aus_fotos_mono.py (Depth Anything V2 Small, Apache-2.0), Feld = Wand bis 10 m
         for w_ in FK.get("waende", []):                                   # TOR: Korrelation je Foto mit dem Scan-Bandpass >= 0,2 (schwaechere Fotos verwirft das Werkzeug; keins uebrig = rc 4 = Wand ohne Mono-Relief)
             rq_ = [os.path.join(Z, "relief", w_["name"] + e_ + ".npz") for e_ in ("_misch", "_voll")]; rq_ = [q_ for q_ in rq_ if os.path.exists(q_)]
             L_, z1m = float(w_.get("laenge", 0.0)), round(min(float(w_.get("z1", 0.0)), 10.0), 2)
@@ -485,13 +486,13 @@ def main():
         json.dump(FK, open(fkj, "w"), indent=1, ensure_ascii=False)
         notiz(B, "mono", True, waende=mono_w, hinweis="ANSEHEN: relief/<wand>_mono.jpg (Foto | Scan | neu); fassaden_kette.anbauen baut <wand>_mono.npz ein (seit 21.11.2026; OHNE_MONO=1 schaltet ab)")
     if dran("fenster") and os.path.exists(AU):                          # 15.11.2026: Fenster automatisch (Mehrfoto-Ortho -> OWLv2 -> Scheiben gruppieren); Probe Nordgiebel Schwabentor-Nachbarhaus: 6 von 6 sichtbaren Fenstern, 1-4 cm
-        fo = os.path.join(D, "fassade"); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); fa = os.path.join(Z, "audit", "fenster_auto.json")
-        if lauf(B, "fenster_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo, "--einzeln", "--min-flaeche", "6"], log)[0] == 0:
+        fo = os.path.join(D, "fassade"); fa = os.path.join(Z, "audit", "fenster_auto.json")
+        if lauf(B, "fenster_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--messflaeche", "eben", "--aus", fo, "--einzeln", "--min-flaeche", "6"], log)[0] == 0:      # 22.11.2026 KREISFALL: Messorthos auf modellfreier Flaeche (LoD2 flach + Wandversatz aus Fotokanten), nie auf dem STL des vorigen Laufs (Tor 4,3/5,2 m je Lauf); Lauf von null braucht kein STL
             try: nfo = sum(len(f_.get("fotos") or {}) for f_ in json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])
             except Exception: nfo = 0
             if nfo == 0: notiz(B, "fenster_ortho_inhalt", False, fehler="KEIN Foto auf irgendeiner Fassade - Kameras/fotos_dir pruefen (rc 0 allein beweist nichts; 16.11.2026 lief die Kette so leer durch)")
             env_alt = dict(os.environ); os.environ.update(HF_HOME="/media/oem/scan/hf_cache", HF_HUB_OFFLINE="1")
-            if lauf(B, "fenster_parsing", [PY, "-W", "ignore", "-I", "tools/fassade_parsing.py", "--ortho", fo, "--gpu"], log)[0] == 0 and (lauf(B, "fenster_ortho_fein", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo + "_fein", "--einzeln", "--min-flaeche", "6", "--zelle", "0.01", "--max-mpp", "0.02", "--beste", "3"], log, ok=(0, 1))[0] in (0, 1)) and (lauf(B, "fenster_fein", [PY, "-I", "tools/fassade_fein.py", fo + "_fein"], log, ok=(0, 1))[0] in (0, 1)) and lauf(B, "fenster_bauen_liste", [PY, "-I", "tools/fenster_aus_parsing.py", fo, "--aus", fa, "--fein", fo + "_fein"], log)[0] == 0:   # feines, ausgerichtetes 1-cm-Bild fuer Sprossen/Muster (Nutzer 15.11.: "immer alle Details mitnehmen"); wo kein Foto <= 2 cm/px hat, bleibt das grobe
+            if lauf(B, "fenster_parsing", [PY, "-W", "ignore", "-I", "tools/fassade_parsing.py", "--ortho", fo, "--gpu"], log)[0] == 0 and (lauf(B, "fenster_ortho_fein", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--messflaeche", "eben", "--aus", fo + "_fein", "--einzeln", "--min-flaeche", "6", "--zelle", "0.01", "--max-mpp", "0.02", "--beste", "3"], log, ok=(0, 1))[0] in (0, 1)) and (lauf(B, "fenster_fein", [PY, "-I", "tools/fassade_fein.py", fo + "_fein"], log, ok=(0, 1))[0] in (0, 1)) and lauf(B, "fenster_bauen_liste", [PY, "-I", "tools/fenster_aus_parsing.py", fo, "--aus", fa, "--fein", fo + "_fein"], log)[0] == 0:   # feines, ausgerichtetes 1-cm-Bild fuer Sprossen/Muster (Nutzer 15.11.: "immer alle Details mitnehmen"); wo kein Foto <= 2 cm/px hat, bleibt das grobe
                 # 17.11.2026 (Schwabentor stand als geschlossener Klotz da): Bogenoeffnungen/Tordurchfahrten. Das Parsing fand den Torbogen (8 von 8 Stimmen), aber nur die Klasse 'fenster' ging in den Generator.
                 # oeffnungen_bogen.py: Bogenkasten = Suchfenster -> Ebenen-Sweep (Durchblick belegt?) -> Formfamilie -> audit/oeffnungen_auto.json -> bauteile.oeffnungen_aus_json (Vorlage objekt_anlegen.py). Scheitert es, bleibt die Wand zu (rc != 0 nur im Bericht).
                 if lauf(B, "oeffnungen_bogen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_bogen.py", fo, "--objekt", ZR, "--aus", os.path.join(Z, "audit", "oeffnungen_auto.json")], log, ok=(0,))[0] == 0 and os.path.exists(gp_) and "oeffnungen_aus_json" not in open(gp_).read():

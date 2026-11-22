@@ -31,8 +31,9 @@ def szene(td, wahr, name):
         im = np.full((K["H"], K["W"]), 205, np.uint8)
         class _F(VP.Foto):
             def __init__(s): s.K = K; s.welt = welt; s.sj = 1.0; s.x0 = 0; s.y0 = 0; s.f = 1.0
-        f_ = _F(); L, R_, O = VP.walm_kurven(wahr["u0"], wahr["u1"], 0.0, wahr["w_t"], wahr["z_t"], wahr["z_a"], wahr["c"], wahr["As"], n=60)
-        x, y_ = f_.px(np.concatenate([L, O[::-1], R_[::-1]])); cv2.fillPoly(im, [np.stack([x, y_], 1).round().astype(np.int32)], 70)
+        f_ = _F()
+        for q_ in VP.flaechen(dict(wahr, w_a=0.0), n=60):            # 22.11.2026: ganzer Dachkoerper (Front + Walmseiten) statt nur Grat-Polygon - so sieht ihn eine schraege Kamera
+            x, y_ = f_.px(q_); cv2.fillPoly(im, [np.stack([x, y_], 1).round().astype(np.int32)], 70)
         fx, fy = f_.px(np.array([[wahr["u0"], wahr["z_t"], wahr["w_t"]], [wahr["u1"], wahr["z_t"], wahr["w_t"]], [wahr["u1"], wahr["z_t"] - 0.5, wahr["w_t"] - 0.1], [wahr["u0"], wahr["z_t"] - 0.5, wahr["w_t"] - 0.1]]))
         cv2.fillPoly(im, [np.stack([fx, fy], 1).round().astype(np.int32)], 50)
         dach = im == 70; pk = rng.random(im.shape) < 0.01; im[dach & pk] = 150             # Ziegelpunkte (helle Glasur-Flecken)
