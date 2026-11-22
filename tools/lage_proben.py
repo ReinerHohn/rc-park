@@ -131,7 +131,9 @@ def probe_oberkante(P, obj, ziel_polys, ring=(1.0, 6.0), dom=None):
 def probe_kamerahoehe(P, C, r=KAMERA_BODEN_R):
     """P = Wolke, C = Kamerazentren (Modellrahmen). Boden je Kamera = 10-%-Hoehe der Wolkenpunkte im Umkreis r UNTER der Kamera."""
     from scipy.spatial import cKDTree
-    erg = dict(probe="kamerahoehe"); baum = cKDTree(P[:, :2]); h = []
+    # 22.11.2026 (1122j) SCHWACH: der Bereich 1,35-1,85 m laesst -13..+19 % Massstab zu und ist drehblind - im Lauf 1122j bestanden 4 von 5 FALSCHEN Loesungen
+    # (1,54-1,67 m) die Kamerahoehe. Sie darf darum nur VERWERFEN, nie allein eine Lage bestaetigen (bestanden(): 'besteht' braucht eine starke Probe).
+    erg = dict(probe="kamerahoehe", schwach=True); baum = cKDTree(P[:, :2]); h = []
     for c in np.asarray(C, float):
         ix = baum.query_ball_point(c[:2], r)
         if len(ix) < 10: continue
@@ -305,10 +307,11 @@ def probe_wandfit_alle(Y_ref, kandidaten_Y, seg, c, kasten, xy_ref=None):
 
 # ---------- Entscheidung
 def bestanden(proben):
-    """Ein Kandidat besteht, wenn keine Probe faellt und mindestens eine besteht. -> 'besteht' / 'faellt' / 'kein Urteil'."""
+    """Ein Kandidat besteht, wenn keine Probe faellt und mindestens eine STARKE Probe besteht (schwach=True, z. B. Kamerahoehe, darf nur verwerfen;
+    22.11.2026 1122j). -> 'besteht' / 'faellt' / 'kein Urteil'."""
     u = [p.get("urteil") for p in proben]
     if "faellt" in u: return "faellt"
-    return "besteht" if "besteht" in u else "kein Urteil"
+    return "besteht" if any(p.get("urteil") == "besteht" and not p.get("schwach") for p in proben) else "kein Urteil"
 
 
 def entscheiden(kand, vertraeglich, alt=None):

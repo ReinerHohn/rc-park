@@ -221,6 +221,57 @@ def gps_anker_kasten(streuung):
     return float(min(max(GPS_ANKER_K * sd, GPS_ANKER_DREH_MIN), GPS_ANKER_DREH)), float(min(max(GPS_ANKER_K * sm, GPS_ANKER_MASS_MIN), GPS_ANKER_MASS))
 
 
+# 22.11.2026 EINE QUELLE DER WAHRHEIT fuer das Foto-GPS (Lauf kette-schwabentor-null-1122j): die Ausrichtung nahm fuer GPS-Fit und ehrliches Band nur den Kamerakern
+# (_nah: 70 % naechste Kameras - Lehre 15.11. fuer Lot und Mitte), also NICHT die 10 Fernfotos bei 320 m -> "1 Gruppe, n_eff 1,0, +-10,4 Grad -> GPS traegt nicht";
+# das GPS-Tor (lage_gps_pruefen) rechnete mit ihnen -> "2 Gruppen, +-1 Grad, kann ankern". Jetzt rechnen BEIDE mit gps_unsicherheit.gps_fit auf ALLEN Kameras mit
+# GPS (falsch registrierte Fernkameras und falsche Geotags fallen im robusten Konsens heraus), und das Veto je Loesung IST das GPS-Tor (lage_gps_pruefen.urteil).
+# Lot und Mitte bleiben beim Kamerakern. Abschalten zum Vergleich: AUSR_GPS_EINE_QUELLE=0 (bisheriger Nah-Fit + Nah-Veto).
+GPS_FERN_MAX_M = 5000.0   # Geotags weiter weg sind keine Kamerastandorte dieses Objekts (wie bisher w_: Kaufhaus unsinnige EXIF-GPS)
+
+
+def eine_quelle_an():
+    return os.environ.get("AUSR_GPS_EINE_QUELLE") != "0" and os.environ.get("AUSR_GPS_EHRLICH") != "0"
+
+
+def gps_kameras_alle(gps_kam, Cq, mitte_utm, xhat, yhat, max_m=GPS_FERN_MAX_M):
+    """ALLE Kameras mit Foto-GPS fuer den GPS-Fit (auch ferne, langer Hebel): gps_kam = [(Kameraindex, UTM)], Cq = Kamerazentren im Lotsystem.
+    -> (idx, Mxy = GPS im Modellsystem m, Cxy = Kameras im Lotsystem, nur endliche Werte und GPS < max_m von der Objektmitte)."""
+    c0 = np.asarray(mitte_utm, float); xh, yh = np.asarray(xhat, float), np.asarray(yhat, float)
+    idx = np.array([i for i, _ in gps_kam], int); M = np.array([[(np.asarray(u, float) - c0) @ xh, (np.asarray(u, float) - c0) @ yh] for _, u in gps_kam]).reshape(-1, 2)
+    if len(idx) == 0: return idx, M, np.zeros((0, 2))
+    C = np.asarray(Cq, float)[idx, :2]; ok = np.isfinite(M).all(1) & np.isfinite(C).all(1) & (np.hypot(*M.T) < max_m)
+    return idx[ok], M[ok], C[ok]
+
+
+def gps_start_aus_fit(f):
+    """gps_fit (G ~ s R C + t, s in m je SfM-Einheit) -> Startlage der Ausrichtung (SfM-Einheiten/m, Drehung rad, tx, ty) wie GPS_START/GPS_ANKER."""
+    return 1.0 / f["s"], math.atan2(f["R"][1, 0], f["R"][0, 0]), float(f["t"][0]), float(f["t"][1])
+
+
+def gps_tor_urteil(namen, Xm, Gm, zeiten):
+    """GPS-Veto je Loesung = das GPS-Tor selbst (lage_gps_pruefen.urteil: Median-Abstand, Fit + ehrliches Band, Fernfotos) auf den Kamerastandorten der Loesung
+    (Modellsystem m) gegen ihr Foto-GPS (Modellsystem m; Ursprung = Objektmitte wie im Tor, das Tor rechnet in UTM relativ zur Mitte - Drehung des Rahmens kuerzt sich).
+    -> (rc 0/3, erg) - stumm."""
+    import io, contextlib
+    import lage_gps_pruefen as LGP
+    with contextlib.redirect_stdout(io.StringIO()): return LGP.urteil(list(namen), np.asarray(Xm, float), np.asarray(Gm, float), zeiten=list(zeiten))
+
+
+def lage_widerspruch_gps(ent, anker_faehig, veto_ok):
+    """Regel 22.11.2026: widersprechen sich Lageproben und ANKERFAEHIGES GPS, gibt es KEINE Lage (benannte Ursache) - nie mitteln, nie still einer Quelle folgen.
+    ent = LP.entscheiden-Ergebnis (Indizes in die Liste der unterscheidbaren Loesungen), veto_ok[i] = besteht Loesung i das GPS-Tor. -> ent (ggf. ersetzt)."""
+    if not anker_faehig: return ent
+    je = ent.get("je") or []; gps_ok = [i for i, v in enumerate(veto_ok) if v]
+    wahl = ent.get("wahl"); w_ = wahl if wahl is not None else (0 if ent.get("ergebnis") in ("kein Urteil",) and je else None)
+    if not gps_ok:
+        return dict(ent, ergebnis="keine", wahl=None, grund="WIDERSPRUCH LoD2/Lageproben gegen ankerfaehiges Foto-GPS: keine Loesung besteht das GPS-Tor - Lage nicht belegt (" + str(ent.get("grund"))[:200] + ")")
+    if w_ is not None and not veto_ok[w_]:
+        return dict(ent, ergebnis="keine", wahl=None, grund=f"WIDERSPRUCH Lageproben gegen ankerfaehiges Foto-GPS: Lageproben waehlen Loesung {w_}, das GPS-Tor verwirft sie - Lage nicht belegt")
+    if ent.get("ergebnis") == "keine" and any(je[i] == "faellt" for i in gps_ok):
+        return dict(ent, grund="WIDERSPRUCH Lageproben gegen ankerfaehiges Foto-GPS: die GPS-stimmigen Loesungen fallen an den Lageproben - Lage nicht belegt (" + str(ent.get("grund"))[:200] + ")")
+    return ent
+
+
 def loesung_index(loesung, n, schreiben):
     """Welche der n unterscheidbaren Loesungen wird geschrieben, und mit welchem rc endet der Lauf? -> (Index oder None, rc).
     17.11.2026 (Durchsicht): der Korrekturkreislauf der Kette ruft --loesung 1, 2, ... --schreiben, bis die Lage-Tore bestehen. Fiel auch die letzte durch, blieb SIE liegen
@@ -431,7 +482,7 @@ def main():
         if not any(abs(math.log(b[1] / t[1])) < 0.15 for t in top): top.append(b)
         # KEINE Obergrenze (Martinstor 2026-11-04): mit 'top 12' fiel das richtige Band (s = 0,071, alte Pick-Kette) heraus, weil die Grobsumme kleine
         # Modelle bevorzugt -> Turm 0,66-fach. Jedes Massstabsband (Abstand 0,15 in log s, ~19 Baender) bekommt eine Feinloesung; entschieden wird dort.
-    GPS_PRUEF = None; GPS_ANKER = None; GPS_EHRLICH = None; GPS_START = None
+    GPS_PRUEF = None; GPS_ANKER = None; GPS_EHRLICH = None; GPS_START = None; GPS_FIT = None; GPS_ALLE = None
     if sum(_nah[i] for i, _ in GPS_KAM) >= 15:                                               # 15.11.: GPS-Startkandidat (v2: LoD2-Grobsuche verfehlte Lage; 190 Kameras mit GPS)
         R_ = obj["rahmen"]; c0_ = np.array(R_["mitte_utm"], float); xh_, yh_ = np.array(R_["xhat_utm"], float), np.array(R_["yhat_utm"], float)
         _gk = [(i, u) for i, u in GPS_KAM if _nah[i]]                                         # nur Kamerakern: globaler Mapper setzt einzelne Kameras tausende Einheiten weit weg
@@ -458,20 +509,46 @@ def main():
             print(f"GPS-Startkandidat: Massstab {1 / k_:.4f} SfM-Einheiten/m, Drehung {math.degrees(thg):.0f} Grad, Rest Median {np.median(res):.1f} m ({int(w_.sum())} von {len(w_)} Kameras)")
         else: print(f"GPS-Startkandidat nicht benutzt: Rest Median {np.median(res):.1f} m, {int(w_.sum())} Kameras")
         if np.linalg.det(Rg) > 0 and np.median(res) < 8 and int(w_.sum()) >= 15: GPS_PRUEF = (np.array([i for i, _ in _gk]), Mxy, 1.0 / k_)   # guter GPS-Fit -> Veto fuer Loesungen (unabhaengiger Lagebeleg)
+        GPS_FIT = None; GPS_ALLE = None
         if GPS_PRUEF is not None:
             # 22.11.2026 EHRLICHE GPS-Unsicherheit (tools/gps_unsicherheit.py; schwabentor-1122: Nah-GPS EINER Sitzung systematisch +9,4 Grad / x0,867 verzerrt, der
             # Bootstrap-Kasten +-2 Grad / +-4,2 % sperrte die Ausrichtung in die falsche Lage). Bootstrap (Zufall) + systematischer Anteil je Sitzung x Ring (Hebel).
             # Dasselbe Mass rechnet das GPS-Tor (lage_gps_pruefen). Ist der ehrliche Kasten breiter als der alte Anker (8 Grad / 8 %), TRAEGT das GPS die Lage nicht:
             # kein Anker, nur Veto; dann entscheiden unabhaengige Proben (tools/lage_proben.py) zwischen den LoD2-Loesungen.
-            _gidx = [i for i, _ in _gk]; _rob = GU.robust_fit2d(Cxy, Mxy) if np.isfinite(Cxy).all() else None   # wie das GPS-Tor (RANSAC < 10 m)
-            _wr = _rob[3] if _rob is not None and _rob[3].sum() >= 15 else w_; _str0 = gps_fit_streuung(Cxy, Mxy, _wr)
-            GPS_EHRLICH = GU.ehrlich(Mxy, _wr, zeiten=[GPS_ZEIT.get(i) for i in _gidx], M=Cxy, sd_dreh_zufall=(_str0[0] if _str0 else 0.0), sd_mass_zufall=(_str0[1] if _str0 else 0.0))
-            if _rob is not None and _rob[3].sum() >= 15:                                       # Bezugslage der Lageproben = robuster GPS-Fit (Mxy ~ s R Cxy + t)
-                GPS_START = (1.0 / _rob[0], math.atan2(_rob[1][1, 0], _rob[1][0, 0]), float(_rob[2][0]), float(_rob[2][1]))
-                print(f"GPS robust (wie GPS-Tor): {int(_rob[3].sum())} von {len(_rob[3])} Kameras < 10 m, Massstab {1.0 / _rob[0]:.4f} SfM-Einheiten/m, Drehung {math.degrees(GPS_START[1]):.1f} Grad"
-                      f" (getrimmter Fit: {1 / k_:.4f}, {math.degrees(math.atan2(Rg[1, 0], Rg[0, 0])):.1f} Grad)", flush=True)
-            print(GPS_EHRLICH["text"], flush=True)
-        if GPS_PRUEF is not None and gps_anker_aktiv(int(w_.sum()), float(np.median(res[w_])) if w_.any() else float("inf"), np.linalg.det(Rg) > 0) and (GPS_EHRLICH is None or GPS_EHRLICH["anker"] is not None or os.environ.get("AUSR_GPS_EHRLICH") == "0"):
+            # 22.11.2026 (1122j) EINE QUELLE: GPS-Fit + Band auf ALLEN GPS-Kameras (auch Fernfotos) mit GU.gps_fit - bitgleich mit dem GPS-Tor (gps_kameras_alle oben).
+            if eine_quelle_an():
+                _ia, _Ma, _Ca = gps_kameras_alle(GPS_KAM, Cq, R_["mitte_utm"], R_["xhat_utm"], R_["yhat_utm"])
+                _za = [GPS_ZEIT.get(int(i)) for i in _ia]; GPS_FIT = GU.gps_fit(_Ca, _Ma, _za, GU.NAH_M) if len(_ia) >= 10 else dict(ok=False, grund="unter 10 GPS-Kameras")
+                print(GU.gps_fit_text(GPS_FIT), flush=True)
+            if GPS_FIT is not None and GPS_FIT["ok"]:
+                GPS_ALLE = dict(idx=_ia, Mxy=_Ma, zeiten=_za, namen=[os.path.splitext(os.path.basename(ims[int(i)].name))[0] for i in _ia])
+                GPS_PRUEF = (_ia, _Ma, 1.0 / GPS_FIT["s"])                                      # Veto-Kameras = dieselben wie im Tor
+                _sy = GPS_FIT["systematik"]
+                GPS_EHRLICH = dict(systematik=_sy, dreh_sd_grad=GPS_FIT["sd_drehung_grad"], mass_sd_rel=GPS_FIT["sd_massstab"], anker=GPS_FIT["anker"], text=GU.gps_fit_text(GPS_FIT))
+                if int(GPS_FIT["w"].sum()) >= 15: GPS_START = gps_start_aus_fit(GPS_FIT)          # Bezugslage der Lageproben = derselbe Fit wie im Tor
+            else:
+                _gidx = [i for i, _ in _gk]; _rob = GU.robust_fit2d(Cxy, Mxy) if np.isfinite(Cxy).all() else None   # bisher: nur Kamerakern (AUSR_GPS_EINE_QUELLE=0)
+                _wr = _rob[3] if _rob is not None and _rob[3].sum() >= 15 else w_; _str0 = gps_fit_streuung(Cxy, Mxy, _wr)
+                GPS_EHRLICH = GU.ehrlich(Mxy, _wr, zeiten=[GPS_ZEIT.get(i) for i in _gidx], M=Cxy, sd_dreh_zufall=(_str0[0] if _str0 else 0.0), sd_mass_zufall=(_str0[1] if _str0 else 0.0))
+                if _rob is not None and _rob[3].sum() >= 15:                                   # Bezugslage der Lageproben = robuster GPS-Fit (Mxy ~ s R Cxy + t)
+                    GPS_START = (1.0 / _rob[0], math.atan2(_rob[1][1, 0], _rob[1][0, 0]), float(_rob[2][0]), float(_rob[2][1]))
+                    print(f"GPS robust (wie GPS-Tor): {int(_rob[3].sum())} von {len(_rob[3])} Kameras < 10 m, Massstab {1.0 / _rob[0]:.4f} SfM-Einheiten/m, Drehung {math.degrees(GPS_START[1]):.1f} Grad"
+                          f" (getrimmter Fit: {1 / k_:.4f}, {math.degrees(math.atan2(Rg[1, 0], Rg[0, 0])):.1f} Grad)", flush=True)
+                print(GPS_EHRLICH["text"], flush=True)
+        if GPS_FIT is not None and GPS_FIT["ok"]:
+            _n_a, _r_a = int(GPS_FIT["w"].sum()), GPS_FIT["rest_median_m"]
+            if GPS_FIT["anker"] is not None and gps_anker_aktiv(_n_a, _r_a, np.linalg.det(GPS_FIT["R"]) > 0):
+                _sa, _tha, _txa, _tya = gps_start_aus_fit(GPS_FIT); _kd, _km = GPS_FIT["anker"]
+                GPS_ANKER = dict(s=_sa, drehung=_tha, t=[_txa, _tya], kameras=_n_a, rest_m=_r_a, sigma_drehung_grad=GPS_FIT["sd_drehung_grad"], sigma_massstab=GPS_FIT["sd_massstab"],
+                                 kasten_drehung_grad=_kd, kasten_massstab=_km, quelle="gps_unsicherheit.gps_fit (alle GPS-Kameras, wie GPS-Tor)", fern_inlier=GPS_FIT["n_fern_inlier"])
+                for _dx, _dy in ((2, 0), (-2, 0), (0, 2), (0, -2), (0, 0)): top.insert(0, (-1.0, _sa, _tha, _txa + _dx, _tya + _dy))   # Start + Massstabsraster um DIESEN Fit
+                print(f"GPS-ANKER: Foto-GPS traegt die Lage ({_n_a} Kameras, davon {GPS_FIT['n_fern_inlier']} Fernfotos, Rest Median {_r_a:.1f} m, ehrlich +-{GPS_FIT['sd_drehung_grad']:.1f} Grad"
+                      f" / +-{100 * GPS_FIT['sd_massstab']:.1f} %) - Startlage Massstab {_sa:.4f} SfM-Einheiten/m, Drehung {math.degrees(_tha):.1f} Grad; LoD2-Feinfit nur im Kasten "
+                      f"Drehung +-{_kd:.1f} Grad, Massstab +-{100 * _km:.1f} %, Versatz +-{GPS_ANKER_VERSATZ:.0f} m, Kippung +-{GPS_ANKER_KIPP:.0f} Grad (Hoehe frei: DGM1/Kamerahoehe)", flush=True)
+            elif GPS_FIT["anker"] is None:
+                print("GPS-ANKER nicht aktiv: das Foto-GPS legt Drehung/Massstab ehrlich gerechnet nicht fest (systematischer Fehler je Fotositzung) - nur Veto; unabhaengige Proben entscheiden", flush=True)
+            else: print(f"GPS-ANKER nicht aktiv: {_n_a} Kameras im GPS-Fit (noetig >= {GPS_ANKER_MIN_KAM}) oder Rest {_r_a:.1f} >= {GPS_ANKER_MAX_REST:.0f} m - nur Veto + Proben", flush=True)
+        elif GPS_PRUEF is not None and gps_anker_aktiv(int(w_.sum()), float(np.median(res[w_])) if w_.any() else float("inf"), np.linalg.det(Rg) > 0) and (GPS_EHRLICH is None or GPS_EHRLICH["anker"] is not None or os.environ.get("AUSR_GPS_EHRLICH") == "0"):
             _str = gps_fit_streuung(Cxy, Mxy, w_); _kd, _km = gps_anker_kasten(_str)           # Kasten aus der Bootstrap-Unsicherheit des GPS-Fits (22.11.2026, 1122e)
             if GPS_EHRLICH is not None and GPS_EHRLICH["anker"] is not None and os.environ.get("AUSR_GPS_EHRLICH") != "0": _kd, _km = GPS_EHRLICH["anker"]   # ehrlicher Kasten (Zufall + Sitzung)
             GPS_ANKER = dict(s=1.0 / k_, drehung=math.atan2(Rg[1, 0], Rg[0, 0]), t=[float(tg[0]), float(tg[1])], kameras=int(w_.sum()), rest_m=float(np.median(res[w_])),
@@ -634,11 +711,19 @@ def main():
         # 22.11.2026 (Nulllauf schwabentor-1122): der Kamerarest < 12 m laesst eine um 20 Grad gedrehte Loesung durch, wenn die Kameras nah am Objekt stehen (20 Grad bei 15 m
         # = 5 m) - gewaehlt wurde Guete 5 %, das GPS-Tor maß danach 20 Grad (90 %: 18-22) und brach ab. Jetzt zusaetzlich Drehung und Massstab des GPS-Fits je Loesung mit
         # den GRENZEN DES GPS-TORS; bleibt so keine Loesung, gilt die alte Auswahl (gemeldet) - es wird nie weniger gewaehlt als vorher.
-        _dm = [(l, gps_dreh_massstab(zu_modell(l[2], Cq[_gi])[:, :2], _gm)) for l in _kons]
-        if GPS_EHRLICH is not None and os.environ.get("AUSR_GPS_EHRLICH") != "0":                # gleiche Regel wie das GPS-Tor (ehrliches 90-%-Band, feste Grenzen)
+        if GPS_ALLE is not None:                                                                # 22.11.2026 (1122j) EINE QUELLE: Veto = das GPS-Tor selbst (lage_gps_pruefen.urteil)
+            _tu = [(l, gps_tor_urteil(GPS_ALLE["namen"], zu_modell(l[2], Cq[_gi])[:, :2], _gm, GPS_ALLE["zeiten"])) for l in _kons]
+            _dm = [(l, (e_["gps_fit"]["drehung_grad"], e_["gps_fit"]["massstab"]) if e_.get("gps_fit") else None) for l, (rc_, e_) in _tu]
+            _kons2 = [l for l, (rc_, e_) in _tu if rc_ == 0]
+            for l, (rc_, e_) in _tu[:8]:
+                if rc_: print(f"   GPS-Tor verwirft Loesung (Guete {100 * l[0]:.1f} %, Massstab {math.exp(l[2][0]):.4f}): " + "; ".join(e_.get("warnungen") or [str(e_.get("ergebnis"))]), flush=True)
+        elif GPS_EHRLICH is not None and os.environ.get("AUSR_GPS_EHRLICH") != "0":              # gleiche Regel wie das GPS-Tor (ehrliches 90-%-Band, feste Grenzen)
+            _dm = [(l, gps_dreh_massstab(zu_modell(l[2], Cq[_gi])[:, :2], _gm)) for l in _kons]
             _sdd, _sdm = GPS_EHRLICH["dreh_sd_grad"], GPS_EHRLICH["mass_sd_rel"]
             _kons2 = [l for l, dm in _dm if dm is not None and not GU.widerspruch(dm[0], GU.band(dm[0], 0.0, _sdd), dm[1], GU.band(dm[1], 0.0, _sdm), GPS_MAX_DREH, GPS_MAX_MASS)]
-        else: _kons2 = [l for l, dm in _dm if dm is not None and abs(dm[0]) <= GPS_MAX_DREH and abs(dm[1] - 1.0) <= GPS_MAX_MASS]
+        else:
+            _dm = [(l, gps_dreh_massstab(zu_modell(l[2], Cq[_gi])[:, :2], _gm)) for l in _kons]
+            _kons2 = [l for l, dm in _dm if dm is not None and abs(dm[0]) <= GPS_MAX_DREH and abs(dm[1] - 1.0) <= GPS_MAX_MASS]
         print(f"GPS-Veto Drehung/Massstab (Grenzen des GPS-Tors {GPS_MAX_DREH:.0f} Grad / {100 * GPS_MAX_MASS:.0f} %): {len(_kons2)} von {len(_kons)} Loesungen; "
               + ", ".join(f"{dm[0]:+.0f} Grad x{dm[1]:.2f}" for _, dm in _dm[:8] if dm is not None))
         if _kons2: _kons = _kons2
@@ -648,9 +733,12 @@ def main():
     # 22.11.2026 UNABHAENGIGE LAGEPROBEN (tools/lage_proben.py) - nur wenn das Foto-GPS vorhanden ist, die Lage aber ehrlich gerechnet NICHT festlegt (kein Anker):
     # (c) Wandfit mit den GESEHENEN Nachbargebaeuden (2D-Suche im ehrlichen GPS-Kasten um die GPS-Startlage) liefert einen zusaetzlichen Kandidaten (3D-Feinfit eng um seinen
     # Bestwert); dann je unterscheidbarer Loesung Proben a) Oberkante/DOM1, b) Kamerahoehe, c) Wandfit -> gewaehlt wird, was alle urteilsfaehigen Proben besteht
-    # (lage_proben.entscheiden). Martinstor (kein GPS) und Objekte mit ankerndem GPS laufen wie bisher. Abschalten: AUSR_PROBEN=0 (oder AUSR_GPS_EHRLICH=0).
-    LAGE_PROBEN = None
-    _proben_an = (GPS_PRUEF is not None and GPS_EHRLICH is not None and GPS_EHRLICH["anker"] is None and GPS_START is not None
+    # (lage_proben.entscheiden). Martinstor (kein GPS) laeuft wie bisher; mit ankerndem GPS laufen die Proben seit 22.11. (1122j) als Gegenprobe mit. Abschalten: AUSR_PROBEN=0 (oder AUSR_GPS_EHRLICH=0).
+    LAGE_PROBEN = None; _wand_l = None
+    # 22.11.2026 (1122j) auch MIT ankerfaehigem GPS (eine Quelle, GU.gps_fit) laufen die Proben - als Gegenprobe: widersprechen sie dem GPS, gibt es KEINE Lage
+    # (lage_widerspruch_gps, benannte Ursache), statt still einer Quelle zu folgen.
+    _anker_faehig = bool(GPS_ALLE is not None and GPS_FIT is not None and GPS_FIT.get("ok") and GPS_FIT.get("anker") is not None)
+    _proben_an = (GPS_PRUEF is not None and GPS_EHRLICH is not None and (GPS_EHRLICH["anker"] is None or _anker_faehig) and GPS_START is not None
                   and os.environ.get("AUSR_GPS_EHRLICH") != "0" and os.environ.get("AUSR_PROBEN") != "0")
     if _proben_an:
         try:
@@ -675,14 +763,23 @@ def main():
                 _vt = True
                 if GPS_PRUEF is not None:
                     _dmw = gps_dreh_massstab(zu_modell(_pp, Cq[_gi])[:, :2], _gm)
-                    _vt = _gps_rest(_pp) < 12 and _dmw is not None and not GU.widerspruch(_dmw[0], GU.band(_dmw[0], 0.0, GPS_EHRLICH["dreh_sd_grad"]), _dmw[1], GU.band(_dmw[1], 0.0, GPS_EHRLICH["mass_sd_rel"]), GPS_MAX_DREH, GPS_MAX_MASS)
+                    _vt = (gps_tor_urteil(GPS_ALLE["namen"], zu_modell(_pp, Cq[_gi])[:, :2], _gm, GPS_ALLE["zeiten"])[0] == 0) if GPS_ALLE is not None else \
+                        _gps_rest(_pp) < 12 and _dmw is not None and not GU.widerspruch(_dmw[0], GU.band(_dmw[0], 0.0, GPS_EHRLICH["dreh_sd_grad"]), _dmw[1], GU.band(_dmw[1], 0.0, GPS_EHRLICH["mass_sd_rel"]), GPS_MAX_DREH, GPS_MAX_MASS)
                 print(f"   Wandfit-Kandidat (3D-Feinfit): Inlier {100 * _fr:.0f} %, Abdeckung {100 * _ab:.0f} %, RMS {_rm:.2f} m, Massstab {math.exp(_pp[0]):.4f}" + ("" if _vt else " - VERWORFEN: verletzt das ehrliche GPS-Veto"), flush=True)
-                if _vt: loes.append((_fr * _ab, _rm, _pp, _ok, _fr, _ab))
+                if _vt: _wand_l = (_fr * _ab, _rm, _pp, _ok, _fr, _ab); loes.append(_wand_l)
         except Exception as _e:
             print("HINWEIS Lageproben nicht moeglich:", type(_e).__name__, _e, flush=True); _proben_an = False
     loes.sort(key=lambda l: -l[0])
     _verschieden = []
     for l in loes:                                                                              # unterscheidbare Lagen (Korrekturkreislauf: Loesung K probieren, Tore entscheiden)
+        if l is _wand_l:
+            # 22.11.2026 (Probe 1122j mit GPS-Anker): der Wandfit-Kandidat (x0,1060 = 1120-Lage) lag 4,5 % im Massstab und 2,4 Grad neben dem am Kastenrand klebenden
+            # Anker-Feinfit (x0,1109) und wurde mit der 5-%-Regel als 'dieselbe Lage' verschluckt - die Proben sahen nur die falsche. Er bleibt eigene Lage, ausser eine
+            # Loesung liegt innerhalb der Wandfit-Toleranz (lage_proben TOL_DREH/TOL_MASS/TOL_M).
+            if not any(np.degrees((Rot.from_rotvec(l[2][1:4]).inv() * Rot.from_rotvec(v[2][1:4])).magnitude()) <= LP.TOL_DREH and abs(l[2][0] - v[2][0]) <= LP.TOL_MASS
+                       and np.linalg.norm(np.asarray(l[2][4:6]) - np.asarray(v[2][4:6])) <= LP.TOL_M for v in _verschieden):
+                _verschieden.append(l)
+            continue
         if all(np.degrees((Rot.from_rotvec(l[2][1:4]).inv() * Rot.from_rotvec(v[2][1:4])).magnitude()) > 10 or np.linalg.norm(np.asarray(l[2][4:7]) - np.asarray(v[2][4:7])) > 3
                or (_proben_an and abs(l[2][0] - v[2][0]) > 0.05) for v in _verschieden):    # mit Proben: Massstab > 5 % = eigene Lage (1122g und 1120-Lage: 9 Grad, x1,25)
             _verschieden.append(l)
@@ -695,6 +792,11 @@ def main():
                 _kand.append(dict(name=f"Loesung {i_} (Guete {100 * l[0]:.1f} %, Massstab {math.exp(l[2][0]):.4f})", guete=l[0], proben=_pr))
             _sub = np.random.default_rng(5).choice(len(Q), min(len(Q), 20000), replace=False)
             _ent = LP.entscheiden(_kand, lambda i_, j_: LP.vertraeglich_2d(zu_modell(_verschieden[i_][2], Q[_sub]), zu_modell(_verschieden[j_][2], Q[_sub]), _cp), alt=0)   # 0 = bisherige Wahl (beste Guete)
+            if _anker_faehig:                                                                    # Regel: Lageproben gegen ankerfaehiges GPS -> bei Widerspruch keine Lage
+                _vok = [gps_tor_urteil(GPS_ALLE["namen"], zu_modell(l[2], Cq[_gi])[:, :2], _gm, GPS_ALLE["zeiten"])[0] == 0 for l in _verschieden]
+                _ent0 = _ent; _ent = lage_widerspruch_gps(_ent, True, _vok)
+                print(f"LAGEPROBEN gegen ankerfaehiges GPS: GPS-Tor besteht fuer Loesung(en) {[i_ for i_, v_ in enumerate(_vok) if v_]} von {len(_vok)}"
+                      + ("" if _ent is _ent0 else f" -> {_ent['grund']}"), flush=True)
             for k_ in _kand:
                 print(f"   {k_['name']}: {LP.bestanden(k_['proben'])} - " + "; ".join(f"{p_['probe']} {p_['urteil']} ({p_.get('grund', '')})" for p_ in k_["proben"]), flush=True)
             print(f"LAGEPROBEN: {_ent['ergebnis'].upper()} - {_ent['grund']}", flush=True)
