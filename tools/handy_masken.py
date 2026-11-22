@@ -43,9 +43,13 @@ def segmentiere(model, proc_mean, proc_std, ims, breite, dev, fp16):
     with torch.no_grad():
         lg = model(pixel_values=x).logits
         out = []
+        # 22.11.2026 (Nulllauf schwabentor-1122): Logits (150 Klassen) auf VOLLE Bildgroesse hochrechnen kostet bei grossen Commons-/Panoramabildern
+        # 150*H*W*2 Byte (12 MPx = 3,6 GB) -> CUDA-OOM bei jeder Breite, Masken-Vorstufe scheiterte, SfM brach ab. Jetzt hoechstens ~3 MPx auf der GPU, Rest nearest auf der CPU.
+        f_ = min(1.0, (3.0e6 / float(H * W)) ** 0.5); Hs, Ws = max(1, int(round(H * f_))), max(1, int(round(W * f_)))
         for j in range(lg.shape[0]):
-            up = torch.nn.functional.interpolate(lg[j:j + 1], size=(H, W), mode="bilinear", align_corners=False)
-            out.append(up.argmax(1)[0].cpu().numpy())
+            up = torch.nn.functional.interpolate(lg[j:j + 1], size=(Hs, Ws), mode="bilinear", align_corners=False)
+            k = up.argmax(1)[0].cpu().numpy().astype(np.int32); del up
+            out.append(k if (Hs, Ws) == (H, W) else cv2.resize(k.astype(np.uint16), (W, H), interpolation=cv2.INTER_NEAREST).astype(np.int32))
     return out
 
 def main():
@@ -73,11 +77,14 @@ def main():
         for b in range(0, len(lst), a.batch):
             pf = lst[b:b + a.batch]; ims = [cv2.imread(f) for f in pf]
             segs = None
-            for bb, bt in ((a.breite, a.batch), (a.breite, 1), (int(a.breite * 0.75), 1)):   # OOM-Leiter: Batch 1, dann kleinere Breite (im Bericht vermerkt)
+            for bb, bt in ((a.breite, a.batch), (a.breite, 1), (int(a.breite * 0.75), 1), (int(a.breite * 0.5), 1)):   # OOM-Leiter: Batch 1, dann kleinere Breite (im Bericht vermerkt)
                 try:
                     segs = sum((segmentiere(model, mean, std, ims[i:i + bt], bb, dev, fp16) for i in range(0, len(ims), bt)), []); break
                 except torch.cuda.OutOfMemoryError:
                     torch.cuda.empty_cache(); print("  OOM bei", bb, bt, flush=True); abw = True
+            if segs is None:                                                  # 22.11.2026: alle OOM-Stufen gescheitert -> Bilder dieser Gruppe ohne Maske melden statt TypeError (ganze Vorstufe brach ab)
+                print(f"  WARNUNG: keine Maske fuer {len(pf)} Bild(er) {shp[1]}x{shp[0]} (GPU-Speicher) - diese Bilder bleiben unmaskiert:", ", ".join(os.path.basename(x) for x in pf), flush=True)
+                n += len(pf); continue
             for f, seg in zip(pf, segs):
                 nm = os.path.basename(f); ser = serie_von(nm, os.path.dirname(f)); od = os.path.join(a.ausgabe, ser); os.makedirs(od, exist_ok=True)
                 m = maske_aus_seg(seg, ids, a.puffer); cv2.imwrite(os.path.join(od, os.path.splitext(nm)[0] + ".png"), m)
