@@ -212,7 +212,7 @@ GB.belegen()
 if _sm:                                                                   # SEITENMODELLE, Phase 2 (GPU): je Teil dichte Wolke, vereinen, Blick-Tor; Ergebnis -> sparse/0 (vereint oder Teil A allein)
     SM.dicht_vereinen(w, img, _e0["seiten_json"], _db_ursprung, _sm); _ok_sm = SM.einsetzen(w, _sm); SM.schreiben(w, _sm)
     if not _ok_sm: raise SystemExit("SEITENMODELLE: kein Ergebnismodell (seiten_modelle.json) - bewusst ohne diesen Weg: RCPARK_SEITEN_MODELLE=0")
-    wahl["seiten_modelle"] = dict(gerechnet=True, art=_sm["ergebnis"]["art"], teil_a=_sm.get("teil_a"), vereint=_sm.get("vereint"), nicht_vereint=_sm.get("nicht_vereint"), meldungen=_sm.get("meldungen"),
+    wahl["seiten_modelle"] = dict(gerechnet=True, art=_sm["ergebnis"]["art"], teil_a=_sm.get("teil_a"), vereint=_sm.get("vereint"), nicht_vereint=_sm.get("nicht_vereint"), fotoluecken=_sm.get("fotoluecken"), meldungen=_sm.get("meldungen"),
                                   dicht=_sm["ergebnis"].get("dicht"), bericht=os.path.join(w, "seiten_modelle.json"))
 json.dump(wahl, open(os.path.join(w, "mapper_wahl.json"), "w"), indent=1); print("MAPPERWAHL", json.dumps(wahl), flush=True)
 rec = {k: pycolmap.Reconstruction(os.path.join(f"{w}/sparse", k)) for k in sorted(os.listdir(f"{w}/sparse")) if k.isdigit()}

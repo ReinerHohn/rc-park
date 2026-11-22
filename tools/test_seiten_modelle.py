@@ -123,9 +123,11 @@ Rz = np.diag([-1.0, -1.0, 1.0, 1.0]); M_kleb = Rz @ M_wahr                      
 ZAHL = {}
 
 
-def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr, ausgleich=None, querspur=None):
+def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr, ausgleich=None, querspur=None, gps_belegt=None, lod2=None):
     def lauf(cmd, log=None):
         was = os.path.basename(cmd[2]) if cmd[0] == SM.PYC else cmd[1]; ZAHL[was] = ZAHL.get(was, 0) + 1
+        if was == "seiten_lod2_je_teil.py" and lod2 is not None:                          # 22.11.2026 LoD2 je Teil (Attrappe): lod2 = (rc, lod2_teile.json-Inhalt)
+            aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); json.dump(dict(lod2[1], rc=lod2[0], ok=lod2[0] == 0), open(os.path.join(aus, "lod2_teile.json"), "w")); return lod2[0]
         if was == "seiten_querspur_binden.py" and querspur is not None:                 # 22.11.2026 Querspur-Bindung; querspur None = echtes Werkzeug (Text-DB -> rc 2, GPS-Lage bleibt)
             assert cmd[5].endswith("ursprung.db") and cmd[cmd.index("--gps") + 1].endswith(os.path.join("_gps", "vereinen.json")), "Querspur ohne Ursprungs-DB oder ohne GPS-Ergebnis"
             aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); json.dump(dict(ok=True, urteil="gebunden (Attrappe)", B_nach_A=querspur.tolist(), doppelwand=dict(vor=dict(median_m=1.8), nach=dict(median_m=0.05))), open(os.path.join(aus, "querspur.json"), "w")); return 0
@@ -137,7 +139,7 @@ def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr, ausgl
                       "1": dict(delta=D1.tolist(), dicht_gueltig=ausgleich != "verformt")}), open(os.path.join(aus, "gps_ausgleich.json"), "w")); return 0
         if was == "seiten_gps_vereinen.py" and gps_rc is not None:                   # 22.11.2026 Rueckfall GPS; gps_rc None = das echte Werkzeug laeuft (Fotoordner ohne GPS -> rc 2)
             assert "--bilder" in cmd and cmd[3] != cmd[4], "GPS-Vereinen ohne Fotoordner oder mit gleichem Modell"
-            aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); v = dict(art="gps", ok=gps_rc == 0, urteil="vereint ueber das Foto-GPS" if gps_rc == 0 else "GPS zu ungenau", pruefung=dict(dreh_sd_grad=2.0, mass_sd_rel=0.08))
+            aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); v = dict(art="gps", ok=gps_rc == 0, urteil="vereint ueber das Foto-GPS" if gps_rc == 0 else "GPS zu ungenau", pruefung=dict(dreh_sd_grad=2.0, mass_sd_rel=0.08, **({} if gps_belegt is None else dict(lage_b_belegt=gps_belegt, dreh_sd_ehrlich_grad=3.0 if gps_belegt else 9.5, mass_sd_ehrlich_rel=0.09 if gps_belegt else 0.17))))
             if gps_rc == 0: v["B_nach_A"] = gps_matrix.tolist()
             json.dump(v, open(os.path.join(aus, "vereinen.json"), "w")); return gps_rc
         if was == "global_mapper":
@@ -179,6 +181,8 @@ def kette(w_, **k):
     return rc, puffer.getvalue(), json.load(open(os.path.join(w_, "seiten_modelle.json")))
 
 
+# Die Faelle a-h pruefen die Mechanik des Vereinens; die REGEL "Teil nur bei belegter Lage" (tools/seiten_lage_beleg.py) ist dafuer aus und wird in i) geprueft.
+SM.NUR_BELEGT = False
 # a) vereint
 wa_ = arbeit("ka"); ZAHL.clear(); rc, aus, B = kette(wa_); assert rc == 0, f"Kette a rc {rc}\n{aus[-1500:]}"
 t0, t1 = [t for t in B["teile"] if t.get("gerechnet")]; E = B["ergebnis"]
@@ -246,7 +250,7 @@ wq3 = arbeit("kq3"); ZAHL.clear(); rc, aus, B = kette(wq3, querspur=M_wahr); ass
 wf = arbeit("kf"); SM.GPS_VEREINEN = False
 try: rc, aus, B = kette(wf, vereinen_rc=3, gps_rc=0)
 finally: SM.GPS_VEREINEN = True
-c_alt = B["nachstufe_code"]; assert B["ergebnis"]["art"] == "teil_a_allein" and len(c_alt) == 12 and c_alt == SM.nachstufe_code(), f"Bericht ohne Code-Stand: {B.get('nachstufe_code')}"
+c_alt = B["nachstufe_code"]; assert B["ergebnis"]["art"] == "teil_a_allein" and len(c_alt.split("+")[0]) == 12 and c_alt == SM.nachstufe_code(), f"Bericht ohne Code-Stand: {B.get('nachstufe_code')}"
 ZAHL.clear(); rc, aus, B = kette(wf, vereinen_rc=3, gps_rc=0)                        # gleicher Code (Klappung), GPS jetzt an: Klappung NICHT neu, GPS neu
 assert ZAHL.get("seiten_vereinen.py") is None and ZAHL.get("seiten_gps_vereinen.py") == 1 and B["ergebnis"]["art"] == "vereint", f"GPS nach Zuschalten: {ZAHL} {B['ergebnis']['art']}"
 cs_echt = SM.code_stand; SM.code_stand = lambda *w, **k: "geaendert0000" if w == ("seiten_vereinen.py",) else cs_echt(*w, **k)   # seiten_vereinen.py "geaendert"
@@ -269,6 +273,40 @@ wh3 = arbeit("kh3"); SM.GPS_AUSGLEICH = False; ZAHL.clear()
 try: rc, aus, B = kette(wh3, ausgleich="ok")
 finally: SM.GPS_AUSGLEICH = True
 assert not ZAHL.get("sfm_gps_ausgleich.py") and "abgeschaltet" in B["gps_ausgleich"]["urteil"], "RCPARK_GPS_AUSGLEICH=0 wirkt nicht"
+# i) REGEL "Teil nur bei belegter Lage einsetzen" (22.11.2026, schwabentor-1122 Teil 1: nur GPS, 3-4 m versetzt). Auf dem GPS-Weg ohne eigene Probe -> Teil WEGGELASSEN,
+#    Fotoluecke im Bericht, Teil A allein in sparse/0 (14 Bilder); GPS ehrlich belegt + Wanddicke der GPS-Lage ok -> eingesetzt; LoD2 je Teil uebernommen -> eingesetzt;
+#    Klappungs-Weg (Fall a) unberuehrt; Schalter aus -> eingesetzt mit Warnung; Schalter steht im Code-Stand der Nachstufe.
+SM.NUR_BELEGT = True; oj_ = os.path.join(S, "objekt_attrappe.json"); json.dump({}, open(oj_, "w")); os.environ["RCPARK_SEITEN_OBJEKT"] = oj_
+WD_OK = dict(vorher=dict(rc=0, kanten_mit_beiden=1, max_lageunterschied_m=0.12, kanten=[dict(von=[0, 0], bis=[0, 10], urteil="ok", lageunterschied_m=0.12, dicke_gesamt_m=0.4)]))
+WD_DOPPEL = dict(vorher=dict(rc=3, kanten_mit_beiden=1, max_lageunterschied_m=3.6, kanten=[dict(von=[0, 0], bis=[0, 10], urteil="doppelwand", lageunterschied_m=3.6, dicke_gesamt_m=3.9)]))
+TB_MEHR = dict(a=dict(eindeutig=True, gruende=[]), b=dict(eindeutig=False, gruende=["mehrdeutig: andere Lage erreicht 97 % des Bestwerts"]))
+try:
+    wi1 = arbeit("ki1"); ZAHL.clear(); rc, aus, B = kette(wi1, vereinen_rc=3, gps_rc=0, gps_belegt=False, lod2=(3, dict(urteil="NICHT uebernommen - Teil b mehrdeutig", wand_dicke=WD_DOPPEL, teile=TB_MEHR)))
+    t1 = [t for t in B["teile"] if t.get("gerechnet")][1]; fl = B.get("fotoluecken") or []
+    assert rc == 0 and B["ergebnis"]["art"] == "teil_a_allein" and B["vereint"] == [0] and B["nicht_vereint"] == [1] and pycolmap.Reconstruction(os.path.join(wi1, "sparse", "0")).num_reg_images() == 14, f"nicht belegt, trotzdem eingesetzt: {B['ergebnis']} {B.get('vereint')}\n{aus[-1500:]}"
+    assert len(fl) == 1 and fl[0]["teil"] == 1 and "Lage nicht belegt, nicht gebaut" in fl[0]["text"] and "Brueckenfotos" in fl[0]["text"] and t1["vereinen"]["lage_belegt"]["belegt"] is False, f"Fotoluecke fehlt: {fl}"
+    assert "doppelwand" in fl[0]["grund"] and "gps_ehrlich: NICHT" in fl[0]["grund"] and not ZAHL.get("seiten_blick_tor.py") and any("WEGGELASSEN" in m for m in B["meldungen"]) and "FOTOLUECKE SEITENMODELLE" in aus, f"Grund/Meldung: {fl[0]['grund']} {ZAHL}"
+    assert t1["vereinen"]["lod2_je_teil"]["wand_dicke"]["vorher"]["kanten"][0]["urteil"] == "doppelwand" and t1["vereinen"]["lod2_je_teil"]["teile_eindeutig"]["b"]["eindeutig"] is False
+    wi0 = arbeit("ki0"); rc, aus, B = kette(wi0, vereinen_rc=3, gps_rc=0)                        # ohne LoD2-Attrappe: echtes Werkzeug scheitert (Attrappen-objekt.json) -> Wanddicke nicht pruefbar
+    assert B["ergebnis"]["art"] == "teil_a_allein" and len(B["fotoluecken"]) == 1 and "nicht" in B["fotoluecken"][0]["grund"], f"ohne Probe eingesetzt: {B['ergebnis']} {B.get('fotoluecken')}"
+    wi2 = arbeit("ki2"); rc, aus, B = kette(wi2, vereinen_rc=3, gps_rc=0, gps_belegt=True, lod2=(3, dict(urteil="NICHT uebernommen - (a) nicht besser", wand_dicke=WD_OK, teile=TB_MEHR)))
+    t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
+    assert B["ergebnis"]["art"] == "vereint" and B["vereint"] == [0, 1] and not B["fotoluecken"] and t1["vereinen"]["weg"] == "gps" and t1["vereinen"]["lage_belegt"]["belegt"], f"GPS belegt + Wanddicke ok nicht eingesetzt: {t1['vereinen'].get('lage_belegt')}"
+    wi3 = arbeit("ki3"); rc, aus, B = kette(wi3, vereinen_rc=3, gps_rc=0, gps_belegt=True, lod2=(3, dict(urteil="NICHT uebernommen", wand_dicke=WD_DOPPEL, teile=TB_MEHR)))
+    assert B["ergebnis"]["art"] == "teil_a_allein" and B["fotoluecken"][0]["teil"] == 1, "GPS belegt, aber Doppelwand -> muss weggelassen werden"
+    wi4 = arbeit("ki4"); rc, aus, B = kette(wi4, vereinen_rc=3, gps_rc=0, gps_matrix=M_gps_daneben, gps_belegt=False, lod2=(0, dict(urteil="uebernommen (Attrappe)", B_nach_A=M_wahr.tolist(), wand_dicke=WD_OK)))
+    t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
+    assert B["ergebnis"]["art"] == "vereint" and t1["vereinen"]["weg"] == "gps+lod2" and not B["fotoluecken"] and np.allclose(json.load(open(os.path.join(wi4, "sparse", "0", "vereint.json")))["teile"][1]["matrix"], M_wahr), f"LoD2 je Teil belegt, nicht eingesetzt: {t1['vereinen']}"
+    c_an = SM.nachstufe_code(); SM.NUR_BELEGT = False; c_aus = SM.nachstufe_code()
+    wi5 = arbeit("ki5"); rc, aus, B = kette(wi5, vereinen_rc=3, gps_rc=0, gps_belegt=False, lod2=(3, dict(urteil="NICHT", wand_dicke=WD_DOPPEL, teile=TB_MEHR)))
+    assert B["ergebnis"]["art"] == "vereint" and not B["fotoluecken"] and any("RCPARK_TEIL_NUR_BELEGT=0" in m for m in B["meldungen"]) and c_an != c_aus and c_aus.endswith("+belegt0"), "Schalter aus wirkt nicht / nicht im Code-Stand"
+    SM.NUR_BELEGT = True
+    wi6 = arbeit("ki6"); ZAHL.clear(); rc, aus, B = kette(wi6, gps_belegt=False); t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
+    assert B["ergebnis"]["art"] == "vereint" and not B["fotoluecken"] and t1["vereinen"]["weg"] == "klappung" and "lage_belegt" not in t1["vereinen"], f"Klappungs-Weg veraendert: {t1['vereinen']}"
+    assert not ZAHL.get("seiten_gps_vereinen.py"), "Klappungs-Weg ruft GPS"
+finally:
+    SM.NUR_BELEGT = True; os.environ.pop("RCPARK_SEITEN_OBJEKT", None)
+print("ok 4i: Regel 'Teil nur bei belegter Lage' - nur GPS + Doppelwand/mehrdeutig -> weggelassen + Fotoluecke (Teil A allein, 14 Bilder); GPS ehrlich + Wanddicke ok -> eingesetzt; LoD2 je Teil -> eingesetzt; Schalter aus -> eingesetzt mit Warnung; Klappung unveraendert")
 # d) nur ein grosser Teil
 wd_ = arbeit("kd", teile=((0, BN),)); ZAHL.clear(); rc, aus, B = kette(wd_); assert rc == 2 and B.get("grund") and not ZAHL and not os.path.isdir(os.path.join(wd_, "sparse")), f"ein Teil: rc {rc}, {ZAHL}"
 print("ok 4: Kette - vereint (24 Bilder, Wolke, Tiefenkarten, Wiederverwendung), abgelehnt/zu wenig -> Teil A allein gemeldet, verklebt -> Blick-Tor, Klappung abgelehnt -> Foto-GPS (vereint / geklebt / zu ungenau / abgeschaltet), GPS-Ausgleich (ohne GPS / uebernommen / verformt / abgeschaltet), ein Teil -> nichts gerechnet")

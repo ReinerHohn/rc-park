@@ -11,6 +11,8 @@ Verbindung; ein Mapper kann sie nicht in ein Modell legen. Bisher meldete die Ke
                             (URSPRUNGS-Datenbank mit den Querpaaren, NICHT db_seiten.db). rc 0 -> Teil wird in das VEREINTE Modell gelegt (modelle_zusammen), danach
                             tools/seiten_blick_tor.py auf dem vereinten Modell (rc 3 = dieser Teil wird wieder herausgenommen). rc 3/2 -> Teil bleibt draussen und wird mit den
                             Pruefwerten aus vereinen.json GEMELDET; ohne vereinten Teil gilt Teil A allein.
+                            GPS-Weg (22.11.2026): ein Teil wird nur eingesetzt, wenn seine Lage UNABHAENGIG belegt ist (tools/seiten_lage_beleg.py); sonst weggelassen und als
+                            FOTOLUECKE gemeldet ('fotoluecken' im Bericht; gesamtkette Stufe tore, foto_auftrag --seiten-modelle). RCPARK_TEIL_NUR_BELEGT=0 = alter Stand.
 Ausgaben in <arbeitsordner>/seiten_modelle/: teil<i>.txt, teil<i>_a/, teil<i>_b/ (Mapper), teil<i>/{vgl_a_b.json, schaerfe.json, sperrliste.txt, dicht/}, vereinen_<A>_<B>/,
   vereint/sparse (EIN COLMAP-Modell, alle vereinten Seiten im System von Teil A, darin vereint.json) und vereint/dicht (COLMAP-Arbeitsordner: images, sparse, stereo, fused.ply).
   <arbeitsordner>/seiten_modelle.json = Bericht (Teile, Bildzahlen, Laufzeiten, gewaehlter Lauf, a/b-Abweichung, Pfade, Meldungen, 'ergebnis' fuer die Folgestufen).
@@ -58,7 +60,7 @@ GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
 # gebunden: Vereinen (Klappung, Foto-GPS), Zusammenlegen, Blick-/GPS-Seiten-Tor, Einsetzen. Die Werkzeuge der Nachstufe (samt ihrer Hilfsmodule, tools/code_stand.py) ergeben
 # 'nachstufe_code' in seiten_modelle.json; tools/pipeline_objekt.py rechnet iphone_sfm.py erneut (nur die Nachstufe), wenn er nicht mehr zum Code passt.
 NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py", "seiten_querspur_binden.py",
-             "seiten_lod2_je_teil.py")
+             "seiten_lod2_je_teil.py", "seiten_lage_beleg.py")
 # 22.11.2026 TEILE UEBER QUERSPUREN BINDEN nach dem GPS-Vereinen (tools/seiten_querspur_binden.py, querspur_stufe; Nulllauf 1122f: GPS-Lage von Teil 1 nur +-3,6 Grad/+-12 %,
 # Ostwand 1-2,5 m ausserhalb LoD2, Westwand doppelt). Querpaare der Ursprungs-DB -> 3D-3D -> RANSAC-Sim3 NUR im GPS-Korridor (GPS = Veto, nicht gemittelt). NUR auf dem GPS-Weg:
 # auf dem Klappungs-Weg (Martinstor) SIND die Querpaare die Gegenseiten-Verwechslung und es gibt kein unabhaengiges Veto. Nach einer Bindung wird der GPS-Ausgleich AUSGELASSEN:
@@ -77,11 +79,16 @@ VERFORM_MAX_PROZ = 0.002
 # RCPARK_SEITEN_OBJEKT (setzt tools/pipeline_objekt.py); fehlt es, wird die Stufe gemeldet und uebersprungen. NUR auf dem GPS-Weg (Martinstor: Klappung, Kaufhaus: ein Teil).
 # Abschalten: RCPARK_LOD2_JE_TEIL=0.
 LOD2_JE_TEIL = os.environ.get("RCPARK_LOD2_JE_TEIL", "1") != "0"
+# 22.11.2026 REGEL "TEIL NUR BEI BELEGTER LAGE EINSETZEN" (tools/seiten_lage_beleg.py; schwabentor-1122: Teil 1 nur ueber GPS gelegt, 3-4 m versetzt -> Grundriss-Tor A 17,6 %,
+# Wanddicke 'doppelwand'). Ein Teil auf dem GPS-Weg wird nur eingesetzt, wenn eine eigene Probe seine Lage belegt (Querspur, LoD2 je Teil, oder GPS ehrlich belegt UND
+# Wanddicke der GPS-Lage widerspruchsfrei); sonst WEGGELASSEN und als FOTOLUECKE gemeldet (ber['fotoluecken']). Abschalten: RCPARK_TEIL_NUR_BELEGT=0 (steht im Code-Stand).
+import seiten_lage_beleg as SLB
+NUR_BELEGT = SLB.NUR_BELEGT
 
 
 def nachstufe_code():
     """Code-Stand der Nachstufe (Vereinen, Zusammenlegen, Tore, Einsetzen) - 12 Hex-Zeichen."""
-    return code_stand(*NACHSTUFE, wurzel=T)
+    return code_stand(*NACHSTUFE, wurzel=T) + ("" if NUR_BELEGT else "+belegt0")   # Schalter wechselt = Nachstufe neu (sonst gaelte das alte sparse/0 weiter)
 
 
 def _lauf(cmd, log=None):
@@ -367,7 +374,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         n = ply_kopf(fu)[0]; e["dicht"] = dict(ordner=dd, fused=fu if n > 0 else None, punkte=n, rc=rc, sekunden=sek, wiederverwendet=wieder, sperrliste_angewandt=mit_sp)
         sag(f"SEITENMODELLE: Teil {e['teil']} dichte Wolke: rc {rc}, {sek} s" + (" (wiederverwendet)" if wieder else "") + f", {n} Punkte")
         if n <= 0: M_.append(f"Teil {e['teil']}: dichte Wolke gescheitert (rc {rc}, {arb}/teil{e['teil']}/dicht.log) - Vereinen dieses Teils nur aus der duennen Wolke")
-    mit.sort(key=lambda e: -e["im_modell"]); A = mit[0]; ber["teil_a"] = A["teil"]; fa = (A.get("dicht") or {}).get("fused"); ang = []; ber["vereint"] = [A["teil"]]; ber["nicht_vereint"] = []
+    mit.sort(key=lambda e: -e["im_modell"]); A = mit[0]; ber["teil_a"] = A["teil"]; fa = (A.get("dicht") or {}).get("fused"); ang = []; ber["vereint"] = [A["teil"]]; ber["nicht_vereint"] = []; ber["fotoluecken"] = []
     vz = os.path.join(arb, "vereint"); os.makedirs(vz, exist_ok=True); stand_sparse = None
     for B in mit[1:]:
         fb = (B.get("dicht") or {}).get("fused"); vo = os.path.join(arb, f"vereinen_{A['teil']}_{B['teil']}"); vj = os.path.join(vo, "vereinen.json"); vs = os.path.join(vo, "stand.json")
@@ -408,9 +415,18 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
                 if e["weg"] == "gps":                                                   # Querspuren banden nicht -> jeder Teil einzeln an LoD2 (Kasten = seine GPS-Unsicherheit)
                     lo = lod2_stufe(vo + "_lod2", A, B, fa, fb, vgj, fotos) if LOD2_JE_TEIL else dict(ok=False, urteil="abgeschaltet (RCPARK_LOD2_JE_TEIL=0)")
                     e["lod2_je_teil"] = {k: lo.get(k) for k in ("rc", "ok", "urteil", "ordner", "bild", "korridor") if k in lo}
+                    e["lod2_je_teil"]["wand_dicke"] = SLB.wd_kurz(lo.get("wand_dicke"))         # Probe der GPS-Lage fuer die Regel 'nur bei belegter Lage'
+                    e["lod2_je_teil"]["teile_eindeutig"] = {k: dict(eindeutig=t.get("eindeutig"), gruende=t.get("gruende") or ([t["grund"]] if t.get("grund") else [])) for k, t in (lo.get("teile") or {}).items() if isinstance(t, dict)}
                     if lo.get("ok") and "B_nach_A" in lo:
                         v = dict(vgd, B_nach_A=lo["B_nach_A"]); e.update(weg="gps+lod2", urteil=lo.get("urteil")); M_.append(f"Teil {B['teil']}: Lage je Teil an LoD2 gelegt: {lo.get('urteil')}")
                     else: M_.append(f"Teil {B['teil']}: LoD2 je Teil NICHT uebernommen - GPS-Lage bleibt: {lo.get('urteil')}")
+                belegt, grund_b, _ = SLB.lage_belegt(e); e["lage_belegt"] = dict(belegt=belegt, grund=grund_b, regel_an=NUR_BELEGT)
+                if not belegt and NUR_BELEGT:                                           # REGEL: nicht unabhaengig belegt -> weglassen, Fotoluecke melden (nichts erfinden/spiegeln)
+                    az, az_her = SLB.richtung(fotos, A["modell"], B["modell"], os.environ.get("RCPARK_SEITEN_OBJEKT", ""))
+                    fl = SLB.luecke(B["teil"], B["im_modell"], grund_b, az, az_her); ber.setdefault("fotoluecken", []).append(fl); e["fotoluecke"] = fl
+                    M_.append(f"Teil {B['teil']} WEGGELASSEN (Lage nicht unabhaengig belegt: {grund_b}) - {fl['text']}"); sag(f"SEITENMODELLE: {fl['text']}")
+                    ber["nicht_vereint"].append(B["teil"]); continue
+                if not belegt: M_.append(f"ACHTUNG Teil {B['teil']}: Lage NICHT unabhaengig belegt ({grund_b}) - trotzdem eingesetzt, weil RCPARK_TEIL_NUR_BELEGT=0")
                 if e["weg"] == "gps" and (vgd.get("pruefung") or {}).get("mass_sd_rel", 0) > 0.05:
                     M_.append(f"ACHTUNG Teil {B['teil']}: Massstab gegen Teil A nur auf +-{100 * vgd['pruefung']['mass_sd_rel']:.0f} % belegt (Foto-GPS) - Masse dieser Seite nicht ohne Gegenprobe (LoD2-Grundriss, foto_mass) verwenden")
         if rc == 0 and "B_nach_A" in v:
@@ -461,7 +477,8 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         else: M_.append("vereinte dichte Wolke NICHT geschrieben (einem vereinten Teil fehlt die dichte Wolke) - die Kette rechnet sie auf dem vereinten Modell selbst")
     else:
         ber["ergebnis"] = dict(art="teil_a_allein", sparse=A["modell"], dicht=(A.get("dicht") or {}).get("ordner") if fa else None, fused=fa, punkte=(A.get("dicht") or {}).get("punkte"))
-        M_.append(f"KEIN Teil vereint - die Kette verwendet Teil {A['teil']} ({A['im_modell']} Bilder) ALLEIN; es fehlen die Teile {ber['nicht_vereint']}")
+        M_.append(f"KEIN Teil vereint - die Kette verwendet Teil {A['teil']} ({A['im_modell']} Bilder) ALLEIN; es fehlen die Teile {ber['nicht_vereint']}"
+                  + (f" (davon Fotoluecke, Lage nicht belegt: {[f_['teil'] for f_ in ber.get('fotoluecken', [])]})" if ber.get("fotoluecken") else ""))
     return ber
 
 
@@ -544,6 +561,7 @@ def einsetzen(w, ber):
 def schreiben(w, ber):
     ber["zeit_ende"] = time.strftime("%Y-%m-%d %H:%M"); json.dump(ber, open(os.path.join(w, "seiten_modelle.json"), "w"), indent=1, ensure_ascii=False)
     for m in ber.get("meldungen", []): sag("ACHTUNG SEITENMODELLE: " + m)
+    for f_ in ber.get("fotoluecken", []): sag("FOTOLUECKE SEITENMODELLE: " + f_["text"])
     e = ber.get("ergebnis")
     if e: sag(f"SEITENMODELLE ERGEBNIS: {e['art']} - Teile {ber.get('vereint')} im Modell {e['sparse']}" + (f", nicht vereint {ber['nicht_vereint']}" if ber.get("nicht_vereint") else "") + (f"; dichte Wolke {e['fused']}" if e.get("fused") else "; KEINE fertige dichte Wolke"))
     return ber

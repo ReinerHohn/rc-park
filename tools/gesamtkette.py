@@ -378,6 +378,12 @@ def main():
         smj_ = os.path.join(P, "sfm", "seiten_modelle.json")
         if os.environ.get("RCPARK_WANDDICKE", "1") != "0" and os.path.isfile(smj_) and os.path.exists(AU):
             erg["wand_dicke"] = lauf(B, f"tor_wanddicke{tag}", [PYC, "-I", "tools/wand_dicke_tor.py", ZR, "--seiten", smj_, "--ausrichtung", AU, "--aus", os.path.join(Z, "audit", "wand_dicke.json")], log, ok=(0, 2, 3))[0]
+        # 22.11.2026 REGEL "Teil nur bei belegter Lage" (tools/seiten_lage_beleg.py): weggelassene Seitenteile = FOTOLUECKE, sichtbar im Kettenergebnis (rot, kein Abbruch -
+        # die Kette baut mit dem Hauptteil weiter, die Wand bleibt 'ungesehen' und geht in Fotoauftrag/seiten_luecken).
+        if tag == "" and os.path.isfile(smj_):
+            try: _fl = json.load(open(smj_)).get("fotoluecken") or []
+            except Exception as e_: _fl = []; print("seiten_modelle.json nicht lesbar:", e_, flush=True)
+            for f_ in _fl: notiz(B, f"seiten_fotoluecke_teil{f_.get('teil')}", False, fehler=f_.get("text"), grund=str(f_.get("grund"))[:400], fotos_noetig=f_.get("fotos_noetig"), azimut_grad=f_.get("azimut_grad"))
         if os.path.isdir(sp) and os.path.exists(AU):                       # 19.11.2026 (Martinstor, schiefe uebergrosse Haeuserzeile aus einem Fernclip): setzt eine Bildgruppe Punkte hoch ueber die LoD2-Hoehe? -> audit/wolke_gruppen.json
             erg["gruppen"] = lauf(B, f"tor_gruppen{tag}", [PYC, "-I", "tools/wolke_gruppen_pruefen.py", ZR, os.path.relpath(AU, ROOT), sp, "--schreiben"], log, ok=(0, 3))[0]
         return erg
@@ -639,7 +645,7 @@ def main():
             t_sl = time.time(); rc, out = lauf(B, "seiten_luecken", [PY, "-I", "tools/seiten_luecken.py", ZR, fo, "--sparse", sp, "--ref-db", db, "--download", "--holen"], log, ok=(0, 3))   # rc 3 = Wand ohne Foto: freie Quellen laden (Commons, Hochblicke, Openverse), Kandidaten nachregistrieren
             sl = os.path.join(Z, "audit", "seiten_luecken.json"); ung = json.load(open(sl)).get("ungesehen", []) if frisch(sl, t_sl) else ["?"]      # 17.11.2026: nach einem Absturz von seiten_luecken galt der Bericht eines frueheren Laufs (oder 'keine Luecke', wenn es keinen gab)
             if ung == ["?"]: notiz(B, "seiten_bericht", False, fehler=f"{sl} wurde nicht neu geschrieben (seiten_luecken rc {rc}) - Luecken UNBEKANNT")
-            wj = os.path.join(Z, "fotowuensche.json"); lauf(B, "foto_auftrag", [PY, "-W", "ignore", "-I", "tools/foto_auftrag.py", ZR, fo, os.path.join(D, f"fotoauftrag_{a.ziel}.html")] + (["--wunsch", wj] if os.path.exists(wj) else []), log)   # 16.11.2026: dem Nutzer zeigen, welche Fotos fehlen (Lageplan, Standorte, markierte Ziele)
+            wj = os.path.join(Z, "fotowuensche.json"); lauf(B, "foto_auftrag", [PY, "-W", "ignore", "-I", "tools/foto_auftrag.py", ZR, fo, os.path.join(D, f"fotoauftrag_{a.ziel}.html")] + (["--wunsch", wj] if os.path.exists(wj) else []) + (["--seiten-modelle", os.path.join(P, "sfm", "seiten_modelle.json")] if os.path.isfile(os.path.join(P, "sfm", "seiten_modelle.json")) else []), log)   # 16.11.2026: dem Nutzer zeigen, welche Fotos fehlen (Lageplan, Standorte, markierte Ziele)
             notiz(B, "seiten", not ung, ungesehen=ung, hinweis="" if not ung else "nach dem Nachregistrieren fassade_ortho/fassade_fein neu; bleibt die Wand leer: Kontaktbogen audit/seiten_luecken_kandidaten.jpg ansehen, Kamera aus Modellpunkten + tools/fassade_ein_foto.py (PIPELINE_FASSADEN.md 'Ungesehene Seite')")
         else: notiz(B, "seiten", False, fehler="kein fassaden.json (Stufe fenster) oder kein SfM-Netz/Datenbank")
     # 21.11.2026 SACKGASSEN-TOR (Nutzer: "Warum wurde das nicht bemerkt? ... die fliessen nicht in die Kette ein"): der Ebenen-Sweep schrieb vier Tage lang Vorbau-'Vorschlaege',

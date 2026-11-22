@@ -61,6 +61,8 @@ Details: `modelle/archiv/STAND_2026-11-14.md` · `modelle/LOGBUCH_KETTENTEST_202
 - 19.11. · ganze Clips (N schaerfste von 300) statt Trefferabschnitten → ⚠ Falle · Quelle der 637 fremden Bilder [LOGBUCH 19.11. 16:50 Punkt 47]
 - 19.11. · Openverse / Commons-Umkreis fuer Gegenseite → ✗ · 21 Bilder bzw. historische Festzuege vom Turm, keine Gegenseite [LOGBUCH 19.11.]
 - 19.11. · vorhandenes `sfm/sparse/0` bei neuem Fotosatz weiterverwenden → ✗ · neue Fotos ignoriert; `pipe/fotosatz.json` loest SfM neu aus [8d4a94d9]
+- 22.11. · Seitenteil allein ueber Foto-GPS einsetzen (schwabentor-1122 Teil 1) → ✗ · 3-4 m versetzt, Grundriss A 17,6 %, doppelwand; jetzt Regel 'nur bei belegter Lage' (`tools/seiten_lage_beleg.py`), sonst Fotoluecke [LOGBUCH_SCHWABENTOR_KETTE 22.11. 17:00]
+- 22.11. · Teil 1 ueber Gebaeudekanten binden (Wandebene + Ecke + Boden, Merging the Unmatchable) → ⚠ offen · Wandebene und EIN scharfes Wandende (y 21,3 gegen LoD2-Ecke 20,95) messbar, zweites Wandende geht in Nachbarfassade ueber, Wolke endet bei 27 m (Traufe 37,9) → kein Massstab [LOGBUCH 22.11. 17:00]
 
 ## Offen
 - Seiten aus globalen Stuecken vereinen: Bruecke ueber Bilder, die beide Seiten sehen (Torbogen), statt Klappung (Stand 20.11.) [LOGBUCH 08:31]
@@ -69,3 +71,4 @@ Details: `modelle/archiv/STAND_2026-11-14.md` · `modelle/LOGBUCH_KETTENTEST_202
 - Seitentest "Blickrichtung je Bildgruppe" als Tor; Gegenseiten-Fotos als Zusatzreferenz der Vorpruefung (Ideen 37/31/28, Stand 19.11., ungeprueft)
 - Videobilder nur aus Trefferabschnitten, Fremdbilder vor dem Mapper streichen, Paarliste nach Bildart (Punkte 47/33/50, Stand 19.11., ungeprueft)
 - Seiten (Nord/Süd) symmetrischer Tore automatisch vereinen (Stand 20.11.)
+- Massstab eines Seitenteils, das nur eine Wand sieht: gemeinsame Gesims-/Quaderlagenhoehen mit dem Hauptteil (Kantenstufe, foto_mass) statt Wolkenoberkante/Kamerahoehe; Wandende-Probe in `seiten_lod2_je_teil.teil_legen` (Stand 22.11., ungeprueft)
