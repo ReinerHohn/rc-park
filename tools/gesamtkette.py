@@ -185,6 +185,19 @@ def notiz(B, name, ok, **k):
     B["schritte"].append(dict(stufe=name, ok=ok, **k)); __import__("json_sicher").schreiben(B["_pfad"], B); print(f"    {name}: {k}", flush=True)
 
 
+def verbund_hinweise(B, sp, P, FV, log):
+    """22.11.2026 HINWEIS-STUFEN nach der SfM (Recherche duenne Bruecken, Methoden 6 + 2): (a) Schwachstellen-Radar tools/verbund_schwachstellen.py -> sfm/radar.json
+    (Format verbund_schwachstellen/1: Gelenkbilder, duenne Schnitte; Ausloeser fuer Nachmatchen/Kopplung), (b) Lotfeld tools/teil_verformung.py -> sfm/teil_verformung.json
+    (Biegung/Knick ohne Zuordnungen). Nur Meldung, kein Abbruch; RCPARK_VERBUND_HINWEIS=0 schaltet beides ab, RCPARK_LOTFELD=0 nur (b)."""
+    if os.environ.get("RCPARK_VERBUND_HINWEIS", "1") == "0": return
+    for name, cmd, aus in (("radar", [PYC, "-I", "tools/verbund_schwachstellen.py", "--modell", sp], os.path.join(P, "sfm", "radar.json")),
+                           ("lotfeld", [PYC, "-I", "tools/teil_verformung.py", sp, FV, "--max-n", "300", "--faeden", "4"], os.path.join(P, "sfm", "teil_verformung.json"))):
+        if name == "lotfeld" and os.environ.get("RCPARK_LOTFELD", "1") == "0": continue
+        rc_ = lauf(B, f"hinweis_{name}", cmd + ["--aus", aus], log, ok=(0, 2, 3, 4))[0]
+        try: notiz(B, f"hinweis_{name}_urteil", rc_ in (0, 4), hinweis=json.load(open(aus)).get("zeile", "")[:400], json=aus)
+        except Exception as e_: notiz(B, f"hinweis_{name}_urteil", False, fehler=f"{aus} nicht lesbar: {e_}")
+
+
 def foto_auftrag_skizze(B, wann, ZR, Z, P, W, AU, FV, log):
     """22.11.2026 FOTOAUFTRAG FRUEH UND ALS BILD (tools/foto_auftrag_skizze.py): die Kette wusste nach der SfM, welche Seite fehlt (seiten_modelle.json 'fotoluecken'),
     der Nutzer erfuhr es erst auf Nachfrage und nur als Text. Jetzt: Skizze audit/foto_auftrag.png (Grundriss, Wandbelegung, nummerierte Standpunkte mit Blick und GPS)
@@ -395,6 +408,7 @@ def main():
                 sj_ = os.path.join(P, "sfm", "seiten.json")
                 if os.path.isfile(sj_): _sb[0] = lauf(B, "tor_seiten_blick", [PYC, "-I", "tools/seiten_blick_tor.py", sp, sj_, "--aus", os.path.join(P, "sfm", "seiten_blick.json")], log)[0]
                 else: notiz(B, "tor_seiten_blick", False, fehler=f"keine {sj_} - Seiten-Blick-Tor NICHT geprueft (SfM vor dem 21.11.2026 gerechnet oder Vorstufe 'seiten' abgeschaltet, RCPARK_SEITEN=0)")
+                verbund_hinweise(B, sp, P, FV, log)
                 # Sperrliste fuers Messen: Kameras, deren Brennweite das Modell nicht festlegt (wandern zwischen zwei Mapper-Laeufen zu 67-100 %), vereinigt mit der Liste der
                 # unstabilen Kameras des Konsens-Mappers -> sfm/sperrliste_messen.txt (die dichte Wolke nimmt sie ueber tools/dicht_bildwahl.py --ohne, siehe pipeline_objekt.py)
                 uns_ = os.path.join(P, "sfm", "konsens_arbeit", "unstabil.txt"); mwj_ = os.path.join(P, "sfm", "mapper_wahl.json")

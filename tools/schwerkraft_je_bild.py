@@ -15,13 +15,13 @@ Optionen: --min-inlier 12 (Linien am Fluchtpunkt), --max-n (nur die ersten n Bil
 import os, sys, argparse, sqlite3, numpy as np, cv2
 
 
-def fluchtpunkt_senkrecht(grau, rng, min_inlier=12):
+def fluchtpunkt_senkrecht(grau, rng, min_inlier=12, laenge_rel=0.06):
     """-> (vp homogen in Pixeln des Originalbilds, Zahl tragender Linien) oder (None, 0)."""
     sc = 1000.0 / max(grau.shape); g = cv2.resize(grau, None, fx=sc, fy=sc, interpolation=cv2.INTER_AREA) if sc < 1 else grau; sc = min(sc, 1.0)
     L = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD).detect(g)[0]
     if L is None: return None, 0
     L = L.reshape(-1, 4) / sc; d = L[:, 2:] - L[:, :2]; ln = np.linalg.norm(d, axis=1); ang = np.degrees(np.arctan2(np.abs(d[:, 0]), np.abs(d[:, 1])))
-    L = L[(ln > 0.06 * max(grau.shape)) & (ang < 25)]
+    L = L[(ln > laenge_rel * max(grau.shape)) & (ang < 25)]
     if len(L) < min_inlier: return None, 0
     h0 = np.c_[L[:, :2], np.ones(len(L))]; h1 = np.c_[L[:, 2:], np.ones(len(L))]; lh = np.cross(h0, h1); lh /= np.linalg.norm(lh[:, :2], axis=1, keepdims=True)
     mid = 0.5 * (L[:, :2] + L[:, 2:]); dl = L[:, 2:] - L[:, :2]; best = (0, None)
