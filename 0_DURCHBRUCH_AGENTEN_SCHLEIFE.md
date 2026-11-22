@@ -50,6 +50,9 @@ Automatisierbar als Nächstes: Befundliste aus Bild + Toren durch einen Prüf-Ag
 - **Zahl ≠ Aussehen:** 11/11 prüft nur Höhen und Lagen. Form, Tiefe und Lesbarkeit zeigt nur das Nebeneinander-Bild.
 - **Wolke/DOM1 erzeugen Formen, die es nicht gibt:** Die Dachstufen kamen aus dem 1-m-Laserraster, der Absatz war ein Wolkendeckel.
   Fotokanten schlagen Wolke (KERNMETHODE).
+- **Ein Nebenbild reicht nicht (22.11. 06:00):** Ich meldete „Vordach flach, Laterne fehlt“ am Steilblick 113231 (Licht von vorn, Laterne
+  nur ein heller Block). Das Ketten-STL hatte beides richtig (Agent: Schnitte + Render aus 4 SfM-Kameras). Befunde je Bauteil erst an einer
+  Detailansicht aus passender Kamera bestaetigen, bevor ein Agent auf „kommt nicht an“ angesetzt wird.
 - **Speicher:** Agenten-Testläufe parallel zur Kette → OOM. Seitdem gilt: ein Job, Agenten rechnen nicht, Wiederholung bei Speichermangel.
 - **Merge-Fehler fangen:** Die Zeile `q5, q95 = …` rutschte in einen Kommentar → NameError nach 20 min.
   Seitdem prüft pyflakes im Schnelltest auf neue undefinierte Namen.
