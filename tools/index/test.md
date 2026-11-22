@@ -1,6 +1,7 @@
-# Werkzeuge: test (115)
+# Werkzeuge: test (120)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
+- `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
 - `tools/test_bogen_kontur.py` [seg] test_bogen_kontur.py - synthetischer Beweis fuer tools/bogen_kontur.py (Exit 0 = ALLE BESTANDEN). Testfassade: Rotwand, Bogenoeffnung mit BEKANNTER Kontur (Goldlinie 3 cm, innen du
@@ -38,11 +39,13 @@
 - `tools/test_hand_vergleich.py` [-] test_hand_vergleich.py - fester synthetischer Test fuer tools/hand_vergleich.py (21.11.2026): Treppenturm aus koerper_auto.json (form rund), Ueberstand und Laterne aus dach_profil.
 - `tools/test_handy_kalibrieren.py` [-] Synthetischer Test fuer handy_kalibrieren.py / handy_zoom_verdacht.py: /media/oem/scan/venv-colmap/bin/python -I tools/test_handy_kalibrieren.py Beweis: (1) f_orig + k1 werden aus 
 - `tools/test_handy_masken.py` [seg] Test handy_masken: (1) Klassenableitung exakt (kein 'carpet' fuer 'car'), (2) Maskenlogik, (3) 3 Bilder echt durch GPU, Format/Konvention pruefen.
+- `tools/test_handy_masken_gross.py` [seg] test_handy_masken_gross.py - 22.11.2026 Nulllauf schwabentor-1122: grosse Bilder (27 MPx) liessen handy_masken bei jeder Breite CUDA-OOM laufen, weil 150 Klassen-Logits auf VOLLE B
 - `tools/test_handy_masken_v2.py` [-] Test handy_masken_v2 (ohne GPU): Statue haengt an Fassade -> frei; Person am Boden -> maskiert; Box ohne Boden -> frei; Fleck im Pflaster -> verworfen; Fahrzeug immer.
 - `tools/test_kamera_ausgleich.py` [seg] test_kamera_ausgleich.py - BS3d synthetischer Beweis: Kameras absichtlich verschieben (Kamerazentrum 3/5/10 cm, Rotation 0,3/0,5/1 Grad), pruefen ob der Ausgleich (kamera_ausgleich
 - `tools/test_kamera_lod2.py` [seg] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
+- `tools/test_kantenstufe_kreis.py` [seg] test_kantenstufe_kreis.py - WAECHTER gegen den Kreis in der KERNMETHODE (CPU, ohne Daten, ~1 min; 22.11.2026).
 - `tools/test_keilsteine.py` [-] test_keilsteine.py - fester synthetischer Test fuer quader_raster.keilsteine (21.11.2026 spaet), < 20 s, nur CPU.
 - `tools/test_kette_kreis_orthos.py` [seg] test_kette_kreis_orthos.py - fester Test (CPU, < 20 s, ohne Daten) fuer den KREISFALL der Kette (22.11.2026, Kettenlauf schwabentor 1121v).
 - `tools/test_kette_stabil.py` [seg] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
@@ -54,6 +57,7 @@
 - `tools/test_laibung_aus_fotos.py` [seg] test_laibung_aus_fotos.py - fester synthetischer Test fuer tools/laibung_aus_fotos.py (21.11.2026 spaet), < 10 s, nur CPU.
 - `tools/test_laterne_aus_fotos.py` [gen] test_laterne_aus_fotos.py - feste synthetische Tests fuer tools/laterne_aus_fotos.py und bauteile.laterne (22.11.2026). Ohne Dateien, Sekunden.
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
+- `tools/test_messflaeche_kreis.py` [seg] test_messflaeche_kreis.py - WAECHTER gegen zirkulaere Messung (CPU, wenige Sekunden, ohne Daten; 22.11.2026, Kreisfall Einzelorthos schwabentor-1120).
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
 - `tools/test_nischen_fenster.py` [seg] test_nischen_fenster.py - fester synthetischer Test fuer tools/nischen_fenster.py (+ Bau in bauteile.fenster_aus_json), < 10 s, nur CPU.
@@ -103,6 +107,7 @@
 - `tools/test_undefinierte_namen.py` [-] Undefinierte Namen in tools/*.py (pyflakes) - Lauf 1121t verlor die Feinrechnung, weil 'q5, q95 = ...' bei einem Agenten-Merge in einen Kommentar rutschte (NameError erst nach 20 m
 - `tools/test_versuch_log.py` [-] Test versuch_log: Eintrag, Identitaetswarnung (BS7-Fall), Fehlschlag, Liste. Exit 0 = ALLE BESTANDEN.
 - `tools/test_vis_mapping.py` [-] test_vis_mapping.py - Beweis und Dauerwaechter fuer die Zuordnung vis-Index -> Bild (Register CV/CW).
+- `tools/test_vordach_traufe.py` [seg] test_vordach_traufe.py - fester synthetischer Test (22.11.2026, Befund Lauf 1122a schwabentor-1120 Stadtseite, Bild audit/neben_eigen__IMG_20261106_113231.jpg): Vordach im Foto wei
 - `tools/test_vordach_vorbau.py` [seg] test_vordach_vorbau.py - fester synthetischer Test (21.11.2026, schwabentor-1120 Stadtseite, Nutzerbild neben_eigen__IMG_20261106_113231) fuer (1) tools/vordach_profil.messen: Walm
 - `tools/test_vordergrund_quader.py` [-] test_vordergrund_quader.py - synthetischer Test (21.11.2026, Schwabentor w01, Lauf 1121s) fuer (1) tools/relief_vordergrund.py: Verkehrsschild (0,6 x 0,8 m, +15 cm) DIREKT auf eine
 - `tools/test_vorpruefen_cache.py` [-] Test Zwischenspeicher der Bildvorpruefung (bilder_vorpruefen.Speicher, 19.11.2026): Ergebnis bleibt ueber Neustart, geaenderte Datei = neue Kennung, anderer Referenzsatz = anderer 

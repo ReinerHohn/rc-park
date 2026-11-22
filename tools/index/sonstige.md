@@ -1,8 +1,9 @@
-# Werkzeuge: sonstige (106)
+# Werkzeuge: sonstige (107)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
 - `tools/bauplan_sheet.py` [seg] bauplan_sheet.py — UNGEFÄHRER BAUPLAN aus vorhandenen Daten: GRUNDRISS (LOD2-Footprint, amtlich) + AUFRISS (LOD2-Höhen Traufe/First + foto-gemessene Fensterachsen + Fassadenbänder)
+- `tools/befundliste.py` [seg] befundliste.py <objekt.json> [--daten DIR] [--bericht B.json --ab-schritt N] [--log L --ab-zeile N] [--neben BILD ...] [--aus audit/befunde.json] [--kachel 30] BEFUNDLISTE (22.11.2
 - `tools/betrachter_note.py` [-] betrachter_note.py - Betrachter-Note (SPEC_BETRACHTER_NOTE, Nutzer 11.11.): Prozent der fuer das Auge SICHTBAREN Merkmale, die stimmen. Zwei Stufen: Besucher (Sichtschwelle 0,25 m 
 - `tools/brennweite_schaerfe.py` [col] brennweite_schaerfe.py <sparse-modell> [--aus bericht.json] [--liste datei.txt] [--sperrliste datei.txt --vereinen liste.txt ...] [--weich 4] [--unbestimmt 10]
 - `tools/brennweite_waehlen.py` [-] brennweite_waehlen.py - Pixel-Brennweite eines Einzelfotos aus EXIF herleiten und durch das Foto-GPS absichern (18.11.2026). Anlass Martinstor K-061: EXIF 9,855 mm, Bild 3601x2757 
