@@ -9,7 +9,7 @@ A  LOT: lot_modell (Fluchtpunkt-Lot je Teil, seiten_gps_vereinen.lot_ausrichtung
    nach der FREIEN Kopplung.
 B  GEFUEHRTES NACHMESSEN: kandidaten_paare (Bildpaare A x B, die sich laut Naeherungslage sehen muessten: Punkte von a in b sichtbar und umgekehrt, Blickachsen < MAX_WINKEL),
    lg_paare (ALIKED+LightGlue nur fuer diese Paare, tools/lg_match.py --paare, GPU-Deckel), paare_pruefen (je Paar Essentialmatrix-RANSAC + EPIPOLARBAND aus der
-   Naeherung: ein verwechseltes Paar verletzt die Naeherungs-Epipolargeometrie), direkte Spuren A<->B ueber die 3D-Punkte der Teilmodelle (Merkmal <= RADIUS_PX neben
+   Naeherung: ein verwechseltes Paar verletzt die Naeherungs-Epipolargeometrie), direkte Spuren A<->B ueber die 3D-Punkte der Teilmodelle (Tiefe aus den Spuren der Umgebung, punkte_aus_tiefe, neben
    einer beobachteten Spur), direkt_koppeln (robuste Sim3 B->A aus diesen Spuren, dieselben Annahmeregeln wie seiten_eck_koppeln.kopplung_pruefen).
 C  GEMEINSAMER AUSGLEICH: ausgleich (B als starrer Koerper 7 bzw. mit Lot 5 Parameter, gleichzeitig E->A; Quellen: Zwischenmodell-Spuren E-A, E-B + direkte Spuren A-B,
    alles BILDZUORDNUNGEN ueber die Naht; Teil A fest). HALBSTARR: zusaetzlich Verformung von B mit 2 Parametern (Massstabsverlauf a je Teillaenge, Biegung b um
@@ -30,7 +30,8 @@ MIN_PAAR = 15            # Zuordnungen je bestaetigtem Paar (wie bruecke_nachmat
 BAND_ANTEIL = 0.5        # ANNAHME: >= 50 % der RANSAC-Inlier liegen im Naeherungs-Epipolarband, sonst ist das Paar mit der Naeherung unvertraeglich (Verwechslung)
 BAND_MIN_PX = 4.0
 BAND_SIGMA = 3.0         # Bandbreite = 3 x Kopplungsunsicherheit (Winkel) x Brennweite
-RADIUS_PX = 3.0          # ANNAHME: ALIKED-Merkmal <= 3 px neben einem Merkmal mit 3D-Punkt = dieselbe Stelle (Lokalisierung beider Detektoren ~1 px)
+TIEFE_RADIUS_PX = 15.0   # ANNAHME: Tiefe eines Merkmals aus den Spuren im Umkreis 15 px (Ebene 1/z linear im Bild), Rest <= 1 %
+TIEFE_REST = 0.01
 SIG_VERFORMUNG = 3.0
 VERFORMUNG_MAX = 0.15    # Gueltigkeits-Guard: |a| <= 15 %, |b| <= 0,15 rad (8,6 Grad) - mehr ist keine Mapper-Verformung, sondern ein falsches Teil
 
@@ -200,16 +201,29 @@ def _epi_px(E, na, nb, f):
     ha = np.c_[na, np.ones(len(na))]; hb = np.c_[nb, np.ones(len(nb))]; l = ha @ E.T; return np.abs(np.sum(l * hb, 1)) / np.maximum(np.linalg.norm(l[:, :2], axis=1), 1e-12) * f
 
 
-def _naechster(xy, pid, q, radius):
+def punkte_aus_tiefe(M, i, q, radius=TIEFE_RADIUS_PX, kmin=4, rest_max=TIEFE_REST):
+    """3D-Punkt (Rahmen von M) fuer Bildpunkte q im Bild i aus den beobachteten Spuren der Umgebung: 1/z = a x + b y + c (Ebene im Bild, exakt fuer ebene Flaechen)
+    ueber die >= kmin Spuren im Umkreis 'radius' px, nur wenn alle auf 'rest_max' (relativ) zur Ebene passen (Tiefenkanten fallen heraus). Sonst NaN.
+    22.11.2026: die erste Fassung (Merkmal <= 3 px neben einer Spur) behielt am Martinstor 231 von 69469 bestaetigten Zuordnungen."""
     from scipy.spatial import cKDTree
-    w = np.flatnonzero(pid >= 0)
-    if len(w) == 0: return np.full(len(q), -1)
-    d, k = cKDTree(xy[w]).query(q, distance_upper_bound=radius); out = np.full(len(q), -1); ok = np.isfinite(d); out[ok] = pid[w[k[ok]]]; return out
+    out = np.full((len(q), 3), np.nan); w = np.flatnonzero(M.pid[i] >= 0)
+    if len(w) < kmin or len(q) == 0: return out
+    Xc = M.P[M.pid[i][w]] @ M.R[i].T + M.t[i]; z = Xc[:, 2]; ok = z > 1e-9; w, Xc, z = w[ok], Xc[ok], z[ok]
+    if len(w) < kmin: return out
+    n = M.cam[i].cam_from_img(M.xy[i][w].astype(float)); nq = M.cam[i].cam_from_img(np.asarray(q, float)); tr = cKDTree(M.xy[i][w])
+    for k, nb in enumerate(tr.query_ball_point(np.asarray(q, float), radius)):
+        if len(nb) < kmin: continue
+        G = np.c_[n[nb], np.ones(len(nb))]; iz = 1.0 / z[nb]; c, *_ = np.linalg.lstsq(G, iz, rcond=None)
+        if np.max(np.abs(G @ c - iz) * z[nb]) > rest_max: continue
+        zq = 1.0 / float(np.r_[nq[k], 1.0] @ c)
+        if not np.isfinite(zq) or zq <= 0: continue
+        out[k] = M.R[i].T @ (zq * np.r_[nq[k], 1.0] - M.t[i])
+    return out
 
 
-def paare_pruefen(npz, A, B, M_A_B, sigma_rad, band_min_px=BAND_MIN_PX, radius_px=RADIUS_PX):
+def paare_pruefen(npz, A, B, M_A_B, sigma_rad, band_min_px=BAND_MIN_PX):
     """Gematchte Paare gegen die Naeherung pruefen und direkte Spuren A<->B bilden. B im eigenen Rahmen, M_A_B = Naeherung B -> A.
-    -> dict(paare_gematcht, paare_bestaetigt, paare_verworfen_band, zuordnungen, spuren (Liste (pidA, pidB, tiefe_B, bild_b))) ."""
+    -> (stat, spuren = Liste (X_A, X_B, tiefe_B, bild_b)); 3D je Seite aus punkte_aus_tiefe."""
     import cv2
     D = np.load(npz, allow_pickle=True); meta = json.loads(str(D["meta"])); gr = meta.get("groesse", {}); BA = B.transformiert(M_A_B)
     stat = dict(paare_gematcht=0, paare_bestaetigt=0, paare_verworfen_band=0, paare_zu_wenig=0, paare_groesse_falsch=0, zuordnungen=0, band_px_median=None); spuren = {}; bander = []
@@ -232,17 +246,17 @@ def paare_pruefen(npz, A, B, M_A_B, sigma_rad, band_min_px=BAND_MIN_PX, radius_p
         if inl.sum() < MIN_PAAR: stat["paare_zu_wenig"] += 1; continue
         if keep.sum() < MIN_PAAR or keep.sum() < BAND_ANTEIL * inl.sum(): stat["paare_verworfen_band"] += 1; continue
         stat["paare_bestaetigt"] += 1; stat["zuordnungen"] += int(keep.sum())
-        pa = _naechster(A.xy[i], A.pid[i], ka[keep], radius_px); pb = _naechster(B.xy[j], B.pid[j], kb[keep], radius_px)
-        for x, y in zip(pa, pb):
-            if x >= 0 and y >= 0: spuren.setdefault((int(x), int(y)), (float(np.linalg.norm(B.P[y] - B.C(j))), b))
+        XA_ = punkte_aus_tiefe(A, i, ka[keep]); XB_ = punkte_aus_tiefe(B, j, kb[keep]); w_ = np.flatnonzero(np.isfinite(XA_[:, 0]) & np.isfinite(XB_[:, 0])); cb_ = B.C(j)
+        ia_ = np.flatnonzero(keep)
+        for x in w_: spuren.setdefault((a, int(m[ia_[x], 0])), (XA_[x], XB_[x], float(np.linalg.norm(XB_[x] - cb_)), b))   # je Merkmal in a eine Spur
     stat["band_px_median"] = round(float(np.median(bander)), 1) if bander else None
-    stat["spuren"] = len(spuren); return stat, [(x, y, td, bb) for (x, y), (td, bb) in spuren.items()]
+    stat["spuren"] = len(spuren); return stat, list(spuren.values())
 
 
 def direkt_koppeln(A, B, spuren):
     """Robuste Sim3 B -> A aus direkten Spuren (Annahmeregeln wie seiten_eck_koppeln). -> (M, pruefung, ok, grund, X_B, X_A, tiefe)."""
     if not spuren: return None, dict(punkte=0), False, "keine direkten Spuren", None, None, None
-    X = B.P[[s[1] for s in spuren]]; Y = A.P[[s[0] for s in spuren]]; td = np.array([s[2] for s in spuren])
+    X = np.array([s[1] for s in spuren]); Y = np.array([s[0] for s in spuren]); td = np.array([s[2] for s in spuren])
     M, pr, ok, g = EK.kopplung_pruefen(X, Y, B.ausdehnung(), A.ausdehnung(), tiefe=td)
     if M is not None:
         inl = _rest(M, X, Y, td) <= EK.SCHWELLE_REL; pr["hebel_b"] = round(EK.ausdehnung(X[inl]) / max(B.ausdehnung(), 1e-12), 3)
@@ -250,11 +264,15 @@ def direkt_koppeln(A, B, spuren):
     return M, pr, ok, g, X, Y, td
 
 
-def bestaetigt(M_direkt, M_naeherung, ausd_b, sigma_rad):
-    """Bestaetigt die direkte Kopplung die Naeherung? Unterschied (Drehung, Versatz relativ zu B) <= BAND_SIGMA x sigma (mind. 0,5 Grad / 1 %). -> (ok, dict)."""
-    s, R, t = EK.zerlegen(np.linalg.inv(M_naeherung) @ M_direkt); dg = EK.winkel(R); vr = float(np.linalg.norm(t)) / max(ausd_b, 1e-12)
-    g = max(BAND_SIGMA * sigma_rad, np.radians(0.5)); return bool(np.radians(dg) <= g and vr <= max(BAND_SIGMA * sigma_rad, 0.01) and abs(s - 1) <= max(BAND_SIGMA * sigma_rad, 0.01)), \
-        dict(drehung_grad=round(dg, 3), versatz_rel=round(vr, 4), massstab_rel=round(abs(s - 1), 4), grenze_grad=round(float(np.degrees(g)), 3))
+def bestaetigt(M_direkt, M_naeherung, PB, sigma_rad):
+    """Liegt die direkte Kopplung im Unsicherheitsband der Naeherung? Drehung, Massstab und mittlere Verschiebung der B-Punkte (relativ zur Ausdehnung von B im
+    Zielrahmen) <= BAND_SIGMA x sigma (mind. 0,5 Grad / 1 %). Eine falsche Naeherung ausserhalb ihres eigenen Bands wird so NICHT bestaetigt (Selbsttest:
+    3 m Versatz -> direkte Kopplung findet die Wahrheit, weicht ab, abgelehnt). -> (ok, dict)."""
+    s, R, _ = EK.zerlegen(np.linalg.inv(M_naeherung) @ M_direkt); dg = EK.winkel(R); sn = float(np.cbrt(np.linalg.det(M_naeherung[:3, :3])))
+    vr = float(np.median(np.linalg.norm(anwenden(M_direkt, PB) - anwenden(M_naeherung, PB), axis=1))) / max(sn * EK.ausdehnung(PB), 1e-12)
+    g = max(BAND_SIGMA * sigma_rad, np.radians(0.5)); gr = max(BAND_SIGMA * sigma_rad, 0.01)
+    return bool(np.radians(dg) <= g and vr <= gr and abs(s - 1) <= gr), dict(drehung_grad=round(dg, 3), versatz_rel=round(vr, 4), massstab_rel=round(abs(s - 1), 4),
+                                                                             grenze_grad=round(float(np.degrees(g)), 3), grenze_rel=round(gr, 4))
 
 
 # ---------------------------------------------------------------- C: gemeinsamer Ausgleich
@@ -371,7 +389,7 @@ def leiter(E, A, B, MA, MB, pa, pb, fotos, aus, lot=None, wdh_grad=None):
     M = M0; stufe = "zwischenmodell"; out["stufen"].append(dict(stufe=stufe, hebel=[pa.get("hebel"), pb.get("hebel")]))
     lotarg = tuple(lot) if (lot is not None and LOT_ZWANG) else None
     if AUSGLEICH:
-        g = ausgleich(q, M0, MA, lot=lotarg); d = bestaetigt(g["M_AB"], M0, B.ausdehnung(), sig)[1]
+        g = ausgleich(q, M0, MA, lot=lotarg); d = bestaetigt(g["M_AB"], M0, B.P, sig)[1]
         out["stufen"].append(dict(stufe="ausgleich_starr", rest_median=round(g["rest_median"], 5), unterschied=d)); M = g["M_AB"]; stufe = "ausgleich_starr"
     hs = [x for x in (pa.get("hebel"), pb.get("hebel")) if x is not None]; heb = min(hs) if hs else None
     u, grund = urteil_kante(heb, wdh_grad, 0); out.update(urteil=u, urteil_grund=grund)
@@ -381,12 +399,13 @@ def leiter(E, A, B, MA, MB, pa, pb, fotos, aus, lot=None, wdh_grad=None):
             npz = lg_paare(kp, fotos, os.path.join(aus, "fuehren"), vram_mb=FUEHREN_VRAM_MB, resize=FUEHREN_RESIZE) if kp else None
             if npz:
                 st, sp = paare_pruefen(npz, A, B, M, sig); info.update(st); Md, prd, okd, gd, X, Y, td = direkt_koppeln(A, B, sp); info["direkt"] = dict(ok=okd, grund=gd, **prd)
-                if Md is not None: b_, dd = bestaetigt(Md, M, B.ausdehnung(), sig); info.update(bestaetigt=b_, unterschied=dd)
+                if Md is not None: b_, dd = bestaetigt(Md, M, B.P, sig); info.update(bestaetigt=b_, unterschied=dd)
                 out["stufen"].append(info)
                 if okd and info.get("bestaetigt"):
-                    w = np.flatnonzero(_rest(Md, X, Y, td) <= EK.SCHWELLE_REL); q["direkt"] = (X[w], Y[w], td[w])
-                    g = ausgleich(q, M, MA, lot=lotarg); M = g["M_AB"]; stufe = "ausgleich_direkt"
-                    out["stufen"].append(dict(stufe="ausgleich_direkt", rest_median=round(g["rest_median"], 5), spuren=len(w)))
+                    # QUELLEN NICHT MITTELN (Selbsttest Martinstor k3: direkt allein 0,19 Grad / 1,0 cm; gemeinsam mit den Zwischenmodell-Spuren 0,48 Grad / 4,7 cm,
+                    # die 8000 E-Spuren ueberstimmen die 231 direkten): die direkte Kopplung TRAEGT, die Zwischenmodell-Kopplung ist Gegenprobe ('unterschied').
+                    w = np.flatnonzero(_rest(Md, X, Y, td) <= EK.SCHWELLE_REL); M = Md; stufe = "direkt"
+                    out["stufen"].append(dict(stufe="direkt", spuren=len(w), gegenprobe_zwischenmodell=info.get("unterschied")))
                     hb = min(prd.get("hebel") or 0, prd.get("hebel_b") or 0); u, grund = urteil_kante(max(heb or 0, hb), wdh_grad, len(w)); out.update(urteil=u, urteil_grund=grund + " (nach Nachmessen)")
             else: info["grund"] = "keine Kandidatenpaare / LightGlue gescheitert"; out["stufen"].append(info)
         except Exception as ex: out["stufen"].append(dict(stufe="fuehren", fehler=str(ex)[:300]))

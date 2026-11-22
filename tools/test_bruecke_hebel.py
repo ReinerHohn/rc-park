@@ -38,7 +38,7 @@ def modell(Rs, ts, P, cam):
         m.xy.append(np.where(ok[:, None], uv, -1e6)); m.pid.append(np.where(ok, np.arange(len(P)), -1))
     m.idx = {n: i for i, n in enumerate(m.namen)}; return m
 cam = pycolmap.Camera(model="PINHOLE", width=1600, height=1200, params=[1200.0, 1200.0, 800.0, 600.0])
-W = np.c_[rng.uniform(-8, 8, 1500), rng.uniform(-5, 5, 1500), rng.uniform(19.5, 20.5, 1500)]   # Wand bei z = 20
+W = np.c_[rng.uniform(-8, 8, 1500), rng.uniform(-5, 5, 1500), rng.uniform(19.97, 20.03, 1500)]   # Wand bei z = 20 (Relief +-3 cm)
 def kams(xs, gier):
     Rs, ts = [], []
     for x, g in zip(xs, gier):
@@ -60,14 +60,14 @@ np.savez(npz, **D)
 st, sp = BH.paare_pruefen(npz, A, B, M_AB, 0.004)
 pruef(st["paare_bestaetigt"] == len(kp) and len(sp) > 300, f"paare_pruefen richtig: {st['paare_bestaetigt']}/{len(kp)} Paare, {len(sp)} direkte Spuren")
 Md, pr, ok, g, Xd, Yd, tdd = BH.direkt_koppeln(A, B, sp)
-pruef(ok and BH.bestaetigt(Md, M_AB, B.ausdehnung(), 0.004)[0], f"direkte Kopplung stimmig und bestaetigt die Naeherung ({g})")
+pruef(ok and BH.bestaetigt(Md, M_AB, B.P, 0.004)[0], f"direkte Kopplung stimmig und bestaetigt die Naeherung ({g})")
 c = np.median(anwenden(M_AB, B.P), 0)
 for nm, Mf in (("180 Grad", (lambda D_: D_)(np.block([[BH._rot(np.array([0, np.pi, 0])), (c - BH._rot(np.array([0, np.pi, 0])) @ c)[:, None]], [np.zeros((1, 3)), np.ones((1, 1))]])) @ M_AB),
                ("3 m Versatz laengs der Basis", matrix(1, np.eye(3), [3.0, 0, 0]) @ M_AB), ("3 m Versatz quer", matrix(1, np.eye(3), [0, 3.0, 0]) @ M_AB)):
     # falsche Naeherung darf sich NICHT selbst bestaetigen: entweder verwirft das Band die Paare, oder die direkte Kopplung weicht von der Naeherung ab (und liegt bei
     # der Wahrheit = zurueckgefuehrt). Versatz laengs der Kamerabasis laesst die Epipolargeometrie fast gleich (Band blind) - dann traegt die direkte 3D-Kopplung.
     st2, sp2 = BH.paare_pruefen(npz, A, B, Mf, 0.004); Mn = BH.direkt_koppeln(A, B, sp2)[0] if sp2 else None
-    selbst = Mn is not None and BH.bestaetigt(Mn, Mf, B.ausdehnung(), 0.004)[0]; zurueck = Mn is not None and BH.bestaetigt(Mn, M_AB, B.ausdehnung(), 0.004)[0]
+    selbst = Mn is not None and BH.bestaetigt(Mn, Mf, B.P, 0.004)[0]; zurueck = Mn is not None and BH.bestaetigt(Mn, M_AB, B.P, 0.004)[0]
     pruef(not selbst and (st2["paare_bestaetigt"] == 0 or zurueck), f"Negativprobe {nm}: Band verwirft {st2['paare_verworfen_band']}/{st2['paare_gematcht']}, bestaetigt sich nicht selbst"
           + (", direkte Kopplung fuehrt zur Wahrheit zurueck" if zurueck else ""))
 

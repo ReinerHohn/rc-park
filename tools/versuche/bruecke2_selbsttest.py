@@ -60,7 +60,7 @@ def fuehren(name, A, B, M_AB, sigma, fotos, aus, gpu, vram, resize, wahr=None):
     st, sp = BH.paare_pruefen(npz, A, B, M_AB, sigma); info.update(st)
     M, pr, ok, g, X, Y, td = BH.direkt_koppeln(A, B, sp); info.update(direkt=dict(ok=ok, grund=g, **pr))
     if M is not None:
-        b, d = BH.bestaetigt(M, M_AB, B.ausdehnung(), sigma); info["bestaetigt_naeherung"] = b; info["unterschied_zur_naeherung"] = d
+        b, d = BH.bestaetigt(M, M_AB, B.P, sigma); info["bestaetigt_naeherung"] = b; info["unterschied_zur_naeherung"] = d
     return info, sp, (M if ok else None)
 
 
@@ -87,7 +87,7 @@ def lauf(name, A, B, E, fotos, aus, gpu, vram, resize, MB=None, m_je=1.0, lot_ca
         try:
             ra, rb = pycolmap.align_reconstructions_via_reprojections(rE, rA), pycolmap.align_reconstructions_via_reprojections(rE, rB)
             if ra is not None and rb is not None:
-                M_rp = _m4(ra) @ np.linalg.inv(_m4(rb)); erg["reproj"] = dict(ok=True, unterschied_zu_frei=BH.bestaetigt(M_rp, M_frei, B.ausdehnung(), sig)[1])
+                M_rp = _m4(ra) @ np.linalg.inv(_m4(rb)); erg["reproj"] = dict(ok=True, unterschied_zu_frei=BH.bestaetigt(M_rp, M_frei, B.P, sig)[1])
                 if Mt is not None: erg["reproj"]["fehler"] = fehler(M_rp, Mt, PB, m_je, oa)
             else: erg["reproj"] = dict(ok=False, grund="keine Ausrichtung")
         except Exception as ex: erg["reproj"] = dict(ok=False, grund=str(ex)[:200])
@@ -122,12 +122,13 @@ def lauf(name, A, B, E, fotos, aus, gpu, vram, resize, MB=None, m_je=1.0, lot_ca
         if M_dir is not None: q["direkt"] = _inl(M_dir, X, Y, td)
     fp = BH.feld_parameter(B.P, ob); c = {}
     for nm, kw in (("starr", {}), ("lot", dict(lot=(oa, ob))), ("halbstarr", dict(fp=fp, verformung=True)), ("halbstarr_lot", dict(lot=(oa, ob), fp=fp, verformung=True))):
-        for quelle in (("alle", q), ("nur_e", {k: v for k, v in q.items() if k != "direkt"})):
+        for quelle in (("alle", q), ("nur_e", {k: v for k, v in q.items() if k != "direkt"}), ("nur_direkt", {k: v for k, v in q.items() if k == "direkt"})):
+            if not quelle[1]: continue
             if quelle[0] == "alle" and "direkt" not in q: continue
             g = BH.ausgleich(quelle[1], M_frei, MA, **kw); z = dict(rest_median=round(g["rest_median"], 5), n=g["n"])
             if kw.get("verformung"): z.update(a=round(g["a"], 5), b_grad=round(float(np.degrees(g["b"])), 3), sigma_a=g.get("sigma_a"), sigma_b_grad=np.degrees(g.get("sigma_b", np.nan)), urteil=BH.verformung_urteil(g))
             if Mt is not None: z["fehler"] = fehler_feld(g, Mt, B.P, B.P, m_je, oa, fp, kw.get("verformung"))
-            c[f"{nm}_{quelle[0]}"] = z
+            z["M"] = g["M_AB"].tolist(); c[f"{nm}_{quelle[0]}"] = z
     erg["ausgleich"] = c
     if Mt is not None: erg["verformung"] = verformungsfaelle(A, B, E, MA, M_frei, sp, M_dir, fi, sig, Mt, m_je, oa, ob, os.path.join(aus, "fuehren"))
     erg["_M"] = dict(frei=M_frei.tolist(), lot=M_lot.tolist() if M_lot is not None else None, direkt=M_dir.tolist() if M_dir is not None else None)
@@ -160,8 +161,9 @@ def verformungsfaelle(A, B, E, MA, M_frei, sp, M_dir, fi, sig, Mt, m_je, oa, ob,
             st, spd = BH.paare_pruefen(npz, A, Bd, Mf, sig); Md, prd, okd, gd, X, Y, td = BH.direkt_koppeln(A, Bd, spd); z["direkt"] = dict(ok=okd, grund=gd, spuren=len(spd), **{k: prd.get(k) for k in ("anteil", "rest_rel", "hebel", "hebel_b")})
             if Md is not None: q["direkt"] = _inl(Md, X, Y, td); z["direkt_fehler"] = fehler_feld(dict(M_AB=Md, a=0, b=0), Mt, Bd.P, B.P, m_je, oa, None, False)
         fp = BH.feld_parameter(Bd.P, ob)
-        for nm, kw in (("starr", {}), ("halbstarr", dict(fp=fp, verformung=True))):
-            g = BH.ausgleich(q, Mf, MA, **kw); r = dict(fehler=fehler_feld(g, Mt, Bd.P, B.P, m_je, oa, fp, kw.get("verformung")), rest_median=round(g["rest_median"], 5))
+        for nm, kw, qq in (("starr", {}, q), ("halbstarr", dict(fp=fp, verformung=True), q), ("halbstarr_direkt", dict(fp=fp, verformung=True), {k: v for k, v in q.items() if k == "direkt"})):
+            if not qq: continue
+            g = BH.ausgleich(qq, Mf, MA if "ea" in qq else None, **kw); r = dict(fehler=fehler_feld(g, Mt, Bd.P, B.P, m_je, oa, fp, kw.get("verformung")), rest_median=round(g["rest_median"], 5))
             if kw: r.update(a=round(g["a"], 5), b_grad=round(float(np.degrees(g["b"])), 3), sigma_a=g.get("sigma_a"), sigma_b_grad=float(np.degrees(g.get("sigma_b", np.nan))), urteil=BH.verformung_urteil(g))
             z[nm] = r
         out[art] = z; print("   verformung", art, json.dumps({k: (v.get("fehler") or v) if isinstance(v, dict) else v for k, v in z.items()}, default=str)[:600], flush=True)

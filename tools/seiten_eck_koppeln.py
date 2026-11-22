@@ -24,6 +24,9 @@ ABLAUF (beliebig viele Teile, Bruecken jeder Art):
      (sonst 'Massstab nicht belegt'); Hebel = Ausdehnung der gemeinsamen Punkte / Ausdehnung des Teils. Begruendung 1122: Ecke->A 96 % stimmig, Rest 0,34 %, Ecke->B
      96 %, 0,21 %; Zufall / andere Flaeche -> keine Sim3; 8 % Verformung -> Anteil 53 % (Test).
      KANTE i-j = zwei stimmige Kopplungen desselben Zwischenmodells; Guete = min(stimmig x Hebel).
+     LEITER je Kante (22.11.2026, tools/bruecke_hebel.leiter, RCPARK_ECK_LEITER=0 aus): gemeinsamer Ausgleich (tiefengewichtet) -> Urteil stark/duenn/zu duenn ->
+     bei nicht 'stark' gefuehrtes Nachmessen (Kandidatenpaare aus der Naeherung, ALIKED+LightGlue, Epipolarband, direkte Spuren A<->B) -> Ausgleich mit direkten
+     Spuren, nur wenn diese die Naeherung bestaetigen; Lot der Teile = PRUEFUNG ('leiter.lot_pruefung'). Belege und Schwellen: bruecke_hebel-Kopf, lage-seiten.md.
   4. STAERKSTER SPANNBAUM ab Teil A (Prim, groesste Guete zuerst) -> Lage jedes erreichten Teils im Rahmen von A. Jede weitere Kante schliesst einen KREIS = unabhaengige
      Pruefung: Kreisschlussfehler (Drehung Grad, Massstab, Versatz relativ zur Ausdehnung) gegen 3 x sigma, sigma = Wurzel der Quadratsumme der Kopplungsreste und
      Haelften-Proben aller Kanten im Kreis (ANNAHME: Rest = 1 sigma). Widerspruch -> alle Teile des Kreises (ausser A) und was nur durch sie erreicht wird: NICHT gekoppelt.
