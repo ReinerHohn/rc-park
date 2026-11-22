@@ -139,6 +139,24 @@ def gps_fit_robust(X, U, schwelle=10.0, iter_=3000, min_anteil=0.4, min_n=15, ma
     return 1.0 / k, best, rest, ausd
 
 
+def gps_dreh_massstab(Xm, G, grenze=12.0):
+    """Drehung (Grad, um das Lot) und Massstab der 2D-Aehnlichkeit, die die Kamerastandorte EINER Loesung (Xm, Modellsystem in m, n x 2) auf ihr Foto-GPS (G, gleiches System)
+    legt - dieselbe Messgroesse wie das GPS-Tor tools/lage_gps_pruefen.py ('2 GPS-Fit: Drehung, Massstab'). Getrimmt: Nachfit auf Kameras mit Rest < max(80-%-Wert, grenze).
+    Rueckgabe (drehung_grad, massstab) oder None (zu wenige Kameras)."""
+    Xm = np.asarray(Xm, float); G = np.asarray(G, float); w = np.isfinite(Xm).all(1) & np.isfinite(G).all(1)
+    if w.sum() < 8: return None
+    def fit(A, B):
+        ma, mb = A.mean(0), B.mean(0); A0, B0 = A - ma, B - mb; U, S, Vt = np.linalg.svd(B0.T @ A0); D = np.eye(2); D[1, 1] = np.sign(np.linalg.det(U @ Vt)); R = U @ D @ Vt
+        s = float((S * np.diag(D)).sum() / max((A0 ** 2).sum(), 1e-12)); return s, R, mb - s * R @ ma
+    for _ in range(4):
+        if w.sum() < 8: return None
+        s, R, t = fit(Xm[w], G[w]); r = np.linalg.norm(s * Xm @ R.T + t - G, axis=1); w = np.isfinite(r) & (r < max(float(np.percentile(r[np.isfinite(r)], 80)), grenze))
+    return math.degrees(math.atan2(R[1, 0], R[0, 0])), s
+
+
+GPS_MAX_DREH, GPS_MAX_MASS = 15.0, 0.15   # wie die Grenzen des GPS-Tors (lage_gps_pruefen.py --max_dreh 15 --max_skala 0.15) - die Ausrichtung waehlt keine Lage, die das Tor sicher verwirft
+
+
 def loesung_index(loesung, n, schreiben):
     """Welche der n unterscheidbaren Loesungen wird geschrieben, und mit welchem rc endet der Lauf? -> (Index oder None, rc).
     17.11.2026 (Durchsicht): der Korrekturkreislauf der Kette ruft --loesung 1, 2, ... --schreiben, bis die Lage-Tore bestehen. Fiel auch die letzte durch, blieb SIE liegen
@@ -476,6 +494,15 @@ def main():
         def _gps_rest(p_): return float(np.median(np.linalg.norm(zu_modell(p_, Cq[_gi])[:, :2] - _gm, axis=1)))
         _kons = [l for l in loes if _gps_rest(l[2]) < 12 and abs(l[2][0] - math.log(_gs)) < 0.25]
         print(f"GPS-Veto: {len(_kons)} von {len(loes)} Loesungen passen zum Foto-GPS (Kamerarest < 12 m, Massstab +-28 %); beste verworfene Guete {100 * max([l[0] for l in loes if not any(l is k for k in _kons)], default=0):.0f} %")
+        # 22.11.2026 (Nulllauf schwabentor-1122): der Kamerarest < 12 m laesst eine um 20 Grad gedrehte Loesung durch, wenn die Kameras nah am Objekt stehen (20 Grad bei 15 m
+        # = 5 m) - gewaehlt wurde Guete 5 %, das GPS-Tor maß danach 20 Grad (90 %: 18-22) und brach ab. Jetzt zusaetzlich Drehung und Massstab des GPS-Fits je Loesung mit
+        # den GRENZEN DES GPS-TORS; bleibt so keine Loesung, gilt die alte Auswahl (gemeldet) - es wird nie weniger gewaehlt als vorher.
+        _dm = [(l, gps_dreh_massstab(zu_modell(l[2], Cq[_gi])[:, :2], _gm)) for l in _kons]
+        _kons2 = [l for l, dm in _dm if dm is not None and abs(dm[0]) <= GPS_MAX_DREH and abs(dm[1] - 1.0) <= GPS_MAX_MASS]
+        print(f"GPS-Veto Drehung/Massstab (Grenzen des GPS-Tors {GPS_MAX_DREH:.0f} Grad / {100 * GPS_MAX_MASS:.0f} %): {len(_kons2)} von {len(_kons)} Loesungen; "
+              + ", ".join(f"{dm[0]:+.0f} Grad x{dm[1]:.2f}" for _, dm in _dm[:8] if dm is not None))
+        if _kons2: _kons = _kons2
+        elif _kons: print("WARNUNG GPS-Veto: keine Loesung innerhalb der Drehungs-/Massstabsgrenzen des GPS-Tors - alte Auswahl (Kamerarest < 12 m), das GPS-Tor wird sie vermutlich verwerfen")
         if _kons: loes = _kons
         else: print("WARNUNG GPS-Veto: KEINE Loesung passt zum Foto-GPS - Ergebnis nicht glauben (Tore entscheiden)")
     loes.sort(key=lambda l: -l[0])
