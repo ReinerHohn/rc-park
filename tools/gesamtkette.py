@@ -17,7 +17,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
              sfm_lod2_ausrichten --loesung 1..max probieren, die erste Loesung, die ALLE Tore besteht, gilt; sonst Abbruch mit Bericht
   dach       tools/dach_vermessen.py (DOM1, mit Wolke)
   bauen      tools/bauen_abnehmen.sh <ziel> (Generator aus Vorlage = LoD2 + Dach)
-  kanten     KERNMETHODE (15.11.): tools/kantenstufe.py - SfM-Kameras -> Stabilkarten -> Kanten-Tiefen-Sweep um die Modellflaeche -> 3D-Kanten-F1 + Liste fehlender Kanten
+  kanten     KERNMETHODE (15.11.): tools/kantenstufe.py - SfM-Kameras -> Stabilkarten -> Kanten-Tiefen-Sweep um den MODELLFREIEN Messkoerper (22.11.: 2 m vor bis 0,5 m hinter LoD2-flach + Wandversatz, Wolke nur Lage-Veto; vorher Vormodell = Kreis) -> 3D-Kanten-F1 + Liste fehlender Kanten
   fototor    tools/kameras_aus_buendel.py (K-<foto>.json) -> tools/foto_diff.py auf den Fotos mit bester Modellsicht (Foto-Tor)
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
@@ -426,7 +426,7 @@ def main():
     KD = os.path.join(D, "kanten")
     if dran("kanten"):
         if os.path.exists(AU):
-            if lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD], log, ok=(0, 4))[0] == 4:      # 17.11.2026: rc 4 (< 6 Kameras sehen das Modell / < 2000 Kantenpunkte) stand als 'in Ordnung' im Bericht -
+            if lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD] + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 4))[0] == 4:      # 22.11.2026 KREISFALL: Suchraum = modellfreier Messkoerper (Standard der Kantenstufe), Wolke nur Lage-Veto      # 17.11.2026: rc 4 (< 6 Kameras sehen das Modell / < 2000 Kantenpunkte) stand als 'in Ordnung' im Bericht -
                 notiz(B, "kanten_ergebnis", False, fehler="Kantenstufe OHNE Ergebnis (rc 4: zu wenige Kameras oder Kantenpunkte, kein Kanten-F1) - Kernmethode nicht erfuellt; Kameras/Stabilkarten pruefen (kanten_bericht.json 'fehler')")      # die Kernmethode (Fotokanten) lief leer
         else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
     for s_ in ("fototor", "fassaden", "seiten"):                         # 17.11.2026: ohne Ausrichtung fielen diese Stufen STILL aus ("alle in Ordnung" bei 0 Stufen)
