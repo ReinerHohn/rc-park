@@ -210,3 +210,18 @@ Gemeinsamer Vorbehalt: Wo Gewichte permissiv lizenziert sind, aber auf Daten mit
 - Bewertung: **nein** (NC, Inria). Idee (LoD2-Punkte als Startwerte, Tiefen-/Normalen-Prior aus Ebenen) ggf. selbst auf gsplat nachbauen (Patentlage ungeprueft).
 
 Ungeprueft geblieben (22.11.): Datensatzlizenz Mapillary Planet-Scale Depth und Map-free-Datensatz; Datensatzliste der LoMa-commercial-Gewichte; RoMa-v2-Gewichte (keine Angabe an der Quelle); DA3-/MoGe-2-Trainingsdatensaetze im Einzelnen; Patente 3DGS/2DGS; Lizenzen der LiP-Map-Abhaengigkeiten.
+
+## Nachtrag 2026-11-22 (spaet): Befunde aus der Bruecken-Recherche
+Quelle: `research_notes/duenne_bruecken_methoden_2026-11-22.md` (dort Zitate und Fundstellen; GitHub-API-Feld license bzw. LICENSE/README am 22.11. gelesen). Keine Rechtsberatung.
+- RoMa v1 (Parskatt/RoMa): Code MIT, DINOv2 Apache-2.0; Gewichte ohne eigene Lizenzzeile, MegaDepth-Daten CC BY 4.0 -> **ja mit Auflage** (Gewichte-Lizenz unklar, Hinweis CC BY).
+- EfficientLoFTR und MatchAnything (zju3dv): "Project Registration License v1.0" - kommerziell frei, aber nur nach Registrierung VOR der Nutzung -> **ja mit Auflage (erst registrieren)**; MatchAnything-Gewichte/Trainingsdaten ungeprueft.
+- XFeat (verlab/accelerated_features): Apache-2.0, Gewichte im Repo -> **ja**.
+- GIM (xuelunshen/gim): API sagt MIT, README "research purposes only" -> **unklar, nicht fuer Verkauf** ohne Klaerung.
+- MASt3R/DUSt3R: LICENSE jetzt an der Quelle gelesen: CC BY-NC-SA 4.0 -> **nein** (bestaetigt die alte Zeile oben).
+- Doppelgangers++: CC BY-NC-SA 4.0 an der Quelle gelesen -> **nein**.
+- VGGSfM (facebookresearch/vggsfm): CC BY-NC 4.0 -> **nein**; damit GlueMap (colmap/gluemap, Code BSD) nur mit Standard-Checkpoints Pi3/VGGSfM nicht verkaufstauglich -> Code ja, Standardkonfiguration **nein**.
+- MP-SfM (cvg/mpsfm): Code Apache-2.0; Standard-Priors (MASt3R NC, DepthPro/Metric3D/DSINE ungeprueft) -> nur mit MoGe-2 (MIT) als Prior **ja**.
+- Kimera-RPGO (MIT-SPARK): BSD-2-Clause -> **ja**. GTSAM (borglab): simplified BSD -> **ja**.
+- Open3D: MIT (LICENSE gelesen) -> **ja**. TEASER++: MIT -> **ja**. pycolmap: BSD-3 -> **ja**. networkx/scipy: BSD -> **ja**.
+- pvlib: BSD-3 laut Recherche, an der Quelle **ungeprueft**.
+- Ungeprueft geblieben: RoMa-v2-Gewichte, Datensatzlizenzen Mapillary Planet-Scale Depth und Map-free, Datensatzliste LoMa-commercial.
