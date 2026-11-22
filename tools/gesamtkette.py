@@ -209,9 +209,14 @@ def main():
             B["warnungen"] = [dict(n=e["n"], text=e["text"][:240], datei=os.path.basename(e["datei"]), zeile=e["zeile"]) for e in w[:40]]
             print(f"WARNUNGEN im Lauf: {len(w)} verschiedene (Bericht 'warnungen'); haeufigste: " + " | ".join(f"{e['n']}x {e['text'][:90]}" for e in w[:3]), flush=True)
         except Exception as e: print("Warnungen nicht gesammelt:", type(e).__name__, e, flush=True)
+        try:                                                                   # 22.11.2026 VERLUSTBILANZ (tools/verlustbilanz.py): je Stufe rein/raus/verloren+Grund; stille Verluste = WARNUNG (Clip hBlkpdGf6LY ging ohne Zeile verloren)
+            B.pop("verlustbilanz", None); import verlustbilanz as VB
+            B["verlustbilanz"] = VB.bilanz(D, Z, B=B, n_start=n_start, seit=t_lauf, log=log, log_ab=log_ab); VB.drucken(B["verlustbilanz"], log)
+            if B["verlustbilanz"]["warnungen"] and os.environ.get("RCPARK_VERLUST_ROT") == "1": notiz(B, "verlustbilanz", False, fehler="; ".join(B["verlustbilanz"]["warnungen"])[:400])
+        except Exception as e: print("Verlustbilanz nicht erstellt:", type(e).__name__, e, flush=True)
         rot = [e for e in B["schritte"][n_start:] if e.get("ok") is False]      # 16.11.2026: die Kette endete IMMER mit rc 0 - auch mit abgestuerzten Stufen
         rc = rc or (4 if rot else 0)
-        B["lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot], rc=rc, abbruch=abbruch); __import__("json_sicher").schreiben(bp, B)
+        B["lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot], rc=rc, abbruch=abbruch, verlust_warnungen=len((B.get("verlustbilanz") or {}).get("warnungen") or [])); __import__("json_sicher").schreiben(bp, B)
         print(f"ERGEBNIS DES LAUFS: {len(B['schritte']) - n_start} Stufen, " + (f"{len(rot)} NICHT in Ordnung: " + ", ".join(e["stufe"] for e in rot) if rot else "alle in Ordnung") + (" - ABGEBROCHEN" if abbruch else ""), flush=True)
         for e in rot: print(f"    {e['stufe']}: {str(e.get('fehler') or ' | '.join(e.get('ende', [])) or e.get('hinweis', ''))[:200]}", flush=True)
         print("GESAMTKETTE_ENDE", bp, flush=True); return rc
