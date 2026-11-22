@@ -259,6 +259,10 @@ def main():
     if obj.get("fotos_dir_quelle") and os.path.realpath(fd) == os.path.realpath(os.path.join(D, "fotos")):      # 17.11.2026: nach dem ersten Lauf zeigt fotos_dir auf den SAMMELORDNER (siehe unten). Ein Einstieg --ab commons..sammeln nahm ihn dann
         fd = obj["fotos_dir_quelle"]; fd = fd if os.path.isabs(fd) else os.path.join(ROOT, fd)                  # als 'eigene Fotos': alle Fremdbilder wurden zu eigen__eigen__..., die Namen passten nicht mehr zu Netz und K-Dateien, Fremdbilder bestaetigten sich selbst
     fremd = list(a.fremd); VF = os.path.join(D, "video_frames"); CO = os.path.join(D, "commons")
+    if dran("vorpruefen") and os.path.isdir(fd):            # 22.11.2026 (schwabentor-1122): fotos_dir_quelle = alter Sammelordner, 311 von 504 'eigenen' Bildern waren Video-/Commons-/Online-Bilder ohne
+        from fotos_sammeln import fremde_ordner              # Vorpruefung (Einblendungen -> config-7-Paare). Deren echte Ordner gehen als Fremdquelle in die Vorpruefung; fotos_sammeln nimmt sie nur von dort.
+        fie = [d_ for d_ in fremde_ordner([fd]) if d_ not in fremd]; fremd += fie
+        if fie: notiz(B, "fremd_in_eigen", True, ordner=len(fie), hinweis="Fremdbilder im eigenen Fotoordner -> Vorpruefung: " + "; ".join(fie[:30]))
     if not a.ohne_weitere_fotos and dran("vorpruefen"):      # 17.11.2026 (kaufhaus_gk gegen Handmodell grob3): nur fotos_dir (333) + Commons gesammelt; iPhone-Fotos, Handyserien, Nutzerfotos, Videobilder und Mapillary
         from fotoquellen import finden as fotoquellen_finden    # desselben Gebaeudes (rund 2700 Bilder in 46 Ordnern unter rc-park_daten/kaufhaus*) blieben liegen. Alle als Fremdquelle -> bilder_vorpruefen entscheidet je Bild.
         aus_ = list((obj.get("fotos_eingang") or {}).get("ausschluss") or []) + list(obj.get("fotos_ausschluss") or [])

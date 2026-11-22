@@ -73,14 +73,18 @@ def refnamen(a):
     json.dump(sorted(i.name for i in ref.images.values() if i.has_pose), open(os.path.join(lg, "refnamen.json"), "w")); print("Referenzbilder:", ref.num_reg_images())
 
 
-def einlesen(a):
-    import pycolmap, shutil
-    Z = a.ziel; lg = os.path.join(Z, "lg"); db = os.path.join(lg, "db.db")
-    if os.path.exists(db): os.remove(db)
-    shutil.copy(os.path.join(Z, "db.db"), db)
-    for f in ("vorbereitet.json", "merkmale.json"): shutil.copy(os.path.join(Z, f), os.path.join(lg, f))
-    if not os.path.exists(os.path.join(lg, "bilder")): os.symlink(os.path.join(Z, "bilder"), os.path.join(lg, "bilder"))
-    D = np.load(os.path.join(lg, "lg.npz"), allow_pickle=True); con = sqlite3.connect(db); cur = con.cursor()
+def paar_id(a, b):
+    """COLMAP-Paarschluessel (wie pycolmap.image_pair_to_pair_id): kleinere Bild-ID zuerst, id1 * 2147483647 + id2."""
+    a, b = (int(a), int(b)) if a < b else (int(b), int(a))
+    return a * 2147483647 + b
+
+
+def lg_anhaengen(db, D):
+    """ALIKED-Merkmale und -Matches aus D (lg_match-npz oder dict: namen, kp_<name>, m_<a>|<b>) an die Datenbank db ANHAENGEN (in place, also nur auf einer Kopie aufrufen).
+    SIFT-Merkmale behalten Index und Reihenfolge (spaetere Kopplung ueber (Bildname, Merkmalsindex)); neue Merkmale hinter den alten (Versatz = alte Anzahl),
+    Beschreiber mit Nullen aufgefuellt. Bestehende SIFT-Matches eines Paares bleiben vorn, ALIKED-Matches (mit Versatz) dahinter; die two_view_geometry
+    des Paares wird geloescht (danach neu verifizieren). -> (versatz {name: alte Merkmalsanzahl}, paare [(a, b)] mit geschriebenen Matches)."""
+    con = sqlite3.connect(db); cur = con.cursor()
     ids = {n: i for i, n in cur.execute("select image_id,name from images")}; typ = cur.execute("select sql from sqlite_master where name='descriptors'").fetchone()[0]; off = {}
     for name in [str(n) for n in D["namen"]]:
         iid = ids[name]; row = cur.execute("select rows, cols, data from keypoints where image_id=?", (iid,)).fetchone(); n0, cols, data = row
@@ -94,15 +98,28 @@ def einlesen(a):
         if "type" in typ: cur.execute("insert into descriptors (image_id, type, rows, cols, data) values (?,?,?,?,?)", (iid, 0, dall.shape[0], dall.shape[1], dall.tobytes()))
         else: cur.execute("insert into descriptors (image_id, rows, cols, data) values (?,?,?,?)", (iid, dall.shape[0], dall.shape[1], dall.tobytes()))
     pl = []
-    for key in D.files:
+    for key in (D.files if hasattr(D, "files") else list(D)):
         if not key.startswith("m_"): continue
-        x, y = key[2:].split("|"); ia, ib = ids[x], ids[y]; m = D[key].astype(np.uint32) + np.array([off[x], off[y]], np.uint32)
+        x, y = key[2:].split("|"); ia, ib = ids[x], ids[y]; m = np.asarray(D[key]).astype(np.uint32) + np.array([off[x], off[y]], np.uint32)
         if ia > ib: ia, ib = ib, ia; m = m[:, ::-1].copy()
-        pid = int(pycolmap.image_pair_to_pair_id(ia, ib)); alt = cur.execute("select rows, data from matches where pair_id=?", (pid,)).fetchone()
+        pid = paar_id(ia, ib); alt = cur.execute("select rows, data from matches where pair_id=?", (pid,)).fetchone()
         if alt and alt[0]: m = np.vstack([np.frombuffer(alt[1], np.uint32).reshape(alt[0], 2), m])
+        m = np.ascontiguousarray(m, np.uint32)
         cur.execute("delete from matches where pair_id=?", (pid,)); cur.execute("delete from two_view_geometries where pair_id=?", (pid,))
-        cur.execute("insert into matches (pair_id, rows, cols, data) values (?,?,?,?)", (pid, m.shape[0], 2, m.tobytes())); pl.append(f"{x} {y}")
-    con.commit(); con.close(); pf = os.path.join(lg, "paare.txt"); open(pf, "w").write("\n".join(pl) + "\n")
+        cur.execute("insert into matches (pair_id, rows, cols, data) values (?,?,?,?)", (pid, m.shape[0], 2, m.tobytes())); pl.append((x, y))
+    con.commit(); con.close()
+    return off, pl
+
+
+def einlesen(a):
+    import pycolmap, shutil
+    Z = a.ziel; lg = os.path.join(Z, "lg"); db = os.path.join(lg, "db.db")
+    if os.path.exists(db): os.remove(db)
+    shutil.copy(os.path.join(Z, "db.db"), db)
+    for f in ("vorbereitet.json", "merkmale.json"): shutil.copy(os.path.join(Z, f), os.path.join(lg, f))
+    if not os.path.exists(os.path.join(lg, "bilder")): os.symlink(os.path.join(Z, "bilder"), os.path.join(lg, "bilder"))
+    D = np.load(os.path.join(lg, "lg.npz"), allow_pickle=True); _, pl = lg_anhaengen(db, D)
+    pf = os.path.join(lg, "paare.txt"); open(pf, "w").write("\n".join(f"{x} {y}" for x, y in pl) + "\n")
     vo = pycolmap.TwoViewGeometryOptions(); vo.ransac.random_seed = 0
     pycolmap.verify_matches(db, pf, verification_options=vo) if False else pycolmap.verify_matches(db, pf)
     # Referenz: Posen behalten, Punkte NEU aus SIFT+ALIKED (alte Punkt-IDs haengen an den alten Merkmalsindizes - die Indizes sind gleich geblieben, ALIKED ist angehaengt)

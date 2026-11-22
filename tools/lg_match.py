@@ -17,6 +17,8 @@ def main():
     ap.add_argument("--extractor", default="aliked", choices=["aliked", "disk"]); ap.add_argument("--max-kp", type=int, default=4096)
     ap.add_argument("--resize", type=int, default=2048); ap.add_argument("--min-matches", type=int, default=15)
     a = ap.parse_args(); dev = "cuda" if torch.cuda.is_available() else "cpu"
+    vmb = int(os.environ.get("RCPARK_LG_VRAM_MB", "0"))               # 22.11.2026 (bruecke_nachmatchen.py): harte VRAM-Obergrenze dieses Prozesses (torch-Zuteiler), 0 = keine
+    if vmb and dev == "cuda": torch.cuda.set_per_process_memory_fraction(min(1.0, vmb / (torch.cuda.get_device_properties(0).total_memory / 2**20)))
     namen = a.namen or sorted(f for f in os.listdir(a.ordner) if f.lower().endswith((".jpg", ".jpeg", ".png")))
     ext = (ALIKED(max_num_keypoints=a.max_kp) if a.extractor == "aliked" else DISK(max_num_keypoints=a.max_kp)).eval().to(dev)
     matcher = LightGlue(features=a.extractor, mp=os.environ.get("RCPARK_LG_MP", "1") != "0").eval().to(dev)   # 20.11.2026 gemischte Genauigkeit: -22 % Zeit, 99,2 % identische Zuordnungen, RANSAC-Inlier +1 % (tools/versuche/lg_mp_ab2.py); RCPARK_LG_MP=0 = alter Stand
