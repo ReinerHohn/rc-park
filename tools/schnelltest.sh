@@ -4,6 +4,11 @@
 # Prueft feste ERWARTUNGEN an bekannten Daten (ober_tvdr, klein). Schlaegt etwas an: erst klaeren, ob die Aenderung das wollte - dann die Erwartung hier mit Grund anpassen.
 cd "$(dirname "$0")/.."; P=/media/oem/scan/venv-seg/bin/python; G=~/.venvs/rcpark/bin/python; F=0; T0=$(date +%s)
 ok(){ echo "  ok    $1"; }; rot(){ echo "  FEHLER $1"; F=$((F+1)); }
+# 22.11.2026 (Root 48 GB lief zweimal voll, /tmp/test_vordach_* je 23 MB nach jedem Lauf): Temp des ganzen Schnelltests in EINEN eigenen Ordner auf der Datenplatte
+# (gleiche Reihenfolge wie tools/pfade.temp_wurzel: $TMPDIR -> /media/oem/rcdaten/tmp -> /media/oem/scan/rc-park_tmp -> /tmp); am Ende: Reste = Fehlerzeile, Ordner weg.
+for TW in "${TMPDIR:-}" /media/oem/rcdaten/tmp /media/oem/scan/rc-park_tmp /tmp; do [ -n "$TW" ] && [ -d "$TW" ] && [ -w "$TW" ] && break; done
+ST_TMP=$(mktemp -d -p "$TW" schnelltest_XXXXXX); export TMPDIR=$ST_TMP; trap 'rm -rf "$ST_TMP"' EXIT
+TMP_VOR=$(ls -d /tmp/test_* 2>/dev/null | sort)
 for f in tools/*.py; do python3 -m py_compile "$f" 2>/dev/null || rot "Syntax $f"; done; ok "Syntax aller tools/*.py"; for f in tools/*.sh; do bash -n "$f" || rot "Syntax $f"; done
 $G - <<'PY' && ok "bauteile: Boegen, Fenster, Galerie, Umgang wasserdicht" || rot "bauteile"
 import sys; sys.path.insert(0, "tools"); import numpy as np
@@ -175,6 +180,13 @@ k=$($P -W ignore -I tools/test_befundliste.py 2>&1); [ $? = 0 ] && ok "Befundlis
 k=$($P -W ignore -I tools/test_neben_details.py 2>&1); [ $? = 0 ] && ok "Detailansicht je Bauteil (neben_details: Kamera mit Bauteil gross/mittig/senkrecht gewinnt, Profil von der Seite, Verdecker senkt Sicht, Bauteile aus audit-JSON) - 22.11. Fehlbefund Vordach/Laterne am Steilblick" || { rot "neben_details"; echo "$k" | tail -5; }
 k=$($P -W ignore -I tools/test_leistung_messen.py 2>&1); [ $? = 0 ] && ok "Leistungsmessung (leistung_messen: Wallzeit/CPU/Spitzen-RAM/RAPL/GPU neben einem Befehl, Thread-Sweep mit Platzhalter, kleinste Einstellung innerhalb 5 %, Engpass-Regeln, perf oder sauber uebersprungen) - 22.11." || { rot "leistung_messen: $(echo "$k" | grep FEHLER | head -3)"; }
 k=$(python3 -I tools/test_verlustbilanz.py 2>&1); [ $? = 0 ] && ok "Verlustbilanz je Stufe (rein/raus/verloren+Grund; Clip ohne Bilder und ohne Fehlerzeile = WARNUNG, benannte Verluste nicht; Grenze je Stufe, alter Stand markiert) - Nulllauf 1122: hBlkpdGf6LY still verloren" || { rot "verlustbilanz: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
+k=$(python3 -I tools/test_temp_ordner.py 2>&1); [ $? = 0 ] && ok "Temp nicht auf Root + Aufraeumen (pfade.temp_ordner: TMPDIR/Datenplatte, weg auch nach assert; Waechter: kein Test mit nacktem tempfile.mkdtemp) - Root lief 2x voll" || { rot "temp_ordner: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$(python3 -I tools/test_undefinierte_namen.py 2>&1); [ $? = 0 ] && ok "Keine neuen undefinierten Namen in tools/*.py (pyflakes; 1121t: q95 im Kommentar -> NameError nach 20 min)" || { rot "undefinierte Namen: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$(/media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_handy_masken_gross.py 2>&1); [ $? = 0 ] && ok "handy_masken: grosse Bilder ohne Logits in voller Groesse (Nulllauf 1122: 27-MPx-Bild -> OOM -> SfM-Abbruch)" || { rot "handy_masken gross: $(echo "$k" | tail -2 | cut -c1-200)"; }
-rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
+rm -rf $S
+# 22.11.2026: Tests raeumen selbst auf (tools/pfade.temp_ordner, TemporaryDirectory, finally) - Reste im eigenen Temp-Ordner oder neue /tmp/test_* = Fehler
+rest=$(find "$ST_TMP" -mindepth 1 -maxdepth 1 -type d ! -name 'torchinductor_*' ! -name '__pycache__' -printf '%f ' 2>/dev/null | cut -c1-300)
+[ -z "$rest" ] && ok "Tests raeumen ihre Temp-Ordner selbst auf (Temp unter $TW, nicht auf Root)" || rot "Temp-Reste nach den Tests in $ST_TMP: $rest"
+neu=$(comm -13 <(echo "$TMP_VOR") <(ls -d /tmp/test_* 2>/dev/null | sort) | tr '\n' ' ' | cut -c1-300)
+[ -z "$neu" ] || rot "neue Ordner in /tmp (Root) seit Testbeginn: $neu - Test schreibt an TMPDIR/pfade.temp_ordner vorbei"
+echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

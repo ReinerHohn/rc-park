@@ -5,6 +5,7 @@ Aufruf: python3 tools/test_flaeche_ortho.py  (rc 0 = alles bestanden). Kein echt
 import os, sys, json, math, tempfile, shutil
 import numpy as np, cv2
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import flaeche_ortho as FO
 
 W, H, F_PX = 800, 600, 700.0
@@ -75,7 +76,7 @@ def pruefen(name, tmp, flaechen, gt, schwelle_med=10.0, schwelle_p90=40.0, mind_
 
 
 def main():
-    tmp0 = tempfile.mkdtemp(prefix="flaeche_ortho_test_"); alle = True
+    tmp0 = temp_ordner("flaeche_ortho_test_"); alle = True
     try:
         # 1) Zylinder (r 1,2, z 0..4) und 2) Kegel (r 1,5 -> 0,9) von 8 Kameras ringsum
         for name, k, r0 in (("zylinder", 0.0, 1.2), ("kegel", -0.15, 1.5)):

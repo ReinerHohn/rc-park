@@ -9,13 +9,14 @@ Werte sind Testgeometrie, kein Objektmass. < 20 s."""
 import os, sys, json, tempfile
 import numpy as np, cv2
 H = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import putz_wandbild as PW, fassaden_kette as FK, uhren_wandbild as UW
 
 fehler = []
 def pruef(b, t):
     if not b: fehler.append(t)
 
-T = tempfile.mkdtemp(prefix="test_putz_uhr_"); FF = os.path.join(T, "fassade_fein"); os.makedirs(os.path.join(FF, "ortho_f00_einzeln"))
+T = temp_ordner("test_putz_uhr_"); FF = os.path.join(T, "fassade_fein"); os.makedirs(os.path.join(FF, "ortho_f00_einzeln"))
 # Fassade f00: Ebene x = 0, u entlang +y, Normale +x; Raster 1 cm, u -1..5, z 10..0 (Zeile 0 oben)
 c = 0.01; R = dict(u0=-1.0, z1=10.0, nu=600, nz=1000, zelle=c)
 json.dump(dict(fassaden=[dict(id="f00", o=[0.0, 0.0], d=[0.0, 1.0], n=[1.0, 0.0], raster=R)]), open(os.path.join(FF, "fassaden.json"), "w"))

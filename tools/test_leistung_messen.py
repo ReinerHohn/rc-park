@@ -4,6 +4,7 @@ Sweep mit Platzhalter, Auswertung 'kleinste Einstellung innerhalb 5 %', Engpass-
   /media/oem/scan/venv-seg/bin/python -I tools/test_leistung_messen.py   (braucht numpy fuer die Last; das Werkzeug selbst nur Standardbibliothek)"""
 import json, os, sys, tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import leistung_messen as L
 
 F = 0
@@ -18,7 +19,7 @@ LAST = ("import numpy as np, os, sys, time, json\n"
         "t = time.time(); b = np.random.default_rng(0).random((200, 200))\n"
         "while time.time() - t < float(sys.argv[2]): b = (b @ b) / 200.0 + 0.001; a[:1000] += 1\n")
 
-tmp = tempfile.mkdtemp(prefix="test_leistung_")
+tmp = temp_ordner("test_leistung_")
 skript = os.path.join(tmp, "last.py"); open(skript, "w").write(LAST)
 
 # 1. eine Messung

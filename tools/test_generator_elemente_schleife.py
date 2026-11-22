@@ -56,7 +56,7 @@ def el_box(el):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--zufall", type=int, default=8); a = ap.parse_args(); erg_tests = {}
-    wd = tempfile.mkdtemp(prefix="elsch_test_", dir="/media/oem/scan/rc-park_null") if os.path.isdir("/media/oem/scan/rc-park_null") else tempfile.mkdtemp()
+    wd = tempfile.mkdtemp(prefix="elsch_test_", dir="/media/oem/scan/rc-park_null") if os.path.isdir("/media/oem/scan/rc-park_null") else __import__("pfade").temp_ordner("elsch_test_")
     print("Arbeitsordner", wd)
     H = tm_aus(haus()); W = tm_aus(haus() + erker_giebel()); PW = wolke(W)
     e_lo, e_hi = np.array(erker_giebel().bounding_box()[:3]), np.array(erker_giebel().bounding_box()[3:])

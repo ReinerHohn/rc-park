@@ -523,7 +523,7 @@ def synth_tor():
     import tempfile
     fehl = 0
     for fall, kw in (("1_mittel_hoeher", dict()), ("2_wolke_leer", dict(wolke_aus=True)), ("3_wolke_widerspricht", dict(wolke_falsch=True))):
-        tmp = tempfile.mkdtemp(prefix="muster_synth_"); K, _ = synth_szene(tmp, **kw); F = Fotos(tmp + "/kam.json", tmp + "/stabil", tmp + "/bilder"); Z_ = np.load(tmp + "/wolke.npz"); WK = Z_["P"]; cloud = Z_["E"] if len(Z_["E"]) else np.zeros((1, 3), np.float32) + 1e6
+        sys.path.insert(0, HIER); from pfade import temp_ordner; tmp = temp_ordner("muster_synth_"); K, _ = synth_szene(tmp, **kw); F = Fotos(tmp + "/kam.json", tmp + "/stabil", tmp + "/bilder"); Z_ = np.load(tmp + "/wolke.npz"); WK = Z_["P"]; cloud = Z_["E"] if len(Z_["E"]) else np.zeros((1, 3), np.float32) + 1e6
         log("##### Synth-Fall", fall); ka, ber = kanten_tor(F, cloud, WK, dict(K, kanten=[k_ for k_ in K["kanten"] if k_["gruppe"] == "kaempfer"]), ende=False); korr = {c["id"]: c for c in kanten_korrigieren(dict(K, kanten=[k_ for k_ in K["kanten"] if k_["gruppe"] == "kaempfer"]), ka)}
         err = []
         for k_ in K["kanten"]:

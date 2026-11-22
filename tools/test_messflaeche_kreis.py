@@ -18,6 +18,7 @@ rc 0 = bestanden.
 import sys, os, json, re, tempfile, shutil, glob, contextlib, io
 import numpy as np, cv2, trimesh
 H = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import fassade_ortho as FO
 F_ = 0
 
@@ -76,7 +77,7 @@ def gleich(A, B): return set(A) == set(B) and all(A[k].shape == B[k].shape and n
 
 def main():
     FO.lod2_eigen = lod2_fake; FO.lod2_waende = lambda obj: ([P for t, P in lod2_fake(obj) if t == "WallSurface"], np.zeros(2))
-    T = tempfile.mkdtemp(prefix="messflaeche_kreis_")
+    T = temp_ordner("messflaeche_kreis_")
     try:
         od = os.path.join(T, "obj"); fd = os.path.join(T, "fotos"); os.makedirs(os.path.join(od, "messprotokoll")); os.makedirs(fd)
         for nr, C in (("cam1", np.array([-4.0, -16.0, 3.0])), ("cam2", np.array([5.0, -14.0, 6.0])), ("cam3", np.array([0.5, -12.0, 4.0]))):

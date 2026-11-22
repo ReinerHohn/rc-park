@@ -24,7 +24,7 @@ raum_all = json.load(open(a.raum or os.path.join(OD, "parameter_raum.json"))); r
 if not raum: sys.exit(f"kein Parameterraum fuer {a.typ} in parameter_raum.json")
 names = list(raum); lo = np.array([raum[n]["lo"] for n in names], float); hi = np.array([raum[n]["hi"] for n in names], float)
 x0 = np.array([float(raum[n].get("start", SPEC[n[0]].get(n[1]))) for n in names], float)
-TMP = tempfile.mkdtemp(prefix="pwf_", dir=os.environ.get("TMPDIR"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner; TMP = temp_ordner("pwf_")      # 22.11.2026: aufgeraeumt, nie Root
 def bauen(vals, tag, nur=False, nur_typ=None):
     ueber = {t: {} for t in TYPEN}
     for (t, n), v in zip(names, vals): ueber[t][n] = float(v)

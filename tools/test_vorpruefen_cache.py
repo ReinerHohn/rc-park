@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Test Zwischenspeicher der Bildvorpruefung (bilder_vorpruefen.Speicher, 19.11.2026): Ergebnis bleibt ueber Neustart, geaenderte Datei = neue Kennung, anderer Referenzsatz = anderer Speicher."""
 import os, sys, tempfile, time
-t = tempfile.mkdtemp(prefix="vpcache_", dir=os.environ.get("TMPDIR", "/tmp")); os.environ["RCPARK_CACHE"] = t
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner   # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
+t = temp_ordner("vpcache_"); os.environ["RCPARK_CACHE"] = t
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bilder_vorpruefen as BV
 a = os.path.join(t, "a.jpg"); open(a, "w").write("x"); r = os.path.join(t, "ref.jpg"); open(r, "w").write("ref")

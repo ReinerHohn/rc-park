@@ -13,9 +13,10 @@ from types import SimpleNamespace as N
 import pycolmap                                                        # (tools/py waehlt daran venv-colmap)
 import numpy as np, cv2
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import seiten_blick_tor as SB, db_masken_filter as DM, brennweite_schaerfe as BS, modell_lage_vergleich as ML, sfm_seiten_vorstufe as SV
 
-S = tempfile.mkdtemp(prefix="test_seiten_kette_"); rng = np.random.default_rng(7); W, H, F0 = 1600, 1200, 1200.0
+S = temp_ordner("test_seiten_kette_"); rng = np.random.default_rng(7); W, H, F0 = 1600, 1200, 1200.0
 
 
 def blick(C, ziel, hoch=(0, 0, 1)):

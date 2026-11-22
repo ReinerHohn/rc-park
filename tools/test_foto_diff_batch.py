@@ -4,6 +4,7 @@
 Punktmodus: komplettes Ergebnis-JSON muss GLEICH sein (alle Felder). Raster (--raster, braucht freie GPU, VRAM-Budget JOB_GPU_MB): kosten_lr + modellkanten_px gleich;
 ein CUDA-OOM durch fremde Jobs ist kein Fehler des Werkzeugs, wird aber als 'uebersprungen' gemeldet. Ausserdem: Punktmodus importiert torch nicht; Kameravariante (--k-ordner) wird benutzt."""
 import sys, os, json, subprocess, tempfile, argparse, shutil
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner   # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 T = os.path.dirname(os.path.abspath(__file__)); R = os.path.dirname(T)
 ap = argparse.ArgumentParser(); ap.add_argument("--objekt", default=os.path.join(R, "modelle/kaufhaus_null5/objekt.json"))
 ap.add_argument("--stl", default="/media/oem/scan/rc-park_null/wettbewerb_kh/netze5/pl30_saeule_median.stl"); ap.add_argument("--maske-dir", default="/media/oem/scan/rc-park_null/wettbewerb_kh9g/masken")
@@ -12,7 +13,7 @@ fotos = a.fotos.split(","); fehler = []; PY = sys.executable
 def ok(c, t):
     print(("OK   " if c else "FEHL ") + t, flush=True)
     if not c: fehler.append(t)
-tmp = tempfile.mkdtemp(prefix="fdb_", dir=os.environ.get("TMPDIR"))
+tmp = temp_ordner("fdb_")
 def orig(nr, modus, out):
     env = dict(os.environ, FD_RASTER="1" if modus == "raster" else "0"); env.pop("FD_GPU", None)
     if modus == "punkt": env["CUDA_VISIBLE_DEVICES"] = ""

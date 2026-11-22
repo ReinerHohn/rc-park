@@ -135,11 +135,13 @@ def main():
     R = enu_matrix(a.lat, a.lon)           # ECEF→ENU
     parts = []
     for i, (url, M) in enumerate(glbs):
+        tmp = None
         try:
             data = fetch(url)
             with tempfile.NamedTemporaryFile(suffix=".glb", delete=False) as f:
                 f.write(data); tmp = f.name
             g = trimesh.load(tmp, force="mesh")
+            os.unlink(tmp); tmp = None                                       # 22.11.2026: jede Kachel blieb als .glb in /tmp liegen
             if g.vertices is None or len(g.vertices) == 0: continue
             V = (M @ np.c_[g.vertices, np.ones(len(g.vertices))].T).T[:, :3]  # → ECEF
             V = (R @ (V - target).T).T                                       # → lokal ENU (m)
@@ -147,6 +149,7 @@ def main():
             if i % 10 == 0: print(f"  {i+1}/{len(glbs)} tiles ...")
         except Exception as ex:
             print(f"  tile {i} err: {ex}")
+            if tmp and os.path.exists(tmp): os.unlink(tmp)
     if not parts: sys.exit("Keine Geometrie ladbar.")
     full = trimesh.util.concatenate(parts)
     full.export(a.out)

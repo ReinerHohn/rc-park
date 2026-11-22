@@ -16,6 +16,7 @@ rc 0 = bestanden.
 """
 import sys, os, json, tempfile, shutil, subprocess, numpy as np
 H = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 F_ = 0
 
 
@@ -132,7 +133,7 @@ def teil_d():
 
 
 def main():
-    d = tempfile.mkdtemp(prefix="test_kreis_")
+    d = temp_ordner("test_kreis_")
     try:
         teil_a(d); teil_b(d); teil_c(); teil_d()
     finally: shutil.rmtree(d, ignore_errors=True)

@@ -9,6 +9,7 @@ Werte sind Testgeometrie, kein Objektmass. < 10 s."""
 import os, sys, json, tempfile
 import numpy as np, cv2
 H = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import putz_wandbild as PW
 
 fehler = []
@@ -39,7 +40,7 @@ rel[quader & gem] += 0.06                                                       
 spitz = np.zeros((Hn, Wn), bool); spitz[140:150:3, 20:100:7] = True; rel[spitz] += 0.08   # Einzelzell-Spitzen in gemessener Putzflaeche
 Zd = dict(rel=rel, a=np.array([0.0, 0.0]), t=np.array([1.0, 0.0]), n=np.array([0.0, 1.0]), u0=0.0, z0=0.0, px=px, oeffnung=np.zeros((Hn, Wn), bool),
           wand=fl.copy(), loch=(loch & ~insel) | grossloch)                       # relief_roh: Loch = Zelle ohne Netz
-T = tempfile.mkdtemp(prefix="test_tiefe_belegt_"); f_in = os.path.join(T, "w00_voll.npz"); np.savez_compressed(f_in, **Zd)
+T = temp_ordner("test_tiefe_belegt_"); f_in = os.path.join(T, "w00_voll.npz"); np.savez_compressed(f_in, **Zd)
 putz = np.zeros((Hn, Wn), bool); putz[125:155, :] = True                          # Putzbeleg aus Fotos nur in einem Streifen; Lochfeld ohne Einzelbild (wie w00 ueber z 23,6 m)
 for ohne in ("", "1"):
     os.environ["OHNE_TIEFENBELEG"] = ohne

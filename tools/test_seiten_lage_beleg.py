@@ -10,6 +10,7 @@ Python: /media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_lage_beleg.p
 import os, sys, json, tempfile, io, contextlib, shutil
 import numpy as np
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import seiten_lage_beleg as SLB
 
 # ---------- 1 lage_belegt
@@ -51,7 +52,7 @@ print("ok 3: Fotoauftrag - Westseite -> Westfassade (ganze Wand, ungesehen), ohn
 
 # ---------- 4 Folgestufen
 import wand_dicke_tor as WD
-S = tempfile.mkdtemp(prefix="test_lage_beleg_")
+S = temp_ordner("test_lage_beleg_")
 try:
     sm = os.path.join(S, "seiten_modelle.json"); au = os.path.join(S, "au.json"); oj = os.path.join(S, "objekt.json")
     json.dump(dict(ergebnis=dict(art="teil_a_allein"), vereint=[0], nicht_vereint=[1], fotoluecken=[L]), open(sm, "w")); json.dump(dict(kameras={}), open(au, "w")); json.dump(dict(lod2=dict(id="X")), open(oj, "w"))
