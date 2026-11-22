@@ -25,6 +25,11 @@ Was das Werkzeug prueft (alles im Modellrahmen = objekt.json 'rahmen'):
      Schwabentor-Tuermchen 174 Grad F1 0,92 (richtig), aber Kaufhaus (liegt richtig) Teil 1 15 m2 ungesehen 284 Grad F1 0,76 -> gerade Waende
      fuellen kleine Rechtecke beliebig. Rundformen sind aussagekraeftig, Rechtecke nicht. = falsch gedrehtes Teilnetz. Nur fehlende Deckung = Hinweis.
      Rueckgabe: 0 ok, 3 = Haufen auf der Strasse (Tor A).
+  Geklaerte Haufen (objekt.json grundriss_haufen_geklaert) mit "punkte" gelten nur bis 2x dieser Punktzahl (22.11.2026, schwabentor-1122: die
+  falsche Lage legte einen 7,9x groesseren Haufen versetzter Waende 0,5 m neben den geklaerten Platz-Haufen von schwabentor-1120).
+  22.11.2026 Kontrolle 1122 (Lage +8 Grad / x1,089 neben dem GPS, Rest 3,9 m; GPS-Tor selbst rc 3): A schlaegt zu Recht an - gleiche Kette 1120
+  (GPS-Fit -0,03 Grad / x0,994) besteht, Turmtuermchen 88 % gedeckt (1122: 0 %). B/C bleiben Hinweise; kein GPS-Freibrief fuer A, weil Telefon-GPS
+  (Rest 4 m) einen Versatz von 2-4 m nicht ausschliessen kann, A ihn aber sieht.
 Quellen-Blindheit: LoD2 kennt keine Erker, Arkaden, Vordaecher, Baeume, Autos - Punkte dort landen in A als 'Strasse'.
 Deshalb wird nur gewarnt und gelistet; die Entscheidung faellt am Foto (tools/foto_diff.py, Ueberlagerung).
 
@@ -138,6 +143,21 @@ def teile_pruefen(zp, andere_g, Q, min_abstand, z0, Path, tol=0.2, schritt_w=2, 
     return out
 
 
+def haufen_geklaert(h, gekl, faktor=2.0):
+    """Befund eines am Foto geklaerten Haufens oder None. 22.11.2026 (schwabentor-1122): der Strassenhaufen der falsch ausgerichteten Wolke
+    (348 813 Punkte, versetzte Ost- und Nordwaende) lag mit seiner Mitte 0,5 m neben dem in schwabentor-1120 geklaerten Platz-Haufen
+    (44 105 Punkte, Laterne/Masten/Passanten) - ein mitkopierter Eintrag haette die falsche Lage durchgewunken. Darum: Eintrag mit "punkte"
+    (Punktzahl beim Klaeren) gilt nur, solange der Haufen hoechstens faktor-mal so gross ist; ohne "punkte" wie bisher nur nach Lage."""
+    for g in gekl:
+        if np.hypot(h["mitte"][0] - g["mitte"][0], h["mitte"][1] - g["mitte"][1]) > g.get("radius_m", 5.0): continue
+        if g.get("punkte") and h["punkte"] > faktor * g["punkte"]:
+            print(f"A Haufen bei {h['mitte']} ({h['punkte']} Punkte) liegt bei einem geklaerten Haufen, ist aber {h['punkte'] / g['punkte']:.1f}x so gross "
+                  f"wie beim Klaeren ({g['punkte']}) - gilt NICHT als geklaert (neue Wolke/Lage, erneut am Foto pruefen)")
+            continue
+        return g.get("befund", "ja")
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("objekt"); ap.add_argument("--wolke", required=True); ap.add_argument("--radius", type=float, default=60.0)
@@ -245,7 +265,7 @@ def main():
     # 15.11.2026: am FOTO geklaerte Haufen (objekt.json "grundriss_haufen_geklaert": [{"mitte": [x, y], "radius_m": r, "befund": "...", "quelle": "Fotos ..."}])
     # zaehlen nicht mehr als Warnung - z. B. Erker/Traufe des Nachbarhauses oder Galerie, die ueber den LoD2-Grundriss kragen (echt, kein Teilnetzfehler).
     _gekl = obj.get("grundriss_haufen_geklaert", [])
-    for h in haufen: h["geklaert"] = next((g.get("befund", "ja") for g in _gekl if np.hypot(h["mitte"][0] - g["mitte"][0], h["mitte"][1] - g["mitte"][1]) <= g.get("radius_m", 5.0)), None)
+    for h in haufen: h["geklaert"] = haufen_geklaert(h, _gekl)
     _offen = [h for h in haufen if not h["geklaert"]]
     warn_a = bool(_offen) and _offen[0]["punkte"] > a.haufen
     for h in haufen[:5]:

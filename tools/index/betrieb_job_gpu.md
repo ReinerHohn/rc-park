@@ -1,4 +1,4 @@
-# Werkzeuge: betrieb_job_gpu (48)
+# Werkzeuge: betrieb_job_gpu (49)
 - `tools/aufraeumen_2026-11-10.sh` [sh] Aufraeumen Root-Platte 10.11.2026 (vom Koordinator geprueft, Ausfuehren durch den Nutzer: Loeschen nur per Nutzer-Skript). Aufruf im eigenen Terminal:  sudo bash tools/aufraeumen_2
 - `tools/aufraeumen_datenplatte.sh` [sh] aufraeumen_datenplatte.sh - gibt Platz auf /media/oem/scan frei, OHNE Ergebnisse zu loeschen (Stand 2026-11-03, Platte 99 % voll). Loescht NUR regenerierbare Zwischenprodukte der d
 - `tools/backup_rcdaten.sh` [sh] backup_rcdaten.sh ZIEL [--los] [--pruefen] [--spiegeln] [--nur rcdaten|daten|repo]       (18.11.2026, Nutzerauftrag "Backup vorbereiten") Sichert ALLES, was nach dem Umzug nur noch
@@ -30,6 +30,7 @@
 - `tools/json_sicher.py` [-] json_sicher.py - JSON-Dateien schreiben, ohne die alte Datei zu zerstoeren, wenn etwas schiefgeht.
 - `tools/leistung_ab.sh` [sh] leistung_ab.sh - EIN Skript: A/B balanced vs performance fuer CPU, GPU und CPU+GPU zusammen (Durchsatz + Watt + Takt + Temperatur). sudo bash tools/leistung_ab.sh            (dauer
 - `tools/leistung_diagnose.sh` [sh] leistung_diagnose.sh - WAS bremst die CPU unter Last? (Temperatur, Strom, Firmware). Braucht Root + Pakete (siehe modelle/CPU_LEISTUNG.md): sudo apt install linux-tools-$(uname -r)
+- `tools/leistung_messen.py` [-] leistung_messen.py - Leistungsmessung einer Kettenstufe/eines Werkzeugs + Thread-/Parameter-Sweep + Bericht mit Engpassvermutung (22.11.2026).
 - `tools/leistung_testen.sh` [sh] leistung_testen.sh - CPU-(und optional GPU-)Leistungslimits stufenweise erhoehen und je Stufe Durchsatz/Takt/Temperatur/Leistung messen. ! sudo bash tools/leistung_testen.sh       
 - `tools/links_auf_platte.sh` [sh] links_auf_platte.sh MOUNTPUNKT [SUCHWURZELN...]   (18.11.2026) - zaehlt/listet ALLE Verknuepfungen, die auf eine Platte zeigen, auch ueber Alias-Pfade. Anlass: umzug_auslagerung.sh
 - `tools/luefter_adaptiv.sh` [sh] luefter_adaptiv.sh - zweistufige, temperaturgefuehrte Luefterregelung fuer Laptops mit hp-wmi (OMEN): der Treiber kennt nur pwm1_enable 2 (BIOS-Automatik, zurueckhaltend) und 0 (vo

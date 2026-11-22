@@ -56,4 +56,3 @@
 - `tools/wolke_farbmerkmal.py` [-] wolke_farbmerkmal.py - GENERISCH: Lage eines FARBIGEN Fassadenmerkmals (Zifferblatt, Tafel, Relief) aus der dichten Fotowolke.
 - `tools/zusatz_kameras_lot2.py` [col] zusatz_kameras_lot2.py - Posen nachregistrierter Zusatzbilder (zusatzfotos_registrieren.py, sparse_handy/0) in den lot2-Kamerarahmen bringen und an eine vorhandene Kameradatei (For
 - `tools/zusatzfotos_registrieren.py` [col] zusatzfotos_registrieren.py - Zusatzfotos (Handy, feste Linse) gegen ein VORHANDENES SfM-Netz registrieren, OHNE das Netz zu veraendern (2026-11-06).
-- `tools/code_stand.py` [-] code_stand.py <werkzeug.py> [...] - CODE-STAND fuer Zwischenstaende: Fingerabdruck der beteiligten Werkzeuge samt Hilfsmodulen (billige Folgeschritte laufen bei Codeaenderung neu)
