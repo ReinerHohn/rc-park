@@ -27,7 +27,17 @@ def daten_dir(obj, anlegen=False):
     return d
 
 
-TEMP_KANDIDATEN = (os.path.join(GROSS, "tmp"), os.path.join(SCAN, "rc-park_tmp"))   # 22.11.2026: Root (48 GB) lief zweimal voll, u. a. /tmp/test_vordach_* je 23 MB nach jedem Schnelltest
+def repo_pfad(rel, root=None):
+    """Pfad einer Repo-Eingabe (objekt.json 'fotos_dir', 'stl', ...): absolut -> unveraendert; sonst <root>/<rel>. Fehlt es dort und ist RCPARK_HAUPTORDNER gesetzt
+    (tools/schnelltest.sh in einem git-Worktree: unversionierte Eingaben wie daten/<obj>/fotos, modelle/stl/*.stl liegen nur im Hauptordner), dann <haupt>/<rel> -
+    NUR ZUM LESEN (22.11.2026: jeder Agent verlor eine Runde an 3 roten Schnelltest-Zeilen wegen fehlender unversionierter Eingaben)."""
+    if os.path.isabs(rel): return rel
+    p = os.path.join(root or ROOT, rel); h = os.environ.get("RCPARK_HAUPTORDNER")
+    if not os.path.exists(p) and h and os.path.exists(os.path.join(h, rel)): return os.path.join(h, rel)
+    return p
+
+
+TEMP_KANDIDATEN =(os.path.join(GROSS, "tmp"), os.path.join(SCAN, "rc-park_tmp"))   # 22.11.2026: Root (48 GB) lief zweimal voll, u. a. /tmp/test_vordach_* je 23 MB nach jedem Schnelltest
 
 
 def temp_wurzel():
