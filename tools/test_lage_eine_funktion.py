@@ -31,7 +31,7 @@ def pruef(b, txt):
     print(("    ok    " if b else "    FEHLER ") + txt, flush=True)
     if not b: FEHLER.append(txt)
 
-tmp = tempfile.mkdtemp(prefix="test_lage_eine_funktion_")
+tmp = __import__("pfade").temp_ordner("test_lage_eine_funktion_")      # Temp auf der Datenplatte, raeumt selbst auf (Waechter test_temp_ordner)
 try:
     # ---------- 1 Kameraauswahl
     fd = os.path.join(tmp, "fotos"); os.makedirs(fd)

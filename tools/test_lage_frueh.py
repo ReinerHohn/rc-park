@@ -85,7 +85,7 @@ def gps_setzen(Cm, dreh_grad=0.0, an=True):
 
 SA.lod2_ziel = lod2_fake; WG.grundrisse = grundrisse_fake
 _alt = (gps_ausrichtung.gps_exif, LGP.gps_exif, bilder_holen.wgs84_zu_utm)
-tmp = tempfile.mkdtemp(prefix="test_lage_frueh_")
+tmp = __import__("pfade").temp_ordner("test_lage_frueh_")      # Temp auf der Datenplatte, raeumt selbst auf (Waechter test_temp_ordner)
 try:
     # ---------- 1 sparse -> PLY
     p, Cm = szene(os.path.join(tmp, "stand"))
