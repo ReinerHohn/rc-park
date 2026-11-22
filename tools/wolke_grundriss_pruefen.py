@@ -30,6 +30,11 @@ Was das Werkzeug prueft (alles im Modellrahmen = objekt.json 'rahmen'):
   22.11.2026 Kontrolle 1122 (Lage +8 Grad / x1,089 neben dem GPS, Rest 3,9 m; GPS-Tor selbst rc 3): A schlaegt zu Recht an - gleiche Kette 1120
   (GPS-Fit -0,03 Grad / x0,994) besteht, Turmtuermchen 88 % gedeckt (1122: 0 %). B/C bleiben Hinweise; kein GPS-Freibrief fuer A, weil Telefon-GPS
   (Rest 4 m) einen Versatz von 2-4 m nicht ausschliessen kann, A ihn aber sieht.
+  22.11.2026 AUTOMATISCH KLAEREN (tools/haufen_klaeren.py, Nutzer "Keine Handangriffe, nur Automatik"): jeder grosse Haufen (> --haufen) ohne
+  Handeintrag wird auf ein senkrechtes WANDBLATT geprueft (Wandband lueckenlos gefuellt), geeicht an den eigenen Waenden derselben Wolke:
+  kein Blatt >= L_eich/3 = echte Umgebung (geklaert, Befund + Merkmale in strasse.haufen[i].auto); Blatt = versetzte Wand -> bleibt rot;
+  Eichung zu schwach oder Zielgebaeude fehlt = nicht geklaert. Torgrenzen (Anteil, --haufen) unveraendert. Belege im Docstring dort.
+  Abschalten: RCPARK_HAUFEN_AUTO=0. Der Handeintrag bleibt lesbar (Vorrang), wird aber nicht mehr gebraucht.
 Quellen-Blindheit: LoD2 kennt keine Erker, Arkaden, Vordaecher, Baeume, Autos - Punkte dort landen in A als 'Strasse'.
 Deshalb wird nur gewarnt und gelistet; die Entscheidung faellt am Foto (tools/foto_diff.py, Ueberlagerung).
 
@@ -158,6 +163,26 @@ def haufen_geklaert(h, gekl, faktor=2.0):
     return None
 
 
+def auto_klaeren(haufen, Xb, strasse, pl, Q, ziel, n_haufen, min_abstand, z0):
+    """Je grossem, nicht von Hand geklaertem Haufen (> n_haufen Punkte) tools/haufen_klaeren.klaeren: Haufenpunkte gegen die eigenen Wandpunkte
+    (nicht Strasse, <= 1 m von einer LoD2-Kante des Zielgebaeudes) als Eichung. Schreibt h['auto'] (Merkmale) und bei Erfolg h['geklaert']."""
+    import haufen_klaeren as HK
+    if not HK.AN or pl is None: return
+    gross = [h for h in haufen if not h["geklaert"] and h["punkte"] > n_haufen]
+    if not gross: return
+    eigen = None
+    zg = [g for g in (ziel[0]["ground"] if ziel else []) if len(g) >= 3]
+    if zg:
+        ke = np.vstack([rand(g) for g in zg]); ns = ~strasse
+        eigen = Xb[ns][min_abstand(z0(Q[ns]), z0(ke)) < 1.0]
+    Xs = Xb[strasse]
+    for h in gross:
+        if eigen is None: h["auto"] = dict(geklaert=False, urteilsfaehig=False, befund="nicht geklaert: Zielgebaeude (objekt.json lod2.id) nicht im LoD2 - keine Eichung"); continue
+        h["auto"] = HK.klaeren(Xs[pl == h["_k"]], eigen)
+        print(f"A Haufen bei {h['mitte']} ({h['punkte']} Punkte): {h['auto']['befund']}")
+        if h["auto"]["geklaert"]: h["geklaert"] = "automatisch: " + h["auto"]["befund"]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("objekt"); ap.add_argument("--wolke", required=True); ap.add_argument("--radius", type=float, default=60.0)
@@ -204,12 +229,13 @@ def main():
     if len(ij):
         o = ij.min(0); sz = ij.max(0) - o + 1; G = np.zeros(sz[::-1], int); np.add.at(G, (ij[:, 1] - o[1], ij[:, 0] - o[0]), 1)
         lab, n = ndimage.label(G > 0, structure=np.ones((3, 3)))
+        _pl = lab[ij[:, 1] - o[1], ij[:, 0] - o[0]]                           # Haufen-Nummer je Strassenpunkt (fuer haufen_klaeren)
         for k in range(1, n + 1):
             cnt = int(G[lab == k].sum())
             if cnt < 200: continue
             yy, xx = np.nonzero(lab == k)
             haufen.append(dict(punkte=cnt, mitte=[round(float((xx.mean() + o[0] + .5) * gr), 1), round(float((yy.mean() + o[1] + .5) * gr), 1)],
-                               ausdehnung_m=[int(np.ptp(xx) + 1), int(np.ptp(yy) + 1)]))
+                               ausdehnung_m=[int(np.ptp(xx) + 1), int(np.ptp(yy) + 1)], _k=k))
         haufen.sort(key=lambda h: -h["punkte"])
     anteil = float(strasse.mean())
     try:                                                                     # 20.11.2026: die Strassenpunkte selbst ablegen (hoechstens 300 000) - haufen_herkunft.py/haufen_am_foto.py brauchen GENAU diese Punkte, nicht den Kasten um den Haufen (der enthaelt auch echte Waende)
@@ -266,6 +292,8 @@ def main():
     # zaehlen nicht mehr als Warnung - z. B. Erker/Traufe des Nachbarhauses oder Galerie, die ueber den LoD2-Grundriss kragen (echt, kein Teilnetzfehler).
     _gekl = obj.get("grundriss_haufen_geklaert", [])
     for h in haufen: h["geklaert"] = haufen_geklaert(h, _gekl)
+    # 22.11.2026 AUTOMATISCH klaeren (tools/haufen_klaeren.py, Nutzer: "nur Automatik"): grosser Haufen ohne Wandblatt (gegen die eigenen Waende geeicht) = Umgebung
+    auto_klaeren(haufen, X[band], strasse, _pl if len(ij) else None, Q, ziel, a.haufen, min_abstand, z0)
     _offen = [h for h in haufen if not h["geklaert"]]
     warn_a = bool(_offen) and _offen[0]["punkte"] > a.haufen
     for h in haufen[:5]:
