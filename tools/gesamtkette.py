@@ -670,6 +670,17 @@ def main():
             rc_, out_ = lauf(B, "druck", ["bash", "tools/bausatz.sh", a.ziel, ",".join(mk_)], log, ok=(0, 3))
             notiz(B, "druck_ergebnis", rc_ == 0, masken=len(mk_), hinweis="rc 3 = Luftinsel/Abbruch (Meldungen im Log); Teile: modelle/stl/<ziel>_teile, Platten: modelle/stl/<ziel>_farbteile")
     abnahme_nachholen(B, a.ziel, log)
+    # 22.11.2026 DETAILANSICHT JE BAUTEIL (0_DURCHBRUCH_AGENTEN_SCHLEIFE.md "Ein Nebenbild reicht nicht"): am festen Nebenbild (Steilblick 113231) wirkten Vordach und
+    # Laterne flach/fehlend, das STL hatte beides. Je Bauteil (audit/*_auto.json, vordach_profil, dach_profil laterne/spitze) beste SfM-Kamera -> audit/neben_detail_<bauteil>.jpg
+    # + Raster audit/neben_details.jpg. Bericht, kein Tor (rc 3 = kein Bauteil/keine Kamera). CPU-Render, kein GPU-Bedarf.
+    if os.path.isdir(os.path.join(Z, "audit")) and os.path.exists(os.path.join(ROOT, json.load(open(ZJ)).get("stl") or "-")):
+        rc_d, _ = lauf(B, "neben_details", [PY, "-W", "ignore", "-I", "tools/neben_details.py", ZR, "--daten", D], log, ok=(0, 3))
+        try:
+            nd_ = json.load(open(os.path.join(Z, "audit", "neben_details.json")))
+            notiz(B, "neben_details_ergebnis", rc_d == 0, bauteile=len(nd_.get("bauteile") or []), bilder=sum(1 for b_ in nd_.get("bauteile") or [] if b_.get("bild")),
+                  ohne_kamera=[b_["name"] for b_ in nd_.get("bauteile") or [] if not b_.get("bild")],
+                  schwach=[b_["name"] for b_ in nd_.get("bauteile") or [] if any(v_.get("schwach") for v_ in b_.get("ansichten") or [])], hinweis="ANSEHEN: audit/neben_details.jpg - Befund je Bauteil erst an der Detailansicht bestaetigen")
+        except Exception as e: notiz(B, "neben_details_ergebnis", False, fehler=f"audit/neben_details.json nicht lesbar (rc {rc_d}): {type(e).__name__} {e}"[:240])
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
     if os.path.isdir(os.path.join(Z, "audit")):

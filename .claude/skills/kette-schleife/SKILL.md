@@ -9,6 +9,10 @@ Grundlage: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` (lesen). Nichts am Modell von Hand
 2. **Auswerten:** `grep -a "ERGEBNIS DES LAUFS\|NICHT in Ordnung\|HANDSTAND\|FEHLER" <log> | tail`, Warnungen mit `FEHLER` im Log lesen
    (abgefangene Codefehler!), `journalctl -k --since <start> | grep -ci oom`. `audit/neben_*.jpg` + `seiten.jpg` ANSEHEN, dem Nutzer
    schicken (SendUserFile) mit Fehlerliste (sichtbar!) und Realitaets-% nach Aussehen. Logbuchzeile.
+   Befund je Bauteil erst an der DETAILANSICHT bestaetigen: `audit/neben_details.jpg` (Raster) + `audit/neben_detail_<bauteil>.jpg`
+   (Kettenstufe `neben_details`, tools/neben_details.py: beste SfM-Kamera je Bauteil, Profilteile zusaetzlich von der Seite; Wahl in
+   `audit/neben_details.json`). Ein festes Nebenbild (Steilblick, Gegenlicht) taeuscht ("Vordach flach, Laterne fehlt" 22.11. war falsch).
+   Fehlt die Detailansicht: `tools/py tools/neben_details.py modelle/<ziel>/objekt.json` (CPU, ~5 min, < 1 GB bei 1,4 Mio. Dreiecken). SCHWACH im Bild = verdeckt/kein Fotobeleg, nicht bewerten.
 3. **Je Befund ein Agent** (hoechstens 2-3 gleichzeitig): `isolation: "worktree"`, `model: "opus"`, `run_in_background: true`.
    Auftrag: EIN Befund mit Bildpfad/Log/Zahlen; Ursache mit Belegen; generisch als Kettenstufe/Werkzeug + Test + Zeile in
    `tools/schnelltest.sh`; `test_undefinierte_namen` vor Commit; keine Handstand-Werte; Objektordner auf main nicht aendern;
