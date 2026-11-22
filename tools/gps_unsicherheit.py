@@ -18,7 +18,7 @@ MODELL (ANNAHMEN gekennzeichnet):
   - Gibt es >= 2 Gruppen mit je >= MIN_GRUPPE Fotos, wird SIGMA zusaetzlich aus DEN DATEN geschaetzt (Abweichung der Einzel-Fits je Gruppe) und das GROESSERE genommen.
   - SITZUNG_LUECKE_S = 3600 s ANNAHME: am 1120 lagen die Teilsitzungen 11:3x und 11:4x (10 min auseinander) in DIESELBE Richtung daneben (korreliert); erst eine
     andere Stunde/ein anderer Tag (Satellitenstand, Laufweg) gilt als unabhaengig. Fotos ohne Aufnahmezeit bilden zusammen EINE Gruppe (vorsichtig).
-Verwendet von: tools/lage_gps_pruefen.py (GPS-Tor), tools/sfm_lod2_ausrichten.py (GPS-Anker/Veto), tools/seiten_gps_vereinen.py + tools/seiten_lod2_je_teil.py (Kasten je Teil)
+Verwendet von: tools/lage_gps_pruefen.py (GPS-Tor) und tools/sfm_lod2_ausrichten.py (Startlage/GPS-Anker/Veto) - seit 22.11. (1122j) BEIDE ueber gps_fit() auf allen GPS-Kameras inkl. Fernfotos, tools/seiten_gps_vereinen.py + tools/seiten_lod2_je_teil.py (Kasten je Teil)
 - EIN Mass, damit Tor und Ausrichtung nicht verschieden rechnen. Test: tools/test_gps_unsicherheit.py. Nur numpy (+ PIL fuer exif_zeit)."""
 import math
 import numpy as np
@@ -146,6 +146,74 @@ def anker_kasten(sd_dreh_grad, sd_mass_rel, k=ANKER_K, min_dreh=2.0, min_mass=0.
     d, m = max(k * sd_dreh_grad, min_dreh), max(k * sd_mass_rel, min_mass)
     if d > max_dreh or m > max_mass: return None
     return float(d), float(m)
+
+
+def _fit2d_t(a, b):
+    """Aehnlichkeit b ~ s R a + t (2D, ohne Spiegelung) - wie lage_gps_pruefen.fit2d (bitgleich)."""
+    ma, mb = a.mean(0), b.mean(0); a0, b0 = a - ma, b - mb; U, S, Vt = np.linalg.svd(a0.T @ b0)
+    d = np.sign(np.linalg.det(Vt.T @ U.T)); D = np.diag([1, d]); R = Vt.T @ D @ U.T
+    s = (S * np.diag(D)).sum() / max((a0 ** 2).sum(), 1e-12); return s, R, mb - s * R @ ma
+
+
+def _winkel(R): return float(np.degrees(np.arctan2(R[1, 0], R[0, 0])))
+
+
+def gps_fit(C, G, zeiten=None, nah_m=NAH_M, seed=0, n_boot=400, n_ransac=3000):
+    """DER GPS-Fit (EINE Quelle der Wahrheit, 22.11.2026): Kamerastandorte C (n x 2, beliebiges System: SfM-Lotsystem der Ausrichtung ODER Modell/UTM des Tors)
+    -> Foto-GPS G (n x 2, m, relativ zur Objektmitte): G ~ s R C + t. ALLE Fotos mit GPS zaehlen, auch die Fernfotos (langer Hebel); falsch registrierte Kameras und
+    falsche Geotags fallen im robusten Konsens heraus. Ablauf = bisheriges GPS-Tor (lage_gps_pruefen.urteil Pruefung 2, unveraendert verschoben): Start mit dem
+    Kamerakern (75 %), 5 x getrimmt, robuster Konsens (RANSAC < 10 m, gilt ab >= 40 % und >= 10 Fotos), Bootstrap (Zufall), ehrliches Band (Zufall + Sitzung x Ring).
+    WARUM (Lauf kette-schwabentor-null-1122j): die Ausrichtung nahm nur den Kamerakern (70 %, ohne die 10 Fernfotos bei 320 m) -> 'GPS traegt nicht' (1 Gruppe,
+    +-10,4 Grad), das Tor rechnete mit ihnen -> 'kann ankern' (2 Gruppen, +-1 Grad). Zwei Quellen, zwei Urteile ueber dasselbe GPS.
+    Lot und Mitte der Ausrichtung rechnen weiter NUR mit dem Kamerakern (Lehre 15.11.) - das betrifft diesen Fit nicht.
+    -> dict(ok, grund, s, R, t, drehung_grad (Fit), w (Inlier), res, ransac, drehung_90/massstab_90 (Bootstrap 5/50/95), drehung_90_ehrlich, massstab_90_ehrlich,
+            sd_drehung_grad, sd_massstab (gesamt 1 Sigma), anker (Kasten oder None), systematik, rest_median_m, n_fern_inlier)."""
+    C = np.asarray(C, float); G = np.asarray(G, float); n_ = len(G)
+    if n_ < 5 or len(C) != n_: return dict(ok=False, grund="zu wenige Fotos mit GPS")
+    _dm = np.hypot(*(C - np.median(C, 0)).T); w = _dm <= np.percentile(_dm, 75)   # 15.11.: Start nur mit dem Kamerakern - km-weit versetzte Kameras kippten den Fit
+    for _ in range(5):
+        if w.sum() < 3 or not np.isfinite(C[w]).all(): return dict(ok=False, grund="fit nicht moeglich")
+        try: s, R, t = _fit2d_t(C[w], G[w])
+        except np.linalg.LinAlgError: return dict(ok=False, grund="fit konvergiert nicht")
+        res = np.hypot(*(C @ R.T * s + t - G).T); w = res < max(np.percentile(res, 80), 15)
+    rng = np.random.default_rng(seed); best = None; ransac = None
+    for _ in range(n_ransac):
+        i3 = rng.choice(n_, 2, replace=False)
+        if np.hypot(*(G[i3[0]] - G[i3[1]])) < 10 or np.hypot(*(C[i3[0]] - C[i3[1]])) < 1e-6: continue
+        try: s_, R_, t_ = _fit2d_t(C[i3], G[i3])
+        except np.linalg.LinAlgError: continue
+        inl = np.hypot(*(C @ R_.T * s_ + t_ - G).T) < 10.0
+        if best is None or inl.sum() > best.sum(): best = inl
+    if best is not None and best.sum() >= max(10, 0.4 * n_):
+        for _ in range(3): s, R, t = _fit2d_t(C[best], G[best]); res = np.hypot(*(C @ R.T * s + t - G).T); best = res < 10.0
+        if best.sum() >= max(10, 0.4 * n_): w = best; ransac = dict(inlier=int(best.sum()), von=int(n_))
+    s, R, t = _fit2d_t(C[w], G[w]); res = np.hypot(*(C @ R.T * s + t - G).T)
+    ys, ss = [], []; iw = np.flatnonzero(w)
+    for _ in range(n_boot):
+        i = rng.choice(iw, len(iw)); s_, R_, _ = _fit2d_t(C[i], G[i]); ys.append(_winkel(R_)); ss.append(s_)
+    yb = np.percentile(ys, [5, 50, 95]); sb = np.percentile(ss, [5, 50, 95])
+    sy = systematik(G, gruppen(G, zeiten, nah_m), w, M=C)
+    yb_e = band(yb[1], (yb[2] - yb[0]) / 2, sy["dreh_sd_grad"]); sb_e = band(sb[1], (sb[2] - sb[0]) / 2, sy["mass_sd_rel"])
+    sd_d, sd_m = gesamt((yb[2] - yb[0]) / (2 * Z90), (sb[2] - sb[0]) / (2 * Z90 * max(sb[1], 1e-9)), sy); ak = anker_kasten(sd_d, sd_m)
+    fern = np.hypot(*G.T) >= nah_m
+    return dict(ok=True, grund="", s=float(s), R=R, t=t, drehung_grad=_winkel(R), w=w, res=res, ransac=ransac, drehung_90=yb, massstab_90=sb,
+                drehung_90_ehrlich=yb_e, massstab_90_ehrlich=sb_e, sd_drehung_grad=float(sd_d), sd_massstab=float(sd_m), anker=ak, systematik=sy,
+                rest_median_m=float(np.median(res[w])), n_fern_inlier=int((w & fern).sum()), n=int(n_))
+
+
+def gps_fit_widerspruch(f, max_dreh=15.0, max_skala=0.15):
+    """Regel des GPS-Tors (Pruefung 2) auf einen gps_fit(): Bootstrap-Median gegen das ehrliche Band und die festen Grenzen. -> Liste der Warnungen."""
+    return widerspruch(float(f["drehung_90"][1]), f["drehung_90_ehrlich"], float(f["massstab_90"][1]), f["massstab_90_ehrlich"], max_dreh, max_skala)
+
+
+def gps_fit_text(f):
+    """Eine Zeile fuer Logs (gleich in Tor und Ausrichtung)."""
+    if not f.get("ok"): return f"GPS-Fit nicht moeglich: {f.get('grund')}"
+    sy = f["systematik"]
+    return (f"GPS-Fit (eine Quelle, alle GPS-Fotos inkl. Fernfotos): {f['ransac']['inlier'] if f['ransac'] else int(f['w'].sum())} von {f['n']} Fotos (davon fern {f['n_fern_inlier']}), "
+            f"Rest Median {f['rest_median_m']:.1f} m; ehrlich +-{f['sd_drehung_grad']:.1f} Grad / +-{100 * f['sd_massstab']:.1f} % (systematisch {sy['dreh_sd_grad']:.1f} Grad aus "
+            f"{sy['n_gruppen']} Gruppe(n) Sitzung x Ring, n_eff {sy['n_eff']})" + (f" -> GPS kann ankern (Kasten +-{f['anker'][0]:.1f} Grad / {100 * f['anker'][1]:.1f} %)" if f["anker"]
+                                                                                    else " -> GPS legt die Lage NICHT fest (nur grobes Veto)"))
 
 
 def ehrlich(G, w, zeiten=None, M=None, sd_dreh_zufall=0.0, sd_mass_zufall=0.0, nah_m=NAH_M):
