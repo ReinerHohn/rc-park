@@ -22,6 +22,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
+  (immer am Ende) tools/befundliste.py -> audit/befunde.json + audit/befunde/bNN.jpg: sichtbare Fehler je Ort/Art/Beleg/Werkzeug fuer die Agenten-Schleife
 Umgebung: venv-seg (s.o.) oder `tools/py tools/gesamtkette.py ...`; Teilschritte mit pycolmap ruft die Kette selbst mit venv-colmap.
 Exit: 0 = Kette durchgelaufen, 2 = Datenplatte fehlt / modelle/<ziel>/objekt.json fehlt, 3 = keine Lage besteht alle Tore oder Platz zu knapp,
       4 = Stufe gescheitert (Fotos sammeln, SfM, Tor/Ausrichtung abgestuerzt) - Grund steht im Bericht (abbruch).
@@ -669,6 +670,16 @@ def main():
             rc_, out_ = lauf(B, "druck", ["bash", "tools/bausatz.sh", a.ziel, ",".join(mk_)], log, ok=(0, 3))
             notiz(B, "druck_ergebnis", rc_ == 0, masken=len(mk_), hinweis="rc 3 = Luftinsel/Abbruch (Meldungen im Log); Teile: modelle/stl/<ziel>_teile, Platten: modelle/stl/<ziel>_farbteile")
     abnahme_nachholen(B, a.ziel, log)
+    # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
+    # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
+    if os.path.isdir(os.path.join(Z, "audit")):
+        rc_b, _ = lauf(B, "befundliste", [PY, "-W", "ignore", "-I", "tools/befundliste.py", ZR, "--daten", D, "--bericht", bp, "--ab-schritt", str(n_start), "--log", log, "--ab-zeile", str(log_ab)], log, ok=(0, 3))
+        try:
+            bf_ = json.load(open(os.path.join(Z, "audit", "befunde.json"))); top_ = [b_ for b_ in bf_["befunde"] if b_["stufe"] == "FEHLER"][:5]
+            notiz(B, "befundliste_ergebnis", True, zusammenfassung=bf_.get("zusammenfassung"), ohne_fotos=bf_.get("ohne_fotos"),
+                  oben=[f"{b_['id']} {b_['art']} {(b_.get('ort') or {}).get('fassade') or ''} {(b_.get('ort') or {}).get('bauteil') or ''} -> {(b_.get('vorschlag') or {}).get('werkzeug', '')[:60]}" for b_ in top_],
+                  hinweis="ANSEHEN: audit/befunde/bNN.jpg; je Befund ein Agent (Skill kette-schleife)")
+        except Exception as e: notiz(B, "befundliste_ergebnis", False, fehler=f"audit/befunde.json nicht lesbar (befundliste rc {rc_b}): {type(e).__name__} {e}"[:240])
     return abschluss()
 
 
