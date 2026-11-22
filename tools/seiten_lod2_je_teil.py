@@ -87,12 +87,18 @@ def ziel_kanten(obj, radius=60.0):
     return [np.asarray(g, float) for b in WG.grundrisse(obj, radius) if b["id"] == zid for g in b["ground"]] if zid else []
 
 
+KASTEN_MAX_DREH, KASTEN_MAX_MASS = 20.0, 0.25   # ANNAHME: Obergrenze der Suche (90-Grad-Mehrdeutigkeit fast quadratischer Grundrisse bleibt ausgeschlossen; Rechenzeit)
+
+
 def kasten(F):
-    """Kasten je Teil aus seiner GPS-Unsicherheit -> dict(dreh_grad, mass_rel, versatz_m, kipp_grad, herkunft)."""
-    d = min(max(K_SIGMA * F["dreh_sd_grad"], SA.GPS_ANKER_DREH_MIN), SA.GPS_MAX_DREH); m = min(max(K_SIGMA * F["mass_sd_rel"], SA.GPS_ANKER_MASS_MIN), SA.GPS_MAX_MASS)
+    """Kasten je Teil aus seiner GPS-Unsicherheit -> dict(dreh_grad, mass_rel, versatz_m, kipp_grad, herkunft).
+    22.11.2026: EHRLICHE Unsicherheit (Zufall + Sitzungsfehler, gps_unsicherheit.py via seiten_gps_vereinen.rahmen) statt nur Bootstrap - Teil A des Schwabentors klebte im
+    3-x-Bootstrap-Kasten (2,3 Grad / 6 %) am Rand, die belegte Lage liegt ~9 Grad / ~15 % daneben. Obergrenze KASTEN_MAX_* statt der GPS-Tor-Grenzen."""
+    sd_d = F.get("dreh_sd_ehrlich_grad", F["dreh_sd_grad"]); sd_m = F.get("mass_sd_ehrlich_rel", F["mass_sd_rel"])
+    d = min(max(K_SIGMA * sd_d, SA.GPS_ANKER_DREH_MIN), KASTEN_MAX_DREH); m = min(max(K_SIGMA * sd_m, SA.GPS_ANKER_MASS_MIN), KASTEN_MAX_MASS)
     zuf = K_SIGMA * F["rest_median_m"] / math.sqrt(max(F["inlier"], 1)); v = min(math.hypot(VERSATZ_SITZUNG_M, zuf), VERSATZ_MAX_M)
     return dict(dreh_grad=round(d, 2), mass_rel=round(m, 4), versatz_m=round(v, 2), kipp_grad=KIPP_GRAD,
-                herkunft=f"{K_SIGMA:.0f} x Bootstrap ({F['dreh_sd_grad']} Grad, {100 * F['mass_sd_rel']:.1f} %), Versatz Wurzel({VERSATZ_SITZUNG_M}^2 + ({zuf:.2f})^2) (Sitzungsversatz ANNAHME 1120)")
+                herkunft=f"{K_SIGMA:.0f} x ehrlich ({sd_d} Grad, {100 * sd_m:.1f} %; Bootstrap {F['dreh_sd_grad']} Grad), Versatz Wurzel({VERSATZ_SITZUNG_M}^2 + ({zuf:.2f})^2) (Sitzungsversatz ANNAHME 1120)")
 
 
 # ---------- Suche
