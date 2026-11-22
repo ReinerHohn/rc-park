@@ -13,8 +13,12 @@ ABLAUF (beliebig viele Teile, Bruecken jeder Art):
   2. ZWISCHENMODELL je Kandidat: Brueckenbilder + NACHBAR_TIEFE Schritte starker Nachbarn (je NACHBARN_JE_BILD, >= NACHBAR_MIN Inlier), schrittweiser COLMAP-Mapper.
      SCHWELLE abs_pose_min_num_inliers NICHT frei gewaehlt: der Reihe nach SCHWELLEN (30 = COLMAP-Standard, 20, 15, 12, 10); genommen wird die STRENGSTE, bei der ein Modell
      >= MIN_BILDER_TEIL Bilder aus >= 2 beruehrten Teilen enthaelt. Die naechst lockerere Schwelle wird zur SENSITIVITAET mitgerechnet: Kopplung (Drehung, Massstab,
-     Versatz) bei beiden Schwellen im Stufen-JSON ('sensitivitaet'). 1122: 30 und 15 zerfallen, 12 verbindet. Untergrenze 10: ANNAHME (P3P braucht 4; < 10 Inlier je
-     Bild ist im Mapper-Log nicht mehr von Fehlregistrierung zu trennen).
+     Versatz) bei beiden Schwellen im Stufen-JSON ('sensitivitaet'). 1122 (Handliste 44 Bilder): 30 und 15 zerfielen, 12 verband; mit der Nachbarregel hier: 20
+     verbindet, 15 ergibt dieselbe Kopplung (Sensitivitaet 0). Untergrenze 10: ANNAHME (P3P braucht 4; < 10 Inlier je Bild nicht von Fehlregistrierung zu trennen).
+     NACHMATCHEN (RCPARK_ECK_NACHMATCHEN, Standard an): vor dem Mapper die Zwischenmodell-Bilder + EXIF-Zeitnachbarn (Rundgang, ZEIT_FENSTER_S) mit ALIKED+LightGlue
+     paarweise nachmatchen (tools/bruecke_nachmatchen.py, an SIFT angehaengt, SIFT-Indizes unveraendert -> Kopplung ueber SIFT-Punkte bleibt gueltig). Gescheitert ->
+     SIFT-Datenbank. Selbsttest Martinstor k=3: 0,83 -> 0,21 Grad, Lage 0,14 -> 0,024 m.
+     WIEDERHOLBARKEIT (Stabilitaetsmass): WIEDERHOLUNGEN Laeufe mit je WEGLASSEN der Nicht-Brueckenbilder weg -> Streuung der Kantenlage im JSON ('wiederholbarkeit').
   3. KOPPLUNG Zwischenmodell -> jeder beruehrte Teil ueber GEMEINSAME 3D-PUNKTE (gleicher Bildpunkt gemeinsamer Bilder), robuste Sim3 (sim3_robust.sim3_meter, Schwelle
      SCHWELLE_REL x Ausdehnung). Stimmig nur bei >= MIN_PUNKTE stimmigen Punkten, Anteil >= MIN_ANTEIL, Rest <= REST_REL x Ausdehnung, Massstab Haelften-Probe <= MASS_REL
      (sonst 'Massstab nicht belegt'); Hebel = Ausdehnung der gemeinsamen Punkte / Ausdehnung des Teils. Begruendung 1122: Ecke->A 96 % stimmig, Rest 0,34 %, Ecke->B
