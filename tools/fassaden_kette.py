@@ -305,6 +305,9 @@ def wandende_ist_ecke(waende, w, ende, abstand=0.8, parallel=0.95):
     return True
 
 
+_CODEFEHLER = []   # Programmierfehler in abgefangenen Teilschritten -> Stufe rot (wie Teilwerkzeug-Absturz)
+
+
 def quadern(f, objekt_json, Z_basis, art, ecken=(False, False)):
     """Quaderraster aus dem Wandbild auf ein gebautes Relief (tools/quader_raster.py, 21.11.2026): je Stein ebene Stirnflaeche (Median der Tiefe), druckbare Rillen.
     art: 'fein' (mono/misch, Steinzone unten), 'foto' (Fotorelief: nur wo es Stein ist), 'wand' (Wand ohne Quader-Tor: nur Steinzone von unten).
@@ -324,7 +327,10 @@ def quadern(f, objekt_json, Z_basis, art, ecken=(False, False)):
                              for fid, F_ in json.load(open(oa_)).items() if isinstance(F_, dict)}
         except Exception as e: print(f"    quader_raster: oeffnungen_auto.json nicht lesbar ({type(e).__name__}) - ohne Keilsteine", flush=True)
     try: p, info = quader_datei(f, ffn, **kw)
-    except Exception as e: print(f"    quader_raster {os.path.basename(f)}: FEHLER {type(e).__name__}: {str(e)[:160]} - Relief unveraendert", flush=True); return f, None
+    except Exception as e:
+        print(f"    quader_raster {os.path.basename(f)}: FEHLER {type(e).__name__}: {str(e)[:160]} - Relief unveraendert", flush=True)
+        if isinstance(e, (NameError, TypeError, AttributeError, IndexError, KeyError, ValueError)): _CODEFEHLER.append(f"quader_raster {os.path.basename(f)}: {type(e).__name__}: {str(e)[:120]}")   # 22.11.2026: Lauf 1122a - UnboundLocalError fiel als Warnung durch, Stufe 'in Ordnung', Quader weg
+        return f, None
     if p != f: print(f"    quader_raster {os.path.basename(f)}: {info.get('relief_steine')} Steine, Rillen {info.get('relief_rille_mm')} mm, Bild {os.path.basename(p)[:-4]}.jpg", flush=True)
     return p, (info if p != f else None)
 
@@ -627,6 +633,7 @@ def main():
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(dict(netz=a.netz, waende=W), open(os.path.join(od, "audit", "fassaden_kette.json"), "w"), indent=1, ensure_ascii=False)
     print("->", os.path.join(od, "audit", "fassaden_kette.json"), "| ANSEHEN: relief/<wand>_voll.jpg")
     n_rel = sum(1 for w in W if not w.get("aus"))                         # 17.11.2026 (Durchsicht): die Stufe endete IMMER mit rc 0 - auch ohne ein einziges Relief und nach Abstuerzen der Teilwerkzeuge
+    abstuerze += _CODEFEHLER
     if abstuerze: print(f"FEHLER: {len(abstuerze)} Teilwerkzeug-Absturz/Abstuerze (Ergebnis der betroffenen Waende unvollstaendig): " + " | ".join(abstuerze[:4]), flush=True); return 3
     if n_rel == 0: print(f"FEHLER: KEIN Relief fuer irgendeine der {len(W)} Waende (alle 'aus': " + "; ".join(sorted({str(w.get('aus')) for w in W}))[:300] + ") - die Stufe hat nichts geliefert", flush=True); return 2
     return 0

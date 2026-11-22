@@ -348,6 +348,7 @@ def quader_auf_relief(Z, ffn, min_fotos=2, massstab=None, min_mm=None, rand_ecke
     kq = K["quader"]; kc = float(K["zelle"]); ii_, jj_ = np.mgrid[i0:i0 + hh, j0:j0 + ww]; qi = np.clip((ii_ * c / kc).astype(int), 0, kq.shape[0] - 1); qj = np.clip((jj_ * c / kc).astype(int), 0, kq.shape[1] - 1)
     stein = kq[qi, qj] & (nf >= min_fotos)
     ri = np.clip(i - i0, 0, hh - 1); rj = np.clip(j - j0, 0, ww - 1); innen = ((i - i0) >= 0) & ((i - i0) < hh); innen_j = ((j - j0) >= 0) & ((j - j0) < ww)
+    oe_f = None                                                           # 22.11.2026: ohne 'oeffnung' im Relief (w01_mono/w01_foto_vorbau) warf Zeile 354 UnboundLocalError - Quaderraster fiel in Lauf 1122a still weg
     if "oeffnung" in Z:                                                   # Oeffnungen (Tor, Fenster) sind kein Stein: Reliefmaske ins Wandbildraster
         oe = np.zeros((hh, ww), bool); oe[np.ix_(ri[innen], rj[innen_j])] = np.asarray(Z["oeffnung"], bool)[np.ix_(innen, innen_j)]
         oe_f = ndi.binary_dilation(oe, np.ones((int(0.1 / c) | 1,) * 2)) if "oeffnung" in Z else None
