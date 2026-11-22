@@ -23,7 +23,8 @@ from sim3_robust import sim3_meter, umeyama, anwenden
 
 MAXID = 2147483647
 NACHBAR_MIN = 200        # wie DURCH_MIN_INLIER: nur starke Nachbarpaare ziehen Bilder ins Eckmodell
-NACHBARN_JE_BILD = 10    # ANNAHME: je Brueckenbild die 10 staerksten Nachbarn (1122: alle Nachbarn >= 200 = 196 Bilder, schrittweiser Mapper > 10 min; Handliste 44 Bilder reichte)
+NACHBARN_JE_BILD = 5     # ANNAHME: je Bild die 5 staerksten Nachbarn, zwei Schritte weit (NACHBAR_TIEFE); alle Nachbarn >= 200 = 196 Bilder (1122, > 10 min), ein Schritt = 14 Bilder (nur 2 Teil-0-Bilder im Eckmodell)
+NACHBAR_TIEFE = 2
 ABS_POSE_MIN = 12        # ANNAHME, siehe Kopf (3)
 MIN_PUNKTE = 100
 MIN_ANTEIL = 0.8
@@ -68,14 +69,24 @@ def kopplung_pruefen(X, Y, ausd):
 def eckbilder(sj, A, B, db):
     """Brueckenpaare (nicht ganz in A, nicht ganz in B) + starke direkte Nachbarn ihrer Bilder."""
     br = [d for d in (sj.get("durchblick") or []) if d.get("urteil") == "durchblick" and not (d["a"] in A and d["b"] in A) and not (d["a"] in B and d["b"] in B)]
+    # nur Paare auf einem Weg A <-> B: Zusammenhangsstuecke der Brueckenpaare, die ein A-Bild UND ein B-Bild beruehren (1122: sonst zogen Paare zwischen Videobildern
+    # ausserhalb beider Modelle 124 Eckbilder in 3 getrennte Eckmodelle)
+    eltern = {}
+    def wurzel(x):
+        while eltern.setdefault(x, x) != x: x = eltern[x]
+        return x
+    for d in br: eltern[wurzel(d["a"])] = wurzel(d["b"])
+    gut = {wurzel(x) for x in list(eltern) if x in A} & {wurzel(x) for x in list(eltern) if x in B}
+    br = [d for d in br if wurzel(d["a"]) in gut]
     kern = {d["a"] for d in br} | {d["b"] for d in br}
     if not kern: return br, []
-    c = sqlite3.connect(f"file:{db}?immutable=1", uri=True); nm = {i: n for i, n in c.execute("select image_id, name from images")}; aus = set(kern); nb = {k: [] for k in kern}
+    c = sqlite3.connect(f"file:{db}?immutable=1", uri=True); nm = {i: n for i, n in c.execute("select image_id, name from images")}; nb = {}
     for pid, r in c.execute("select pair_id, rows from two_view_geometries where rows >= ?", (NACHBAR_MIN,)):
         a, b = nm.get(pid // MAXID), nm.get(pid % MAXID)
-        if a in kern and b: nb[a].append((r, b))
-        if b in kern and a: nb[b].append((r, a))
-    for k, L in nb.items(): aus |= {x for _, x in sorted(L, reverse=True)[:NACHBARN_JE_BILD]}
+        if a and b: nb.setdefault(a, []).append((r, b)); nb.setdefault(b, []).append((r, a))
+    aus = set(kern); rand = set(kern)
+    for _ in range(NACHBAR_TIEFE):                                                     # Nachbarn der Nachbarn: das Eckmodell braucht >= 3 Bilder je Teil mit vielen Punkten
+        neu = {x for k in rand for _, x in sorted(nb.get(k, []), reverse=True)[:NACHBARN_JE_BILD]} - aus; aus |= neu; rand = neu
     return br, sorted(aus)
 
 
