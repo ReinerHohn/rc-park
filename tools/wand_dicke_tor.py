@@ -85,7 +85,16 @@ def kanten_messen(grundflaeche, teile, z_band=Z_BAND, abstand=ABSTAND_M, min_kan
         gueltig = [v for v in k["teile"].values() if "lage_m" in v]
         if not gueltig: k["urteil"] = "kein_urteil"; L_.append(k); continue
         D = np.concatenate(alle); k["dicke_gesamt_m"] = round(float(np.percentile(D, 90) - np.percentile(D, 10)), 3); k["lage_gesamt_m"] = round(float(np.median(D)), 3)
-        k["lageunterschied_m"] = round(max(v["lage_m"] for v in gueltig) - min(v["lage_m"] for v in gueltig), 3) if len(gueltig) > 1 else None
+        # GUELTIGKEIT (22.11.2026, Eck-Kopplung 1122, Kante Nord: Teil 0 40 000 Aussenpunkte bei -0,13 m, Teil 1 nur 681 verschmiert -3..-1,25 m, Dicke 1,58 m -> "versetzt 2,15 m"):
+        # wer die Wand nicht sieht, kann sie nicht bezeugen. Ein Teil zaehlt im TEILVERGLEICH nur, wenn er dort eine Wandflaeche zeigt (eigene Dicke <= DICKE_MAX_M,
+        # >= min_punkte); seine Punkte bleiben in der Gesamtdicke. Grenzen unveraendert. Meldung je Teil 'flaeche'/'hinweis'.
+        for t_, v in k["teile"].items():
+            if "lage_m" in v:
+                v["flaeche"] = v["dicke_m"] <= DICKE_MAX_M
+                if not v["flaeche"]: v["hinweis"] = f"Teil {t_}: keine Flaeche (eigene Dicke {v['dicke_m']} m > {DICKE_MAX_M} m), kein Urteil im Teilvergleich"
+        flaeche = [v for v in gueltig if v.get("flaeche")]
+        k["vergleich_teile"] = [t_ for t_, v in k["teile"].items() if v.get("flaeche")] if len(flaeche) > 1 else []
+        k["lageunterschied_m"] = round(max(v["lage_m"] for v in flaeche) - min(v["lage_m"] for v in flaeche), 3) if len(flaeche) > 1 else None
         dick = k["dicke_gesamt_m"] > DICKE_MAX_M; vers = (k["lageunterschied_m"] or 0) > VERSATZ_MAX_M
         k["urteil"] = "doppelwand" if dick and vers else ("versetzt" if vers else ("dick" if dick else "ok"))
         schraeg = [t for t, v in k["teile"].items() if abs(v.get("neigung_grad", 0)) > NEIGUNG_MAX_GRAD]
@@ -94,11 +103,57 @@ def kanten_messen(grundflaeche, teile, z_band=Z_BAND, abstand=ABSTAND_M, min_kan
     return L_
 
 
+INNEN_MIN_PUNKTE = 2000   # ANNAHME: je Teil so viele Punkte auf einer Innenflaeche, damit Lage/Winkel belastbar sind (1122: Durchfahrtswaende je Teil 10^4-10^5)
+INNEN_BIN_M = 0.1
+INNEN_FENSTER = 4         # Raster-Schritte je Seite (+-0,4 m): Ebenen beider Teile, die bis 0,4 m verschoben sind, gelten als dieselbe Flaeche
+
+
+def innenflaechen(grundflaeche, teile, z_band=Z_BAND, min_punkte=INNEN_MIN_PUNKTE, normal_grad=NORMAL_GRAD):
+    """UNABHAENGIGE PROBE der Teil-Lage (22.11.2026, Eck-Kopplung 1122: die Kopplung lief ueber das Eckmodell AUSSEN; die Waende der Tordurchfahrt sehen beide Teile
+    von innen). Je Richtung einer LoD2-Kante: Punkte INNERHALB der Grundflaeche (> 0,5 m hinter der Kante) mit Normale parallel zur Kantennormale (beide Vorzeichen);
+    Ebenen = Haeufungen des Abstands (10-cm-Raster), die JEDER Teil mit >= min_punkte zeigt. Je Ebene: Lage je Teil (Median), Unterschied, Winkel je Teil gegen die
+    Kante (Hauptrichtung) und Winkelunterschied. Nur Messung (kein Tor). Braucht Normalen (n x 6)."""
+    g = np.asarray(grundflaeche, float); c = g.mean(0); aus = []
+    if any(np.asarray(P).shape[1] < 6 for P in teile.values()) or len(teile) < 2: return aus
+    for p0, p1 in kanten_zusammenfassen(g):
+        L = float(np.linalg.norm(p1 - p0))
+        if L < MIN_KANTE_M: continue
+        e = (p1 - p0) / L; n = np.array([e[1], -e[0]]); n = n if (p0 - c) @ n > 0 else -n; band = {}
+        for name, P in teile.items():
+            P = np.asarray(P, float); w = (P[:, 2] > z_band[0]) & (P[:, 2] < z_band[1]); q = P[w, :2] - p0; s_ = q @ e; d = q @ n; nh = P[w, 3:5]; nl = np.linalg.norm(nh, axis=1)
+            m = (s_ > 0.5) & (s_ < L - 0.5) & (d < -0.5) & (np.abs(nh @ n) >= np.cos(np.radians(normal_grad)) * nl) & (nl > 1e-6)
+            band[str(name)] = (d[m], s_[m])
+        if len(band) < 2: continue
+        lo = min(float(x.min()) for x, _ in band.values() if len(x)) if all(len(x) for x, _ in band.values()) else None
+        if lo is None: continue
+        bins = np.arange(lo - INNEN_BIN_M, 0.0 + INNEN_BIN_M, INNEN_BIN_M); H = {t: np.histogram(x, bins)[0] for t, (x, _) in band.items()}
+        gem = np.min(np.stack([np.convolve(h, np.ones(2 * INNEN_FENSTER + 1), "same") for h in H.values()]), 0)   # Fenster +-0,4 m: verschobene Ebenen der Teile ueberlappen                                   # Ebene muss in JEDEM Teil vorkommen
+        for i in np.argsort(-gem):
+            if gem[i] < min_punkte or any(abs(bins[i] - x["mitte_m"]) < 1.0 for x in aus if x["kante"] == [np.round(p0, 2).tolist(), np.round(p1, 2).tolist()]): continue
+            mitte = (bins[i] + bins[i + 1]) / 2; ebene = dict(kante=[np.round(p0, 2).tolist(), np.round(p1, 2).tolist()], mitte_m=round(float(mitte), 2), teile={})
+            for t, (x, s_) in band.items():
+                m = np.abs(x - mitte) < INNEN_FENSTER * INNEN_BIN_M + INNEN_BIN_M
+                if m.sum() < min_punkte: break
+                Q = np.c_[s_[m], x[m]]; _, _, Vt = np.linalg.svd(Q - Q.mean(0)); ang = (np.degrees(np.arctan2(Vt[0, 1], Vt[0, 0])) + 90) % 180 - 90
+                ebene["teile"][t] = dict(n=int(m.sum()), lage_m=round(float(np.median(x[m])), 3), winkel_grad=round(float(ang), 2))
+            else:
+                v = list(ebene["teile"].values()); ebene["lageunterschied_m"] = round(max(x["lage_m"] for x in v) - min(x["lage_m"] for x in v), 3)
+                ebene["winkelunterschied_grad"] = round(max(x["winkel_grad"] for x in v) - min(x["winkel_grad"] for x in v), 2); aus.append(ebene)
+            if len([x for x in aus if x["kante"] == ebene["kante"]]) >= 3: break
+    return aus
+
+
 def zusammenfassen(kanten):
     """-> (rc, urteil) aus den Kanten-Urteilen."""
     schlecht = [k for k in kanten if k["urteil"] in ("doppelwand", "versetzt")]; gemessen = [k for k in kanten if k["urteil"] != "kein_urteil"]
     if not gemessen: return 2, "keine Kante mit genug Wandbeleg - kein Urteil"
     if schlecht: return 3, "; ".join(f"Kante {k['von']}->{k['bis']}: {k['urteil']} (Dicke {k['dicke_gesamt_m']} m, Teile {k['lageunterschied_m']} m auseinander)" for k in schlecht)
+    teile = sorted({t_ for k in kanten for t_ in k["teile"]})
+    if len(teile) > 1:                                                                  # jeder Teil braucht >= 1 Kante MIT Teilvergleich (Flaeche in beiden), sonst nicht belegt
+        ohne = [t_ for t_ in teile if not any(t_ in (k.get("vergleich_teile") or []) for k in kanten)]
+        if ohne:
+            eigen = {t_: [f"{k['von']}->{k['bis']}" for k in kanten if (k["teile"].get(t_) or {}).get("flaeche")] for t_ in ohne}
+            return 2, "nicht belegt: " + "; ".join(f"Teil {t_}: " + (f"nur eigene Wand ({', '.join(eigen[t_])}), kein Teilvergleich" if eigen[t_] else "keine Wandflaeche") for t_ in ohne)
     dick = [k for k in gemessen if k["urteil"] == "dick"]; schraeg = [k for k in gemessen if k.get("schraeg_teile")]
     return 0, f"{len(gemessen)} Kanten gemessen, keine Doppelwand" + (f"; {len(dick)} Kante(n) dick in sich (Torbogen/Tiefe, zweite Wand oder Kippung)" if dick else "") \
         + (f"; {len(schraeg)} Kante(n) mit schraeger Wand (> {NEIGUNG_MAX_GRAD:.0f} Grad: Lot des Teils pruefen)" if schraeg else "")
@@ -144,7 +199,10 @@ def main(argv=None):
     if not gf: return ende(2, f"LoD2-Grundflaeche von {zid} nicht gefunden")
     P, I = teile_laden(sm, au); erg["teile"] = I
     if len(P) < 1: return ende(2, "kein Teil in den Modellrahmen gelegt: " + json.dumps(I, ensure_ascii=False))
-    erg["kanten"] = [k for g in gf for k in kanten_messen(g, P)]; rc, u = zusammenfassen(erg["kanten"]); return ende(rc, u)
+    erg["kanten"] = [k for g in gf for k in kanten_messen(g, P)]; rc, u = zusammenfassen(erg["kanten"])
+    erg["innenflaechen"] = [x for g in gf for x in innenflaechen(g, P)]                  # unabhaengige Probe der Teil-Lage (nur Messung)
+    for x in erg["innenflaechen"]: print(f"Innenflaeche hinter {x['kante'][0]}->{x['kante'][1]} bei {x['mitte_m']} m: Teile {x['lageunterschied_m']} m / {x['winkelunterschied_grad']} Grad auseinander | " + "; ".join(f"Teil {t}: {v['lage_m']:+.2f} m, {v['winkel_grad']:+.1f} Grad (n {v['n']})" for t, v in x["teile"].items()))
+    return ende(rc, u)
 
 
 if __name__ == "__main__": sys.exit(main())
