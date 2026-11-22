@@ -57,7 +57,13 @@ GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
 # weiter, weil nur die Eingaben im Stand standen). Teuer und nur an Eingaben gebunden: Mapper je Teil, a/b-Vergleich, Sperrliste, dichte Wolke je Teil. Billig und an den CODE
 # gebunden: Vereinen (Klappung, Foto-GPS), Zusammenlegen, Blick-/GPS-Seiten-Tor, Einsetzen. Die Werkzeuge der Nachstufe (samt ihrer Hilfsmodule, tools/code_stand.py) ergeben
 # 'nachstufe_code' in seiten_modelle.json; tools/pipeline_objekt.py rechnet iphone_sfm.py erneut (nur die Nachstufe), wenn er nicht mehr zum Code passt.
-NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py")
+NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py", "seiten_querspur_binden.py")
+# 22.11.2026 TEILE UEBER QUERSPUREN BINDEN nach dem GPS-Vereinen (tools/seiten_querspur_binden.py, querspur_stufe; Nulllauf 1122f: GPS-Lage von Teil 1 nur +-3,6 Grad/+-12 %,
+# Ostwand 1-2,5 m ausserhalb LoD2, Westwand doppelt). Querpaare der Ursprungs-DB -> 3D-3D -> RANSAC-Sim3 NUR im GPS-Korridor (GPS = Veto, nicht gemittelt). NUR auf dem GPS-Weg:
+# auf dem Klappungs-Weg (Martinstor) SIND die Querpaare die Gegenseiten-Verwechslung und es gibt kein unabhaengiges Veto. Nach einer Bindung wird der GPS-Ausgleich AUSGELASSEN:
+# die Teile haben im vereinten Modell keine gemeinsamen 3D-Punkte, sfm_gps_ausgleich zoege jeden Teil (>= 15 Geotags) wieder einzeln aufs GPS = Bindung rueckgaengig.
+# Abschalten: RCPARK_QUERSPUR=0.
+QUERSPUR = os.environ.get("RCPARK_QUERSPUR", "1") != "0"
 # 22.11.2026 GEMEINSAMER AUSGLEICH MIT GPS-PRIOREN nach dem Vereinen (tools/sfm_gps_ausgleich.py, gps_ausgleich_stufe). Nur ab 40 unabhaengigen Geotags, nur wenn Bildfehler nicht
 # schlechter und GPS-Rest kleiner; sonst unveraendert (gemeldet). Abschalten: RCPARK_GPS_AUSGLEICH=0. VERFORM_MAX_PROZ nur fuer die Meldung (Grenze steht im Werkzeug).
 GPS_AUSGLEICH = os.environ.get("RCPARK_GPS_AUSGLEICH", "1") != "0"
@@ -385,7 +391,12 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
             if rg == 0 and "B_nach_A" in vgd:
                 M_.append(f"Teil {B['teil']}: Klappung gescheitert ({v.get('urteil') or 'rc ' + str(rc)}) - ueber das Foto-GPS gelegt: {vgd.get('urteil')}")
                 v = vgd; rc = 0; e.update(weg="gps", urteil=vgd.get("urteil"), pruefung=vgd.get("pruefung"))
-                if (vgd.get("pruefung") or {}).get("mass_sd_rel", 0) > 0.05:
+                qs = querspur_stufe(vo + "_querspur", A, B, db_ursprung, fa, fb, vgj) if QUERSPUR else dict(ok=False, urteil="abgeschaltet (RCPARK_QUERSPUR=0)")
+                e["querspur"] = {k: qs.get(k) for k in ("rc", "ok", "urteil", "pruefung", "doppelwand", "doppelwand_aus", "ordner") if k in qs}
+                if qs.get("ok") and "B_nach_A" in qs:
+                    v = dict(vgd, B_nach_A=qs["B_nach_A"]); e.update(weg="gps+querspur", urteil=qs.get("urteil")); M_.append(f"Teil {B['teil']}: GPS-Lage ueber Querspuren an Teil A gebunden: {qs.get('urteil')}")
+                else: M_.append(f"Teil {B['teil']}: Querspur-Bindung NICHT uebernommen - GPS-Lage bleibt: {qs.get('urteil')}")
+                if e["weg"] == "gps" and (vgd.get("pruefung") or {}).get("mass_sd_rel", 0) > 0.05:
                     M_.append(f"ACHTUNG Teil {B['teil']}: Massstab gegen Teil A nur auf +-{100 * vgd['pruefung']['mass_sd_rel']:.0f} % belegt (Foto-GPS) - Masse dieser Seite nicht ohne Gegenprobe (LoD2-Grundriss, foto_mass) verwenden")
         if rc == 0 and "B_nach_A" in v:
             kand = os.path.join(vz, f"versuch_{B['teil']}"); tj = os.path.join(vo, "seiten_blick.json")
@@ -394,7 +405,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
             except Exception as ex:
                 e["zusammenlegen"] = f"gescheitert: {ex}"; M_.append(f"Teil {B['teil']}: seiten_vereinen rc 0, aber das Zusammenlegen der Modelle scheiterte ({ex}) - Teil NICHT im Ergebnis"); ber["nicht_vereint"].append(B["teil"]); continue
             rt = LAUF([PYC, "-I", os.path.join(T, "seiten_blick_tor.py"), kand, sj, "--aus", tj], os.path.join(vo, "seiten_blick.log")); e["blick_tor"] = rt
-            if rt == 0 and e["weg"] == "gps":                                          # GPS-Lage: zweites unabhaengiges Tor - alle GPS-Fotos des vereinten Modells muessen zusammen passen
+            if rt == 0 and e["weg"].startswith("gps"):                                        # GPS-Lage: zweites unabhaengiges Tor - alle GPS-Fotos des vereinten Modells muessen zusammen passen
                 rgs = LAUF([PYC, "-I", os.path.join(T, "gps_seiten_pruefen.py"), kand, "--bilder", fotos], os.path.join(vo + "_gps", "gps_seiten.log")); e["gps_seiten_tor"] = rgs
                 if rgs == 3:
                     M_.append(f"Teil {B['teil']}: ueber das Foto-GPS gelegt, aber das GPS-Seiten-Tor am vereinten Modell fiel DURCH ({vo}_gps/gps_seiten.log) - Teil wieder herausgenommen"); ber["nicht_vereint"].append(B["teil"]); continue
@@ -409,7 +420,10 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         ber["nicht_vereint"].append(B["teil"])
     if ang:                                                                              # das letzte angenommene Zwischenmodell ist das Ergebnis
         ziel = os.path.join(vz, "sparse"); dichte = [(A, None)] + ang; dicht_ok = True
-        ga = gps_ausgleich_stufe(vz, stand_sparse, fotos, sj, A, ang, M_) if GPS_AUSGLEICH else dict(ok=False, urteil="abgeschaltet (RCPARK_GPS_AUSGLEICH=0)")
+        gebunden = [x["teil"] for x, _ in ang if (x.get("vereinen") or {}).get("weg") == "gps+querspur"]
+        if not GPS_AUSGLEICH: ga = dict(ok=False, urteil="abgeschaltet (RCPARK_GPS_AUSGLEICH=0)")
+        elif gebunden: ga = dict(ok=False, urteil=f"ausgelassen: Teile {gebunden} ueber Querspuren gebunden - ohne gemeinsame 3D-Punkte zoege der GPS-Ausgleich sie wieder einzeln aufs GPS")
+        else: ga = gps_ausgleich_stufe(vz, stand_sparse, fotos, sj, A, ang, M_)
         ber["gps_ausgleich"] = {k: v for k, v in ga.items() if k != "teile"}
         if ga.get("ok") and ga.get("sparse") and os.path.isfile(os.path.join(ga["sparse"], "images.bin")):
             D = {k: np.array(v["delta"]) for k, v in (ga.get("teile") or {}).items()}
@@ -451,6 +465,25 @@ def gps_ausgleich_stufe(vz, sparse, fotos, sj, A, ang, M_):
         json.dump(dict(stand=st, rc=rc), open(sf, "w"))
     try: return json.load(open(aj))
     except Exception as ex: return dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, {ao}/log.txt)")
+
+
+def querspur_stufe(qo, A, B, db_ursprung, fa, fb, vgj):
+    """TEILE UEBER QUERSPUREN BINDEN (tools/seiten_querspur_binden.py) nach dem GPS-Vereinen von B. Zwischenstand an Eingaben (Modelle, Ursprungs-DB, dichte Wolken, GPS-Ergebnis)
+    + Code-Stand gebunden. -> querspur.json als dict mit 'rc' und 'ordner' (ok False = GPS-Lage bleibt)."""
+    qj = os.path.join(qo, "querspur.json"); sf = os.path.join(qo, "stand.json")
+    st = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), db_ursprung, vgj, *(x for x in (fa, fb) if x)) + [code_stand("seiten_querspur_binden.py", wurzel=T)]
+    try: alt = json.load(open(sf)) if os.path.isfile(qj) else None
+    except Exception: alt = None
+    if alt and alt.get("stand") == st: rc = alt["rc"]
+    else:
+        os.makedirs(qo, exist_ok=True); sag(f"SEITENMODELLE: Teil {B['teil']} ueber Querspuren an Teil {A['teil']} binden (tools/seiten_querspur_binden.py) ...")
+        rc = LAUF([PYC, "-I", os.path.join(T, "seiten_querspur_binden.py"), A["modell"], B["modell"], db_ursprung, "--gps", vgj, "--aus", qo] + (["--dicht-a", fa, "--dicht-b", fb] if fa and fb else []), os.path.join(qo, "log.txt"))
+        json.dump(dict(stand=st, rc=rc), open(sf, "w"))
+    try: d = json.load(open(qj))
+    except Exception as ex: d = dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, rc {rc}, {qo}/log.txt)")
+    d.update(rc=rc, ordner=qo)
+    if rc != 0: d["ok"] = False
+    return d
 
 
 def _frei(p):

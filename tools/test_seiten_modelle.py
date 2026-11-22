@@ -123,9 +123,12 @@ Rz = np.diag([-1.0, -1.0, 1.0, 1.0]); M_kleb = Rz @ M_wahr                      
 ZAHL = {}
 
 
-def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr, ausgleich=None):
+def attrappe(vereinen_rc=0, matrix=M_wahr, gps_rc=None, gps_matrix=M_wahr, ausgleich=None, querspur=None):
     def lauf(cmd, log=None):
         was = os.path.basename(cmd[2]) if cmd[0] == SM.PYC else cmd[1]; ZAHL[was] = ZAHL.get(was, 0) + 1
+        if was == "seiten_querspur_binden.py" and querspur is not None:                 # 22.11.2026 Querspur-Bindung; querspur None = echtes Werkzeug (Text-DB -> rc 2, GPS-Lage bleibt)
+            assert cmd[5].endswith("ursprung.db") and cmd[cmd.index("--gps") + 1].endswith(os.path.join("_gps", "vereinen.json")), "Querspur ohne Ursprungs-DB oder ohne GPS-Ergebnis"
+            aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); json.dump(dict(ok=True, urteil="gebunden (Attrappe)", B_nach_A=querspur.tolist(), doppelwand=dict(vor=dict(median_m=1.8), nach=dict(median_m=0.05))), open(os.path.join(aus, "querspur.json"), "w")); return 0
         if was == "view_graph_calibrator": return 0
         if was == "sfm_gps_ausgleich.py" and ausgleich is not None:                       # 22.11.2026 GPS-Ausgleich; ausgleich None = echtes Werkzeug (Fotoordner ohne GPS -> rc 2, unveraendert)
             aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True); assert json.load(open(cmd[cmd.index("--teile") + 1])), "Teile-Zuordnung leer"
@@ -211,6 +214,7 @@ assert B["ergebnis"]["art"] == "teil_a_allein" and t1["vereinen"]["blick_tor"] =
 # c2) Klappung abgelehnt -> Rueckfall Foto-GPS (22.11.2026, Nulllauf schwabentor-1122): richtig -> vereint (Blick-Tor + GPS-Seiten-Tor), Massstab-Warnung; geklebt -> Blick-Tor
 #     faellt durch; GPS zu ungenau -> Teil A allein mit GPS-Urteil in der Meldung; RCPARK_SEITEN_GPS=0 -> kein GPS-Versuch
 wg = arbeit("kg"); ZAHL.clear(); rc, aus, B = kette(wg, vereinen_rc=3, gps_rc=0); t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
+B_kg, t1_kg = B, t1
 assert rc == 0 and B["ergebnis"]["art"] == "vereint" and B["vereint"] == [0, 1] and t1["vereinen"]["weg"] == "gps" and t1["vereinen"]["blick_tor"] == 0 and t1["vereinen"]["gps_seiten_tor"] == 2, f"GPS-Rueckfall: {B['ergebnis']} {t1.get('vereinen')}\n{aus[-1200:]}"
 assert ZAHL.get("seiten_gps_vereinen.py") == 1 and ZAHL.get("gps_seiten_pruefen.py") == 1 and pycolmap.Reconstruction(os.path.join(wg, "sparse", "0")).num_reg_images() == 24, f"Aufrufe {ZAHL}"
 assert any("ueber das Foto-GPS gelegt" in m for m in B["meldungen"]) and any("Massstab gegen Teil A nur auf +-8 %" in m for m in B["meldungen"]), f"GPS-Weg nicht gemeldet: {B['meldungen']}"
@@ -223,6 +227,20 @@ wg4 = arbeit("kg4"); SM.GPS_VEREINEN = False; ZAHL.clear()
 try: rc, aus, B = kette(wg4, vereinen_rc=3, gps_rc=0)
 finally: SM.GPS_VEREINEN = True
 assert B["ergebnis"]["art"] == "teil_a_allein" and not ZAHL.get("seiten_gps_vereinen.py"), "RCPARK_SEITEN_GPS=0 wirkt nicht"
+# c3) Querspur-Bindung nach dem GPS-Vereinen (22.11.2026, Nulllauf 1122f): echtes Werkzeug auf Text-DB (Fall kg) -> GPS-Lage bleibt, gemeldet; gebunden -> Matrix der Querspur
+#     im vereinten Modell, Weg gps+querspur, GPS-Ausgleich ausgelassen; Wiederverwendung; RCPARK_QUERSPUR=0 -> kein Aufruf; Klappungs-Weg ruft die Stufe nie
+assert t1_kg["vereinen"]["weg"] == "gps" and t1_kg["vereinen"]["querspur"]["rc"] == 2 and any("Querspur-Bindung NICHT uebernommen" in m for m in B_kg["meldungen"]), f"Querspur ohne DB: {t1_kg['vereinen'].get('querspur')}"
+M_gps_daneben = np.diag([1.05, 1.05, 1.05, 1.0]) @ M_wahr
+wq = arbeit("kq"); ZAHL.clear(); rc, aus, B = kette(wq, vereinen_rc=3, gps_rc=0, gps_matrix=M_gps_daneben, querspur=M_wahr, ausgleich="ok"); t1 = [t for t in B["teile"] if t.get("gerechnet")][1]
+assert rc == 0 and B["ergebnis"]["art"] == "vereint" and t1["vereinen"]["weg"] == "gps+querspur" and t1["vereinen"]["querspur"]["ok"] and ZAHL.get("seiten_querspur_binden.py") == 1, f"Querspur gebunden: {t1.get('vereinen')}"
+vj_ = json.load(open(os.path.join(wq, "sparse", "0", "vereint.json"))); assert np.allclose(vj_["teile"][1]["matrix"], M_wahr), "vereintes Modell nicht mit der Querspur-Matrix gelegt"
+assert not ZAHL.get("sfm_gps_ausgleich.py") and "ausgelassen" in B["gps_ausgleich"]["urteil"] and not any("Massstab gegen Teil A nur auf" in m for m in B["meldungen"]), f"GPS-Ausgleich nach Bindung: {B['gps_ausgleich']} {ZAHL}"
+ZAHL.clear(); rc, aus, B = kette(wq, vereinen_rc=3, gps_rc=0, gps_matrix=M_gps_daneben, querspur=M_wahr, ausgleich="ok"); assert not ZAHL.get("seiten_querspur_binden.py") and [t for t in B["teile"] if t.get("gerechnet")][1]["vereinen"]["weg"] == "gps+querspur", f"Querspur nicht wiederverwendet: {ZAHL}"
+wq2 = arbeit("kq2"); SM.QUERSPUR = False; ZAHL.clear()
+try: rc, aus, B = kette(wq2, vereinen_rc=3, gps_rc=0, querspur=M_wahr)
+finally: SM.QUERSPUR = True
+assert not ZAHL.get("seiten_querspur_binden.py") and [t for t in B["teile"] if t.get("gerechnet")][1]["vereinen"]["weg"] == "gps", "RCPARK_QUERSPUR=0 wirkt nicht"
+wq3 = arbeit("kq3"); ZAHL.clear(); rc, aus, B = kette(wq3, querspur=M_wahr); assert not ZAHL.get("seiten_querspur_binden.py") and B["ergebnis"]["art"] == "vereint", "Querspur auf dem Klappungs-Weg aufgerufen"
 # f) CODE-STAND (22.11.2026, Nulllauf schwabentor-1122c): Zwischenstand "Klappung abgelehnt, Teil A allein" von ALTEM Code (GPS-Rueckfall noch aus) - danach kommt der neue Code.
 #    Erwartet: Mapper je Teil und dichte Wolken je Teil werden wiederverwendet, die Klappung laeuft nur bei geaendertem seiten_vereinen.py neu, der GPS-Rueckfall laeuft, Ergebnis vereint.
 wf = arbeit("kf"); SM.GPS_VEREINEN = False
