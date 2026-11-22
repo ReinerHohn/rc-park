@@ -25,10 +25,11 @@ ok(FK.parallel_plaetze(8, {"FASSADEN_PARALLEL": "4", "RCPARK_GPU_MB": "6000"})[1
 ok(FK.parallel_plaetze(8, {"FASSADEN_PARALLEL": "4", "FASSADEN_GPU_PARALLEL": "3"})[1] == 3, "FASSADEN_GPU_PARALLEL setzt die Plaetze von Hand")
 ok(FK.parallel_plaetze(8, {"RCPARK_RAM_MB": "8000", "RCPARK_GPU_MB": "2500"}, fein=True)[0] == 1, "Buchung 8000 + Feinrechnung (5,3 GB) -> nur 1 Wand (1121p: OOM, Signal 6)")
 # 23.11.2026: freier RAM aus /proc/meminfo haengt von der Last ab (Schnelltest neben Kettenlauf -> 1 statt 2) -> fest 16 GB frei vorspielen
-import io as _io
-FK.open = lambda pf, *a, **k: _io.StringIO("MemAvailable:   16000000 kB\n") if pf == "/proc/meminfo" else open(pf, *a, **k)
+import io as _io, builtins as _bi
+_open_alt = _bi.open
+_bi.open = lambda pf, *a, **k: _io.StringIO("MemAvailable:   16000000 kB\n") if pf == "/proc/meminfo" else _open_alt(pf, *a, **k)
 ok(FK.parallel_plaetze(8, {"RCPARK_RAM_MB": "8000", "RCPARK_GPU_MB": "2500"}, fein=False)[0] == min(2, max(1, (os.cpu_count() or 4) // 4)), "Buchung 8000 ohne Fein -> 2 Waende (RAM-Last vorgespielt)")
-del FK.open
+_bi.open = _open_alt
 
 # 1b Reihenfolge + GPU-Grenze
 W = [dict(name=f"w{i:02d}", dauer=0.05 * (5 - i)) for i in range(5)]; sperre = threading.Lock()
