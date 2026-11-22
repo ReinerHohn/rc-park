@@ -100,6 +100,59 @@ def vorbereiten(a):
     print(f"vorbereitet: {len(info)} Bilder, verworfen {len(verworfen)}")
 
 
+def sift_fehlend(db, names):
+    """Namen aus <names>, die nach der Merkmalssuche NICHT in der Datenbank stehen oder keine Schluesselpunkte haben."""
+    con = sqlite3.connect(db)
+    try: ids = {n: i for i, n in con.execute("select image_id,name from images")}; kp = dict(con.execute("select image_id,rows from keypoints").fetchall())
+    except sqlite3.OperationalError: return list(names)      # Datenbank ohne Tabellen (Merkmalssuche schrieb nichts)
+    finally: con.close()
+    return [n for n in names if not kp.get(ids.get(n), 0)]
+
+
+def vram_frei_mb():
+    """Freier GPU-Speicher in MiB (nvidia-smi), None wenn unbekannt."""
+    import subprocess
+    try: return int(subprocess.run(["nvidia-smi", "--query-gpu=memory.free", "--format=csv,noheader,nounits"], capture_output=True, text=True, timeout=20).stdout.split()[0])
+    except Exception: return None
+
+
+def sift_sicher(pycolmap, db, bilddir, bilder, names, f0, extrahieren=None, warte_s=180, vram_mb=2500, klein_px=1600):
+    """SIFT fuer <names> (je Bildgroesse EINE Kamera) mit NACHHOLEN fehlender Bilder. Rueckgabe dict(gpu_klein=[..], cpu=[..], fehlend=[..]).
+    WARUM (23.11.2026, Kette schwabentor-null-1122n, seiten_luecken Schritt merkmale): zwei Agenten-Jobs belegten die GPU, SiftGPU meldete 'CuTexImage::InitTexture2D: out of memory',
+    COLMAP schrieb je neuem Bild nur 'FAILURE: Failed to process the image' und liess es AUS DER DATENBANK WEG - extract_features endete mit rc 0. Alle 86 neuen Bilder fehlten,
+    das Matching lief 5 min umsonst, dann KeyError beim Nachschlagen; die alte Pruefung (Bilder mit 0 Schluesselpunkten) sah fehlende Bilder nie.
+    Ablauf: Runde 1 wie bisher (Geraet auto, RCPARK_SIFT_MAX); fehlen Bilder -> auf freien GPU-Speicher warten (<= warte_s, >= vram_mb) und nur die fehlenden mit
+    max_image_size=klein_px auf der GPU; fehlen dann noch welche -> CPU-SIFT (laut gemeldet). Was danach fehlt, ist kein Speicherproblem (Datei unlesbar o. ae.).
+    <extrahieren>: Ersatz fuer pycolmap.extract_features (Test)."""
+    import time
+    ex = extrahieren or pycolmap.extract_features; out = dict(gpu_klein=[], cpu=[], fehlend=[])
+    def runde(nn, geraet, max_px):
+        gr = collections.defaultdict(list)
+        for n in nn: gr[tuple(bilder[n]["bild"])].append(n)         # Hoch-/Querformat = verschiedene Bildgroesse -> je Gruppe EINE Kamera (gleiche f, k1)
+        for (W, H), g in gr.items():
+            ro = pycolmap.ImageReaderOptions(); ro.camera_model = "SIMPLE_RADIAL"; ro.camera_params = f"{f0},{W / 2},{H / 2},0"
+            eo = pycolmap.FeatureExtractionOptions(); eo.use_gpu = geraet != "cpu"
+            if max_px: eo.max_image_size = int(max_px)
+            ex(db, bilddir, image_names=g, camera_mode=pycolmap.CameraMode.SINGLE, reader_options=ro, extraction_options=eo,
+               device={"auto": pycolmap.Device.auto, "gpu": pycolmap.Device.cuda, "cpu": pycolmap.Device.cpu}[geraet])
+    runde(names, "auto", os.environ.get("RCPARK_SIFT_MAX"))      # opt-in RCPARK_SIFT_MAX: SiftGPU-VRAM begrenzen (3200 -> bis 7,4 GB, 1600 -> 2,1 GB; GPU_PARALLEL_UNTERSUCHUNG.md)
+    fehl = sift_fehlend(db, names)
+    if fehl:
+        print(f"WARNUNG: {len(fehl)} von {len(names)} Bildern ohne Merkmale nach SIFT (COLMAP laesst sie bei SiftGPU 'out of memory' still weg): {fehl[:3]} - "
+              f"warte auf >= {vram_mb} MiB freien GPU-Speicher und wiederhole mit max_image_size {klein_px}", flush=True)
+        t0 = time.time()
+        while warte_s > 0 and time.time() - t0 < warte_s:
+            v = vram_frei_mb()
+            if v is None or v >= vram_mb: break
+            time.sleep(10)
+        runde(fehl, "gpu", klein_px); f2 = sift_fehlend(db, fehl); out["gpu_klein"] = [n for n in fehl if n not in f2]; fehl = f2
+    if fehl:
+        print(f"WARNUNG: GPU-SIFT scheitert weiter an {len(fehl)} Bildern - CPU-SIFT als Rueckfall (langsamer; GPU-Belegung pruefen: nvidia-smi, parallele Jobs)", flush=True)
+        runde(fehl, "cpu", klein_px); f3 = sift_fehlend(db, fehl); out["cpu"] = [n for n in fehl if n not in f3]; fehl = f3
+    out["fehlend"] = fehl
+    return out
+
+
 def merkmale(a):
     import pycolmap
     pycolmap.set_random_seed(0)
@@ -108,14 +161,9 @@ def merkmale(a):
         src = sqlite3.connect(f"file:{a.ref_db}?mode=ro", uri=True); dst = sqlite3.connect(db); src.backup(dst); dst.close(); src.close()      # Kopie, Referenz bleibt unberuehrt
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from colmap_db_schema import kameras_alt      # 18.11.2026: Datenbank vom neuen globalen Mapper (Spalte 'source') -> pycolmap 4.2.1 oeffnet sie sonst nicht
     if kameras_alt(db): print("Datenbank-Kopie auf das pycolmap-4.2.1-Schema zurueckgefuehrt (Kameratabelle 'source' -> prior_focal_length)", flush=True)
-    gr = collections.defaultdict(list)
-    for n in names: gr[tuple(V["bilder"][n]["bild"])].append(n)         # Hoch-/Querformat = verschiedene Bildgroesse -> je Gruppe EINE Kamera (gleiche f, k1)
-    for (W, H), nn in gr.items():
-        ro = pycolmap.ImageReaderOptions(); ro.camera_model = "SIMPLE_RADIAL"; f0 = a.f_px; ro.camera_params = f"{f0},{W / 2},{H / 2},0"
-        kw = {}
-        if os.environ.get("RCPARK_SIFT_MAX"):                                  # opt-in: SiftGPU-VRAM begrenzen (3200 -> bis 7,4 GB, 1600 -> 2,1 GB; GPU_PARALLEL_UNTERSUCHUNG.md); ohne Variable Verhalten unveraendert
-            eo = pycolmap.FeatureExtractionOptions(); eo.max_image_size = int(os.environ["RCPARK_SIFT_MAX"]); kw["extraction_options"] = eo
-        pycolmap.extract_features(db, os.path.join(a.aus, "bilder"), image_names=nn, camera_mode=pycolmap.CameraMode.SINGLE, reader_options=ro, **kw)
+    f0 = a.f_px; sift = sift_sicher(pycolmap, db, os.path.join(a.aus, "bilder"), V["bilder"], names, f0)
+    if sift["fehlend"]:      # VOR dem Matching (23.11.2026: vorher 5 min Matching, dann KeyError)
+        raise SystemExit(f"FEHLER: {len(sift['fehlend'])} Bilder ohne Merkmale auch nach GPU-Wiederholung und CPU-SIFT (kein Speicherproblem - Bilddatei pruefen): {sift['fehlend'][:5]}")
     con = sqlite3.connect(db); ids = {n: i for i, n in con.execute("select image_id,name from images")}; con.close()
     ref = pycolmap.Reconstruction(a.sparse); reg = sorted(i.name for i in ref.images.values() if i.has_pose)
     mod_ = {str(c.model).split(".")[-1] for c in ref.cameras.values()}
@@ -129,7 +177,8 @@ def merkmale(a):
     ver = con.execute("select count(*) from two_view_geometries where rows>0").fetchone()[0]; con.close()
     leer = [n for n, k in nk.items() if not k]
     if leer: raise SystemExit(f"FEHLER: {len(leer)} Bilder ohne Schluesselpunkte (SiftGPU scheitert bei VRAM-Mangel STILL mit rc 0): {leer[:5]} - VRAM pruefen (nvidia-smi), RCPARK_SIFT_MAX=1600")
-    json.dump(dict(paare=len(paare), neu=len(names), referenz=len(reg), schluesselpunkte_mittel=float(np.mean(list(nk.values()))), verifizierte_paare_gesamt=ver, f_prior_px=f0), open(os.path.join(a.aus, "merkmale.json"), "w"), indent=1)
+    json.dump(dict(paare=len(paare), neu=len(names), referenz=len(reg), schluesselpunkte_mittel=float(np.mean(list(nk.values()))), verifizierte_paare_gesamt=ver, f_prior_px=f0,
+                   sift_nachgeholt=dict(gpu_klein=len(sift["gpu_klein"]), cpu=len(sift["cpu"]))), open(os.path.join(a.aus, "merkmale.json"), "w"), indent=1)
     print(f"merkmale: {len(names)} neu, {len(paare)} Paare gematcht, mittl. Schluesselpunkte {np.mean(list(nk.values())):.0f}")
 
 
