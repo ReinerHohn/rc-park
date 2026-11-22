@@ -107,6 +107,9 @@ def lauf(name, A, B, E, fotos, aus, gpu, vram, resize, MB=None, m_je=1.0, lot_ca
     fi, sp, M_dir = fuehren(name, A, B, M_frei, sig, fotos, os.path.join(aus, "fuehren"), gpu, vram, resize)
     erg["fuehren"] = fi
     if Mt is not None and M_dir is not None: erg["fuehren"]["fehler"] = fehler(M_dir, Mt, PB, m_je, oa)
+    lw = lambda M: round(float(np.degrees(np.arccos(np.clip(abs((EK.zerlegen(M)[1] @ ob) @ oa) / np.linalg.norm(ob) / np.linalg.norm(oa), -1, 1)))), 3)
+    if M_dir is not None: erg["fuehren"]["lot_winkel_grad"] = lw(M_dir)                 # Lot-Pruefung der direkten Kopplung (Lot B nach A gegen Lot A)
+    if M_lot is not None: erg["lot_zwang"]["lot_winkel_grad"] = lw(M_lot)
     if Mt is not None:
         BAc = np.median(anwenden(M_frei, B.P), 0); neg = {}
         for nm, Mf in (("kurs_2grad", kurs_drehen(M_frei, oa, BAc, 2.0)), ("versatz_0.5m", verschieben(M_frei, oa, 0.5, m_je)), ("versatz_3m", verschieben(M_frei, oa, 3.0, m_je)),
@@ -118,7 +121,7 @@ def lauf(name, A, B, E, fotos, aus, gpu, vram, resize, MB=None, m_je=1.0, lot_ca
     # C: gemeinsamer Ausgleich (starr, Lot, halbstarr) + Verformungsfaelle
     q = dict(ea=_inl(MA, XA, YA, tA), eb=_inl(MBc, XB, YB, tB))
     if sp:
-        X, Y, td = B.P[[s[1] for s in sp]], A.P[[s[0] for s in sp]], np.array([s[2] for s in sp])
+        X, Y, td = np.array([s[1] for s in sp]), np.array([s[0] for s in sp]), np.array([s[2] for s in sp])
         if M_dir is not None: q["direkt"] = _inl(M_dir, X, Y, td)
     fp = BH.feld_parameter(B.P, ob); c = {}
     for nm, kw in (("starr", {}), ("lot", dict(lot=(oa, ob))), ("halbstarr", dict(fp=fp, verformung=True)), ("halbstarr_lot", dict(lot=(oa, ob), fp=fp, verformung=True))):
@@ -195,7 +198,7 @@ def kurz(e):
     g = lambda *p: (lambda d: d)(_get(e, p))
     out = dict(frei=g("frei", "fehler"), hebel=[_get(e, ("frei", "a", "hebel")), _get(e, ("frei", "b", "hebel"))], lot_rel=_get(e, ("lot", "relativ_fehler_grad")),
                lot_winkel_frei=_get(e, ("frei", "lot_winkel_grad")), lot=dict(ok=_get(e, ("lot_zwang", "ok")), fehler=_get(e, ("lot_zwang", "fehler"))), reproj=_get(e, ("reproj", "fehler")),
-               fuehren={k: _get(e, ("fuehren", k)) for k in ("kandidatenpaare", "paare_bestaetigt", "spuren", "bestaetigt_naeherung", "fehler")},
+               fuehren={k: _get(e, ("fuehren", k)) for k in ("kandidatenpaare", "paare_bestaetigt", "spuren", "bestaetigt_naeherung", "fehler", "lot_winkel_grad")},
                fuehren_direkt={k: _get(e, ("fuehren", "direkt", k)) for k in ("ok", "anteil", "rest_rel", "hebel", "hebel_b", "grund")},
                negativ={k: dict(paare=v.get("paare_bestaetigt"), spuren=v.get("spuren"), ok=_get(v, ("direkt", "ok")), bestaetigt=v.get("bestaetigt_naeherung")) for k, v in (e.get("negativ") or {}).items()},
                ausgleich={k: v.get("fehler") or v.get("rest_median") for k, v in (e.get("ausgleich") or {}).items()})

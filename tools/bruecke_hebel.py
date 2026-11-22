@@ -425,8 +425,9 @@ def leiter(E, A, B, MA, MB, pa, pb, fotos, aus, lot=None, wdh_grad=None, radar=N
                 if okd and info.get("bestaetigt"):
                     # QUELLEN NICHT MITTELN (Selbsttest Martinstor k3: direkt allein 0,19 Grad / 1,0 cm; gemeinsam mit den Zwischenmodell-Spuren 0,48 Grad / 4,7 cm,
                     # die 8000 E-Spuren ueberstimmen die 231 direkten): die direkte Kopplung TRAEGT, die Zwischenmodell-Kopplung ist Gegenprobe ('unterschied').
-                    w = np.flatnonzero(_rest(Md, X, Y, td) <= EK.SCHWELLE_REL); M = Md; stufe = "direkt"
-                    out["stufen"].append(dict(stufe="direkt", spuren=len(w), gegenprobe_zwischenmodell=info.get("unterschied")))
+                    # Danach Ausgleich NUR ueber die direkten Spuren (tiefengewichtet, Cauchy): Martinstor k3 0,10 -> 0,035 Grad, 0,9 -> 0,3 cm (Sim3-Inlier ungewichtet).
+                    w = np.flatnonzero(_rest(Md, X, Y, td) <= EK.SCHWELLE_REL); g = ausgleich(dict(direkt=(X[w], Y[w], td[w])), Md, lot=lotarg); M = g["M_AB"]; stufe = "direkt"
+                    out["stufen"].append(dict(stufe="direkt", spuren=len(w), rest_median=round(g["rest_median"], 5), gegenprobe_zwischenmodell=info.get("unterschied")))
                     hb = min(prd.get("hebel") or 0, prd.get("hebel_b") or 0); u, grund = urteil_kante(max(heb or 0, hb), wdh_grad, len(w)); out.update(urteil=u, urteil_grund=grund + " (nach Nachmessen)")
             else: info["grund"] = "keine Kandidatenpaare / LightGlue gescheitert"; out["stufen"].append(info)
         except Exception as ex: out["stufen"].append(dict(stufe="fuehren", fehler=str(ex)[:300]))
