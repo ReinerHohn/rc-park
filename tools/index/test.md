@@ -1,4 +1,4 @@
-# Werkzeuge: test (121)
+# Werkzeuge: test (124)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -47,9 +47,11 @@
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
 - `tools/test_kantenstufe_kreis.py` [seg] test_kantenstufe_kreis.py - WAECHTER gegen den Kreis in der KERNMETHODE (CPU, ohne Daten, ~1 min; 22.11.2026).
 - `tools/test_keilsteine.py` [-] test_keilsteine.py - fester synthetischer Test fuer quader_raster.keilsteine (21.11.2026 spaet), < 20 s, nur CPU.
+- `tools/test_kette_1122c.py` [-] test_kette_1122c.py - fester Test (CPU, Sekunden, echte kleine Fixtures aus dem Kettenlauf schwabentor-1120 1122c, 22.11.2026).
 - `tools/test_kette_kreis_orthos.py` [seg] test_kette_kreis_orthos.py - fester Test (CPU, < 20 s, ohne Daten) fuer den KREISFALL der Kette (22.11.2026, Kettenlauf schwabentor 1121v).
 - `tools/test_kette_stabil.py` [seg] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
 - `tools/test_kette_tempo.py` [gen] test_kette_tempo.py - Tempo-Umbau der Kette (21.11.2026) ohne Rechenlast pruefen: 1. fassaden_kette._waende_parallel: Ausgabe in Wandreihenfolge (wie seriell), GPU-Teil (_gpu_run) 
+- `tools/test_kette_vordach_laterne.py` [gen] test_kette_vordach_laterne.py - KETTENFALL Vordach + Laterne mit den echten JSON-Staenden des Kettenlaufs 1122c (22.11.2026). Sekunden, < 300 MB.
 - `tools/test_koerper_schleife.py` [gen] test_koerper_schleife.py - fester Test ohne GPU fuer tools/wolke_rest.py (Grobformen, Nachbar-Abtrennung), bauteile.wolkenrest_koerper und tools/koerper_schleife.py (21.11.2026).
 - `tools/test_konsens_urteil.py` [-] Test der Konsens-Annahme (global_mapper_konsens.urteil, 19.11.2026): gutes Modell traegt; duennes Rueckgrat / wenig Bilder / kein Clip -> Gruende + Ursache + Abhilfe.
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
@@ -59,6 +61,7 @@
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_messflaeche_kreis.py` [seg] test_messflaeche_kreis.py - WAECHTER gegen zirkulaere Messung (CPU, wenige Sekunden, ohne Daten; 22.11.2026, Kreisfall Einzelorthos schwabentor-1120).
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
+- `tools/test_neben_details.py` [seg] test_neben_details.py - synthetische Pruefung von tools/neben_details.py (Detailansicht je Bauteil, 22.11.2026). Kein echtes Objekt, Sekunden. 1. Kamerawahl front: von vier Kameras
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
 - `tools/test_nischen_fenster.py` [seg] test_nischen_fenster.py - fester synthetischer Test fuer tools/nischen_fenster.py (+ Bau in bauteile.fenster_aus_json), < 10 s, nur CPU.
 - `tools/test_nullstart_schritte.py` [-] test_nullstart_schritte.py - BEWEIS, dass jede gelernte Erkenntnis ein fester Nullstart-Schritt mit Tor ist (2026-11-04, Nutzerregel beweis-pflicht-nullstart). Quelle der Pflicht: 

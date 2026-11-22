@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (107)
+# Werkzeuge: sonstige (108)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -43,6 +43,7 @@
 - `tools/messen_interaktiv.py` [seg] messen_interaktiv.py <objekt> --wolke w.npy --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8765] Interaktives Messen AUS DER WOLKE (Nutzerwunsch 8.11.): lokaler Web
 - `tools/messung_uebernehmen.py` [gen] messung_uebernehmen.py <objekt> [--anwenden] Uebernimmt die BESTAETIGTEN Direktmessungen aus <objekt>/messungen_wolke.json (tools/messen_interaktiv.py) in die Parameter von objekt.
 - `tools/model3d_textured.py` [seg] (kein Docstring)
+- `tools/neben_details.py` [seg] neben_details.py <objekt.json> [--daten DIR] [--stl a.stl] [--aus DIR] [--max 24] [--kandidaten 6] [--ohne-verdecker] - je erkanntem Bauteil eine DETAILANSICHT Foto | Modell aus de
 - `tools/objekt_daten.py` [-] objekt_daten.py - GENERISCH: amtliche Grunddaten eines neuen Objekts holen und daraus Modellrahmen + 3D-Anker bauen (Nullstart-Stufe 0).
 - `tools/openbuildings_fallback.py` [gen] openbuildings_fallback.py — HEBEL 5: Weltklasse-Fallback-Geometrie, wenn weder Google 3D Tiles (Hebel 1) noch lokales LOD2 (Hebel 3) ein Mesh liefern.
 - `tools/openverse_holen.py` [-] openverse_holen.py --aus DIR --suche "Schwabentor Freiburg" ["Freiburg Luftbild" ...] [--max 150] [--min-breite 900] [--bekannt herkunft.json ...]
