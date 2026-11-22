@@ -64,6 +64,10 @@ Details: `modelle/archiv/STAND_2026-11-14.md` · `modelle/LOGBUCH_KETTENTEST_202
 - 22.11. · Seitenteil allein ueber Foto-GPS einsetzen (schwabentor-1122 Teil 1) → ✗ · 3-4 m versetzt, Grundriss A 17,6 %, doppelwand; jetzt Regel 'nur bei belegter Lage' (`tools/seiten_lage_beleg.py`), sonst Fotoluecke [LOGBUCH_SCHWABENTOR_KETTE 22.11. 17:00]
 - 22.11. · Teil 1 ueber Gebaeudekanten binden (Wandebene + Ecke + Boden, Merging the Unmatchable) → ⚠ offen · Wandebene und EIN scharfes Wandende (y 21,3 gegen LoD2-Ecke 20,95) messbar, zweites Wandende geht in Nachbarfassade ueber, Wolke endet bei 27 m (Traufe 37,9) → kein Massstab [LOGBUCH 22.11. 17:00]
 
+- 22.11. · GPS-Anker mit Kasten 3 x Bootstrap (nur Zufallsfehler) → ⚠ Falle · Nah-GPS einer Sitzung ist systematisch verzerrt (1122: +9,4 Grad / x0,867); ehrliches Band je Sitzung x Ring, Fernfotos mit langem Hebel zaehlen [LOGBUCH_SCHWABENTOR_KETTE 22.11.]
+- 22.11. · Tor und Ausrichtung mit verschiedenen GPS-Mengen/Lot-Formeln → ⚠ Falle · eine gemeinsame Funktion (gps_unsicherheit.gps_fit, lot_aus_bild_achsen); Lage-Pruefstand offen [LOGBUCH 22.11.]
+- 22.11. · Seiten-Teil ohne belegte Lage per GPS ansetzen → ✗ 3-4 m Versatz, Doppelwand · Teil weglassen + Fotoluecke (seiten_lage_beleg.py); Bindung ueber Querspuren ✗ (Gegenseiten-Verwechslung 167 Grad) [LOGBUCH 22.11.]
+
 ## Offen
 - Seiten aus globalen Stuecken vereinen: Bruecke ueber Bilder, die beide Seiten sehen (Torbogen), statt Klappung (Stand 20.11.) [LOGBUCH 08:31]
 - Lage-Tor ohne GPS fuer Objekte mit unbrauchbaren Geotags; GPS-Schwelle relativ statt fest 15 % (Ideen 10/20, Stand 19.11., ungeprueft)
