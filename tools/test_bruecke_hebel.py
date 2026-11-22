@@ -42,7 +42,7 @@ W = np.c_[rng.uniform(-8, 8, 1500), rng.uniform(-5, 5, 1500), rng.uniform(19.97,
 def kams(xs, gier):
     Rs, ts = [], []
     for x, g in zip(xs, gier):
-        R_ = BH._rot(np.array([0, np.radians(g), 0])); C = np.array([x, 0, 0.0]); Rs.append(R_); ts.append(-R_ @ C)
+        R_ = BH._rot(np.array([0, np.radians(g), 0])); C = np.array([x, 0.4 * abs(x) - 1.0, 0.3 * x]); Rs.append(R_); ts.append(-R_ @ C)
     return Rs, ts
 RAk, tAk = kams([-6, -4, -2], [8, 5, 3]); RBk, tBk = kams([1, 3, 5], [-2, -5, -8])
 A = modell(RAk, tAk, W, cam); B0 = modell(RBk, tBk, W, cam)
@@ -60,6 +60,9 @@ np.savez(npz, **D)
 st, sp = BH.paare_pruefen(npz, A, B, M_AB, 0.004)
 pruef(st["paare_bestaetigt"] == len(kp) and len(sp) > 300, f"paare_pruefen richtig: {st['paare_bestaetigt']}/{len(kp)} Paare, {len(sp)} direkte Spuren")
 Md, pr, ok, g, Xd, Yd, tdd = BH.direkt_koppeln(A, B, sp)
+ge = BH.ausgleich_epipolar(A, B, st["_z2d"], matrix(1.0, BH._rot(np.array([0.01, -0.008, 0.004])), [0.1, 0.05, 0]) @ M_AB)
+de = EK.winkel(EK.zerlegen(ge["M_AB"] @ np.linalg.inv(M_AB))[1]); dv = np.median(np.linalg.norm(anwenden(ge["M_AB"], B.P) - anwenden(M_AB, B.P), axis=1))
+pruef(de < 0.05 and dv < 0.05, f"ausgleich_epipolar (2D-2D, ohne 3D an der Naht): aus 0,8 Grad / 0,1 m Start -> {de:.3f} Grad, {dv:.3f} m")
 pruef(ok and BH.bestaetigt(Md, M_AB, B.P, 0.004)[0], f"direkte Kopplung stimmig und bestaetigt die Naeherung ({g})")
 c = np.median(anwenden(M_AB, B.P), 0)
 for nm, Mf in (("180 Grad", (lambda D_: D_)(np.block([[BH._rot(np.array([0, np.pi, 0])), (c - BH._rot(np.array([0, np.pi, 0])) @ c)[:, None]], [np.zeros((1, 3)), np.ones((1, 1))]])) @ M_AB),

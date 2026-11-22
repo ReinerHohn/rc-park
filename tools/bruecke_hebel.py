@@ -227,7 +227,7 @@ def paare_pruefen(npz, A, B, M_A_B, sigma_rad, band_min_px=BAND_MIN_PX):
     -> (stat, spuren = Liste (X_A, X_B, tiefe_B, bild_b)); 3D je Seite aus punkte_aus_tiefe."""
     import cv2
     D = np.load(npz, allow_pickle=True); meta = json.loads(str(D["meta"])); gr = meta.get("groesse", {}); BA = B.transformiert(M_A_B)
-    stat = dict(paare_gematcht=0, paare_bestaetigt=0, paare_verworfen_band=0, paare_zu_wenig=0, paare_groesse_falsch=0, zuordnungen=0, band_px_median=None); spuren = {}; bander = []
+    stat = dict(paare_gematcht=0, paare_bestaetigt=0, paare_verworfen_band=0, paare_zu_wenig=0, paare_groesse_falsch=0, zuordnungen=0, band_px_median=None); spuren = {}; bander = []; z2d = []
     for k in D.files:
         if not k.startswith("m_"): continue
         a, b = k[2:].split("|", 1)
@@ -246,12 +246,12 @@ def paare_pruefen(npz, A, B, M_A_B, sigma_rad, band_min_px=BAND_MIN_PX):
         inl = msk.ravel() > 0; keep = inl & (d <= band)
         if inl.sum() < MIN_PAAR: stat["paare_zu_wenig"] += 1; continue
         if keep.sum() < MIN_PAAR or keep.sum() < BAND_ANTEIL * inl.sum(): stat["paare_verworfen_band"] += 1; continue
-        stat["paare_bestaetigt"] += 1; stat["zuordnungen"] += int(keep.sum())
+        stat["paare_bestaetigt"] += 1; stat["zuordnungen"] += int(keep.sum()); z2d.append((i, j, na[keep], nb[keep], fb))
         XA_ = punkte_aus_tiefe(A, i, ka[keep]); XB_ = punkte_aus_tiefe(B, j, kb[keep]); w_ = np.flatnonzero(np.isfinite(XA_[:, 0]) & np.isfinite(XB_[:, 0])); cb_ = B.C(j)
         ia_ = np.flatnonzero(keep)
         for x in w_: spuren.setdefault((a, int(m[ia_[x], 0])), (XA_[x], XB_[x], float(np.linalg.norm(XB_[x] - cb_)), b))   # je Merkmal in a eine Spur
     stat["band_px_median"] = round(float(np.median(bander)), 1) if bander else None
-    stat["spuren"] = len(spuren); return stat, list(spuren.values())
+    stat["spuren"] = len(spuren); stat["_z2d"] = z2d; return stat, list(spuren.values())     # _z2d: bestaetigte 2D-Zuordnungen je Paar (ausgleich_epipolar)
 
 
 def direkt_koppeln(A, B, spuren):
@@ -274,6 +274,28 @@ def bestaetigt(M_direkt, M_naeherung, PB, sigma_rad):
     g = max(BAND_SIGMA * sigma_rad, np.radians(0.5)); gr = max(BAND_SIGMA * sigma_rad, 0.01)
     return bool(np.radians(dg) <= g and vr <= gr and abs(s - 1) <= gr), dict(drehung_grad=round(dg, 3), versatz_rel=round(vr, 4), massstab_rel=round(abs(s - 1), 4),
                                                                              grenze_grad=round(float(np.degrees(g)), 3), grenze_rel=round(gr, 4))
+
+
+def ausgleich_epipolar(A, B, z2d, M_AB0, n_max=30000, f_scale_px=2.0):
+    """B als starrer Koerper (7 Parameter) gegen die FESTEN Kameras von A ueber die bestaetigten 2D-2D-Zuordnungen (Sampson-Abstand in Pixeln, Cauchy): braucht KEINE
+    3D-Punkte an der Naht (schwabentor-1122: die Nahtbilder haben 3-440 Spuren, direkte 3D-Spuren = 0). Massstab ueber die Lage mehrerer B-Kameras zueinander.
+    -> dict(M_AB, rest_px_median, n)."""
+    from scipy.optimize import least_squares
+    if not z2d: return None
+    I = np.concatenate([np.full(len(z[2]), z[0]) for z in z2d]); J = np.concatenate([np.full(len(z[2]), z[1]) for z in z2d]); NA = np.concatenate([z[2] for z in z2d]); NB = np.concatenate([z[3] for z in z2d])
+    F = np.concatenate([np.full(len(z[2]), z[4]) for z in z2d])
+    if len(I) > n_max: w = np.random.default_rng(0).choice(len(I), n_max, replace=False); I, J, NA, NB, F = I[w], J[w], NA[w], NB[w], F[w]
+    s0, R0, t0 = EK.zerlegen(M_AB0); ha = np.c_[NA, np.ones(len(NA))]; hb = np.c_[NB, np.ones(len(NB))]
+    RA = np.array(A.R)[I]; tA = np.array(A.t)[I]; RBc = np.array(B.R)[J]; tBc = np.array(B.t)[J]
+    def res(p):
+        R = _rot(p[:3]) @ R0; s = s0 * np.exp(p[3]); t = t0 + p[4:7] * s0
+        Rb = RBc @ R.T; tb = s * tBc - np.einsum("nij,j->ni", Rb, t)                       # B-Kameras im Rahmen von A
+        Rr = Rb @ RA.transpose(0, 2, 1); tr = tb - np.einsum("nij,nj->ni", Rr, tA); tr = tr / np.maximum(np.linalg.norm(tr, axis=1, keepdims=True), 1e-12)
+        tx = np.zeros((len(tr), 3, 3)); tx[:, 0, 1], tx[:, 0, 2], tx[:, 1, 0], tx[:, 1, 2], tx[:, 2, 0], tx[:, 2, 1] = -tr[:, 2], tr[:, 1], tr[:, 2], -tr[:, 0], -tr[:, 1], tr[:, 0]
+        E = tx @ Rr; Ex = np.einsum("nij,nj->ni", E, ha); Etx = np.einsum("nji,nj->ni", E, hb); num = np.sum(hb * Ex, 1)
+        return num / np.sqrt(Ex[:, 0] ** 2 + Ex[:, 1] ** 2 + Etx[:, 0] ** 2 + Etx[:, 1] ** 2 + 1e-18) * F
+    sol = least_squares(res, np.zeros(7), loss="cauchy", f_scale=f_scale_px, x_scale=1e-3, max_nfev=200)
+    p = sol.x; M = matrix(s0 * np.exp(p[3]), _rot(p[:3]) @ R0, t0 + p[4:7] * s0); return dict(M_AB=M, rest_px_median=float(np.median(np.abs(sol.fun))), n=int(len(I)))
 
 
 # ---------------------------------------------------------------- C: gemeinsamer Ausgleich
@@ -420,7 +442,7 @@ def leiter(E, A, B, MA, MB, pa, pb, fotos, aus, lot=None, wdh_grad=None, radar=N
             kp = kandidaten_paare(A, B.transformiert(M), start=start); info = dict(stufe="fuehren", kandidatenpaare=len(kp))
             npz = lg_paare(kp, fotos, os.path.join(aus, "fuehren"), vram_mb=FUEHREN_VRAM_MB, resize=FUEHREN_RESIZE) if kp else None
             if npz:
-                st, sp = paare_pruefen(npz, A, B, M, sig); info.update(st); Md, prd, okd, gd, X, Y, td = direkt_koppeln(A, B, sp); info["direkt"] = dict(ok=okd, grund=gd, **prd)
+                st, sp = paare_pruefen(npz, A, B, M, sig); st.pop("_z2d", None); info.update(st); Md, prd, okd, gd, X, Y, td = direkt_koppeln(A, B, sp); info["direkt"] = dict(ok=okd, grund=gd, **prd)
                 if Md is not None: b_, dd = bestaetigt(Md, M, B.P, sig); info.update(bestaetigt=b_, unterschied=dd)
                 out["stufen"].append(info)
                 if okd and info.get("bestaetigt"):

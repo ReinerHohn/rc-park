@@ -57,7 +57,9 @@ def fuehren(name, A, B, M_AB, sigma, fotos, aus, gpu, vram, resize, wahr=None):
         if not kp: info["grund"] = "keine Kandidatenpaare"; return info, [], None
         npz = BH.lg_paare(kp, fotos, aus, vram_mb=vram, resize=resize); json.dump([list(p[:2]) for p in kp], open(os.path.join(aus, "paare.json"), "w"))
         if npz is None: info["grund"] = "lg_match gescheitert"; return info, [], None
-    st, sp = BH.paare_pruefen(npz, A, B, M_AB, sigma); info.update(st)
+    st, sp = BH.paare_pruefen(npz, A, B, M_AB, sigma); z2d = st.pop("_z2d", []); info.update(st)
+    ge = BH.ausgleich_epipolar(A, B, z2d, M_AB)
+    if ge: info["epipolar"] = dict(rest_px_median=ge["rest_px_median"], n=ge["n"], M=ge["M_AB"].tolist()); info["_M_epi"] = ge["M_AB"]
     M, pr, ok, g, X, Y, td = BH.direkt_koppeln(A, B, sp); info.update(direkt=dict(ok=ok, grund=g, **pr))
     if M is not None:
         b, d = BH.bestaetigt(M, M_AB, B.P, sigma); info["bestaetigt_naeherung"] = b; info["unterschied_zur_naeherung"] = d
@@ -107,6 +109,8 @@ def lauf(name, A, B, E, fotos, aus, gpu, vram, resize, MB=None, m_je=1.0, lot_ca
     fi, sp, M_dir = fuehren(name, A, B, M_frei, sig, fotos, os.path.join(aus, "fuehren"), gpu, vram, resize)
     erg["fuehren"] = fi
     if Mt is not None and M_dir is not None: erg["fuehren"]["fehler"] = fehler(M_dir, Mt, PB, m_je, oa)
+    Me = fi.pop("_M_epi", None)
+    if Me is not None and Mt is not None: erg["fuehren"]["epipolar"]["fehler"] = fehler(Me, Mt, PB, m_je, oa)
     lw = lambda M: round(float(np.degrees(np.arccos(np.clip(abs((EK.zerlegen(M)[1] @ ob) @ oa) / np.linalg.norm(ob) / np.linalg.norm(oa), -1, 1)))), 3)
     if M_dir is not None: erg["fuehren"]["lot_winkel_grad"] = lw(M_dir)                 # Lot-Pruefung der direkten Kopplung (Lot B nach A gegen Lot A)
     if M_lot is not None: erg["lot_zwang"]["lot_winkel_grad"] = lw(M_lot)
@@ -115,6 +119,7 @@ def lauf(name, A, B, E, fotos, aus, gpu, vram, resize, MB=None, m_je=1.0, lot_ca
         for nm, Mf in (("kurs_2grad", kurs_drehen(M_frei, oa, BAc, 2.0)), ("versatz_0.5m", verschieben(M_frei, oa, 0.5, m_je)), ("versatz_3m", verschieben(M_frei, oa, 3.0, m_je)),
                        ("kurs_180grad", kurs_drehen(M_frei, oa, BAc, 180.0))):
             ni, _, Mn = fuehren(name, A, B, Mf, sig, fotos, os.path.join(aus, "neg_" + nm), gpu, vram, resize)
+            Mne = ni.pop("_M_epi", None); ni["epipolar_fehler"] = fehler(Mne, Mt, PB, m_je, oa) if Mne is not None else None
             ni["naeherung_fehler"] = fehler(Mf, Mt, PB, m_je, oa); ni["fehler_direkt"] = fehler(Mn, Mt, PB, m_je, oa) if Mn is not None else None; neg[nm] = ni
         erg["negativ"] = neg
     print("  fuehren", json.dumps(erg["fuehren"], default=str)[:400], flush=True)
@@ -161,7 +166,9 @@ def verformungsfaelle(A, B, E, MA, M_frei, sp, M_dir, fi, sig, Mt, m_je, oa, ob,
         Mf = MA @ np.linalg.inv(MBd); z["frei_fehler"] = fehler_feld(dict(M_AB=Mf, a=0, b=0), Mt, Bd.P, B.P, m_je, oa, None, False)
         X0, Y0, t0 = BH.punkte(E, A)[:3]; q = dict(ea=_inl(MA, X0, Y0, t0), eb=_inl(MBd, XB, YB, tB))
         if os.path.isfile(npz):
-            st, spd = BH.paare_pruefen(npz, A, Bd, Mf, sig); Md, prd, okd, gd, X, Y, td = BH.direkt_koppeln(A, Bd, spd); z["direkt"] = dict(ok=okd, grund=gd, spuren=len(spd), **{k: prd.get(k) for k in ("anteil", "rest_rel", "hebel", "hebel_b")})
+            st, spd = BH.paare_pruefen(npz, A, Bd, Mf, sig); z2 = st.pop("_z2d", []); ge = BH.ausgleich_epipolar(A, Bd, z2, Mf)
+            if ge: z["epipolar_fehler"] = fehler_feld(dict(M_AB=ge["M_AB"], a=0, b=0), Mt, Bd.P, B.P, m_je, oa, None, False)
+            Md, prd, okd, gd, X, Y, td = BH.direkt_koppeln(A, Bd, spd); z["direkt"] = dict(ok=okd, grund=gd, spuren=len(spd), **{k: prd.get(k) for k in ("anteil", "rest_rel", "hebel", "hebel_b")})
             if Md is not None: q["direkt"] = _inl(Md, X, Y, td); z["direkt_fehler"] = fehler_feld(dict(M_AB=Md, a=0, b=0), Mt, Bd.P, B.P, m_je, oa, None, False)
         fp = BH.feld_parameter(Bd.P, ob)
         for nm, kw, qq in (("starr", {}, q), ("halbstarr", dict(fp=fp, verformung=True), q), ("halbstarr_direkt", dict(fp=fp, verformung=True), {k: v for k, v in q.items() if k == "direkt"})):
