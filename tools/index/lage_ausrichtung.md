@@ -1,4 +1,4 @@
-# Werkzeuge: lage_ausrichtung (51)
+# Werkzeuge: lage_ausrichtung (53)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
@@ -20,6 +20,7 @@
 - `tools/gpu_slot.py` [-] gpu_slot.py - gemeinsame GPU-Warteschlange fuer alle schweren GPU-Werkzeuge (rechnerweit, ueber Prozesse und Kreis-Spuren).
 - `tools/hoehe_gegen_dom1.py` [gen] hoehe_gegen_dom1.py <objekt.json> [--radius 12] [--zmin 8] [--tol 0.5] - HOEHEN-TOR: Oberseite des gebauten Modells gegen den DOM1-Laser (1-m-Pixel).
 - `tools/iphone_ausrichten.py` [-] iphone_ausrichten.py <sparse/0> <wolke.npy> <aus.npy> - Aehnlichkeits-ICP (GPU knn): SfM-Punkte -> Wolke. Start: Hochachse per PCA-Minimum, 36 Drehungen um Hoehe x Massstab aus Hoe
+- `tools/lage_frueh.py` [-] lage_frueh.py - VORSTUFE 'LAGE FRUEH' der Gesamtkette: Ausrichtung + GPS-Tor + Lageproben auf dem DUENNEN SfM-Netz, VOR der dichten Wolke (22.11.2026).
 - `tools/lage_gps_pruefen.py` [-] lage_gps_pruefen.py - Ausrichtung gegen das EXIF-GPS der eigenen Fotos pruefen (allgemein, je Objekt). Der Fit kennt das GPS nicht -> unabhaengiger Beleg.
 - `tools/lage_proben.py` [-] lage_proben.py - UNABHAENGIGE Massstabs-/Lageproben als ENTSCHEIDER zwischen den LoD2-Loesungen der Ausrichtung (nicht mitteln; jede Probe sagt 'besteht' / 'faellt' / 'kein Urteil'
 - `tools/lage_pruefstand.py` [-] lage_pruefstand.py - LAGE-PRUEFSTAND: Ausrichtung + Lage-Tore der Gesamtkette auf GESPEICHERTEN Staenden in Minuten statt in einem 60-90-min-Kettenlauf (22.11.2026).
@@ -30,6 +31,7 @@
 - `tools/lod2_to_blender.py` [gen] lod2_to_blender.py — GENERISCH: echtes LOD2-Gebäude (+ Detail) → selbst-enthaltenes Blender-Skript. Die echte Geometrie (Grundriss/L-Form/Vorbau/Dach) wird als Vertices/Faces EINGE
 - `tools/lod2_winkel_abgleich.py` [seg] lod2_winkel_abgleich.py <objekt> --wolke w.npy [--synth] [--k 24] [--aus out.json] Winkelabgleich Wolke <-> LoD2 OHNE Georeferenz (Nutzer 8.11.: LoD2 nur fuer Richtung/Winkel, nich
 - `tools/lot_aus_fotos.py` [seg] lot_aus_fotos.py --fotos k.json --bilder dir [--n 40] [--aus lot.json] Lotrichtung im Wolkenrahmen AUS DEN FOTOS (Manhattan-Welt): je Foto Linienstuecke (LSD), nahezu senkrechte Li
+- `tools/lot_wandneigung.py` [-] lot_wandneigung.py - LOT-TOR "Wandneigung": kippt das ausgerichtete Modell als Ganzes? (22.11.2026)
 - `tools/lotpruefung.py` [gen] lotpruefung.py - Lot-/Neigungspruefung der Wandflaechen einer Punktwolke OHNE den Generator (Plan 2.3).
 - `tools/massstab_quelle_gps.py` [-] massstab_quelle_gps.py - Massstabsquelle GPS der FOTOS (horizontal, unabhaengig von den Bodenankern) (Register BP).
 - `tools/massstab_quelle_lod2.py` [-] massstab_quelle_lod2.py - Massstabsquelle 'LoD2-Nachbargebaeude als Hoehenschwarm' (vertikal).

@@ -1,4 +1,4 @@
-# Werkzeuge: bauteil_generator (62)
+# Werkzeuge: bauteil_generator (63)
 - `tools/_test_baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baum_erzeugen.py` [-] baum_erzeugen.py - Wissensbaum fuer KI-Suche (Nutzer 20.11.2026: "Informationen baumartig, damit der Kontext nicht vollballert"). Erzeugt (nie von Hand pflegen, nach neuen Dateien 
@@ -59,5 +59,6 @@
 - `tools/realitaet_form.py` [seg] realitaet_form.py - FORMNOTE (Realitaet Teil 2: Form). Spec modelle/archiv/SPEC_FORMNOTE.md (Nutzerentscheid 11.11.).
 - `tools/sparse_zeigen.py` [-] sparse_zeigen.py - ein COLMAP-Sparse-Modell (Kameramodell) als Bild und als 3D-HTML zeigen. Allgemein, jedes Modell (images.bin + points3D.bin).
 - `tools/stadttor_generator.py` [gen] stadttor_generator.py — TYP-GENERATOR 'Stadttor' (Torturm mit Durchfahrt). Parametrisch, config-getrieben → ein Generator für Martinstor UND Schwabentor (und jedes weitere Torturm-
+- `tools/teil_verformung.py` [col] teil_verformung.py <sparse> <fotos> [--aus teil_verformung.json] [--faeden N] [--max-n N] (22.11.2026, Recherche duenne Bruecken Methode 2)
 - `tools/testdruck_dachziegel.py` [gen] testdruck_dachziegel.py - Testplatte: wie sehen Dachdeckungen im Massstab (Standard H0 1:87) auf dem Bambu P1S (0,4-mm-Duese) aus?
 - `tools/vordach_profil.py` [seg] vordach_profil.py - DACHPROFIL eines Vordachs aus Fotokanten (21.11.2026, Kettenstufe 'bauplan', nach tools/ebenen_masse.py).

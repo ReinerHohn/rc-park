@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (111)
+# Werkzeuge: sonstige (117)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -7,6 +7,7 @@
 - `tools/betrachter_note.py` [-] betrachter_note.py - Betrachter-Note (SPEC_BETRACHTER_NOTE, Nutzer 11.11.): Prozent der fuer das Auge SICHTBAREN Merkmale, die stimmen. Zwei Stufen: Besucher (Sichtschwelle 0,25 m 
 - `tools/brennweite_schaerfe.py` [col] brennweite_schaerfe.py <sparse-modell> [--aus bericht.json] [--liste datei.txt] [--sperrliste datei.txt --vereinen liste.txt ...] [--weich 4] [--unbestimmt 10]
 - `tools/brennweite_waehlen.py` [-] brennweite_waehlen.py - Pixel-Brennweite eines Einzelfotos aus EXIF herleiten und durch das Foto-GPS absichern (18.11.2026). Anlass Martinstor K-061: EXIF 9,855 mm, Bild 3601x2757 
+- `tools/bruecke_nachmatchen.py` [-] bruecke_nachmatchen.py - eine COLMAP-Datenbank NUR fuer eine kleine Bildmenge (Bruecken-Region, 20-200 Bilder) mit ALIKED+LightGlue verstaerken (22.11.2026).
 - `tools/buendel_stuetz.py` [seg] buendel_stuetz.py - GENERISCH: Buendelausgleich eines COLMAP-Netzes MIT STUETZTERMEN (LoD2-Gebaeudekanten im Foto, Foto-GPS, robuste Verluste), GPU (torch).
 - `tools/code_stand.py` [-] code_stand.py <werkzeug.py> [...] - CODE-STAND fuer Zwischenstaende: Fingerabdruck der beteiligten Werkzeuge (Inhalt, nicht Zeit) samt ihrer Hilfsmodule aus tools/.
 - `tools/db_masken_filter.py` [seg] db_masken_filter.py <db.db> <masken-ordner> --aus <kopie.db> [--min 15]
@@ -23,6 +24,7 @@
 - `tools/handy_masken.py` [seg] handy_masken.py - GPU-Masken fuer bewegte/nicht zum Bauwerk gehoerende Dinge in Handyfotos (Personen, Fahrzeuge, Fahrraeder, Marktstaende/Zelte, Kisten). Wie video_masken.py (nicht
 - `tools/handy_masken_v2.py` [seg] handy_masken_v2.py - Handy-Masken v2 (Register DI). v1 (handy_masken.py) bleibt unveraendert. Aenderungen gegenueber v1, alle aus den Segmentierungsklassen (ADE20K id2label) bzw. O
 - `tools/haufen_herkunft.py` [col] haufen_herkunft.py - welche BILDER haben einen Strassenhaufen des Grundriss-Tors erzeugt? (20.11.2026, Schwabentor: Flugpunkt-Faecher auf dem Platz)
+- `tools/haufen_klaeren.py` [-] haufen_klaeren.py - Strassenhaufen des Grundriss-Tors (tools/wolke_grundriss_pruefen.py, Test A) AUTOMATISCH klaeren: Doppelwand oder Umgebung?
 - `tools/haut_find.py` [-] haut_find.py — Haut-Teil(e) auf der Bauplan-Karte FINDEN (Nummer -> wo hin).
 - `tools/hintergrundhaus.py` [seg] hintergrundhaus.py - HINTERGRUNDHAUS (Reifegrad 1) in Minuten: LoD2-Koerper + LoD2-Dach (DOM1 als Gegenprobe), Fenster aus vorhandenen Fotos, sonst Fensterraster als ANNAHME, duenn
 - `tools/hybrid_abgleich.py` [gen] hybrid_abgleich.py - Dachflaechen je QUELLE getrennt fitten (Strassenwolke, Drohnenwolke, Generator) und Abweichungen melden (Register BR/BS).
@@ -64,12 +66,14 @@
 - `tools/schluchsee_modell.py` [seg] schluchsee_modell.py — texturiertes 3D der Schluchsee-Staumauer (Seebrugg) aus LGL-Daten. DGM025 (0,25m) + DOP20-Luftbild, Original-Proportion. Mauer bei UTM E438867 N5294465.
 - `tools/schwarzwald_katalog.py` [-] schwarzwald_katalog.py — Katalog markanter, schwarzwaldtypischer Modelle. Verifizierte Koordinaten (WebSearch), berechnet LGL-2km-Kachel je Ort, schreibt JSON (maschinell) + MD (le
 - `tools/seg3d.py` [-] seg3d.py — NUR der Tunnel-Einschnitt als Platten, sauber. Keine Facetten-Segmentierung. Aus der erkannten Einschnitt-Kontur (grow-to-rim): DECKPLATTE = ebener Boden auf Gleis-Nivea
+- `tools/seiten_eck_koppeln.py` [col] seiten_eck_koppeln.py <db_mapper> <seiten.json> <fotos> --teil N=<modell> [--teil M=<modell> ...] --aus <ordner> (erster --teil = Teil A, Bezugsrahmen)
 - `tools/seiten_erkennen.py` [-] seiten_erkennen.py <db.db> <bilder_ordner> --aus <seiten.json> [--db-aus <kopie.db>] [--min-bilder 12] [--min-paare 20] [--stichprobe 24] [--schwelle 0.45] [--referenz eigen__] [--
 - `tools/seiten_luecken.py` [seg] seiten_luecken.py <objekt.json> <fassaden-ordner> --sparse <SfM-Ordner mit images.bin> --ref-db <db.db> [--schwelle 0.2] [--min_m2 40] [--holen] [--download]
 - `tools/seiten_querspur_binden.py` [col] seiten_querspur_binden.py <modell_a> <modell_b> <ursprungs-db> --gps <vereinen.json> --aus <ordner> [--dicht-a fused.ply --dicht-b fused.ply]
 - `tools/selbstbau_verdecker.py` [seg] selbstbau_verdecker.py - Verdecker-Modell fuer MESSUNGEN ohne selbst erzeugte Bauteile (21.11.2026, MESSFEHLER zirkulaere Messung).
 - `tools/shape_extract.py` [-] shape_extract.py — FORM AUTOMATISCH AUS DEM FOTO MESSEN (statt Augenmaß).
 - `tools/sichtrichtung_kohaerenz.py` [-] Sichtrichtungs-Kohaerenz je Wolkenpunkt (allgemein, fuer jedes Objekt mit Dichte-Wolke + vis + Kameras).
+- `tools/sim3_robust.py` [-] sim3_robust.py - EINE gemeinsame robuste Sim3 (Aehnlichkeit X -> Y) mit fester Meter-Schwelle im Zielrahmen (22.11.2026). ANLASS: wand_dicke_tor.teile_laden legte ein Modell per Um
 - `tools/skin_smart_split.py` [gen] skin_smart_split.py — teilt die 3D-Haut KLUG in druckoptimierte Stücke.
 - `tools/snap_in_objekt.py` [-] snap_in_objekt.py - wege3d.json (rippen_pfad_snap.py) -> rippen_pfade.pfade_ohne_spiegel eines erker_polygon (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/snap
 - `tools/sp_crown_demo.py` [gen] sp_crown_demo.py — DEMO-Kranz zum 3-mm-LED-Fit-Test: sauberer Ring (wasserdicht), groß genug, Wand dick genug, mit N senkrechten (radialen) selbst-zentrierenden Ø-Löchern. Runde 3-
@@ -101,7 +105,9 @@
 - `tools/validate_bauwerk.py` [gen] validate_bauwerk.py — validiert ein BAUWERK-Modell gegen die Realität.
 - `tools/validate_modell.py` [gen] validate_modell.py — VALIDIERUNG: wie nah ist das erzeugte Modell an der Realität, und ist es ohne viel Nacharbeit lasercut-/druckbar?
 - `tools/variante_bauen.sh` [sh] variante_bauen.sh - Generator-Variante bauen UND PRUEFEN, DASS SIE SICH UNTERSCHEIDET. Falle (2026-11-01): sed-Muster griff nicht ("TWs = 2.6" statt "TWs, T0, T1 = 2.6,") -> drei "
+- `tools/verbund_schwachstellen.py` [-] verbund_schwachstellen.py [--db <db>] [--modell <sparse> ...] [--aus radar.json] [--teil N=<sparse> ...] (22.11.2026, Recherche duenne Bruecken Methode 6)
 - `tools/verify_gorge.py` [seg] verify_gorge.py — MESSBARE Prüfung der Einschnitt/Schlucht-Kantenerkennung. Rendert Hillshade (Draufsicht) + erkannte Platte + ihre Kanten, und MISST objektiv: wall_frac = Anteil d
+- `tools/verlustbilanz.py` [-] verlustbilanz.py - Verlustbilanz eines Kettenlaufs: je Stufe, die eine Menge verarbeitet, "rein / raus / verloren + Grund" (22.11.2026). Anlass (Nulllauf schwabentor-1122): ein von
 - `tools/versuch_log.py` [-] versuch_log.py - AUTOMATISCHES Versuchslog (Nutzerauftrag 7.11.: nichts doppelt versuchen, Fehlschlaege mitschreiben). Bibliothek (von Werkzeugen am Ende eines Laufs aufgerufen) + 
 - `tools/viadukt_gelaende.py` [gen] viadukt_gelaende.py — Viadukt, der der ECHTEN Trasse + dem GELÄNDE folgt.
 - `tools/vorbauten_bauplan.py` [seg] vorbauten_bauplan.py - Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep in eine BAULISTE uebersetzen (20.11.2026).

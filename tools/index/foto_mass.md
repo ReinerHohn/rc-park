@@ -1,4 +1,4 @@
-# Werkzeuge: foto_mass (120)
+# Werkzeuge: foto_mass (122)
 - `tools/bauplan_aus_foto.py` [seg] bauplan_aus_foto.py — die beschriebene Methode als EINE Kette: 1) Gebäude aus Umgebung freistellen (ML-Maske, gebaeude_segment) 2) auf das Gebäude zuschneiden 3) PERSPEKTIVE raus (
 - `tools/bilder_einsortieren.py` [-] bilder_einsortieren.py - PIPELINE-SCHRITT nach bilder_holen.py: geerntete Fotos (fotos_eingang) in den Fotoordner des Objekts einsortieren.
 - `tools/bilder_holen.py` [seg] bilder_holen.py - PIPELINE-SCHRITT: Fotos einer Attraktion aus freien Quellen holen - nur die mit MEHRWERT fuer die Fotowolke.
@@ -14,7 +14,7 @@
 - `tools/flaechen_gegen_netz.py` [seg] flaechen_gegen_netz.py - "Geraffel"-Melder (Nutzeridee 2026-11-07): Im FOTO sind Fenster-/Wandflaechen einfarbig, im 3D-Netz sind dort Beulen. Ablauf je Foto (K-Kamera wie foto_dif
 - `tools/flaechen_mass.py` [seg] flaechen_mass.py - FLAECHENMASS (Spec modelle/archiv/SPEC_FLAECHENMASS.md, Nutzerentscheid 11.11.): Formvergleich ueber FLAECHEN statt Kanten.
 - `tools/foto_auftrag.py` [seg] foto_auftrag.py <objekt.json> <fassaden-ordner> <aus.html> [--wunsch wuensche.json] [--mpp 0.01] [--extra-umriss x0 y0 x1 y1 ...]
-- `tools/foto_auftrag_skizze.py` [seg] Fotoauftrag als Skizze aus den Kettendaten (LoD2-Grundriss, Wandbelegung je Wand aus der Wolke, Fotoluecken aus seiten_modelle.json -> nummerierte Standpunkte Uebereck/Frontal/Fern mit WGS84, audit/foto_auftrag.png/.json/.md); --pruefen <json> <foto> = Foto-GPS gegen Standpunkte. Kette: nach SfM und am Laufende
+- `tools/foto_auftrag_skizze.py` [-] foto_auftrag_skizze.py - FOTOAUFTRAG FRUEH, GENAU UND ALS BILD (22.11.2026, schwabentor-1122).
 - `tools/foto_auswahl.py` [col] foto_auswahl.py - Automatische Bildauswahl: Kennzahlen je Foto VOR dem Netz + Pruefung, welche davon die Registrierung wirklich vorhersagen (Register BK).
 - `tools/foto_auto_pose.py` [seg] foto_auto_pose.py — VOLLAUTOMATISCH die Kamera-Pose eines bekannten 3D-Modells in einem Foto finden (keine Hand-Korrespondenzen, kein Klicken).
 - `tools/foto_breitenprofil.py` [seg] foto_breitenprofil.py - BREITE JE HOEHE IN METERN, automatisch aus Foto und Modell (kalibrierte Kamera, keine Handpicks).
@@ -118,5 +118,6 @@
 - `tools/video_suchen.py` [seg] video_suchen.py - Videoclips (Drohne/Rundgang) fuer ein Objekt AUTOMATISCH finden und pruefen (5.11.: Martinstor-Clips waren noch von Hand gesucht; Nutzerregel "alles vollautomatis
 - `tools/videobilder_ausduennen.py` [-] videobilder_ausduennen.py <video_frames_ordner> [fenster=3] Je Clip aus jeweils <fenster> aufeinanderfolgenden Bildern das schaerfste behalten (manifest.json von videos_zu_bildern.
 - `tools/videos_zu_bildern.py` [seg] videos_zu_bildern.py <videoordner> <ausordner> [fps=2] [min_schaerfe=60] Alle Videos eines Ordners -> scharfe Einzelbilder vid_<clip>_<nn>.jpg (ffmpeg dreht nach Metadaten selbst).
+- `tools/vorbau_fototor.py` [gen] vorbau_fototor.py - FOTO-TOR fuer gebaute Vorbauten (Erker, Galerie, Vordach) je Gruppe aus audit/vorbauten_auto.json (22.11.2026, Kettenstufe 'bauplan').
 - `tools/zusatzfotos_lightglue.py` [col] zusatzfotos_lightglue.py - Zusatzfotos, die mit SIFT nicht registrierten, mit ALIKED+LightGlue nachmatchen und neu registrieren (2026-11-06, Register CY).
 - `tools/zylinder_mass.py` [seg] zylinder_mass.py <objekt.json> --achse x y --radius r --mess FOTO u v [--mess FOTO u v ...] [--tri FOTO u v FOTO u v] - Punkte auf einem RUNDEN Bauteil messen.

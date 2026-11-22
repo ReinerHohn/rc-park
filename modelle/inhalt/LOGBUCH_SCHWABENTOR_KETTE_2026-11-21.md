@@ -46,3 +46,5 @@
 - Z.381: ## 21.11. Agent Anschluss-Stufe (Vordach f00: ANNAHME 16,74 -> gemessen 19,67-19,73)
 - Z.395: ## 19:35 Agent Feinrechnung (tiefe_lokal 'fein 0 %' + Signal 6)
 - Z.401: ## 20:30 Agent Dachueberstand-Rueckschritt (1121p PASST -> 1121q 0,12 statt 0,9 m)
+- Z.459: ## UEBERGABE 22.11.2026 16:00
+- Z.480: ## UEBERGABE 22.11.2026 23:15
