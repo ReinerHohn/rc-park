@@ -305,13 +305,16 @@ def leiter_kante(z, i, j, Mi, Mj, pi, pj, R, a):
             except Exception as ex: _LOT[t] = dict(oben=None, hinweis=str(ex)[:200])
     lot = (_LOT[i]["oben"], _LOT[j]["oben"]) if _LOT[i].get("oben") and _LOT[j].get("oben") and all(_LOT[t].get("quelle") == "fluchtpunkte" for t in (i, j)) else None
     wd = ((z.get("wiederholbarkeit") or {}).get("max") or {}).get("drehung_grad")
-    lt = BH.leiter(BH.Modell(pycolmap.Reconstruction(z["modell"])), BH.Modell(R[i]), BH.Modell(R[j]), Mi, Mj, pi, pj, a.fotos, os.path.join(a.aus, f"leiter_{i}_{j}"), lot=lot, wdh_grad=wd)
+    rd = json.load(open(a.radar)) if getattr(a, "radar", None) and os.path.isfile(a.radar) else None
+    lt = BH.leiter(BH.Modell(pycolmap.Reconstruction(z["modell"])), BH.Modell(R[i]), BH.Modell(R[j]), Mi, Mj, pi, pj, a.fotos, os.path.join(a.aus, f"leiter_{i}_{j}"), lot=lot, wdh_grad=wd,
+                   radar=rd, teile=(i, j))
     M = lt.pop("M"); return dict(M=M, leiter=json.loads(json.dumps(lt, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o))))
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0]); [ap.add_argument(k) for k in ("db", "seiten", "fotos")]; ap.add_argument("--aus", required=True)
     ap.add_argument("--teil", action="append", required=True, help="N=<modell>, erster = Teil A"); ap.add_argument("--faeden", type=int, default=max(1, (os.cpu_count() or 2) // 2))
+    ap.add_argument("--radar", default=os.environ.get("RCPARK_ECK_RADAR"), help="Schwachstellen-Radar (tools/verbund_schwachstellen.py, verbund_schwachstellen/1) fuer das Urteil der Leiter")
     a = ap.parse_args(argv); os.makedirs(a.aus, exist_ok=True)
     tl = [(int(x.split("=", 1)[0]), x.split("=", 1)[1]) for x in a.teil]; A = tl[0][0]
     def ende(rc, urteil, **kw):

@@ -87,4 +87,11 @@ pruef(not BH.verformung_urteil(dict(a=0.3, b=0.0, sigma_a=0.001, sigma_b=0.001))
 # 5 Urteil
 pruef(BH.urteil_kante(0.5, 0.1, 500)[0] == "stark" and BH.urteil_kante(0.16, 0.7, 0)[0] == "duenn" and BH.urteil_kante(0.06, None, 0)[0] == "zu duenn"
       and BH.urteil_kante(0.5, 0.1, 500, kreis_ok=False)[0] == "zu duenn", "urteil_kante: stark / duenn / zu duenn / Kreiswiderspruch")
+# 6 Radar (verbund_schwachstellen/1) traegt das Urteil, Startbilder fuer das Nachmessen
+rd = dict(urteil="zu_duenn", ausloeser=["s1", "s2"], schwachstellen=[dict(id="s1", art="bruecke", bilder=["x.jpg"], teile=[0, 1], staerke=dict(spuren_quer=12, knoten_disjunkt=1)),
+          dict(id="s2", art="gelenk", bilder=["b1.jpg"], staerke=dict(spuren_quer=200, knoten_disjunkt=3)), dict(id="s3", art="schnitt", bilder=["q.jpg"], teile=[2, 3])])
+pruef(BH.radar_urteil(rd, 0, 1, {"x.jpg"})[0] == "zu duenn" and BH.radar_urteil(rd, 5, 6, {"b1.jpg"})[:3:2] == ("duenn", ["b1.jpg"]) and BH.radar_urteil(rd, 2, 3, set())[0] == "stark"
+      and BH.radar_urteil(None, 0, 1, set())[0] is None, "radar_urteil: zu duenn / duenn + Startbild / nicht Ausloeser = stark / ohne Radar = Rueckfall")
+kp2 = BH.kandidaten_paare(A, B.transformiert(M_AB), start=["b2.jpg"])
+pruef(kp2 and kp2[0][0] == "b2.jpg", "kandidaten_paare: Radar-Startbilder zuerst")
 print("FEHLER:" if fehler else "alle ok", len(fehler)); sys.exit(1 if fehler else 0)

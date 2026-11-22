@@ -162,7 +162,7 @@ def _sicht(Mq, i, Mz, j, n_max=300, rng=None):
     ok = (uv[:, 0] >= 0) & (uv[:, 0] < c.width) & (uv[:, 1] >= 0) & (uv[:, 1] < c.height) & (z > 0.25 * zj) & (z < 4 * zj); return float(ok.mean())
 
 
-def kandidaten_paare(A, B_in_A, max_winkel=MAX_WINKEL, min_ueberlapp=MIN_UEBERLAPP, je_bild=JE_BILD, max_paare=MAX_PAARE, ausschluss=()):
+def kandidaten_paare(A, B_in_A, max_winkel=MAX_WINKEL, min_ueberlapp=MIN_UEBERLAPP, je_bild=JE_BILD, max_paare=MAX_PAARE, ausschluss=(), start=()):
     """A, B_in_A: Modelle im selben Rahmen (B mit der Naeherung transformiert). -> [(a_name, b_name, guete)] absteigend (guete = min der beiden Sichtanteile)."""
     rng = np.random.default_rng(0); ach = lambda M, i: M.R[i][2]; ex = set(ausschluss); kand = []
     for i in range(len(A.namen)):
@@ -174,7 +174,7 @@ def kandidaten_paare(A, B_in_A, max_winkel=MAX_WINKEL, min_ueberlapp=MIN_UEBERLA
             if f1 < min_ueberlapp: continue
             f2 = _sicht(B_in_A, j, A, i, rng=rng)
             if f2 >= min_ueberlapp: kand.append((A.namen[i], B_in_A.namen[j], min(f1, f2)))
-    kand.sort(key=lambda x: -x[2]); na, nb, aus = {}, {}, []
+    st = set(start); kand.sort(key=lambda x: (not (x[0] in st or x[1] in st), -x[2])); na, nb, aus = {}, {}, []   # Radar-Startbilder zuerst
     for a, b, g in kand:
         if na.get(a, 0) >= je_bild and nb.get(b, 0) >= je_bild: continue
         na[a] = na.get(a, 0) + 1; nb[b] = nb.get(b, 0) + 1; aus.append((a, b, round(g, 3)))
@@ -365,6 +365,25 @@ HEBEL_MIN = 0.1          # 1122 Teil 0: 0,06 (SIFT) -> Kopplung nur ueber einen 
 MIN_SPUREN_STARK = 100   # = MIN_PUNKTE der Kopplung
 
 
+def radar_urteil(radar, i, j, namen):
+    """URTEIL AUS DEM SCHWACHSTELLEN-RADAR (tools/verbund_schwachstellen.py, Format 'verbund_schwachstellen/1', Agent ae06; keine eigene Erkennung schwacher Stellen):
+    radar = geladenes JSON; i, j = Teilnummern der Kante; namen = Bildnamen von A, B und Zwischenmodell. Gilt die Schwachstelle, deren 'teile' i und j enthalten,
+    sonst die mit gemeinsamen 'bilder'/'seite_klein'; Reihenfolge nach 'ausloeser' (schlimmste zuerst). -> (urteil 'stark'|'duenn'|'zu duenn' oder None, grund, startbilder)."""
+    if not radar or radar.get("urteil") in (None, "kein_graph"): return None, "kein Radar", []
+    sw = {x.get("id"): x for x in radar.get("schwachstellen") or []}; rang = {k: n for n, k in enumerate(radar.get("ausloeser") or [])}; nm = set(namen)
+    def passt(x):
+        t = {str(v) for v in (x.get("teile") or [])}
+        return (str(i) in t and str(j) in t) if t else bool(nm & (set(x.get("bilder") or []) | set(x.get("seite_klein") or [])))
+    tr = sorted((x for x in sw.values() if passt(x)), key=lambda x: rang.get(x.get("id"), 10 ** 6))
+    if not tr: return "stark", "Radar: keine Schwachstelle an dieser Naht", []
+    x = tr[0]; st = x.get("staerke") or {}; uw = str(x.get("urteil") or "")
+    if uw: u = {"stark": "stark", "duenn": "duenn", "zu_duenn": "zu duenn"}.get(uw, "duenn")
+    elif x.get("id") not in rang: u = "stark"
+    else: u = "zu duenn" if ((st.get("knoten_disjunkt") or 0) <= 1 or (st.get("spuren_quer") or 0) < 30) else "duenn"   # Radar-Grenzen (verbund_schwachstellen/1)
+    st = x.get("staerke") or {}
+    return u, f"Radar {x.get('id')} ({x.get('art')}): Spuren quer {st.get('spuren_quer')}, Wege {st.get('knoten_disjunkt')}", [b for b in (x.get("bilder") or []) if b in nm]
+
+
 # ---------------------------------------------------------------- Eskalationsleiter (seiten_eck_koppeln)
 AUSGLEICH = os.environ.get("RCPARK_ECK_AUSGLEICH", "1") != "0"     # Stufe C starr (Standard an, Beleg siehe leiter)
 FUEHREN = os.environ.get("RCPARK_ECK_FUEHREN", "1") != "0"         # Stufe B bei Urteil 'duenn' (GPU, Minuten)
@@ -374,7 +393,7 @@ FUEHREN_RESIZE = int(os.environ.get("RCPARK_ECK_FUEHREN_RESIZE", "1024"))
 LOT_TOR_GRAD = 3.0       # vorlaeufig, Beleg siehe Doku (relativer Lotfehler der Teile im Selbsttest)
 
 
-def leiter(E, A, B, MA, MB, pa, pb, fotos, aus, lot=None, wdh_grad=None):
+def leiter(E, A, B, MA, MB, pa, pb, fotos, aus, lot=None, wdh_grad=None, radar=None, teile=(None, None)):
     """ESKALATIONSLEITER fuer EINE Kante A-B ueber das Zwischenmodell E (Modelle als bruecke_hebel.Modell, MA/MB = stimmige Kopplungen E->A, E->B aus
     seiten_eck_koppeln, pa/pb deren Pruefungen). Stufen: (1) Zwischenmodell-Kopplung (SIFT/Nachmatchen, schon gerechnet) -> (2) gemeinsamer Ausgleich starr
     (tiefengewichtet, Cauchy) -> Urteil -> bei nicht 'stark': (3) gefuehrtes Nachmessen, direkte Spuren A<->B, (4) gemeinsamer Ausgleich mit den direkten Spuren.
@@ -392,10 +411,12 @@ def leiter(E, A, B, MA, MB, pa, pb, fotos, aus, lot=None, wdh_grad=None):
         g = ausgleich(q, M0, MA, lot=lotarg); d = bestaetigt(g["M_AB"], M0, B.P, sig)[1]
         out["stufen"].append(dict(stufe="ausgleich_starr", rest_median=round(g["rest_median"], 5), unterschied=d)); M = g["M_AB"]; stufe = "ausgleich_starr"
     hs = [x for x in (pa.get("hebel"), pb.get("hebel")) if x is not None]; heb = min(hs) if hs else None
-    u, grund = urteil_kante(heb, wdh_grad, 0); out.update(urteil=u, urteil_grund=grund)
+    u, grund, start = radar_urteil(radar, teile[0], teile[1], set(A.namen) | set(B.namen) | set(E.namen)) if radar else (None, "", [])
+    if u is None: u, grund = urteil_kante(heb, wdh_grad, 0); grund = "ohne Radar: " + grund      # Rueckfall nur ohne Radar-Datei
+    out.update(urteil=u, urteil_grund=grund, radar_startbilder=start)
     if u != "stark" and FUEHREN:
         try:
-            kp = kandidaten_paare(A, B.transformiert(M)); info = dict(stufe="fuehren", kandidatenpaare=len(kp))
+            kp = kandidaten_paare(A, B.transformiert(M), start=start); info = dict(stufe="fuehren", kandidatenpaare=len(kp))
             npz = lg_paare(kp, fotos, os.path.join(aus, "fuehren"), vram_mb=FUEHREN_VRAM_MB, resize=FUEHREN_RESIZE) if kp else None
             if npz:
                 st, sp = paare_pruefen(npz, A, B, M, sig); info.update(st); Md, prd, okd, gd, X, Y, td = direkt_koppeln(A, B, sp); info["direkt"] = dict(ok=okd, grund=gd, **prd)
