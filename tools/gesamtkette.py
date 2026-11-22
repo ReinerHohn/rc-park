@@ -344,6 +344,13 @@ def main():
         if not os.path.exists(AU): notiz(B, f"tor_gps{tag}", False, fehler=f"keine Ausrichtung {AU} - GPS-Tor und Kamera-Gelaende-Tor NICHT geprueft")
         if os.path.isdir(sp): erg["kamera"] = lauf(B, f"tor_kamera{tag}", [PY, "-I", "tools/kamera_abdeckung.py", sp], log, ok=(0, 2))[0]
         erg["gps"] = lauf(B, f"tor_gps{tag}", [PY, "-I", "tools/lage_gps_pruefen.py", ZR, os.path.relpath(AU, ROOT), "--fotos", FV], log)[0] if os.path.exists(AU) else None
+        # 22.11.2026 LAGEPROBEN der Ausrichtung (tools/lage_proben.py, in SFM-AUSRICHTUNG transformation.lage_proben): 'keine'/'mehrdeutig' = keine Loesung besteht alle
+        # urteilsfaehigen unabhaengigen Proben (Oberkante/DOM1, Kamerahoehe, Wandfit mit Nachbarn) -> Lage nicht belegt, nicht modellieren (rc 3); 'belegt' = 0; sonst kein Urteil.
+        try:
+            _lp = (json.load(open(AU)).get("transformation") or {}).get("lage_proben") if os.path.exists(AU) else None
+            erg["lage_proben"] = None if not _lp else (0 if _lp.get("ergebnis") in ("belegt", "bestaetigt") else 3 if _lp.get("ergebnis") in ("keine", "mehrdeutig") else None)
+            if _lp: notiz(B, f"tor_lage_proben{tag}", erg["lage_proben"] != 3, hinweis=f"Lageproben: {_lp.get('ergebnis')} - {str(_lp.get('grund'))[:300]}")
+        except Exception as e_: erg["lage_proben"] = None; print("Lageproben nicht lesbar:", e_, flush=True)
         if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT)], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende
         if os.path.isdir(sp):                                              # 20.11.2026 (Martinstor FlexGlue-Nacht): Hinweis-Tore Seitenverkleben - Modell aus punktlos getrennten Stuecken? Kameras gegen Foto-GPS auf der falschen Turmseite?
             erg["zerfall"] = lauf(B, f"tor_zerfall{tag}", [PYC, "-I", "tools/modell_zerlegen.py", sp, "--min-bilder", "10"], log, ok=(0, 3))[0]
@@ -381,7 +388,7 @@ def main():
             B["lage"] = dict(tore=erg, bestanden=False, fehler="seiten_verklebt" if erg["seiten_blick"] == 3 else "tor_abgestuerzt"); __import__("json_sicher").schreiben(bp, B)
             if erg["seiten_blick"] == 3: return abschluss(3, "SEITEN-BLICK-TOR durchgefallen: aehnliche Seiten liegen im SfM-Modell aufeinander (pipe/sfm/seiten_blick.json) - Modell NICHT weiterverwenden, nicht modellieren. Abhilfe: Seiten getrennt rechnen und vereinen (tools/seiten_erkennen.py, tools/seiten_vereinen.py)")
             return abschluss(4, f"Seiten-Blick-Tor abgestuerzt (rc {erg['seiten_blick']}, Log ansehen) - KEIN Urteil ueber Seitenverklebung")
-        bestanden = lambda e: e.get("gps") in (0, None) and e.get("grundriss") == 0 and e.get("seiten_blick") in (0, None)
+        bestanden = lambda e: e.get("gps") in (0, None) and e.get("grundriss") == 0 and e.get("seiten_blick") in (0, None) and e.get("lage_proben") in (0, None)
         try:                                                             # 15.11.: Hoehen-Tor (DOM1-Laser gegen Modelldach) bei jedem neuen Objekt mit LoD2 in bauen_abnehmen einschalten
             _o = json.load(open(os.path.join(ROOT, ZR)))
             if _o.get("lod2", {}).get("id") and "hoehen_tor" not in _o: _o["hoehen_tor"] = True; __import__("json_sicher").schreiben(os.path.join(ROOT, ZR), _o)

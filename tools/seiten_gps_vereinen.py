@@ -28,9 +28,13 @@ MAX_MASS_SD = 0.15      # ANNAHME: Bootstrap-Streuung des Massstabsverhaeltnisse
 RADIUS_M = 150.0        # GPS-Fotos weiter als 150 m vom Median = Fernaufnahmen/Ortsmarken, nicht verwenden (wie gps_seiten_pruefen)
 
 
+ZEITEN = {}   # Bildname -> EXIF-Aufnahmezeit (gps_roh fuellt sie; Sitzungen der ehrlichen GPS-Unsicherheit, tools/gps_unsicherheit.py)
+
+
 def gps_roh(ordner, namen):
-    """{Bildname: (breite, laenge)} aus dem EXIF (Bilder ohne GPS fehlen)."""
+    """{Bildname: (breite, laenge)} aus dem EXIF (Bilder ohne GPS fehlen). Nebenbei: Aufnahmezeiten in ZEITEN."""
     from PIL import Image
+    import gps_unsicherheit as GU
     roh = {}
     for n in namen:
         try:
@@ -38,7 +42,7 @@ def gps_roh(ordner, namen):
             if not e or 2 not in e or 4 not in e: continue
             gr = lambda v: float(v[0]) + float(v[1]) / 60 + float(v[2]) / 3600
             la = gr(e[2]) * (-1 if e.get(1) == "S" else 1); lo = gr(e[4]) * (-1 if e.get(3) == "W" else 1)
-            if abs(la) > 0.1 and np.isfinite(la) and np.isfinite(lo): roh[n] = (la, lo)
+            if abs(la) > 0.1 and np.isfinite(la) and np.isfinite(lo): roh[n] = (la, lo); ZEITEN[n] = GU.exif_zeit(os.path.join(ordner, n))
         except Exception: continue
     return roh
 
@@ -123,8 +127,16 @@ def rahmen(namen, C, oben, G, boden=None, rng=None, grenze=GRENZE_M, kamerahoehe
             if len(z_) >= 5: z0 = float(np.median(z_)); hoehe_aus = f"Boden der dichten Wolke unter {len(z_)} GPS-Kameras"
         except Exception as ex: hoehe_aus += f" (Boden aus der Wolke nicht moeglich: {type(ex).__name__})"
     M = np.eye(4); M[0, :3] = s * (R[0, 0] * e1 + R[0, 1] * e2); M[1, :3] = s * (R[1, 0] * e1 + R[1, 1] * e2); M[2, :3] = s * ob; M[:2, 3] = t; M[2, 3] = -s * z0
+    # 22.11.2026 EHRLICH (tools/gps_unsicherheit.py, dasselbe Mass wie GPS-Tor und Ausrichtung): Bootstrap misst nur den Zufall; der gemeinsame Fehler einer Fotositzung
+    # wirkt mit Sigma/Hebel (schwabentor-1122 Teil 1: 23 Geotags eng an der Suedwand -> Hebel klein). NUR BERICHT (dreh_sd_ehrlich_grad, mass_sd_ehrlich_rel) + Kasten in
+    # seiten_lod2_je_teil; die Annahme-Regeln von b_nach_a bleiben unveraendert (Vorschlag im Logbuch: Teil nur einsetzen, wenn belegt).
+    import gps_unsicherheit as GU
+    sd_b, sm_b = float(np.std(dr)), float(np.std(ms) / s)
+    sy = GU.systematik(Y, GU.gruppen(Y, [ZEITEN.get(namen[i]) for i in k], mitte=np.median(Y[inl], 0)), inl, M=X); sd_e, sm_e = GU.gesamt(sd_b, sm_b, sy)
     return dict(n_gps=len(k), inlier=int(inl.sum()), rest_median_m=round(best["rest"], 2), ausreisser=round(float((best["d"] > grenze).mean()), 3), drehung_grad=round(winkel(R), 2),
-                massstab=s, dreh_sd_grad=round(float(np.std(dr)), 2), mass_sd_rel=round(float(np.std(ms) / s), 4), hoehe_aus=hoehe_aus, M=M)
+                massstab=s, dreh_sd_grad=round(sd_b, 2), mass_sd_rel=round(sm_b, 4), dreh_sd_ehrlich_grad=round(sd_e, 2), mass_sd_ehrlich_rel=round(sm_e, 4),
+                systematik=dict(dreh_sd_grad=round(sy["dreh_sd_grad"], 2), mass_sd_rel=round(sy["mass_sd_rel"], 4), n_gruppen=sy["n_gruppen"], n_eff=sy["n_eff"], sigma_m=sy["sigma_m"],
+                                hebel_m=[g_["hebel_m"] for g_ in sy["gruppen"]]), hoehe_aus=hoehe_aus, M=M)
 
 
 def guete(F):
@@ -148,6 +160,9 @@ def b_nach_a(A, B, G, boden_a=None, boden_b=None):
     if ga or gb: erg.update(ok=False, urteil="GPS taugt nicht als Lagebeleg: " + "; ".join([f"A: {x}" for x in ga] + [f"B: {x}" for x in gb])); return erg
     M = np.linalg.inv(FA["M"]) @ FB["M"]; dsd = float(np.hypot(FA["dreh_sd_grad"], FB["dreh_sd_grad"])); msd = float(np.hypot(FA["mass_sd_rel"], FB["mass_sd_rel"]))
     pr = dict(dreh_sd_grad=round(dsd, 2), mass_sd_rel=round(msd, 4), massstab_b_nach_a=float(FB["massstab"] / FA["massstab"]))
+    dse = float(np.hypot(FA.get("dreh_sd_ehrlich_grad", FA["dreh_sd_grad"]), FB.get("dreh_sd_ehrlich_grad", FB["dreh_sd_grad"]))); mse = float(np.hypot(FA.get("mass_sd_ehrlich_rel", FA["mass_sd_rel"]), FB.get("mass_sd_ehrlich_rel", FB["mass_sd_rel"])))
+    pr.update(dreh_sd_ehrlich_grad=round(dse, 2), mass_sd_ehrlich_rel=round(mse, 4), lage_b_belegt=bool(dse <= MAX_DREH_SD and mse <= MAX_MASS_SD),
+              hinweis_ehrlich="Zufall + systematischer Sitzungsfehler (gps_unsicherheit.py); nur Bericht - ist lage_b_belegt false, legt das GPS die Lage von B NICHT fest (Fotoluecke melden)")
     gr = []
     if dsd > MAX_DREH_SD: gr.append(f"Drehung von B gegen A nur auf +-{dsd:.1f} Grad belegt (Grenze {MAX_DREH_SD:.0f})")
     if msd > MAX_MASS_SD: gr.append(f"Massstab B/A nur auf +-{100 * msd:.0f} % belegt (Grenze {100 * MAX_MASS_SD:.0f} %)")

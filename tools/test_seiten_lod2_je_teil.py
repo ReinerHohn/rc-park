@@ -62,9 +62,11 @@ print(f"ok 4: wahre Lage 5,5 m neben GPS, Kasten 2 m -> Rand {S2['rand']}")
 
 # ---------- 5 Kasten + Regeln
 Kv = L.kasten(dict(dreh_sd_grad=0.75, mass_sd_rel=0.021, rest_median_m=5.0, inlier=125)); Kw = L.kasten(dict(dreh_sd_grad=3.5, mass_sd_rel=0.12, rest_median_m=1.8, inlier=24))
-Kx = L.kasten(dict(dreh_sd_grad=9.0, mass_sd_rel=0.4, rest_median_m=20.0, inlier=16))
+Kx = L.kasten(dict(dreh_sd_grad=9.0, mass_sd_rel=0.4, rest_median_m=20.0, inlier=16))   # 22.11.: Obergrenze jetzt KASTEN_MAX_* (20 Grad/25 %, ehrliche GPS-Unsicherheit)
+Ke = L.kasten(dict(dreh_sd_grad=0.75, mass_sd_rel=0.021, dreh_sd_ehrlich_grad=9.5, mass_sd_ehrlich_rel=0.17, rest_median_m=5.0, inlier=125))
+pruef(Ke["dreh_grad"] > 15 and Ke["mass_rel"] > 0.2, f"ehrliche Unsicherheit (eine Sitzung) muss den Kasten weiten: {Ke}")
 pruef(Kw["dreh_grad"] > Kv["dreh_grad"] and Kw["mass_rel"] > Kv["mass_rel"], f"wenig GPS gibt keinen weiteren Kasten: {Kv} / {Kw}")
-pruef(Kx["dreh_grad"] <= 15.0 and Kx["mass_rel"] <= 0.15 and Kx["versatz_m"] <= L.VERSATZ_MAX_M and Kv["versatz_m"] >= L.VERSATZ_SITZUNG_M, f"Kasten-Grenzen: {Kv} / {Kx}")
+pruef(Kx["dreh_grad"] <= L.KASTEN_MAX_DREH and Kx["mass_rel"] <= L.KASTEN_MAX_MASS and Kx["versatz_m"] <= L.VERSATZ_MAX_M and Kv["versatz_m"] >= L.VERSATZ_SITZUNG_M, f"Kasten-Grenzen: {Kv} / {Kx}")
 t_ok = dict(teil="a", eindeutig=True, gruende=[]); t_nein = dict(teil="b", eindeutig=False, gruende=["mehrdeutig"])
 kv = dict(kanten=[dict(urteil="versetzt", von=[0, 0], bis=[1, 0], lageunterschied_m=1.6)], kanten_mit_beiden=1, max_lageunterschied_m=1.6, summe_lageunterschied_m=1.6)
 kn = dict(kanten=[dict(urteil="ok", von=[0, 0], bis=[1, 0], lageunterschied_m=0.2)], kanten_mit_beiden=1, max_lageunterschied_m=0.2, summe_lageunterschied_m=0.2)
