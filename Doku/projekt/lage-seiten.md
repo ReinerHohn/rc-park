@@ -29,6 +29,12 @@ Details: `modelle/archiv/STAND_2026-11-14.md` · `modelle/LOGBUCH_KETTENTEST_202
 - 19.11. · Wolken-Gruppen-Tor (Punkte > 6 m ueber LoD2-Umgebung) → ✓ · nennt fehlverortete Clips; > 6 % unmoeglich = Ausrichtung falsch [LOGBUCH 19.11. 10:15]
 - 19.11. · unstabile Konsens-Kameras in die dichte Wolke → ✗ · schiefe Haeuserzeile; `dicht_bildwahl --ohne unstabil.txt` [LOGBUCH 19.11. 09:57]
 - 15.11. · Drohnenclip als Kette an ein einziges Torbild → ⚠ Falle · Massstab der Kette kollabiert (Flug 500 m -> 27 m); Insel-Tor `kette_insel_pruefen` [archiv/STAND_2026-11-14]
+- 22.11. · GPS-Kameraauswahl Ausrichtung ≠ Tor (Muster, 0,0, 5 km, 3D-Vorfilter) → ✓ eine Funktion `gps_unsicherheit.gps_kameras` fuer beide [test_lage_eine_funktion]
+- 22.11. · GPS-Veto ungerundet vs. Tor auf 0,01 m gerundeten Standorten → ✓ `standort_runden` in beiden (1120: Unterschied war 0,00°) [test_lage_eine_funktion]
+- 22.11. · Lot aus Kameraebene (Ausrichtung) vs. Bild-x-Achsen (Tor), 1120 2,3° auseinander → ✓ Bild-x (`seiten_gps_vereinen.lot_info`, Vorzeichen per Median) · Ursache der GPS-Ehrlichkeit ±11,2° vs. ±1,0°: RANSAC im schiefen Rahmen landet auf 105 Nahkameras ohne Fernfotos; Bild-x 125/174, 10 fern = Tor. Gegen Feinfit/Wandlot: Ebene 1120 6,6/5,9°, 1122 2,9/1,6°, Martinstor 68/85° (!); Bild-x 4,4/4,1, 4,6/3,3, 16/1,8 → Ebene kann katastrophal kippen, Bild-x nie; alt per `AUSR_LOT=ebene` · Kipp-Box-Wirkung auf echten Staenden UNGEPRUEFT [tools/versuche/lage_eine_funktion/]
+- 22.11. · LO-RANSAC im GPS-Fit (beste Hypothesen nachverfeinern) → ✗ · aendert das 1122-Tor (148 → 154/157 Inlier), Urteile nicht mehr vergleichbar [lo_test.py]
+- 22.11. · Objektwand-Abdeckung per Schwerpunkt der Kameras → ✗ 0 % bei Kameras rundum · ✓ je Kamera `lage_proben.wand_gesehen` (= gesehene_kanten); alt `AUSR_ABDECKUNG=schwerpunkt` · Rangfolge auf echten Staenden UNGEPRUEFT
+- 22.11. · Vorstufe „Lage frueh“: Ausrichtung auf sparse/0 + GPS-Tor + Lageproben VOR der dichten Wolke → ✓ synthetisch (rc 0/3/4), Abbruch spart 40–60 min · Grundriss/Wanddicke sparse nicht belegt → bleiben spaet; echter Lauf UNGEPRUEFT; Schalter `RCPARK_LAGE_FRUEH` [tools/lage_frueh.py, test_lage_frueh]
 
 **Seitenverwechslung & Seiten vereinen**
 - 01.11. · alle Fotos eines symmetrischen Turms in einer SfM → ✗ · beide Uhrseiten zu einer Fassade verklebt [VERSUCHSREGISTER AH]

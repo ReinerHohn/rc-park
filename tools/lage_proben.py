@@ -365,3 +365,9 @@ def tor_rc(transformation):
 def lage_bestanden(erg):
     """Lage-Urteil der Kette aus den rc der Tore (None = Tor lief nicht / kein Urteil): GPS, Seiten-Blick und Lageproben 0 oder None, Grundriss genau 0."""
     return erg.get("gps") in (0, None) and erg.get("grundriss") == 0 and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None)
+
+
+def lage_frueh_bestanden(erg):
+    """Urteil der Vorstufe 'Lage frueh' (tools/lage_frueh.py, vor der dichten Wolke): DIESELBE Regel wie lage_bestanden ohne das Grundriss-Tor (braucht die dichte Wolke;
+    eine sparse-Fassung ist nicht als gleichurteilend belegt, 22.11.2026). Nur rc 3 eines geprueften Tors verwirft - None/kein Urteil laesst durch."""
+    return erg.get("gps") in (0, None) and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None)

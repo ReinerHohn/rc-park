@@ -12,7 +12,9 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   video      tools/video_suchen.py (GPU) -> tools/clips_waehlen.py (Regeln statt Sichtpruefung) -> tools/video_frames.py
   vorpruefen tools/bilder_vorpruefen.py (GPU, Videokette) gegen fotos_dir (vertrauenswuerdige Bilder)
   sammeln    tools/fotos_sammeln.py (Dubletten, Quelle im Namen)
-  sfm        tools/pipeline_objekt.py fein (SfM mit Paarliste, Bildwahl, Tiefenkarten GPU, LoD2-Abgleich)
+  sfm        tools/pipeline_objekt.py fein (SfM mit Paarliste, Bildwahl, Tiefenkarten GPU, LoD2-Abgleich); VORSTUFE 'Lage frueh' (22.11.2026, tools/lage_frueh.py):
+             erst pipeline_objekt --bis kameras, dann Ausrichtung + GPS-Tor + Lageproben auf dem duennen Netz, eindeutig durchgefallen -> Abbruch VOR der dichten Wolke
+             (RCPARK_LAGE_FRUEH=1 Standard, =hinweis nur melden, =0 aus)
   tore       kamera_abdeckung, lage_gps_pruefen, wolke_grundriss_pruefen; KORREKTUR: faellt GPS (rc 3) oder Grundriss A (rc 3) durch,
              sfm_lod2_ausrichten --loesung 1..max probieren, die erste Loesung, die ALLE Tore besteht, gilt; sonst Abbruch mit Bericht
   dach       tools/dach_vermessen.py (DOM1, mit Wolke)
@@ -311,7 +313,11 @@ def main():
                 except Exception as e_: print("HINWEIS Fotosatz des alten SfM-Laufs nicht lesbar (wird wiederverwendet):", e_, flush=True)
             if alt_ and alt_.get("sha") != sha_:
                 neu_sfm = ["--neu", "sfm"]; notiz(B, "sfm_neu", True, hinweis=f"Fotosatz geaendert ({alt_.get('n')} -> {len(namen_)} Bilder): SfM und dichte Wolke werden neu gerechnet, alter Stand beiseite (pipe/*.alt_<zeit>, nicht geloescht)")
-        t_s = time.time(); rc_s = lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe] + (["--mapper", a.mapper] if a.mapper else []) + neu_sfm, log, platz=[P], timeout=float(os.environ.get("RCPARK_STUFE_MAX_S", "43200")))[0]   # 20.11.2026: SfM mind. 6 h - das 3-h-Standardlimit brach den globalen Mapper bei 2107 Bildern ab (rc 124)
+        t_s = time.time(); _pipe = [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe] + (["--mapper", a.mapper] if a.mapper else []); _to = float(os.environ.get("RCPARK_STUFE_MAX_S", "43200"))   # 20.11.2026: SfM mind. 6 h - das 3-h-Standardlimit brach den globalen Mapper bei 2107 Bildern ab (rc 124)
+        if os.environ.get("RCPARK_LAGE_FRUEH", "1") != "0":                   # 22.11.2026 VORSTUFE 'Lage frueh' (tools/lage_frueh.py): GPS-Tor + Lageproben auf dem duennen Netz VOR der dichten Wolke
+            rc_s, _abbr = __import__("lage_frueh").sfm_mit_vorstufe(B, lauf, notiz, _pipe, neu_sfm, ZR, P, FV, a.ziel, log, _to, py=PY)
+            if _abbr: json.dump(dict(n=len(namen_), sha=sha_, zeit=time.strftime("%Y-%m-%d %H:%M")), open(fsj, "w")); return abschluss(3, _abbr)   # SfM steht fuer diesen Fotosatz
+        else: rc_s = lauf(B, "sfm", _pipe + neu_sfm, log, platz=[P], timeout=_to)[0]
         if rc_s == 0: json.dump(dict(n=len(namen_), sha=sha_, zeit=time.strftime("%Y-%m-%d %H:%M")), open(fsj, "w"))
         B["lage"] = dict(bestanden=None, hinweis="neue SfM - Lage-Tore noch nicht gelaufen (Stufe 'tore')")
         mwj = os.path.join(P, "sfm", "mapper_wahl.json")                         # 19.11.2026 (Nutzer): trug der Konsens-Mapper nicht, steht der DATENMANGEL als eigene rote Zeile im Bericht (nie still die langsamere/schlechtere Methode)
