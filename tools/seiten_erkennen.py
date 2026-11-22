@@ -16,6 +16,9 @@ Verfahren (ohne Vorwissen, ohne Kamerastandorte):
   3. --db-aus: Kopie der Datenbank, in der ALLE Paare zwischen verwechselten Gruppen geloescht sind (matches + two_view_geometries).
      Dazu: Gruppen-Zusammenhang ohne die geloeschten Verbindungen; Teile ohne ein einziges Objektfoto (--referenz Namensanfang) = FREMD (anderes Bauwerk aus
      Stadtrundgang-Videos) -> ihre Paare werden ebenfalls geloescht (sie kosteten am Martinstor 35 min Mapper-Zeit ohne Nutzen), Liste in seiten.json 'fremd'.
+  4. --durchblick / RCPARK_SEITEN_DURCHBLICK=1 (Stufe Durchblick/Umgebung, 22.11.2026): in verwechselten/unklaren/ungeprueften Verbindungen bleiben EINZELNE Paare mit
+     >= 200 nicht-statischen Inliern ueber >= 12/64 Bildzellen (Uebereck-/Umgebungsfotos; Verwechslung findet nur Uhr/Helm, max 122 Inlier am Martinstor), auch gegen
+     Regel 2b; GPS-Veto je Paar. Liste 'durchblick' in seiten.json (urteil 'durchblick' + Messwerte). Einblendungen (gleiche Bildstelle) zaehlen nie. Siehe Kommentar unten.
 Ausgabe seiten.json: gemeinschaft je Bild, verbindungen (paare, p_median, urteil), seiten (Zusammenhangsteile mit Objektfotos), fremd, geloeschte_paare.
 rc 0 = nichts verwechselt, rc 3 = mindestens eine Verwechslung gefunden (und bei --db-aus bereinigt).
 GRENZEN: der Pruefer ist je Paar unsicher (echte Paare Median nur 0,57-0,89) - deshalb Abstimmung je Gruppenpaar, nie Einzelpaar-Filter. Eine Gruppe, die selbst beide
@@ -116,6 +119,86 @@ def fernsicht_behalten(verb, fern):
     return beh
 
 
+# DURCHBLICK / UEBERECK (22.11.2026, schwabentor-1122, Nutzer: "Ich habe doch Fotos von ueberall her gemacht. Muesst ihr das nicht zusammenfinden?").
+# Befund an den Paarbildern (tools/versuche/durchblick_paare_1122.py, /media/oem/rcdaten/tmp/durchblick/): die vermuteten Bruecken 9-14, 14-19, 7-14, 9-13 waren
+# KEIN Durchblick durch den Bogen, sondern die eingeblendete Schrift eines Urlaubsvideos ("Urlaub Schwarzwald ... Schwabentor", Datum) - alle Paare COLMAP-config 7
+# (WATERMARK), Zuordnungen an derselben Bildstelle (Versatz < 4 px), 0 von 222 Querpaaren behalten nach Abzug >= 15 echte Inlier. 0-1 = echte Fassadenverwechslung
+# (Uhr/Helm, Inlier <= 44). Die ECHTE Bruecke lag woanders: der Nutzer ging um die Turmecke (Fotos 11:39:28-11:41:45): Gruppe 1 (Teil 1) -> Gruppe 27 (5 Bilder,
+# eigener Teil) -> Gruppe 12 (Teil 0) mit 300 / 545 / 268 bestaetigten Inliern auf Quadern, Brunnensaeule, Nachbarhaus und Boden. --streng warf sie weg, weil der
+# Pruefer kleine Gruppen (< --min-bilder) und schwache Verbindungen (< --min-paare) nie sieht und alles Ungepruefte loescht.
+# KRITERIUM je PAAR (nicht je Gruppenverbindung): Verwechslung aehnlicher Seiten findet nur die wiederholten, entworfenen Bauteile (Uhr, Helm, Fenster); verschiedene
+# Quader-, Pflaster- und Nachbarhausflaechen passen nicht Stein fuer Stein. Gemessen: groesste Inlierzahl eines Querpaares zwischen verschiedenen Bildteilen
+# Martinstor-1120 (bekannte Verwechslung, alle 4491 Paare) 122, Schwabentor 0<->1 ohne Einblendung 93; echte Eckpaare 268-545.
+DURCH_MIN_INLIER = 200   # ANNAHME: > 1,6 x groesstes Verwechslungs-/unklar-Paar (Martinstor 122, davon 'verwechselt' max 88), < kleinstes gesehenes Eckpaar 268
+DURCH_MIN_ZELLEN = 12    # ANNAHME: Inlier in >= 12 von 64 Rasterzellen JEDES Bildes (Schrift/Logo/Uhr belegt 3-9)
+DURCH_STATISCH = 0.002   # Zuordnung an (fast) derselben Bildstelle = Einblendung/Wasserzeichen; Anteil der Bildgroesse (4 px bei 2000 px)
+DURCH_MAX_STATISCH = 0.10  # ANNAHME: mehr als 10 % statische Zuordnungen = Paar teilweise Einblendung (schwabentor-1122 9-24: 25-33 %, echte Paare 0-6 %) -> abgelehnt
+DURCH_GPS_GEGEN = 120.0  # wie urteil_gps: Standorte beider Fotos > 120 Grad um die Objektmitte auseinander = koennen nicht dieselbe Flaeche sehen -> Paar abgelehnt
+
+
+def paar_staerke(p0, p1, wh0, wh1, statisch=DURCH_STATISCH, raster=8):
+    """p0, p1 = bestaetigte Zuordnungen (N x 2, Pixel), wh = (breite, hoehe) -> dict(n, statisch, n_eff, zellen0, zellen1). Statische Zuordnungen (Einblendung) zaehlen nicht."""
+    p0 = np.asarray(p0, float).reshape(-1, 2); p1 = np.asarray(p1, float).reshape(-1, 2)
+    st = np.linalg.norm(p0 - p1, axis=1) < statisch * max(max(wh0), max(wh1)); q0, q1 = p0[~st], p1[~st]
+    def zellen(q, wh):
+        if not len(q): return 0
+        gx = np.clip((q[:, 0] / wh[0] * raster).astype(int), 0, raster - 1); gy = np.clip((q[:, 1] / wh[1] * raster).astype(int), 0, raster - 1)
+        return int(len(set(zip(gx.tolist(), gy.tolist()))))
+    return dict(n=int(len(p0)), statisch=int(st.sum()), n_eff=int(len(q0)), zellen0=zellen(q0, wh0), zellen1=zellen(q1, wh1))
+
+
+def durchblick_ok(m, gps_dw=None, min_inlier=DURCH_MIN_INLIER, min_zellen=DURCH_MIN_ZELLEN, gegen=DURCH_GPS_GEGEN):
+    """(urteil, grund): 'durchblick' = Paar zeigt dieselbe Flaeche (viele nicht-statische Inlier ueber das ganze Bild), sonst 'abgelehnt'."""
+    if m["n_eff"] < min_inlier: return "abgelehnt", f"n_eff {m['n_eff']} < {min_inlier}" + (f" (statisch {m['statisch']} = Einblendung)" if m["statisch"] > m["n_eff"] else "")
+    if m["statisch"] > DURCH_MAX_STATISCH * max(m["n"], 1): return "abgelehnt", f"Einblendung: statisch {m['statisch']} von {m['n']}"
+    if min(m["zellen0"], m["zellen1"]) < min_zellen: return "abgelehnt", f"Zellen {min(m['zellen0'], m['zellen1'])} < {min_zellen}"
+    if gps_dw is not None and gps_dw > gegen: return "abgelehnt", f"GPS-Standorte {gps_dw:.0f} Grad auseinander"
+    return "durchblick", "ok"
+
+
+def durchblick_stufe(db, nm, g, falsch, gruppen_ok, mitte=None, bilder=None, min_inlier=DURCH_MIN_INLIER):
+    """Stufe 'Durchblick/Umgebung' fuer Verbindungen in falsch (verwechselt/unklar/ungeprueft unter --streng): jedes Paar mit >= min_inlier bestaetigten Zuordnungen
+    zwischen zwei Gruppen aus gruppen_ok (Bildteile mit Objektfotos) wird einzeln gemessen. -> Liste dict(pair_id, a, b, ga, gb, n, n_eff, ..., urteil, grund).
+    mitte + bilder: EXIF-GPS beider Fotos (15-300 m) als Veto gegen Paare von gegenueberliegenden Standorten."""
+    wh = {i: (w, h) for i, w, h in db.execute("select i.image_id, c.width, c.height from images i join cameras c on c.camera_id = i.camera_id")}
+    gps = {}
+    def standort(i):
+        if i not in gps:
+            gps[i] = None
+            if mitte and bilder:
+                from paarvorwahl import gps_aus_exif
+                q = gps_aus_exif(os.path.join(bilder, nm[i]))
+                if q is not None:
+                    w, d = richtung(mitte, q); gps[i] = w if 15.0 <= d <= 300.0 else None
+        return gps[i]
+    def kp(i):
+        r, c, d = db.execute("select rows, cols, data from keypoints where image_id = ?", (i,)).fetchone(); return np.frombuffer(d, np.float32).reshape(r, c)[:, :2]
+    aus = []
+    for pid, r, c, dat in db.execute("select pair_id, rows, cols, data from two_view_geometries where rows >= ?", (min_inlier,)).fetchall():
+        x, y = pid // MAXID, pid % MAXID; k = tuple(sorted((g[x], g[y])))
+        if k not in falsch or g[x] not in gruppen_ok or g[y] not in gruppen_ok: continue
+        ij = np.frombuffer(dat, np.uint32).reshape(r, c); m = paar_staerke(kp(x)[ij[:, 0]], kp(y)[ij[:, 1]], wh[x], wh[y])
+        wa, wb = standort(x), standort(y); dw = abs((wa - wb + 180.0) % 360.0 - 180.0) if wa is not None and wb is not None else None
+        u, grund = durchblick_ok(m, dw, min_inlier=min_inlier)
+        aus.append(dict(pair_id=int(pid), a=nm[x], b=nm[y], ga=g[x], gb=g[y], **m, gps_dw=None if dw is None else round(dw), urteil=u, grund=grund))
+    return aus
+
+
+def durchblick_einbauen(a, db, nm, g, C, quer_alle, falsch, ref, verb):
+    """EIN Aufruf aus main(): Gruppen der Bildteile mit Objektfotos bestimmen, Stufe rechnen, Zaehler je Verbindung in verb eintragen. -> (liste, behaltene pair_ids)."""
+    S0 = teile(len(C), [k for k in quer_alle if k not in falsch]); ok = {k for s in S0 if sum(ref(k) for k in s) > 0 for k in s}
+    mitte = None; oj = a.objekt or a.fernsicht
+    if oj:
+        sys.path.insert(0, T); from netz_fotos_holen import geo; mitte = geo(json.load(open(oj)))
+    sys.path.insert(0, T); d = durchblick_stufe(db, nm, g, falsch, ok, mitte=mitte, bilder=a.bilder)
+    beh = {x["pair_id"] for x in d if x["urteil"] == "durchblick"}; z = collections.Counter(tuple(sorted((x["ga"], x["gb"]))) for x in d if x["urteil"] == "durchblick")
+    for v in verb:
+        if z.get((v["a"], v["b"])): v["durchblick_paare"] = z[(v["a"], v["b"])]
+    print(f"DURCHBLICK/UMGEBUNG: {len(d)} starke Paare (>= {DURCH_MIN_INLIER} Inlier) in verwechselten/unklaren Verbindungen gemessen, {len(beh)} behalten "
+          f"(Gruppenpaare {dict(sorted(z.items()))}); abgelehnt: {collections.Counter(x['grund'].split(' ')[0] for x in d if x['urteil'] != 'durchblick')}", flush=True)
+    return d, beh
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("db"); ap.add_argument("bilder"); ap.add_argument("--aus", required=True); ap.add_argument("--db-aus"); ap.add_argument("--min-bilder", type=int, default=12)
     ap.add_argument("--min-paare", type=int, default=20); ap.add_argument("--min-inlier", type=int, default=30); ap.add_argument("--stichprobe", type=int, default=24); ap.add_argument("--schwelle", type=float, default=0.45)
@@ -124,6 +207,7 @@ def main(argv=None):
     ap.add_argument("--streng", action="store_true", help="nur bestaetigte Verbindungen behalten: auch 'unklare' und ungepruefte schwache Verbindungen zwischen Gruppen loeschen (Verklebung laeuft sonst ueber Umwege, Martinstor 19.11.2026)")
     ap.add_argument("--pruefer-aus", help="Pruefer-Ergebnisse (p je Verbindung) aus einer frueheren seiten.json derselben Datenbank uebernehmen statt neu zu rechnen (Cache)")
     ap.add_argument("--masken", help="Ordner mit Vordergrund-Masken (tools/handy_masken.py; <bildname>.png, 0 = Person/Fahrzeug): der Paar-Pruefer sieht den Vordergrund grau (Martinstor 21.11.2026: Person auf beiden Torseiten = falsche Bruecke)"); ap.add_argument("--objekt", help="objekt.json: mit Objektmitte + EXIF-GPS der Fotos entscheidet die STANDRICHTUNG je Bildgruppe vor dem Pruefer (Nutzer 19.11.2026: kuenftig GPS im EXIF; muss auch ohne gehen)")
+    ap.add_argument("--durchblick", action="store_true", help="Stufe Durchblick/Umgebung (auch RCPARK_SEITEN_DURCHBLICK=1): einzelne Paare verwechselter/unklarer/ungepruefter Verbindungen mit >= 200 nicht-statischen Inliern ueber >= 12/64 Bildzellen bleiben (Uebereck-/Umgebungsfotos); GPS-Veto bei --objekt/--fernsicht")
     ap.add_argument("--fernsicht", help="objekt.json: NUR die Fernsicht-Regel (Gruppen mit GPS-Fotos >= 100 m behalten unter --streng ihre staerkste unklare Verbindung), ohne GPS-Richtungs-Urteil (--objekt)")
     a = ap.parse_args(argv); db = sqlite3.connect(f"file:{a.db}?mode=ro", uri=True); nm = dict(db.execute("select image_id, name from images"))
     K = [(pid // MAXID, pid % MAXID, rows) for pid, rows in db.execute("select pair_id, rows from two_view_geometries where rows >= ?", (a.min_inlier,))]
@@ -188,7 +272,11 @@ def main(argv=None):
         echt = {(v["a"], v["b"]) for v in verb if v["urteil"] == "echt"} | fernsicht_behalten(verb, fern); falsch = {k for k in quer_alle if k not in echt}
         if fern: print(f"FERNSICHT: Gruppen {sorted(fern)} (GPS-Fotos >= {FERN_M:.0f} m) - behaltene Verbindung(en): {sorted((v['a'], v['b']) for v in verb if v.get('fernsicht_behalten'))}")
     # Zusammenhang der Gruppen ohne die verwechselten Verbindungen (kleine Gruppen und ungepruefte schwache Verbindungen zaehlen als echt)
-    S = teile(len(C), [k for k in quer_alle if k not in falsch]); ref = lambda k: sum(1 for i in C[k] if nm[i].startswith(a.referenz))
+    ref = lambda k: sum(1 for i in C[k] if nm[i].startswith(a.referenz))
+    durch = []; behalten = set()
+    if a.durchblick or os.environ.get("RCPARK_SEITEN_DURCHBLICK", "0") == "1":     # Stufe Durchblick/Umgebung: einzelne starke Paare verwechselter/unklarer Verbindungen behalten
+        durch, behalten = durchblick_einbauen(a, db, nm, g, C, quer_alle, falsch, ref, verb)
+    S = teile(len(C), [k for k in quer_alle if k not in falsch] + [tuple(sorted((d["ga"], d["gb"]))) for d in durch if d["urteil"] == "durchblick"])
     seiten = [s for s in S if sum(ref(k) for k in s) > 0]; fremd_g = {k for s in S if sum(ref(k) for k in s) == 0 for k in s}; fremd = sorted(nm[i] for k in fremd_g for i in C[k])
     for v in sorted(verb, key=lambda v: v.get("p90") if v.get("p90") is not None else 9)[:40]:
         print(f"  Gruppe {v['a']:3d} ({len(C[v['a']]):4d} Bilder) <-> {v['b']:3d} ({len(C[v['b']]):4d}): {v['paare']:5d} Paare, p_gleich Median {v['p_median']}, 90 % unter {v.get('p90')}, eindeutig gleich {v.get('anteil_hoch')}  {v['urteil'].upper() if v['urteil'] != 'echt' else 'echt'}" + (f"  [GPS {v['gps_richtung'][0]} / {v['gps_richtung'][1]} Grad]" if v.get("gps_richtung") else ""))
@@ -199,10 +287,12 @@ def main(argv=None):
         shutil.copyfile(a.db, a.db_aus); d2 = sqlite3.connect(a.db_aus); weg = []
         for (pid,) in d2.execute("select pair_id from two_view_geometries"):
             x, y = pid // MAXID, pid % MAXID; k = tuple(sorted((g[x], g[y])))
-            if k in falsch or g[x] in fremd_g or g[y] in fremd_g: weg.append((pid,))
+            if (k in falsch and pid not in behalten) or g[x] in fremd_g or g[y] in fremd_g: weg.append((pid,))
         d2.executemany("delete from two_view_geometries where pair_id = ?", weg); d2.executemany("delete from matches where pair_id = ?", weg); d2.commit(); d2.close(); geloescht = len(weg)
     json.dump(dict(db=os.path.abspath(a.db), gemeinschaft={nm[i]: k for i, k in g.items()}, groessen=[len(c) for c in C], verbindungen=verb, verwechselt=[list(k) for k in sorted(falsch)],
-                   seiten=[dict(gruppen=s, bilder=sum(len(C[k]) for k in s)) for s in seiten], fremd=fremd, geloeschte_paare=geloescht, schwelle=a.schwelle, fernsicht=sorted(fern)), open(a.aus, "w"), indent=1)
+                   seiten=[dict(gruppen=s, bilder=sum(len(C[k]) for k in s)) for s in seiten], fremd=fremd, geloeschte_paare=geloescht, schwelle=a.schwelle, fernsicht=sorted(fern),
+                   durchblick=[{k: v for k, v in x.items() if k != "pair_id"} for x in durch if x["urteil"] == "durchblick"],
+                   durchblick_abgelehnt=len(durch) - len(behalten)), open(a.aus, "w"), indent=1)
     print(f"Seitenerkennung: {len(falsch)} verwechselte Gruppenverbindung(en), {sum(1 for v in verb if v['urteil'] == 'unklar')} unklar; {len(seiten)} Teil(e) mit Objektfotos, {len(fremd)} fremde Bilder"
           + (f"; {geloescht} Paare geloescht -> {a.db_aus}" if a.db_aus and not a.trocken else ""))
     if falsch: print("WARNUNG SEITENVERWECHSLUNG: Bildgruppen zeigen aehnliche, aber verschiedene Seiten - ihre Paare duerfen nicht in den Mapper (bereinigte Datenbank nehmen).")
