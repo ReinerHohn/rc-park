@@ -119,13 +119,16 @@ def seiten(db, img, w, roh, lauf=subprocess.run, modus="1"):
     ungeprueften kleiner Gruppen (< 12 Bilder). Hat der Pruefer KEIN Gruppenpaar als 'verwechselt' beurteilt, gibt es keinen Beleg fuer aehnliche Seiten; dann wuerde --streng
     einen kleinen Fotosatz nur zerstueckeln -> der Mapper rechnet auf der Eingangs-DB weiter (seiten.json bleibt fuer das Blick-Tor). modus 'immer' (RCPARK_SEITEN=immer) nimmt
     db_seiten.db in jedem Fall."""
-    sj = os.path.join(w, "seiten.json"); dbs = os.path.join(w, "db_seiten.db"); sd = sj + ".stand.json"; st = _stand(db) + [len(masken_index(roh))]; alle = bilder(img)
+    # 22.11.2026 FERNSICHT: mit objekt.json (RCPARK_SEITEN_OBJEKT, setzt pipeline_objekt) behalten Fernfoto-Gruppen (GPS >= 100 m) unter --streng ihre staerkste unklare
+    # Verbindung (seiten_erkennen.fernsicht_behalten) - schwabentor-1122 verlor sonst die 10 Fernfotos, die in 1120 Drehung/Massstab trugen. Im Stand, damit neu gerechnet wird.
+    oj = os.environ.get("RCPARK_SEITEN_OBJEKT", ""); fs = ["--fernsicht", oj] if oj and os.path.isfile(oj) else []
+    sj = os.path.join(w, "seiten.json"); dbs = os.path.join(w, "db_seiten.db"); sd = sj + ".stand.json"; st = _stand(db) + [len(masken_index(roh))] + (["fernsicht1"] if fs else []); alle = bilder(img)
     if _aktuell(sd, st, sj, dbs): print("SEITEN 3/3 Seitenerkennung: wiederverwendet", sj, flush=True)
     else:
         # Objektfotos heissen im Sammelordner 'eigen__...' (tools/fotos_sammeln.py); Teile ohne Objektfoto gelten als FREMD und verlieren alle Paare. Ein Ordner ohne solche Namen
         # (iphone_sfm.py direkt auf einem Fotoordner) haette danach KEIN Paar mehr -> dann zaehlt jedes Bild als Objektfoto.
         ref = [] if any(f.startswith("eigen__") for f in alle) else ["--referenz", ""]
-        r = lauf([PY_SEG, "-W", "ignore", "-I", os.path.join(T, "seiten_erkennen.py"), db, img, "--aus", sj, "--db-aus", dbs, "--streng", "--masken", roh] + ref, check=False)
+        r = lauf([PY_SEG, "-W", "ignore", "-I", os.path.join(T, "seiten_erkennen.py"), db, img, "--aus", sj, "--db-aus", dbs, "--streng", "--masken", roh] + ref + fs, check=False)
         if r.returncode not in (0, 3) or not os.path.isfile(sj) or not os.path.isfile(dbs):
             raise SystemExit(f"SEITEN-VORSTUFE: Seitenerkennung gescheitert (rc {r.returncode}, tools/seiten_erkennen.py) - Mapper NICHT gestartet (ohne sie klebt der Mapper aehnliche Seiten aufeinander). Bewusst ohne Vorstufe: RCPARK_SEITEN=0")
         json.dump(st, open(sd, "w"))

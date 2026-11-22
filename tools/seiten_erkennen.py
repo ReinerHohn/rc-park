@@ -82,6 +82,40 @@ def urteil_gps(ra, rb, gegen=120.0, gleich=60.0):
     return "verwechselt" if d > gegen else ("echt" if d < gleich else None)
 
 
+# FERNSICHT (22.11.2026, Vergleich schwabentor-1120 gegen 1122): 10 Fotos aus ~320 m (eigen__IMG_20261106_110741..111237, zwei Standorte, GPS 319-325 m) waren
+# in 1120 registriert und trugen dort Drehung/Massstab (Modell 322-326 m, Richtung < 1 Grad daneben; Hebel 320 m statt 25-m-Kamerakranz). In 1122 bildeten sie
+# Gruppe 22 (12 Bilder), deren einzige Verbindung 0<->22 der Pruefer 'unklar' nannte (p90 0,60, aus der Ferne sieht man zwei Turmseiten zugleich); --streng
+# schnitt sie ab -> eigene 'Seite' unter 30 Bildern -> kein Modell -> die Ausrichtung hatte nur noch das Nah-GPS (systematisch +9,4 Grad / x0,867 verzerrt).
+# Regel: eine Gruppe, deren GPS-Fotos ueberwiegend weit weg stehen (>= FERN_M, mehrere verschiedene Geotags = kein eingefrorener Ortsstempel), zeigt das GANZE
+# Bauwerk; sie ist keine 'Seite'. --streng behaelt darum ihre staerkste 'unklare' Verbindung (nur EINE, damit sie keine zwei Seiten verbruecken kann); ein
+# 'verwechselt' des Pruefers bleibt geloescht. Die GPS-Standrichtung (2b) wertet Fernsicht-Gruppen nicht (aus der Ferne sieht man mehrere Seiten).
+FERN_M = 100.0            # ANNAHME wie lage_gps_pruefen (nah_m 100 m = Torfotos; Fernfotos dahinter tragen den Massstab)
+FERN_MAX_M = 5000.0       # weiter weg: Ortsmarke/falscher Geotag (eigen__od_08 GPS 1,9 km, Modell 84 km)
+FERN_ANTEIL = 0.6         # ANNAHME: so viele der GPS-Fotos der Gruppe muessen fern sein
+FERN_MIN_ORTE = 2         # verschiedene Geotags (auf ~1 m gerundet) - 4 Fotos mit DEMSELBEN Geotag 272 m waren eingefroren (1122e, 113015-19)
+
+
+def fernsicht_gruppen(gps_je_gruppe, mitte, fern_m=FERN_M, fern_max_m=FERN_MAX_M, anteil=FERN_ANTEIL, min_orte=FERN_MIN_ORTE, min_fotos=3):
+    """gps_je_gruppe = {gruppe: [(breite, laenge), ...]}, mitte = (breite, laenge) -> Menge der Fernsicht-Gruppen."""
+    aus = set()
+    for k, qs in gps_je_gruppe.items():
+        if len(qs) < min_fotos: continue
+        d = np.array([richtung(mitte, q)[1] for q in qs]); f = (d >= fern_m) & (d <= fern_max_m)
+        orte = {(round(q[0], 5), round(q[1], 5)) for q, j in zip(qs, f) if j}
+        if f.sum() >= min_fotos and f.mean() >= anteil and len(orte) >= min_orte: aus.add(k)
+    return aus
+
+
+def fernsicht_behalten(verb, fern):
+    """Je Fernsicht-Gruppe die 'unklare' Verbindung mit den meisten Paaren -> Menge (a, b), die --streng NICHT loescht. Markiert sie in verb ('fernsicht_behalten')."""
+    beh = set()
+    for k in sorted(fern):
+        kand = [v for v in verb if k in (v["a"], v["b"]) and v["urteil"] == "unklar"]
+        if not kand: continue
+        v = max(kand, key=lambda v: v["paare"]); v["fernsicht_behalten"] = True; beh.add((v["a"], v["b"]))
+    return beh
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("db"); ap.add_argument("bilder"); ap.add_argument("--aus", required=True); ap.add_argument("--db-aus"); ap.add_argument("--min-bilder", type=int, default=12)
     ap.add_argument("--min-paare", type=int, default=20); ap.add_argument("--min-inlier", type=int, default=30); ap.add_argument("--stichprobe", type=int, default=24); ap.add_argument("--schwelle", type=float, default=0.45)
@@ -90,6 +124,7 @@ def main(argv=None):
     ap.add_argument("--streng", action="store_true", help="nur bestaetigte Verbindungen behalten: auch 'unklare' und ungepruefte schwache Verbindungen zwischen Gruppen loeschen (Verklebung laeuft sonst ueber Umwege, Martinstor 19.11.2026)")
     ap.add_argument("--pruefer-aus", help="Pruefer-Ergebnisse (p je Verbindung) aus einer frueheren seiten.json derselben Datenbank uebernehmen statt neu zu rechnen (Cache)")
     ap.add_argument("--masken", help="Ordner mit Vordergrund-Masken (tools/handy_masken.py; <bildname>.png, 0 = Person/Fahrzeug): der Paar-Pruefer sieht den Vordergrund grau (Martinstor 21.11.2026: Person auf beiden Torseiten = falsche Bruecke)"); ap.add_argument("--objekt", help="objekt.json: mit Objektmitte + EXIF-GPS der Fotos entscheidet die STANDRICHTUNG je Bildgruppe vor dem Pruefer (Nutzer 19.11.2026: kuenftig GPS im EXIF; muss auch ohne gehen)")
+    ap.add_argument("--fernsicht", help="objekt.json: NUR die Fernsicht-Regel (Gruppen mit GPS-Fotos >= 100 m behalten unter --streng ihre staerkste unklare Verbindung), ohne GPS-Richtungs-Urteil (--objekt)")
     a = ap.parse_args(argv); db = sqlite3.connect(f"file:{a.db}?mode=ro", uri=True); nm = dict(db.execute("select image_id, name from images"))
     K = [(pid // MAXID, pid % MAXID, rows) for pid, rows in db.execute("select pair_id, rows from two_view_geometries where rows >= ?", (a.min_inlier,))]
     C = gemeinschaften(K, list(nm), aufloesung=a.aufloesung); g = {i: k for k, c in enumerate(C) for i in c}; gross = [k for k, c in enumerate(C) if len(c) >= a.min_bilder]
@@ -116,17 +151,26 @@ def main(argv=None):
             pm = float(np.median(P[k])) if P[k] else 1.0
             verb.append(dict(a=k[0], b=k[1], paare=len(quer[k]), geprueft=len(P[k]), p_median=round(pm, 3), p90=round(float(np.percentile(P[k], 90)), 3) if P[k] else None,
                              anteil_hoch=round(float((np.array(P[k]) >= 0.8).mean()), 3) if P[k] else None, p=[round(x, 3) for x in P[k]], urteil=urteil(P[k])))
-    gr = {}
+    gr = {}; fern = set()
+    if a.fernsicht and not a.objekt:                                               # nur die Fernsicht-Regel (Kette: sfm_seiten_vorstufe mit RCPARK_SEITEN_OBJEKT)
+        sys.path.insert(0, T); from paarvorwahl import gps_aus_exif; from netz_fotos_holen import geo
+        mitte = geo(json.load(open(a.fernsicht))); gq = collections.defaultdict(list)
+        if mitte:
+            for i, n in nm.items():
+                q = gps_aus_exif(os.path.join(a.bilder, n))
+                if q is not None: gq[g[i]].append(q)
+            fern = fernsicht_gruppen(gq, mitte)
     if a.objekt:                                                                   # GPS-Anker: staerkste Stimme, wo vorhanden
         sys.path.insert(0, T); from paarvorwahl import gps_aus_exif; from netz_fotos_holen import geo
-        mitte = geo(json.load(open(a.objekt))); az = collections.defaultdict(list); n_gps = 0
+        mitte = geo(json.load(open(a.objekt))); az = collections.defaultdict(list); n_gps = 0; gq = collections.defaultdict(list)
         if mitte:
             for i, n in nm.items():
                 q = gps_aus_exif(os.path.join(a.bilder, n))
                 if q is None: continue
-                w, d = richtung(mitte, q)
+                w, d = richtung(mitte, q); gq[g[i]].append(q)
                 if 15.0 <= d <= 300.0: az[g[i]].append(w); n_gps += 1             # naeher als 15 m: Richtung unbestimmt (GPS-Fehler 5-15 m); weiter als 300 m: Ortsmarke statt Standort
-            gr = {k: gruppen_richtung(v) for k, v in az.items()}; gr = {k: v for k, v in gr.items() if v}
+            fern = fernsicht_gruppen(gq, mitte)
+            gr = {k: gruppen_richtung(v) for k, v in az.items() if k not in fern}; gr = {k: v for k, v in gr.items() if v}
             for v in verb:
                 u = urteil_gps(gr.get(v["a"]), gr.get(v["b"]))
                 if gr.get(v["a"]) and gr.get(v["b"]): v["gps_richtung"] = [round(gr[v["a"]][0]), round(gr[v["b"]][0])]
@@ -141,7 +185,8 @@ def main(argv=None):
         print(f"GPS-Anker: {n_gps} Fotos mit Standort 15-300 m um die Objektmitte, {len(gr)} Bildgruppen mit Standrichtung; {sum(1 for v in verb if v.get('quelle') == 'gps')} Verbindungen durch GPS entschieden" if mitte else "GPS-Anker: objekt.json ohne Objektmitte (koordinate_utm) - uebersprungen")
     falsch = {(v["a"], v["b"]) for v in verb if v["urteil"] == "verwechselt"}
     if a.streng:                                                                   # nur BESTAETIGTE Verbindungen behalten: alles zwischen zwei Gruppen, was nicht 'echt' ist, faellt weg
-        echt = {(v["a"], v["b"]) for v in verb if v["urteil"] == "echt"}; falsch = {k for k in quer_alle if k not in echt}
+        echt = {(v["a"], v["b"]) for v in verb if v["urteil"] == "echt"} | fernsicht_behalten(verb, fern); falsch = {k for k in quer_alle if k not in echt}
+        if fern: print(f"FERNSICHT: Gruppen {sorted(fern)} (GPS-Fotos >= {FERN_M:.0f} m) - behaltene Verbindung(en): {sorted((v['a'], v['b']) for v in verb if v.get('fernsicht_behalten'))}")
     # Zusammenhang der Gruppen ohne die verwechselten Verbindungen (kleine Gruppen und ungepruefte schwache Verbindungen zaehlen als echt)
     S = teile(len(C), [k for k in quer_alle if k not in falsch]); ref = lambda k: sum(1 for i in C[k] if nm[i].startswith(a.referenz))
     seiten = [s for s in S if sum(ref(k) for k in s) > 0]; fremd_g = {k for s in S if sum(ref(k) for k in s) == 0 for k in s}; fremd = sorted(nm[i] for k in fremd_g for i in C[k])
@@ -157,7 +202,7 @@ def main(argv=None):
             if k in falsch or g[x] in fremd_g or g[y] in fremd_g: weg.append((pid,))
         d2.executemany("delete from two_view_geometries where pair_id = ?", weg); d2.executemany("delete from matches where pair_id = ?", weg); d2.commit(); d2.close(); geloescht = len(weg)
     json.dump(dict(db=os.path.abspath(a.db), gemeinschaft={nm[i]: k for i, k in g.items()}, groessen=[len(c) for c in C], verbindungen=verb, verwechselt=[list(k) for k in sorted(falsch)],
-                   seiten=[dict(gruppen=s, bilder=sum(len(C[k]) for k in s)) for s in seiten], fremd=fremd, geloeschte_paare=geloescht, schwelle=a.schwelle), open(a.aus, "w"), indent=1)
+                   seiten=[dict(gruppen=s, bilder=sum(len(C[k]) for k in s)) for s in seiten], fremd=fremd, geloeschte_paare=geloescht, schwelle=a.schwelle, fernsicht=sorted(fern)), open(a.aus, "w"), indent=1)
     print(f"Seitenerkennung: {len(falsch)} verwechselte Gruppenverbindung(en), {sum(1 for v in verb if v['urteil'] == 'unklar')} unklar; {len(seiten)} Teil(e) mit Objektfotos, {len(fremd)} fremde Bilder"
           + (f"; {geloescht} Paare geloescht -> {a.db_aus}" if a.db_aus and not a.trocken else ""))
     if falsch: print("WARNUNG SEITENVERWECHSLUNG: Bildgruppen zeigen aehnliche, aber verschiedene Seiten - ihre Paare duerfen nicht in den Mapper (bereinigte Datenbank nehmen).")
