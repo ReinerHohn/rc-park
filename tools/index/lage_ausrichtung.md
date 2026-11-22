@@ -1,4 +1,4 @@
-# Werkzeuge: lage_ausrichtung (45)
+# Werkzeuge: lage_ausrichtung (46)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
@@ -38,6 +38,7 @@
 - `tools/rahmen_lot_foto.py` [-] rahmen_lot_foto.py <objekt> --wolke_voll w.npy --kameras k.json --up lot_fotos.json --wolke_aus w.npy --kameras_aus k.json [--rgb rgb.npy --rgb_aus rgb_crop.npy] [--crop u0,u1,n0,n
 - `tools/schleife_ausrichten.py` [-] schleife_ausrichten.py <objekt> --wolke w.npy --fotos k.json --bilder dir [--foto ip_IMG_6161.jpg] [--runden 4] [--tol 0.003] Aeussere ITERATIVE, KONVERGIERENDE Schleife (Nutzer 8.
 - `tools/seiten_geometrie.py` [-] STAND 19.11.2026: NICHT IN DER KETTE - Messung am Martinstor trennt nicht (siehe unten ERGEBNIS). Nur als Messwerkzeug behalten. ERGEBNIS Martinstor (25 gemessene Verbindungen): Si
+- `tools/seiten_gps_vereinen.py` [col] seiten_gps_vereinen.py <modell_a> <modell_b> --bilder <fotoordner> --aus <ordner> [--dicht-a fused.ply --dicht-b fused.ply]
 - `tools/seiten_vereinen.py` [col] seiten_vereinen.py <modell_A> <modell_B> <db.db> --aus <ordner> [--min-paare 60] [--rel 0.02]
 - `tools/stadt_lod2_schneiden.py` [gen] stadt_lod2_schneiden.py - Stadt-Freiburg-LoD2 (Quellentyp 18, STADT_LOD2) auf ein Objekt zuschneiden (Auftrag G4).
 - `tools/teile_lage_pruefen.py` [gen] teile_lage_pruefen.py <objekt> [wolke.npy] - je aktivem Bauteil (NUR_BAUTEIL) Median-Abstand Wolke->Teil und Hoehe/Lage; markiert Teile ohne Wolkenstuetzung und Doppelungen. Sichtf

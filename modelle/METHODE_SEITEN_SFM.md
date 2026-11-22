@@ -61,6 +61,7 @@ Entstehung, alle Läufe und Zahlen: `modelle/GLOBALER_MAPPER_STABIL.md` (ab „U
 - Klappung als Quelle für Lot und Drehung: 4,52 Grad gekippt, 16,7 Grad verdreht (beides Nutzerfund am 3D-Bild) - ersetzt durch Wandnormalen und Wandrichtungen.
 - Massstab der zweiten Seite über die Breitenmessung prüfen: oberhalb 50 % der Höhe streut sie (Süd/Nord 0,75-0,88) - so nicht brauchbar; kein Beleg für < 3 %.
 - FlexGlue trennt die Seiten nicht besser (19./20.11., alle 4 Varianten gleich).
+- Schwabentor 22.11. (Nulllauf 1122b): Klappung gibt bei verschiedenen Gegenseiten Unsinn (Massstab 0,012) -> Teil A allein -> Lage 20 Grad gedreht. Rückfall Foto-GPS (`tools/seiten_gps_vereinen.py`, in `sfm_seiten_modelle.py`) legt Teil 1 an echten Daten richtig an (Blick-Tor 168 Grad, GPS-Seiten 4 %); Massstab der zweiten Seite nur ±12 %. Globaler Mapper über alles ist KEIN Ausweg: 1120 war verklebt (Blick-Tor 3 von 4). Logbuch `LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` 22.11. 05:30.
 
 ## Offen
 Aus `ERKENNTNISSE.md` (Zeilen mit „offen“):
