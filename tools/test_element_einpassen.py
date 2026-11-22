@@ -10,6 +10,7 @@ NEGATIV=1: Wahrheitsfamilie vertauscht -> Test muss durchfallen (Exit 1).
 import os, sys, json, tempfile, shutil
 import numpy as np, cv2
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import element_einpassen as EE
 from scipy.spatial import cKDTree
 
@@ -88,7 +89,7 @@ def synth_maske(fam, p, seed, vox=0.1, ds=0.05):
 
 
 def main():
-    aus = sys.argv[1] if len(sys.argv) > 1 else tempfile.mkdtemp(prefix="s9synth_"); os.makedirs(aus, exist_ok=True)
+    aus = sys.argv[1] if len(sys.argv) > 1 else temp_ordner("s9synth_"); os.makedirs(aus, exist_ok=True)
     neg = os.environ.get("NEGATIV") == "1"; erg = []; fehler = 0
     for i, (name, fam, p) in enumerate(FAELLE):
         d = os.path.join(aus, name); shutil.rmtree(d, ignore_errors=True); os.makedirs(d)

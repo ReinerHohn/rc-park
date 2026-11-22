@@ -11,6 +11,7 @@ Aufruf: ~/.venvs/rcpark/bin/python -I tools/test_quader_raster.py (rc 0 = ok)"""
 import sys, os, numpy as np
 from scipy import ndimage as ndi
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import quader_raster as Q
 
 
@@ -34,7 +35,7 @@ def teil_b(rng, basis_mauer, lab_mauer, c=0.01):
     nz, nu = 600, 400; mauer = int(1.4 / c); putz_bis = int(3.0 / c)          # z 0-1,4 Quader, 1,4-3,0 Putz, 3,0-6,0 Gemaelde
     bild = np.empty((nz, nu)); bild[nz - mauer:] = basis_mauer[basis_mauer.shape[0] - mauer:]; bild[nz - putz_bis:nz - mauer] = 205.0
     farbe = ndi.gaussian_filter(rng.normal(0, 1, (nz, nu)), 8.0); pin = ndi.gaussian_filter(rng.normal(0, 1, (nz, nu)), 1.5); bild[:nz - putz_bis] = (135 + farbe / farbe.std() * 45 + pin / pin.std() * 18)[:nz - putz_bis]      # Gemaelde: Verlaeufe + Pinselstruktur (Wandbild liest es als 'rau')
-    d = tempfile.mkdtemp(prefix="quader_raster_"); ffn = os.path.join(d, "fassade_fein"); os.makedirs(os.path.join(ffn, "ortho_f00_einzeln")); fe = []
+    d = temp_ordner("quader_raster_"); ffn = os.path.join(d, "fassade_fein"); os.makedirs(os.path.join(ffn, "ortho_f00_einzeln")); fe = []
     try:
         json.dump(dict(fassaden=[dict(id="f00", n=[0.0, -1.0], d=[1.0, 0.0], o=[0.0, 0.0], raster=dict(u0=0.0, z1=6.0, nu=nu, nz=nz, zelle=c))]), open(os.path.join(ffn, "fassaden.json"), "w"))
         for k in range(4):

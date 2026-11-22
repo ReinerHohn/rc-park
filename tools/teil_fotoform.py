@@ -169,7 +169,7 @@ def main(argv=None):
     stl = a.stl or os.path.join(R0, obj["stl"])
     td = a.teile_dir
     if not td:
-        td = tempfile.mkdtemp(prefix="tff_")
+        from pfade import temp_ordner; td = temp_ordner("tff_")      # 22.11.2026: Teile-STLs lagen nach jedem Foto-F1 in /tmp (Root) und blieben liegen
         subprocess.run(obj["generator"], shell=True, cwd=R0, env=dict(os.environ, BAUTEILE_AUS=td), check=True, capture_output=True)
     teile = sorted(glob.glob(os.path.join(td, "*.stl")))
     if a.nur: teile = [p for p in teile if os.path.basename(p)[:-4] in a.nur.split(",")]   # Kreis-Tor: nur das Ziel-Teil (Verdeckung trotzdem gegen das ganze Modell)

@@ -12,6 +12,7 @@ Bau: Koerper bleibt ein Stueck, Volumen sinkt um Nische + Fenster (+-15 %).
 """
 import sys, os, json, tempfile, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import nischen_fenster as NF
 
 U0, U1, Z0, Z1, C = -4.0, 4.0, 20.0, 28.0, 0.01
@@ -54,7 +55,7 @@ def tiefe():
 
 def main():
     import cv2
-    d = tempfile.mkdtemp(prefix="test_nischen_"); fo = os.path.join(d, "fassade"); ff = os.path.join(d, "fassade_fein"); au = os.path.join(d, "audit")
+    d = temp_ordner("test_nischen_"); fo = os.path.join(d, "fassade"); ff = os.path.join(d, "fassade_fein"); au = os.path.join(d, "audit")
     for x in (fo, ff, au): os.makedirs(x)
     cv2.imwrite(os.path.join(ff, "ortho_f00.png"), bild()); np.savez(os.path.join(fo, "tiefe_f00.npz"), **tiefe())
     json.dump(dict(fassaden=[dict(id="f00", raster=dict(u0=U0, z1=Z1, nu=800, nz=800, zelle=C))]), open(os.path.join(ff, "fassaden.json"), "w"))

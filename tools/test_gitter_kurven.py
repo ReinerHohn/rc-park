@@ -2,7 +2,8 @@
 plus eine Gerade, die schon im Eingabegitter steht (muss ausgeschlossen werden). Erwartung: 1 Bogen (R +-3 cm, Zentrum +-3 cm), 1 Bezier, 1 Gerade (quelle 12),
 nichts auf der Gittergeraden. Aufruf: test_gitter_kurven.py [ARBEITSORDNER]  -> Exit 0 bestanden, 1 durchgefallen."""
 import sys, os, json, subprocess, numpy as np
-ordner = sys.argv[1] if len(sys.argv) > 1 else "/tmp/gitter_kurven_test"; os.makedirs(ordner, exist_ok=True); rng = np.random.default_rng(1)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner
+ordner = sys.argv[1] if len(sys.argv) > 1 else temp_ordner("test_gitter_kurven_"); os.makedirs(ordner, exist_ok=True); rng = np.random.default_rng(1)
 def streu(X, nref=5, sig=0.01):
     P = []; R = []
     for r in range(nref): P.append(X + rng.normal(0, sig, X.shape)); R.append(np.full(len(X), r))

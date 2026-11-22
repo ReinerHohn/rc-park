@@ -11,6 +11,7 @@ ohne Wand darunter wird nichts gebaut; Auskragung unter Druckmindestmass -> ANNA
 """
 import sys, os, json, tempfile, shutil, subprocess, numpy as np
 H = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 U0, U1, Z0, Z1, C = -4.0, 4.0, 9.3, 12.0, 0.01
 SB = [dict(u0=-3.05, u1=-0.95, z0=10.0, z1=10.08, d=0.08), dict(u0=0.95, u1=3.05, z0=10.0, z1=10.08, d=0.08)]
 FE = [dict(u0=-2.3, u1=-1.7, z0=10.12, z1=11.6, nische=dict(u0=-3.0, u1=-1.0, z0=10.08, z1=11.9, tiefe=0.07)),
@@ -51,7 +52,7 @@ def pruef_bau(pruef):
     k3, v3 = BT.sohlbank(wand, W, dict(u0=0.95, u1=3.05, z0=10.0, z1=10.08, auskragung=0.03), druck_min=0.0696)
     pruef(any("Druckmindestmass" in x for x in v3) and abs((k3.volume() - wand.volume()) - 2.1 * 0.08 * 0.0696) < 1e-3, f"Auskragung 0,03 -> Druckmass: {v3}")
     # fenster_aus_json baut die Sohlbank mit
-    d = tempfile.mkdtemp(prefix="test_sb_bau_"); fa = os.path.join(d, "fenster_auto.json")
+    d = temp_ordner("test_sb_bau_"); fa = os.path.join(d, "fenster_auto.json")
     fe = [dict(u0=1.7, u1=2.3, z0=10.12, z1=11.6, stimmen_min=3, tiefe=0.12, nische=dict(u0=1.0, u1=3.0, z0=10.08, z1=11.9, tiefe=0.07),
                sohlbank=dict(u0=0.95, u1=3.05, z0=10.0, z1=10.08, auskragung=0.08, quelle="test"))]
     json.dump(dict(f00=dict(o=[0, 0], d=[1, 0], n=[0, -1], fenster=fe)), open(fa, "w"))
@@ -63,7 +64,7 @@ def pruef_bau(pruef):
 
 def main():
     import cv2
-    d = tempfile.mkdtemp(prefix="test_sb_"); ff = os.path.join(d, "fassade_fein"); ez = os.path.join(ff, "ortho_f00_einzeln"); mp = os.path.join(d, "messprotokoll"); au = os.path.join(d, "audit")
+    d = temp_ordner("test_sb_"); ff = os.path.join(d, "fassade_fein"); ez = os.path.join(ff, "ortho_f00_einzeln"); mp = os.path.join(d, "messprotokoll"); au = os.path.join(d, "audit")
     for x in (ez, mp, au): os.makedirs(x)
     for n_, (Cu, Cw) in enumerate(KAM):
         cv2.imwrite(os.path.join(ez, f"k{n_}.png"), ortho(Cu, Cw, n_))

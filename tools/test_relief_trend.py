@@ -10,6 +10,7 @@ Keil nicht an - wohl aber eine Neigung fein - grob von ~1 cm/m (nur Median-Versa
 """
 import os, sys, subprocess, tempfile, numpy as np
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 from relief_trend import robuste_ebene
 n_ok = 0
 
@@ -45,7 +46,7 @@ def npz(p, rel, px, eb, tr, **k):
     np.savez_compressed(p, rel=rel.astype(np.float32), a=np.array([0.0, 0.0]), t=np.array([1.0, 0.0]), n=np.array([0.0, -1.0]), u0=0.1, z0=0.0, px=px, ebene_abstand_m=eb, trend_je_m=np.array(tr), **k)
 
 def lauf(keil_z):
-    td = tempfile.mkdtemp(prefix="relief_trend_")
+    td = temp_ordner("relief_trend_")
     Hg, Wg, pg = 128, 70, 0.05; gi, gj = np.mgrid[0:Hg, 0:Wg]; zg = (Hg - 1 - gi + 0.5) * pg
     grob = 0.02 * gj * pg + np.where((zg > 4.0) & (zg < 4.3), 0.15, 0.0)          # leichte Wandneigung in u, Gesims z 4,0-4,3 (in beiden)
     npz(os.path.join(td, "g.npz"), np.where(grob == 0, 1e-4, grob), pg, 0.0, [0.0, 0.0], putz=np.zeros((Hg, Wg), bool), generiert=np.zeros((Hg, Wg), bool))

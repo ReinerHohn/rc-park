@@ -13,6 +13,7 @@ Kein Rechenlauf, < 10 s, < 300 MB. Aufruf: /media/oem/scan/venv-seg/bin/python -
 import sys, os, json, tempfile, shutil
 import numpy as np, cv2
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import befundliste as BL
 
 F = 0
@@ -127,7 +128,7 @@ def main():
     p = BL.projizieren(K, [0.0, 2.5, 15.0], 1.0)
     pruef(p is not None and abs(p[0] - 350) < 0.5 and abs(p[1] - 400) < 0.5, f"Projektion u 2,5 z 15 -> Pixel (350, 400) ({p})")
 
-    d = tempfile.mkdtemp(prefix="befundliste_test_")
+    d = temp_ordner("befundliste_test_")
     try:
         od, au, da, log = objekt_anlegen(d)
         cv2.imwrite(os.path.join(au, "neben_foto_a.jpg"), schlecht, [cv2.IMWRITE_JPEG_QUALITY, 95])

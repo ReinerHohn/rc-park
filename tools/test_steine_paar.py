@@ -5,6 +5,7 @@
 Vorher: Gegenfoto = erstes Foto vom anderen Standort (C) -> fast die ganze Wand 'widerspruechlich' ausgeblendet -> Quader-Tor 0 % -> glatte Wand.
 Nur CPU (ohne --stl), < 10 s. Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/test_steine_paar.py (rc 0 = ok)"""
 import sys, os, json, tempfile, subprocess, numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner   # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 HIER = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -32,7 +33,7 @@ def foto(T, u, z, c, C, R, f, W=900, H=900):
 
 
 def main():
-    rng = np.random.default_rng(7); T, u, z, c = textur(rng); d = tempfile.mkdtemp(prefix="steine_paar_"); od = os.path.join(d, "modelle", "obj"); mp = os.path.join(od, "messprotokoll"); fd = os.path.join(d, "fotos")
+    rng = np.random.default_rng(7); T, u, z, c = textur(rng); d = temp_ordner("steine_paar_"); od = os.path.join(d, "modelle", "obj"); mp = os.path.join(od, "messprotokoll"); fd = os.path.join(d, "fotos")
     os.makedirs(mp); os.makedirs(fd); json.dump(dict(fotos_dir="fotos", stl="-"), open(os.path.join(od, "objekt.json"), "w"))
     ziel = np.array([1.5, 0.0, 1.5]); f = 1000.0
     for name, C, f_k, unscharf in (("A1", (1.5, -5.8, 1.4), f, float(os.environ.get("TEST_UNSCHARF", 7.0))), ("A2", (1.62, -6.0, 1.45), f, 0.0), ("C", (-2.5, -8.0, 1.5), 1.35 * f, 0.0), ("B", (4.5, -7.5, 1.6), f, 0.0)):

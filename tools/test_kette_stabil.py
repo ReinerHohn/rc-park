@@ -102,7 +102,7 @@ def main():
             try:
                 r = subprocess.run(["python3", "-I", "tools/gesamtkette.py", "ober_tvdr", "--ziel", ziel, "--ab", "html", "--bis", "html"], capture_output=True, text=True, cwd=ROOT)
                 b = json.load(open(os.path.join(D, "gesamtkette_bericht.json"))); e = b["lauf_ergebnis"]
-                assert r.returncode == 2 and e["rc"] == 2 and "fehlt" in e["abbruch"] and e["fehlgeschlagen"] == ["abbruch"] and "ABGEBROCHEN" in r.stdout, (r.returncode, e, r.stdout[-300:], r.stderr[-300:])
+                assert r.returncode == 2 and e["rc"] == 2 and "fehlt" in e["abbruch"] and e["fehlgeschlagen"] == ["abbruch"] and "ABGEBROCHEN" in r.stdout and "verlust_warnungen" in e and "verlustbilanz" in b, (r.returncode, e, r.stdout[-300:], r.stderr[-300:])
             finally: shutil.rmtree("/media/oem/scan/rc-park_daten/_schnelltest_kette", ignore_errors=True)
 
         # ---------------- zweite Durchsicht 17.11.2026: stille Fehler in den Stufenwerkzeugen ----------------

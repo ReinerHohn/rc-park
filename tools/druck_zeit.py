@@ -21,7 +21,7 @@ def main():
     if not a or a[0].startswith("--"): sys.exit(__doc__)
     od = a[0]; fl = sorted(f for f in glob.glob(os.path.join(od, "*.stl")) if os.path.basename(f) not in ("stifte.stl", "koerper.stl", "koerper_rippen.stl"))      # koerper.stl = ungeteilter Koerper (wird ueber druck_teilung --stl geteilt und dort gemessen)
     if not fl: print("keine STL in", od); return 2
-    tmp = tempfile.mkdtemp(dir="/media/oem/scan/tmp" if os.path.isdir("/media/oem/scan/tmp") else None)
+    from pfade import temp_ordner; tmp = temp_ordner("druck_zeit_")      # 22.11.2026: G-Code-Ordner blieb liegen; jetzt beim Ende entfernt, nie Root
     bett = opt("--bett", "256")      # Druckraum (mm), Standard Bambu P1S; 17.11.2026: ohne Angabe lehnte der Slicer ein 241 mm hohes Teil ab (Standardprofil 210 mm)
     bx, by, bz = (bett.split("x") + [bett, bett])[:3] if "x" in bett else (bett, bett, bett)      # --bett 256 (Wuerfel) oder 250x210x220 (Prusa MK4S)
     def eins(f):

@@ -132,11 +132,12 @@ def kollage(c, objekt, teile_dir, stl, aus, max_fotos=3):
         ausschn = "%d,%d,%d,%d" % (cx - s * 0.75, cy - s * 0.5, cx + s * 0.75, cy + s * 0.5)
         td = tempfile.mkdtemp(dir=TMP)
         try:
-            pf = TR.main([objekt, c["teil"], "--fotos", nr, "--teile_dir", teile_dir, "--stl", stl, "--aus", td, "--ausschnitt=" + ausschn, "--kontur", "--name", "Teil", "--maxbreite", "1500"])
-        except SystemExit: pf = []
-        if not pf: continue
-        im = cv2.imread(pf[0]); zeilen.append(im); half = im[:, :im.shape[1] // 2]; arts.append(art_verdacht(half))
-        os.remove(pf[0]); os.rmdir(td)
+            try:
+                pf = TR.main([objekt, c["teil"], "--fotos", nr, "--teile_dir", teile_dir, "--stl", stl, "--aus", td, "--ausschnitt=" + ausschn, "--kontur", "--name", "Teil", "--maxbreite", "1500"])
+            except SystemExit: pf = []
+            if not pf: continue
+            im = cv2.imread(pf[0]); zeilen.append(im); half = im[:, :im.shape[1] // 2]; arts.append(art_verdacht(half))
+        finally: __import__("shutil").rmtree(td, ignore_errors=True)      # 22.11.2026: ohne Ergebnis (continue) blieb td liegen
     if not zeilen: return None, None
     B = max(z.shape[1] for z in zeilen)
     zeilen = [cv2.copyMakeBorder(z, 0, 0, 0, B - z.shape[1], cv2.BORDER_CONSTANT, value=(255, 255, 255)) for z in zeilen]

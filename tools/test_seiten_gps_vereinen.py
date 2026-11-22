@@ -11,6 +11,7 @@ Python: /media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_gps_vereinen
 import os, sys, math, tempfile, shutil
 import numpy as np
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import seiten_gps_vereinen as SG
 
 rng = np.random.default_rng(5); FEHLER = []
@@ -78,7 +79,7 @@ e4 = SG.b_nach_a((nA, CA, obA), (nB, CB, obB), G4); pruef(not e4["ok"] and "B_na
 print(f"ok 1: B ueber das Foto-GPS auf A gelegt; ungenaues GPS ({e2['urteil'][:45]}...), zu wenig GPS ({e3['urteil'][:40]}...) und zufaellige Geotags ({e4['urteil'][:50]}...) abgelehnt")
 
 # ---------- 2 gps_roh (EXIF wie Handyfotos)
-S = tempfile.mkdtemp(prefix="test_gps_vereinen_")
+S = temp_ordner("test_gps_vereinen_")
 try:
     from PIL import Image
     ex = Image.Exif(); ex[0x8825] = {1: "N", 2: (47.0, 59.0, 34.5), 3: "E", 4: (7.0, 51.0, 14.5)}

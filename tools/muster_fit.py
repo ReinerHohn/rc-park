@@ -684,7 +684,7 @@ def synth_fenster(seed=5):
         S.append([W_(tc + px[0], zt_a), W_(tc + px[1], zt_i), 0, 1.0]); S.append([W_(tc + px[3], zt_a), W_(tc + px[2], zt_i), 0, 1.0]); S.append([W_(tc + px[1], zt_i), W_(tc + px[2], zt_i), 0, 1.0])
     for x in np.arange(-12, 12, 1.5): S.append([W_(x, 14.6), W_(x + 1.5, 14.6), 0, 1.0]); S.append([W_(x, 8.4), W_(x + 1.5, 8.4), 0, 1.0])               # Traufe / Balkon als lange Waagerechte
     for _ in range(150): x = rng.uniform(-12, 12); zz = rng.uniform(3, 9); S.append([W_(x, zz), W_(x + rng.normal(0, .2), zz + rng.uniform(.3, 1.2)), 0, 1.0])  # Clutter
-    tmp = tempfile.mkdtemp(prefix="muster_synth_"); pf = tmp + "/g.json"; json.dump({"segmente": S}, open(pf, "w")); G = gitter_laden(pf)
+    from pfade import temp_ordner; tmp = temp_ordner("muster_synth_"); pf = tmp + "/g.json"; json.dump({"segmente": S}, open(pf, "w")); G = gitter_laden(pf)
     u2, n2, of2 = rahmen_auto(G); fe = []
     if abs(abs(u2 @ u) - 1) > 1e-3 or abs(abs(n2 @ [*n[:2], 0]) - 1) > 1e-3: fe.append("Rahmenwinkel")
     sg = 1 if u2 @ u > 0 else -1; of_err = abs(of2 - (of if sg > 0 else -of)); z = zone_fenster(G, (u2, n2, of2)); log("Synth Fenster: Rahmen u %s (wahr %s), off_front %.3f (wahr %.3f), Zone z %.2f..%.2f" % (np.round(u2[:2], 4).tolist(), np.round(u[:2], 4).tolist(), of2, of if sg > 0 else -of, z["zlo"], z["zhi"]))

@@ -8,6 +8,7 @@ import os, sys, json, argparse, math
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import kamera_ausgleich as KA
 
 
@@ -44,7 +45,7 @@ def semaphor_test(a):
     ein Foto liefert immer Fehler -> Ausfallanteil 100 % und Gueltigkeit false."""
     import threading, time, tempfile, shutil as sh
     from concurrent.futures import ThreadPoolExecutor as TP
-    d = tempfile.mkdtemp(); obj = json.load(open(a.objekt)); b = KA.Bank(a.objekt, a.stl, d, 6); b.vram_limit = 7000.0; b._smi_frei = lambda: 1e9
+    d = temp_ordner(); obj = json.load(open(a.objekt)); b = KA.Bank(a.objekt, a.stl, d, 6); b.vram_limit = 7000.0; b._smi_frei = lambda: 1e9
     gross = b.gewicht("073"); klein = b.gewicht("000"); live = [0.0]; spitze = [0.0]; lk = threading.Lock(); orig = b._fd
     def fake(dd, foto, extra, o):
         g = b.gewicht(foto)

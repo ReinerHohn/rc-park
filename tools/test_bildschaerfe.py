@@ -4,6 +4,7 @@
 import os, sys, json, tempfile, shutil, subprocess
 import numpy as np, cv2
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import bildschaerfe as B, zusatzfotos_registrieren as Z
 
 def szene(seed=0):
@@ -24,7 +25,7 @@ res.append(ok(B.urteil(B.schaerfe(glatt)) == "scharf" and B.schaerfe(glatt)["glo
 glatt_u = cv2.GaussianBlur(glatt, (0, 0), 6)
 res.append(ok(B.urteil(B.schaerfe(glatt_u)) != "scharf", "dieselbe Kante verwischt -> nicht scharf"))
 # vorbereiten
-t = tempfile.mkdtemp(); a = os.path.join(t, "handy_2026-11-06"); c = os.path.join(t, "handy_2026-11-06_c"); os.makedirs(a); os.makedirs(c)
+t = temp_ordner(); a = os.path.join(t, "handy_2026-11-06"); c = os.path.join(t, "handy_2026-11-06_c"); os.makedirs(a); os.makedirs(c)
 cv2.imwrite(os.path.join(a, "handy_01.jpg"), cv2.resize(s, (400, 300))); shutil.copy(os.path.join(a, "handy_01.jpg"), os.path.join(c, "handy_c_01.jpg"))
 cv2.imwrite(os.path.join(a, "handy_02.jpg"), cv2.resize(bl, (400, 300))); cv2.imwrite(os.path.join(c, "handy_c_02.jpg"), cv2.resize(szene(3), (400, 300)))
 aus = os.path.join(t, "z"); os.makedirs(aus); json.dump(dict(aussortiert=[dict(datei="handy_2026-11-06/handy_02.jpg", grund="test")]), open(os.path.join(t, "aus.json"), "w"))

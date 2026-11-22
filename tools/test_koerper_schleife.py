@@ -17,6 +17,7 @@ import sys, os, json, argparse, subprocess, tempfile, shutil
 import numpy as np
 
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 GEN_PY = os.path.expanduser("~/.venvs/rcpark/bin/python")
 
 
@@ -76,7 +77,7 @@ def main():
         k = finde("hohl", 4, 4, 3); ok(len(k) == 1 and not k[0]["kandidat"], f"{t}: Flaeche im Vollkoerper nicht als 'hohl' gemeldet")
         ok(sum(1 for h in H if h.get("kandidat")) == 4, f"{t}: {sum(1 for h in H if h.get('kandidat'))} Kandidaten statt 4: {[(h['form'], h['kasten']) for h in H if h.get('kandidat')]}")
     # --- Teil 2: Treiber mit Bau-Attrappe ---
-    T = tempfile.mkdtemp(prefix="koerper_schleife_"); A = os.path.join(T, "audit")
+    T = temp_ordner("koerper_schleife_"); A = os.path.join(T, "audit")
     try:
         stl = os.path.join(T, "turm.stl"); json.dump(dict(name="Testturm", stl=stl, stl_massstab=87), open(os.path.join(T, "objekt.json"), "w")); np.save(os.path.join(T, "wolke.npy"), W); json.dump(G, open(os.path.join(T, "g.json"), "w"))
         bau = f"{shlex_quote(GEN_PY)} -I {shlex_quote(os.path.abspath(__file__))} --attrappe"; env = dict(os.environ, OBJEKT_JSON=os.path.join(T, "objekt.json"), KOERPER_AUTO=os.path.join(A, "koerper_auto.json"), FALSCH_FORM="kasten"); os.makedirs(A)

@@ -103,7 +103,7 @@ def main():
         print(f"Wolke Zone {n}: markiert {v*100:5.1f} % von {nn_} (Soll {op} {lim*100:.0f} %) -> {'ok' if ok and nn_ > 5 else 'FEHLER'}"); res.setdefault("wolke", {})[n] = v
     Vw_, frei_w = FG.abbauen(netz, abw, 10); fw_ = frei_w & innen; r_w = float(np.sqrt(((Vw_[fw_, 1] - np.asarray(wahr.vertices)[fw_, 1]) ** 2).mean()) / max(np.sqrt(((np.asarray(netz.vertices)[fw_, 1] - np.asarray(wahr.vertices)[fw_, 1]) ** 2).mean()), 1e-9)) if fw_.any() else 9
     print(f"Wolke Abbau: freie Knoten {int(fw_.sum())}, Restabstand/Anfangsabstand {r_w:.2f} (Soll <= 0.30)"); ok_all &= r_w <= 0.30 and fw_.sum() > 100
-    print("ALLE BESTANDEN" if ok_all else "FEHLGESCHLAGEN"); json.dump(res, open(os.path.join(os.environ.get("TEST_AUS", "/tmp"), "test_flaechen_gegen_netz.json"), "w"), indent=1); return 0 if ok_all else 1
+    print("ALLE BESTANDEN" if ok_all else "FEHLGESCHLAGEN"); json.dump(res, open(os.path.join(os.environ.get("TEST_AUS") or __import__("pfade").temp_wurzel(), "test_flaechen_gegen_netz.json"), "w"), indent=1); return 0 if ok_all else 1
 
 
 if __name__ == "__main__":

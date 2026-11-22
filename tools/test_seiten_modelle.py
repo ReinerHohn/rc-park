@@ -19,9 +19,10 @@ import os, sys, json, tempfile, shutil, io, contextlib
 import pycolmap
 import numpy as np
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import sfm_seiten_modelle as SM
 
-S = tempfile.mkdtemp(prefix="test_seiten_modelle_"); rng = np.random.default_rng(3); W, H = 1600, 1200
+S = temp_ordner("test_seiten_modelle_"); rng = np.random.default_rng(3); W, H = 1600, 1200
 
 
 def blick(C, ziel, hoch=(0, 0, 1)):

@@ -14,6 +14,7 @@ Erwartung:
 """
 import sys, os, json, tempfile, shutil, subprocess, numpy as np
 H = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import nischen_fenster as NF
 
 U0, U1, Z0, Z1, C = -3.6, 3.6, 22.3, 26.0, 0.01
@@ -52,7 +53,7 @@ def tiefe():
 
 def main():
     import cv2
-    d = tempfile.mkdtemp(prefix="test_fform_"); fo = os.path.join(d, "fassade"); ff = os.path.join(d, "fassade_fein"); au = os.path.join(d, "audit"); ez = os.path.join(ff, "ortho_f00_einzeln")
+    d = temp_ordner("test_fform_"); fo = os.path.join(d, "fassade"); ff = os.path.join(d, "fassade_fein"); au = os.path.join(d, "audit"); ez = os.path.join(ff, "ortho_f00_einzeln")
     for x in (fo, ff, au, ez): os.makedirs(x)
     cv2.imwrite(os.path.join(ff, "ortho_f00.png"), bild()); np.savez(os.path.join(fo, "tiefe_f00.npz"), **tiefe())
     for i, (du, dz) in enumerate(((0.02, 0.0), (-0.03, 0.01), (0.01, -0.02))): cv2.imwrite(os.path.join(ez, f"foto{i}.png"), bild(seed=10 + i, du=du, dz=dz, kontrast=0.8))

@@ -7,6 +7,7 @@ Modellflaeche (relief) im Fenster A bei s = -0,30 (wie ein schon geschnittenes M
 Erwartung: T(A) = 0,80 +-0,04, T(B) = 0,45 +-0,04; tiefe B = 0,35 ab Nischengrund; Fenster C ohne Fotos bleibt unveraendert (rc 0, C ohne 'laibung').
 """
 import sys, os, json, tempfile, shutil, subprocess, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner   # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 H = os.path.dirname(os.path.abspath(__file__))
 U0, U1, Z0, Z1, C = -3.0, 3.0, 9.0, 13.0, 0.01
 WIN = [dict(u0=-2.0, u1=-1.4, z0=10.0, z1=11.8, T=0.80, b=(-2.0, -1.4), s=-0.30),
@@ -29,7 +30,7 @@ def ortho(Cu, Cw, leer=False):
 
 def main():
     import cv2
-    d = tempfile.mkdtemp(prefix="test_laib_"); ff = os.path.join(d, "fassade_fein"); ez = os.path.join(ff, "ortho_f00_einzeln"); mp = os.path.join(d, "messprotokoll"); au = os.path.join(d, "audit")
+    d = temp_ordner("test_laib_"); ff = os.path.join(d, "fassade_fein"); ez = os.path.join(ff, "ortho_f00_einzeln"); mp = os.path.join(d, "messprotokoll"); au = os.path.join(d, "audit")
     for x in (ez, mp, au): os.makedirs(x)
     for n_, (Cu, Cw) in enumerate(KAM):
         g, r_ = ortho(Cu, Cw, leer=(n_ == len(KAM) - 1)); cv2.imwrite(os.path.join(ez, f"k{n_}.png"), g)

@@ -17,6 +17,7 @@ rc 0 = bestanden.
 """
 import sys, os, json, re, tempfile, shutil, subprocess
 import numpy as np, cv2, trimesh
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner   # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 H = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(H); PY = sys.executable
 F_ = 0
 SK = 87.0                                                                         # stl_massstab wie echte Objekte: STL in mm (1:87), Kette rechnet in Metern
@@ -59,7 +60,7 @@ def an_strecke(P, A, B):
 
 
 def main():
-    tmp = tempfile.mkdtemp(prefix="kantenkreis_"); bd = os.path.join(tmp, "bilder"); os.makedirs(bd)
+    tmp = temp_ordner("kantenkreis_"); bd = os.path.join(tmp, "bilder"); os.makedirs(bd)
     try:
         kams = {}; i = 0
         for x in (-8, -4.5, -1.5, 1.5, 4.5, 8):

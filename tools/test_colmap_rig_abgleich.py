@@ -7,6 +7,7 @@ probe() meldet ok auf der echten Konstellation, Konflikte vorher > 0, nachher 0;
 Umgebung: venv-colmap (pycolmap). Ohne pycolmap: UEBERSPRUNGEN (rc 0). Dauer ~2 s."""
 import os, sys, sqlite3, shutil, tempfile, subprocess
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 try: import pycolmap
 except ImportError: print("UEBERSPRUNGEN: pycolmap fehlt (venv-colmap nutzen)"); sys.exit(0)
 import colmap_rig_abgleich as RA
@@ -36,7 +37,7 @@ def tri(dbp, sp, d, name):
     return pycolmap.triangulate_points(pycolmap.Reconstruction(sp), dbp, bd, td, clear_points=True)
 
 
-d = tempfile.mkdtemp(prefix="test_rig_")
+d = temp_ordner("test_rig_")
 try:
     dbp, sp = aufbau(d); rec = pycolmap.Reconstruction(sp)
     k = RA.konflikte(dbp, rec); pruef(len(k) == 2 and {x["art"] for x in k} == {"Kamera anders", "Rig anders"}, f"Konflikt erkannt (Kamera + Rig von Bild 2): {[(x['name'], x['art']) for x in k]}")

@@ -183,6 +183,22 @@ def notiz(B, name, ok, **k):
     B["schritte"].append(dict(stufe=name, ok=ok, **k)); __import__("json_sicher").schreiben(B["_pfad"], B); print(f"    {name}: {k}", flush=True)
 
 
+def foto_auftrag_skizze(B, wann, ZR, Z, P, W, AU, FV, log):
+    """22.11.2026 FOTOAUFTRAG FRUEH UND ALS BILD (tools/foto_auftrag_skizze.py): die Kette wusste nach der SfM, welche Seite fehlt (seiten_modelle.json 'fotoluecken'),
+    der Nutzer erfuhr es erst auf Nachfrage und nur als Text. Jetzt: Skizze audit/foto_auftrag.png (Grundriss, Wandbelegung, nummerierte Standpunkte mit Blick und GPS)
+    nach der SfM ('frueh') und am Laufende ('ende'); Bildpfad im Bericht -> dem Nutzer sofort schicken. Nur CPU, Sekunden. Abschalten: RCPARK_FOTOAUFTRAG_SKIZZE=0."""
+    if os.environ.get("RCPARK_FOTOAUFTRAG_SKIZZE", "1") == "0" or not (os.path.exists(W) or os.path.exists(AU)): return
+    smj = os.path.join(P, "sfm", "seiten_modelle.json"); aus = os.path.join(Z, "audit"); os.makedirs(aus, exist_ok=True)
+    try:
+        lauf(B, f"foto_auftrag_skizze_{wann}", [PY, "-W", "ignore", "-I", "tools/foto_auftrag_skizze.py", ZR, "--wolke", W, "--ausrichtung", AU, "--fotos", FV, "--aus", aus]
+             + (["--seiten-modelle", smj] if os.path.isfile(smj) else []), log, ok=(0, 2))
+        e = json.load(open(os.path.join(aus, "foto_auftrag.json")))
+        notiz(B, f"foto_auftrag_{wann}", True, bild=e.get("bild"), text=e.get("text"), luecken=[f"{l_.get('seite')}: {l_.get('satz', '')[:160]}" for l_ in e.get("luecken") or []],
+              standpunkte=len(e.get("standpunkte") or []), fotos=sum(s_.get("anzahl", 0) for s_ in e.get("standpunkte") or []),
+              hinweis="SOFORT DEM NUTZER SCHICKEN (Bild + Standpunktliste aus dem Text); Foto vor Ort pruefen: tools/foto_auftrag_skizze.py --pruefen <json> <foto>" if e.get("luecken") else "keine Luecke")
+    except Exception as e_: print(f"Fotoauftrag-Skizze ({wann}) nicht erzeugt: {type(e_).__name__} {e_}", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
     ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
@@ -209,9 +225,14 @@ def main():
             B["warnungen"] = [dict(n=e["n"], text=e["text"][:240], datei=os.path.basename(e["datei"]), zeile=e["zeile"]) for e in w[:40]]
             print(f"WARNUNGEN im Lauf: {len(w)} verschiedene (Bericht 'warnungen'); haeufigste: " + " | ".join(f"{e['n']}x {e['text'][:90]}" for e in w[:3]), flush=True)
         except Exception as e: print("Warnungen nicht gesammelt:", type(e).__name__, e, flush=True)
+        try:                                                                   # 22.11.2026 VERLUSTBILANZ (tools/verlustbilanz.py): je Stufe rein/raus/verloren+Grund; stille Verluste = WARNUNG (Clip hBlkpdGf6LY ging ohne Zeile verloren)
+            B.pop("verlustbilanz", None); import verlustbilanz as VB
+            B["verlustbilanz"] = VB.bilanz(D, Z, B=B, n_start=n_start, seit=t_lauf, log=log, log_ab=log_ab); VB.drucken(B["verlustbilanz"], log)
+            if B["verlustbilanz"]["warnungen"] and os.environ.get("RCPARK_VERLUST_ROT") == "1": notiz(B, "verlustbilanz", False, fehler="; ".join(B["verlustbilanz"]["warnungen"])[:400])
+        except Exception as e: print("Verlustbilanz nicht erstellt:", type(e).__name__, e, flush=True)
         rot = [e for e in B["schritte"][n_start:] if e.get("ok") is False]      # 16.11.2026: die Kette endete IMMER mit rc 0 - auch mit abgestuerzten Stufen
         rc = rc or (4 if rot else 0)
-        B["lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot], rc=rc, abbruch=abbruch); __import__("json_sicher").schreiben(bp, B)
+        B["lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot], rc=rc, abbruch=abbruch, verlust_warnungen=len((B.get("verlustbilanz") or {}).get("warnungen") or [])); __import__("json_sicher").schreiben(bp, B)
         print(f"ERGEBNIS DES LAUFS: {len(B['schritte']) - n_start} Stufen, " + (f"{len(rot)} NICHT in Ordnung: " + ", ".join(e["stufe"] for e in rot) if rot else "alle in Ordnung") + (" - ABGEBROCHEN" if abbruch else ""), flush=True)
         for e in rot: print(f"    {e['stufe']}: {str(e.get('fehler') or ' | '.join(e.get('ende', [])) or e.get('hinweis', ''))[:200]}", flush=True)
         print("GESAMTKETTE_ENDE", bp, flush=True); return rc
@@ -341,6 +362,7 @@ def main():
         alt = [x_ for x_ in (W, AU) if not frisch(x_, t_s)]
         if alt: return abschluss(4, "SfM endete mit rc 0, schrieb aber NICHT neu: " + ", ".join(os.path.relpath(x_, ROOT) for x_ in alt) + f" (LoD2-Abgleich gescheitert? {P}/pipeline.log) - alte Wolke/Ausrichtung werden nicht weiterverwendet")
 
+    if dran("sfm") or dran("tore"): foto_auftrag_skizze(B, "frueh", ZR, Z, P, W, AU, FV, log)      # 22.11.2026: Fotoluecken sofort als Bild (vor den Toren - auch ein Abbruch dort hat dann den Auftrag)
     _sb = [None]                                                           # Ergebnis des Seiten-Blick-Tors (haengt nur am SfM-Modell, nicht an der Ausrichtung -> einmal je Lauf)
     def tore(tag):
         sp = os.path.join(P, "sfm", "sparse", "0"); erg = {}
@@ -713,6 +735,7 @@ def main():
                   oben=[f"{b_['id']} {b_['art']} {(b_.get('ort') or {}).get('fassade') or ''} {(b_.get('ort') or {}).get('bauteil') or ''} -> {(b_.get('vorschlag') or {}).get('werkzeug', '')[:60]}" for b_ in top_],
                   hinweis="ANSEHEN: audit/befunde/bNN.jpg; je Befund ein Agent (Skill kette-schleife)")
         except Exception as e: notiz(B, "befundliste_ergebnis", False, fehler=f"audit/befunde.json nicht lesbar (befundliste rc {rc_b}): {type(e).__name__} {e}"[:240])
+    foto_auftrag_skizze(B, "ende", ZR, Z, P, W, AU, FV, log)               # 22.11.2026: Fotoauftrag mit dem Stand am Laufende
     return abschluss()
 
 

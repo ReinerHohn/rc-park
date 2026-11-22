@@ -12,6 +12,7 @@ import os, sys, json, math, shutil, tempfile, hashlib, io, contextlib
 os.environ["CUDA_VISIBLE_DEVICES"] = ""; os.environ["ALIGN_CPU"] = "1"                 # nie die GPU (Kettenjob)
 import numpy as np
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import sfm_lod2_ausrichten as SA
 import lage_pruefstand as LPS
 from scipy.spatial.transform import Rotation as Rot
@@ -94,7 +95,7 @@ def kern(E):
 
 SA.lod2_ziel = lod2_fake
 import wolke_grundriss_pruefen as WG; WG.grundrisse = grundrisse_fake
-tmp = tempfile.mkdtemp(prefix="test_lage_pruefstand_")
+tmp = temp_ordner("test_lage_pruefstand_")
 try:
     p, Cm = szene(os.path.join(tmp, "stand"))
     os.environ.pop("AUSR_ZWISCHEN", None)

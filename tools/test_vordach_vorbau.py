@@ -9,6 +9,7 @@ Laeuft in Sekunden, keine echten Daten. rc 0 = alles gut, sonst FEHLER-Zeilen.
 """
 import sys, os, tempfile, numpy as np
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import cv2
 import vordach_profil as VP
 FEHLER = []
@@ -44,7 +45,7 @@ def szene(td, wahr, name):
 
 
 print("(1) vordach_profil.messen an synthetischen Fotos")
-td = tempfile.mkdtemp(prefix="test_vordach_")
+td = temp_ordner("test_vordach_")
 for name, wahr, fam in (("schweif", dict(u0=-4.1, u1=4.1, w_t=1.4, z_t=16.1, z_a=19.9, c=2.0, As=1.25), "geschweift"),
                         ("gerade", dict(u0=-4.1, u1=4.1, w_t=1.4, z_t=16.1, z_a=19.9, c=0.0, As=1.25), "gerade")):
     F, g, KA = szene(td, wahr, name)

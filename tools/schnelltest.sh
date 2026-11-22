@@ -3,7 +3,21 @@
 # Anlass: am 16.11. brach ich mit Aenderungen mehrfach anderes (Kamera ueberschrieben, eigene Kameras ausgeschlossen, halbe Codezeile auskommentiert, Einrueckung).
 # Prueft feste ERWARTUNGEN an bekannten Daten (ober_tvdr, klein). Schlaegt etwas an: erst klaeren, ob die Aenderung das wollte - dann die Erwartung hier mit Grund anpassen.
 cd "$(dirname "$0")/.."; P=/media/oem/scan/venv-seg/bin/python; G=~/.venvs/rcpark/bin/python; F=0; T0=$(date +%s)
-ok(){ echo "  ok    $1"; }; rot(){ echo "  FEHLER $1"; F=$((F+1)); }
+# 22.11.2026: Dauer je Pruefung (Zeit seit der vorigen Ergebniszeile) -> am Ende die 5 langsamsten; UEBERSPRUNGEN zaehlt mit (nie still gruen)
+U=0; TL=${EPOCHREALTIME/,/.}; DAUER=""
+_dt(){ local t=${EPOCHREALTIME/,/.}; DAUER+="$(awk -v a="$TL" -v b="$t" 'BEGIN{printf "%.1f", b-a}') ${1:0:90}"$'\n'; TL=$t; }
+ok(){ _dt "$1"; echo "  ok    $1"; }; rot(){ _dt "$1"; echo "  FEHLER $1"; F=$((F+1)); }; ueb(){ _dt "$1"; echo "  UEBERSPRUNGEN (Eingabe fehlt): $1"; U=$((U+1)); }
+# 22.11.2026 SCHNELLTEST IM AGENTEN-WORKTREE: unversionierte Eingaben (modelle/stl/*.stl, daten/<obj>/fotos) fehlen dort - jeder Agent verlor eine Runde an
+# 3 roten Zeilen. git-Worktree erkannt (--git-common-dir != --git-dir) -> fehlende Eingaben NUR LESEND aus dem Hauptordner (eingabe(), RCPARK_HAUPTORDNER fuer
+# tools/pfade.repo_pfad, z. B. fotos_dir in fassade_ortho). Keine Verknuepfungen ins Repo; der Pruefstand rechnet auf einer Kopie des Objektordners.
+HAUPT=""; GD=$(git rev-parse --path-format=absolute --git-dir 2>/dev/null); GC=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+[ -n "$GD" ] && [ "$GD" != "$GC" ] && HAUPT=$(dirname "$GC") && export RCPARK_HAUPTORDNER=$HAUPT && echo "  (git-Worktree: fehlende unversionierte Eingaben lesend aus $HAUPT)"
+eingabe(){ if [ -e "$1" ]; then echo "$1"; elif [ -n "$HAUPT" ] && [ -e "$HAUPT/$1" ]; then echo "$HAUPT/$1"; fi; }
+# 22.11.2026 (Root 48 GB lief zweimal voll, /tmp/test_vordach_* je 23 MB nach jedem Lauf): Temp des ganzen Schnelltests in EINEN eigenen Ordner auf der Datenplatte
+# (gleiche Reihenfolge wie tools/pfade.temp_wurzel: $TMPDIR -> /media/oem/rcdaten/tmp -> /media/oem/scan/rc-park_tmp -> /tmp); am Ende: Reste = Fehlerzeile, Ordner weg.
+for TW in "${TMPDIR:-}" /media/oem/rcdaten/tmp /media/oem/scan/rc-park_tmp /tmp; do [ -n "$TW" ] && [ -d "$TW" ] && [ -w "$TW" ] && break; done
+ST_TMP=$(mktemp -d -p "$TW" schnelltest_XXXXXX); export TMPDIR=$ST_TMP; trap 'rm -rf "$ST_TMP"' EXIT
+TMP_VOR=$(ls -d /tmp/test_* 2>/dev/null | sort)
 for f in tools/*.py; do python3 -m py_compile "$f" 2>/dev/null || rot "Syntax $f"; done; ok "Syntax aller tools/*.py"; for f in tools/*.sh; do bash -n "$f" || rot "Syntax $f"; done
 $G - <<'PY' && ok "bauteile: Boegen, Fenster, Galerie, Umgang wasserdicht" || rot "bauteile"
 import sys; sys.path.insert(0, "tools"); import numpy as np
@@ -22,20 +36,27 @@ import sys; sys.path.insert(0, "tools"); from fenster_aus_parsing import raster_
 f = [dict(u0=u, u1=u + 1.2, z0=z, z1=z + 2.0, teiler=[], kaempfer=None, scheiben=1, stimmen_min=3) for z in (3.5, 6.5) for u in (-3, -0.5, 2)]; del f[2]
 r = raster_regel(f, None, dict(u0=-5, z1=10, zelle=0.05), 28); assert len(r) == 6 and sum(1 for x in r if x.get("ergaenzt")) == 1
 PY
-S=$(mktemp -d); O=ober_tvdr; FO=/media/oem/scan/rc-park_daten/$O/fassade
-if [ -f $FO/elemente.json ]; then
-  n=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1 | grep "^f02" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${n:-0}" -ge 6 ] && [ "${n:-0}" -le 8 ] && ok "Fenster ober_tvdr f02: $n (erwartet 6-8)" || rot "Fenster ober_tvdr f02: $n statt 6-8"
-  m=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1 | grep "^f01" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${m:-9}" -le 2 ] && ok "gemischte Fassade f01: $m Fenster (erwartet <= 2; seit MAD-Mass und Kamerabereinigung ist die rechte Haelfte sauber)" || rot "gemischte Fassade f01 liefert $m Fenster (erwartet <= 2)"
-  k=$($P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl modelle/stl/${O}_1-87.stl --aus $S/o --nur f02 --min-flaeche 40 2>&1 | grep "f02:" | sed 's/.*, *\([0-9]*\) Fotos, Abdeckung \([0-9]*\)%.*/\1 \2/'); set -- $k; [ "${1:-0}" -ge 4 ] && [ "${2:-0}" -ge 75 ] && ok "Fassadenbild f02: $1 Fotos, $2 % (erwartet >= 4 Fotos, >= 75 %)" || rot "Fassadenbild f02: '$k' (eigene Kameras ausgeschlossen? Loecher schwarz?)"
+S=$(mktemp -d); O=ober_tvdr; FO=/media/oem/scan/rc-park_daten/$O/fassade; STL_O=$(eingabe modelle/stl/${O}_1-87.stl); FD_O=$(eingabe "$(python3 -c "import json; print(json.load(open('modelle/$O/objekt.json'))['fotos_dir'])")")
+if [ ! -f $FO/elemente.json ]; then ueb "Fenster/Fassadenbild ober_tvdr (4 Pruefungen): $FO/elemente.json fehlt (Datenplatte?)"
+else
+  fp=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1)      # 22.11.2026: einmal rechnen, f01 und f02 aus derselben Ausgabe (lief vorher zweimal gleich)
+  n=$(echo "$fp" | grep "^f02" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${n:-0}" -ge 6 ] && [ "${n:-0}" -le 8 ] && ok "Fenster ober_tvdr f02: $n (erwartet 6-8)" || rot "Fenster ober_tvdr f02: $n statt 6-8"
+  m=$(echo "$fp" | grep "^f01" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${m:-9}" -le 2 ] && ok "gemischte Fassade f01: $m Fenster (erwartet <= 2; seit MAD-Mass und Kamerabereinigung ist die rechte Haelfte sauber)" || rot "gemischte Fassade f01 liefert $m Fenster (erwartet <= 2)"
+  if [ -z "$STL_O" ] || [ -z "$FD_O" ]; then ueb "Fassadenbild f02 + GPU/CPU-Vergleich (2 Pruefungen): ${STL_O:-modelle/stl/${O}_1-87.stl fehlt} ${FD_O:-Fotoordner (fotos_dir) fehlt}"; else
+  k=$($P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/o --nur f02 --min-flaeche 40 2>&1 | grep "f02:" | sed 's/.*, *\([0-9]*\) Fotos, Abdeckung \([0-9]*\)%.*/\1 \2/'); set -- $k; [ "${1:-0}" -ge 4 ] && [ "${2:-0}" -ge 75 ] && ok "Fassadenbild f02: $1 Fotos, $2 % (erwartet >= 4 Fotos, >= 75 %)" || rot "Fassadenbild f02: '$k' (eigene Kameras ausgeschlossen? Loecher schwarz?)"
   # 17.11.2026: Zellrechnung auf der GPU (ab --gpu-ab Zellen) muss dieselben Bilder liefern wie der CPU-Weg (hier erzwungen mit --gpu-ab 0; faellt die Karte aus, meldet das Werkzeug es und rechnet auf der CPU)
-  $P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl modelle/stl/${O}_1-87.stl --aus $S/og --nur f02 --min-flaeche 40 --gpu-ab 0 > $S/og.txt 2>&1; v=$($P -I tools/test_ortho_vergleich.py $S/o $S/og --alle --max-stufe 0 | tail -1)
+  $P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/og --nur f02 --min-flaeche 40 --gpu-ab 0 > $S/og.txt 2>&1; v=$($P -I tools/test_ortho_vergleich.py $S/o $S/og --alle --max-stufe 0 | tail -1)
   case "$v" in *"-> GLEICH") ok "Fassadenbild GPU-Weg = CPU-Weg ($(grep -o 'Zellrechnung: [A-Z, a-z]*' $S/og.txt | head -1); ${v#VERGLEICH })";; *) rot "Fassadenbild GPU-Weg weicht vom CPU-Weg ab: $v";; esac
+  fi
 fi
 k=$($P -I tools/test_kette_stabil.py 2>&1); [ $? = 0 ] && ok "Kette gegen stille Fehler: $(echo "$k" | grep -c '^    ok') Tests (veraltete Ausgaben, leere Ergebnisse, Platte/Verknuepfung, Abbruch-Bericht)" || { rot "Kette gegen stille Fehler"; echo "$k" | grep FEHLER; }
 k=$($P -I tools/test_kette_tempo.py 2>&1); [ $? = 0 ] && ok "Kette Tempo: $(echo "$k" | grep -c '^    ok') Tests (Waende parallel in Wandreihenfolge, GPU-Plaetze, Zwischenbau ohne Abnahme + Abnahme auf dem Endstand)" || { rot "Kette Tempo"; echo "$k" | grep FEHLER; }
 k=$($P -I tools/test_tiefe_lokal_paar.py 2>&1); [ $? = 0 ] && ok "Feinrechnung Paar-Guard: $(echo "$k" | grep -c '^    ok') Tests (entzerrtes Buendel + Originalfotos = rot, fein_paar nimmt sparse_dicht + Originalfotos, Cache aus RAM, rc 2 schaltet Feinrechnung ab)" || { rot "Feinrechnung Paar-Guard"; echo "$k" | grep FEHLER; }
 k=$($P -I tools/test_relief_trend.py 2>&1); [ $? = 0 ] && ok "Relief-Trend: $(echo "$k" | grep -c '^    ok') Tests (Ebene nur aus der Wandflaeche, Sockel kippt sie nicht; fein->grob Versatz+Neigung mit Guard; Gesims/Sockel bleiben)" || { rot "Relief-Trend"; echo "$k" | grep FEHLER; }
-a=$($P -W ignore -I tools/pruefstand.py modelle/$O/objekt.json 2>&1 | grep -c "alle Pruefungen bestanden"); [ "$a" = "1" ] && ok "Pruefstand ober_tvdr gruen" || rot "Pruefstand ober_tvdr"
+if [ -z "$STL_O" ]; then ueb "Pruefstand ober_tvdr: modelle/stl/${O}_1-87.stl fehlt (auch im Hauptordner)"; else      # 22.11.2026: auf einer Kopie (schreibt pruefbericht.json/MASSNACHWEIS.md)
+  mkdir -p $S/ps/modelle && cp -r modelle/$O $S/ps/modelle/ && cp modelle/${O}_gen.py $S/ps/modelle/ 2>/dev/null
+  a=$($P -W ignore -I tools/pruefstand.py $S/ps/modelle/$O/objekt.json --stl $STL_O 2>&1 | grep -c "alle Pruefungen bestanden"); [ "$a" = "1" ] && ok "Pruefstand ober_tvdr gruen" || rot "Pruefstand ober_tvdr"
+fi
 v=$(grep -l '"vertrauen": true' modelle/schwab_v3/messprotokoll/K-dl_*.json 2>/dev/null | wc -l); e=$(ls modelle/schwab_v3/messprotokoll/K-eigen__*.json | wc -l); [ "$e" -ge 150 ] && [ "$v" -ge 100 ] && ok "Kameras: $e eigene, $v gepruefte Fremdkameras" || rot "Kameras: $e eigene, $v gepruefte Fremdkameras (erwartet >= 150 / >= 100)"
 u=$($P -I tools/kamera_plausibel.py | tail -1 | cut -d" " -f1); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"
 python3 -I - "$S" <<'PY' > /dev/null 2>&1 && ok "Kette: Stufe mit Zeitlimit, Absturz = Fehler; Kameraregeln (Tiefe, Verzeichnung)" || rot "Kette lauf()/Kameraregeln"
@@ -119,7 +140,7 @@ k=$($P -I tools/test_oeffnungen_aus_kanten.py 2>&1); [ $? = 0 ] && ok "Oeffnunge
 k=$($P -I tools/test_modell_zerlegen.py 2>&1); [ $? = 0 ] && ok "Modell nach Punkt-Zusammenhang zerlegen (globaler Mapper legt unverbundene Stuecke in ein Modell)" || { rot "modell_zerlegen: $(echo "$k" | tail -1)"; }
 k=$(python3 tools/pfade.py 2>&1); [ $? = 0 ] && ok "Projektpfade und Python-Umgebungen vorhanden (tools/pfade.py)" || { rot "pfade: $(echo "$k" | grep FEHLT | head -2)"; }
 k=$(tools/py tools/modell_zerlegen.py --help 2>&1); [ $? = 0 ] && ok "Starter tools/py waehlt Umgebung (pycolmap -> venv-colmap)" || { rot "tools/py: $(echo "$k" | tail -1)"; }
-k=$(python3 ~/.claude/skills/doku-pflege/check.py --strict 2>&1); r=$?; [ ! -f ~/.claude/skills/doku-pflege/check.py ] && ok "Doku-Pruefung uebersprungen (claude-mds fehlt: bash ~/git/claude-mds/bootstrap.sh)" || { [ $r = 0 ] && ok "Doku KI-tauglich (doku-pflege check.py --strict)" || rot "Doku: $(echo "$k" | grep '✗' | head -2 | cut -c1-120) -> /doku-pflege"; }
+k=$(python3 ~/.claude/skills/doku-pflege/check.py --strict 2>&1); r=$?; [ ! -f ~/.claude/skills/doku-pflege/check.py ] && ueb "Doku-Pruefung: ~/.claude/skills/doku-pflege/check.py fehlt (bash ~/git/claude-mds/bootstrap.sh)" || { [ $r = 0 ] && ok "Doku KI-tauglich (doku-pflege check.py --strict)" || rot "Doku: $(echo "$k" | grep '✗' | head -2 | cut -c1-120) -> /doku-pflege"; }
 k=$($P -I tools/test_gps_seiten_pruefen.py 2>&1); [ $? = 0 ] && ok "Seiten per Foto-GPS pruefen (geklappte Rueckseite synthetisch erkannt)" || { rot "gps_seiten_pruefen: $(echo "$k" | tail -1)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_kette.py 2>&1); [ $? = 0 ] && ok "Seitenfolge der Kette (seiten_blick_tor verklebt/getrennt, db_masken_filter, brennweite_schaerfe + Sperrliste, modell_lage_vergleich, Vorstufe sfm_seiten_vorstufe: Wiederverwendung, Guard, Bereinigung)" || { rot "seiten_kette: $(echo "$k" | tail -1 | cut -c1-300)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_modelle.py 2>&1); [ $? = 0 ] && ok "Seitenmodelle (sfm_seiten_modelle: je Seite Mapper a/b + Wahl, dichte Wolke, seiten_vereinen, vereintes sparse-Modell + Wolke, Blick-Tor, Rueckfall Teil A allein, Uebernahme in pipeline_objekt)" || { rot "seiten_modelle: $(echo "$k" | tail -1 | cut -c1-300)"; }
@@ -133,6 +154,7 @@ k=$(TMPDIR=${TMPDIR:-/media/oem/rcdaten/tmp} /media/oem/scan/venv-colmap/bin/pyt
 k=$(TMPDIR=${TMPDIR:-/media/oem/rcdaten/tmp} $P -I tools/test_fotos_sammeln_fremd.py 2>&1); [ $? = 0 ] && ok "Fotos sammeln: Fremdbilder im eigenen Ordner -> echte Quelle + Vorpruefung" || { rot "fotos_sammeln_fremd: $(echo "$k" | grep FEHL | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_lod2_je_teil.py 2>&1); [ $? = 0 ] && ok "LoD2 je Teil + Bild-x-Lot (Turmfotos: Bild-oben-Lot 19 Grad schief; Nord/West/Turm -> wahre Lage, eine Wand/Rand -> kein Urteil; Regeln a/b/c)" || { rot "seiten_lod2_je_teil: $(echo "$k" | grep -E "FEHLER|Error|assert" | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_lage_beleg.py 2>&1); [ $? = 0 ] && ok "Teil nur bei belegter Lage einsetzen (schwabentor-1122 Teil 1 nur GPS, 3-4 m versetzt -> weglassen + Fotoluecke; Querspur/LoD2/GPS ehrlich+Wanddicke -> einsetzen; Fotoauftrag, Folgestufen)" || { rot "seiten_lage_beleg: $(echo "$k" | grep -E "Error|assert" | head -3)"; }
+k=$(TMPDIR=/media/oem/rcdaten/tmp /media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_foto_auftrag_skizze.py 2>&1); [ $? = 0 ] && ok "Fotoauftrag frueh als Skizze (schwabentor-1122 Suedseite: Uebereck an beiden Suedecken, Frontalreihe, Fernstandorte, nichts in Nachbarhaeusern; Foto-GPS -> Standpunkt; Kettenaufruf)" || { rot "foto_auftrag_skizze: $(echo "$k" | grep -E "Error|assert" | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_gps_anker.py 2>&1); [ $? = 0 ] && ok "GPS-Anker der LoD2-Ausrichtung: Kasten um den GPS-Fit besteht das GPS-Veto, Martinstor ohne Anker (Nulllauf schwabentor-1122d: -22 Grad x0,83)" || { rot "gps_anker: $(echo "$k" | grep FEHLER | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_lage_gps_fern.py 2>&1); [ $? = 0 ] && ok "GPS-Tor Fernfotos: nur unter dem freien Fit stimmige Geotags, gleicher Fix = ein Beleg; 1122 besteht, -22 Grad x0,83 faellt; Anker-Kasten aus Bootstrap (Lauf 1122e)" || { rot "lage_gps_fern: $(echo "$k" | grep FEHLER | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_gps_unsicherheit.py 2>&1); [ $? = 0 ] && ok "GPS ehrlich: Zufall + Sitzungsfehler/Hebel (1122 eine Sitzung legt Lage nicht fest, 1120 mit Fernfotos ja; Tor und Ausrichtung gleiches Mass)" || { rot "gps_unsicherheit: $(echo "$k" | grep FEHLER | head -3)"; }
@@ -179,6 +201,16 @@ k=$($P -W ignore -I tools/test_haufen_klaeren.py 2>&1); [ $? = 0 ] && ok "Grundr
 k=$($P -W ignore -I tools/test_befundliste.py 2>&1); [ $? = 0 ] && ok "Befundliste (Sichtbefunde aus neben_*.jpg + Toren + Log: fehlt/flach oben, Kastenvordach = Form falsch, Beulen = zu grob, falsche Kamera = Beleg ungueltig, Wand ohne Fotos = KEINE FOTOS, Codefehler als Ursache) - Agenten-Schleife 22.11." || { rot "befundliste: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$($P -W ignore -I tools/test_neben_details.py 2>&1); [ $? = 0 ] && ok "Detailansicht je Bauteil (neben_details: Kamera mit Bauteil gross/mittig/senkrecht gewinnt, Profil von der Seite, Verdecker senkt Sicht, Bauteile aus audit-JSON) - 22.11. Fehlbefund Vordach/Laterne am Steilblick" || { rot "neben_details"; echo "$k" | tail -5; }
 k=$($P -W ignore -I tools/test_leistung_messen.py 2>&1); [ $? = 0 ] && ok "Leistungsmessung (leistung_messen: Wallzeit/CPU/Spitzen-RAM/RAPL/GPU neben einem Befehl, Thread-Sweep mit Platzhalter, kleinste Einstellung innerhalb 5 %, Engpass-Regeln, perf oder sauber uebersprungen) - 22.11." || { rot "leistung_messen: $(echo "$k" | grep FEHLER | head -3)"; }
+k=$(python3 -I tools/test_verlustbilanz.py 2>&1); [ $? = 0 ] && ok "Verlustbilanz je Stufe (rein/raus/verloren+Grund; Clip ohne Bilder und ohne Fehlerzeile = WARNUNG, benannte Verluste nicht; Grenze je Stufe, alter Stand markiert) - Nulllauf 1122: hBlkpdGf6LY still verloren" || { rot "verlustbilanz: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
+k=$(python3 -I tools/test_temp_ordner.py 2>&1); [ $? = 0 ] && ok "Temp nicht auf Root + Aufraeumen (pfade.temp_ordner: TMPDIR/Datenplatte, weg auch nach assert; Waechter: kein Test mit nacktem tempfile.mkdtemp) - Root lief 2x voll" || { rot "temp_ordner: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
+k=$(python3 -I tools/test_repo_pfad.py 2>&1); [ $? = 0 ] && ok "Schnelltest im Worktree (pfade.repo_pfad: fehlende unversionierte Eingaben lesend aus dem Hauptordner, sonst UEBERSPRUNGEN mitgezaehlt) - 22.11.: jeder Agent verlor eine Runde" || { rot "repo_pfad: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$(python3 -I tools/test_undefinierte_namen.py 2>&1); [ $? = 0 ] && ok "Keine neuen undefinierten Namen in tools/*.py (pyflakes; 1121t: q95 im Kommentar -> NameError nach 20 min)" || { rot "undefinierte Namen: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$(/media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_handy_masken_gross.py 2>&1); [ $? = 0 ] && ok "handy_masken: grosse Bilder ohne Logits in voller Groesse (Nulllauf 1122: 27-MPx-Bild -> OOM -> SfM-Abbruch)" || { rot "handy_masken gross: $(echo "$k" | tail -2 | cut -c1-200)"; }
-rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
+rm -rf $S
+# 22.11.2026: Tests raeumen selbst auf (tools/pfade.temp_ordner, TemporaryDirectory, finally) - Reste im eigenen Temp-Ordner oder neue /tmp/test_* = Fehler
+rest=$(find "$ST_TMP" -mindepth 1 -maxdepth 1 -type d ! -name 'torchinductor_*' ! -name '__pycache__' -printf '%f ' 2>/dev/null | cut -c1-300)
+[ -z "$rest" ] && ok "Tests raeumen ihre Temp-Ordner selbst auf (Temp unter $TW, nicht auf Root)" || rot "Temp-Reste nach den Tests in $ST_TMP: $rest"
+neu=$(comm -13 <(echo "$TMP_VOR") <(ls -d /tmp/test_* 2>/dev/null | sort) | tr '\n' ' ' | cut -c1-300)
+[ -z "$neu" ] || rot "neue Ordner in /tmp (Root) seit Testbeginn: $neu - Test schreibt an TMPDIR/pfade.temp_ordner vorbei"
+echo "LANGSAMSTE PRUEFUNGEN (s): $(echo "$DAUER" | sort -rn | head -5 | cut -c1-70 | tr '\n' '|' | sed 's/|$//; s/|/ | /g')"
+echo "SCHNELLTEST: $F Fehler$( [ "$U" -gt 0 ] && echo ", $U uebersprungen"), $(( $(date +%s) - T0 )) s"; exit $F

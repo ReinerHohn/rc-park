@@ -10,6 +10,7 @@ Laeuft in ~30 s, keine echten Daten. rc 0 = alles gut, sonst FEHLER-Zeilen.
 """
 import sys, os, tempfile, numpy as np
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import cv2
 import vordach_profil as VP
 FEHLER = []
@@ -51,7 +52,7 @@ def szene(td):
     return F, g, KA
 
 
-td = tempfile.mkdtemp(prefix="test_vordach_traufe_")
+td = temp_ordner("test_vordach_traufe_")
 F, g, KA = szene(td)
 r = VP.messen(F, g, KA, td, max_fotos=4, min_fotos=3, log=lambda *a: None)
 pruefe(isinstance(r, tuple), "Messung liefert ein Ergebnis")

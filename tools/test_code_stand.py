@@ -7,9 +7,10 @@
 Python: python3 -I tools/test_code_stand.py"""
 import os, sys, tempfile, shutil
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 from code_stand import code_stand, dateien
 
-S = tempfile.mkdtemp(prefix="test_code_stand_")
+S = temp_ordner("test_code_stand_")
 try:
     open(os.path.join(S, "a.py"), "w").write("import json, os\ndef f():\n    from b import g\n    return g()\n")
     open(os.path.join(S, "b.py"), "w").write("import a\ndef g(): return 1\n")              # Kreisimport a <-> b

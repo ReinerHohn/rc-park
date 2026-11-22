@@ -2,6 +2,7 @@
 """Stufe, die am Speicher scheitert, wird im Lauf wiederholt (Nutzer 21.11.2026; Lauf 1121p: w03 Signal 6 nach Kernel-OOM blieb weg)."""
 import sys, os, tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import gesamtkette as GK
 f = 0
 def ok(b, t):
@@ -14,7 +15,7 @@ ok(GK.speichermangel(1, "torch.OutOfMemoryError: CUDA out of memory. Tried to al
 ok(not GK.speichermangel(3, "keine Stufe im Profil"), "normales 'geht nicht' wird NICHT wiederholt")
 ok(not GK.speichermangel(0, "out of memory"), "rc 0 nie wiederholen")
 ok(GK.speichermangel(2, "", kernel_oom=True), "Kernel-OOM waehrend der Stufe")
-d = tempfile.mkdtemp(); zaehler = os.path.join(d, "n"); B = {"schritte": [], "_pfad": os.path.join(d, "b.json")}
+d = temp_ordner(); zaehler = os.path.join(d, "n"); B = {"schritte": [], "_pfad": os.path.join(d, "b.json")}
 skript = f"import os,signal\np={zaehler!r}\nn=int(open(p).read()) if os.path.exists(p) else 0\nopen(p,'w').write(str(n+1))\nprint('versuch',n+1,flush=True)\nos.kill(os.getpid(), signal.SIGKILL) if n==0 else print('fertig')"
 os.environ["RCPARK_SPEICHER_WIEDERHOL"] = "2"; GK._speicher_abwarten = lambda *a, **k: None
 rc, out = GK.lauf(B, "test_oom", [sys.executable, "-I", "-c", skript], os.path.join(d, "log"))
