@@ -29,7 +29,7 @@ def wolke(pfad, waende):
     np.save(pfad, np.vstack(P))
 
 
-tmp = tempfile.mkdtemp(dir=os.environ.get("TMPDIR") or "/media/oem/rcdaten/tmp")
+tmp = __import__("pfade").temp_ordner("test_foto_auftrag_")      # raeumt beim Prozessende selbst auf, Temp auf der Datenplatte (Waechter test_temp_ordner)
 try:
     # ---------- 1 Rechteck frei, Suedseite leer
     wp = os.path.join(tmp, "w.npy"); wolke(wp, [([12, 0], [12, 10]), ([0, 0], [12, 0]), ([0, 10], [12, 10])])      # Nord, Ost, West
