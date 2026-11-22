@@ -11,7 +11,8 @@ Reihenfolge (Regel: Fotos zuerst, LOD2 nur als Abgleich):
 Ergebnis: <daten_ordner>/pipeline_bericht.json mit Status je Stufe. Eine Stufe, die ausfaellt, stoppt die Kette
 und wird im Bericht mit der Ursache festgehalten. Fehlt ein Eingang (z. B. Koordinate), wird die Stufe als OFFEN markiert.
 Aufruf (ueber GPU-Steuerung): JOB_GPU_MB=6000 tools/job_start.sh pipe_<objekt> <log> /media/oem/scan/venv-seg/bin/python -I tools/pipeline_objekt.py <objekt> <fotos> <daten>
-        [--stufe grob|schnell|fein] [--sfm-von DIR] [--neu sfm|dicht] [--ohne-abnahme]
+        [--stufe grob|schnell|fein] [--sfm-von DIR] [--neu sfm|dicht] [--ohne-abnahme] [--bis kameras]
+        --bis kameras (22.11.2026): nur Stufen 1-2 + Bildbestand + kameras.json, dann Ende rc 0 (Vorstufe 'Lage frueh' der Gesamtkette, tools/lage_frueh.py).
 
 17.11.2026 (Durchsicht) - Zwischenstaende galten allein deshalb als gueltig, weil sie EXISTIEREN:
   - Bildbestand: nach der SfM wird der Fotoordner mit der SfM-Datenbank verglichen. Bilder, die die SfM nie gesehen hat (neu gesammelt) oder die es nicht mehr gibt, stehen als
@@ -240,6 +241,13 @@ def main():
         ib = os.path.join(sparse_dir, "images.bin")
         if not os.path.exists(kam_json) or (os.path.exists(ib) and os.path.getmtime(kam_json) < os.path.getmtime(ib) - 2):
             stufe(bericht, "kameras", "FEHLER", f"tools/kamera_export.py schrieb {kam_json} nicht (neu) - siehe {log}"); sichern(); return 2
+
+    # 22.11.2026 VORSTUFE 'LAGE FRUEH' (tools/lage_frueh.py, gesamtkette Stufe sfm): '--bis kameras' endet HIER - SfM-Netz, Bildbestand und kameras.json stehen, die dichte
+    # Wolke (40-60 min GPU) noch nicht. Die Kette prueft dann Ausrichtung + GPS-Tor + Lageproben auf dem duennen Netz und ruft pipeline_objekt.py danach ein zweites Mal
+    # ohne --bis (Fotos/SfM/Kameras sind dann vorhanden und werden nur geprueft, nicht neu gerechnet).
+    if "--bis" in sys.argv and sys.argv[sys.argv.index("--bis") + 1:sys.argv.index("--bis") + 2] == ["kameras"]:
+        stufe(bericht, "bis_kameras", "OK", f"--bis kameras: Ende nach SfM + {kam_json} (dichte Wolke, Kandidaten, Abgleich folgen im naechsten Aufruf)"); sichern()
+        print("BERICHT", spath, flush=True); return 0
 
     # Parallel: Kandidatenliste (CPU, LOD2-Text) laeuft waehrend der dichten Stufe (GPU). Keine gemeinsame Ressource.
     koord = cfg.get("koordinate_utm")

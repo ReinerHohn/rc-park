@@ -71,14 +71,101 @@ def lot_aus_bild_achsen(Rs):
     Kamera nach oben (Median +16/+18 Grad je Seite); die Bild-oben-Richtung kippt um genau diese Neigung vom Lot weg, auf gegenueberliegenden Seiten in entgegengesetzte
     Richtung. Gemessen: Bild-oben-Lot 12,8 Grad (Teil 0) und 16,3 Grad (Teil 1) neben dem Bild-x-Lot -> Teil 1 gegen Teil 0 ~28 Grad gekippt, die Suedwand stand im
     vereinten Modell 23 Grad schraeg (Median-x von -8,7 m in 1 m Hoehe bis -3,6 m in 13 m Hoehe) = das 'zwei Streifen'-Bild. Die Bild-x-Achse bleibt beim Neigen
-    waagerecht (Fotos werden nicht gerollt) - so rechnet tools/sfm_lod2_ausrichten.py das Lot seit 19.11. Rueckfall (< 8 Kameras stuetzen es): Mittel der Bild-oben-Richtungen."""
+    waagerecht (Fotos werden nicht gerollt) - so rechnet tools/sfm_lod2_ausrichten.py das Lot seit 19.11. Rueckfall (< 8 Kameras stuetzen es): Mittel der Bild-oben-Richtungen.
+    22.11.2026 EIN LOT (Lage-Pruefstand): seit heute rechnet auch die Ausrichtung (sfm_lod2_ausrichten) ihr Netzsystem mit DIESER Funktion (lot_info), Begruendung dort
+    und in lot_info. Vorzeichen jetzt per MEDIAN der Bild-oben-Komponente (wie bisher die Ausrichtung) statt per Mittelwert: wenige kopfstehende/gedrehte Bilder kippen den
+    Median nicht (auf 1120/1122/Kaufhaus gk/gk2/Martinstor gk3 beide gleich)."""
+    return lot_info(Rs)["oben"]
+
+
+def lot_info(Rs):
+    """DAS Lot aus den Kameradrehungen (cam_from_world, je 3x3) mit Begleitwerten -> dict(oben, stuetzend (Anteil der Kameras mit Bild-x < LOT_X_GRAD neben der Waagerechten),
+    n, quelle 'bildachsen' | 'bild_oben_mittel' (Rueckfall)).
+    WARUM Bild-x-Achsen und nicht die Normale der Kameraebene (Entscheid 22.11.2026 an Daten; tools/versuche/lage_eine_funktion/lot_vergleich.py, lot_wand.py):
+      Bezug 1 = Hochachse des LoD2+DGM1-Feinfits der geschriebenen Ausrichtung (Kippung frei), Bezug 2 = Lot aus den Wandnormalen der dichten Wolke (unabhaengig von LoD2).
+      Winkel Kameraebene / Bild-x-Achsen gegen Bezug 1 und 2:  schwabentor-1120 (gute Lage) 6,6/5,9 gegen 4,4/4,1 Grad;  schwabentor-1122 2,9/1,6 gegen 4,6/3,3;
+      kaufhaus_gk2 0,7/1,9 gegen 1,9/0,9;  martinstor_gk3 (Drohnenclips) 68/85 gegen 16/1,8.  Beide Kameralote liegen 1-6 Grad daneben, die Kameraebene kann aber
+      KATASTROPHAL falsch sein (Drohne, Hoehenunterschiede, Teilmodelle einer Wand: Kameras auf einer Linie -> Ebenennormale unbestimmt); die Bild-x-Achsen nie.
+      Am GPS gemessen (Fixture test_gps_eine_quelle_fixture.json + kameras.json 1120): GPS-Fit der Ausrichtung im Kameraebenen-Rahmen 105 von 174 Fotos, KEIN
+      Fernfoto, +-11,2 Grad 'legt nicht fest' (18 von 20 Zufallsstarts), im Bild-x-Rahmen 125 von 174, 10 Fernfotos, +-1,0 Grad 'kann ankern' (20 von 20) = genau das
+      GPS-Tor auf der fertigen Lage. Die 63 m hoch stehenden Fernkameras machen den RANSAC-Konsens empfindlich fuer 2,3 Grad Lotfehler.
+      Feiner als ~2-4 Grad ist kein Kameralot: das richtet der LoD2/DGM1-Feinfit (Kippung frei) bzw. nach der dichten Wolke das Wandnormalen-Lot."""
     Rs = np.asarray(Rs, float).reshape(-1, 3, 3); ob = np.mean(-Rs[:, 1, :], 0); ob /= max(np.linalg.norm(ob), 1e-12)
     X = Rs[:, 0, :]; inn = np.ones(len(X), bool); up = None
     for _ in range(5):
         if inn.sum() < 8: break
         up = np.linalg.svd(X[inn], full_matrices=False)[2][2]; inn = np.abs(X @ up) < np.sin(np.radians(LOT_X_GRAD))
-    if up is None or inn.sum() < 8: return ob
-    return up if up @ ob > 0 else -up
+    if up is None or inn.sum() < 8: return dict(oben=ob, stuetzend=float(inn.mean()) if len(X) else 0.0, n=int(len(X)), quelle="bild_oben_mittel")
+    up = up if np.median(-Rs[inn, 1, :] @ up) > 0 else -up                                      # Bild-y zeigt nach unten -> Bild-oben = -y
+    return dict(oben=up, stuetzend=float(inn.mean()), n=int(len(X)), quelle="bildachsen")
+
+
+LOT_FLUCHT_MIN = 20         # so viele Bilder muessen den Fluchtpunkt-Konsens (< 3 Grad) tragen, sonst Bild-x-Lot
+LOT_FLUCHT_VETO_GRAD = 8.0  # Fluchtpunkt-Lot weiter als das vom Bild-x-Lot = Fehlschluss (Bild-x lag auf 5 Staenden nie > 5 Grad neben Feinfit/Wandlot) -> Bild-x-Lot
+
+
+def lot_ausrichtung(Rs, kameras=None, ordner=None, n_max=150, cache=None):
+    """DAS Lot der Ausrichtung (sfm_lod2_ausrichten) und des Lage-Pruefstands (eine Funktion): Fluchtpunkte der Senkrechten, Rueckfall Bild-x-Achsen (lot_info).
+    Rs: cam_from_world je Bild; kameras: Liste dict(name, R, f, cx, cy, breite, hoehe) fuer schwerkraft_je_bild.lot_welt; ordner: Fotos; cache: JSON-Datei (Ergebnis nach Inhalt).
+    -> dict wie lot_info + bildachsen (Lot aus lot_info), fluchtpunkte (lot_welt-Ergebnis oder None), winkel_bildachsen_grad, hinweis.
+    WARUM (Lot-Runde 22.11.2026, tools/versuche/lot_runde/lot_quellen.py; Bezug = gemeinsame Kippung der Waende in der dichten Wolke, tools/lot_wandneigung.py):
+      Kippung, die das Modell mit diesem Lot haette, schwabentor-1120 / -1122:  Kameraebene 7,1 / 1,4 Grad;  Bild-x-Achsen 4,9 / 2,7;  Wandnormalen dichte Wolke 2,0 / 2,1;
+      Wandnormalen sparse (Nachbar-PCA) 5,4 / 1,8;  FLUCHTPUNKTE 0,44 / 0,63 Grad (83 bzw. ~80 Bilder, Streuung Median 0,8 Grad) - als einzige Quelle auf BEIDEN Staenden
+      unter der Torgrenze (2 cm/m = 1,15 Grad). Die Hochachse des LoD2/DGM1-Feinfits (Kippung frei im +-3-Grad-Kasten) traf 1120 (0,55) und verfehlte 1122 (3,2 Grad:
+      der Feinfit lief vom besseren Start 1,4 Grad weg an die Kastenecke). EXIF-Schwerkraft gibt es nicht (nubia Z2462N: kein MakerNote/Beschleunigungssensor; Netzfotos ohne).
+      Daher: Fluchtpunkte TRAGEN das Lot, die Ausrichtung haelt die Kippung fest (AUSR_KIPP_FEST); Bild-x ist Veto (> LOT_FLUCHT_VETO_GRAD) und Rueckfall.
+    AUSR_LOT=bildachsen -> lot_info wie bisher; AUSR_LOT=ebene -> ebenfalls lot_info (die Ausrichtung waehlt dann selbst die Kameraebene)."""
+    li = lot_info(Rs); erg = dict(li, oben=np.asarray(li["oben"], float), bildachsen=np.asarray(li["oben"], float).tolist(), fluchtpunkte=None, winkel_bildachsen_grad=None, hinweis=None)
+    if os.environ.get("AUSR_LOT") in ("bildachsen", "ebene"): erg["hinweis"] = f"AUSR_LOT={os.environ.get('AUSR_LOT')}: Fluchtpunkte abgeschaltet"; return erg
+    if not kameras or not ordner or not os.path.isdir(ordner): erg["hinweis"] = "keine Fotos/Kameradaten fuer Fluchtpunkte - Bild-x-Lot"; return erg
+    import hashlib
+    from code_stand import code_stand
+    schl = hashlib.sha1(json.dumps([[k["name"], np.round(np.asarray(k["R"], float), 6).tolist(), round(float(k["f"]), 3), round(float(k["cx"]), 3), round(float(k["cy"]), 3),
+                                     int(k["breite"]), int(k["hoehe"])] for k in kameras] + [os.path.realpath(ordner), int(n_max), code_stand("schwerkraft_je_bild.py"),
+                                                                                             np.round(erg["oben"], 6).tolist()]).encode()).hexdigest()[:16]
+    fl = None
+    if cache and os.path.isfile(cache):
+        try:
+            c = json.load(open(cache)); fl = c["fluchtpunkte"] if c.get("schluessel") == schl else None
+        except Exception: fl = None
+    if fl is None:
+        import schwerkraft_je_bild as SJ
+        fl = SJ.lot_welt(kameras, ordner, n_max=n_max, oben_ref=erg["oben"]) or dict(oben=None, n=0, getragen=0)
+        if cache:
+            try: os.makedirs(os.path.dirname(cache), exist_ok=True); json.dump(dict(schluessel=schl, fluchtpunkte=fl), open(cache, "w"), indent=1)
+            except Exception: pass
+    erg["fluchtpunkte"] = fl
+    if fl.get("oben") is None or fl.get("getragen", 0) < LOT_FLUCHT_MIN:
+        erg["hinweis"] = f"Fluchtpunkte: nur {fl.get('getragen', 0)} tragende Bilder (< {LOT_FLUCHT_MIN}) - Bild-x-Lot"; return erg
+    u = np.asarray(fl["oben"], float); u /= np.linalg.norm(u); w = float(np.degrees(np.arccos(min(1.0, abs(float(u @ erg["oben"]))))))
+    erg["winkel_bildachsen_grad"] = w
+    if w > LOT_FLUCHT_VETO_GRAD: erg["hinweis"] = f"Fluchtpunkt-Lot {w:.1f} Grad neben dem Bild-x-Lot (> {LOT_FLUCHT_VETO_GRAD:.0f}) - verworfen, Bild-x-Lot"; return erg
+    erg.update(oben=u if u @ erg["oben"] > 0 else -u, quelle="fluchtpunkte"); return erg
+
+
+def kameras_fuer_lot(ims, CAMS):
+    """Bilder (pycolmap-artig: name, camera_id, cam_from_world) + Kameras (params, width, height, model) -> Liste fuer lot_ausrichtung / schwerkraft_je_bild.lot_welt."""
+    out = []
+    for im in ims:
+        try: c = CAMS[im.camera_id]
+        except (KeyError, IndexError): continue
+        p = [float(x) for x in list(c.params)]; m = getattr(c.model, "name", str(c.model))
+        f, cx, cy = (p[0], p[1], p[2]) if m in ("SIMPLE_PINHOLE", "SIMPLE_RADIAL", "RADIAL", "SIMPLE_RADIAL_FISHEYE", "RADIAL_FISHEYE") else (0.5 * (p[0] + p[1]), p[2], p[3])
+        cw = im.cam_from_world() if callable(im.cam_from_world) else im.cam_from_world
+        out.append(dict(name=im.name, R=np.asarray(cw.rotation.matrix(), float), f=f, cx=cx, cy=cy, breite=int(c.width), hoehe=int(c.height)))
+    return out
+
+
+def kameras_fuer_lot_json(KJ):
+    """kameras.json (kamera_export: bilder[name, cam, R], kameras{id: params, model, width, height}) -> dieselbe Liste wie kameras_fuer_lot (gleicher Cache-Schluessel)."""
+    out = []
+    for b in KJ["bilder"]:
+        c = KJ["kameras"].get(str(b["cam"]))
+        if c is None: continue
+        p = [float(x) for x in c["params"]]; m = str(c["model"])
+        f, cx, cy = (p[0], p[1], p[2]) if m in ("SIMPLE_PINHOLE", "SIMPLE_RADIAL", "RADIAL", "SIMPLE_RADIAL_FISHEYE", "RADIAL_FISHEYE") else (0.5 * (p[0] + p[1]), p[2], p[3])
+        out.append(dict(name=b["name"], R=np.asarray(b["R"], float), f=f, cx=cx, cy=cy, breite=int(c["width"]), hoehe=int(c["height"])))
+    return out
 
 
 def kameras(modell):
