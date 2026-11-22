@@ -99,11 +99,13 @@ def kopplung_neu(modell, rA, rB):
     return None, pr
 
 
-def bewerten(rA, rB, M, wahr, folge, m_je, up):
-    """M: B -> A. wahr: {name: Zentrum im Ursprungsmodell}. -> Kennzahlen (Meter, Grad, Prozent)."""
+def bewerten(rA, rB, M, wahr, bruecke, m_je, up):
+    """M: B -> A. wahr: {name: Zentrum im Ursprungsmodell}; bruecke: Mitte der Brueckenkameras (Ursprung). NAHT/ENDE = naechstes/fernstes Viertel der B-Kameras
+    nach dem 3D-Abstand zur Bruecke (erster Lauf nach der Azimut-Folge: Martinstor-Kameras decken nur 82 Grad Azimut, Fernfotos nahe der Naht im Azimut lagen
+    weit weg -> 'Naht' 0,22 m > 'Ende' 0,09 m). -> Kennzahlen (Meter, Grad, Prozent)."""
     A = {im.name: im.projection_center() for im in rA.images.values() if im.has_pose and im.name in wahr}
     B = {im.name: im.projection_center() for im in rB.images.values() if im.has_pose and im.name in wahr}
-    na, nb = sorted(A), sorted(B, key=lambda n: folge[n])
+    na, nb = sorted(A), sorted(B, key=lambda n: np.linalg.norm(wahr[n] - bruecke))
     TA = matrix(*umeyama(np.array([A[n] for n in na]), np.array([wahr[n] for n in na])))
     TB = matrix(*umeyama(np.array([B[n] for n in nb]), np.array([wahr[n] for n in nb])))
     W = np.array([wahr[n] for n in nb]); q = max(1, len(nb) // 4)
@@ -138,17 +140,22 @@ def main():
     au = json.load(open(a.ausrichtung)); st = {k: np.asarray(v["standort"], float) for k, v in au["kameras"].items() if v.get("standort") is not None}
     ns = [im for im in ims if os.path.splitext(im.name)[0] in st]
     f = sim3_meter(np.array([im.projection_center() for im in ns]), np.array([st[os.path.splitext(im.name)[0]] for im in ns])); m_je = float(np.cbrt(np.linalg.det(f["M"][:3, :3])))
-    Rm = f["M"][:3, :3] / m_je; up = Rm.T @ np.array([0, 0, 1.0])                     # Lot im Modellrahmen (Ausrichtung: z oben)
+    Rm = f["M"][:3, :3] / m_je; up_au = Rm.T @ np.array([0, 0, 1.0])                  # Lot im Modellrahmen laut Ausrichtung (z oben) - nur fuer die Trennstelle (wie Stufe 1)
+    # LOT FUER VERFORMUNG UND KIPP/GIER = Fluchtpunkt-Lot des ungetrennten Modells (teil_verformung.messen): die Ausrichtung martinstor_gk (Kameraebene-Lot) liegt
+    # 40,6 Grad daneben (kaufhaus_gk 1,9) - mit ihr war 'biegung_lot' eine schraege Drehung (erster Lauf 22.11.: Lot-Feld sprang bei 'Gier'-Biegung um 1,8 Grad).
+    rw_p = os.path.join(a.aus, "lot_wahr_roh.json"); bw, roh_w = TV.messen(r, a.fotos, 4, None, json.load(open(rw_p)) if os.path.isfile(rw_p) else None); json.dump(roh_w, open(rw_p, "w"))
+    up = np.asarray(bw["lot"], float) if bw.get("lot") else up_au; up = up if up @ up_au >= 0 else -up
+    lot_info = dict(quelle="fluchtpunkte" if bw.get("lot") else "ausrichtung", gegen_ausrichtung_grad=round(float(np.degrees(np.arccos(np.clip(abs(up @ up_au), -1, 1)))), 2))
     P = np.array([p.xyz for p in r.points3D.values()]); mitte = np.median(P, 0); C = np.array([im.projection_center() for im in ims])
     Cw = (C - mitte) @ Rm.T; az = np.degrees(np.arctan2(Cw[:, 1], Cw[:, 0])) % 360
     o = np.argsort(az); gap = np.diff(np.r_[az[o], az[o][0] + 360]); start = (int(np.argmax(gap)) + 1) % len(o); folge = [ims[i].name for i in np.roll(o, -start)]
-    fnr = {n: i for i, n in enumerate(folge)}; wahr = {im.name: im.projection_center() for im in ims}
-    mid = len(folge) // 2; erg = dict(modell=a.sparse, bilder=len(folge), meter_je_einheit=m_je, faelle=[], zeilen=[])
+    wahr = {im.name: im.projection_center() for im in ims}
+    mid = len(folge) // 2; erg = dict(modell=a.sparse, bilder=len(folge), meter_je_einheit=m_je, lot=lot_info, faelle=[], zeilen=[])
     db0 = sqlite3.connect(f"file:{a.db}?immutable=1", uri=True); nm = {n: i for i, n in db0.execute("select image_id, name from images")}
     rows = {pid: rw for pid, rw in db0.execute("select pair_id, rows from two_view_geometries")}
     rng = np.random.default_rng(7); q = rng.normal(size=4); q /= np.linalg.norm(q); MB = matrix(1.7, pycolmap.Rotation3d(q).matrix(), [5.0, -3.0, 2.0])
     for k in a.k:
-        lo, hi = mid - k // 2, mid - k // 2 + k; K = set(folge[lo:hi]); A = set(folge[:lo]); B = set(folge[hi:]); o_ = os.path.join(a.aus, f"k{k}"); os.makedirs(o_, exist_ok=True)
+        lo, hi = mid - k // 2, mid - k // 2 + k; K = set(folge[lo:hi]); brk = np.mean([wahr[n] for n in K], 0); A = set(folge[:lo]); B = set(folge[hi:]); o_ = os.path.join(a.aus, f"k{k}"); os.makedirs(o_, exist_ok=True)
         db = os.path.join(o_, "db.db"); sj = os.path.join(o_, "seiten.json")
         if not os.path.isfile(os.path.join(o_, "db_fertig.json")):
             shutil.copyfile(a.db, db); c = sqlite3.connect(db); ia, ib = {nm[n] for n in A}, {nm[n] for n in B}
@@ -186,21 +193,21 @@ def main():
                 art, wert = (vf.split(":") + ["0"])[:2]; wert = float(wert)
                 if art == "keine": tbv = tb
                 else:
-                    tbv = os.path.join(om, f"teilB_{art}_{wert:g}")
+                    tbv = os.path.join(om, f"teilB_{art}_{wert:g}_fl")    # _fl: mit Fluchtpunkt-Lot verformt
                     if not os.path.isfile(os.path.join(tbv, "images.bin")): verformen_modell(tb, art, wert, _up_teil(tb, up, wahr), tbv)
                 rB = pycolmap.Reconstruction(tbv); fall = f"{os.path.basename(a.aus.rstrip('/'))} k{k} {modus} {vf}"
                 ergebnisse = {}
                 if art == "keine" and (ej.get("teile") or {}).get("1", {}).get("ok"):
-                    ergebnisse["stufe"] = bewerten(rA, rB, np.asarray(ej["teile"]["1"]["M_nach_A"]), wahr, fnr, m_je, up)
-                elif art == "keine": ergebnisse["stufe"] = dict(bewerten(rA, rB, None, wahr, fnr, m_je, up), grund=ej.get("urteil"))
+                    ergebnisse["stufe"] = bewerten(rA, rB, np.asarray(ej["teile"]["1"]["M_nach_A"]), wahr, brk, m_je, up)
+                elif art == "keine": ergebnisse["stufe"] = dict(bewerten(rA, rB, None, wahr, brk, m_je, up), grund=ej.get("urteil"))
                 if a.stufe_je_fall and art != "keine":
                     z_ = stufe + f"_{art}_{wert:g}"
                     if not os.path.isfile(os.path.join(z_, "eck.json")): os.makedirs(z_, exist_ok=True); stufe_laufen(tbv, z_)
                     e2 = json.load(open(os.path.join(z_, "eck.json"))); t1 = (e2.get("teile") or {}).get("1") or {}
-                    ergebnisse["stufe"] = bewerten(rA, rB, np.asarray(t1["M_nach_A"]) if t1.get("ok") else None, wahr, fnr, m_je, up)
+                    ergebnisse["stufe"] = bewerten(rA, rB, np.asarray(t1["M_nach_A"]) if t1.get("ok") else None, wahr, brk, m_je, up)
                 for v, mod in varianten.items():
                     if not mod: continue
-                    M, pr = kopplung_neu(mod, rA, rB); z = bewerten(rA, rB, M, wahr, fnr, m_je, up); z["pruefung"] = pr; ergebnisse[v] = z
+                    M, pr = kopplung_neu(mod, rA, rB); z = bewerten(rA, rB, M, wahr, brk, m_je, up); z["pruefung"] = pr; ergebnisse[v] = z
                 lf = None
                 if a.lotfeld:
                     bb, roh = TV.messen(rB, a.fotos, 4, None, roh); json.dump(roh, open(lot_roh, "w"))

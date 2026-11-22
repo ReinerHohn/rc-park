@@ -206,7 +206,7 @@ def messen(rec, fotos, faeden=4, max_n=None, roh=None):
         args = [(k["name"], fotos, k["R"], k["f"], k["cx"], k["cy"], k["br"], k["ho"]) for k in fehlt]
         if faeden > 1:
             import multiprocessing as mp
-            with mp.get_context("spawn").Pool(faeden) as p: res = p.map(_kamera, args, chunksize=4)
+            with mp.get_context("spawn").Pool(faeden) as p: res = p.map(_kamera, args, chunksize=4); p.close(); p.join()   # sauber beenden (terminate -> glog-Absturzmeldungen von pycolmap)
         else: res = [_kamera(x) for x in args]
         for k, r_ in zip(fehlt, res): roh[k["name"]] = r_ or dict(name=k["name"], fehlt=True)
     W, idx = [], []
