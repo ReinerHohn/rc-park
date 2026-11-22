@@ -17,6 +17,12 @@ import sys, os, json, argparse, subprocess, time, numpy as np
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
 
 
+def kipp(ne, u, z):
+    """22.11.2026: Neigung der Wandebene im Kamerarahmen (fassade_tiefe 'wand_ebene', ohne Fusswert a) an (u, z); ohne Neigung 0."""
+    if not ne: return 0.0 * np.asarray(u, float)
+    return ne["b_u"] * (np.asarray(u, float) - ne["u_ref"]) + ne["c_z"] * (np.asarray(z, float) - ne["z_ref"])
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassade"); ap.add_argument("kanten"); ap.add_argument("aus")
     ap.add_argument("--min_m2", type=float, default=40.0); ap.add_argument("--maxpx", type=int, default=150000); ap.add_argument("--refs", type=int, default=80); ap.add_argument("--nur", default="")
@@ -27,15 +33,16 @@ def main():
     if not (os.path.exists(KW) and os.path.isdir(SD)): print("Kantenstufe fehlt (kam_wahl.json / stabil) - erst Stufe 'kanten'"); return 3
     E = []
     for i, F in enumerate(FA):
-        vj = os.path.join(a.fassade, f"vorbauten_f{i:02d}.json"); ww = float(json.load(open(vj)).get("wand_versatz_m", 0.0)) if os.path.exists(vj) and json.load(open(vj)).get("belastbar") else 0.0
+        vj = os.path.join(a.fassade, f"vorbauten_f{i:02d}.json"); vj_ = json.load(open(vj)) if os.path.exists(vj) else {}
+        ww = float(vj_.get("wand_versatz_m", 0.0)) if vj_.get("belastbar") else 0.0; ne = vj_.get("wand_ebene") if vj_.get("belastbar") else None
         if F.get("flaeche_m2", 0) >= a.min_m2 and len(F.get("fotos") or {}) >= 6:
-            E.append(dict(id=f"f{i:02d}_wand", art="wand", fassade=F.get("id", f"f{i:02d}"), o=F["o"], d=F["d"], n=F["n"], w=round(ww, 3), zone=[F["u"][0], F["u"][1], F["z"][0], F["z"][1]], band=0.5))
+            E.append(dict(id=f"f{i:02d}_wand", art="wand", fassade=F.get("id", f"f{i:02d}"), o=F["o"], d=F["d"], n=F["n"], w=round(ww, 3), neigung=ne, zone=[F["u"][0], F["u"][1], F["z"][0], F["z"][1]], band=0.5))
     vp = os.path.join(od, "audit", "vorbauten_auto.json")
     if os.path.exists(vp):
         for F in json.load(open(vp)).get("fassaden", []):
             for k, g in enumerate(F["gruppen"]):
                 E.append(dict(id=f"f{F['nr']:02d}_vb{k}", art="vorbau", fassade=F["id"], o=F["o"], d=F["d"], n=F["n"], w=round(float(F.get("w_wand", 0.0)) + float(g["koerper"]["w_median"]), 3),
-                              w_wand=round(float(F.get("w_wand", 0.0)), 3), zone=[g["u0"] - 0.6, g["u1"] + 0.6, g["z0"] - 1.6, g["z1"] + 1.0], band=0.8))
+                              w_wand=round(float(F.get("w_wand", 0.0)), 3), neigung=F.get("wand_ebene"), zone=[g["u0"] - 0.6, g["u1"] + 0.6, g["z0"] - 1.6, g["z1"] + 1.0], band=0.8))
     # 21.11.2026 (Nutzer: "Ebenen in alle Richtungen, nicht nur in der Frontansicht, sondern von der Seite auch"): je Vorbau zwei SEITENEBENEN (senkrecht zur Wand, an den Enden des
     # Vorbaus). In-Ebenen-Achse u' = Tiefe ab der Fassadenebene (Richtung n), Normale = -d (links) / +d (rechts). Dort stehen Ausladung, Strebenschraege und Dachprofil als Kanten.
     if os.path.exists(vp) and a.seiten:
@@ -43,6 +50,7 @@ def main():
             o_ = np.array(F["o"], float); d_ = np.array(F["d"], float); n_ = np.array(F["n"], float); ww_ = float(F.get("w_wand", 0.0))
             for k, g in enumerate(F["gruppen"]):
                 Kb = (g.get("kanten_mass") or {}).get("kasten") or g["koerper"]; aus_ = float((g.get("kanten_mass") or {}).get("ausladung") or g["koerper"]["w_median"])
+                ww_ = float(F.get("w_wand", 0.0)) + float(kipp(F.get("wand_ebene"), 0.5 * (g["u0"] + g["u1"]), 0.5 * (g["z0"] + g["z1"])))      # oertliche Wand bei geneigter Wandebene
                 for nm, ue, vz in (("li", Kb["u0"], -1.0), ("re", Kb["u1"], 1.0)):
                     E.append(dict(id=f"f{F['nr']:02d}_vb{k}_{nm}", art="seite", fassade=F["id"], o=[float(x) for x in (o_ + ue * d_)], d=[float(x) for x in n_], n=[float(x) for x in (vz * d_)], w=0.0, w_wand=round(ww_, 3),
                                   zone=[ww_ - 0.4, ww_ + aus_ + 1.6, g["z0"] - 2.2, g["z1"] + 1.5], band=0.5, u_kante=round(float(ue), 2)))
@@ -52,12 +60,12 @@ def main():
         w0s, w1s, ds = a.stapel
         for e_ in [e_ for e_ in E if e_["art"] == "wand"]:
             for j, wj in enumerate(np.arange(w0s, w1s + 1e-6, ds)):
-                E.append(dict(id=f"{e_['id'][:3]}_s{j:02d}", art="schicht", fassade=e_["fassade"], o=e_["o"], d=e_["d"], n=e_["n"], w=round(e_["w"] + float(wj), 3), w_wand=e_["w"], zone=e_["zone"], band=round(ds / 2, 3)))
+                E.append(dict(id=f"{e_['id'][:3]}_s{j:02d}", art="schicht", fassade=e_["fassade"], o=e_["o"], d=e_["d"], n=e_["n"], w=round(e_["w"] + float(wj), 3), w_wand=e_["w"], neigung=e_.get("neigung"), zone=e_["zone"], band=round(ds / 2, 3)))
     if a.nur: E = [e for e in E if e["id"] in a.nur.split(",") or (a.nur.endswith("*") and e["id"].startswith(a.nur[:-1]))]
     PY = sys.executable; n_ok = 0
     for e in E:
         t0 = time.time(); ed = os.path.join(a.aus, e["id"]); os.makedirs(ed, exist_ok=True); o = np.array(e["o"]); d = np.array(e["d"]); n = np.array(e["n"]); u0, u1, z0, z1 = e["zone"]; z0 = max(z0, 0.0)
-        P = lambda u, z: [o[0] + u * d[0] + e["w"] * n[0], o[1] + u * d[1] + e["w"] * n[1], z]
+        ne = e.get("neigung"); P = lambda u, z: [o[0] + u * d[0] + (e["w"] + kipp(ne, u, z)) * n[0], o[1] + u * d[1] + (e["w"] + kipp(ne, u, z)) * n[1], z]      # geneigte Ebene: 4 Ecken bleiben eben
         V = np.array([P(u0, z0), P(u1, z0), P(u1, z1), P(u0, z1)]); stl = os.path.join(ed, "ebene.stl"); trimesh.Trimesh(V, [[0, 1, 2], [0, 2, 3]]).export(stl)
         box = ",".join(f"{x:.2f}" for x in np.r_[V.min(0) - e["band"] - 1.0, V.max(0) + e["band"] + 1.0]); sw = os.path.join(ed, "sweep.npz")
         if os.path.exists(sw): os.remove(sw)
@@ -66,12 +74,12 @@ def main():
         e["punkte"] = int(len(np.load(sw)["P"])) if os.path.exists(sw) else 0; e["sweep"] = sw if e["punkte"] else None; e["sekunden"] = round(time.time() - t0)
         if r.returncode != 0 or not e["punkte"]: e["fehler"] = (r.stderr.strip().splitlines() or r.stdout.strip().splitlines() or ["?"])[-1][:200]
         if e["punkte"]:
-            n_ok += 1; Pp = np.load(sw)["P"].astype(float); w_ = (Pp[:, :2] - o) @ n - e["w"]; e["auf_ebene_anteil"] = round(float((np.abs(w_) < 0.15).mean()), 3)
+            n_ok += 1; Pp = np.load(sw)["P"].astype(float); w_ = (Pp[:, :2] - o) @ n - e["w"] - kipp(ne, (Pp[:, :2] - o) @ d, Pp[:, 2]); e["auf_ebene_anteil"] = round(float((np.abs(w_) < 0.15).mean()), 3)
         if e["art"] == "vorbau" and a.bild and e["punkte"]:
             try:
                 import cv2
                 from form_aus_wandbild import wandbild_fotos, _ebene
-                A_, T_, N_ = _ebene(o, o + d, o + n); img, _, _ = wandbild_fotos(a.objekt, A_, T_, N_, (u0, u1, z0, z1), 0.01, w=e["w"], k=5)
+                A_, T_, N_ = _ebene(o, o + d, o + n); img, _, _ = wandbild_fotos(a.objekt, A_, T_, N_, (u0, u1, z0, z1), 0.01, w=e["w"] + float(kipp(ne, 0.5 * (u0 + u1), 0.5 * (z0 + z1))), k=5)
                 if img is not None: e["bild"] = os.path.join(ed, "bild.png"); cv2.imwrite(e["bild"], img)
             except Exception as x_: e["bild_fehler"] = str(x_)[:160]
         print(f"{e['id']}: Ebene w {e['w']:+.2f} m, Zone u {u0:.1f}..{u1:.1f} z {z0:.1f}..{z1:.1f}, Band {e['band']} m -> {e['punkte']} Kantenpunkte"
