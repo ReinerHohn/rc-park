@@ -134,6 +134,10 @@ DURCH_MIN_ZELLEN = 12    # ANNAHME: Inlier in >= 12 von 64 Rasterzellen JEDES Bi
 DURCH_STATISCH = 0.002   # Zuordnung an (fast) derselben Bildstelle = Einblendung/Wasserzeichen; Anteil der Bildgroesse (4 px bei 2000 px)
 DURCH_MAX_STATISCH = 0.10  # ANNAHME: mehr als 10 % statische Zuordnungen = Paar teilweise Einblendung (schwabentor-1122 9-24: 25-33 %, echte Paare 0-6 %) -> abgelehnt
 DURCH_GPS_GEGEN = 120.0  # wie urteil_gps: Standorte beider Fotos > 120 Grad um die Objektmitte auseinander = koennen nicht dieselbe Flaeche sehen -> Paar abgelehnt
+# BRUECKE ERWEITERN (22.11.2026, schwabentor-1122 Eck-Kopplung): an einer Gruppenverbindung, die >= 1 starkes Paar bestaetigt, haengen die Teile sonst nur an diesen
+# wenigen Paaren (Ecke G27 -> G12: 3 Paare, EIN Teil-0-Bild) - der globale Mapper knickte Teil 1 dort um 25 Grad. Die schwaecheren Paare DERSELBEN Verbindung kommen mit
+# denselben Pruefungen (Zellen, statischer Anteil, GPS-Veto) zurueck, Mindestzahl = die Kantenschwelle des Graphen (--min-inlier, 30). Nur bestaetigte Verbindungen:
+# Martinstor hat keine (groesstes Querpaar 122) -> unveraendert getrennt.
 
 
 def paar_staerke(p0, p1, wh0, wh1, statisch=DURCH_STATISCH, raster=8):
@@ -156,12 +160,12 @@ def durchblick_ok(m, gps_dw=None, min_inlier=DURCH_MIN_INLIER, min_zellen=DURCH_
     return "durchblick", "ok"
 
 
-def durchblick_stufe(db, nm, g, falsch, gruppen_ok, mitte=None, bilder=None, min_inlier=DURCH_MIN_INLIER):
+def durchblick_stufe(db, nm, g, falsch, gruppen_ok, mitte=None, bilder=None, min_inlier=DURCH_MIN_INLIER, bruecke_min=None):
     """Stufe 'Durchblick/Umgebung' fuer Verbindungen in falsch (verwechselt/unklar/ungeprueft unter --streng): jedes Paar mit >= min_inlier bestaetigten Zuordnungen
     zwischen zwei Gruppen aus gruppen_ok (Bildteile mit Objektfotos) wird einzeln gemessen. -> Liste dict(pair_id, a, b, ga, gb, n, n_eff, ..., urteil, grund).
     mitte + bilder: EXIF-GPS beider Fotos (15-300 m) als Veto gegen Paare von gegenueberliegenden Standorten."""
     wh = {i: (w, h) for i, w, h in db.execute("select i.image_id, c.width, c.height from images i join cameras c on c.camera_id = i.camera_id")}
-    gps = {}
+    bruecke_min = min_inlier if bruecke_min is None else bruecke_min; gps = {}
     def standort(i):
         if i not in gps:
             gps[i] = None
@@ -181,6 +185,15 @@ def durchblick_stufe(db, nm, g, falsch, gruppen_ok, mitte=None, bilder=None, min
         wa, wb = standort(x), standort(y); dw = abs((wa - wb + 180.0) % 360.0 - 180.0) if wa is not None and wb is not None else None
         u, grund = durchblick_ok(m, dw, min_inlier=min_inlier)
         aus.append(dict(pair_id=int(pid), a=nm[x], b=nm[y], ga=g[x], gb=g[y], **m, gps_dw=None if dw is None else round(dw), urteil=u, grund=grund))
+    bruecken = {tuple(sorted((d["ga"], d["gb"]))) for d in aus if d["urteil"] == "durchblick"}
+    if bruecken and bruecke_min < min_inlier:                                          # BRUECKE ERWEITERN: schwaechere Paare bestaetigter Verbindungen
+        for pid, r, c, dat in db.execute("select pair_id, rows, cols, data from two_view_geometries where rows >= ? and rows < ?", (bruecke_min, min_inlier)).fetchall():
+            x, y = pid // MAXID, pid % MAXID; k = tuple(sorted((g[x], g[y])))
+            if k not in bruecken: continue
+            ij = np.frombuffer(dat, np.uint32).reshape(r, c); m = paar_staerke(kp(x)[ij[:, 0]], kp(y)[ij[:, 1]], wh[x], wh[y])
+            wa, wb = standort(x), standort(y); dw = abs((wa - wb + 180.0) % 360.0 - 180.0) if wa is not None and wb is not None else None
+            u, grund = durchblick_ok(m, dw, min_inlier=bruecke_min)
+            aus.append(dict(pair_id=int(pid), a=nm[x], b=nm[y], ga=g[x], gb=g[y], **m, gps_dw=None if dw is None else round(dw), urteil=u, grund=grund, bruecke=True))
     return aus
 
 
@@ -190,12 +203,13 @@ def durchblick_einbauen(a, db, nm, g, C, quer_alle, falsch, ref, verb):
     mitte = None; oj = a.objekt or a.fernsicht
     if oj:
         sys.path.insert(0, T); from netz_fotos_holen import geo; mitte = geo(json.load(open(oj)))
-    sys.path.insert(0, T); d = durchblick_stufe(db, nm, g, falsch, ok, mitte=mitte, bilder=a.bilder)
+    sys.path.insert(0, T); d = durchblick_stufe(db, nm, g, falsch, ok, mitte=mitte, bilder=a.bilder, bruecke_min=a.min_inlier)
     beh = {x["pair_id"] for x in d if x["urteil"] == "durchblick"}; z = collections.Counter(tuple(sorted((x["ga"], x["gb"]))) for x in d if x["urteil"] == "durchblick")
     for v in verb:
         if z.get((v["a"], v["b"])): v["durchblick_paare"] = z[(v["a"], v["b"])]
-    print(f"DURCHBLICK/UMGEBUNG: {len(d)} starke Paare (>= {DURCH_MIN_INLIER} Inlier) in verwechselten/unklaren Verbindungen gemessen, {len(beh)} behalten "
-          f"(Gruppenpaare {dict(sorted(z.items()))}); abgelehnt: {collections.Counter(x['grund'].split(' ')[0] for x in d if x['urteil'] != 'durchblick')}", flush=True)
+    nb = sum(1 for x in d if x.get("bruecke") and x["urteil"] == "durchblick")
+    print(f"DURCHBLICK/UMGEBUNG: {len(d) - sum(1 for x in d if x.get('bruecke'))} starke Paare (>= {DURCH_MIN_INLIER} Inlier) in verwechselten/unklaren Verbindungen gemessen, {len(beh)} behalten "
+          f"(davon {nb} schwaechere Bruecken-Paare >= {a.min_inlier} an bestaetigten Verbindungen; Gruppenpaare {dict(sorted(z.items()))}); abgelehnt: {collections.Counter(x['grund'].split(' ')[0] for x in d if x['urteil'] != 'durchblick')}", flush=True)
     return d, beh
 
 

@@ -54,6 +54,16 @@ L = S.durchblick_stufe(db, nm, g, {(0, 1), (0, 2)}, {0, 1})
 u = {(x["a"], x["b"]): x["urteil"] for x in L}
 pruefe("Stufe: flaechiges Paar zwischen Objektteilen behalten, Einblendung abgelehnt, Paar zu fremder Gruppe gar nicht gemessen", u == {("a.jpg", "b.jpg"): "durchblick", ("a.jpg", "c.jpg"): "abgelehnt"})
 pruefe("Stufe: echte Verbindungen (nicht in falsch) werden nicht angefasst", S.durchblick_stufe(db, nm, g, set(), {0, 1}) == [])
+# BRUECKE ERWEITERN: e (Gruppe 0) - b (Gruppe 1) nur 80 flaechige Inlier -> zurueck, weil 0-1 bestaetigt; f (Gruppe 3) - a 80 Inlier -> nicht gemessen (0-3 ohne starkes Paar)
+for i, n in ((5, "e.jpg"), (6, "f.jpg")):
+    k = np.r_[p0, e0].astype(np.float32); db.execute("insert into images values (?, ?, 1)", (i, n)); db.execute("insert into keypoints values (?, ?, 6, ?)", (i, len(k), np.c_[k, np.zeros((len(k), 4), np.float32)].tobytes()))
+i80 = np.arange(0, 400, 5); paar(2, 5, np.c_[i80, i80]); paar(1, 6, np.c_[i80, i80]); db.commit()
+g.update({5: 0, 6: 3}); nm.update({5: "e.jpg", 6: "f.jpg"})
+L = S.durchblick_stufe(db, nm, g, {(0, 1), (0, 3)}, {0, 1, 3}, bruecke_min=30)
+u = {(x["a"], x["b"]): (x["urteil"], bool(x.get("bruecke"))) for x in L}
+pruefe("Bruecke erweitern: schwaches Paar einer bestaetigten Verbindung zurueck, an unbestaetigter Verbindung nicht gemessen",
+       u.get(("b.jpg", "e.jpg")) == ("durchblick", True) and ("a.jpg", "f.jpg") not in u)
+pruefe("Bruecke erweitern ohne bruecke_min (Standard) = alte Stufe", ("b.jpg", "e.jpg") not in {(x["a"], x["b"]) for x in S.durchblick_stufe(db, nm, g, {(0, 1), (0, 3)}, {0, 1, 3})})
 
 # Verdrahtung in main(): Schalter, Loeschung ueberspringt behaltene Paare, seiten.json-Feld, EIN Aufruf
 src = open(os.path.join(T, "seiten_erkennen.py")).read()
