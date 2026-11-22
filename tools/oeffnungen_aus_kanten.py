@@ -365,6 +365,7 @@ def wandbild_laden(fein_dir, e, objekt_json=None):
         R = cv2.imread(rp, cv2.IMREAD_UNCHANGED)
         if R is not None and R.shape[:2] == im.shape[:2]: rel = np.where(R > 0, R.astype(np.float32) / 1000.0 - 10.0, 0.0).astype(np.float32)
     W = wandbild_aus(F, bild, e, einz, quelle=" + ".join(n_ for n_, _ in bilder), relief=rel); W["bilder"] = [b_ for _, b_ in bilder]
+    W["eben"] = (F.get("messflaeche") or {}).get("art") == "eben"          # 22.11.2026: Einzelorthos auf dem modellfreien Messkoerper (fassade_ortho --messflaeche eben) - kein Kreis
     if objekt_json and not os.environ.get("OEFFNUNGEN_OHNE_FOTO"):          # 22.11.2026: Laibungskanten direkt aus den Fotos (siehe laibungskanten); Fotos erst bei Bedarf laden
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import laibung_aus_fotos as LF
         try: obj_ = json.load(open(objekt_json))
@@ -454,21 +455,31 @@ def _foto_flach(W, nr, g, ua, ub, za, zb, rand=0.25):
     out = np.zeros(g.shape, np.uint8); out[i0:i1, j0:j1] = A; return out
 
 
-def laibungskanten(W, ua, ub, za, zb):
-    """Durchgehende senkrechte Kanten im Fenster ua..ub mit LAGE und TIEFE: in jedem Einzelfoto-Ortho erscheint eine Kante in Tiefe L hinter der Wand bei u0 + L * ru
-    (ru = (C - P).d / (C - P).n, Parallaxe). Hough ueber (u0, L): Stimmen = Fotos mit gleichsinniger Spitze <= EINZEL_TOL_M daneben; Kante ab FOTOS_MIN Fotos und FOTOS_MIN_ANTEIL
-    der Fotos, die die Stelle sehen; dann Ausgleich u0 + L * ru ueber die Treffer. Ohne Einzelfotos: Spitzen des Wandbilds selbst (Tiefe unbekannt).
-    Rueckgabe Liste dict(u, tiefe, fotos, rest, vorzeichen, staerke) nach u sortiert, und Zahl der Fotos, die die Stelle sehen."""
+def laibung_beobachtungen(W, ua, ub, za, zb, foto=None):
+    """Je Einzelfoto die senkrechten Kantenspitzen im Fenster ua..ub (za..zb), auf die Fassadenebene zurueckgerechnet: Liste (ru, u_eben, vorzeichen, staerke).
+    foto: True = Suchfeld direkt aus dem Foto (_foto_flach), False = aus dem Einzelortho; None = Foto nur, wenn die Orthos auf dem MODELL liegen (Kreisfall 1121v) -
+    auf dem modellfreien Messkoerper (W['eben']) gilt das Einzelortho (volle Aufloesung, Ausrichtung der Kette)."""
+    if foto is None: foto = not W.get("eben")
     F = W["F"]; o3 = np.array([*F["o"], 0.0]); d3 = np.array([*F["d"], 0.0]); n3 = np.array([*F["n"], 0.0]); um = 0.5 * (ua + ub)
     P = o3 + float(W["u_f"](um)) * d3 + np.array([0, 0, 0.5 * (za + zb)]); bel = []
     for nr, g, C in W["einzeln"]:
         v = C - P; vn = float(v @ n3)
         if vn <= 0.5: continue                                                                           # Kamera hinter / in der Wand
-        fl = _foto_flach(W, nr, g, ua, ub, za, zb)
+        fl = _foto_flach(W, nr, g, ua, ub, za, zb) if foto else None
         sp = _profil_spitzen(W, g if fl is None else fl, ua, ub, za, zb)
         if sp is None: continue
         ru = float(v @ d3) / vn * W["s"]; u_, s_, h_ = sp
         bel.append((ru, u_ + (0.0 if fl is not None else _projektionstiefe(W, u_, za, zb)) * ru, s_, h_))   # Orthos sind auf das Relief projiziert: u_k = u + (L - Lp) ru -> u_k + Lp ru = u + L ru; Foto auf der Ebene: Lp = 0
+    return bel
+
+
+def laibungskanten(W, ua, ub, za, zb, foto=None, bel=None):
+    """Durchgehende senkrechte Kanten im Fenster ua..ub mit LAGE und TIEFE: in jedem Einzelfoto-Ortho erscheint eine Kante in Tiefe L hinter der Wand bei u0 + L * ru
+    (ru = (C - P).d / (C - P).n, Parallaxe). Hough ueber (u0, L): Stimmen = Fotos mit gleichsinniger Spitze <= EINZEL_TOL_M daneben; Kante ab FOTOS_MIN Fotos und FOTOS_MIN_ANTEIL
+    der Fotos, die die Stelle sehen; dann Ausgleich u0 + L * ru ueber die Treffer. Ohne Einzelfotos: Spitzen des Wandbilds selbst (Tiefe unbekannt).
+    foto: Bildquelle je Foto (laibung_beobachtungen); bel: fertige Beobachtungen (Test mit echter Fixture).
+    Rueckgabe Liste dict(u, tiefe, fotos, rest, vorzeichen, staerke) nach u sortiert, und Zahl der Fotos, die die Stelle sehen."""
+    if bel is None: bel = laibung_beobachtungen(W, ua, ub, za, zb, foto)
     aus = []
     if len(bel) >= FOTOS_MIN:
         Ls = np.arange(L_BEREICH[0], L_BEREICH[1] + 1e-9, 0.01); U0 = np.arange(ua, ub + 1e-9, 0.005); frei = [np.ones(len(b[1]), bool) for b in bel]; n_min = max(FOTOS_MIN, int(np.ceil(FOTOS_MIN_ANTEIL * len(bel))))
@@ -494,10 +505,40 @@ def laibungskanten(W, ua, ub, za, zb):
             else: L = None; u0 = float(np.median(tr[:, 1])); rest = float(np.sqrt(np.mean((tr[:, 1] - u0) ** 2)))
             aus.append(dict(u=float(u0), tiefe=None if L is None else float(L), tiefe_tol=None if L is None else max(DRUCK_MIN_M, EINZEL_TOL_M / spanne), fotos=len(tr), rest=rest,
                             vorzeichen=int(vz), staerke=float(np.median(tr[:, 2])), quelle="einzelfotos"))
-    if not aus:                                                                                          # Fallback: Spitzen des Wandbilds selbst
+    if not aus and W is not None:                                                                        # Fallback: Spitzen des Wandbilds selbst
         sp = _profil_spitzen(W, W["bild"], ua, ub, za, zb)
         if sp is not None: aus = [dict(u=float(u_), tiefe=None, tiefe_tol=None, fotos=0, rest=None, vorzeichen=int(s_), staerke=float(h_), quelle="wandbild") for u_, s_, h_ in zip(*sp)]
     return sorted(aus, key=lambda k: k["u"]), len(bel)
+
+
+def ruecksprung_belegt(quellen, u_in, u_aus):
+    """Gewaende = Ruecksprung: die Laibungskante an der Innenkante u_in liegt TIEFER als die an der Aussenkante u_aus (sonst Fuge/Rahmenband in der Ebene).
+    quellen = Kantenlisten (laibungskanten) aus je EINER Bildquelle; verglichen wird nur innerhalb einer Quelle (gleiche Fotos, gleiche Abtastung).
+    22.11.2026 (Kettenlauf 1122c, Tor 5,27 statt 4,32): die Tiefe einer Kante aus der Parallaxe ist bei schmaler Blickspanne schlecht bestimmt (Hough waehlt bei
+    Gleichstand die flachere Tiefe) - dieselbe Innenkante u -1,98..-2,07 kam je Bildquelle mit 0,14 / 0,58 / 0,74 m heraus. Ein Ruecksprung gilt darum, wenn EINE
+    Quelle ihn belegt (die Bildquellen fallen nur nach der flachen Seite aus; eine Fuge in der Ebene bleibt in jeder Quelle flach)."""
+    for K in quellen:
+        lk = [k_ for k_ in K if k_["quelle"] == "einzelfotos" and k_["tiefe"] is not None]                 # Kanten aus >= FOTOS_MIN Einzelfotos mit Tiefe (Durchblick > L_BEREICH faellt weg)
+        def an(u_):
+            k_ = min(lk, key=lambda k: abs(k["u"] - u_)) if lk else None; return k_ if k_ and abs(k_["u"] - u_) <= 3 * EINZEL_TOL_M else None
+        ki, ka = an(u_in), an(u_aus)
+        if ki and ki["tiefe"] > (ka["tiefe"] if ka else 0.0) + max(ki["tiefe_tol"] or 0.0, DRUCK_MIN_M): return True
+    return False
+
+
+def gewaende_waehlen(s, kand, untergrund, quellen):
+    """Zweite Kante (Gewaende/Fase) aus den Kandidaten kand = [(g, beleg_versatz, zweite_kante(...) oder None)] in Reihenfolge waehlen: eigener Beleg >= 2 x Untergrund
+    und Ruecksprung an mindestens einer Laibung (ruecksprung_belegt mit quellen{'links'|'rechts': [Kantenlisten je Bildquelle]}).
+    Rueckgabe (zweit oder None, Versatz g (0 ohne zweite Kante; < 0 = nach innen), Pruefliste)."""
+    geprueft = []
+    for g_, b_, zk_ in kand:
+        if zk_ is None: continue
+        i_, a_ = (zk_[0], s) if g_ < 0 else (s, zk_[0])
+        bestaetigt = [n_ for n_, ui_, ua_ in (("links", i_["uL"], a_["uL"]), ("rechts", i_["uR"], a_["uR"])) if ruecksprung_belegt(quellen[n_], ui_, ua_)]
+        geprueft.append(dict(g=g_, beleg_versatz=b_, beleg_eigen=round(zk_[1], 2), beleg_abschluss=round(zk_[2], 2), laibungskante=bestaetigt))
+        if zk_[1] >= 2 * untergrund and bestaetigt:
+            return zk_, 0.5 * ((zk_[0]["uR"] - zk_[0]["uL"]) - (s["uR"] - s["uL"])), geprueft
+    return None, 0.0, geprueft
 
 
 def gewaende_kandidaten(kanten, u_c, innen, aus_m, ein_m):
@@ -640,6 +681,8 @@ def wandbild_vermessen(o, W, zelle_wolke, schwelle):
     for name, u_c, innen in (("links", f["uL"], 1), ("rechts", f["uR"], -1)):
         ua, ub = sorted((u_c - innen * aus_m, u_c + innen * ein_m)); K, n_sehen = laibungskanten(W, ua, ub, za, zb); a, ii = gewaende_kandidaten(K, u_c, innen, aus_m, ein_m)
         st[name] = (a, ii); info[f"laibung_{name}"] = dict(fotos_sehen=n_sehen, kanten=[kk(k) for k in K], aussen_start=None if a is None else r3(a["u"]), innen_kandidaten=[r3(k["u"]) for k in ii])
+        if W.get("eben") and W.get("fotos"):     # 22.11.2026 (Lauf 1122c): zweite Bildquelle derselben Fotos (Suchfeld direkt aus dem Foto) - nur fuer den Ruecksprung-Beleg, s. unten
+            info[f"laibung_{name}"]["kanten_foto"] = [kk(k) for k in laibungskanten(W, ua, ub, za, zb, foto=True)[0]]
     uLa = st["links"][0]["u"] if st["links"][0] else f["uL"]; uRa = st["rechts"][0]["u"] if st["rechts"][0] else f["uR"]
     rand = aus_m + ein_m; pk = bildkanten_punkte(W, min(uLa, f["uL"]) - rand, max(uRa, f["uR"]) + rand, za, zt + 0.25 * b + rand)
     if pk is None: info["hinweis"] = "Wandbild an der Oeffnung leer"; return o
@@ -692,20 +735,10 @@ def wandbild_vermessen(o, W, zelle_wolke, schwelle):
     # Innenkante, und sie ist per Parallaxe TIEFER als die Kante an der Aussenkante (Ruecksprung) - eine Fuge oder ein Rahmenband in der Wandebene ist kein Gewaende.
     # Die Innenkante einer tiefen Fase liegt in jedem Foto anders (Parallaxe) - ein fester Anteil am Beleg der Aussenkante waere deshalb zu streng (Schwabentor: 0,30 gegen 0,65).
     untergrund = float(np.median([k_[1] for k_ in kurve])) if kurve else 1.0; info["versatz"]["untergrund"] = round(untergrund, 3)
-    lk = {n_: [k_ for k_ in info[f"laibung_{n_}"]["kanten"] if k_["quelle"] == "einzelfotos" and k_["tiefe"] is not None] for n_ in ("links", "rechts")}   # Kanten aus >= FOTOS_MIN Einzelfotos mit Tiefe (Durchblick > L_BEREICH faellt weg)
-    def an(n_, u_):
-        k_ = min(lk[n_], key=lambda k: abs(k["u"] - u_)) if lk[n_] else None; return k_ if k_ and abs(k_["u"] - u_) <= 3 * EINZEL_TOL_M else None
-    def ruecksprung(n_, u_in, u_aus):                                                                       # Gewaende = Ruecksprung: Innenkante liegt TIEFER als die Aussenkante (sonst Fuge/Rahmen in der Ebene)
-        ki, ka = an(n_, u_in), an(n_, u_aus)
-        return bool(ki) and ki["tiefe"] > (ka["tiefe"] if ka else 0.0) + max(ki["tiefe_tol"] or 0.0, DRUCK_MIN_M)
-    for g_, b_ in spitzen[:3]:
-        zk_ = zweite_kante(s, form, g_, Q, G, T, zs)
-        if zk_ is None: continue
-        i_, a_ = (zk_[0], s) if g_ < 0 else (s, zk_[0])
-        bestaetigt = [n_ for n_, ui_, ua_ in (("links", i_["uL"], a_["uL"]), ("rechts", i_["uR"], a_["uR"])) if ruecksprung(n_, ui_, ua_)]
-        info["versatz"].setdefault("geprueft", []).append(dict(g=g_, beleg_versatz=b_, beleg_eigen=round(zk_[1], 2), beleg_abschluss=round(zk_[2], 2), laibungskante=bestaetigt))
-        if zk_[1] >= 2 * untergrund and bestaetigt:
-            zweit = zk_; g = 0.5 * ((zk_[0]["uR"] - zk_[0]["uL"]) - (s["uR"] - s["uL"])); break
+    quellen = {n_: [info[f"laibung_{n_}"]["kanten"]] + ([info[f"laibung_{n_}"]["kanten_foto"]] if "kanten_foto" in info[f"laibung_{n_}"] else []) for n_ in ("links", "rechts")}
+    kand = [(g_, b_, zweite_kante(s, form, g_, Q, G, T, zs)) for g_, b_ in spitzen[:3]]
+    zweit, g, geprueft = gewaende_waehlen(s, kand, untergrund, quellen)
+    if geprueft: info["versatz"]["geprueft"] = geprueft
     if zweit is None:
         si = sa = s; info["hinweis_gewaende"] = "ANNAHME: nur eine Kante belegt - Innen- und Aussenmass gleich, Gewaende unbestimmt" + ("" if W["einzeln"] else " (keine Einzelfotos: zweite Kante nicht bestaetigbar)")
     else: si, sa = (zweit[0], s) if g < 0 else (s, zweit[0])                                               # Innenkante = die innere der beiden
