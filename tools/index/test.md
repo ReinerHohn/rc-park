@@ -1,4 +1,4 @@
-# Werkzeuge: test (127)
+# Werkzeuge: test (139)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -9,6 +9,7 @@
 - `tools/test_brennweite_waehlen.py` [-] Test brennweite_waehlen: Martinstor-061-Fall (Canon A650, 3601x2757 aus 4000x3000, EXIF 9,855 mm, 541,17 Pixel/mm), Seitenverhaeltnis-Regel, GPS-Abstand. Aufruf: python3 tools/test
 - `tools/test_buendel_synthetisch.py` [-] test_buendel_synthetisch.py - BEWEIS mit bekannter Wahrheit: alte gegen neue Kamera-/Buendelkette (Kaufhaus 2026-11-04, Nutzerauftrag "beweise, dass es bei einem neuen Objekt besse
 - `tools/test_code_stand.py` [-] Fester Test (Sekunden, nur Standardbibliothek) fuer tools/code_stand.py (22.11.2026, Nulllauf kette-schwabentor-null-1122c: Zwischenstaende ohne Code-Stand -> Fix lief nie). 1 Hilf
+- `tools/test_colmap_rig_abgleich.py` [seg] test_colmap_rig_abgleich.py - synthetischer Nachbau des Absturzes der Kettenstufe seiten_luecken (22.11.2026, schwabentor-1120, Laeufe 1122c/1122d): "ValueError: [reconstruction.cc
 - `tools/test_dach_dom1_veto.py` [-] test_dach_dom1_veto.py - DOM1-Veto des Wolken-Dachprofils (tools/dach_profil_wolke.dom1_veto, 21.11.2026). Anlass Schwabentor-1120: Hoehen-Tor meldete Dach +1,62 m ueber DOM1 (k 0,
 - `tools/test_dach_veto_traufe.py` [-] test_dach_veto_traufe.py - DOM1-Veto darf den DACHUEBERSTAND nicht abschneiden (tools/dach_profil_wolke.dom1_veto + dom1_kachel.dom1_bilinear(klippe), 21.11.2026). Anlass Schwabent
 - `tools/test_dachflaeche_aus_umriss.py` [-] Test dachflaeche_aus_umriss.py + bauteile.flaeche_aus_foto (synthetisch, Sekunden): Profil-Familie aus gerenderten Silhouetten zurueckgewinnen, Formfamilie nur aus >= 3 einigen Fot
@@ -33,11 +34,14 @@
 - `tools/test_generator_schleife.py` [seg] test_generator_schleife.py - BEWEIS (bekannte Wahrheit, OHNE echte Fotos) fuer generator_schleife.py (2026-11-06).
 - `tools/test_gitter_kurven.py` [-] Beweistest gitter_kurven.py (synthetisch): Gerade, Kreisbogen (R 1,9 m, 150 Grad), kubische Bezier, Bogen in 2 Fragmenten (Luecke 33 cm) und Gerade in 2 Fragmenten (Luecke 20 cm) -
 - `tools/test_gps_anker.py` [-] Fester Test (Sekunden, ohne GPU) fuer den GPS-ANKER der LoD2-Ausrichtung (22.11.2026, Nulllauf kette-schwabentor-null-1122d: vereinte Seiten 0+1, GPS-Fit der Kameras gut, aber der 
+- `tools/test_gps_eine_quelle.py` [-] Fester Test (Sekunden, CPU): EINE Quelle der Wahrheit fuer das Foto-GPS in Ausrichtung (sfm_lod2_ausrichten) und GPS-Tor (lage_gps_pruefen) - 22.11.2026. Befund Lauf kette-schwaben
 - `tools/test_gps_seiten_pruefen.py` [-] Fester Test gps_seiten_pruefen.urteil_2d: Kameras im Halbkreis vor und hinter einem Turm (GPS mit 4 m Rauschen), Modell gedreht+skaliert. Richtig -> GPS-STIMMIG; Rueckseite durch d
+- `tools/test_gps_unsicherheit.py` [-] Fester Test (Sekunden, CPU) fuer tools/gps_unsicherheit.py und seine Verwendung im GPS-Tor (lage_gps_pruefen) und in der Ausrichtung (sfm_lod2_ausrichten). Befund 22.11.2026 (schwa
 - `tools/test_gpu_gleichwertig.py` [-] test_gpu_gleichwertig.py - BEWEIS: Ist die GPU-Fassung von foto_diff gleichwertig zur CPU-Fassung? (2026-11-04, Nutzerauftrag)
 - `tools/test_gpu_knn.py` [-] test_gpu_knn.py - GPU-Nachbarsuche gleich CPU-KD-Baum? (min_abstand, naechster, ball_anzahl) auf Zufallsdaten und auf der echten Kaufhaus-Wolke. Exit 1 bei Abweichung. /media/oem/s
 - `tools/test_gpu_slot.py` [-] (kein Docstring)
 - `tools/test_grauzone_tor.py` [gen] test_grauzone_tor.py - BEWEIS des Grauzonen-Tors (Spec modelle/archiv/SPEC_GRAUZONE_TOR.md).
+- `tools/test_grundriss_geklaert.py` [-] test_grundriss_geklaert.py - am Foto geklaerte Strassenhaufen (objekt.json grundriss_haufen_geklaert) duerfen eine falsche Lage nicht durchwinken.
 - `tools/test_hand_vergleich.py` [-] test_hand_vergleich.py - fester synthetischer Test fuer tools/hand_vergleich.py (21.11.2026): Treppenturm aus koerper_auto.json (form rund), Ueberstand und Laterne aus dach_profil.
 - `tools/test_handy_kalibrieren.py` [-] Synthetischer Test fuer handy_kalibrieren.py / handy_zoom_verdacht.py: /media/oem/scan/venv-colmap/bin/python -I tools/test_handy_kalibrieren.py Beweis: (1) f_orig + k1 werden aus 
 - `tools/test_handy_masken.py` [seg] Test handy_masken: (1) Klassenableitung exakt (kein 'carpet' fuer 'car'), (2) Maskenlogik, (3) 3 Bilder echt durch GPU, Format/Konvention pruefen.
@@ -58,6 +62,9 @@
 - `tools/test_konsens_urteil.py` [-] Test der Konsens-Annahme (global_mapper_konsens.urteil, 19.11.2026): gutes Modell traegt; duennes Rueckgrat / wenig Bilder / kein Clip -> Gruende + Ursache + Abhilfe.
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
 - `tools/test_konvergenz_logik.py` [-] test_konvergenz_logik.py - Trockenlauf der Konvergenzschleife OHNE GPU und OHNE Generatorbau (S3 Phase A, 2026-11-05). Prueft die STEUERUNG von qualitaetsstufen.v_konvergenz mit vo
+- `tools/test_lage_gps_fern.py` [-] Fester Test (Sekunden, ohne GPU) fuer das GPS-Tor tools/lage_gps_pruefen.py - Fernfotos und Anker-Kasten (22.11.2026, Lauf kette-schwabentor-anker-1122e). Befund: tor_gps fiel bei 
+- `tools/test_lage_proben.py` [-] Fester Test (Sekunden, CPU) fuer tools/lage_proben.py - unabhaengige Lageproben als Entscheider (22.11.2026, schwabentor-1122: Nah-GPS einer Sitzung +9,4 Grad / x0,867 verzerrt, Au
+- `tools/test_lage_pruefstand.py` [-] Fester Test (CPU, synthetisch, ~1 min): Lage-Pruefstand + Zwischenstand der Ausrichtung (22.11.2026). 1 sfm_lod2_ausrichten.ausrichten als Funktion auf einer kuenstlichen Szene (3 
 - `tools/test_laibung_aus_fotos.py` [seg] test_laibung_aus_fotos.py - fester synthetischer Test fuer tools/laibung_aus_fotos.py (21.11.2026 spaet), < 10 s, nur CPU.
 - `tools/test_laterne_aus_fotos.py` [gen] test_laterne_aus_fotos.py - feste synthetische Tests fuer tools/laterne_aus_fotos.py und bauteile.laterne (22.11.2026). Ohne Dateien, Sekunden.
 - `tools/test_leistung_messen.py` [-] test_leistung_messen.py - Kurztest fuer tools/leistung_messen.py (22.11.2026): synthetische numpy-Schleife (~1 s, ~120 MB, 1-2 Threads), Sweep mit Platzhalter, Auswertung 'kleinste
@@ -88,14 +95,15 @@
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_erkennen.py` [-] test_seiten_erkennen.py - feste Erwartungen fuer tools/seiten_erkennen.py (ohne GPU, ohne Bilder): Gemeinschaften, Zusammenhangsteile, Urteil.
 - `tools/test_seiten_gps_vereinen.py` [-] Fester Test (Sekunden, ohne GPU, ohne echte Daten) fuer den 22.11.2026-Fix nach dem Nulllauf schwabentor-1122 (Lage-Tore: 20 Grad gegen GPS, Teil 1 mit 130 Bildern fehlte). 1 seite
-- `tools/test_sfm_gps_ausgleich.py` [-] Fester Test (synthetisch, Sekunden): zwei Seitenteile 3 Grad / 9 % daneben + GPS 4 m + falsche/eingefrorene Geotags -> sfm_gps_ausgleich bringt sie zurueck; wenig GPS -> unveraendert
-- `tools/test_seiten_querspur_binden.py` [col] Fester Test (synthetisch, Sekunden): Turm, B 4 m/3 Grad/5 % daneben; echte Querspuren + Gegenseiten-Block -> wahre Lage; nur Gegenseite / Gegenseiten-Mehrheit / Schwabentor-1122-Zahlen (167 Grad x1,21) -> nichts
-- `tools/test_wand_dicke_tor.py` [-] Fester Test (synthetisch): Seitenteile an der Westwand 1,6 m versetzt -> doppelwand; Vordach ueber dem Band zaehlt nicht; ein Teil in sich dick -> dick
 - `tools/test_seiten_kette.py` [col] Fester Test (ohne GPU, Sekunden) fuer die Seitenfolge der Kette vom 21.11.2026 - synthetische Mini-Modelle (COLMAP-Textformat) und Mini-Datenbanken: 1 seiten_blick_tor.py zwei 'ver
+- `tools/test_seiten_lage_beleg.py` [-] Fester Test (synthetisch, < 5 s) fuer tools/seiten_lage_beleg.py - REGEL "Teil nur bei belegter Lage einsetzen" (22.11.2026, schwabentor-1122 Teil 1). 1 lage_belegt Klappung / Quer
+- `tools/test_seiten_lod2_je_teil.py` [-] Fester Test fuer tools/seiten_lod2_je_teil.py, das Bild-x-Lot (seiten_gps_vereinen.lot_aus_bild_achsen) und die Kantenzusammenfassung des Wanddicke-Tors - ohne echte Daten. 1 Lot: 
 - `tools/test_seiten_modelle.py` [col] Fester Test (ohne GPU, Sekunden) fuer tools/sfm_seiten_modelle.py (21.11.2026: je Seite ein Kameramodell, je Seite eine dichte Wolke, vereinen). Synthetischer Turm: 14 Nordbilder (
+- `tools/test_seiten_querspur_binden.py` [-] Fester Test (synthetisch, Sekunden, ohne GPU/pycolmap) fuer tools/seiten_querspur_binden.py (22.11.2026, Nulllauf schwabentor-1122f: per GPS vereinte Teile 1-3 m versetzt). Synthet
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
 - `tools/test_seiten_vereinen_robust.py` [-] Fester Test: BELASTUNGSPROBE fuer seiten_vereinen.vereinen OHNE echte Daten (Vorbild tools/versuche/vereinen_robust_1121.py, dort an den Martinstor-Wolken: 8 verfaelschte Laeufe en
 - `tools/test_selbstbau_verdecker.py` [seg] test_selbstbau_verdecker.py - MESSFEHLER 21.11.2026 (zirkulaere Messung): Messungen gegen das eigene Modell duerfen selbst gebaute Vorbauten nicht als Verdecker nutzen.
+- `tools/test_sfm_gps_ausgleich.py` [col] Fester Test tools/sfm_gps_ausgleich.py (synthetisch, < 30 s, < 1 GB): Turm 10 x 10 x 30 m, zwei Seitenteile (Nord 60 Kameras, Sued 50) OHNE gemeinsame 3D-Punkte (wie das vereinte M
 - `tools/test_sohlbank.py` [seg] test_sohlbank.py - fester synthetischer Test fuer tools/sohlbank_aus_fotos.py + bauteile.sohlbank (21.11.2026 spaet), < 20 s, nur CPU.
 - `tools/test_speicher_wiederholung.py` [-] Stufe, die am Speicher scheitert, wird im Lauf wiederholt (Nutzer 21.11.2026; Lauf 1121p: w03 Signal 6 nach Kernel-OOM blieb weg).
 - `tools/test_spitze_durchfahrt.py` [seg] test_spitze_durchfahrt.py - feste synthetische Tests fuer tools/spitze_aus_umriss.py und tools/durchfahrt_pruefen.py (21.11.2026). Ohne Dateien, < 30 s.
@@ -121,6 +129,7 @@
 - `tools/test_vordach_vorbau.py` [seg] test_vordach_vorbau.py - fester synthetischer Test (21.11.2026, schwabentor-1120 Stadtseite, Nutzerbild neben_eigen__IMG_20261106_113231) fuer (1) tools/vordach_profil.messen: Walm
 - `tools/test_vordergrund_quader.py` [-] test_vordergrund_quader.py - synthetischer Test (21.11.2026, Schwabentor w01, Lauf 1121s) fuer (1) tools/relief_vordergrund.py: Verkehrsschild (0,6 x 0,8 m, +15 cm) DIREKT auf eine
 - `tools/test_vorpruefen_cache.py` [-] Test Zwischenspeicher der Bildvorpruefung (bilder_vorpruefen.Speicher, 19.11.2026): Ergebnis bleibt ueber Neustart, geaenderte Datei = neue Kennung, anderer Referenzsatz = anderer 
+- `tools/test_wand_dicke_tor.py` [-] Fester Test (synthetisch, Sekunden) fuer tools/wand_dicke_tor.py (22.11.2026, Nulllauf schwabentor-1122f: Westwand ~3 m dick aus zwei Seitenteilen). Grundflaeche 10 x 12 m. Teil 0 
 - `tools/test_wolke_carving.py` [gen] test_wolke_carving.py - Beweise fuer tools/wolke_carving.py (Koerper NUR aus der Wolke). unabhaengig : synthetische Wolke (Halle hinter 4 Arkaden) -> Koerper; jeder Zugriff auf *.s
 - `tools/test_wolke_filter_varianten.py` [-] Synthetik-Test fuer wolke_kennzahlen.py + wolke_filter_varianten.f3_filter (Schwellen werden HIER festgelegt, nicht am Kaufhaus). Szene: Wand (x=0, 12 m breit, 8 m hoch) mit 3 cm G
 - `tools/test_wolke_gruppen.py` [-] Test wolke_gruppen_pruefen (19.11.2026): Hoehenkarte aus LoD2-Punkten, Gruppe mit Punkten hoch ueber der Strasse wird auffaellig, gute Gruppe nicht, unbewertbare Punkte zaehlen nic

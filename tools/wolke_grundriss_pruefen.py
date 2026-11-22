@@ -158,7 +158,7 @@ def haufen_geklaert(h, gekl, faktor=2.0):
     return None
 
 
-def main():
+def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("objekt"); ap.add_argument("--wolke", required=True); ap.add_argument("--radius", type=float, default=60.0)
     ap.add_argument("--wandabstand", type=float, default=1.5); ap.add_argument("--haufen", type=int, default=5000)
@@ -166,7 +166,7 @@ def main():
     ap.add_argument("--max_verschiebung", type=float, default=8.0, help="m; FFT-Treffer weiter weg passen auf Nachbarhaeuser (Schwabentor: 52 m), nicht zaehlen")
     ap.add_argument("--gml", default="", help="LoD2-GML statt objekt.json lod2.gml")
     ap.add_argument("--min_wandpunkte", type=int, default=0, help="Mindestzahl Wolkenpunkte im Wandband (z 1,5-9 m, Umkreis); 0 = --haufen. Darunter rc 4 'nicht geprueft'")
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt))
     if a.gml: obj["_gml"] = a.gml
     B = grundrisse(obj, a.radius)

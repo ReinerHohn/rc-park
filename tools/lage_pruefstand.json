@@ -1,0 +1,33 @@
+{
+ "_hinweis": "Staende fuer tools/lage_pruefstand.py (22.11.2026). Pfade: absolut oder relativ zu 'wurzel' (Repo mit modelle/<ziel>/objekt.json - die Kette legt objekt.json und Ausrichtung nur im Haupt-Checkout ab). Der Pruefstand liest hier NUR; geschrieben wird nach --aus. 'daten' = Kettenordner rc-park_daten/<ziel> (pipe/kameras.json, pipe/dicht/fused.ply, fotos/, pipe/sfm/seiten_modelle.json). 'referenzen' = SFM-AUSRICHTUNG-Dateien, gegen deren Kamerastandorte die neue Lage gemessen wird (m / Grad / Massstab); die eigene geschriebene Kettenausrichtung kommt immer als Referenz 'kette' dazu.",
+ "wurzel": "/home/oem/git/rc-park",
+ "aus": "/media/oem/rcdaten/tmp/lage_pruefstand",
+ "python_colmap": "/media/oem/scan/venv-colmap/bin/python",
+ "ausrichtung_args": ["--radius", "30"],
+ "staende": {
+  "schwabentor-1120": {
+   "ziel": "schwabentor-1120",
+   "objekt": "modelle/schwabentor-1120/objekt.json",
+   "daten": "/media/oem/scan/rc-park_daten/schwabentor-1120",
+   "referenzen": {}
+  },
+  "schwabentor-1122": {
+   "ziel": "schwabentor-1122",
+   "objekt": "modelle/schwabentor-1122/objekt.json",
+   "daten": "/media/oem/scan/rc-park_daten/schwabentor-1122",
+   "referenzen": {"1120": "modelle/schwabentor-1120/messprotokoll/SFM-AUSRICHTUNG-schwabentor-1120.json"}
+  },
+  "martinstor_gk3": {
+   "ziel": "martinstor_gk3",
+   "objekt": "modelle/martinstor_gk3/objekt.json",
+   "daten": "/media/oem/scan/rc-park_daten/martinstor_gk3",
+   "referenzen": {}
+  },
+  "kaufhaus_gk2": {
+   "ziel": "kaufhaus_gk2",
+   "objekt": "modelle/kaufhaus_gk2/objekt.json",
+   "daten": "/media/oem/scan/rc-park_daten/kaufhaus_gk2",
+   "referenzen": {}
+  }
+ }
+}

@@ -111,23 +111,10 @@ def urteil(namen, MU, G, nah_m=100.0, max_abstand=15.0, max_dreh=15.0, max_skala
     print("Lage passt zum GPS."); return 0, erg
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("objekt"); ap.add_argument("ausrichtung", help="messprotokoll/SFM-AUSRICHTUNG-<name>.json")
-    ap.add_argument("--fotos", default="", help="Fotoordner (Standard objekt.json fotos_dir)")
-    ap.add_argument("--lage", default="", help="modul.py:funktion - Korrektur der Modellkoordinaten pruefen")
-    ap.add_argument("--nah", type=float, default=100.0); ap.add_argument("--max_abstand", type=float, default=15.0)
-    ap.add_argument("--max_dreh", type=float, default=15.0); ap.add_argument("--max_skala", type=float, default=0.15)
-    a = ap.parse_args()
-    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); r = obj["rahmen"]
-    m0 = np.array(r["mitte_utm"], float); xh = np.array(r["xhat_utm"], float); yh = np.array(r["yhat_utm"], float)
-    fd = a.fotos or obj.get("fotos_dir", ""); fd = fd if os.path.isabs(fd) else os.path.join(repo, fd)
-    kam = json.load(open(a.ausrichtung))["kameras"]
-    korr = None
-    if a.lage:
-        pf, fn = a.lage.split(":"); sp = importlib.util.spec_from_file_location("lage_mod", pf); md = importlib.util.module_from_spec(sp)
-        sys.path.insert(0, os.path.dirname(os.path.abspath(pf))); sp.loader.exec_module(md); korr = getattr(md, fn)
+def gps_daten(kam, fd):
+    """Kameras der Ausrichtung (SFM-AUSRICHTUNG 'kameras': name -> standort) + Fotoordner -> (namen, M Standorte im Modellsystem, G Foto-GPS UTM absolut, Z EXIF-Zeiten,
+    gefunden = Zahl der gefundenen Fotos). DIE Kameraauswahl des GPS-Tors (Namen mit/ohne Quellpraefix, Kaufhaus-Endung _<quelle>, NaN/0,0-Geotags weg) - als Funktion,
+    damit der Lage-Pruefstand (tools/lage_pruefstand.py) sie gegen die Auswahl der Ausrichtung (sfm_lod2_ausrichten.gps_massstab) halten kann."""
     namen, M, G, Z = [], [], [], []; gefunden = 0
     for nr, k in kam.items():
         kand = [nr] + ([nr.split("__", 1)[1]] if "__" in nr else [])          # 15.11.: Gesamtkette benennt eigen__IMG_... (Quellpraefix) -> auch ohne Praefix suchen
@@ -138,7 +125,28 @@ def main():
         try:
             if not all(math.isfinite(float(x)) for x in g) or (abs(float(g[0])) < 1e-6 and abs(float(g[1])) < 1e-6): continue   # 15.11. Kaufhaus: EXIF-GPS NaN/0,0 liess den Fit abstuerzen
         except Exception: continue
-        namen.append(nr); M.append(k["standort"]); G.append(np.array(wgs84_zu_utm(*g)) - m0); Z.append(GU.exif_zeit(hit[0]))
+        namen.append(nr); M.append(k["standort"]); G.append(np.array(wgs84_zu_utm(*g))); Z.append(GU.exif_zeit(hit[0]))
+    return namen, M, G, Z, gefunden
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("objekt"); ap.add_argument("ausrichtung", help="messprotokoll/SFM-AUSRICHTUNG-<name>.json")
+    ap.add_argument("--fotos", default="", help="Fotoordner (Standard objekt.json fotos_dir)")
+    ap.add_argument("--lage", default="", help="modul.py:funktion - Korrektur der Modellkoordinaten pruefen")
+    ap.add_argument("--nah", type=float, default=100.0); ap.add_argument("--max_abstand", type=float, default=15.0)
+    ap.add_argument("--max_dreh", type=float, default=15.0); ap.add_argument("--max_skala", type=float, default=0.15)
+    a = ap.parse_args(argv)
+    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); r = obj["rahmen"]
+    m0 = np.array(r["mitte_utm"], float); xh = np.array(r["xhat_utm"], float); yh = np.array(r["yhat_utm"], float)
+    fd = a.fotos or obj.get("fotos_dir", ""); fd = fd if os.path.isabs(fd) else os.path.join(repo, fd)
+    kam = json.load(open(a.ausrichtung))["kameras"]
+    korr = None
+    if a.lage:
+        pf, fn = a.lage.split(":"); sp = importlib.util.spec_from_file_location("lage_mod", pf); md = importlib.util.module_from_spec(sp)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(pf))); sp.loader.exec_module(md); korr = getattr(md, fn)
+    namen, M, G, Z, gefunden = gps_daten(kam, fd); G = [g_ - m0 for g_ in G]
     erg = dict(werkzeug="lage_gps_pruefen.py", ausrichtung=a.ausrichtung, lage=a.lage or None, n_kameras=len(kam), n_gps=len(G))
     if len(G) < 10:
         erg["fotos_gefunden"] = gefunden

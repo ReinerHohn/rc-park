@@ -335,3 +335,18 @@ def entscheiden(kand, vertraeglich, alt=None):
     if fremd:
         return dict(ergebnis="mehrdeutig", wahl=None, je=je, grund=f"mehrere unvereinbare Lagen bestehen alle Proben: {kand[ok[0]]['name']} und {kand[fremd[0]]['name']}")
     return dict(ergebnis="belegt", wahl=ok[0], je=je, grund=f"{kand[ok[0]]['name']} besteht alle urteilsfaehigen Proben ({len(ok)} vertraegliche Loesung(en))")
+
+
+# ---------- Tor-Regeln der Kette (22.11.2026, Lage-Pruefstand: EINE Funktion fuer tools/gesamtkette.py tore() und tools/lage_pruefstand.py)
+def tor_rc(transformation):
+    """Lageproben-Tor aus SFM-AUSRICHTUNG 'transformation.lage_proben': 0 = belegt/bestaetigt, 3 = keine/mehrdeutig (Lage nicht belegt, nicht modellieren),
+    None = kein Urteil (oder keine Lageproben gelaufen). -> (rc, Hinweistext oder None)."""
+    lp = (transformation or {}).get("lage_proben")
+    if not lp: return None, None
+    rc = 0 if lp.get("ergebnis") in ("belegt", "bestaetigt") else 3 if lp.get("ergebnis") in ("keine", "mehrdeutig") else None
+    return rc, f"Lageproben: {lp.get('ergebnis')} - {str(lp.get('grund'))[:300]}"
+
+
+def lage_bestanden(erg):
+    """Lage-Urteil der Kette aus den rc der Tore (None = Tor lief nicht / kein Urteil): GPS, Seiten-Blick und Lageproben 0 oder None, Grundriss genau 0."""
+    return erg.get("gps") in (0, None) and erg.get("grundriss") == 0 and erg.get("seiten_blick") in (0, None) and erg.get("lage_proben") in (0, None)

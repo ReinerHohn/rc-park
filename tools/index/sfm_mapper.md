@@ -1,7 +1,8 @@
-# Werkzeuge: sfm_mapper (57)
+# Werkzeuge: sfm_mapper (59)
 - `tools/ansichten_foto_paare.py` [seg] ansichten_foto_paare.py - FUER JEDES MODELL: Kantenbild des Modells aus den kalibrierten Kameras NEBEN dem Foto, ueber alle Blickrichtungen UND Hoehenwinkel (von oben, eben, von un
 - `tools/bildsuche_paare.py` [seg] bildsuche_paare.py <bilder-ordner> --aus <paare.txt> [--k 40] [--liste namen.txt] [--pruefen-db <db>]
 - `tools/colmap_db_schema.py` [-] colmap_db_schema.py <db.db> - KOPIE einer COLMAP-Datenbank auf das Schema von pycolmap 4.2.1 (venv-colmap) zurueckfuehren. 18.11.2026 (Kaufhaus gk2h, Stufe seiten_luecken: "No regi
+- `tools/colmap_rig_abgleich.py` [col] colmap_rig_abgleich.py pruefen|angleichen|probe --db <db.db> --sparse <SfM-Ordner> [--arbeit <ordner>] - Kamera/Rig/Frame einer COLMAP-Datenbank an eine Rekonstruktion angleichen.
 - `tools/doppelgaenger_paare.py` [seg] doppelgaenger_paare.py <bilder_ordner> <paare.txt> --aus <ergebnis.json> [--groesse 1024]
 - `tools/flexglue_zuordnung.py` [-] flexglue_zuordnung.py --db <sift-db> --bilder <ordner> --aus <ziel-db> [--stufe2] [--max-merkmale 6000] [--paare-max N]
 - `tools/global_mapper_konsens.py` [col] global_mapper_konsens.py --db <db.db> --bilder <ordner> --ziel <arbeitsordner> [--fotos <ordner>] [--loeschen REGEX] [--ohne-clip] [--svc-start] [--lage 0.10] [--rot 2.0] [--label 
@@ -41,6 +42,7 @@
 - `tools/sfm_db_variante.py` [-] sfm_db_variante.py <quelle.db> <ziel.db> [--kamera-je-clip] [--priors behalten|loeschen|exif --fotos <ordner>] [--bildliste <datei> --nur fotos|video|alle] Kopie einer COLMAP-Daten
 - `tools/sfm_dicht.py` [col] sfm_dicht.py - dichte, farbige Punktwolke (COLMAP PatchMatch, CUDA) aus einem Seitennetz, ins Modellsystem gebracht und auf den Turm beschnitten.
 - `tools/sfm_draufsicht.py` [-] sfm_draufsicht.py <sparse/0> <ausgabe.png> [--nah 3] - Draufsicht eines Sparse-Modells zum ANSEHEN (Regel: Zahlen allein gelten nicht). Ebene = Hauptebene durch den Kamerakern (75 
+- `tools/sfm_gps_ausgleich.py` [col] sfm_gps_ausgleich.py <modell> --bilder <fotoordner> --aus <ordner> [--teile teile.json]
 - `tools/sfm_html_viewer.py` [-] sfm_html_viewer.py - GENERISCH: ausgerichtetes SfM-Netz (Modellsystem, Meter) als selbst-enthaltene three.js-Seite.
 - `tools/sfm_kameras_export.py` [col] sfm_kameras_export.py <sparse/N> <T.npz> <aus.json> - COLMAP-Kameras in den Netzrahmen legen (Aehnlichkeit R,s,t aus iphone_ausrichten.py): je Bild R (Welt->Kamera), t, C (Zentrum,
 - `tools/sfm_lod2_ausrichten.py` [col] sfm_lod2_ausrichten.py - GENERISCH: SfM-Netz OHNE Handpicks an die amtliche Umgebung ausrichten (LoD2-Gebaeude + DGM1-Gelaende).

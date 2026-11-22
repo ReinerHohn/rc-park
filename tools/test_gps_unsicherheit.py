@@ -80,7 +80,10 @@ pruef("GU.ehrlich(" in q and "GPS_EHRLICH[\"anker\"] is None" in q and "LP.entsc
 pruef("if GPS_PRUEF is not None:\n            # 22.11.2026 EHRLICHE" in q, "ehrliche Unsicherheit darf nur mit GPS-Fit (GPS_PRUEF) rechnen - Martinstor ohne GPS bleibt unveraendert")
 pruef("GU.gps_fit(" in open(os.path.join(T, "lage_gps_pruefen.py")).read() and "systematik(" in open(os.path.join(T, "gps_unsicherheit.py")).read().split("def gps_fit(")[1] and "GU.systematik(" in open(os.path.join(T, "seiten_gps_vereinen.py")).read(), "Tor/Seiten-GPS muessen dasselbe Mass nehmen")
 qg = open(os.path.join(T, "gesamtkette.py")).read()
-pruef('e.get("lage_proben") in (0, None)' in qg, "gesamtkette: Lageproben 'keine/mehrdeutig' muessen die Lage-Tore verwerfen")
+import lage_proben as _LPR                                                   # 22.11.2026: Regel als Funktion lage_proben.lage_bestanden/tor_rc (Kette + Lage-Pruefstand)
+pruef('__import__("lage_proben").lage_bestanden' in qg and "_LPR.tor_rc(" in qg and not _LPR.lage_bestanden(dict(gps=0, grundriss=0, lage_proben=3))
+      and _LPR.lage_bestanden(dict(gps=0, grundriss=0, lage_proben=None)) and _LPR.tor_rc(dict(lage_proben=dict(ergebnis="mehrdeutig")))[0] == 3,
+      "gesamtkette: Lageproben 'keine/mehrdeutig' muessen die Lage-Tore verwerfen")
 
 print("FEHLER:", len(FEHLER)) if FEHLER else print("OK test_gps_unsicherheit")
 sys.exit(1 if FEHLER else 0)

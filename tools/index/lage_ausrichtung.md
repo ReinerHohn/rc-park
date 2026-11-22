@@ -1,4 +1,4 @@
-# Werkzeuge: lage_ausrichtung (46)
+# Werkzeuge: lage_ausrichtung (51)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
@@ -16,10 +16,13 @@
 - `tools/git_packs_auslagern.sh` [sh] Git-Objekte verlustfrei von der Root-Platte auf die Datenplatte (10.11.: .git wuchs nachts ~1 GB/h durch Kreis-Zweige mit STL/Audit-Bildern). Mechanismus: .git/objects/info/alterna
 - `tools/gps_ausrichtung.py` [-] gps_ausrichtung.py <objekt.json> <kameras.json> <fotos_eigen_ordner> <dicht_ply> - Ausrichtung ueber GPS der eigenen Fotos (Exif).
 - `tools/gps_seiten_pruefen.py` [col] gps_seiten_pruefen.py <sparse-modell> --bilder <ordner> [--grenze 12]
+- `tools/gps_unsicherheit.py` [-] gps_unsicherheit.py - EHRLICHE Unsicherheit eines Foto-GPS-Fits (Drehung um das Lot, Massstab): Zufall (Bootstrap) PLUS systematischer Anteil je Fotositzung.
 - `tools/gpu_slot.py` [-] gpu_slot.py - gemeinsame GPU-Warteschlange fuer alle schweren GPU-Werkzeuge (rechnerweit, ueber Prozesse und Kreis-Spuren).
 - `tools/hoehe_gegen_dom1.py` [gen] hoehe_gegen_dom1.py <objekt.json> [--radius 12] [--zmin 8] [--tol 0.5] - HOEHEN-TOR: Oberseite des gebauten Modells gegen den DOM1-Laser (1-m-Pixel).
 - `tools/iphone_ausrichten.py` [-] iphone_ausrichten.py <sparse/0> <wolke.npy> <aus.npy> - Aehnlichkeits-ICP (GPU knn): SfM-Punkte -> Wolke. Start: Hochachse per PCA-Minimum, 36 Drehungen um Hoehe x Massstab aus Hoe
 - `tools/lage_gps_pruefen.py` [-] lage_gps_pruefen.py - Ausrichtung gegen das EXIF-GPS der eigenen Fotos pruefen (allgemein, je Objekt). Der Fit kennt das GPS nicht -> unabhaengiger Beleg.
+- `tools/lage_proben.py` [-] lage_proben.py - UNABHAENGIGE Massstabs-/Lageproben als ENTSCHEIDER zwischen den LoD2-Loesungen der Ausrichtung (nicht mitteln; jede Probe sagt 'besteht' / 'faellt' / 'kein Urteil'
+- `tools/lage_pruefstand.py` [-] lage_pruefstand.py - LAGE-PRUEFSTAND: Ausrichtung + Lage-Tore der Gesamtkette auf GESPEICHERTEN Staenden in Minuten statt in einem 60-90-min-Kettenlauf (22.11.2026).
 - `tools/lod2_fehlerbudget.py` [gen] lod2_fehlerbudget.py - Fehlerbudget der Quelle LoD2 statistisch: LGL-LoD2 gegen Stadt-LoD2 ueber ALLE Gebaeude im Umkreis (300 m) um Kaufhaus und Martinstor (Plan 4c.5). Funktionen
 - `tools/lod2_gebaeude.py` [gen] lod2_gebaeude.py — GENERISCH: ein (oder mehrere) Gebäude aus LGL-LOD2-CityGML als echtes 3D-Mesh extrahieren. Das ist das GROBE GERÜST (Massenmodell) der Vermesser-Pipeline: amtlic
 - `tools/lod2_kandidaten.py` [-] lod2_kandidaten.py --gml DATEI --e E --n N [--radius 40] [--soll-hoehe H --toleranz 0.1] - Gebaeude im LOD2 nahe einer Koordinate.
@@ -39,9 +42,8 @@
 - `tools/schleife_ausrichten.py` [-] schleife_ausrichten.py <objekt> --wolke w.npy --fotos k.json --bilder dir [--foto ip_IMG_6161.jpg] [--runden 4] [--tol 0.003] Aeussere ITERATIVE, KONVERGIERENDE Schleife (Nutzer 8.
 - `tools/seiten_geometrie.py` [-] STAND 19.11.2026: NICHT IN DER KETTE - Messung am Martinstor trennt nicht (siehe unten ERGEBNIS). Nur als Messwerkzeug behalten. ERGEBNIS Martinstor (25 gemessene Verbindungen): Si
 - `tools/seiten_gps_vereinen.py` [col] seiten_gps_vereinen.py <modell_a> <modell_b> --bilder <fotoordner> --aus <ordner> [--dicht-a fused.ply --dicht-b fused.ply]
-- `tools/sfm_gps_ausgleich.py` [col] sfm_gps_ausgleich.py <modell> --bilder <fotoordner> --aus <ordner> [--teile teile.json] - gemeinsamer Buendelausgleich mit GPS-Positions-Prioren nach dem Vereinen (ab 40 unabhaengigen Geotags; Waechter Bildfehler/GPS-Rest)
-- `tools/seiten_querspur_binden.py` [col] seiten_querspur_binden.py <modell_a> <modell_b> <ursprungs-db> --gps <vereinen.json> --aus <ordner> [--dicht-a/-b] - Seitenteile nach dem GPS-Vereinen ueber Querpaare der Ursprungs-DB binden (3D-3D, RANSAC-Sim3 nur im GPS-Korridor, Blick-Filter 110 Grad, Doppelwand-Mass vor/nach); Schwabentor 1122: Querpaare = Gegenseiten-Verwechslung (167 Grad x1,21) -> abgelehnt, nur Pruefung
-- `tools/wand_dicke_tor.py` [col] wand_dicke_tor.py <objekt.json> --seiten seiten_modelle.json --ausrichtung SFM-AUSRICHTUNG.json [--aus] - je LoD2-Kante des Zielgebaeudes Wanddicke (P90-P10) und Lage je Seitenteil (z 1,5-9 m, <= 3 m), Urteil doppelwand/versetzt/dick/ok; Messung in gesamtkette (RCPARK_WANDDICKE)
+- `tools/seiten_lage_beleg.py` [col] seiten_lage_beleg.py - REGEL "TEIL NUR BEI BELEGTER LAGE EINSETZEN" fuer tools/sfm_seiten_modelle.py (22.11.2026, schwabentor-1122).
+- `tools/seiten_lod2_je_teil.py` [seg] seiten_lod2_je_teil.py <objekt.json> <modell_a> <modell_b> --bilder <fotoordner> --gps <vereinen.json der GPS-Vereinigung> --aus <ordner> [--dicht-a fused.ply --dicht-b fused.ply]
 - `tools/seiten_vereinen.py` [col] seiten_vereinen.py <modell_A> <modell_B> <db.db> --aus <ordner> [--min-paare 60] [--rel 0.02]
 - `tools/stadt_lod2_schneiden.py` [gen] stadt_lod2_schneiden.py - Stadt-Freiburg-LoD2 (Quellentyp 18, STADT_LOD2) auf ein Objekt zuschneiden (Auftrag G4).
 - `tools/teile_lage_pruefen.py` [gen] teile_lage_pruefen.py <objekt> [wolke.npy] - je aktivem Bauteil (NUR_BAUTEIL) Median-Abstand Wolke->Teil und Hoehe/Lage; markiert Teile ohne Wolkenstuetzung und Doppelungen. Sichtf

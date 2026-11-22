@@ -1,4 +1,4 @@
-# Werkzeuge: fassade_relief (64)
+# Werkzeuge: fassade_relief (65)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
 - `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
@@ -62,4 +62,5 @@
 - `tools/steine_aus_foto.py` [seg] steine_aus_foto.py <relief.npz> <aus.npz> <fassaden.json> <nr> <ortho_fein.png> --feld u0 u1 z0 z1 [--px 0.02] [--fuge 0.03] [--massstab k x y z]
 - `tools/steine_generieren.py` [seg] steine_generieren.py <relief.npz> <aus.npz> --zone u0 u1 z0 z1 [--zone ...] [--unten 0.0] [--seed 1] - Loecher eines Relief-Einsatzes mit GENERIERTEN Quadern fuellen.
 - `tools/uhren_wandbild.py` [seg] uhren_wandbild.py - Turmuhren aus dem Wandbild finden und vermessen (21.11.2026, Kettenstufe 'bauplan').
+- `tools/wand_dicke_tor.py` [col] wand_dicke_tor.py <objekt.json> --seiten <pipe/sfm/seiten_modelle.json> --ausrichtung <messprotokoll/SFM-AUSRICHTUNG-<obj>.json> [--aus audit/wand_dicke.json]
 - `tools/wand_ortho.py` [seg] wand_ortho.py - Foto auf eine senkrechte Wandebene entzerren (u/z-Raster) und Wandpunkte zurueck in Originalpixel rechnen (Hilfe fuer foto_mass.py-Picks).

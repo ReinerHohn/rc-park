@@ -306,7 +306,84 @@ def ergebnis_schreiben(od, sfx, usfx, out, Pm, FARBEN):
     return pth
 
 
-def main():
+# 22.11.2026 ZWISCHENSTAND NACH INHALT (Auftrag Lage-Pruefstand, tools/lage_pruefstand.py): der bisherige Zwischenstand der Feinfits hing an der Dateizeit von objekt.json
+# (die Kette schreibt sie selbst, z. B. hoehen_tor) und am Code-Stand der GANZEN Datei - jede Aenderung am GPS-Veto oder an den Lageproben rechnete Grobsuche und alle
+# Feinfits neu (~8 min je Stand), obwohl deren Ergebnis davon nicht abhaengt. Jetzt: Schluessel = die WERTE, die eine Rechnung liest (Punkte Q, Kameras Cq, LoD2/DGM-Ziel,
+# Startwert, Schwellen, Grenzen, Startmassstab, Rechenweg GPU/CPU, Bibliotheksversionen) + der Quelltext GENAU dieser Rechnung (Abschnitt zwischen den Marken
+# '[CODE-STAND fein|grob:anfang/ende]', code_abschnitt) + Code-Stand der Hilfsmodule (gpu_knn). Eine Aenderung am Lot, an der Wolke oder am Ziel aendert die Werte ->
+# neue Rechnung; eine Aenderung an Veto/Proben/Auswahl aendert keinen Schluessel -> Treffer. Datei: messprotokoll/.ausr_zwischen<-name>.pkl neben objekt.json (der
+# Pruefstand legt objekt.json in seinen eigenen Ordner, schreibt also nie in die Kettenordner). Abschalten: AUSR_ZWISCHEN=0. Test: tools/test_lage_pruefstand.py
+# (Ergebnis mit Cache == ohne Cache, bitgleich).
+ZW_VERSION = 2
+ZW_MAX_EINTRAEGE = 3000      # ANNAHME: Obergrenze je Datenstand (Feinfit ~75 kB) - aeltere Eintraege fallen beim Sichern heraus
+
+
+def code_abschnitt(name, pfad=None):
+    """sha1 (12 Hex) des Quelltexts zwischen den Marken '# [CODE-STAND <name>:anfang]' und '...:ende]' dieser Datei (Code-Stand GENAU einer Rechnung)."""
+    import hashlib
+    txt = open(pfad or os.path.abspath(__file__), encoding="utf-8").read(); m0, m1 = "# [CODE-STAND " + name + ":anfang]", "# [CODE-STAND " + name + ":ende]"
+    i, j = txt.find(m0), txt.find(m1)
+    if i < 0 or j < i or txt.count(m0) != 1 or txt.count(m1) != 1: raise RuntimeError(f"Code-Abschnitt '{name}' ohne eindeutige Marken in {pfad or __file__}")
+    return hashlib.sha1(txt[i:j].encode()).hexdigest()[:12]
+
+
+def wert_hash(*werte):
+    """sha1 ueber Werte (numpy-Felder mit Form + Typ + Inhalt, sonst repr) - Schluessel nach INHALT."""
+    import hashlib
+    h = hashlib.sha1()
+    for w in werte:
+        if isinstance(w, np.ndarray):
+            w_ = np.ascontiguousarray(w); h.update(repr((w_.shape, str(w_.dtype))).encode()); h.update(w_.tobytes())
+        else: h.update(repr(w).encode())
+        h.update(b"\0")
+    return h.hexdigest()
+
+
+class Zwischenstand:
+    """Zwischenstand teurer Teilrechnungen (Grobsuche, Feinfits) unter Schluesseln nach Inhalt. datenstand = Hash der Eingangswerte; eine Datei mit anderem
+    datenstand wird nicht gelesen (und beim Sichern ersetzt). an=False: nichts lesen, nichts schreiben (AUSR_ZWISCHEN=0)."""
+    def __init__(self, pfad, datenstand, an=True):
+        import pickle
+        self.pfad, self.datenstand, self.an, self.e, self.treffer, self.neu = pfad, datenstand, an, {}, {}, {}
+        if not an: return
+        try:
+            if os.path.exists(pfad):
+                alt = pickle.load(open(pfad, "rb"))
+                if isinstance(alt, dict) and alt.get("version") == ZW_VERSION and alt.get("datenstand") == datenstand:
+                    self.e = alt.get("eintraege") or {}; print(f"ZWISCHENSTAND: {len(self.e)} Eintraege aus {pfad} (gleicher Datenstand)", flush=True)
+                else: print("ZWISCHENSTAND: vorhanden, aber anderer Datenstand/Format - wird neu gerechnet", flush=True)
+        except Exception as e_: print("HINWEIS Zwischenstand nicht lesbar (wird neu gerechnet):", type(e_).__name__, e_, flush=True); self.e = {}
+
+    def holen(self, art, schl):
+        if not self.an: return None
+        k = art + ":" + schl
+        if k in self.e:
+            self.treffer[art] = self.treffer.get(art, 0) + 1; w = self.e.pop(k); self.e[k] = w; return w      # ans Ende = zuletzt benutzt
+        self.neu[art] = self.neu.get(art, 0) + 1; return None
+
+    def ablegen(self, art, schl, wert):
+        if self.an: self.e[art + ":" + schl] = wert
+
+    def sichern(self):
+        if not self.an: return
+        import pickle
+        try:
+            while len(self.e) > ZW_MAX_EINTRAEGE: self.e.pop(next(iter(self.e)))
+            tmp_ = f"{self.pfad}.neu{os.getpid()}"; os.makedirs(os.path.dirname(self.pfad), exist_ok=True)
+            with open(tmp_, "wb") as f_: pickle.dump(dict(version=ZW_VERSION, datenstand=self.datenstand, eintraege=self.e), f_)
+            os.replace(tmp_, self.pfad); print(f"ZWISCHENSTAND gesichert: {len(self.e)} Eintraege (Treffer {self.treffer}, neu {self.neu}) -> {self.pfad}", flush=True)
+        except Exception as e_: print("HINWEIS Zwischenstand nicht gesichert:", type(e_).__name__, e_, flush=True)
+
+
+def main(argv=None):
+    E = ausrichten(argv)
+    if E.get("rc"): sys.exit(E["rc"])
+
+
+def ausrichten(argv=None):
+    """Die ganze Ausrichtungsstufe als Funktion (Kette: main -> Skript; Pruefstand: Aufruf mit argv). Rueckgabe dict: rc (0 / 5 = Loesung K gibt es nicht),
+    gewaehlte Loesung, ALLE unterscheidbaren Loesungen (Kamerastandorte im Modellsystem), Lot, GPS-Fit/-Kameras, Lageproben, Zwischenstand-Zaehler. Mit --schreiben
+    schreibt sie wie bisher (messprotokoll/SFM-AUSRICHTUNG, sfm/punkte_modell) neben objekt.json."""
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sparse", default=None); ap.add_argument("--name", default=""); ap.add_argument("--schreiben", action="store_true")
     ap.add_argument("--fit_punkte", type=int, default=600000, help="dichte Wolke: Zufallsauswahl fuer die Anpassung (7 Parameter)")
     ap.add_argument("--fotos", default="", help="Fotoordner fuer GPS-Startmassstab (Standard objekt.json fotos_dir; Quellpraefix eigen__ wird abgestreift)")
@@ -318,7 +395,7 @@ def main():
     ap.add_argument("--wand", help="ignoriert (Kompatibilitaet zu sfm_ausrichten.py-Aufrufen)")
     ap.add_argument("--kameras", default=None, help="kamera_export.py-JSON: Kameras ohne pycolmap (GPU-Umgebung)")
     ap.add_argument("--fein-punkte", type=int, default=40000, help="Punkte im Feinfit (feste Zufallsauswahl)")
-    ap.add_argument("--dicht", default=None, help="dichte Wolke (binary PLY, COLMAP fusion): Punkte kommen daraus, Kameras weiter aus --sparse"); a = ap.parse_args()
+    ap.add_argument("--dicht", default=None, help="dichte Wolke (binary PLY, COLMAP fusion): Punkte kommen daraus, Kameras weiter aus --sparse"); a = ap.parse_args(argv)
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); obj = __import__('objekt_rahmen').ergaenzen(obj, od)
     rec = None; CAMS = {}
     if a.kameras:  # Kameras aus JSON (keine pycolmap-Abhaengigkeit)
@@ -362,6 +439,7 @@ def main():
     if np.median((Pg - cm) @ up) < 0: up = -up
     flach = sv[2] / sv[0]
     print(f"Lot aus Kameraebene: Streuung {sv.round(2).tolist()} (Dicke/Laenge {flach:.2f}; < 0,25 = Strassenfotos in einer Ebene)")
+    LOT = dict(ebene=up.tolist(), flach=float(flach), blick=None, blick_anteil=None, winkel_ebene_blick_grad=None, quelle="kameraebene")   # Pruefstand: Lot je Quelle
     # 1b. Lot aus dem KAMERABLICK (19.11.2026, Martinstor mit Drohnenclips: Kamerazentren nicht in einer Ebene, Ebenennormale 87 Grad neben dem Lot -> Modell lag auf der Seite,
     #     alle Lage-Tore rot, 3D-Seite 'Muell'). Fotos werden fast immer waagerecht gehalten: die Bild-x-Achse jeder Kamera liegt horizontal, egal wie steil sie blickt.
     #     Lot = Richtung, die auf moeglichst vielen x-Achsen senkrecht steht (kleinster Singulaervektor, Ausreisser wie Hochformat/gerollte Bilder iterativ raus).
@@ -376,9 +454,10 @@ def main():
             if np.median(_Rm[_in, 1, :] @ up_b) > 0: up_b = -up_b                                  # Bild-y zeigt nach unten -> Lot entgegengesetzt
             _w = float(np.degrees(np.arccos(min(1.0, abs(float(up @ up_b)))))); _ant = float(_in.mean())
             print(f"Lot aus Kamerablick: {_in.sum()} von {len(_X)} Kameras waagerecht gehalten ({100 * _ant:.0f} %), Winkel zum Lot der Kameraebene {_w:.1f} Grad")
+            LOT.update(blick=up_b.tolist(), blick_anteil=_ant, winkel_ebene_blick_grad=_w)
             if _w > 15 and _ant >= 0.5:
                 print(f"ACHTUNG LOT: Kameraebene und Kamerablick widersprechen sich um {_w:.0f} Grad (Kameras nicht in einer Ebene: Drohne/Hoehenunterschiede?) - es gilt das Lot aus dem Kamerablick", flush=True)
-                up = up_b
+                up = up_b; LOT["quelle"] = "kamerablick"
     except Exception as _e: print("HINWEIS Lot aus Kamerablick nicht bestimmbar:", _e)
     # Basis: e3 = up, e1/e2 beliebig senkrecht
     e1 = np.cross(up, [1, 0, 0]); e1 = e1 if np.linalg.norm(e1) > 0.1 else np.cross(up, [0, 1, 0]); e1 /= np.linalg.norm(e1); e2 = np.cross(up, e1)
@@ -389,6 +468,10 @@ def main():
     Wo = T[Te & (Tt == 0)]; Wn = Tn[Te & (Tt == 0)]                                             # Waende des Objekts selbst (Abdeckungsmass)
     print(f"Objekt-Waende (LoD2 {obj['lod2'].get('id')}): {len(Wo)} Abtastpunkte"); G, Gn, gq = dgm_ziel(obj, a.radius)
     print(f"Ziel: {nb} LoD2-Gebaeude im Umkreis {a.radius:.0f} m ({len(T)} Flaechenpunkte), Boden {gq} ({len(G)} Punkte)")
+    # Zwischenstand nach INHALT (siehe Zwischenstand oben): Datenstand = Punkte, Kameras, Ziel, Argumente (ohne --loesung/--schreiben)
+    _zw_pfad = os.path.join(od, "messprotokoll", f".ausr_zwischen{('-' + a.name) if a.name else ''}.pkl")
+    ZW = Zwischenstand(_zw_pfad, wert_hash(ZW_VERSION, Q, Cq, T, Tn, Tt, G, Gn, json.dumps({k_: v_ for k_, v_ in vars(a).items() if k_ not in ("loesung", "schreiben")}, sort_keys=True, default=str)),
+                       an=os.environ.get("AUSR_ZWISCHEN") != "0")
     # 2. Grobsuche 2D: Wandlinien-Raster (Naehe) gegen Punktdichte
     from scipy.ndimage import distance_transform_edt
     z = a.zelle; H = a.radius * 1.25; n = int(2 * H / z); W = np.zeros((n, n), bool)
@@ -437,46 +520,55 @@ def main():
     print(f"Startmassstab s0 = {s0:.4f} SfM-Einheiten/m ({'Foto-GPS' if s_gps else 'Kamerahoehe' if _kam_gilt else 'Wolkenausdehnung'}), Toleranz 0,75 m * s0/s (konstant in SfM-Einheiten)")
     _band = 1.5 if s_gps else (2.0 if _kam_gilt else 4.0)                                     # 15.11.: mit GPS-Massstab nur +-50 % suchen (GPS lag 6-8 % neben LoD2; Kaufhaus: ohne Grenze gewann ein 2,6-fach geschrumpftes Modell, Wolke 9 m hoch)
     if s_gps: print(f"Massstabssuche auf GPS-Band begrenzt: {s0 / _band:.4f} .. {s0 * _band:.4f}")
-    for ls in np.linspace(math.log(s0 / _band), math.log(s0 * _band), 17 if s_gps else 33):
-        s = math.exp(ls); hq = (Q[:, 2] - zc_q) / s + 1.6; fs = (hq > 1.0) & (hq < 7.0)
-        if fs.sum() < 50: continue
-        sig_m = max(z, 0.75 * s0 / s)                                                          # Toleranz in SfM-EINHEITEN konstant (massstabsneutral; in Metern bevorzugt jede Toleranz das geschrumpfte Modell)
-        FN = np.fft.rfft2(np.exp(-0.5 * (Dw / sig_m) ** 2))
-        if GPU_FFT: FNt = torch.fft.rfft2(torch.as_tensor(np.exp(-0.5 * (Dw / sig_m) ** 2), dtype=torch.float32, device="cuda"))
-        if GPU_FFT:  # gesamter Winkel-Durchlauf auf der GPU (Drehung, Raster, FFT, Maximum)
-            Qf = torch.as_tensor(Q[fs, :2], dtype=torch.float64, device="cuda"); sh_t = np.fft.fftfreq(n, 1.0 / n) * z
+    # Grobsuche aus dem Zwischenstand (Schluessel: Code dieses Abschnitts + Raster Dw/Tief + Startmassstab/Band + Rechenweg; Q/Cq stehen im Datenstand)
+    _grob_schl = wert_hash(code_abschnitt("grob"), Dw, Tief, float(s0), bool(s_gps), float(_band), float(z), float(H), float(a.mitte_max), float(zc_q), bool(GPU_FFT))
+    _grob_alt = ZW.holen("grob", _grob_schl)
+    if _grob_alt is not None:
+        best = [tuple(b_) for b_ in _grob_alt]; print(f"Grobsuche aus Zwischenstand: {len(best)} Kandidaten", flush=True)
+    else:
+        # [CODE-STAND grob:anfang]
+        for ls in np.linspace(math.log(s0 / _band), math.log(s0 * _band), 17 if s_gps else 33):
+            s = math.exp(ls); hq = (Q[:, 2] - zc_q) / s + 1.6; fs = (hq > 1.0) & (hq < 7.0)
+            if fs.sum() < 50: continue
+            sig_m = max(z, 0.75 * s0 / s)                                                          # Toleranz in SfM-EINHEITEN konstant (massstabsneutral; in Metern bevorzugt jede Toleranz das geschrumpfte Modell)
+            FN = np.fft.rfft2(np.exp(-0.5 * (Dw / sig_m) ** 2))
+            if GPU_FFT: FNt = torch.fft.rfft2(torch.as_tensor(np.exp(-0.5 * (Dw / sig_m) ** 2), dtype=torch.float32, device="cuda"))
+            if GPU_FFT:  # gesamter Winkel-Durchlauf auf der GPU (Drehung, Raster, FFT, Maximum)
+                Qf = torch.as_tensor(Q[fs, :2], dtype=torch.float64, device="cuda"); sh_t = np.fft.fftfreq(n, 1.0 / n) * z
+                for th in np.radians(np.arange(0, 360, 3)):
+                    c, si = math.cos(th), math.sin(th)
+                    Rt = torch.tensor([[c, -si], [si, c]], dtype=torch.float64, device="cuda")
+                    xyt = (Qf @ Rt.T) / s
+                    ijf = torch.floor((xyt + H) / z).long(); okt = (ijf >= 0).all(1) & (ijf < n).all(1)
+                    if int(okt.sum()) < 0.3 * len(xyt): continue
+                    Dt = torch.zeros((n, n), dtype=torch.float32, device="cuda")
+                    Dt.index_put_((ijf[okt, 1], ijf[okt, 0]), torch.ones(int(okt.sum()), dtype=torch.float32, device="cuda"), accumulate=True)
+                    K = torch.fft.irfft2((FNt - 2.0 * FTt) * torch.conj(torch.fft.rfft2(Dt))).double()
+                    m0 = torch.median(xyt, 0).values.cpu().numpy()
+                    fern = np.hypot(m0[0] + sh_t[None, :], m0[1] + sh_t[:, None]) > a.mitte_max
+                    K = K.masked_fill(torch.as_tensor(fern, device="cuda"), float("-inf"))
+                    kf = int(torch.argmax(K)); ky, kx = divmod(kf, n); kval = float(K[ky, kx])
+                    dy, dx = [(v if v < n // 2 else v - n) * z for v in (ky, kx)]
+                    best.append((kval / len(Q), s, th, dx, dy))
+                continue
             for th in np.radians(np.arange(0, 360, 3)):
-                c, si = math.cos(th), math.sin(th)
-                Rt = torch.tensor([[c, -si], [si, c]], dtype=torch.float64, device="cuda")
-                xyt = (Qf @ Rt.T) / s
-                ijf = torch.floor((xyt + H) / z).long(); okt = (ijf >= 0).all(1) & (ijf < n).all(1)
-                if int(okt.sum()) < 0.3 * len(xyt): continue
-                Dt = torch.zeros((n, n), dtype=torch.float32, device="cuda")
-                Dt.index_put_((ijf[okt, 1], ijf[okt, 0]), torch.ones(int(okt.sum()), dtype=torch.float32, device="cuda"), accumulate=True)
-                K = torch.fft.irfft2((FNt - 2.0 * FTt) * torch.conj(torch.fft.rfft2(Dt))).double()
-                m0 = torch.median(xyt, 0).values.cpu().numpy()
-                fern = np.hypot(m0[0] + sh_t[None, :], m0[1] + sh_t[:, None]) > a.mitte_max
-                K = K.masked_fill(torch.as_tensor(fern, device="cuda"), float("-inf"))
-                kf = int(torch.argmax(K)); ky, kx = divmod(kf, n); kval = float(K[ky, kx])
-                dy, dx = [(v if v < n // 2 else v - n) * z for v in (ky, kx)]
-                best.append((kval / len(Q), s, th, dx, dy))
-            continue
-        for th in np.radians(np.arange(0, 360, 3)):
-            c, si = math.cos(th), math.sin(th); xy = (Q[fs, :2] @ np.array([[c, -si], [si, c]]).T) / s
-            ij = ((xy + H) / z).astype(int); ok = (ij >= 0).all(1) & (ij < n).all(1)
-            if ok.sum() < 0.3 * len(xy): continue
-            if GPU_FFT:  # GPU: Raster per scatter-add, FFT per torch (gleiche Mathematik wie numpy)
-                ijt = torch.as_tensor(np.c_[ij[ok, 1], ij[ok, 0]], dtype=torch.long, device="cuda")
-                Dt = torch.zeros((n, n), dtype=torch.float32, device="cuda"); Dt.index_put_((ijt[:, 0], ijt[:, 1]), torch.ones(len(ijt), dtype=torch.float32, device="cuda"), accumulate=True)
-                FDt = torch.conj(torch.fft.rfft2(Dt)); K = torch.fft.irfft2((FNt - 2.0 * FTt) * FDt, s=(n, n)).double().cpu().numpy()
-            else:
-                D = np.zeros((n, n)); np.add.at(D, (ij[ok, 1], ij[ok, 0]), 1.0)
-                FD = np.conj(np.fft.rfft2(D)); K = np.fft.irfft2((FN - 2.0 * FT) * FD, s=(n, n))   # K[dy,dx] = sum D(p) * (Nahe - 2 Tief)(p + d)
-            m0 = np.median(xy, 0); sh = np.fft.fftfreq(n, 1.0 / n) * z                          # Verschiebung je Rasterindex (m)
-            fern = np.hypot(m0[0] + sh[None, :], m0[1] + sh[:, None]) > a.mitte_max                 # Fotos sind um das Objekt ausgewaehlt: Wolkenmitte (Median) <= mitte_max vom Objekt
-            K[fern] = -np.inf
-            k = np.unravel_index(np.argmax(K), K.shape); dy, dx = [(v if v < n // 2 else v - n) * z for v in k]
-            best.append((K[k] / len(Q), s, th, dx, dy))                                       # durch ALLE Punkte teilen: wenige Punkte im Band (zu kleines Modell) gewinnen nicht
+                c, si = math.cos(th), math.sin(th); xy = (Q[fs, :2] @ np.array([[c, -si], [si, c]]).T) / s
+                ij = ((xy + H) / z).astype(int); ok = (ij >= 0).all(1) & (ij < n).all(1)
+                if ok.sum() < 0.3 * len(xy): continue
+                if GPU_FFT:  # GPU: Raster per scatter-add, FFT per torch (gleiche Mathematik wie numpy)
+                    ijt = torch.as_tensor(np.c_[ij[ok, 1], ij[ok, 0]], dtype=torch.long, device="cuda")
+                    Dt = torch.zeros((n, n), dtype=torch.float32, device="cuda"); Dt.index_put_((ijt[:, 0], ijt[:, 1]), torch.ones(len(ijt), dtype=torch.float32, device="cuda"), accumulate=True)
+                    FDt = torch.conj(torch.fft.rfft2(Dt)); K = torch.fft.irfft2((FNt - 2.0 * FTt) * FDt, s=(n, n)).double().cpu().numpy()
+                else:
+                    D = np.zeros((n, n)); np.add.at(D, (ij[ok, 1], ij[ok, 0]), 1.0)
+                    FD = np.conj(np.fft.rfft2(D)); K = np.fft.irfft2((FN - 2.0 * FT) * FD, s=(n, n))   # K[dy,dx] = sum D(p) * (Nahe - 2 Tief)(p + d)
+                m0 = np.median(xy, 0); sh = np.fft.fftfreq(n, 1.0 / n) * z                          # Verschiebung je Rasterindex (m)
+                fern = np.hypot(m0[0] + sh[None, :], m0[1] + sh[:, None]) > a.mitte_max                 # Fotos sind um das Objekt ausgewaehlt: Wolkenmitte (Median) <= mitte_max vom Objekt
+                K[fern] = -np.inf
+                k = np.unravel_index(np.argmax(K), K.shape); dy, dx = [(v if v < n // 2 else v - n) * z for v in k]
+                best.append((K[k] / len(Q), s, th, dx, dy))                                       # durch ALLE Punkte teilen: wenige Punkte im Band (zu kleines Modell) gewinnen nicht
+        # [CODE-STAND grob:ende]
+        best = [tuple(float(x_) for x_ in b_) for b_ in best]; ZW.ablegen("grob", _grob_schl, best)    # beide Wege dieselben Typen (float) -> bitgleiche Folgerechnung
     best.sort(key=lambda b: -b[0]); top = []
     for b in best:                                                                            # je Massstabsband die beste Loesung (die Grobsumme allein bevorzugt kleine Modelle)
         if not any(abs(math.log(b[1] / t[1])) < 0.15 for t in top): top.append(b)
@@ -562,17 +654,19 @@ def main():
     print("Grobsuche (Anteil nahe LoD2-Wand, Massstab, Drehung, Verschiebung): " + "; ".join(f"{b[0]:.2f} s={b[1]:.3f} {math.degrees(b[2]):.0f} Grad" for b in top[:4]))
 
     # 3. Fein: 7 Parameter, Punkt-zu-Flaeche, getrimmt; Startwerte aus den besten Grobloesungen
+    # [CODE-STAND fein:anfang]
     Tall = np.vstack([T, G]); Nall = np.vstack([Tn, Gn]); baum = cKDTree(Tall)
     # Nachbarsuche auf der GPU (gpu_knn, Nutzerregel); ohne GPU Rueckfall auf cKDTree
     try:
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from gpu_knn import naechster as _gnn
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import gpu_knn as _gk; from gpu_knn import naechster as _gnn
+        if _gk.geraet() != "cuda": raise ImportError("keine CUDA-Karte sichtbar")                # 22.11.2026: gpu_knn rechnet dann auf der CPU - hier wie bisher der cKDTree-Weg
         def nn(M, bound=None):
             d, j = _gnn(np.asarray(M, np.float64), Tall)
             if bound is not None: bad = d > bound; d = np.where(bad, np.inf, d); j = np.where(bad, 0, j)
             return d, j
-        print("Nachbarsuche: GPU (gpu_knn)", flush=True)
+        print("Nachbarsuche: GPU (gpu_knn)", flush=True); _KNN_WEG = "gpu_knn"
     except Exception as e:
-        print("Nachbarsuche: CPU (cKDTree), GPU nicht verfuegbar:", type(e).__name__, flush=True)
+        print("Nachbarsuche: CPU (cKDTree), GPU nicht verfuegbar:", type(e).__name__, flush=True); _KNN_WEG = "ckdtree"
         def nn(M, bound=None):
             d, j = baum.query(M, distance_upper_bound=bound) if bound is not None else baum.query(M)
             return d, j
@@ -613,45 +707,25 @@ def main():
                 p = least_squares(r, np.clip(p, lo + 1e-9, hi - 1e-9), loss="huber", f_scale=sw / 3 * math.exp(ls0), max_nfev=200, bounds=(lo, hi)).x
         M = zu_modell(p, X); d, _ = nn(M); ok = d * math.exp(p[0]) < schwellen[-1] * s0      # Inlier-Schwelle in SfM-Einheiten (massstabsneutral)
         return p, ok.mean(), float(np.sqrt(np.mean(d[ok] ** 2))) if ok.any() else np.inf, ok
+    # [CODE-STAND fein:ende]
 
-    # 22.11.2026 ZWISCHENSTAND der Feinfits (Auftrag: --loesung K rechnete die ganze Ausrichtung je K neu, ~9 min). Jeder Aufruf von fein() ist deterministisch in
-    # (Startwert, Punkte, Schwellen, Band, Grenzen); sein Ergebnis wird unter einem Schluessel aus EINGABEN (Dateigroesse/-zeit von objekt.json, Kameras, Wolke, Fotoordner,
-    # alle Argumente ausser --loesung/--schreiben, AUSR_*-Umgebung) + CODE-STAND (tools/code_stand.py: dieses Werkzeug samt Hilfsmodulen) in
-    # messprotokoll/.ausr_zwischen<name>.pkl abgelegt. Der naechste Lauf mit gleichem Schluessel nimmt die Werte (Treffer werden gezaehlt); jede Aenderung = neue Rechnung.
-    # Abschalten: AUSR_ZWISCHEN=0.
-    import pickle as _pk, hashlib as _hl
-    _zw_an = os.environ.get("AUSR_ZWISCHEN") != "0"; _zw_pfad = os.path.join(od, "messprotokoll", f".ausr_zwischen{('-' + a.name) if a.name else ''}.pkl"); _zw = {}; _zw_treffer = [0, 0]
-    if _zw_an:
-        try:
-            from code_stand import code_stand as _cs
-            def _st(q):
-                try: st_ = os.stat(q); return f"{q}|{st_.st_size}|{int(st_.st_mtime)}"
-                except Exception: return f"{q}|fehlt"
-            _fdir = a.fotos or obj.get("fotos_dir", ""); _fl = sorted(os.listdir(_fdir)) if _fdir and os.path.isdir(_fdir) else []
-            _arg = {k_: v_ for k_, v_ in vars(a).items() if k_ not in ("loesung", "schreiben")}
-            _zw_schl = _hl.sha1("|".join([_cs("sfm_lod2_ausrichten.py"), _st(a.objekt), _st(a.kameras or ""), _st(a.dicht or ""), _st(a.sparse or ""), _fdir, str(len(_fl)), _hl.sha1("".join(_fl).encode()).hexdigest(),
-                                          json.dumps(_arg, sort_keys=True, default=str), json.dumps({k_: v_ for k_, v_ in os.environ.items() if k_.startswith("AUSR_") or k_ == "ALIGN_CPU"}, sort_keys=True)]).encode()).hexdigest()
-            if os.path.exists(_zw_pfad):
-                _alt = _pk.load(open(_zw_pfad, "rb"))
-                if _alt.get("schluessel") == _zw_schl: _zw = _alt.get("fein", {}); print(f"ZWISCHENSTAND: {len(_zw)} Feinfits aus {_zw_pfad} (gleiche Eingaben + Code-Stand)", flush=True)
-                else: print("ZWISCHENSTAND: vorhanden, aber andere Eingaben/Code-Stand - wird neu gerechnet", flush=True)
-        except Exception as _e: print("HINWEIS Zwischenstand aus:", type(_e).__name__, _e); _zw_an = False
+    # Zwischenstand der Feinfits (Klasse Zwischenstand oben; frueher: Schluessel aus Dateizeiten + Code-Stand der ganzen Datei). fein() ist deterministisch in
+    # (Startwert, Punkte X, Schwellen, Band, Grenzen) und liest sonst nur Werte, die im Kontext-Schluessel stehen: Ziel Tall/Nall, Kameras Cq, Startmassstab s0,
+    # Argumente fein_punkte/kamera_gewicht/kamerahoehe, Rechenweg (GPU-Residuum, Nachbarsuche GPU/CPU) und den Code des Abschnitts 'fein'.
+    try: import scipy as _sp; _vers = (np.__version__, _sp.__version__, getattr(sys.modules.get("torch"), "__version__", None))
+    except Exception: _vers = (np.__version__,)
+    from code_stand import code_stand as _cs
+    _fein_ktx = wert_hash(code_abschnitt("fein"), _cs("gpu_knn.py"), Tall, Nall, Cq, float(s0), int(a.fein_punkte), float(a.kamera_gewicht), [float(x_) for x_ in a.kamerahoehe],
+                          bool(GPU_FFT), _KNN_WEG, _vers)
     _fein_rechnen = fein
     def fein(p0, X, schwellen=(3.0, 1.5, 0.8), band=0.35, grenzen=None):
-        if not _zw_an: return _fein_rechnen(p0, X, schwellen=schwellen, band=band, grenzen=grenzen)
-        X_ = np.ascontiguousarray(X); k_ = _hl.sha1(np.round(np.asarray(p0, float), 10).tobytes() + repr((X_.shape, schwellen, band)).encode() + X_[::max(1, len(X_) // 997)].tobytes()
-                                                    + (b"" if grenzen is None else np.asarray(grenzen, float).tobytes())).hexdigest()
-        if k_ in _zw:
-            _zw_treffer[0] += 1; pz, fr_, rm_, okb = _zw[k_]; return np.array(pz), fr_, rm_, np.unpackbits(okb, count=len(X_)).astype(bool)
-        _zw_treffer[1] += 1; r_ = _fein_rechnen(p0, X, schwellen=schwellen, band=band, grenzen=grenzen)
-        _zw[k_] = (np.asarray(r_[0], float).tolist(), float(r_[1]), float(r_[2]), np.packbits(np.asarray(r_[3], bool))); return r_
-    def _zw_sichern():
-        if not _zw_an: return
-        try:
-            tmp_ = f"{_zw_pfad}.neu{os.getpid()}"; os.makedirs(os.path.dirname(_zw_pfad), exist_ok=True)
-            with open(tmp_, "wb") as f_: _pk.dump(dict(schluessel=_zw_schl, fein=_zw), f_)
-            os.replace(tmp_, _zw_pfad); print(f"ZWISCHENSTAND gesichert: {len(_zw)} Feinfits (Treffer {_zw_treffer[0]}, neu {_zw_treffer[1]}) -> {_zw_pfad}", flush=True)
-        except Exception as _e: print("HINWEIS Zwischenstand nicht gesichert:", type(_e).__name__, _e)
+        X_ = np.ascontiguousarray(X); k_ = wert_hash(_fein_ktx, np.round(np.asarray(p0, float), 10), X_, tuple(schwellen), float(band), None if grenzen is None else np.asarray(grenzen, float))
+        w_ = ZW.holen("fein", k_)
+        if w_ is None:
+            r_ = _fein_rechnen(p0, X, schwellen=schwellen, band=band, grenzen=grenzen)
+            w_ = (np.asarray(r_[0], float).tolist(), float(r_[1]), float(r_[2]), np.packbits(np.asarray(r_[3], bool))); ZW.ablegen("fein", k_, w_)
+        pz, fr_, rm_, okb = w_; return np.array(pz, float), fr_, rm_, np.unpackbits(okb, count=len(X_)).astype(bool)   # beide Wege dieselben Typen -> bitgleich
+    def _zw_sichern(): ZW.sichern()
 
     def abdeckung(p, X):
         """Anteil der zur Kamera gewandten Objektwand-Flaeche (unter der Traufe) mit einem Netzpunkt im Umkreis 0,6 m: ein geschrumpftes Netz deckt nur einen Fleck."""
@@ -810,6 +884,15 @@ def main():
         except Exception as _e:
             print("HINWEIS Lageproben-Urteil nicht moeglich:", type(_e).__name__, _e, flush=True)
     _zw_sichern()
+    # Ergebnis als Funktion (Pruefstand): ALLE unterscheidbaren Loesungen mit Kamerastandorten im Modellsystem, Lot, GPS - die Kette liest weiter nur die geschriebene Datei
+    E = dict(rc=0, loesung_nr=None, n_unterscheidbar=len(_verschieden), namen=[os.path.splitext(im.name)[0] for im in ims], lot=dict(LOT, oben=B0[2].tolist()),
+             loesungen=[dict(guete=float(l[0]), rms_m=float(l[1]), inlier=float(l[4]), abdeckung=float(l[5]), p=np.asarray(l[2], float).tolist(), massstab=float(math.exp(l[2][0])),
+                             anker=any(l[2] is p_ for p_, _ in _anker_p), wandfit=l is _wand_l, kameras_modell=zu_modell(l[2], Cq)) for l in _verschieden],
+             gps=dict(startmassstab=s_gps, fit=({k_: (v_.tolist() if isinstance(v_, np.ndarray) and k_ not in ("w", "res") else v_) for k_, v_ in GPS_FIT.items() if k_ not in ("w", "res")}
+                                                if GPS_FIT is not None else None),
+                      alle=(dict(idx=[int(i_) for i_ in GPS_ALLE["idx"]], namen=list(GPS_ALLE["namen"]), Mxy=np.asarray(GPS_ALLE["Mxy"], float), zeiten=list(GPS_ALLE["zeiten"])) if GPS_ALLE else None),
+                      veto_kameras=(len(GPS_PRUEF[0]) if GPS_PRUEF is not None else 0), anker=GPS_ANKER, ehrlich_text=(GPS_EHRLICH or {}).get("text")),
+             lage_proben=LAGE_PROBEN, transformation=None, au_pfad=None, mehrdeutig=None)
     i_loes, rc_ende = loesung_index(a.loesung, len(_verschieden), a.schreiben)
     if rc_ende == 5 and i_loes is not None:                                                     # liegt schon Loesung 0 auf der Platte (es gab nur eine), nichts neu schreiben
         try: _nr_alt = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG{('-' + a.name) if a.name else ''}.json")))["transformation"].get("loesung_nr", 0)
@@ -817,7 +900,7 @@ def main():
         if _nr_alt == 0: i_loes = None
     if rc_ende == 5:
         print(f"KEINE_LOESUNG {a.loesung}: nur {len(_verschieden)} unterscheidbare Loesungen" + (" - schreibe Loesung 0 (beste Guete) ZURUECK, damit nicht die zuletzt probierte, durchgefallene liegen bleibt" if i_loes is not None else ""), flush=True)
-        if i_loes is None: sys.exit(5)
+        if i_loes is None: E.update(rc=5, zwischenstand=dict(an=ZW.an, treffer=ZW.treffer, neu=ZW.neu, pfad=ZW.pfad)); return E
     elif a.loesung: print(f"Korrekturkreislauf: nehme unterscheidbare Loesung {a.loesung} von {len(_verschieden)} (Guete {100 * _verschieden[a.loesung][0]:.1f} % statt {100 * loes[0][0]:.1f} %)")
     guete, rms, p, ok, frac, ab = _verschieden[i_loes]
     _gr_wahl = next((g_ for p_, g_ in _anker_p if p_ is p), None)                               # gewaehlt wurde die GPS-verankerte Loesung -> Bootstrap im selben Kasten
@@ -872,7 +955,11 @@ def main():
                 sim = pycolmap.Sim3d(1.0 / s, pycolmap.Rotation3d(Rm), tm - Rm @ cm / s); rec.transform(sim); ziel = os.path.join(od, "sfm", f"sparse_modell{usfx}"); os.makedirs(ziel, exist_ok=True); rec.write(ziel)
                 print("geschrieben:", ziel, "(COLMAP-Modell im Modellsystem, Meter)")
             except Exception as e: print("sparse_modell nicht geschrieben:", type(e).__name__, e)
-    if rc_ende: sys.exit(rc_ende)
+        E["au_pfad"] = pth
+    E.update(rc=rc_ende, loesung_nr=i_loes, mehrdeutig=mehrdeutig, s_sigma_prozent=float(s_sig), t_sigma_m=t_sig.tolist(), kameras_gewaehlt=Cm,
+             transformation=dict(s=float(s), R=R_s.tolist(), rvec=Rot.from_matrix(R_s).as_rotvec().tolist(), t=t_s.tolist(), guete=float(guete), rms_m=float(rms)),
+             zwischenstand=dict(an=ZW.an, treffer=ZW.treffer, neu=ZW.neu, pfad=ZW.pfad))
+    return E
 
 
 if __name__ == "__main__":
