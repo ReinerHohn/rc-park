@@ -14,6 +14,8 @@ Verfahren (Umriss-Tangenten, "visual hull" fuer einen Drehkoerper):
     Verdeckt (Strahl zum Umrisspunkt trifft vorher das Modell, z. B. Turmwand) -> Beobachtung entfaellt.
  4. Grob-fein: Mitte +-0,6 m, Radius 0,5..1,4 x Start; dann Feinraster. Danach je Hoehe nur noch r (Mitte fest) -> Drehprofil r(z).
  5. Oberkante: Umriss-Stuetze je Hoehe (mittlere Abstimmung am besten r), auch 3 m ueber der Wolke; Ende = letzte Hoehe mit >= 50 % der Median-Stuetze (ANNAHME).
+ 6. KEGELDACH (23.11.2026, kegeldach()): ueber der Traufe/Oberkante Traufradius und Spitze aus den beiden geraden Umriss-Mantellinien je Foto (exakte Kegelsilhouette,
+    Kantenrichtung mit Vorzeichen), Guard: >= 6 Fotos, >= 3 einig, Bestwert nicht am Suchrand -> Block 'dach' (bauteile.kegeldach_teile baut Traufbrett + Kegel).
 Ausgabe: koerper_auto.json je Haufen 'umriss' (Masse, Stuetze, Fotos, Profil); mit --uebernehmen ersetzt das Fotomass 'kreis'/'profil' (Wolkenwerte bleiben als
 'kreis_wolke'/'profil_wolke'); Bild audit/rund_umriss_<id>.jpg (Fotoausschnitte: gruen Foto-Umriss, rot Wolkenkreis; rechts Profil).
 Aufruf: rund_aus_umriss.py <objekt.json> [--koerper audit/koerper_auto.json] [--stl STL] [--uebernehmen] [--max-fotos 120]
@@ -133,6 +135,82 @@ def vermessen(bilder, start, z_ebenen, log=print, verdeckt=None):
                 fotos_links=len(fotos[0]), fotos_rechts=len(fotos[1]), fotos=len(set(fotos[0]) | set(fotos[1])))
 
 
+# ---- 23.11.2026 KEGEL-/ZELTDACH auf dem Rundkoerper aus den Umriss-Geraden (Kettenlauf 1122o: Treppentuermchen als nackter Zylinder, oben offen, Kegeldach fehlte) ----
+# Ein Kegel (Spitze S auf der Achse, Traufkreis r_e in z_t) zeigt im Foto zwei gerade Umrisslinien: die Mantellinien, deren Tangentialebene durch die Kamera C geht.
+# Ihre Fusspunkte sind die Beruehrpunkte der Tangenten vom Punkt C' an den Traufkreis, C' = Schnitt der Geraden S-C mit der Traufebene (exakt, keine Naeherung).
+# z_t und r_e sind entlang einer Mantellinie gekoppelt (dieselbe Gerade) - z_t kommt darum aus dem Profil (Traufe/Oberkante), gesucht werden r_e und z_spitze.
+KEGEL_R = (0.80, 1.40)     # Traufradius als Vielfaches des Schaftradius (Dachueberstand bis 40 %, auch eingezogen bis 80 %)
+KEGEL_H = (0.25, 3.5)      # Dachhoehe als Vielfaches des Schaftradius: Neigung ~14..74 Grad (flacher = kein Kegel, steiler = Nadelhelm, eigene Stufe)
+KEGEL_ANTEILE = np.linspace(0.15, 0.85, 8)   # Abtastung der Mantellinie (ohne Traufrand und Spitze: dort stoeren Traufbrett und Knauf)
+KEGEL_MIN_FOTOS = 6        # Beobachtungen aus mind. 6 Fotos (je Seite einzeln verdeckbar), davon
+KEGEL_EINIG = 3            # mind. 3 Fotos, deren Einzelbestwert dieselbe Spitze zeigt (Formfamilie aus >= 3 Fotos, CLAUDE.md)
+
+
+def kegel_fuesse(Cxyz, x, y, z_t, r_e, z_s):
+    """Fusspunkte der beiden Umriss-Mantellinien fuer Kegel (Achse x, y; Traufe z_t, Radius r_e (K); Spitze z_s (K)) von der Kamera Cxyz -> F (2, K, 2), ok (K)."""
+    r_e = np.asarray(r_e, float); z_s = np.asarray(z_s, float); C = np.asarray(Cxyz, float)
+    den = C[2] - z_s; ok = den < -0.05                                                 # Kamera unter der Spitze (sonst sieht sie den Traufkreis als Umriss)
+    t = (z_t - z_s) / np.where(ok, den, -1.0)
+    cp = np.c_[x + t * (C[0] - x), y + t * (C[1] - y)]; v = cp - np.array([x, y]); D = np.linalg.norm(v, axis=1); ok &= D > r_e * 1.02   # C' im Traufkreis: Untersicht, kein Mantelumriss
+    u = v / np.maximum(D, 1e-9)[:, None]; up = np.c_[-u[:, 1], u[:, 0]]; ca = np.clip(r_e / np.maximum(D, 1e-9), -1, 1); sa = np.sqrt(1 - ca * ca)
+    N = np.stack([ca[:, None] * u + sa[:, None] * up, ca[:, None] * u - sa[:, None] * up])
+    return np.array([x, y])[None, None] + r_e[None, :, None] * N, ok
+
+
+def kegel_quer(B, x, y, z_t, r_e, z_s, seite):
+    """Mittlerer |Gradient quer zur projizierten Mantellinie| ueber KEGEL_ANTEILE fuer alle Kandidaten (K) - nan, wo nicht beurteilbar."""
+    F, ok = kegel_fuesse(B.C, x, y, z_t, r_e, z_s); K = len(r_e); Fs = F[seite]
+    pF, zF = B.pix(np.c_[Fs, np.full(K, z_t)]); pS, zS = B.pix(np.c_[np.full(K, x), np.full(K, y), z_s])
+    d = pS - pF; L = np.linalg.norm(d, axis=1); nrm = np.c_[-d[:, 1], d[:, 0]] / np.maximum(L, 1e-9)[:, None]; ok &= (L > 6) & (zF > 0.5) & (zS > 0.5)
+    h, w = B.gx.shape; werte = []
+    for f in KEGEL_ANTEILE:
+        p = pF + f * d; xx = p[:, 0] - B.x0; yy = p[:, 1] - B.y0; inn = (xx >= 1) & (yy >= 1) & (xx < w - 2) & (yy < h - 2)
+        xi = np.clip(xx, 1, w - 2); yi = np.clip(yy, 1, h - 2); x0 = np.floor(xi).astype(int); y0 = np.floor(yi).astype(int); fx = xi - x0; fy = yi - y0
+        def bil(G): return (G[y0, x0] * (1 - fx) * (1 - fy) + G[y0, x0 + 1] * fx * (1 - fy) + G[y0 + 1, x0] * (1 - fx) * fy + G[y0 + 1, x0 + 1] * fx * fy).astype(np.float32)
+        werte.append(np.where(inn, bil(B.gx) * nrm[:, 0] + bil(B.gy) * nrm[:, 1], np.nan))    # VORZEICHEN behalten: eine Umrisskante hat innen/aussen ueberall dieselbe Richtung, Streifen/Fugen quer dazu wechseln
+    W_ = np.array(werte); n_ok = np.isfinite(W_).sum(0); m = np.where(n_ok >= len(KEGEL_ANTEILE) // 2 + 1, np.abs(np.nanmean(W_, 0)), np.nan)
+    return np.where(ok, m, np.nan)
+
+
+def kegeldach(bilder, x, y, z_t, r_s, verdeckt=None, log=print):
+    """Kegeldach ueber dem Rundkoerper (Achse x, y, Schaftradius r_s, Traufe z_t) aus den Umriss-Mantellinien aller Fotos. bilder: Liste Bild (.C, .Cxy).
+    Abstimmung wie vermessen(): jede Beobachtung (Foto x Seite) auf ihr Maximum normiert, Gewicht 1 / Fotos im selben 15-Grad-Faecher. -> dict (gueltig, grund, Masse)."""
+    obs = [(bi, s) for bi in range(len(bilder)) for s in (0, 1) if not (verdeckt and verdeckt(bi, s))]
+    erg = dict(z_traufe=round(float(z_t), 2), r_schaft=round(float(r_s), 3), quelle="tools/rund_aus_umriss.kegeldach: Umriss-Mantellinien (exakte Kegelsilhouette) in kalibrierten Fotos")
+    if not obs: return dict(erg, gueltig=False, grund="keine Beobachtung")
+    az = np.array([int(np.degrees(math.atan2(bilder[bi].Cxy[1] - y, bilder[bi].Cxy[0] - x)) // FAECHER_GRAD) for bi, _ in obs]); u_, c_ = np.unique(az, return_counts=True); cnt = dict(zip(u_, c_))
+    gw = np.array([1.0 / cnt[a] for a in az])
+    def punkte(R, Z):
+        S = np.zeros(len(R)); roh = []
+        for (bi, s), w in zip(obs, gw):
+            v = kegel_quer(bilder[bi], x, y, z_t, R, Z, s); m = np.nanmax(v) if np.isfinite(v).any() else 0.0
+            if m <= 0: roh.append(None); continue
+            v = np.nan_to_num(v / m); S += w * v; roh.append(v)
+        return S, roh
+    r_lo, r_hi = KEGEL_R[0] * r_s, KEGEL_R[1] * r_s; h_lo, h_hi = KEGEL_H[0] * r_s, KEGEL_H[1] * r_s
+    rr, hh = np.meshgrid(np.arange(r_lo, r_hi + 1e-9, 0.04), np.arange(h_lo, h_hi + 1e-9, 0.08), indexing="ij"); R = rr.ravel(); Z = z_t + hh.ravel()
+    S, roh = punkte(R, Z); i = int(np.argmax(S)); r0, z0 = R[i], Z[i]
+    rr, zz = np.meshgrid(np.arange(r0 - 0.04, r0 + 0.04 + 1e-9, 0.01), np.arange(z0 - 0.08, z0 + 0.08 + 1e-9, 0.02), indexing="ij"); R2 = rr.ravel(); Z2 = zz.ravel()
+    S2, roh2 = punkte(R2, Z2); j = int(np.argmax(S2)); r_e, z_s = float(R2[j]), float(Z2[j]); h = z_s - z_t
+    # Einigkeit: Einzelbestwert je Beobachtung im Grobraster; ein Foto ist einig, wenn eine seiner Seiten die Spitze auf max(0,25 m, 12 % der Dachhoehe) trifft
+    tol = max(0.25, 0.12 * h); einig = set(); fotos = set()
+    for (bi, s), v in zip(obs, roh):
+        if v is None: continue
+        fotos.add(bi); k = int(np.argmax(v))
+        if abs(Z[k] - z_s) <= tol and abs(R[k] - r_e) <= max(0.15, 0.1 * r_e): einig.add(bi)
+    rand = (h <= h_lo + 0.1 or h >= h_hi - 0.1 or r_e <= r_lo + 0.05 or r_e >= r_hi - 0.05)
+    erg.update(r_traufe=round(r_e, 3), z_spitze=round(z_s, 2), hoehe=round(h, 2), neigung_grad=round(math.degrees(math.atan2(h, r_e)), 1), fotos=len(fotos), einig=len(einig),
+               beobachtungen=sum(v is not None for v in roh), stuetze=round(float(S2[j] / max(gw.sum(), 1e-9)), 3))
+    grund = None
+    if len(fotos) < KEGEL_MIN_FOTOS: grund = f"nur {len(fotos)} Fotos sehen den Dachumriss (verlangt {KEGEL_MIN_FOTOS})"
+    elif len(einig) < KEGEL_EINIG: grund = f"nur {len(einig)} Fotos einig ueber die Spitze (verlangt {KEGEL_EINIG}) - keine Formfamilie Kegel"
+    elif rand: grund = f"Bestwert am Suchrand (h {h:.2f} m in {h_lo:.2f}..{h_hi:.2f}, r {r_e:.2f} in {r_lo:.2f}..{r_hi:.2f}) - kein Kegel (flach/offen) oder ausserhalb der Formfamilie"
+    erg.update(gueltig=grund is None, grund=grund, familie="kegel" if grund is None else None)
+    log(f"  KEGELDACH: Traufe z {z_t:.2f} r {r_e:.2f} (Schaft {r_s:.2f}), Spitze z {z_s:.2f} (h {h:.2f}, {erg['neigung_grad']} Grad), Fotos {len(fotos)}, einig {len(einig)} -> "
+        + ("GUELTIG" if grund is None else "UNGUELTIG: " + grund))
+    return erg
+
+
 def glaetten(prof):
     """Median ueber 3 Hoehen: einzelne Hoehen, an denen die Mehrheit auf eine Fuge/Kante stimmt (Schwabentor 21.11.: 2,38 / 0,99 m zwischen 1,55-Werten), fallen weg."""
     r = [p[1] for p in prof]; g = [float(np.median(r[max(0, i - 1):i + 2])) for i in range(len(r))]
@@ -193,7 +271,8 @@ def main(argv=None):
         for rpx, nr, c, pf, C in wahl:
             im = cv2.imread(pf, cv2.IMREAD_GRAYSCALE)
             if im is None: continue
-            ring = np.array([[x0 + 1.6 * r0 * math.cos(t), y0 + 1.6 * r0 * math.sin(t), z] for t in np.linspace(0, 2 * math.pi, 16, endpoint=False) for z in (za, zs[-1])])
+            z_box = zs[-1] + KEGEL_H[1] * KEGEL_R[1] * r0 * 0.75                      # 23.11.2026: Ausschnitt bis ueber die hoechste gesuchte Kegelspitze (kegeldach)
+            ring = np.array([[x0 + 1.6 * r0 * math.cos(t), y0 + 1.6 * r0 * math.sin(t), z] for t in np.linspace(0, 2 * math.pi, 16, endpoint=False) for z in (za, z_box)])
             p, zz, _ = FO.projektion(ring, c); p = p * (im.shape[1] / (c["cx"] * 2)); p = p[zz > 0.5]
             if len(p) < 4: continue
             box = (p[:, 0].min() - 10, p[:, 1].min() - 10, p[:, 0].max() + 10, p[:, 1].max() + 10)
@@ -219,6 +298,19 @@ def main(argv=None):
         U["annahmen"] = ["ANNAHME: Traufe = groesster Radius > 108 % des Schafts in der oberen Haelfte (Dachueberstand), sonst Beginn der Verjuengung < 85 %", "Spitze ueber dem Ende der Umriss-Stuetze FEHLT (nicht gemessen, nicht erfunden)", f"ANNAHME: Oberkante = Ende der Umriss-Stuetze (< {STUETZE_ENDE:.0%} des Medians)", "ANNAHME: Querschnitt kreisrund, Achse lotrecht"]
         gut = U["fotos"] >= MIN_FOTOS and min(U["fotos_links"], U["fotos_rechts"]) >= MIN_SEITEN_FOTOS
         U["gueltig"] = gut; U["grund"] = None if gut else f"zu wenig Fotos ({U['fotos']}, links {U['fotos_links']}, rechts {U['fotos_rechts']})"
+        # 23.11.2026 Kegeldach ueber der Traufe (bzw. Oberkante) aus den Umriss-Mantellinien; Verdeckung am Startkegel (r 1,1 x Schaft, h 1 x Schaft) wie oben
+        z_t = U["traufe"] if U["traufe"] is not None else U["oberkante"]
+        if gut and z_t is not None:
+            vk = {}
+            if inter is not None:
+                for bi, B in enumerate(stufe[1]):
+                    F_, okf = kegel_fuesse(B.C, U["x"], U["y"], z_t, [1.1 * U["r_schaft"]], [z_t + U["r_schaft"]])
+                    for s in (0, 1):
+                        if not okf[0]: continue
+                        X = np.array([[*(0.5 * (F_[s, 0] + [U["x"], U["y"]])), z_t + 0.5 * U["r_schaft"]]]); v = X - B.C; dist = np.linalg.norm(v, axis=1)
+                        _, ri, loc = inter.intersects_id(B.C[None], v / dist[:, None], multiple_hits=False, return_locations=True)
+                        vk[(bi, s)] = bool(len(ri) and np.linalg.norm(loc[0] - B.C) < dist[0] - 0.15)
+            U["dach"] = kegeldach(stufe[1], U["x"], U["y"], z_t, U["r_schaft"], verdeckt=lambda bi, s: vk.get((bi, s), False))
         H["umriss"] = U
         print(f"  FOTO-UMRISS: x {U['x']:.2f} y {U['y']:.2f} r {U['r']:.3f} m (Wolke r {r0:.2f}), Rest je Beobachtung {U['rest_beob']} m, {U['beobachtungen']} Beob., "
               f"Fotos {U['fotos']} (links {U['fotos_links']}, rechts {U['fotos_rechts']}), Schaft r {U['r_schaft']}, Traufe {U['traufe']}, Oberkante Umriss {U['oberkante']}  -> {'GUELTIG' if gut else 'UNGUELTIG: ' + U['grund']}")
@@ -228,6 +320,7 @@ def main(argv=None):
             ok_ = [p for p in U["profil"] if p[0] <= (U["oberkante"] or zb)]       # ganzes Foto-Profil (Schaft, Ueberstand, Dach) bis zum Ende der Umriss-Stuetze
             H["traufe"] = U["traufe"]
             H["kreis"] = dict(x=U["x"], y=U["y"], r=U["r"], rest=U["rest_beob"], quelle="foto_umriss"); H["profil"] = [[p[0], p[1], p[2]] for p in ok_]; H["mass_quelle"] = "foto_umriss"
+            H["dach"] = U.get("dach")                                                  # bauteile.drehkoerper_aus_wolkenrest baut den Kegel nur, wenn gueltig
         if gut: rc = 0
         try: bild(bilder, H, U, os.path.join(A, f"rund_umriss_{H.get('id', 'r')}.jpg"))
         except Exception as e: print("  Bild fehlgeschlagen:", e)
