@@ -78,6 +78,16 @@ else:
     if _mit_maske:                                                        # Masken schon in der Merkmalssuche (COLMAP: <mask_path>/<Bildname>.png, 0 = ignorieren) - besser als nachtraeglich filtern
         _ro.mask_path = f"{w}/masken_colmap"; _n_mask, _n_leer = SV.masken_colmap(img, _roh, _ro.mask_path); print(f"Merkmalssuche mit Masken: {_n_mask} von {_n_fotos} Bildern, {_n_leer} mit leerer Maske (COLMAP ueberspringt Bilder ohne Maskendatei)", flush=True)
     pycolmap.extract_features(db, img, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, extraction_options=so, device=pycolmap.Device.cuda); print("Merkmale", time.time() - t, flush=True)
+    # 23.11.2026 AUDIT STILLE ERFOLGE (Geschwister von zusatzfotos_registrieren.sift_sicher): SiftGPU laesst Bilder bei 'out of memory' still WEG, extract_features endet normal -
+    # die SfM rechnete dann ohne sie, der Cache-Vergleich (Bilderzahl) merkte es erst im NAECHSTEN Lauf. Fehlende Bilder einmal auf der CPU nachholen, Rest laut melden.
+    from kette_beleg import db_fehlende_bilder
+    _alle = sorted(f for f in os.listdir(img) if os.path.isfile(os.path.join(img, f)) and f.lower().endswith((".jpg", ".jpeg", ".png", ".tif", ".tiff")))
+    _fehl = db_fehlende_bilder(db, _alle)
+    if _fehl:
+        print(f"WARNUNG SIFT: {len(_fehl)} von {len(_alle)} Bildern ohne Merkmale nach GPU-SIFT (COLMAP laesst sie bei SiftGPU 'out of memory' still weg), z. B. {_fehl[:3]} - CPU-SIFT fuer diese", flush=True)
+        pycolmap.extract_features(db, img, image_names=_fehl, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, extraction_options=so, device=pycolmap.Device.cpu)
+        _rest = db_fehlende_bilder(db, _fehl)
+        print(f"{'ACHTUNG SIFT: ' + str(len(_rest)) + ' Bilder auch auf der CPU ohne Merkmale (unlesbar/leere Maske?) - fehlen in der SfM: ' + str(_rest[:5]) if _rest else 'SIFT nachgeholt: alle ' + str(len(_fehl)) + ' Bilder haben jetzt Merkmale'}", flush=True)
     if _mit_maske and _db_neu: json.dump(dict(masken=_n_mask, bilder=_n_fotos, zeit=time.strftime("%Y-%m-%d %H:%M")), open(_mk, "w"))   # bestand db.db schon (Teilstand), haben alte Bilder Merkmale OHNE Maske -> kein Beleg, Filter-Rueckfall
     _paare = paarliste(db, w)
     if _paare:
