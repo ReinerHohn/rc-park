@@ -193,6 +193,17 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
             N = f.get("nische"); A_ = N or f
             sonde = W.kasten(A_["u0"], A_["u1"], A_["z0"], A_["z1"], 0.03, 0.08)
             if (koerper ^ sonde).volume() > 0.2 * sonde.volume(): continue
+            # 23.11.2026 tools/loch_gewaende.py (1122o: Fenster/Tuer = Erkennerkasten um Loch UND Gewaende): Gewaende als Relief aus dem Wandbild-Umriss VOR dem Lochschnitt,
+            # Loch = dunkle Komponente (u0..z1 des Eintrags) mit Laibungstiefe 'tiefe'. Hoehe mindestens Druckmindestmass (sonst im Druck unsichtbar).
+            G = f.get("gewaende") or {}; w_vor = 0.05
+            if len(G.get("umriss") or []) >= 3:
+                h_ = max(float(G.get("hoehe") or 0.0), DRUCK_MIN); s_ = -1.0 if W.spiegel else 1.0; P = [[s_ * u, z] for u, z in G["umriss"]]
+                if sum(P[i][0] * P[(i + 1) % len(P)][1] - P[(i + 1) % len(P)][0] * P[i][1] for i in range(len(P))) < 0: P = P[::-1]
+                rel = M.extrude(CrossSection([P]), h_ + 0.2).translate((0, 0, -0.2)).transform(W.matrix(0))     # 0,2 m eingebunden (gekruemmte Wand hinter der Fassadenebene)
+                if rel.volume() > 1e-6:
+                    koerper = koerper + rel; w_vor = h_ + 0.03; formen["Gewaende-Relief"] = formen.get("Gewaende-Relief", 0) + 1
+                    if "ANNAHME" in str(G.get("hoehe_quelle", "")): ann.append(f"Gewaende {fid} u {f['u0']:.2f}: Relief {h_:.3f} m (Druckmindestmass, nicht gemessen)")
+            if f.get("loch") and not f.get("bogen"): f = dict(f, bogen=dict(form="gerade", kaempfer=f["z1"], scheitel=f["z1"]))     # Loch: immer Umriss-Schnitt mit gemessener Laibungstiefe
             if N or f.get("bogen"):                                           # 21.11.2026 tools/nischen_fenster.py: Nische und Fensteroeffnung als ZWEI Ebenen, Umriss je Ebene aus den Bildkanten
                 t0 = float(N["tiefe"]) if N else 0.0; tf = float(f.get("tiefe") or tiefe)
                 # 21.11.2026 spaet (Nutzer: 'zwei flache Rechtecke'): jede Stufe mindestens Druckmindestmass (MINMM im Massstab SCALE, Generatoraufruf), sonst ist
@@ -202,8 +213,8 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
                 if "ANNAHME" in str(f.get("tiefe_quelle", "")): ann.append(f"Laibung {fid} u {f['u0']:.2f}: {tf:.2f} m nicht gemessen")
                 if N: koerper = koerper - _umriss_prisma(W, N, N["z0"], -t0, 0.05)
                 z0_ = max(f["z0"], N["z0"]) if N else f["z0"]                  # Fenster unter der Nischensohle wuerde einen geschlossenen Hohlraum hinter der Wand schneiden
-                koerper = koerper - _umriss_prisma(W, f, z0_, -(t0 + tf), 0.05); n_ += 1
-                k_ = (f.get("bogen") or {}).get("form", "gerade") + (" in Nische" if N else ""); formen[k_] = formen.get(k_, 0) + 1
+                koerper = koerper - _umriss_prisma(W, f, z0_, -(t0 + tf), w_vor); n_ += 1
+                k_ = (f.get("art") + " " if f.get("art") else "") + (f.get("bogen") or {}).get("form", "gerade") + (" in Nische" if N else "") + (" (Loch aus Wandbild)" if f.get("loch") else ""); formen[k_] = formen.get(k_, 0) + 1
                 b_ = f.get("bogen") or {}; DURCH.append((W, f["u0"], f["u1"], z0_, b_.get("kaempfer", f["z1"]) if b_.get("form", "gerade") != "gerade" else f["z1"], -(t0 + tf), dict(tiefe=t0 + tf)))   # 7. Feld: Laibungstiefe dieses Fensters fuer rueckwaende()
                 continue
             ab, zu = W.fenster(f["u0"], f["u1"], f["z0"], f["z1"], 0.0, tiefe=tiefe, teiler=f.get("teiler", ()), kaempfer=f.get("kaempfer"), sprossen=f.get("sprossen", ())); koerper = koerper - ab + zu; n_ += 1
@@ -217,6 +228,64 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
                                     masse=[{k: S_.get(k) for k in ("u0", "u1", "z0", "z1", "auskragung", "auskragung_streuung", "fotos")} for S_ in sb_], hinweis="Rueckseite in der gemessenen Koerperflaeche (bauteile.sohlbank)"))
         if n_: belege.append(dict(seite="wand", element=f"{n_} Fenster Fassade {fid} (automatisch erkannt)", formen=formen, **({"annahmen": "ANNAHME: " + "; ".join(ann)} if ann else {}), quelle="OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
                                   hinweis="ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME"))
+    return koerper, belege
+
+
+def _oberflaeche_w(koerper, W, punkte, w_von=3.0, w_bis=-1.5, radius=4.0):
+    """Aeusserste Koerperflaeche vor der Wandebene W an den Stellen [(u, z), ...]: Strahl von w_von gegen -n, erster Treffer -> w (None = kein Treffer).
+    Nur Dreiecke im Umkreis 'radius' um die Punkte (schnell auch bei 1 Mio. Dreiecken)."""
+    me = koerper.to_mesh(); V = np.asarray(me.vert_properties)[:, :3].astype(float); F = np.asarray(me.tri_verts)
+    P = np.array([W.punkt(u, z, 0.0) for u, z in punkte], float); m = P.mean(0)
+    C = V[F].mean(1); sel = np.linalg.norm(C - m, axis=1) < radius + float(np.max(np.linalg.norm(P - m, axis=1)))
+    if not sel.any(): return [None] * len(punkte)
+    A, B, Cc = V[F[sel, 0]], V[F[sel, 1]], V[F[sel, 2]]; e1, e2 = B - A, Cc - A; n3 = np.array([W.n[0], W.n[1], 0.0]); d = -n3
+    pv = np.cross(d, e2); det = np.einsum("ij,ij->i", e1, pv); ok = np.abs(det) > 1e-12; inv = np.where(ok, 1.0 / np.where(ok, det, 1.0), 0.0)
+    out = []
+    for p in P:                                                          # Moeller-Trumbore je Strahl (ohne rtree/embree)
+        o = p + w_von * n3; tv = o - A; uu = np.einsum("ij,ij->i", tv, pv) * inv; qv = np.cross(tv, e1); vv = (qv @ d) * inv; t = np.einsum("ij,ij->i", e2, qv) * inv
+        hit = ok & (uu >= 0) & (vv >= 0) & (uu + vv <= 1) & (t > 0)
+        w = w_von - t[hit]; w = w[(w >= w_bis) & (w <= w_von)]
+        out.append(float(w.max()) if w.size else None)
+    return out
+
+
+def loch_gewaende_spaet(koerper, datei, einbinden=0.3, min_vor=0.005):
+    """23.11.2026 (1122o, Tuer f04 im Treppenturm, Fenster f03): Loch + Gewaende (tools/loch_gewaende.py) auf der ECHTEN Oberflaeche NACH allen Anbauten nachziehen.
+    fenster_aus_json schneidet in die LoD2-Fassadenebene; Rundkoerper/Vorbauten (wolkenrest_koerper, vorbauten_aus_json) kommen erst danach und decken das Loch zu
+    (Schwabentor: Turmzylinder 0,98 m VOR der Facette f04 -> Tuer unsichtbar). Je Eintrag mit 'loch': Oberflaeche w_s = Median der Strahltreffer auf einem Ring 0,1 m um
+    das Gewaende (bzw. das Loch). Liegt sie > min_vor vor der Ebene (Reliefplatte, Rundkoerper: das Gewaende muss ueber DIESER Flaeche Druckmindestmass zeigen) ODER ist das Loch zu (Treffer im Loch vor -tiefe/2), werden Gewaende-Relief (w_s - einbinden .. w_s + h)
+    und Loch (bis w_s - tiefe) dort neu gebaut. GUARD: < 3 Ringtreffer oder Streuung > 0,5 m (kein ebenes Stueck Oberflaeche) -> nichts. Liefert (koerper, belege)."""
+    import json, os
+    if not datei or not os.path.exists(datei): return koerper, []
+    DRUCK_MIN = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
+    belege = []; neu = []; aus = []
+    for fid, F in json.load(open(datei)).items():
+        if not isinstance(F, dict) or not F.get("fenster") or F.get("o") is None: continue
+        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
+        for f in F["fenster"]:
+            if not f.get("loch") or f.get("nische"): continue
+            G = f.get("gewaende") or {}; um = G.get("umriss") if len(G.get("umriss") or []) >= 3 else [[f["u0"], f["z0"]], [f["u1"], f["z0"]], [f["u1"], f["z1"]], [f["u0"], f["z1"]]]
+            uu = [p[0] for p in um]; zz = [p[1] for p in um]; a0, a1, b0, b1 = min(uu) - 0.1, max(uu) + 0.1, min(zz) - 0.1, max(zz) + 0.1
+            ring = [(a0, b0), (a1, b0), (a0, b1), (a1, b1), ((a0 + a1) / 2, b0), ((a0 + a1) / 2, b1), (a0, (b0 + b1) / 2), (a1, (b0 + b1) / 2)]
+            mitte = ((f["u0"] + f["u1"]) / 2, (f["z0"] + f["z1"]) / 2)
+            w = _oberflaeche_w(koerper, W, ring + [mitte]); wr = [x for x in w[:-1] if x is not None]; tf = max(float(f.get("tiefe") or 0.12), DRUCK_MIN)
+            if len(wr) < 3 or float(np.max(wr) - np.min(wr)) > 0.5: aus.append(f"{fid} u {f['u0']:.2f}: Oberflaeche um das Loch nicht eben/nicht getroffen ({len(wr)} Treffer)"); continue
+            ws = float(np.median(wr)); wl = w[-1]
+            zu = wl is not None and wl > ws - 0.5 * tf
+            if ws <= min_vor and not zu: continue                              # schon richtig gebaut (fenster_aus_json auf der Ebene)
+            h_ = max(float(G.get("hoehe") or 0.0), DRUCK_MIN) if G.get("umriss") else 0.0
+            if h_ > 0:
+                s_ = -1.0 if W.spiegel else 1.0; P = [[s_ * u, z] for u, z in um]
+                if sum(P[i][0] * P[(i + 1) % len(P)][1] - P[(i + 1) % len(P)][0] * P[i][1] for i in range(len(P))) < 0: P = P[::-1]
+                koerper = koerper + M.extrude(CrossSection([P]), h_ + einbinden).translate((0, 0, ws - einbinden)).transform(W.matrix(0))
+            b_ = f.get("bogen") or dict(form="gerade", kaempfer=f["z1"], scheitel=f["z1"])
+            if ws > min_vor:                                                  # den frueheren Schnitt in der Ebene (jetzt eingeschlossener Hohlraum hinter dem Anbau) erst fuellen
+                koerper = koerper + _umriss_prisma(W, dict(f, bogen=b_), f["z0"], -(tf + 0.05), ws)
+            koerper = koerper - _umriss_prisma(W, dict(f, bogen=b_), f["z0"], ws - tf, ws + h_ + 0.03)
+            neu.append(dict(fassade=fid, u0=f["u0"], u1=f["u1"], z0=f["z0"], z1=f["z1"], art=f.get("art", "fenster"), oberflaeche_w=round(ws, 3), war_zu=bool(zu), gewaende_h=round(h_, 3), tiefe=round(tf, 3)))
+    if neu or aus:
+        belege.append(dict(seite="wand", element=f"{len(neu)} Loch/Gewaende auf der echten Oberflaeche nachgezogen (nach allen Anbauten)", quelle="bauteile.loch_gewaende_spaet: Strahltreffer um das Gewaende; Loch/Gewaende aus tools/loch_gewaende.py",
+                           masse=neu, **({"hinweis": "; ".join(aus)} if aus else {})))
     return koerper, belege
 
 

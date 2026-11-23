@@ -282,6 +282,9 @@ def bauteil_zonen(audit):
         if tiefe > 6: return
         if isinstance(x, dict):
             f2 = x.get("id") if isinstance(x.get("id"), str) and re.fullmatch(r"f\d\d", x.get("id", "")) else fid
+            # 23.11.2026 (1122o: neben_details zeigte den Treppenturm als 'oeffnung_bogen_f03' und das Turmstueck vor der Tuer als 'oeffnung_bogen_f04' - beide
+            # Eintraege hatten gebaut=false): verworfene/nicht gebaute Erkennungen und Koerper vor der Wand sind KEIN Bauteil des Modells
+            if x.get("gebaut") is False or x.get("koerper_vor_wand"): return
             k = None
             if all(isinstance(x.get(a), (int, float)) for a in ("u0", "u1", "z0", "z1")): k = (x["u0"], x["u1"], x["z0"], x["z1"])
             elif isinstance(x.get("kasten"), list) and len(x["kasten"]) == 4: k = tuple(x["kasten"])
