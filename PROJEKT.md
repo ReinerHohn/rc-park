@@ -15,6 +15,7 @@
 | 🧱 Dichte Wolke, Wandbild, Relief & Öffnungen | [`Doku/projekt/wolke-wandbild.md`](Doku/projekt/wolke-wandbild.md) | Wolke nur Lage-Veto; 1-cm-Wandbild + Tiefe = Bauplan; Fenster = echte Löcher |
 | 📐 Kanten, Foto-Tore & Messen am Foto | [`Doku/projekt/kanten-messen.md`](Doku/projekt/kanten-messen.md) | Linien nur per Mehrfoto-Sweep; Gewinn = Foto-F1; Maß erst ab 3 Fotos |
 | 🏗️ Bauteile, Generator, Kreis & Abnahme | [`Doku/projekt/bauteile-kreis.md`](Doku/projekt/bauteile-kreis.md) | Maße sind Daten, Bauteile generisch, rote Prüfung vor Generator, Sollwerte nie lockern |
+| 🚂 Bahn & Anlage: Unterbau, Gleis, Steuerung, Malen | [`Doku/projekt/bahn-anlage.md`](Doku/projekt/bahn-anlage.md) | Gebäude = Alleinstellung, Bahn/Unterbau/DCC = Kaufteile + Handwerk; Wartung ist das Risiko |
 | ⚙️ Betrieb: GPU, Jobs, Platten, Git | [`Doku/projekt/betrieb.md`](Doku/projekt/betrieb.md) | systemd + VRAM/RAM-Buchung, GPU immer, Datenplatte, Push je Block |
 
 Jede Ast-Datei: **Gilt** (Vorgaben/Entscheidungen) · **Versucht** (Ansatz → Ergebnis → Lehre) · **Offen**.
