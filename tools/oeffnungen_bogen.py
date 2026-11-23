@@ -29,6 +29,28 @@ import sys, os, json, argparse, numpy as np, cv2
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
+WAND_ANTEIL_MIN = 0.6     # 23.11.2026: eine Oeffnungszone muss zu >= 60 % IN der Wandflaeche (Fassadenpolygon polys_uz) liegen
+
+
+def wand_anteil(F, kasten, zelle=0.05):
+    """Anteil des Kastens [u0, u1, z0, z1], der im Fassadenpolygon (F['polys_uz'], LoD2-Wandflaeche) liegt; None = kein Polygon (kein Urteil).
+    Anlass 1122o: der Erkenner meldete den Treppenturm VOR der Ostwand f03 (Zylinder + Kegeldach = 'Bogen'-Silhouette, 3,6 x 16 m) als Bogen - die Ostwand hat
+    an der Stelle gar keine Flaeche (LoD2-Polygon dort ausgespart, der Turm ist ein eigener Koerper f04-f07). Ein Koerper vor der Wand ist keine Oeffnung in ihr."""
+    P = F.get("polys_uz")
+    if isinstance(P, str):
+        try: P = json.loads(P)
+        except Exception: return None
+    if not P: return None
+    u0, u1, z0, z1 = (float(x) for x in kasten[:4])
+    if u1 - u0 <= 0 or z1 - z0 <= 0: return None
+    nu, nz = max(2, int(np.ceil((u1 - u0) / zelle))), max(2, int(np.ceil((z1 - z0) / zelle)))
+    m = np.zeros((nz, nu), np.uint8)
+    for poly in P:
+        q = np.array([[(u - u0) / zelle, (z1 - z) / zelle] for u, z in poly], np.float64)
+        cv2.fillPoly(m, [np.round(q * 8).astype(np.int32)], 1, shift=3)
+    return float(m.mean())
+
+
 def sweep_laden(ordner, objekt, nr, fid, rois, py=sys.executable, log=print):
     """EBENEN-SWEEP der Fassade (tools/fassade_tiefe.py, GPU): je Wandzelle die Tiefe, in der die Fotos uebereinstimmen. Ergebnis in <ordner>/oeffnungen_tiefe/ (eigener Unterordner,
     die Dateien der Stufe 'seiten' bleiben unberuehrt). Liegt die Wandtiefe am Rand des Suchbereichs (LoD2-Wand steht falsch), einmal mit verschobenem Bereich wiederholen.
@@ -176,6 +198,9 @@ def main():
         if K: wand, offen, nichtwand = sweep_masken(T, im, r); cv2.imwrite(os.path.join(a.ortho, f"oeffnungen_{fid}_maske.png"), np.where(offen, 255, np.where(wand, 90, 0)).astype(np.uint8))
         for k in K:
             ka = dict(u0=k["u0"], u1=k["u1"], z0=k["z0"], z1=k["z1"]); o = dict(art="bogen", kasten=[round(k[q], 2) for q in ("u0", "u1", "z0", "z1")], stimmen=k["stimmen"], gesehen=k["gesehen"], unten=round(zb, 3), wand_tiefe_m=round(T["w_wand"], 2), gebaut=False)
+            wa = wand_anteil(F, o["kasten"])
+            if wa is not None and wa < WAND_ANTEIL_MIN:
+                o.update(koerper_vor_wand=True, wand_anteil=round(wa, 2), grund=f"Zone liegt nur zu {wa * 100:.0f} % in der Wandflaeche (Fassadenpolygon) - Koerper vor der Wand (Rundbau/Turm/Vorbau), keine Oeffnung"); aus.append(o); continue
             c = T["zelle"]; H, W = offen.shape; ys, xs = np.mgrid[0:H, 0:W]; U = T["u0"] + (xs + 0.5) * c; Z = T["z1"] - (ys + 0.5) * c; feld = (U >= ka["u0"] - 0.8) & (U <= ka["u1"] + 0.8) & (Z <= ka["z1"] + 0.8)
             kern = (U >= ka["u0"]) & (U <= ka["u1"]) & (Z <= ka["z1"]) & (Z > zb + 0.5)
             if (kern & offen).sum() * c * c < 0.3 * a.min_b * a.min_h: o["grund"] = f"kein Durchblick im Kasten (offen {(kern & offen).sum() * c * c:.1f} m2) - geschlossenes Bogenfeld/Tuer/Blendbogen oder glatte Flaeche ohne Bildstruktur"; aus.append(o); continue

@@ -20,6 +20,8 @@ Grenzen: Tiefe braucht >= 2 Fotos mit verschiedenen Blickwinkeln auf die Zone (s
 von der Wand abhebt (Glas, Torblatt); Profile der Gewaende (Stufen, Kehlen) macht dieses Werkzeug nicht (tools/form_aus_wandbild.py).
 """
 import os, sys, json, glob, argparse, numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from oeffnungen_bogen import wand_anteil, WAND_ANTEIL_MIN
 
 
 def zonen(elemente, luecke=0.35, rand_z=0.3):
@@ -203,7 +205,11 @@ def main():
         oe = []; FEIN[fid] = fein
         for kl, u0, u1, z0, z1 in zonen(EL[fid]["elemente"]):
             e = dict(klasse=kl, zone=[round(u0, 3), round(u1, 3), round(z0, 3), round(z1, 3)])
-            npz_ = os.path.join(a.tiefe_ordner, f"tiefe_{fid}.npz") if a.tiefe_ordner else ""
+            wa = wand_anteil(F, e["zone"])       # 23.11.2026 (1122o: Treppenturm vor f03 als 'bogen'): Zone ausserhalb der Wandflaeche = Koerper davor, keine Oeffnung
+            if wa is not None and wa < WAND_ANTEIL_MIN:
+                e.update(tiefe=None, flach=True, koerper_vor_wand=True, wand_anteil=round(wa, 2), hinweis=f"Zone nur zu {wa * 100:.0f} % in der Wandflaeche - Koerper vor der Wand (Rundbau/Turm/Vorbau), keine Oeffnung, nicht gebaut")
+                oe.append(e); print(f"{fid} {kl:7s} u {u0:6.2f}..{u1:6.2f} z {z0:4.2f}..{z1:4.2f}: KOERPER VOR DER WAND ({wa * 100:.0f} % in der Wandflaeche)"); continue
+            npz_ =os.path.join(a.tiefe_ordner, f"tiefe_{fid}.npz") if a.tiefe_ordner else ""
             if kl == "bogen" or (kl == "tuer" and npz_ and os.path.exists(npz_)):      # 18.11.2026: Bogen (Laube) - Tiefe aus der Sweep-Karte, Gestalt aus Bildkanten
                 tk = tiefe_karte(npz_, (u0, u1, z0, z1)) if npz_ and os.path.exists(npz_) else None
                 if tk and tk[0] >= a.bogen_tief and tk[1] >= 0.5:
