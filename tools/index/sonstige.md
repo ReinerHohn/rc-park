@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (120)
+# Werkzeuge: sonstige (121)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -28,6 +28,7 @@
 - `tools/haufen_klaeren.py` [-] haufen_klaeren.py - Strassenhaufen des Grundriss-Tors (tools/wolke_grundriss_pruefen.py, Test A) AUTOMATISCH klaeren: Doppelwand oder Umgebung?
 - `tools/haut_find.py` [-] haut_find.py — Haut-Teil(e) auf der Bauplan-Karte FINDEN (Nummer -> wo hin).
 - `tools/hintergrundhaus.py` [seg] hintergrundhaus.py - HINTERGRUNDHAUS (Reifegrad 1) in Minuten: LoD2-Koerper + LoD2-Dach (DOM1 als Gegenprobe), Fenster aus vorhandenen Fotos, sonst Fensterraster als ANNAHME, duenn
+- `tools/http_holen.py` [-] http_holen.py - eine URL laden, bei HTTP 429/503 (Drosselung) mit Wartezeit und Backoff wiederholen (23.11.2026). Anlass Lauf schwabentor-1122p: commons_harvest lud 60 Bilder in 70
 - `tools/hybrid_abgleich.py` [gen] hybrid_abgleich.py - Dachflaechen je QUELLE getrennt fitten (Strassenwolke, Drohnenwolke, Generator) und Abweichungen melden (Register BR/BS).
 - `tools/insert_plate.py` [-] insert_plate.py — EBENE EINHÄNG-PLATTE für eine man-made Fläche (Einschnitt/Trog/ Portal-Deck/Stützwand), die das grobe Egg-Crate systematisch übertreppt.
 - `tools/insert_plates_auto.py` [seg] insert_plates_auto.py — schneidet die Flächen, die das grobe Egg-Crate vertreppt, als flache Einhäng-Platten auf die ECHTE Kontur (keine Rechtecke), in zwei Kategorien:

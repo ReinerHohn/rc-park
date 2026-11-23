@@ -1,4 +1,4 @@
-# Werkzeuge: test (162)
+# Werkzeuge: test (164)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -55,6 +55,7 @@
 - `tools/test_handy_masken_v2.py` [-] Test handy_masken_v2 (ohne GPU): Statue haengt an Fassade -> frei; Person am Boden -> maskiert; Box ohne Boden -> frei; Fleck im Pflaster -> verworfen; Fahrzeug immer.
 - `tools/test_haufen_klaeren.py` [-] test_haufen_klaeren.py - synthetisch: Grundriss-Tor klaert Strassenhaufen automatisch (tools/haufen_klaeren.py, 22.11.2026).
 - `tools/test_kamera_ausgleich.py` [seg] test_kamera_ausgleich.py - BS3d synthetischer Beweis: Kameras absichtlich verschieben (Kamerazentrum 3/5/10 cm, Rotation 0,3/0,5/1 Grad), pruefen ob der Ausgleich (kamera_ausgleich
+- `tools/test_kamera_klumpen.py` [-] Fester Test (Sekunden, CPU) fuer KAMERA-KLUMPEN (tools/lage_proben.kamera_nah / kameras_einmal, tools/sfm_lod2_ausrichten.py AUSR_KLUMPEN). Befund Kettenlauf schwabentor-1122p (23.
 - `tools/test_kamera_lod2.py` [seg] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
@@ -114,6 +115,7 @@
 - `tools/test_seiten_lage_beleg.py` [-] Fester Test (synthetisch, < 5 s) fuer tools/seiten_lage_beleg.py - REGEL "Teil nur bei belegter Lage einsetzen" (22.11.2026, schwabentor-1122 Teil 1). 1 lage_belegt Klappung / Quer
 - `tools/test_seiten_lod2_je_teil.py` [-] Fester Test fuer tools/seiten_lod2_je_teil.py, das Bild-x-Lot (seiten_gps_vereinen.lot_aus_bild_achsen) und die Kantenzusammenfassung des Wanddicke-Tors - ohne echte Daten. 1 Lot: 
 - `tools/test_seiten_modelle.py` [col] Fester Test (ohne GPU, Sekunden) fuer tools/sfm_seiten_modelle.py (21.11.2026: je Seite ein Kameramodell, je Seite eine dichte Wolke, vereinen). Synthetischer Turm: 14 Nordbilder (
+- `tools/test_seiten_nachholen_quellen.py` [seg] test_seiten_nachholen_quellen.py - Befunde Kettenlauf schwabentor-1122p (23.11.2026), Sekunden, keine echten Daten, kein Netz: (1) seiten_luecken: Kandidaten nur aus vorhandenen Da
 - `tools/test_seiten_nachholen_speicher.py` [col] test_seiten_nachholen_speicher.py - Nachbau des Fehlschlags der Kettenstufe seiten_luecken (23.11.2026, Kette schwabentor-null-1122n/o): SiftGPU 'out of memory' (fremde GPU-Jobs) -
 - `tools/test_seiten_querspur_binden.py` [-] Fester Test (synthetisch, Sekunden, ohne GPU/pycolmap) fuer tools/seiten_querspur_binden.py (22.11.2026, Nulllauf schwabentor-1122f: per GPS vereinte Teile 1-3 m versetzt). Synthet
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
