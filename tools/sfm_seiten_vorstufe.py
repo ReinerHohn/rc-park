@@ -122,13 +122,19 @@ def seiten(db, img, w, roh, lauf=subprocess.run, modus="1"):
     # 22.11.2026 FERNSICHT: mit objekt.json (RCPARK_SEITEN_OBJEKT, setzt pipeline_objekt) behalten Fernfoto-Gruppen (GPS >= 100 m) unter --streng ihre staerkste unklare
     # Verbindung (seiten_erkennen.fernsicht_behalten) - schwabentor-1122 verlor sonst die 10 Fernfotos, die in 1120 Drehung/Massstab trugen. Im Stand, damit neu gerechnet wird.
     oj = os.environ.get("RCPARK_SEITEN_OBJEKT", ""); fs = ["--fernsicht", oj] if oj and os.path.isfile(oj) else []
-    sj = os.path.join(w, "seiten.json"); dbs = os.path.join(w, "db_seiten.db"); sd = sj + ".stand.json"; st = _stand(db) + [len(masken_index(roh))] + (["fernsicht1"] if fs else []); alle = bilder(img)
+    # 23.11.2026 BRUECKENPAARE IN DER KETTE (Kette 1122q: Suedseite Teil 1 nicht gebaut): die Stufe Eck-Kopplung (sfm_seiten_modelle.eck_stufe) liest die Brueckenpaare
+    # aus seiten.json 'durchblick' - die Kette rief seiten_erkennen aber nie mit --durchblick auf -> 'keine bestaetigten Brueckenpaare' -> GPS-Weg -> Teil weggelassen.
+    # Standard jetzt --durchblick-getrennt (Paare melden + behalten, Teile NICHT darueber vereinen); RCPARK_SEITEN_DURCHBLICK=0 aus, =1 vereint die Teile (alter Versuch, Knick).
+    # Fernsicht-Regel v2 (Gruppen unter --min-bilder, seiten_erkennen.fernsicht_behalten) gehoert mit in den Stand, damit alte seiten.json neu gerechnet werden.
+    dm = os.environ.get("RCPARK_SEITEN_DURCHBLICK", "getrennt"); db_arg = [] if dm == "0" else (["--durchblick"] if dm == "1" else ["--durchblick-getrennt"])
+    sj = os.path.join(w, "seiten.json"); dbs = os.path.join(w, "db_seiten.db"); sd = sj + ".stand.json"
+    st = _stand(db) + [len(masken_index(roh))] + (["fernsicht2"] if fs else []) + ([db_arg[0].lstrip("-")] if db_arg else []); alle = bilder(img)
     if _aktuell(sd, st, sj, dbs): print("SEITEN 3/3 Seitenerkennung: wiederverwendet", sj, flush=True)
     else:
         # Objektfotos heissen im Sammelordner 'eigen__...' (tools/fotos_sammeln.py); Teile ohne Objektfoto gelten als FREMD und verlieren alle Paare. Ein Ordner ohne solche Namen
         # (iphone_sfm.py direkt auf einem Fotoordner) haette danach KEIN Paar mehr -> dann zaehlt jedes Bild als Objektfoto.
         ref = [] if any(f.startswith("eigen__") for f in alle) else ["--referenz", ""]
-        r = lauf([PY_SEG, "-W", "ignore", "-I", os.path.join(T, "seiten_erkennen.py"), db, img, "--aus", sj, "--db-aus", dbs, "--streng", "--masken", roh] + ref + fs, check=False)
+        r = lauf([PY_SEG, "-W", "ignore", "-I", os.path.join(T, "seiten_erkennen.py"), db, img, "--aus", sj, "--db-aus", dbs, "--streng", "--masken", roh] + db_arg + ref + fs, check=False)
         if r.returncode not in (0, 3) or not os.path.isfile(sj) or not os.path.isfile(dbs):
             raise SystemExit(f"SEITEN-VORSTUFE: Seitenerkennung gescheitert (rc {r.returncode}, tools/seiten_erkennen.py) - Mapper NICHT gestartet (ohne sie klebt der Mapper aehnliche Seiten aufeinander). Bewusst ohne Vorstufe: RCPARK_SEITEN=0")
         json.dump(st, open(sd, "w"))
