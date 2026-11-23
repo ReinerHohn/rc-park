@@ -42,7 +42,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 ## Logbuecher
 - `modelle/LOGBUCH_GIEBEL_OST_KREIS1_2026-11-10.md` (1 kB) Logbuch Kreis1 Fehlteil fk_+16_+0_+26 (Ost-Staffelgiebel), 2026-11-10
 - `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` (74 kB) Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte -> Inhalt `modelle/inhalt/LOGBUCH_KETTENTEST_2026-11-19.md` (37 Abschnitte)
-- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (170 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (49 Abschnitte)
+- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (174 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (49 Abschnitte)
 
 ## Sonstiges
 - `modelle/ANALYSE_SACKGASSEN_2026-11-21.md` (3 kB) Analyse: Warum 19.-21.11.2026 in Sackgassen (Auftrag Nutzer 21.11. 09:57)

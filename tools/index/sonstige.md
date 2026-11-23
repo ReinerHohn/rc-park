@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (117)
+# Werkzeuge: sonstige (120)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -7,6 +7,7 @@
 - `tools/betrachter_note.py` [-] betrachter_note.py - Betrachter-Note (SPEC_BETRACHTER_NOTE, Nutzer 11.11.): Prozent der fuer das Auge SICHTBAREN Merkmale, die stimmen. Zwei Stufen: Besucher (Sichtschwelle 0,25 m 
 - `tools/brennweite_schaerfe.py` [col] brennweite_schaerfe.py <sparse-modell> [--aus bericht.json] [--liste datei.txt] [--sperrliste datei.txt --vereinen liste.txt ...] [--weich 4] [--unbestimmt 10]
 - `tools/brennweite_waehlen.py` [-] brennweite_waehlen.py - Pixel-Brennweite eines Einzelfotos aus EXIF herleiten und durch das Foto-GPS absichern (18.11.2026). Anlass Martinstor K-061: EXIF 9,855 mm, Bild 3601x2757 
+- `tools/bruecke_hebel.py` [seg] bruecke_hebel.py - SOFTWARE-HEBEL FUER DUENNE BRUECKEN zwischen starren Teilmodellen (22.11.2026, Nutzer: "vollautomatisiert so robust, dass sie auch mit duennen Bruecken umgehen k
 - `tools/bruecke_nachmatchen.py` [-] bruecke_nachmatchen.py - eine COLMAP-Datenbank NUR fuer eine kleine Bildmenge (Bruecken-Region, 20-200 Bilder) mit ALIKED+LightGlue verstaerken (22.11.2026).
 - `tools/buendel_stuetz.py` [seg] buendel_stuetz.py - GENERISCH: Buendelausgleich eines COLMAP-Netzes MIT STUETZTERMEN (LoD2-Gebaeudekanten im Foto, Foto-GPS, robuste Verluste), GPU (torch).
 - `tools/code_stand.py` [-] code_stand.py <werkzeug.py> [...] - CODE-STAND fuer Zwischenstaende: Fingerabdruck der beteiligten Werkzeuge (Inhalt, nicht Zeit) samt ihrer Hilfsmodule aus tools/.
@@ -38,6 +39,7 @@
 - `tools/lg_match.py` [seg] lg_match.py - Merkmale + Zuordnungen mit ALIKED + LightGlue (gelernter Matcher) fuer grosse Blickwinkel (Luftbild gegen Strasse).
 - `tools/light_prep.py` [gen] light_prep.py — schneidet automatisch LICHT-GEOMETRIE in ein Druckmodell: - LED-Taschen (Durchmesser/Tiefe) MIT Ausrichtung (Lichtkegel zeigt in dir) - Kabelkanäle von der Tasche z
 - `tools/lizenz_register.py` [-] lizenz_register.py - JEDES Bild nach Lizenzklasse ordnen, damit spaeter (Veroeffentlichung/Verkauf) sichtbar ist, was erlaubt ist und was nicht. Zentrales Modul der Pipeline.
+- `tools/loch_gewaende.py` [seg] loch_gewaende.py - LOCH UND GEWAENDE eines Fensters/einer Tuer aus dem feinen Wandbild (23.11.2026, Kettenstufe 'bauplan' nach nischen_fenster.py).
 - `tools/lsd_edges.py` [seg] lsd_edges.py — GERADE menschgemachte Kanten im DEM robust finden (Recherche-Ergebnis): Line Segment Detector (LSD, cv2) auf MULTI-AZIMUT-STREIFLICHT-Hillshade (0-10° Höhe hebt scha
 - `tools/luecken_seite_bauen.py` [seg] luecken_seite_bauen.py - Handy-Seite fuer den Vor-Ort-Termin aus tools/foto_luecken.py (Nutzer 10.11.: "vor Ort sehen, wo ich noch fotografieren muss").
 - `tools/malwerkzeug.py` [gen] malwerkzeug.py [--aus ORDNER] [teil ...] - druckbare Malhilfen fuer das Bemalen der Modellteile (17.11.2026, Nutzer: "Werkzeug ausdrucken, das Geiles zum Anmalen"). Teile (ohne Ang
@@ -82,6 +84,7 @@
 - `tools/sp_led_dome_bores.py` [gen] sp_led_dome_bores.py — Petersdom-KUPPEL mit ECHTEN Ø3,5-DURCHBOHRUNGEN statt flacher Mini-Schlitze. Jedes Loch bricht komplett in den Hohlraum durch → im Druck klar sichtbares rund
 - `tools/sp_led_facade.py` [gen] sp_led_facade.py — rüstet die Petersdom-FASSADE (sp-facade.stl) für 0402-LEDs auf.
 - `tools/sparse_modell_schreiben.py` [col] sparse_modell_schreiben.py - COLMAP-Modell ins Modellsystem (Meter) bringen, aus einer geschriebenen Ausrichtung (messprotokoll/SFM-AUSRICHTUNG-<name>.json).
+- `tools/speicher_muster.py` [-] speicher_muster.py - EIN Muster fuer "Stufe scheiterte am Speicher (RAM oder GPU-VRAM)" fuer Kette (gesamtkette.lauf) und Stufen mit Fehlschlag-Marke (seiten_luecken).
 - `tools/spitze_aus_umriss.py` [seg] spitze_aus_umriss.py - TURMSPITZE / LATERNE / DACHREITER aus den FOTO-SILHOUETTEN gegen den Himmel (21.11.2026).
 - `tools/spitze_hoehe.py` [seg] spitze_hoehe.py - Hoehe von Helm-/Nadelspitzen AUTOMATISCH aus der Himmelssilhouette aller kalibrierten Fotos (2026-11-05).
 - `tools/stabil_alle.py` [seg] Stabilitaetskarten fuer alle kalibrierten Fotos (GPU, sequentiell) -> OUTDIR/<foto>.png (uint8 = Laufanteil*255, Breite 1500). Aufruf: stabil_alle.py KAM.json BILDER OUTDIR

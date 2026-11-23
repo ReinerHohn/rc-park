@@ -1,4 +1,4 @@
-# Werkzeuge: test (157)
+# Werkzeuge: test (161)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -7,12 +7,14 @@
 - `tools/test_bogen_kontur.py` [seg] test_bogen_kontur.py - synthetischer Beweis fuer tools/bogen_kontur.py (Exit 0 = ALLE BESTANDEN). Testfassade: Rotwand, Bogenoeffnung mit BEKANNTER Kontur (Goldlinie 3 cm, innen du
 - `tools/test_bogenform.py` [gen] test_bogenform.py — Regression + Methodik-Schutz: die GEBAUTE Bogenform muss der FOTO-gemessenen Form entsprechen. Soll den Fehler "Bögen zu flach" dauerhaft verhindern.
 - `tools/test_brennweite_waehlen.py` [-] Test brennweite_waehlen: Martinstor-061-Fall (Canon A650, 3601x2757 aus 4000x3000, EXIF 9,855 mm, 541,17 Pixel/mm), Seitenverhaeltnis-Regel, GPS-Abstand. Aufruf: python3 tools/test
+- `tools/test_bruecke_hebel.py` [col] Test bruecke_hebel (22.11.2026): Lot-Aehnlichkeit (5 Freiheitsgrade), Lot-Kante, Epipolarband (richtige Naeherung bestaetigt, 180 Grad / 3 m falsch -> verworfen), direkte Spuren, g
 - `tools/test_bruecke_nachmatchen.py` [-] test_bruecke_nachmatchen.py - DB-Anhaenge-Logik von tools/bruecke_nachmatchen.py / zusatzfotos_lightglue.lg_anhaengen ohne GPU/torch/pycolmap (22.11.2026). Winzige synthetische COL
 - `tools/test_buendel_synthetisch.py` [-] test_buendel_synthetisch.py - BEWEIS mit bekannter Wahrheit: alte gegen neue Kamera-/Buendelkette (Kaufhaus 2026-11-04, Nutzerauftrag "beweise, dass es bei einem neuen Objekt besse
 - `tools/test_code_stand.py` [-] Fester Test (Sekunden, nur Standardbibliothek) fuer tools/code_stand.py (22.11.2026, Nulllauf kette-schwabentor-null-1122c: Zwischenstaende ohne Code-Stand -> Fix lief nie). 1 Hilf
 - `tools/test_colmap_rig_abgleich.py` [seg] test_colmap_rig_abgleich.py - synthetischer Nachbau des Absturzes der Kettenstufe seiten_luecken (22.11.2026, schwabentor-1120, Laeufe 1122c/1122d): "ValueError: [reconstruction.cc
 - `tools/test_dach_dom1_veto.py` [-] test_dach_dom1_veto.py - DOM1-Veto des Wolken-Dachprofils (tools/dach_profil_wolke.dom1_veto, 21.11.2026). Anlass Schwabentor-1120: Hoehen-Tor meldete Dach +1,62 m ueber DOM1 (k 0,
 - `tools/test_dach_profil_duenn.py` [gen] test_dach_profil_duenn.py - Wolken-Dachprofil bei leerer/duenner Dachseite (tools/dach_profil_wolke.py, 22.11.2026). Anlass Lauf schwabentor-1122n (20:16, Stufe bauplan_dachprofil)
+- `tools/test_dach_sichtschatten.py` [seg] test_dach_sichtschatten.py - Fotodach (tools/dach_aus_fotos.py) bei Fotos nur von einer/zwei Seiten (Befund Kette 1122o, 23.11.2026).
 - `tools/test_dach_veto_traufe.py` [-] test_dach_veto_traufe.py - DOM1-Veto darf den DACHUEBERSTAND nicht abschneiden (tools/dach_profil_wolke.dom1_veto + dom1_kachel.dom1_bilinear(klippe), 21.11.2026). Anlass Schwabent
 - `tools/test_dachflaeche_aus_umriss.py` [-] Test dachflaeche_aus_umriss.py + bauteile.flaeche_aus_foto (synthetisch, Sekunden): Profil-Familie aus gerenderten Silhouetten zurueckgewinnen, Formfamilie nur aus >= 3 einigen Fot
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
@@ -75,6 +77,7 @@
 - `tools/test_laibung_aus_fotos.py` [seg] test_laibung_aus_fotos.py - fester synthetischer Test fuer tools/laibung_aus_fotos.py (21.11.2026 spaet), < 10 s, nur CPU.
 - `tools/test_laterne_aus_fotos.py` [gen] test_laterne_aus_fotos.py - feste synthetische Tests fuer tools/laterne_aus_fotos.py und bauteile.laterne (22.11.2026). Ohne Dateien, Sekunden.
 - `tools/test_leistung_messen.py` [-] test_leistung_messen.py - Kurztest fuer tools/leistung_messen.py (22.11.2026): synthetische numpy-Schleife (~1 s, ~120 MB, 1-2 Threads), Sweep mit Platzhalter, Auswertung 'kleinste
+- `tools/test_loch_gewaende.py` [seg] test_loch_gewaende.py - fester synthetischer Test fuer den Befund 'Oeffnungen und Fenster' aus Kettenlauf 1122o (23.11.2026), < 20 s, nur CPU.
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_lot_wandneigung.py` [-] Test Lot-Runde 22.11.2026: lot_wandneigung (Kippung vs. Anzug, Urteile), kipp_rotvec (echte Kippung im Kasten), lage_bestanden mit Lot, Pruefstand-Vergleich mit Mondkamera.
 - `tools/test_messflaeche_kreis.py` [seg] test_messflaeche_kreis.py - WAECHTER gegen zirkulaere Messung (CPU, wenige Sekunden, ohne Daten; 22.11.2026, Kreisfall Einzelorthos schwabentor-1120).
@@ -110,6 +113,7 @@
 - `tools/test_seiten_lage_beleg.py` [-] Fester Test (synthetisch, < 5 s) fuer tools/seiten_lage_beleg.py - REGEL "Teil nur bei belegter Lage einsetzen" (22.11.2026, schwabentor-1122 Teil 1). 1 lage_belegt Klappung / Quer
 - `tools/test_seiten_lod2_je_teil.py` [-] Fester Test fuer tools/seiten_lod2_je_teil.py, das Bild-x-Lot (seiten_gps_vereinen.lot_aus_bild_achsen) und die Kantenzusammenfassung des Wanddicke-Tors - ohne echte Daten. 1 Lot: 
 - `tools/test_seiten_modelle.py` [col] Fester Test (ohne GPU, Sekunden) fuer tools/sfm_seiten_modelle.py (21.11.2026: je Seite ein Kameramodell, je Seite eine dichte Wolke, vereinen). Synthetischer Turm: 14 Nordbilder (
+- `tools/test_seiten_nachholen_speicher.py` [col] test_seiten_nachholen_speicher.py - Nachbau des Fehlschlags der Kettenstufe seiten_luecken (23.11.2026, Kette schwabentor-null-1122n/o): SiftGPU 'out of memory' (fremde GPU-Jobs) -
 - `tools/test_seiten_querspur_binden.py` [-] Fester Test (synthetisch, Sekunden, ohne GPU/pycolmap) fuer tools/seiten_querspur_binden.py (22.11.2026, Nulllauf schwabentor-1122f: per GPS vereinte Teile 1-3 m versetzt). Synthet
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
 - `tools/test_seiten_vereinen_robust.py` [-] Fester Test: BELASTUNGSPROBE fuer seiten_vereinen.vereinen OHNE echte Daten (Vorbild tools/versuche/vereinen_robust_1121.py, dort an den Martinstor-Wolken: 8 verfaelschte Laeufe en
