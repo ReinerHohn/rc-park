@@ -294,6 +294,27 @@ def uhren_frei(od, Z, parallel=0.95, abstand=1.0):
     return r
 
 
+def steinzone_oben(rel, putz, px, anteil=0.3, sockel=1.5, max_z=12.0):
+    """Oberkante (m ueber z0) der Steinzone fuer die lokale Feinrechnung: Zeilen mit >= anteil echtem Nicht-Putz-Relief, zusammenhaengender Block von unten, hoechstens max_z.
+    Unterste 'sockel' m zaehlen immer mit (Strassenrand, Sockel). 23.11.2026 (Kette 1122t, Schwabentor West w00): unten fehlte das Netz 1,55 m (Leerstreifen,
+    darueber 2-4 Zeilen Uebergang mit 20-30 % Relief), die alte Schleife brach an der ersten Zeile nach 1,5 m ab -> 1,5 m < 2 m -> KEINE Feinrechnung,
+    obwohl die Quaderzone 2-8,5 m zu 98 % Relief hat. Jetzt: es zaehlt der hoechste Steinblock, der im Sockel ODER hoechstens 'sockel' m darueber beginnt
+    (Leerstreifen = fehlendes Netz, keine Putzgrenze); Putzzeilen (Putzmaske) beenden den Block wie bisher. Steine erst weiter oben -> wie bisher nur der Sockel."""
+    rel = np.asarray(rel); H_ = rel.shape[0]
+    pz = np.zeros_like(rel, bool) if putz is None else np.asarray(putz, bool)
+    if pz.shape[0] < H_: pz = np.vstack([pz, np.zeros((H_ - pz.shape[0], pz.shape[1]), bool)])
+    stein = (((rel != 0) & ~pz[:H_]).mean(1) >= anteil)[::-1]                  # Index 0 = unterste Zeile
+    ns = int(round(sockel / px)); stein[:min(ns, H_)] = True                   # Sockel zaehlt immer mit (wie bisher)
+    oben = min(ns, H_); i = 0                                                    # hoechstes Ende eines Steinblocks, der spaetestens 'sockel' m ueber dem Sockel beginnt
+    while i < min(2 * ns, H_):                                                   # (einzelne Zufallszeilen im Uebergang sind kurze Bloecke - der hoechste zaehlt)
+        if stein[i]:
+            j = i
+            while j < H_ and stein[j]: j += 1
+            oben = max(oben, j); i = j
+        else: i += 1
+    return round(min(oben * px, max_z), 2)
+
+
 def wandende_ist_ecke(waende, w, ende, abstand=0.8, parallel=0.95):
     """Gebaeudeecke = Wandende ('a'/'b'), an dem KEINE gleichgerichtete Nachbarwand weiterlaeuft (Ende an Anfang innerhalb 'abstand' m, |cos| >= parallel).
     Wandabschnitte derselben Flucht (eine Fassade in mehrere LoD2-Stuecke zerlegt) sind so keine Ecke (21.11.2026, Eckquader-Erkennung)."""
@@ -617,10 +638,8 @@ def main():
         if a.fein and not leer and FEIN_AUS[0]:                           # 21.11.2026: Guard von tiefe_lokal (Buendel/Bilder unpassend) gilt fuer alle Waende - nicht je Wand 10 min neu versuchen
             w["fein_aus"] = FEIN_AUS[0]
         if a.fein and not leer and not FEIN_AUS[0]:                       # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
-            Zv = np.load(r2); rel_ = Zv["rel"]; H_ = rel_.shape[0]; pz = Zv["putz"] if "putz" in Zv.files else np.zeros_like(rel_, bool); pz = np.vstack([pz, np.zeros((H_ - pz.shape[0], pz.shape[1]), bool)]) if pz.shape[0] < H_ else pz
-            stein = ((rel_ != 0) & ~pz).mean(1) >= 0.3; k_ = H_
-            while k_ > 0 and (stein[k_ - 1] or (H_ - k_) * a.px < 1.5): k_ -= 1
-            z1f = round(min((H_ - k_) * a.px, 12.0), 2)
+            Zv = np.load(r2); z1f = steinzone_oben(Zv["rel"], Zv["putz"] if "putz" in Zv.files else None, a.px)
+            w["steinzone_z1"] = z1f
             if z1f >= 2.0:
                 feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = _gpu_run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
                                                                                                            "--aussen", *map(str, w["aussen"]), "--feld", *feld, "--max_size", a.fein_max_size] + (["--massstab", *a.massstab] if a.massstab else []), capture_output=True, text=True)

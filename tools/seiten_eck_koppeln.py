@@ -22,6 +22,8 @@ ABLAUF (beliebig viele Teile, Bruecken jeder Art):
      Bruecke dort duenn -> die Leiter geht weiter; genommen wird die strengste Schwelle mit den MEISTEN registrierten Teil-Bildern (Gleichstand -> strengere), die
      naechst lockerere bleibt Sensitivitaet ('bruecke_duenn' im JSON). Kopplungsgrenzen bleiben unberuehrt.
      TEILKAMERAS (23.11.2026, RCPARK_ECK_TEILKAMERAS, Standard an; Kopf 'TEILKAMERAS' unten): dritte Variante - Mapper mit den Kameras (Intrinsik) der Teilmodelle, fest.
+     REPROJ (23.11.2026, RCPARK_ECK_REPROJ, Standard an; Kopf 'REPROJ' unten): je Eckmodell zusaetzlich 'reproj_<basis>' - Kopplung per
+     pycolmap.align_reconstructions_via_reprojections statt Punkt-Sim3, dieselben Tore; Wahl + Grund in 'varianten' (gewaehlt, wahl_grund).
      WIEDERHOLBARKEIT (Stabilitaetsmass): WIEDERHOLUNGEN Laeufe mit je WEGLASSEN der Nicht-Brueckenbilder weg -> Streuung der Kantenlage im JSON ('wiederholbarkeit').
   3. KOPPLUNG Zwischenmodell -> jeder beruehrte Teil ueber GEMEINSAME 3D-PUNKTE (gleicher Bildpunkt gemeinsamer Bilder), robuste Sim3 (sim3_robust.sim3_meter, Schwelle
      SCHWELLE_REL x Ausdehnung). Stimmig nur bei >= MIN_PUNKTE stimmigen Punkten, Anteil >= MIN_ANTEIL, Rest <= REST_REL x Ausdehnung, Massstab Haelften-Probe <= MASS_REL
@@ -74,6 +76,17 @@ TEILKAMERAS = os.environ.get("RCPARK_ECK_TEILKAMERAS", "1") != "0"
 # bestanden 2 weitere Spiegel. Spiegel bringt die Kameras auf die andere Wandseite. EICHUNG (b2_kam_eich, Selbsttests Martinstor/Kaufhaus + 1122t, 119 Paare):
 # alle 93 angenommenen richtigen Kopplungen 0,33-3,9 % (Median 1,3 %); alle 119 Spiegel 117-265 %. KAM_REL = 0,2: ANNAHME in der Luecke (5x ueber richtig, 6x unter Spiegel).
 KAM_REL = 0.2
+# REPROJ (23.11.2026, Recherche modelle/RECHERCHE_PIPELINE_LEHREN_2026-11-23.md Frage 1; RCPARK_ECK_REPROJ, Standard an): zusaetzlicher KOPPLUNGSWEG je Eckmodell -
+# pycolmap.align_reconstructions_via_reprojections (COLMAP estimators/alignment.cc, BSD-3): LORANSAC ueber die GEMEINSAMEN BILDER (Stichprobe = 3 Projektionszentren,
+# Inlier = Bild, dessen gemeinsame Punkte zu >= REPROJ_MIN_BEOB in BEIDE Richtungen <= REPROJ_PX Pixel reprojizieren; Endmodell = Umeyama der Inlier-Kamerazentren).
+# Braucht dieselben Bild-IDs und Keypoint-Listen in beiden Modellen (gleiche Datenbank; Nachmatchen-DB -> Ausnahme -> Teil nicht gekoppelt, Grund im JSON).
+# Die Sim3 wird NICHT an die Punkte nachgepasst; geprueft wird sie mit DENSELBEN Toren wie der Punkt-Weg (Anteil, Rest, Haelften, Kamera-Probe; kopplung_pruefen(M_fest=)).
+# Variante 'reproj_<basis>' je Basis-Eckmodell (sift/nachmatchen/teilkameras), Wahl nach variante_waehlen (Vorrang bei Gleichstand: Punkt-Weg vor seinem Reproj-Weg).
+# REPROJ_PX/REPROJ_MIN_BEOB = COLMAP-Standardwerte (ANNAHME, nicht geeicht; sie waehlen nur die Inlier-Bilder, die Tore entscheiden).
+REPROJ = os.environ.get("RCPARK_ECK_REPROJ", "1") != "0"
+REPROJ_PX = 8.0
+REPROJ_MIN_BEOB = 0.3
+REPROJ_KEIME = 5         # Keim-Streuung (Angabe, kein Tor): 4 weitere RANSAC-Keime, ~0,3 s je Aufruf
 KREIS_SIGMA = 3.0
 WIEDERHOLUNGEN = int(os.environ.get("RCPARK_ECK_WIEDERHOLUNGEN", "3"))   # Stabilitaetsmass: Laeufe mit weggelassenen Bildern
 NACHMATCHEN = os.environ.get("RCPARK_ECK_NACHMATCHEN", "1") != "0"   # Brueckenbilder mit ALIKED+LightGlue nachmatchen (tools/bruecke_nachmatchen.py, GPU)
@@ -124,22 +137,32 @@ def kamera_probe(M, kameras, tiefe):
     return float(np.median(np.linalg.norm(anwenden(M, CX) - CY, axis=1)) / max(abs(s1) * float(np.median(tiefe)), 1e-12))
 
 
-def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewicht=None, kameras=None):
+def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewicht=None, kameras=None, M_fest=None):
     """Sim3 X -> Y (X im Zwischenmodell, Y im Teilmodell; ausd = Ausdehnung des Zwischenmodells, ausd_ziel = des Teils fuer den Hebel). -> (M, pruefung, ok, grund).
     FEHLERMASS (22.11.2026, Selbsttest Martinstor): mit 'tiefe' (Abstand Punkt - beobachtende Kamera im Zwischenmodell) wird der Rest RELATIV ZUR TIEFE gemessen (= Blickstrahl-
     Winkel, 2 % ~ 1,1 Grad). Relativ zur Ausdehnung bestrafte es ferne, schlecht triangulierte Punkte: ein nachweislich RICHTIGES Zwischenmodell stimmte gegen das Ursprungs-
-    modell nur zu 82 % (Teil A 65 %) - abgelehnt; tiefenbezogen 89-98 % (1122: 93 %). Grenzen (Anteil, Rest, Haelften) unveraendert."""
+    modell nur zu 82 % (Teil A 65 %) - abgelehnt; tiefenbezogen 89-98 % (1122: 93 %). Grenzen (Anteil, Rest, Haelften) unveraendert.
+    M_fest (REPROJ): Sim3 von aussen (z. B. align_reconstructions_via_reprojections) - kein Schaetzen/Nachpassen, nur Inlier + dieselben Tore."""
     if len(X) < MIN_PUNKTE: return None, dict(punkte=len(X)), False, f"nur {len(X)} gemeinsame Punkte (< {MIN_PUNKTE})"
-    f = sim3_meter(X, Y, schwelle_m=float("inf"), min_anteil=0.0)                   # grobe Lage fuer den Massstab der Schwelle im Zielrahmen
-    s_ = float(np.cbrt(abs(np.linalg.det(f["M"][:3, :3])))) if f else 1.0
-    f = sim3_meter(X, Y, schwelle_m=SCHWELLE_REL * ausd * s_, min_anteil=0.0)
-    if f is None: return None, dict(punkte=len(X)), False, "keine Sim3"
-    M = f["M"]; inl = f["inlier"]; mass = "ausdehnung"
     def fit(m):                                                                        # m: Maske/Indizes der verwendeten Punkte
         if gewicht is not None: from sim3_robust import umeyama_w; return umeyama_w(X[m], Y[m], np.asarray(gewicht)[m])
         return (fitter or umeyama)(X[m], Y[m])
-    if (fitter is not None or gewicht is not None) and inl.sum() >= 3: M = matrix(*fit(inl))
-    if tiefe is not None and len(tiefe) == len(X):
+    if M_fest is not None:
+        M = np.asarray(M_fest, float); s1 = float(np.cbrt(np.linalg.det(M[:3, :3])))
+        if not np.isfinite(s1) or s1 <= 0: return None, dict(punkte=len(X)), False, "vorgegebene Sim3 ungueltig"
+        d = np.linalg.norm(anwenden(M, X) - Y, axis=1)
+        if tiefe is not None and len(tiefe) == len(X): r = d / (s1 * np.maximum(tiefe, 1e-12)); mass = "tiefe"
+        else: r = d / max(s1 * ausd, 1e-12); mass = "ausdehnung"
+        inl = r <= SCHWELLE_REL; rest_rel = float(np.median(r[inl])) if inl.any() else 1.0; tiefe_ = None
+    else: tiefe_ = tiefe
+    if M_fest is None:
+        f = sim3_meter(X, Y, schwelle_m=float("inf"), min_anteil=0.0)               # grobe Lage fuer den Massstab der Schwelle im Zielrahmen
+        s_ = float(np.cbrt(abs(np.linalg.det(f["M"][:3, :3])))) if f else 1.0
+        f = sim3_meter(X, Y, schwelle_m=SCHWELLE_REL * ausd * s_, min_anteil=0.0)
+        if f is None: return None, dict(punkte=len(X)), False, "keine Sim3"
+        M = f["M"]; inl = f["inlier"]; mass = "ausdehnung"
+        if (fitter is not None or gewicht is not None) and inl.sum() >= 3: M = matrix(*fit(inl))
+    if tiefe_ is not None and len(tiefe_) == len(X):
         mass = "tiefe"
         for _ in range(5):                                                             # tiefenbezogene Inlier, Umeyama neu, bis stabil
             s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
@@ -147,9 +170,9 @@ def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewich
             M = matrix(*fit(inl))
         s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); r = np.linalg.norm(anwenden(M, X) - Y, axis=1) / (s1 * np.maximum(tiefe, 1e-12)); inl = r <= SCHWELLE_REL
         rest_rel = float(np.median(r[inl])) if inl.any() else 1.0
-    else: rest_rel = f["rest_median_m"] / max(ausd * s_, 1e-12)
+    elif M_fest is None: rest_rel = f["rest_median_m"] / max(ausd * s_, 1e-12)
     n_in = int(inl.sum()); ant = n_in / len(X); i_ = np.flatnonzero(inl)
-    if n_in < 3: return None, dict(punkte=len(X)), False, "keine Sim3"
+    if n_in < 3: return None, dict(punkte=len(X)), False, "keine Sim3" if M_fest is None else f"vorgegebene Sim3 trifft nur {n_in} Punkte (Anteil stimmig {ant:.0%} < {MIN_ANTEIL:.0%})"
     Q = X[i_]; _, _, Vt = np.linalg.svd(Q - Q.mean(0), full_matrices=False); u = (Q - Q.mean(0)) @ Vt[0]
     hs = [fit(i_[w])[0] for w in (u < np.median(u), u >= np.median(u)) if w.sum() >= 3]
     hael = float(abs(hs[0] - hs[1]) / np.mean(hs)) if len(hs) == 2 else 1.0
@@ -281,14 +304,64 @@ def kamerazentren(rE, rZ, ns):
     except Exception: return None
 
 
-def koppeln(m, teile, R, P, ausd_teil):
-    """Zwischenmodell m an alle Teile koppeln. -> (info, {teil: (M_teil_von_E, pruefung)} nur stimmige, alle pruefungen)."""
+def _pose(im):
+    cw = im.cam_from_world() if callable(im.cam_from_world) else im.cam_from_world; return cw.matrix()
+
+
+def reproj_beobachtungen(M, rE, rZ, ns, px=None):
+    """Anteil der gemeinsamen Beobachtungen (gleicher Keypoint, in beiden Modellen trianguliert), die mit M (Eck -> Teil) in BEIDE Richtungen <= px reprojizieren,
+    und Anteil der Bilder mit >= REPROJ_MIN_BEOB solcher Beobachtungen (= Inlier-Bilder des COLMAP-Schaetzers). -> dict"""
+    px = REPROJ_PX if px is None else px; Mi = np.linalg.inv(M); E = {im.name: im for im in rE.images.values()}; Z = {im.name: im for im in rZ.images.values()}
+    n_all = n_in = 0; bild_in = 0
+    for n in ns:
+        a_, b_ = E[n].points2D, Z[n].points2D; ix = [k for k in range(min(len(a_), len(b_))) if a_[k].has_point3D() and b_[k].has_point3D()]
+        if not ix: continue
+        XE = np.array([rE.points3D[a_[k].point3D_id].xyz for k in ix]); XZ = np.array([rZ.points3D[b_[k].point3D_id].xyz for k in ix])
+        ok = np.ones(len(ix), bool)
+        for im, Xw, xy in ((Z[n], anwenden(M, XE), np.array([b_[k].xy for k in ix])), (E[n], anwenden(Mi, XZ), np.array([a_[k].xy for k in ix]))):
+            P = _pose(im); Xc = Xw @ P[:, :3].T + P[:, 3]; vor = Xc[:, 2] > 1e-9; uv = np.full((len(ix), 2), np.inf)
+            if vor.any(): uv[vor] = np.asarray(im.camera.img_from_cam(Xc[vor]), float)[:, :2]
+            ok &= vor & (np.linalg.norm(uv - xy, axis=1) <= px)
+        n_all += len(ix); n_in += int(ok.sum()); bild_in += ok.mean() >= REPROJ_MIN_BEOB
+    return dict(beobachtungen=n_all, beobachtungen_stimmig=round(n_in / max(n_all, 1), 3), bilder_stimmig=int(bild_in), bilder=len(ns), px=px)
+
+
+def reproj_sim3(rE, rZ, keime=REPROJ_KEIME):
+    """REPROJ (Kopf): pycolmap.align_reconstructions_via_reprojections(Eck -> Teil), RANSAC-Keim fest (MAPPER_KEIM; ohne Keim streute 1122t Teil 1 bis 0,96 Grad / 2,4 %
+    zwischen Aufrufen). keime > 1: zusaetzlich KEIM-STREUUNG (Drehung/Massstab gegen den Hauptkeim) als Angabe im JSON, kein Tor (nicht geeicht). -> (4x4 oder None, info)"""
+    import pycolmap; import time as _t; t0 = _t.time()
+    def eins(k):
+        pycolmap.set_random_seed(int(k)); s = pycolmap.align_reconstructions_via_reprojections(rE, rZ, min_inlier_observations=REPROJ_MIN_BEOB, max_reproj_error=REPROJ_PX)
+        if s is None: return None
+        M = np.eye(4); M[:3] = np.asarray(s.matrix(), float); return M
+    k0 = max(MAPPER_KEIM, 0)
+    try: M = eins(k0)
+    except Exception as ex: return None, dict(grund=f"align_reconstructions_via_reprojections: {type(ex).__name__} {str(ex)[:160]} (andere Datenbank/Keypoints?)")
+    if M is None: return None, dict(grund="align_reconstructions_via_reprojections fand keine Sim3 (< 3 gemeinsame Bilder oder zu wenige Inlier-Bilder)", s=round(_t.time() - t0, 3))
+    s0, R0, _ = zerlegen(M); info = dict(keim=k0, massstab=round(s0, 6))
+    if keime > 1:
+        st = [zerlegen(x) for x in (eins(k0 + 1 + j) for j in range(keime - 1)) if x is not None]
+        info["keim_streuung"] = dict(keime=keime, ohne_sim3=keime - 1 - len(st), drehung_grad=round(max((winkel(r @ R0.T) for _, r, _ in st), default=0.0), 3),
+                                     massstab_rel=round(max((abs(s / s0 - 1) for s, _, _ in st), default=0.0), 4))
+    info["s"] = round(_t.time() - t0, 3); return M, info
+
+
+def koppeln(m, teile, R, P, ausd_teil, weg="punkte"):
+    """Zwischenmodell m an alle Teile koppeln. weg 'punkte' (robuste Sim3 der gemeinsamen 3D-Punkte) oder 'reproj' (REPROJ, Kopf); Tore gleich.
+    -> (info, {teil: (M_teil_von_E, pruefung)} nur stimmige, alle pruefungen)."""
     import pycolmap
     rE = pycolmap.Reconstruction(m); ausd = ausdehnung([p.xyz for p in rE.points3D.values()]); gut, alle = {}, {}
     for t in teile:
         X, Y, ns, td = punkte(rE, R[t], mit_tiefe=True)
-        if len(ns) < MIN_BILDER_TEIL: alle[t] = dict(bilder=len(ns), grund=f"nur {len(ns)} gemeinsame Bilder"); continue
-        M, pr, ok, g = kopplung_pruefen(X, Y, ausd, ausd_teil[t], tiefe=td, kameras=kamerazentren(rE, R[t], ns)); pr.update(bilder=len(ns), grund=g); alle[t] = pr
+        if len(ns) < MIN_BILDER_TEIL: alle[t] = dict(bilder=len(ns), grund=f"nur {len(ns)} gemeinsame Bilder", weg=weg); continue
+        Mf, rp = (reproj_sim3(rE, R[t]) if weg == "reproj" else (None, None))
+        if weg == "reproj" and Mf is None: alle[t] = dict(bilder=len(ns), punkte=len(X), grund=rp["grund"], weg=weg, reproj=rp); continue
+        M, pr, ok, g = kopplung_pruefen(X, Y, ausd, ausd_teil[t], tiefe=td, kameras=kamerazentren(rE, R[t], ns), M_fest=Mf); pr.update(bilder=len(ns), grund=g, weg=weg)
+        if rp is not None:
+            try: rp.update(reproj_beobachtungen(Mf, rE, R[t], ns))
+            except Exception as ex: rp["beobachtungen_fehler"] = str(ex)[:160]
+            pr["reproj"] = rp
+        alle[t] = pr
         if ok: gut[t] = (M, pr)
     return dict(modell=m, ausdehnung=round(ausd, 4)), gut, alle
 
@@ -307,23 +380,63 @@ def zwischenmodell(k, i, db, fotos, aus, faeden, R, ausd_teil):
             try: vs["teilkameras"] = dict(_zwischen(k, f"{i}tk", db, fotos, aus, faeden, R, ausd_teil, False, kameras_fest=True), teilkameras=info)
             finally: teilkameras_zurueck(db, alt)
         else: vs["teilkameras"] = dict(grund="keine Teilkameras gesetzt", teilkameras=info)
+    if REPROJ:
+        for b in [v for v in vs if vs[v].get("modell")]: vs["reproj_" + b] = reproj_variante(vs[b], k, R, ausd_teil, b)
     if len(vs) == 1: return vs["sift"]
-    wahl = variante_waehlen({v: z.get("_gut", {}) for v, z in vs.items()}); z = dict(vs[wahl])
-    kurz = lambda zz: {x: zz.get(x) for x in ("bilder", "schwelle", "modell", "kopplungen", "nachmatchen", "zeitnachbarn", "teilkameras", "bruecke_duenn", "grund") if x in zz}
+    gut_je = {v: z.get("_gut", {}) for v, z in vs.items()}; wahl = variante_waehlen(gut_je); z = dict(vs[wahl]); z.pop("_wdh_modelle", None)
+    kurz = lambda zz: {x: zz.get(x) for x in ("bilder", "schwelle", "modell", "weg", "basis", "kopplungen", "nachmatchen", "zeitnachbarn", "teilkameras", "bruecke_duenn",
+                                              "sensitivitaet", "wiederholbarkeit", "laufzeit_s", "grund") if x in zz}
     gw = vs[wahl].get("_gut", {})
-    z["varianten"] = dict(gewaehlt=wahl, **{v: kurz(zz) for v, zz in vs.items()},
+    z["varianten"] = dict(gewaehlt=wahl, wahl_grund=wahl_grund(gut_je, wahl), **{v: kurz(zz) for v, zz in vs.items()},
                           unterschied={v: vergleich(gw, zz.get("_gut", {}), ausd_teil) or "nicht beide gekoppelt" for v, zz in vs.items() if v != wahl})
     return z
 
 
-VORRANG = ("teilkameras", "nachmatchen", "sift")   # bei gleich vielen stimmig gekoppelten Teilen: gleiche Kamerageometrie wie die Teile zuerst (Kopf TEILKAMERAS)
+def reproj_variante(basis, k, R, ausd_teil, name):
+    """REPROJ (Kopf): Eckmodell der Basis-Variante (gleiche Schwelle) ueber align_reconstructions_via_reprojections an die Teile koppeln; Sensitivitaet und
+    Wiederholbarkeit auf den Modellen der Basis (kein weiterer Mapper). -> dict wie _zwischen (weg='reproj', basis=name)."""
+    import time as _t; t0 = _t.time()
+    erg = {x: basis.get(x) for x in ("teile", "brueckenpaare", "bilder", "schwelle", "modell", "bruecke_duenn", "teilkameras", "nachmatchen") if x in basis}
+    erg.update(weg="reproj", basis=name)
+    info, gut, alle = koppeln(basis["modell"], k["teile"], R, None, ausd_teil, weg="reproj"); erg.update(kopplungen={str(t): v for t, v in alle.items()}, **info); erg["_gut"] = gut
+    sm = (basis.get("sensitivitaet") or {}).get("modell")
+    if sm:
+        _, gut1, _ = koppeln(sm, k["teile"], R, None, ausd_teil, weg="reproj")
+        erg["sensitivitaet"] = dict(schwelle=basis["sensitivitaet"].get("schwelle"), vergleich=vergleich(gut, gut1, ausd_teil) or "zu wenige stimmige Kopplungen bei der lockereren Schwelle")
+    wd = []
+    for mods in (basis.get("_wdh_modelle") or []) if len(gut) >= 2 else []:
+        gw = {}
+        for m in mods:
+            _, g_, _ = koppeln(m, k["teile"], R, None, ausd_teil, weg="reproj")
+            if len(g_) > len(gw): gw = g_
+        wd.append(vergleich(gut, gw, ausd_teil) or [dict(kante=None, grund="Wiederholung koppelt nicht")])
+    if wd:
+        fl = [x for v in wd for x in v if x.get("kante")]
+        erg["wiederholbarkeit"] = dict(laeufe=len(wd), je_lauf=wd, gekoppelt=sum(all(x.get("kante") for x in v) for v in wd),
+                                       max={g: max((x[g] for x in fl), default=None) for g in ("drehung_grad", "massstab_rel", "versatz_rel")})
+    erg["laufzeit_s"] = round(_t.time() - t0, 2)
+    return erg
+
+
+VORRANG = ("teilkameras", "reproj_teilkameras", "nachmatchen", "reproj_nachmatchen", "sift", "reproj_sift")
+# bei gleich vielen stimmig gekoppelten Teilen: gleiche Kamerageometrie wie die Teile zuerst (Kopf TEILKAMERAS); der Reproj-Weg eines Eckmodells direkt hinter dessen
+# Punkt-Weg (REPROJ: bisher nicht geeicht -> gewinnt nur, wenn er MEHR Teile stimmig koppelt).
+
+
+def _wert(gut_je, v): return len(gut_je[v]) if (v == "sift" or len(gut_je[v]) >= 2) else -1
 
 
 def variante_waehlen(gut_je):
     """gut_je: {variante: {teil: (M, pruefung)}} -> Name. Eine Variante ausser 'sift' zaehlt nur mit >= 2 stimmig gekoppelten Teilen (sonst keine Kante); gewaehlt wird die
     mit den meisten, bei Gleichstand nach VORRANG. Ohne Teilkameras wie bisher: Nachmatchen, wenn >= 2 und >= SIFT."""
-    wert = lambda v: len(gut_je[v]) if (v == "sift" or len(gut_je[v]) >= 2) else -1
-    return max((v for v in gut_je), key=lambda v: (wert(v), -VORRANG.index(v) if v in VORRANG else -99))
+    return max((v for v in gut_je), key=lambda v: (_wert(gut_je, v), -VORRANG.index(v) if v in VORRANG else -99))
+
+
+def wahl_grund(gut_je, wahl):
+    """Klartext fuer das JSON: warum diese Variante (stimmige Teile je Variante, Gleichstand -> VORRANG)."""
+    n = {v: len(g) for v, g in gut_je.items()}; gl = [v for v in gut_je if v != wahl and _wert(gut_je, v) == _wert(gut_je, wahl)]
+    txt = f"{wahl}: {n[wahl]} Teile stimmig gekoppelt (" + ", ".join(f"{v} {n[v]}" for v in gut_je if v != wahl) + ")"
+    return txt + (f"; Gleichstand mit {gl} -> Vorrang {list(VORRANG)}" if gl else "; meiste stimmige Teile" if _wert(gut_je, wahl) > 0 else "; keine Variante koppelt >= 2 Teile")
 
 
 def _zwischen(k, i, db, fotos, aus, faeden, R, ausd_teil, nachmatchen, kameras_fest=False):
@@ -355,13 +468,14 @@ def _zwischen(k, i, db, fotos, aus, faeden, R, ausd_teil, nachmatchen, kameras_f
     s0, m0 = treffer[w_][:2]; info, gut, alle = koppeln(m0, k["teile"], R, None, ausd_teil); erg.update(schwelle=s0, kopplungen={str(t): v for t, v in alle.items()}, **info); erg["_gut"] = gut
     if s_ is not None:
         _, gut1, _ = koppeln(treffer[s_][1], k["teile"], R, None, ausd_teil)
-        erg["sensitivitaet"] = dict(schwelle=treffer[s_][0], vergleich=vergleich(gut, gut1, ausd_teil) or "zu wenige stimmige Kopplungen bei der lockereren Schwelle")
+        erg["sensitivitaet"] = dict(schwelle=treffer[s_][0], modell=treffer[s_][1], vergleich=vergleich(gut, gut1, ausd_teil) or "zu wenige stimmige Kopplungen bei der lockereren Schwelle")
     else: erg["sensitivitaet"] = dict(schwelle=None, vergleich="keine lockerere Schwelle verbindet")
     # WIEDERHOLBARKEIT (Stabilitaetsmass): WIEDERHOLUNGEN Laeufe mit je WEGLASSEN der Nicht-Brueckenbilder zufaellig weggelassen (feste Keime) -> Streuung der Kantenlage
     kern = {d["a"] for d in k["paare"]} | {d["b"] for d in k["paare"]}; rest = [b for b in k["bilder"] if b not in kern]; wd = []
     for w in range(WIEDERHOLUNGEN if len(gut) >= 2 else 0):
         rng = np.random.default_rng(w); weg = set(rng.choice(rest, int(len(rest) * WEGLASSEN), replace=False)) if rest else set()
         _, mods = mapper([b for b in k["bilder"] if b not in weg], db, fotos, os.path.join(aus, f"zwischen{i}_wdh{w}"), faeden, s0, kameras_fest=kameras_fest); gw = {}
+        erg.setdefault("_wdh_modelle", []).append(mods)                                 # REPROJ-Variante koppelt dieselben Wiederholungsmodelle neu (kein weiterer Mapper)
         for m in mods:
             _, g_, _ = koppeln(m, k["teile"], R, None, ausd_teil)
             if len(g_) > len(gw): gw = g_
@@ -477,7 +591,7 @@ def main(argv=None):
     fa1 = db_fingerabdruck(a.db); edb = dict(pfad=os.path.abspath(a.db), unveraendert=fa0 == fa1, vorher=fa0, nachher=fa1, mapper_keim=MAPPER_KEIM, mapper_faeden=MAPPER_FAEDEN)
     if fa0 != fa1: print(f"WARNUNG ECK-KOPPLUNG: Eingabe-DB {a.db} hat sich waehrend der Stufe geaendert ({fa0} -> {fa1}) - Teilmodelle werden im naechsten Lauf neu gerechnet", flush=True)
     for i, (k, z) in enumerate(zip(ks, zk)):
-        gut = z.pop("_gut", {}); zw.append(z); ts = sorted(gut)
+        gut = z.pop("_gut", {}); z.pop("_wdh_modelle", None); zw.append(z); ts = sorted(gut)
         for x in range(len(ts)):
             for y in range(x + 1, len(ts)):
                 (Mi, pi), (Mj, pj) = gut[ts[x]], gut[ts[y]]
