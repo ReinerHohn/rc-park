@@ -880,20 +880,28 @@ def sauber(o):
 
 
 FORM_KURZ = {"spitzbogen": "spitz", "rundbogen": "rund", "segmentbogen": "stich"}     # Namen in bauteile.bogen_querschnitt
+MIN_FOTOS_RETTEN = 3      # Formfamilie aus >= 3 Fotos (KERNMETHODE): so viele Einzelfotos mit Kamera muss das Wandbild haben, damit es eine nur an der Sweep-Form verworfene Oeffnung baut
 
 
 def uebernehmen(ber, auto_pfad, log=print):
     """Wandbild-Masse in audit/oeffnungen_auto.json (tools/oeffnungen_bogen.py -> bauteile.oeffnungen_aus_json) schreiben (21.11.2026, Nutzer: Kette vollautomatisch).
     Nur bereits GEBAUTE Oeffnungen (Durchblick im Ebenen-Sweep belegt) werden geaendert - Beifang dieses Werkzeugs (Galeriebalken als 'Fenster') baut nichts Neues.
+    Ausnahme (23.11.2026): Kandidaten mit belegtem Durchblick, die oeffnungen_bogen NUR wegen der Sweep-Form verwarf (form_offen), werden gebaut, wenn das Wandbild
+    (>= MIN_FOTOS_RETTEN Einzelfotos) an der Stelle eine SICHERE Bogenform misst - Form und Masse dann aus den Fotokanten (gebaut_durch, grund_sweep).
     Bedingungen: Form aus dem Wandbild (form_quelle 'wandbild', Bogenform), gleiche Fassade (<fid>_wand), Mitte innerhalb der halben Breite der gebauten Oeffnung.
     Uebernommen: Form, lichte Breite, Kaempfer, Scheitel, Lage u (Mitte der Bildkanten); NICHT die Sohle (Wolkenfleck, unten Leute/Autos). Alte Werte unter 'vor_wandbild'."""
     if not os.path.exists(auto_pfad): log(f"uebernehmen: {auto_pfad} fehlt"); return 0
+    from oeffnungen_bogen import form_offen, NISCHE_M
     A = json.load(open(auto_pfad)); n = 0
     for fid, F in A.items():
         if not isinstance(F, dict): continue
-        kand = [o for o in (ber["ebenen"].get(f"{fid}_wand") or {}).get("oeffnungen", []) if o.get("form_quelle") == "wandbild" and o.get("form") in FORM_KURZ]
+        E_ = ber["ebenen"].get(f"{fid}_wand") or {}; nfo_ = int((E_.get("wandbild") or {}).get("einzelfotos") or 0)
+        kand = [o for o in E_.get("oeffnungen", []) if o.get("form_quelle") == "wandbild" and o.get("form") in FORM_KURZ]
         for x in F.get("oeffnungen", []):
-            if not x.get("gebaut") or "breite" not in x: continue
+            # 23.11.2026 (Kette 1122q: Stadttor f00 fehlte ganz - Durchblick 98 % belegt, aber der Sweep-Bogenrand nur zu 33 % an Wand -> verworfen, obwohl das Wandbild
+            # einen sicheren Spitzbogen aus 41 Fotos mass): ein Kandidat mit belegtem Durchblick, dem nur die Sweep-FORM fehlt, wird GEBAUT, wenn die Fotokanten ihn sicher messen.
+            retten = form_offen(x) and nfo_ >= MIN_FOTOS_RETTEN
+            if not (x.get("gebaut") or retten) or "breite" not in x: continue
             # 21.11.2026 (Kettenlauf 1121o: Tor f00 bekam die Masse des Fensters in 25 m Hoehe - nur u wurde verglichen): auch Hoehe und Breite muessen passen
             z0_, z1_ = float(x.get("unten", 0.0)), float(x.get("scheitel", 0.0))
             def passt_(o):
@@ -901,7 +909,7 @@ def uebernehmen(ber, auto_pfad, log=print):
                 zo = (o.get("zone") or [0, 0, None, None])[2:4]; oz0 = zo[0] if zo[0] is not None else o["scheitel"]["wert"] - 1.0
                 ueber = min(z1_, o["scheitel"]["wert"]) - max(z0_, oz0)
                 return ueber > 0.5 * (z1_ - z0_) and 0.6 < o["breite"]["wert"] / x["breite"] < 1.6
-            k = [o for o in kand if passt_(o)]
+            k = [o for o in kand if passt_(o) and (o.get("sicher") or not retten)]
             if not k: continue
             o = min(k, key=lambda o: abs(o["mitte_u"] - x["u"]))
             if o["kaempfer"]["wert"] is None or o["scheitel"]["wert"] is None: continue
@@ -909,6 +917,13 @@ def uebernehmen(ber, auto_pfad, log=print):
             x.update(form=FORM_KURZ[o["form"]], u=round(o["mitte_u"], 3), breite=round(o["breite"]["wert"], 3), kaempfer=round(o["kaempfer"]["wert"], 3), scheitel=round(o["scheitel"]["wert"], 3),
                      mass_quelle=f"wandbild (tools/oeffnungen_aus_kanten.py {o['id']}): {o['breite'].get('hinweis') or 'Bildkante'}; {o['breite'].get('quelle')}",
                      aussenmass=o.get("aussenmass"), gewaende=o.get("gewaende"))
+            if retten:
+                x.update(gebaut=True, form_offen=False, gebaut_durch=f"wandbild: Durchblick im Ebenen-Sweep belegt, Form aus Fotokanten ({o['id']}, {nfo_} Einzelfotos, sicher)",
+                         grund_sweep=x.get("grund"), grund="", durchfahrt=bool(x.get("durchfahrt")), tiefe_m=x.get("tiefe_m") or NISCHE_M,
+                         annahmen=list(x.get("annahmen") or []) + [f"ANNAHME: Tiefe {NISCHE_M} m, bis durchfahrt_pruefen den Torweg belegt", "ANNAHME: Kreisbogen der Formfamilie, Gewaende ohne Profil"])
+                if (o.get("aussenmass") or {}).get("breite") == o["breite"]["wert"] and not any((o.get("gewaende") or {}).get(s_) for s_ in ("links", "rechts", "scheitel")):
+                    x["annahmen"].append("ANNAHME: keine Innenkante gefunden - Masse = Aussenkante inkl. Gewaende (lichte Oeffnung kleiner)")
+                log(f"uebernehmen: {fid} GERETTET (Sweep: {x['grund_sweep']}) -> gebaut aus Fotokanten {o['id']}")
             n += 1; log(f"uebernehmen: {fid} {o['id']} -> {x['form']} Breite {x['breite']} Kaempfer {x['kaempfer']} Scheitel {x['scheitel']} (vorher {x['vor_wandbild']})")
     if n: json.dump(A, open(auto_pfad, "w"), indent=1, ensure_ascii=False)
     return n

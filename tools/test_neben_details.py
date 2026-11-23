@@ -6,6 +6,7 @@
 3. Rundteil: waagrechter Blick schlaegt Steilblick.
 4. Render + Sicht: ein fremder Verdecker vor dem Bauteil senkt den Sicht-Anteil deutlich, ohne ~ 100 %; Beleg: Fotokanten am Umriss hoch, leerer Himmel ~ 0.
 5. Bauteile aus einem kuenstlichen audit-Ordner (vorbauten_auto.json + dach_profil.json): Fassadenzone mit Ausladung aus dem Modell -> Profil, Rundteil erkannt.
+6. Uhr (Befund 1122q, 23.11.): Wand-Faecher mit Mitte im Uhrkasten sind NICHT Bauteil (alle Ecken im Kasten + Kreis-Kontur aus uhren_auto.json).
 """
 import os, sys, json, math, tempfile
 import numpy as np, cv2
@@ -91,6 +92,29 @@ with tempfile.TemporaryDirectory() as d:
     bs = {b["name"]: b for b in ND.bauteile_sammeln(d, T2)}
     pruefe("vorbau_f00" in bs and bs["vorbau_f00"]["profil"] and 1.5 < bs["vorbau_f00"]["w1"] < 2.0, f"bauteile: Vorbau erkannt, Ausladung aus dem Modell ({bs.get('vorbau_f00', {}).get('w1')})")
     pruefe("laterne" in bs and bs["laterne"]["z1"] == 15.0 and bs["laterne"]["r"] == 0.5, f"bauteile: Laterne aus dach_profil (z bis Nadel, r max) {sorted(bs)}")
+
+# 6. Befund Uhr f00 (Lauf 1122q, 23.11.2026): flache Wand um die Uhr als Faecher trianguliert -> lange Splitter, deren MITTE im Uhrkasten liegt, wurden
+#    als 'Uhr' blau gemalt ('Keile bis zur Traufe'). Erwartet: nur Dreiecke innerhalb des Kastens UND der belegten Kreis-Kontur (Mitte + d_aussen).
+def fp(u, w, z): return [w, u, z]                                                             # Fassade wie B: o (0,0), d = +y (u), n = +x (w)
+ph = np.linspace(0, 2 * np.pi, 33)
+scheibe = np.array([[fp(0, 0.1, 10), fp(np.sin(a), 0.1, 10 + np.cos(a)), fp(np.sin(b_), 0.1, 10 + np.cos(b_))] for a, b_ in zip(ph[:-1], ph[1:])])   # Uhr r 1, u 0, z 10
+splitter = np.array([[fp(-0.95, 0, 5.0), fp(-0.97, 0, 11.5), fp(-0.93, 0, 11.5)],          # Wand-Faecher: Mitte z 9,33 im Kasten, Ecken 5 / 11,5 m
+                     [fp(-3.0, 0, 10.0), fp(0.98, 0, 10.4), fp(0.98, 0, 10.5)]])            # quer: Ecke 2 m links neben dem Kasten
+ecke = np.array([[fp(0.9, 0, 10.9), fp(1.05, 0, 10.9), fp(1.05, 0, 11.05)]])                 # Wand in der Kastenecke, ausserhalb des Kreises
+TU = np.concatenate([scheibe, splitter, ecke]); nS = len(scheibe)
+with tempfile.TemporaryDirectory() as d:
+    json.dump(dict(f00=dict(o=[0.0, 0.0], d=[0.0, 1.0], n=[1.0, 0.0], uhren=[dict(u=0.0, z=10.0, d_aussen=2.0, d_innen=1.3, kasten=[-1.1, 1.1, 8.9, 11.1])])),
+              open(os.path.join(d, "uhren_auto.json"), "w"))
+    bu = {b["name"]: b for b in ND.bauteile_sammeln(d, TU)}.get("uhr_f00")
+    pruefe(bool(bu) and bu.get("kreis") == [0.0, 10.0, 1.0], f"uhr: belegte Kontur (Kreis) aus uhren_auto.json mitgefuehrt ({(bu or {}).get('kreis')})")
+    if bu:
+        u_, w_, z_ = ND.lokal(TU, bu)
+        alt = (u_ >= bu["u0"] - 0.1) & (u_ <= bu["u1"] + 0.1) & (w_ >= bu["w0"]) & (w_ <= bu["w1"]) & (z_ >= bu["z0"] - 0.1) & (z_ <= bu["z1"] + 0.1)
+        pruefe(alt[nS:nS + 2].all(), "Vorbedingung: alte Mitten-Auswahl haette die Splitter genommen")
+        su, fr = ND.auswahl(TU, bu, fremd=True)
+        pruefe(su[:nS].all() and not su[nS:].any() and fr == 3, f"uhr: alle {nS} Scheibendreiecke, keine Wand-Splitter, keine Kastenecke (Auswahl {int(su.sum())}, fremd {fr})")
+        b2 = dict(bu); b2.pop("kreis")
+        s2 = ND.auswahl(TU, b2); pruefe(s2[:nS].all() and not s2[nS:nS + 2].any() and s2[-1], "ohne Kreis: Splitter raus (Ecken weit ausserhalb), Kastenecke bleibt")
 
 print("ALLE OK" if F == 0 else f"{F} FEHLER")
 sys.exit(1 if F else 0)

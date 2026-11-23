@@ -30,6 +30,17 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 WAND_ANTEIL_MIN = 0.6     # 23.11.2026: eine Oeffnungszone muss zu >= 60 % IN der Wandflaeche (Fassadenpolygon polys_uz) liegen
+NISCHE_M = 0.6            # ANNAHME: Tiefe einer Bogenoeffnung ohne Gegenstueck (m), Vorgabe fuer --nische und fuer Oeffnungen, die erst die Wandbild-Stufe baut
+FORM_GRUENDE = ("Wand im Inneren", "Bogenrand")      # Verwerfungsgruende, die nur die SWEEP-FORM betreffen (Durchblick selbst belegt)
+
+
+def form_offen(x):
+    """True = Kandidat mit belegtem Durchblick, dessen Form nur der Sweep nicht belegen konnte (Feld 'form_offen'; aeltere Dateien ohne das Feld: aus 'grund' abgeleitet).
+    Anlass 23.11.2026 (Kette 1122q): Stadttor f00 Durchblick 98 %, Wand daneben 5 % offen - verworfen nur wegen 'Bogenrand nur zu 33 % von Wand begrenzt' (1120: 49 %, Schwelle 40 %)."""
+    if x.get("gebaut") or "durchblick" not in x or "breite" not in x: return False
+    if "form_offen" in x: return bool(x["form_offen"])
+    g = [s.strip() for s in (x.get("grund") or "").split(";") if s.strip()]
+    return bool(g) and all(s.startswith(FORM_GRUENDE) for s in g)
 
 
 def wand_anteil(F, kasten, zelle=0.05):
@@ -176,7 +187,7 @@ def kanten_verfeinern(D, G, fam, p, zb, schritt=0.3):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--objekt", help="objekt.json: noetig, um den Ebenen-Sweep (fassade_tiefe.py) zu rechnen; ohne ihn wird nur ein vorhandener Sweep gelesen"); ap.add_argument("--aus"); ap.add_argument("--stimmen", type=int, default=3)
     ap.add_argument("--boden", type=float, default=1.5, help="Kastenunterkante hoechstens so hoch ueber dem Fassadenfuss (m)"); ap.add_argument("--min_b", type=float, default=1.2); ap.add_argument("--min_h", type=float, default=2.2)
-    ap.add_argument("--nische", type=float, default=0.6, help="ANNAHME: Tiefe einer Bogenoeffnung ohne Gegenstueck (m)"); ap.add_argument("--offen", type=float, default=0.6, help="Durchblick: Anteil OFFEN an den bekannten Zellen im Inneren")
+    ap.add_argument("--nische", type=float, default=NISCHE_M, help="ANNAHME: Tiefe einer Bogenoeffnung ohne Gegenstueck (m)"); ap.add_argument("--offen", type=float, default=0.6, help="Durchblick: Anteil OFFEN an den bekannten Zellen im Inneren")
     ap.add_argument("--offen_flaeche", type=float, default=0.3, help="... und OFFEN auf mindestens diesem Anteil der Innenflaeche"); ap.add_argument("--wand", type=float, default=0.35, help="im Wandring hoechstens dieser Anteil OFFEN (sonst Sweep dort nicht belastbar)")
     ap.add_argument("--wand_innen", type=float, default=0.05, help="Gegenpruefung: hoechstens dieser Anteil Wandzellen im Inneren der Form"); ap.add_argument("--rand_wand", type=float, default=0.4, help="... und mindestens dieser Anteil des Streifens 0,3 m ausserhalb des Bogenrands ist Wand"); a = ap.parse_args()
     from element_einpassen import krone
@@ -224,7 +235,8 @@ def main():
             if T["rand"]: grund.append("Wandtiefe am Rand des Suchbereichs - Sweep nicht belastbar")
             if zs + h - zb < a.min_h or w < a.min_b: grund.append(f"zu klein fuer eine Bogenoeffnung am Boden ({w:.2f} x {zs + h - zb:.2f} m)")
             o.update(form=fam, u=round(uc, 3), breite=round(w, 3), kaempfer=round(zs, 3), scheitel=round(zs + h, 3), rest={q: round(v, 3) for q, v in rest.items()}, familien=A["alle_familien"],
-                     durchblick=db, gebaut=not grund, grund="; ".join(grund), _p=p); o["_nur_form"] = o["_nur_form"] and len(grund) <= 2 and all(g_.startswith(("Wand im Inneren", "Bogenrand")) for g_ in grund); aus.append(o)
+                     durchblick=db, gebaut=not grund, grund="; ".join(grund), _p=p); o["_nur_form"] = o["_nur_form"] and len(grund) <= 2 and all(g_.startswith(FORM_GRUENDE) for g_ in grund)
+            o["form_offen"] = bool(o["_nur_form"] and not o["gebaut"]); aus.append(o)      # 23.11.2026: Durchblick belegt, nur die Sweep-Form nicht -> Fotokanten (oeffnungen_aus_kanten --uebernehmen) duerfen die Form liefern
         erg[fid] = dict(o=F["o"], d=F["d"], n=F["n"], oeffnungen=aus, fotos=X.get("fotos", [])[:4])
     # Durchfahrt: Gegenstueck auf der Gegenseite (Normalen entgegengesetzt, Mitten liegen quer hoechstens eine halbe Breite auseinander)
     for fid, A in erg.items():

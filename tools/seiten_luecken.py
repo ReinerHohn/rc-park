@@ -62,6 +62,12 @@ def skript_laufen(sk, logpfad, rest_zeilen=4000):
     return rc, "".join(schluss)
 
 
+def sift_schalter():
+    """23.11.2026: RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT=1 beim Erzeugen des Skripts -> in den Befehl der Stufe merkmale schreiben (der Befehls-Hash der Schritt-Kette
+    aendert sich mit, ein umgeschalteter Lauf uebernimmt keinen Zwischenstand des anderen Wegs). Standard AUS = Befehl unveraendert."""
+    return "RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT=1 " if os.environ.get("RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT", "0") == "1" else ""
+
+
 def schritt_helfer(Z, T):
     """Bash-Funktionen fuer ZWISCHENSTAENDE je Teilschritt des Nachhol-Skripts (22.11.2026: ein Absturz im 6. Schritt verwarf jedes Mal ~44 min Merkmale/LightGlue).
     Schluessel je Schritt = Kette (vorheriger Schluessel | Name | CODE-STAND der genannten Werkzeuge | Befehls-Hash); Kettenbeginn = Kandidatenbestand roh/.
@@ -133,6 +139,16 @@ def wand_abdeckung(fassaden_dir, F, i, im=None, maske=None):
     return float((daten & (maske > 0)).sum() / max(maske.sum(), 1))
 
 
+def kamera_verfeinern_zeile(VS, T, objekt, fassaden_json, audit, Z):
+    """Bash-Zeile: ALLE neuen Kameras (audit/kameras_nachtragen.json 'neu', in dieser Reihenfolge) in EINEM Prozess am Modell nachziehen (kamera_verfeinern.py --liste).
+    23.11.2026 (Kette 1122q): bisher je Kamera ein eigener Prozess - 327 x (Importe, STL 958k Dreiecke laden, ALIKED/LightGlue laden, Referenz-Merkmale und
+    -Tiefenbilder neu) = 75 min von 165 min der Stufe. Der Stapel liest die K-Dateien je Foto frisch und schluesselt Tiefenbilder nach Kamera - Ergebnis wie die
+    Einzelfolge (tools/test_kamera_verfeinern_stapel.py). rc 3 (Kamera bleibt unsicher) und Fehler brechen das Skript nicht ab (wie vorher '|| true' je Foto)."""
+    L = f"{Z}/kamera_verfeinern_liste.txt"
+    return (f"python3 -c \"import json; print('\\n'.join(e['foto'] for e in json.load(open('{audit}/kameras_nachtragen.json'))['neu']), end='')\" > {L} || : ; "
+            f"if [ -s {L} ]; then {VS} -W ignore {T}/kamera_verfeinern.py {objekt} {fassaden_json} - --liste {L} --schreiben || true; fi   # neue Kameras am Modell nachziehen (rc 3 = bleibt unsicher)")
+
+
 def registrierte(sparse):
     namen = []
     with open(os.path.join(sparse, "images.bin"), "rb") as f:
@@ -179,10 +195,10 @@ def main():
         zeilen.append(f"python3 {T}/openverse_holen.py --aus {Z}/openverse --suche \"{nm}\" \"{obj.get('name', '')}\" \"{ort} Altstadt Blick\" --max 150 || true   # Flickr u. a. ueber Openverse, nur CC0/BY/BY-SA")
         zeilen.append(f"for f in {Z}/commons/*.jpg {Z}/hochblick/orig/*.jpg {Z}/openverse/*.jpg; do [ -e \"$f\" ] && ln -sf \"$f\" {Z}/roh/dl_$(basename $(dirname \"$f\"))__$(basename \"$f\"); done")
     zeilen += [f"ln -sf \"{f}\" {Z}/roh/" for f in kand]
-    vf = f"for n in $(python3 -c \"import json; print(' '.join(e['foto'] for e in json.load(open('{audit}/kameras_nachtragen.json'))['neu']))\"); do {VS} -W ignore {T}/kamera_verfeinern.py {os.path.abspath(a.objekt)} {os.path.join(os.path.abspath(a.fassaden), 'fassaden.json')} $n --schreiben || true; done   # neue Kameras am Modell nachziehen (rc 3 = bleibt unsicher)"
+    vf = kamera_verfeinern_zeile(VS, T, os.path.abspath(a.objekt), os.path.join(os.path.abspath(a.fassaden), 'fassaden.json'), audit, Z)
     # (name, Werkzeuge im CODE-STAND (nur billige Folgeschritte, tools/code_stand.py), vor dem Neurechnen loeschen, Befehl) - teure Schritte haengen nur an den Eingaben
     schritte = [("vorbereiten", "", f"{Z}/bilder {Z}/vorbereitet.json {Z}/merkmale.json {Z}/db.db {Z}/lg", f"{VC} {T}/zusatzfotos_registrieren.py vorbereiten --fotos {Z}/roh --aus {Z} --unten 0.0"),
-                ("merkmale", "", f"{Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/merkmale.json", f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}"),
+                ("merkmale", "", f"{Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/merkmale.json", sift_schalter() + f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}"),
                 ("probe_db", "colmap_rig_abgleich.py", "", f"{VC} {T}/colmap_rig_abgleich.py probe --db {Z}/db.db --sparse {a.sparse}   # zweite Vorpruefung auf der erweiterten DB, VOR den GPU-Paaren"),
                 ("refnamen", "", "", f"{VC} {T}/zusatzfotos_lightglue.py refnamen --ziel {Z} --ref-sparse {a.sparse}"),
                 ("paare", "", "", f"{VS} {T}/zusatzfotos_lightglue.py paare --ziel {Z} --ref-sparse {a.sparse} --ref-bilder {fd}"),

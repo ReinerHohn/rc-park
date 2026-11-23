@@ -29,6 +29,7 @@ def main():
             d = json.load(open(f)); d = d if isinstance(d, list) else d.get("bilder", d.get("files", []))
             for e in d:
                 if isinstance(e, dict): bek.update(str(e.get(k, "")).strip().lower() for k in ("url", "titel", "title") if e.get(k))
+    http_holen.vorrat_melden(sum(1 for e in H if os.path.exists(os.path.join(a.aus, e.get("datei", "")))))      # 23.11.2026: schon Bilder da -> bei frischer Drossel-Marke (frueherer Prozess/Lauf) nicht erneut 6 min warten
     n = 0; gesperrt = set(); zuletzt = {}
     for q in a.suche:
         seite = 1

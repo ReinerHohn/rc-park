@@ -65,6 +65,7 @@ bsrc = open(os.path.join(TD, "bilder_vorpruefen.py")).read()
 pruef("M0 is None or M1 is None" in bsrc and "unlesbar(p_)" in bsrc, "Kette behandelt None (aussortiert mit Grund 'nicht lesbar', Quelltext)")
 
 # (4) http_holen
+os.environ["RCPARK_DROSSEL_DATEI"] = os.path.join(T, "drossel_marken.json")      # 23.11.2026: Drossel-Marken des Tests nie in die echte Datei
 import http_holen as HH
 class Antwort(io.BytesIO):
     def __enter__(self): return self
