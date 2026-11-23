@@ -1,4 +1,4 @@
-# Werkzeuge: test (179)
+# Werkzeuge: test (183)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -21,6 +21,7 @@
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
 - `tools/test_durchfahrt_wandbild.py` [gen] test_durchfahrt_wandbild.py - Tordurchfahrt, deren Sweep-Form verworfen wurde, kommt ueber die Fotokanten doch ins Modell (23.11.2026). Ohne Dateien, < 30 s.
 - `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
+- `tools/test_eck_reproj.py` [col] Test seiten_eck_koppeln REPROJ (23.11.2026): Kopplungsweg pycolmap.align_reconstructions_via_reprojections, dieselben Tore wie der Punkt-Weg. (1) Synthetisch (pycolmap.synthesize_d
 - `tools/test_eck_teilkameras.py` [-] Test seiten_eck_koppeln, Stand 23.11.2026 (Befund 1122t: Teil 1 'Massstab nicht belegt', Haelften 2,3 %): (1) KAMERA-PROBE: flache Wand + gespiegelter Teil - die Punkte allein best
 - `tools/test_element_einpassen.py` [seg] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
 - `tools/test_farbteile_neigung.py` [gen] test_farbteile_neigung.py - Schnelltest fuer tools/druck_farbteile.py: Plattentiefe folgt der OERTLICHEN Wand (18.11.2026). Synthetisch: Quader 12 x 8 x 10 m, um 2 Grad gegen die M
@@ -69,6 +70,7 @@
 - `tools/test_kegeldach_rund.py` [seg] test_kegeldach_rund.py - fester synthetischer Test fuer das KEGELDACH auf Rundkoerpern (rund_aus_umriss.kegeldach + bauteile.kegeldach_teile), 23.11.2026. Anlass: Kettenlauf 1122o 
 - `tools/test_keilsteine.py` [-] test_keilsteine.py - fester synthetischer Test fuer quader_raster.keilsteine (21.11.2026 spaet), < 20 s, nur CPU.
 - `tools/test_kette_1122c.py` [-] test_kette_1122c.py - fester Test (CPU, Sekunden, echte kleine Fixtures aus dem Kettenlauf schwabentor-1120 1122c, 22.11.2026).
+- `tools/test_kette_beleg.py` [-] test_kette_beleg.py - Beleg-Helfer gegen 'stille Erfolge' (tools/kette_beleg.py, gesamtkette.beleg/sweep_altstand; Audit modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md). Synthetisch, S
 - `tools/test_kette_kreis_orthos.py` [seg] test_kette_kreis_orthos.py - fester Test (CPU, < 20 s, ohne Daten) fuer den KREISFALL der Kette (22.11.2026, Kettenlauf schwabentor 1121v).
 - `tools/test_kette_stabil.py` [seg] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
 - `tools/test_kette_tempo.py` [gen] test_kette_tempo.py - Tempo-Umbau der Kette (21.11.2026) ohne Rechenlast pruefen: 1. fassaden_kette._waende_parallel: Ausgabe in Wandreihenfolge (wie seriell), GPU-Teil (_gpu_run) 
@@ -163,6 +165,7 @@
 - `tools/test_verlustbilanz.py` [-] test_verlustbilanz.py - Verlustbilanz (tools/verlustbilanz.py) an synthetischen Kettenordnern (Sekunden, keine echten Daten). Faelle: (1) Nulllauf schwabentor-1122: gewaehlter Clip
 - `tools/test_versuch_log.py` [-] Test versuch_log: Eintrag, Identitaetswarnung (BS7-Fall), Fehlschlag, Liste. Exit 0 = ALLE BESTANDEN.
 - `tools/test_vis_mapping.py` [-] test_vis_mapping.py - Beweis und Dauerwaechter fuer die Zuordnung vis-Index -> Bild (Register CV/CW).
+- `tools/test_vorbau_beleg.py` [-] test_vorbau_beleg.py - synthetisch, CPU, < 5 s (23.11.2026, Befund Kette 1122t: 'Vorbau f03' West war ein Phantom).
 - `tools/test_vordach_traufe.py` [seg] test_vordach_traufe.py - fester synthetischer Test (22.11.2026, Befund Lauf 1122a schwabentor-1120 Stadtseite, Bild audit/neben_eigen__IMG_20261106_113231.jpg): Vordach im Foto wei
 - `tools/test_vordach_vorbau.py` [seg] test_vordach_vorbau.py - fester synthetischer Test (21.11.2026, schwabentor-1120 Stadtseite, Nutzerbild neben_eigen__IMG_20261106_113231) fuer (1) tools/vordach_profil.messen: Walm
 - `tools/test_vordergrund_quader.py` [-] test_vordergrund_quader.py - synthetischer Test (21.11.2026, Schwabentor w01, Lauf 1121s) fuer (1) tools/relief_vordergrund.py: Verkehrsschild (0,6 x 0,8 m, +15 cm) DIREKT auf eine
@@ -170,6 +173,7 @@
 - `tools/test_wand_dicke_normalen.py` [-] Test wand_dicke_tor mit Punktnormalen (22.11.2026, Eck-Kopplung schwabentor-1122): Querwand im 3-m-Eckband und Innenwand der Tordurchfahrt (Normale nach innen) zaehlen nicht als zw
 - `tools/test_wand_dicke_tor.py` [-] Fester Test (synthetisch, Sekunden) fuer tools/wand_dicke_tor.py (22.11.2026, Nulllauf schwabentor-1122f: Westwand ~3 m dick aus zwei Seitenteilen). Grundflaeche 10 x 12 m. Teil 0 
 - `tools/test_wand_neigung_vorbau.py` [gen] test_wand_neigung_vorbau.py - synthetisch, CPU, < 5 s (22.11.2026, Befund 1122n: Bilderker der Stadtseite fehlte).
+- `tools/test_wandbild_einigkeit.py` [seg] test_wandbild_einigkeit.py - Befund 23.11.2026 (Lauf 1122t): Sued-Wand f01 Abdeckung 0,037 -> 0,998 per Nachholen = 'GEWINN', Wandbild aber verschmiert (Kameras ungenau). Prueft mi
 - `tools/test_wolke_carving.py` [gen] test_wolke_carving.py - Beweise fuer tools/wolke_carving.py (Koerper NUR aus der Wolke). unabhaengig : synthetische Wolke (Halle hinter 4 Arkaden) -> Koerper; jeder Zugriff auf *.s
 - `tools/test_wolke_filter_varianten.py` [-] Synthetik-Test fuer wolke_kennzahlen.py + wolke_filter_varianten.f3_filter (Schwellen werden HIER festgelegt, nicht am Kaufhaus). Szene: Wand (x=0, 12 m breit, 8 m hoch) mit 3 cm G
 - `tools/test_wolke_gruppen.py` [-] Test wolke_gruppen_pruefen (19.11.2026): Hoehenkarte aus LoD2-Punkten, Gruppe mit Punkten hoch ueber der Strasse wird auffaellig, gute Gruppe nicht, unbewertbare Punkte zaehlen nic

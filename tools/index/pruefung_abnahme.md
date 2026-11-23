@@ -1,4 +1,4 @@
-# Werkzeuge: pruefung_abnahme (37)
+# Werkzeuge: pruefung_abnahme (38)
 - `tools/breite_quellenvergleich.py` [-] breite_quellenvergleich.py - Helmbreite quer (E-W) je Hoehe aus DERSELBEN Silhouetten-Schaetzung (hybrid_abgleich.silhouette_quer) fuer Strassenwolke, Generator-STL, Drohnenwolke g
 - `tools/diff_parallel.py` [-] diff_parallel.py - Foto-Diff-Auswertung (modell_wettbewerb.py) PARALLEL statt nacheinander (7.11., 'Zeit ist Geld'): je (Glaettung, Modus) ein eigener Job ueber tools/job_start.sh 
 - `tools/durchfahrt_pruefen.py` [-] durchfahrt_pruefen.py - Ist eine gebaute Bogenoeffnung eine DURCHFAHRT durch das ganze Gebaeude? (21.11.2026, Kettenstufe 'fenster' nach oeffnungen_bogen)
@@ -12,6 +12,7 @@
 - `tools/handy_masken_vergleich.py` [seg] handy_masken_vergleich.py - Sichtblaetter v1 | v2 mit Blob-Nummern (Register DI) und Auswertung der Handlabels (Sichtprobe, KEIN unabhaengiger Beleg). blatt: python3 tools/handy_ma
 - `tools/hpwmi_pruefen.sh` [sh] hpwmi_pruefen.sh - ist das selbstgebaute hp-wmi-Modul (Board 8C77, Profil performance) noch da? Kein Root noetig. bash tools/hpwmi_pruefen.sh      Exit 0 = alles ok, 1 = ACHTUNG (T
 - `tools/importe_pruefen.py` [-] importe_pruefen.py - findet Importe lokaler Module (tools/*.py), deren Namen es nicht mehr gibt (18.11.2026). Anlass: der Umbau 497af805 hatte 14 Bausteine aus tools/bauteile.py en
+- `tools/kette_beleg.py` [-] kette_beleg.py - gemeinsamer BELEG-Helfer der Gesamtkette gegen 'stille Erfolge' (Audit 23.11.2026, modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md).
 - `tools/kette_insel_pruefen.py` [col] kette_insel_pruefen.py <objekt.json> <sparse-ordner> [--anteil 0.05] [--gruppe 4] [--anker eigen] - Bildketten OHNE Fremdstuetze finden (Insel-Ketten).
 - `tools/ketten_pruefstand.py` [-] ketten_pruefstand.py ZIEL:QUELLE [ZIEL:QUELLE ...] [--ab fototor] [--bis html] [--nur-lesen] [--aus DATEI.md] - die Gesamtkette an MEHREREN Gebaeuden laufen lassen und vergleichen.
 - `tools/knoten_pruefen.py` [seg] knoten_pruefen.py - 3D-Kandidatenpunkte (u n z im Fassadenrahmen) in mehrere Kameras projizieren und die Bildausschnitte als Kontaktbogen zeigen (Gegenprobe der Zuordnung). Aufruf:
