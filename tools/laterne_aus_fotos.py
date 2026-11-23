@@ -29,21 +29,19 @@ rc 0 = gueltig, rc 3 = kein spitze_foto-Block, rc 4 = zu wenig Fotos/keine einde
 import sys, os, json, argparse, math, numpy as np
 
 H_ = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H_)
+# 23.11.2026: Drehkoerper-Bausteine (Fotoauswahl, Farbsilhouette, Sehstrahl-Huelle, Registrierung, Querschnitt-Synthese) liegen GENERISCH in drehkoerper_aus_fotos.py
+# (auch fuer Treppentuermchen/Rundkoerper: tools/rund_aus_huelle.py); hier nur die Laternen-Teile (Pfosten, Facetten, Zonen, Krempe, Knauf, Nadel).
+from drehkoerper_aus_fotos import (N_KAND, MIN_FOTOS, MIN_FAMILIE, DUNKEL, MIN_HIMMEL, SEKTOR_GRAD, MAX_JE_SEKTOR, MAX_FOTOS, T975, t_grenze, ausdehnung, himmel_anteil,
+                                   fotos_streuen, K_HUELLE, QS_PUNKTE, RUND_TOL, EGAL_TOL, querschnitt_einheit, ebene_abbilden, farb_halb, profil_raster, huelle_foto,
+                                   silhouette_vorhersage, drehprofil, huelle_restfehler, DZ_MAX, DZ_SCHRITT, REST_AUSREISSER, zentrieren, registrieren, GLATT_ZEILEN, glaetten, zeile)
+from drehkoerper_aus_fotos import querschnitt_synthese as querschnitt_haube    # Laternenhaube = allgemeine Querschnitt-Synthese (Facetten/Pfosten als Ersatz)
 
 # ---- Schwellen (Grund je Zeile; nicht an einem Bauwerk eingestellt) ---------------------------------------------------------------------------
-N_KAND = (3, 4, 5, 6, 8, 10, 12, 16)  # gepruefte Eckenzahlen (regelmaessige Vielecke der Laternen/Hauben; Kreis = keine Zahl gewinnt)
 HB_BAND = (0.1, 0.4)    # Facettenband der Haube als Anteil Bauch -> Hals: obere, vom Himmel beleuchtete Haelfte (unter dem Bauch liegt die Haube im eigenen
                         # Schatten - die Licht/Schatten-Grenze ist eine waagrecht gekruemmte Stufe und taeuschte im ersten Lauf Kanten vor)
-MIN_FOTOS = 3           # Formfamilie/Eckenzahl aus >= 3 Fotos (CLAUDE.md)
-MIN_FAMILIE = 3
 BAUCH_ANTEIL = 0.04     # Zwiebel: Bauch mind. 4 % breiter als die Taille (Breitenstreuung je Foto 2-3 %; 1,1 x war am Schwabentor mit Bauch/Taille 1,095 zu streng)
-# gewinnende Eckenzahl: gepaarter t-Wert (Korrelation bestes - zweites n je Foto) ueber dem einseitigen 97,5-%-Quantil der t-Verteilung (Freiheitsgrade = Fotos - 1),
-# sonst 'unentschieden' (Fotostreuung statt fester Schwelle)
-T975 = {1: 12.71, 2: 4.30, 3: 3.18, 4: 2.78, 5: 2.57, 6: 2.45, 7: 2.36, 8: 2.31, 9: 2.26, 10: 2.23}
-def t_grenze(n_fotos): return T975.get(max(1, n_fotos - 1), 2.2 if n_fotos <= 21 else 2.05 if n_fotos <= 31 else 1.96)
 MIN_T = t_grenze(8)     # nur fuer Tests/Anzeige; im Lauf je Fotozahl
 STUFE_W_M = 0.10        # Fensterbreite des Stufensignals (Facette ~0,5 m breit, Blechnaht ~1-2 cm -> Naht gibt kaum Stufe)
-DUNKEL = 0.5            # Dunkelheit > 0,5 = Bauwerk (halber Weg Himmel -> dunkelster Wert)
 NADEL_DUNKEL = 0.3      # duenne Nadel (2-3 px) ist im Foto nur halb dunkel (Mischpixel)
 ABW_M = 0.15            # Foto-Ausreisser: Halbbreiten im Median > 15 cm neben dem Median aller Fotos (Profilstreuung guter Fotos 2-5 cm)
 NADEL_STREUUNG_M = 0.3  # Nadelende nur gueltig, wenn die Fotos auf 30 cm einig sind (sonst Mischpixel/Ueberbelichtung - Fallback Himmelsmasken-Spitze)
@@ -56,10 +54,6 @@ OFFEN_REL = 0.85       # offene Zeilen: Himmelsanteil >= 85 % des offensten Wert
 BREITE_REL = 0.15      # ... und Silhouetten-Halbbreite auf 15 % wie der Median der offenen Zeilen (Dachflaeche/Krempe sind breiter)
 MIN_ZEILEN = 3         # offene Zone mind. 3 Zeilen (0,15 m bei 5 cm Schritt), sonst Foto fuer die Pfosten nicht verwendbar
 ZEILE_LO_ANTEIL = 0.3  # Zeilen-Normierung: Nenner mind. 30 % des Foto-Kontrasts (reine Himmelszeile bleibt hell, Rauschen wird nicht zu 'dunkel')
-MIN_HIMMEL = 0.8       # Fotoauswahl: >= 80 % der Randpunkte neben der Laterne (Krempe .. Spitze) sind in der Himmelsmaske Himmel (Laterne frei vor Himmel)
-SEKTOR_GRAD = 45.0     # Fotoauswahl je Blickrichtungs-Sektor ...
-MAX_JE_SEKTOR = 8      # ... hoechstens 8 Fotos (die mit den meisten px/m) - sonst bestimmen 10 Fotos aus 16 Grad die Eckenzahl allein
-MAX_FOTOS = 40         # Speicher: 40 Fotos x 12 MP Graustufen ~ 0,5 GB
 
 
 def ecken_x(n, phase, az, R=1.0):
@@ -162,12 +156,6 @@ def dunkelheit(I):
     return np.clip((hi - I) / max(hi - lo, 1e-6), 0, 1)
 
 
-def ausdehnung(s, x, c0=0.0, schwelle=DUNKEL):
-    """Aeussere Ausdehnung der Dunkelheit (erste/letzte Stelle > schwelle) -> (links, rechts) oder None."""
-    j = np.where(s > schwelle)[0]
-    return None if len(j) == 0 else (float(x[j[0]]), float(x[j[-1]]))
-
-
 def dunkel_zeile(I, hi, lo_foto):
     """Dunkelheit einer Zeile gegen den Himmel (hi), normiert auf das Dunkelste DIESER Zeile (1-%-Wert): helle Pfosten vor Himmel werden ~1, auch wenn die Krempen-Untersicht
     im selben Foto viel dunkler ist; Nenner mind. ZEILE_LO_ANTEIL des Foto-Kontrasts (reine Himmelszeile bleibt ~0)."""
@@ -194,25 +182,6 @@ def offene_zone(S, zs, x):
     e_ = ausdehnung(s, x)
     if not e_: return None, "Pfosten im Median der offenen Zeilen nicht dunkel"
     return dict(s=s, z0=float(zs[k].min()), z1=float(zs[k].max()), zeilen=int(k.sum()), offen=round(float(np.median(of[k])), 3), c=(e_[0] + e_[1]) / 2, h=(e_[1] - e_[0]) / 2), None
-
-
-def himmel_anteil(maske, proj, A, q, zs, xr):
-    """Anteil Himmel (maske True) an den Randpunkten A + x q (x = +-xr) in den Hoehen zs; Punkte ausserhalb des Bilds zaehlen als nicht Himmel."""
-    H, W = maske.shape; n = 0; h = 0
-    for z in zs:
-        for x in xr:
-            p = proj(np.array([[A[0] + x * q[0], A[1] + x * q[1], z]]))[0][0]; n += 1
-            xi, yi = int(round(p[0])), int(round(p[1]))
-            if 0 <= xi < W and 0 <= yi < H and maske[yi, xi]: h += 1
-    return h / max(n, 1)
-
-
-def fotos_streuen(kand, sektor=SEKTOR_GRAD, je=MAX_JE_SEKTOR, gesamt=MAX_FOTOS):
-    """Fotoauswahl ueber die Blickrichtungen: kand = [(ppm, az, nr, ...)]; je Sektor die je besten (ppm), dann insgesamt hoechstens 'gesamt' (beste ppm). -> Liste."""
-    sek = {}
-    for k in sorted(kand, key=lambda k: -k[0]): sek.setdefault(int((k[1] % 360.0) // sektor), []).append(k)
-    aus = [k for v in sek.values() for k in v[:je]]
-    return sorted(aus, key=lambda k: -k[0])[:gesamt]
 
 
 def profil_abweichung(halb, pm, k_grenze=1.45):
@@ -266,194 +235,6 @@ def zonen_ab_krempe(z, r, jk):
                 z_bauch=float(z[jb]), r_bauch=float(r[jb]), z_hals=float(z[jh]), r_hals=float(r[jh]), z_knauf=float(z[jn]), r_knauf=float(r[jn]), i=(jk, jt, jb, jh, jn))
 
 
-# ---- Haube als DREHKOERPER aus den Silhouetten (23.11.2026) ----------------------------------------------------------------------------------------
-# Anlass (Kette 1122r, neben_detail_laterne: Foto Zwiebel mit Einschnuerung, Knauf, Nadel - Modell Kasten): das Median-Breitenprofil je Hoehe war von der Taille bis
-# zum Bauch flach (1,17..1,22 m), weil in Fotos von schraeg unten (bis -49 Grad) die breite Krempe als Ellipse bis 0,9 m ueber ihre eigene Hoehe in die Taillen-Zeilen
-# ragt (Rueckkante hoeher abgebildet) - die Taille verschwand, Familie 'geschweift' 8:5. Jetzt SEHSTRAHL-HUELLE (visual hull): je Foto und Hoehe der groesste Querschnitt
-# (Kreis bzw. n-Eck), dessen Abbild ganz in der Silhouette DIESES Fotos liegt; Radius je Hoehe = K_HUELLE-kleinster Wert ueber die Fotos (Fotos von unten begrenzen die
-# Taille nicht, waagrechte Fotos schon). Querschnitt rund/n-Eck durch Synthese: Huelle je Hypothese, Silhouetten neu abgebildet, Restfehler je Foto verglichen.
-K_HUELLE = 3            # Radius = drittkleinster Fotowert: bis zu 2 Fotos mit zu schmaler Silhouette (helles Blech vor hellem Himmel, Kamera-Restfehler) schnueren die Haube nicht ein;
-                        # am Schwabentor schnitten 195 (Haube oben hell) und ein zweites Foto mit k = 2 den Bauch auf 1,0 m (Fotos 1,25 m)
-QS_PUNKTE = 96          # Punkte je Querschnitt (Kreis/n-Eck-Kanten) fuer die Abbildung
-RUND_TOL = 0.10         # Silhouette RICHTUNGSUNABHAENGIG: Kreis-Huelle erklaert die Fotos hoechstens 10 % schlechter als das beste n-Eck (kein richtungsabhaengiger Anteil) ...
-EGAL_TOL = 0.20         # ... UND die Ersatz-Eckenzahl (Pfosten) ist mind. 20 % schlechter als der Kreis (Fotos widersprechen ihr). Von schraeg unten (45-55 Grad) zeigt die
-                        # Silhouette den Querschnitt selbst (Ellipse/Raute der Ringe), darum trennt das auch bei engem Azimut-Bereich (Schwabentor: Quadrat 0,146 m, Kreis 0,088 m).
-                        # Achteck -> Kreis-Naeherung weicht <= 4 % ab (unter der Profilstreuung)
-
-
-def querschnitt_einheit(n=None, phase=0.0, m=QS_PUNKTE):
-    """Einheits-Querschnitt (Umkreis 1) als Punkte (m x 2): Kreis (n None) oder regelmaessiges n-Eck (Punkte gleichmaessig auf den Kanten, Ecke 0 bei Weltwinkel phase)."""
-    if not n: w = np.linspace(0, 2 * math.pi, m, endpoint=False); return np.c_[np.cos(w), np.sin(w)]
-    e = np.array([[math.cos(math.radians(phase + k * 360.0 / n)), math.sin(math.radians(phase + k * 360.0 / n))] for k in range(n + 1)]); j = max(1, m // n)
-    return np.vstack([e[k] + (e[k + 1] - e[k]) * t for k in range(n) for t in np.arange(j) / j])
-
-
-def ebene_abbilden(P, C, A, az):
-    """3D-Punkte P (k x 3) -> (x', z') in der Fotoebene eines Fotos: Ebene durch die Achse A senkrecht zur waagrechten Blickrichtung az (wie zeile()), Schnitt des
-    Sehstrahls Kamera C -> P mit der Ebene. Gleiches Pixel wie P - so vergleicht man Punkte ausserhalb der Ebene (Krempe, Haubenrueckseite) mit dem gemessenen Profil."""
-    u = np.array([math.cos(math.radians(az)), math.sin(math.radians(az)), 0.0]); q = np.array([u[1], -u[0], 0.0]); A3 = np.array([A[0], A[1], 0.0])
-    d = P - C; t = ((A3 - C) @ u) / np.where(np.abs(d @ u) < 1e-9, -1e-9, d @ u); X = C + t[:, None] * d
-    return (X - A3) @ q, X[:, 2]
-
-
-def farb_halb(zeile_fn, xs, zs, x_himmel, z_ref, schwelle_fn):
-    """Silhouette je Hoehe aus dem FARBABSTAND zum Himmel: zeile_fn(z0, z1, nz) -> Farbzeile (N x 3) auf xs. Himmelsfarbe = Median der Pixel mit |x| >= x_himmel im
-    Referenzband z_ref (neben der Laterne, Foto frei vor Himmel); Abstand normiert auf seinen 97-%-Wert im Band; Bauwerk = Abstand > schwelle_fn(z). -> {z: (l, r)}."""
-    ref = np.asarray(zeile_fn(z_ref[0], z_ref[1], 25), float); au = np.abs(xs) >= x_himmel
-    if ref.ndim != 2 or not np.isfinite(ref[au]).all(1).any(): return {}
-    sky = np.nanmedian(ref[au], 0); d97 = float(np.nanpercentile(np.linalg.norm(ref - sky, axis=1), 97)); out = {}
-    if not d97 > 1e-6: return {}
-    for z in zs:
-        d = np.nan_to_num(np.linalg.norm(np.asarray(zeile_fn(z, z, 1), float) - sky, axis=1) / d97, nan=0.0); e_ = ausdehnung(d, xs, schwelle=schwelle_fn(float(z)))
-        if e_: out[float(z)] = (e_[0], e_[1])
-    return out
-
-
-def profil_raster(halb, dz=0.05):
-    """Gemessenes Foto-Profil {z: (l, r)} (x quer in der Fotoebene) -> (zg, l, r) auf dem z-Gitter; fehlende Zeilen = NaN (dort ist Himmel)."""
-    zz = sorted(halb); zg = np.round(np.arange(zz[0], zz[-1] + dz / 2, dz), 3); l = np.full(len(zg), np.nan); r = np.full(len(zg), np.nan); k = {round(z, 3): v for z, v in halb.items()}
-    for i, z in enumerate(zg):
-        v = k.get(round(float(z), 3))
-        if v is not None: l[i], r[i] = v[0], v[1]
-    return zg, l, r
-
-
-def _zeilen(zp, zg):
-    dz = float(zg[1] - zg[0]) if len(zg) > 1 else 0.05; i = np.round((zp - zg[0]) / dz).astype(int); return i, (i >= 0) & (i < len(zg))
-
-
-def _in_silhouette(xp, zp, B):
-    """Liegen die abgebildeten Punkte (x', z') in der Silhouette von Foto B (l <= x' <= r der naechsten Gitterzeile)? Ausserhalb des Gitters/Himmelszeile = nein."""
-    i, ok = _zeilen(zp, B["zg"]); i = np.clip(i, 0, len(B["zg"]) - 1); l, r = B["l"][i], B["r"][i]
-    return ok & np.isfinite(l) & (xp >= l - 1e-9) & (xp <= r + 1e-9)
-
-
-def _ringe(A, zs, s, quer):
-    m = len(quer); return np.c_[A[0] + (s[:, None] * quer[None, :, 0]).ravel(), A[1] + (s[:, None] * quer[None, :, 1]).ravel(), np.repeat(zs, m)]
-
-
-def huelle_foto(B, A, zs, quer, s_max=3.0, iters=14):
-    """Je Hoehe z (zs) der groesste Massstab s (Umkreis), bei dem der Querschnitt s * quer um die Achse A in Hoehe z ganz in der Silhouette von Foto B liegt (Bisektion).
-    B: dict(C [3], az, A0 [Ebene der Messung], zg, l, r). -> Array s je Hoehe."""
-    lo = np.zeros(len(zs)); hi = np.full(len(zs), s_max); m = len(quer); A0 = B.get("A0", A)
-    for _ in range(iters):
-        s = (lo + hi) / 2; xp, zp = ebene_abbilden(_ringe(A, zs, s, quer), np.asarray(B["C"], float), A0, B["az"])
-        ok = _in_silhouette(xp, zp, B).reshape(len(zs), m).all(1); lo = np.where(ok, s, lo); hi = np.where(ok, hi, s)
-    return lo
-
-
-def silhouette_vorhersage(B, A, zs, rs, quer, dz=0.025):
-    """Ausdehnung (l, r) des Drehkoerpers (Profil zs/rs um die Achse A, Querschnitt quer) im Foto B auf dessen Gitter zg (NaN = nichts): alle Querschnitte fein in z abgebildet."""
-    zf = np.arange(zs[0], zs[-1] + 1e-9, dz); rf = np.interp(zf, zs, rs); xp, zp = ebene_abbilden(_ringe(A, zf, rf, quer), np.asarray(B["C"], float), B.get("A0", A), B["az"])
-    i, k = _zeilen(zp, B["zg"]); n = len(B["zg"]); l = np.full(n, np.inf); r = np.full(n, -np.inf)
-    np.minimum.at(l, i[k], xp[k]); np.maximum.at(r, i[k], xp[k]); l[~np.isfinite(l)] = np.nan; r[~np.isfinite(r)] = np.nan; return l, r
-
-
-def drehprofil(beob, A, zs, n=None, phase=0.0, k=K_HUELLE):
-    """Sehstrahl-Huelle eines Drehkoerpers mit Querschnitt (Kreis oder n-Eck/phase) um die Achse A aus mehreren Fotos. -> (r je Hoehe [Umkreis], S [Fotos x Hoehen],
-    bindend [Anzahl Fotos je Hoehe innerhalb 5 % des Ergebnisses])."""
-    quer = querschnitt_einheit(n, phase); S = np.array([huelle_foto(B, A, zs, quer) for B in beob])
-    r = np.sort(S, 0)[min(k, len(beob)) - 1]
-    return r, S, (S <= 1.05 * r[None, :] + 1e-3).sum(0)
-
-
-def huelle_restfehler(beob, A, zs, r, n=None, phase=0.0, zband=None):
-    """Restfehler je Foto: Median der Kantenabweichung (|l - l_vorh| + |r - r_vorh|) / 2 in den Zeilen des Bands zband (z0, z1); Zeile nur in einem von beiden (Messung
-    oder Vorhersage) zaehlt als Halbbreite daneben."""
-    quer = querschnitt_einheit(n, phase); z0, z1 = zband or (zs[0], zs[-1]); out = []
-    for B in beob:
-        lp, rp = silhouette_vorhersage(B, A, zs, r, quer); sel = (B["zg"] >= z0) & (B["zg"] <= z1); gm = np.isfinite(B["l"]) & sel; gp = np.isfinite(lp) & sel
-        if not (gm | gp).any(): out.append(np.nan); continue
-        e = np.where(gm & gp, (np.abs(B["l"] - lp) + np.abs(B["r"] - rp)) / 2, np.where(gm, (B["r"] - B["l"]) / 2, (rp - lp) / 2))
-        out.append(float(np.median(e[gm | gp])))
-    return np.array(out)
-
-
-DZ_MAX = 0.8            # Registrierung: Hoehenversatz je Foto hoechstens +-0,8 m (Schwabentor-1122: Knauf je Foto 51,6..52,4 m, Krempensprung passend zum Hoehenwinkel
-DZ_SCHRITT = 0.05       # versetzt - Kameralage an der Laternenspitze einige dm unsicher; Nadelende je Foto streute 2 m)
-REST_AUSREISSER = 2.0   # Foto mit Restfehler > 2 x Median aller nach der Registrierung = Silhouette unvollstaendig (helles Blech vor hellem Himmel) -> raus aus der Huelle
-
-
-def zentrieren(beob, band):
-    """Seitlicher Versatz je Foto: Silhouettenmitte im Band (Median von (l + r) / 2) auf 0 - die Achse liegt quer zur Blickrichtung je Foto einige dm daneben
-    (Kameralage/Achse aus der Wolke); Drehkoerper sind in der Fotoebene symmetrisch zur Achse (Kamera liegt in der Symmetrieebene). Mitte nur aus dem Koerper
-    (Zeilen mit > 50 % der groessten Breite; Knauf/Nadel sind wenige Pixel breit). Danach SYMMETRISCH auf die schmalere Seite: ein Fremdkoerper neben einer Seite
-    (Nachbardach/Turm hinter der Haube, commons_orig2__084) verbreitert nur eine Seite und darf die Huelle nicht tragen. Setzt B['mitte'], l = -w, r = w."""
-    for B in beob:
-        sel = (B["zg"] >= band[0]) & (B["zg"] <= band[1]) & np.isfinite(B["l"])
-        if sel.any():
-            wb = (B["r"] - B["l"]) / 2; sel &= wb >= 0.5 * np.nanmax(np.where(sel, wb, np.nan))
-        c = float(np.median((B["l"][sel] + B["r"][sel]) / 2)) if sel.any() else 0.0
-        w = np.minimum(c - B["l"], B["r"] - c); w = np.where(w > 0, w, np.nan)
-        B["mitte"] = c; B["l"] = -w; B["r"] = w
-    return beob
-
-
-def registrieren(beob, A, zs, band, iters=3, k=K_HUELLE):
-    """HOEHENVERSATZ je Foto (Kameralage-Fehler) durch Synthese: je Foto der Versatz dz (+-DZ_MAX), bei dem seine Silhouette am besten zur Huelle der ANDEREN Fotos passt
-    (Runde 1 Median der Einzel-Huellen, danach k-kleinster Wert); Versatz-Median = 0. Danach Fotos mit Restfehler > REST_AUSREISSER x Median raus.
-    Setzt B['dz'] und verschiebt zg. -> (beob [nur passende], weg {nr: Grund})."""
-    quer = querschnitt_einheit()
-    for B in beob: B.setdefault("zg0", B["zg"].copy()); B["dz"] = 0.0
-    def setz(B, dz): B["zg"] = B["zg0"] + dz
-    for it in range(iters):
-        for B in beob: setz(B, B["dz"])
-        S = np.array([huelle_foto(B, A, zs, quer) for B in beob]); neu = []
-        for i, B in enumerate(beob):
-            an = np.delete(S, i, 0); r = np.median(an, 0) if it == 0 else np.sort(an, 0)[min(k, len(an)) - 1]; best = (np.inf, 0.0)
-            for d in np.arange(-DZ_MAX, DZ_MAX + 1e-9, DZ_SCHRITT):
-                if abs(B["dz"] + d) > DZ_MAX + 1e-9: continue
-                setz(B, B["dz"] + d); e = huelle_restfehler([B], A, zs, r, zband=band)[0]
-                if e < best[0] - 1e-9: best = (e, d)
-            setz(B, B["dz"]); neu.append(B["dz"] + best[1])
-        m_ = float(np.median(neu))
-        for B, d in zip(beob, neu): B["dz"] = round(d - m_, 3)
-    for B in beob: setz(B, B["dz"])
-    r, _, _ = drehprofil(beob, A, zs, k=k); e = huelle_restfehler(beob, A, zs, r, zband=band); me = float(np.nanmedian(e)); weg = {}
-    for B, e_ in zip(beob, e):
-        B["rest"] = round(float(e_), 3)
-        if not np.isfinite(e_) or e_ > REST_AUSREISSER * me: weg[B["nr"]] = f"Restfehler {e_:.2f} m > {REST_AUSREISSER} x Median {me:.2f} (Silhouette unvollstaendig/Fremdkoerper)"
-    gut = [B for B in beob if B["nr"] not in weg]
-    if weg and len(gut) >= MIN_FOTOS: g2, w2 = registrieren(gut, A, zs, band, iters, k); return g2, {**weg, **w2}
-    return beob, {}
-
-
-def querschnitt_haube(beob, A, zs, zband, r_ref, n_kand=N_KAND, phase_schritt=5.0, facetten=None, n_fallback=None, phase_fallback=0.0):
-    """Querschnitt der Haube durch SYNTHESE: je Hypothese (Kreis, n-Eck x Lage) Sehstrahl-Huelle, Silhouetten neu abgebildet, Restfehler je Foto im Haubenband.
-    Entscheidung (Formfamilie nur aus >= MIN_FAMILIE Fotos, CLAUDE.md):
-     1. ein n-Eck ist in >= MIN_FAMILIE Fotos besser als der Kreis UND gepaarter t-Wert ueber t_grenze -> n-Eck (Fotobeleg Silhouette);
-     2. sonst Facettenprobe eindeutig (facetten = dict(n, phase, eindeutig)) -> deren n-Eck (Fotobeleg Facettenstufen);
-     3. sonst Kreis, wenn die Silhouette richtungsunabhaengig ist: Kreis-Restfehler <= (1 + RUND_TOL) x bestes n-Eck UND Ersatz-Eckenzahl n_fallback
-        >= (1 + EGAL_TOL) x Kreis -> 'rund' als benannte ANNAHME;
-     4. sonst n_fallback (Eckenzahl der Pfosten) als ANNAHME.
-    -> dict(art 'rund'|'n-eck', n, phase, quelle, annahme, rest_kreis, rest_best, t, besser_fotos, kandidaten)."""
-    rk, _, _ = drehprofil(beob, A, zs); ek = huelle_restfehler(beob, A, zs, rk, zband=zband); kand = {"kreis": round(float(np.nanmedian(ek)), 4)}; best = None
-    for n in n_kand:
-        for ph in np.arange(0.0, 360.0 / n, phase_schritt):
-            r, _, _ = drehprofil(beob, A, zs, n, ph); e = huelle_restfehler(beob, A, zs, r, n, ph, zband=zband); m_ = float(np.nanmedian(e))
-            if best is None or m_ < best[0]: best = (m_, n, float(ph), e)
-            kand[str(n)] = round(min(kand.get(str(n), 9.0), m_), 4)
-    d_ = ek - best[3]; d_ = d_[np.isfinite(d_)]; besser = int((d_ > 0).sum())
-    t = float(d_.mean() / max(d_.std(ddof=1), 1e-6) * math.sqrt(len(d_))) if len(d_) > 1 else 0.0
-    erg = dict(rest_kreis=kand["kreis"], rest_best=round(best[0], 4), n_best=best[1], phase_best=best[2], t=round(t, 2), t_grenze=t_grenze(len(d_)), besser_fotos=besser, kandidaten=kand,
-               rest_kreis_rel=round(kand["kreis"] / max(r_ref, 1e-6), 3))
-    if besser >= MIN_FAMILIE and t >= t_grenze(len(d_)):
-        return dict(erg, art="n-eck", n=best[1], phase=best[2], annahme=None, quelle=f"Silhouetten-Synthese: {best[1]}-Eck in {besser} Fotos besser als Kreis (t {t:.2f})")
-    if facetten and facetten.get("eindeutig"):
-        return dict(erg, art="n-eck", n=int(facetten["n"]), phase=float(facetten["phase"]), annahme=None, quelle=f"Facettenstufen: {facetten['n']}-Eck eindeutig")
-    r_fb = kand.get(str(n_fallback)) if n_fallback else None
-    if kand["kreis"] <= (1 + RUND_TOL) * best[0] and (r_fb is None or r_fb >= (1 + EGAL_TOL) * kand["kreis"]):
-        return dict(erg, art="rund", n=None, phase=0.0, quelle="Silhouette richtungsunabhaengig",
-                    annahme=f"ANNAHME: Haube rund - Silhouette richtungsunabhaengig (Kreis-Restfehler {kand['kreis']:.3f} m, bestes {best[1]}-Eck {best[0]:.3f} m, Pfosten-{n_fallback}-Eck "
-                            f"{r_fb if r_fb is None else round(r_fb, 3)} m); Facetten/Rippen nicht belegt (kein n-Eck in >= {MIN_FAMILIE} Fotos signifikant besser, t {t:.2f})")
-    return dict(erg, art="n-eck", n=n_fallback, phase=phase_fallback, quelle="Pfosten",
-                annahme=f"ANNAHME: Haube {n_fallback}-Eck wie die Pfosten (kein n-Eck belegt, Kreis nicht richtungsunabhaengig: Kreis {kand['kreis']:.3f} m, bestes {best[1]}-Eck {best[0]:.3f} m)")
-
-
-GLATT_ZEILEN = 5        # Huellenprofil: gleitender Median ueber 5 Zeilen (0,25 m) - einzelne Zeilen mit Rauschen (Blechnaht, Mischpixel) kerben sonst die Haube;
-                        # Knauf (0,4 m hoch) bleibt erhalten
-
-
 KREMPE_DELLE = 0.05     # Krempe in der Huelle: erstes oertliches Maximum (+-0,15 m) ueber der Pfostenoberkante, ueber dem die Huelle in 0,6 m um >= 5 % einzieht (Taille)
 
 
@@ -468,13 +249,6 @@ def krempe_index(zh, r, z_median):
     return int(np.argmin(np.abs(zh - z_median)))
 KNAUF_FENSTER_M = 0.1   # Knaufradius: Halbbreiten +-0,1 m um die Knaufmitte (Restversatz der Registrierung ~5 cm)
 KNAUF_MAX = 1.5
-
-
-def glaetten(r, k=GLATT_ZEILEN):
-    """Gleitender Median (ungerade Fensterlaenge k) mit Randwiederholung."""
-    r = np.asarray(r, float); h = k // 2
-    if len(r) < k: return r
-    p = np.r_[np.full(h, r[0]), r, np.full(h, r[-1])]; return np.array([np.median(p[i:i + k]) for i in range(len(r))])
 
 
 def haube_huelle(fotos, A, zs, P, Z):
@@ -508,19 +282,6 @@ def haube_huelle(fotos, A, zs, P, Z):
 
 
 # ---- Fotos ---------------------------------------------------------------------------------------------------------------------------------------
-def zeile(im, c, sb, A, q, z0, z1, xs, nz=7):
-    """Helligkeit quer zur Blickrichtung (x-Gitter xs in m) als Median ueber nz Hoehen zwischen z0 und z1 (volle Fotoaufloesung, bilinear)."""
-    import cv2, flaeche_ortho as FO
-    rows = []
-    for z in np.linspace(z0, z1, nz):
-        X = np.c_[A[0] + xs * q[0], A[1] + xs * q[1], np.full(len(xs), z)]; p = FO.projektion(X, c)[0] * sb
-        v = cv2.remap(im, p[:, 0].astype(np.float32).reshape(1, -1), p[:, 1].astype(np.float32).reshape(1, -1), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)[0].astype(float)
-        aussen = (p[:, 0] < 0) | (p[:, 1] < 0) | (p[:, 0] > im.shape[1] - 1) | (p[:, 1] > im.shape[0] - 1); v[aussen] = np.nan
-        rows.append(v)
-    R = np.array(rows, float)
-    return np.nanmedian(R, 0)
-
-
 def main(argv=None):
     import cv2, flaeche_ortho as FO
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--profil"); ap.add_argument("--aus"); ap.add_argument("--bild"); ap.add_argument("--min-ppm", type=float, default=25.0)
