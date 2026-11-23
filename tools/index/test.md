@@ -1,4 +1,4 @@
-# Werkzeuge: test (166)
+# Werkzeuge: test (168)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -55,6 +55,7 @@
 - `tools/test_handy_masken_gross.py` [seg] test_handy_masken_gross.py - 22.11.2026 Nulllauf schwabentor-1122: grosse Bilder (27 MPx) liessen handy_masken bei jeder Breite CUDA-OOM laufen, weil 150 Klassen-Logits auf VOLLE B
 - `tools/test_handy_masken_v2.py` [-] Test handy_masken_v2 (ohne GPU): Statue haengt an Fassade -> frei; Person am Boden -> maskiert; Box ohne Boden -> frei; Fleck im Pflaster -> verworfen; Fahrzeug immer.
 - `tools/test_haufen_klaeren.py` [-] test_haufen_klaeren.py - synthetisch: Grundriss-Tor klaert Strassenhaufen automatisch (tools/haufen_klaeren.py, 22.11.2026).
+- `tools/test_html_zielgroesse.py` [-] test_html_zielgroesse.py - fester Test (23.11.2026, Kettenlauf 1122p: html-Stufe schrieb 20 MB, Artifact-Grenze 16 MB) fuer modell_3d_html.zielgroesse: (1) Seite ueber der Zielgroe
 - `tools/test_kamera_ausgleich.py` [seg] test_kamera_ausgleich.py - BS3d synthetischer Beweis: Kameras absichtlich verschieben (Kamerazentrum 3/5/10 cm, Rotation 0,3/0,5/1 Grad), pruefen ob der Ausgleich (kamera_ausgleich
 - `tools/test_kamera_klumpen.py` [-] Fester Test (Sekunden, CPU) fuer KAMERA-KLUMPEN (tools/lage_proben.kamera_nah / kameras_einmal, tools/sfm_lod2_ausrichten.py AUSR_KLUMPEN). Befund Kettenlauf schwabentor-1122p (23.
 - `tools/test_kamera_lod2.py` [seg] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
@@ -144,6 +145,7 @@
 - `tools/test_tor_gemeinsame_fotos.py` [-] Test Torluecke 3 (11.11.): Foto-Gewinn nur auf GEMEINSAMEN Fotos (bauteil_kreis.angleichen). 1) synthetisch: Nachher verliert ein schlechtes Foto -> scheinbarer Gewinn muss verschw
 - `tools/test_tor_verschiebung.py` [seg] test_tor_verschiebung.py - BEWEIS fuer tools/tor_verschiebung.py (Nullkontrolle des Foto-Tors) auf synthetischer Wahrheit.
 - `tools/test_traufe_aus_fotos.py` [seg] test_traufe_aus_fotos.py - Traufe des Hauptdachs aus Fotokanten (tools/traufe_aus_fotos.py, bauteile.traufkasten/traufe_einbauen, hand_vergleich), 21.11.2026. Anlass Schwabentor-11
+- `tools/test_uhr_beleg.py` [seg] test_uhr_beleg.py - fester synthetischer Test (23.11.2026, Kettenlauf 1122p: goldener Heiligenschein im Wandgemaelde f01 als Uhr gebaut, dieselbe Uhr zweimal (Aussenrand + Ziffernr
 - `tools/test_umgang_eckquader.py` [gen] test_umgang_eckquader.py - fester synthetischer Test (21.11.2026) fuer (1) tools/umgang_aus_fotos.py: Zone unter der Traufe aus Zeilenkanten (dunkler Ruecksprung ueber heller Wand)
 - `tools/test_undefinierte_namen.py` [-] Undefinierte Namen in tools/*.py (pyflakes) - Lauf 1121t verlor die Feinrechnung, weil 'q5, q95 = ...' bei einem Agenten-Merge in einen Kommentar rutschte (NameError erst nach 20 m
 - `tools/test_verbund_schwachstellen.py` [-] Synthetischer Test verbund_schwachstellen.py (Sekunden): zwei dichte Bildgruppen, verbunden ueber 1 / 3 / 10 Bruecken-Bilder; eine Gruppe allein. Erwartet: Gelenk bei 1 Bild (zu_du
