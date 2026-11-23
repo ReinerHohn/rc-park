@@ -1,4 +1,11 @@
-# Übergabe 23.11.2026 ~01:30
+# Übergabe 23.11.2026 ~06:10 (Nachtrag oben, alter Stand darunter)
+## NACHTRAG 06:10
+- 1122p ausgewertet (~28 %, Sued mit Relief, Ost leer), Logbuch 03:55. 3D V3 (verkleinert, Original 20 MB > 16 MB: html-Stufe sollte --n/--netz_raster kleiner setzen).
+- In main (je Schnelltest 0): Probe13 (Fenster/Tuer, Bruecke), 14 (Kegeldach), 15 (Nachholen, Lage-Klumpen), 16 (Tuermchen-Achse, Dach-DOM1-Veto).
+- LAEUFT: Kette `rcpark-kette-schwabentor-null-1122q` (Start 06:10), Log job_logs/kette-schwabentor-null-1122q.log. Danach auswerten wie 1122p.
+- Ungemergt: a195 geschweiftes Kegeldach (Fotoauswahl fehlt), a4ef gemeinsamer BA (hilft nicht, zweiter Zwang am fernen Ende noetig). Bruecken-Messung 1122: Suedwand +0,30 m (Ziel 0,15) verfehlt.
+- Naechste Befunde: Laterne Pfostenband (laterne_aus_fotos, Band am First, 16 Grad Blickstreuung), uhr_f01_2 = Heiligenschein, Tuer f04, html zu gross.
+
 Weiter mit: „weiter“ (vorher Skill `sitzungsbeginn`). Zuerst Kettenlauf `1122p` auswerten.
 
 ## Auftrag (Nutzerworte, unverändert seit 22.11.)
