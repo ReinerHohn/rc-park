@@ -54,15 +54,22 @@ def foto_messen(maske, proj, A, zs, C):
     b = np.array([A[0] - C[0], A[1] - C[1], 0.0]); b /= max(np.linalg.norm(b), 1e-9); q = np.array([-b[1], b[0], 0.0])     # quer zur Blickrichtung, horizontal
     p1, _, _ = proj(X + q); ppm = np.linalg.norm(p1 - p, axis=1)                                                         # Pixel je Meter quer an der Achse
     e = (p1 - p) / np.maximum(ppm[:, None], 1e-9)
-    if (p[:, 0] < 2).any() or (p[:, 0] > W - 3).any(): return None, "Achse ausserhalb des Bilds", {}
+    if p[0, 0] < 2 or p[0, 0] > W - 3: return None, "Achse ausserhalb des Bilds", {}
+    # 23.11.2026 (Kettenlauf 1122o: 129 von 373 Fotos 'obere Bildkante unter der Suchhoehe', uebrig 16 Fotos aus EINER Richtung -> Spitze ungueltig, Laterne nie
+    # gebaut): verlangt wurde der ganze Suchbereich (Wolkenende + 6 m) im Bild, obwohl die Spitze 3 m tiefer liegt. Jetzt zaehlt nur der sichtbare Teil der Achse
+    # (von unten durchgehend im Bild); ob ueber der Spitze noch Himmel im Bild ist, prueft danach 'kein Himmel ueber der Spitze' (gleiche Regel wie vorher am Suchende).
+    im_bild = (p[:, 1] >= 2) & (p[:, 0] >= 2) & (p[:, 0] <= W - 3)
+    nv = int(np.argmin(im_bild)) if not im_bild.all() else len(zs)
+    dz = zs[1] - zs[0]; lu = max(1, int(round(LUECKE_M / dz)))
+    if nv < 2 * lu + 3: return None, "obere Bildkante unter der Suchhoehe", {}
+    zs, p, ppm, e = zs[:nv], p[:nv], ppm[:nv], e[:nv]
     def bau(x, y): xi, yi = int(round(x)), int(round(y)); return 0 <= xi < W and 0 <= yi < H and not maske[yi, xi]
     def band(i, m):
         n = max(1, int(math.ceil(m * ppm[i])))
         return any(bau(p[i, 0] + k * e[i, 0], p[i, 1] + k * e[i, 1]) for k in range(-n, n + 1))
-    if p[-1, 1] < 2: return None, "obere Bildkante unter der Suchhoehe", {}
     an = [band(i, BAND_M) for i in range(len(zs))]
     if not an[0]: return None, "Achse unten schon Himmel (Dach nicht gesehen/Achse falsch)", {}
-    dz = zs[1] - zs[0]; lu = max(1, int(round(LUECKE_M / dz))); top = 0; leer = 0
+    top = 0; leer = 0
     for i in range(1, len(zs)):
         if an[i]: top = i; leer = 0
         else:
@@ -80,6 +87,10 @@ def foto_messen(maske, proj, A, zs, C):
             yt = int(np.argmax(col))
             if best is None or yt < best[0] - 1: best = (yt, k / ppm[it])
     if best is not None and abs(best[1]) > GIPFEL_TOL_M: return None, f"Silhouettengipfel {best[1]:+.1f} m neben der Achse (Traufe/Dach verdeckt die Spitze)", {}
+    # 23.11.2026 (Probe 1122p: Einzelspitzen 46,5..49,8 m bei Median 52,6): in einer OFFENEN Laterne ist die Achse zwischen den Pfosten Himmel - das Achsenband endet dort,
+    # die Haube liegt aber darueber. Bauwerk an der Achse mehr als LUECKE_M ueber dem Ende = keine Spitze (Foto entfaellt, statt die Luecke als Spitze zu zaehlen).
+    vpm = abs(p[min(top + 1, len(zs) - 1), 1] - p[max(top - 1, 0), 1]) / max(zs[min(top + 1, len(zs) - 1)] - zs[max(top - 1, 0)], 1e-9)   # Bildpixel je Meter entlang der Achse
+    if best is not None and best[0] < p[top, 1] - (LUECKE_M + dz) * vpm: return None, "Bauwerk ueber dem Achsenende (offene Laterne/Luecke)", {}
     # Spitze genauer: zwischen top und top+1 die Zeile des letzten Bauwerkspixels auf der Achse (Unterabtastung dz)
     z_sp = float(zs[top] + dz / 2)
     halb = {}
