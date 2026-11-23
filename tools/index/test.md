@@ -1,4 +1,4 @@
-# Werkzeuge: test (178)
+# Werkzeuge: test (179)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -21,6 +21,7 @@
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
 - `tools/test_durchfahrt_wandbild.py` [gen] test_durchfahrt_wandbild.py - Tordurchfahrt, deren Sweep-Form verworfen wurde, kommt ueber die Fotokanten doch ins Modell (23.11.2026). Ohne Dateien, < 30 s.
 - `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
+- `tools/test_eck_teilkameras.py` [-] Test seiten_eck_koppeln, Stand 23.11.2026 (Befund 1122t: Teil 1 'Massstab nicht belegt', Haelften 2,3 %): (1) KAMERA-PROBE: flache Wand + gespiegelter Teil - die Punkte allein best
 - `tools/test_element_einpassen.py` [seg] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
 - `tools/test_farbteile_neigung.py` [gen] test_farbteile_neigung.py - Schnelltest fuer tools/druck_farbteile.py: Plattentiefe folgt der OERTLICHEN Wand (18.11.2026). Synthetisch: Quader 12 x 8 x 10 m, um 2 Grad gegen die M
 - `tools/test_feinmass.py` [seg] test_feinmass.py - SYNTHETISCHER BEWEIS fuer f1_fein (modelle/archiv/SPEC_ORNAMENT_FEINMASS.md). Testflaeche mit aufgesetzten Rippen (bekannte Lage, Metrik in m) wird mit der echte

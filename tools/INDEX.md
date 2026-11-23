@@ -2,7 +2,7 @@
 Umgebung: col = /media/oem/scan/venv-colmap (pycolmap), seg = /media/oem/scan/venv-seg (torch/CUDA), gen = ~/.venvs/rcpark (trimesh), - = beliebig.
 Suche: Thema waehlen und nur diese Datei lesen, oder `grep -ih <stichwort> tools/index/*.md`. Einstieg der Kette: tools/gesamtkette.py, ./0-3d-modell.sh.
 
-- test (178) -> `tools/index/test.md`
+- test (179) -> `tools/index/test.md`
 - kette_einstieg (12) -> `tools/index/kette_einstieg.md`
 - alt_objekte_frueher (26) -> `tools/index/alt_objekte_frueher.md`
 - sfm_mapper (62) -> `tools/index/sfm_mapper.md`
