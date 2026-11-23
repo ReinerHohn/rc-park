@@ -20,6 +20,8 @@ Angelegt 23.11.2026 auf Nutzerwunsch („eigener Projektbaum für Bahn und Anlag
 - Nutzer 23.11.: Unterbau mit dem Lasercutter maschinisieren („Relief zusammencutten"). Vorschlag (ANNAHMEN, ungemessen): Spanten/Relief 4 mm (Hirschsprung lief mit 3 mm Pappel); Gleistrasse + Modulrahmen NICHT einlagig 4 mm (Durchbiegung → Entgleisen), sondern 2-3 Lagen verleimt (8-12 mm) oder Kastenträger aus gesteckten 4-mm-Teilen, Ecken Fingerzinken. Sculpfun S9 (5,5 W, Bett 410x400) schneidet 3 mm Pappel kalibriert, 4 mm vermutlich mehrere Durchgänge; 1-m-Module aus Teilstücken. Früherer Stand: „eigenen Laser-Park kaufen → ⏸ erst validieren, CO2-Service" (konzept-geschaeft 19.10.).
 - Nächster Schritt: Probemodul ~50x50 cm (Kastenrahmen, Steckspanten, Gleistrasse doppellagig) mit dem S9; messen: Durchbiegung unter Last, Schneidzeit → dann Laserkauf entscheiden. Teile per Werkzeug aus Gelände + Gleisplan erzeugen (`modul_platte.py`-Lücke).
 
+- Nutzer 23.11.: großer Laser für viele m² über Nacht? → Sculpfun-Verlängerung S9 auf 410x950 mm (~50-130 $, LightBurn-Größe anpassen) [sculpfun.com, manuals.plus]; Großformat-CO2 130x90/160x100 cm (Vorwissen, Preise ungeprüft). Hersteller einig: NIE unbeaufsichtigt (Holzbrand) [Epilog, Thunder, xTool, Stanford EHS] → lange beaufsichtigte Blöcke + dichtes Packen statt Nachtbetrieb. Vorschlag: erst Verlängerung + Probemodul, dann CO2-Kauf entscheiden.
+
 **Gleis & Fahrzeuge**
 - H0-Gleis eines großen Herstellers (Code 83/100), Weichen per Servo. Fahrzeuge robust wählen (Dauerbetrieb), Ersatzloks im Umlauf. ANNAHME: Verschleißtempo im Dauerbetrieb je Fahrzeug stark verschieden - Nutzerwert „bei MiWuLa nach ~3 Monaten ausgeleiert" unbelegt, zu prüfen.
 
