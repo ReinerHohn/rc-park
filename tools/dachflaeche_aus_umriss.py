@@ -14,7 +14,9 @@ KERNMETHODE: Form aus Fotos, Wolke/DOM1 nur Veto. Vorbild tools/vordach_profil.p
     flach an der Traufe/steil oben = glockig, c < 0 gewoelbt). h_t, h_f je c per Ausgleich, c = kleinster Fehler. Familie gilt, wenn >= MIN_FOTOS Fotos sie
     waehlen und sie die Mehrheit hat (Formfamilie aus >= 3 Fotos).
  5. Fussquerschnitt: spitze_aus_umriss.querschnitt aus h_f je Blickrichtung (eckig/rund, Lage, Halbseite).
- 6. VETO (nur Pruefung): Abstand der Fotoflaeche zur dichten Wolke und zum DOM1 (Median je Seite) im Block; DOM1 an der Traufkante ist 1-m-Raster (siehe Bericht).
+ 6. DOM1-VETO (23.11.2026, war bis dahin nur angekuendigt): Laser-Isolinien je 0,1 m Hoehe (Regeln wie dach_profil_wolke.dom1_veto, Klippe an der Traufe) in den
+    Block 'dom1_veto'; bauteile.flaeche_aus_foto setzt jede Ringseite, die > 0,3 m ausserhalb steht, auf die Isolinie (Traufring bleibt). Schwabentor-1122p ohne Veto:
+    HOEHEN-TOR +1,73 m (Foto-Ebene ab der Ueberstand-Aussenkante 6,77 m statt Aufschiebling + 56-Grad-Flaeche wie im Laser).
 Ausgabe: Block 'flaeche_foto' in audit/dach_profil.json {gueltig, familie, c, z_traufe, z_fuss, fuss {form, theta, halb}, fotos, stimmen, je_foto, grund}
 -> bauteile.dach_aus_profil baut bei 'gerade' die Dachflaeche als Ebenen von der Foto-Traufe bis zum Fuss (statt Wolkenscheiben), darueber Aufsatz aus spitze_foto.
 Bild audit/dachflaeche_umriss.jpg. Aufruf: dachflaeche_aus_umriss.py <objekt.json> [--profil P] [--aus A] [--bild B] [--max-fotos 300] [--nur-messen] [--root R]
@@ -102,6 +104,51 @@ def ringe(eave, fuss, z_t, z_f, c, n=10):
     return [np.c_[E + t * (F - E), np.full(4, z_t + (z_f - z_t) * float(g_profil(t, c)))] for t in np.linspace(0, 1, n + 1)]
 
 
+VETO_TOL = 0.3      # wie dach_profil_wolke --dom1_tol: Fotoflaeche darf hoechstens 0,3 m weiter hinaus stehen als die Laser-Isolinie ihrer Hoehe
+VETO_RASTER = 0.1   # Hoehenraster der gespeicherten Isolinien (m)
+
+
+def laser_isolinien(D, hoehe, zs):
+    """DOM1-Isolinien je Hoehe im Dachrahmen (o, d, n aus dach_profil.json): {z: [l_-d, l_+d, l_-n, l_+n]} = groesster Abstand nach aussen, an dem der Laser
+    noch >= z misst; None = Laser blind (Laterne, Spitze, Sektor ohne Flaeche) -> dort kein Veto. Gleiche Regeln wie dach_profil_wolke.dom1_veto (Klippe an der Traufe)."""
+    from dach_profil_wolke import dom1_veto
+    P = [[float(z), -99.0, 99.0, -99.0, 99.0] for z in zs]
+    ein = dom1_veto(P, D["o"], D["d"], D["n"], hoehe, tol=0.0); iso = {round(float(z), 2): [None] * 4 for z in zs}
+    for e in ein: iso[round(float(e["z"]), 2)][("-d", "+d", "-n", "+n").index(e["seite"])] = float(e["laser_m"])
+    # Glaetten: 1-m-Laserraster + bilinear gibt je 0,1 m zackige Isolinien (Schwabentor 1122p: Seite -d 3,00 -> 3,08 m bei 0,9 m mehr Hoehe). Gleitender Median
+    # ueber +-0,5 m, dann nach oben nicht breiter werdend (eine Dachflaeche wird mit der Hoehe schmaler; Laterne ist blind = None und bleibt aussen vor).
+    zk = sorted(iso); k_ = int(round(0.5 / max(float(np.median(np.diff(zk))) if len(zk) > 1 else 0.1, 1e-3)))
+    for j in range(4):
+        w = np.array([np.nan if iso[z][j] is None else iso[z][j] for z in zk], float); g = w.copy()
+        for i in range(len(w)):
+            s_ = w[max(0, i - k_):i + k_ + 1]
+            if np.isfinite(w[i]) and np.isfinite(s_).any(): g[i] = float(np.nanmedian(s_))
+        lauf = np.inf
+        for i, z in enumerate(zk):
+            if not np.isfinite(g[i]): lauf = np.inf; continue                              # blinde Hoehe trennt die Laeufe
+            lauf = min(lauf, g[i]); iso[z][j] = round(float(lauf), 3)
+    return iso
+
+
+def ringe_dom1_veto(rs, o, d, n, iso, tol=VETO_TOL):
+    """DOM1-VETO DER FOTO-DACHFLAECHE (23.11.2026, Schwabentor-1122p: HOEHEN-TOR +1,73 m / k 0,958 - die Foto-Ebene Traufkante 6,77 m -> Fuss 0,8 m lag auf
+    r 2-5 m je Seite 1,2-1,3 m weiter draussen als die Laser-Dachflaeche (56 Grad), weil die Familie g(t; c) zwischen der Ueberstand-Aussenkante und dem Fuss keinen
+    Knick (Aufschiebling) kennt; die Stufe ersetzte die schon DOM1-geprueften Wolkenscheiben ohne eigenes Veto). Wie dach_profil_wolke.dom1_veto: steht eine Ringseite
+    mehr als tol weiter hinaus als die Laser-Isolinie ihrer Hoehe, kommt sie auf die Isolinie (nicht + tol). Ring 0 (Traufkante aus Fotos) bleibt. iso: {z: [4 Werte|None]}.
+    -> (Ringe, Eingriffe [dict(ring, z, seite, foto_m, laser_m)])."""
+    o, d, n = (np.asarray(x, float) for x in (o, d, n)); zi = np.array(sorted(iso)); out = [rs[0]]; ein = []
+    for k, r in enumerate(rs[1:], 1):
+        z = float(r[0, 2]); L = iso[float(zi[int(np.argmin(np.abs(zi - z)))])] if len(zi) else [None] * 4
+        if len(zi) and abs(float(zi[int(np.argmin(np.abs(zi - z)))]) - z) > 0.3: L = [None] * 4     # ausserhalb der gemessenen Hoehen: kein Urteil
+        u = (r[:, :2] - o) @ d; v = (r[:, :2] - o) @ n
+        for j, (nm, w, sg) in enumerate((("-d", u, -1), ("+d", u, 1), ("-n", v, -1), ("+n", v, 1))):
+            if L[j] is None: continue
+            zu = sg * w > L[j] + tol
+            if zu.any(): ein.append(dict(ring=k, z=round(z, 2), seite=nm, foto_m=round(float((sg * w).max()), 2), laser_m=round(L[j], 2))); w[zu] = sg * L[j]
+        out.append(np.c_[o + u[:, None] * d + v[:, None] * n, r[:, 2]])
+    return out, ein
+
+
 def hypothese_maske(shape, proj, rs, unterbau):
     """Himmelsmaske (True = Himmel) einer Hypothese: konvexe Huellen zwischen aufeinanderfolgenden Ringen + Unterbau-Koerper (Liste von Punktwolken)."""
     import cv2
@@ -156,6 +203,7 @@ def main(argv=None):
     import cv2, flaeche_ortho as FO, dach_aus_fotos as DA
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--profil"); ap.add_argument("--aus"); ap.add_argument("--bild"); ap.add_argument("--max-fotos", type=int, default=300)
     ap.add_argument("--nur-messen", action="store_true"); ap.add_argument("--root"); ap.add_argument("--cache")
+    ap.add_argument("--ohne_dom1", action="store_true", help="kein DOM1-Veto der Fotoflaeche (nur Test)")
     a = ap.parse_args(argv)
     od = os.path.dirname(os.path.abspath(a.objekt)); Au = os.path.join(od, "audit"); pp = a.profil or os.path.join(Au, "dach_profil.json")
     try: D = json.load(open(pp))
@@ -209,6 +257,7 @@ def main(argv=None):
             if r_ is None: continue
             cb, zb, fe, nz = r_; je.append(dict(foto=nm, c=cb, z_fuss=zb, fehler=round(fe[(zb, cb)], 3), fehler_gerade=round(min([v for (z_, c_), v in fe.items() if c_ == 0.0] or [float("nan")]), 3), hoehen=nz))
         E.update(auswerten(je, int(round((max(z_fs) + 0.8 - z_t - 0.3) / SCHRITT)) + 1)); E["je_foto"] = je
+        if E.get("gueltig") and not a.ohne_dom1: E.update(veto_block(D, obj, eave, fuss, z_t, E))
     print(f"{len(mess)} Fotos mit Silhouette; Fuss in {E.get('fotos_mit_fuss')} (z {E.get('z_fuss')}, Streuung {E.get('z_fuss_streuung')}, {E.get('fuss')}); "
           + (f"FAMILIE {E['familie']} (c {E['c']}, Konsens {E['konsens']}, Restfehler {E['fehler_median']} m, gerade waere {E['fehler_gerade_median']} m), gute Fotos {E['fotos_gut']} {E['stimmen_gut']}" if E.get("gueltig") else f"UNGUELTIG: {E.get('grund')} {E.get('stimmen_gut', '')}"))
     for j in E.get("je_foto", [])[:80] if os.environ.get("DACHFLAECHE_DIAG") else []: print(f"   {j['foto'][-24:]:24s} c {j['c']:+.2f} zf {j['z_fuss']} Fehler {j['fehler']:.2f} (gerade {j['fehler_gerade']:.2f}) n {j['hoehen']}")
@@ -216,6 +265,28 @@ def main(argv=None):
     except Exception as ex: print("Bild fehlgeschlagen:", ex)
     if not a.nur_messen: D["flaeche_foto"] = E; json.dump(D, open(a.aus or pp, "w"), indent=1); print("->", a.aus or pp, "(Block flaeche_foto)")
     return 0 if E.get("gueltig") else 4
+
+
+def veto_block(D, obj, eave, fuss, z_t, E, hoehe=None):
+    """DOM1-Isolinien zwischen Traufe und Fuss (+0,5 m) fuer bauteile.flaeche_aus_foto + Bericht, wie weit die gebaute Fotoflaeche draussen steht.
+    -> dict(dom1_veto=...) bzw. {} ohne Rahmen/Laser."""
+    if hoehe is None:
+        from dach_profil_wolke import laser_im_rahmen
+        hoehe = laser_im_rahmen(obj, klippe=3.0)
+    if hoehe is None: return dict(dom1_veto=dict(aktiv=False, grund="kein Rahmen/Laser"))
+    z_f = float(E["z_fuss"]); zs = np.round(np.arange(z_t, z_f + 0.5 + 1e-9, VETO_RASTER), 2)
+    try: iso = laser_isolinien(D, hoehe, zs)
+    except Exception as ex: return dict(dom1_veto=dict(aktiv=False, grund=f"Laser nicht lesbar: {ex}"))
+    c_ = 0.0 if E.get("familie") == "gerade" else float(E.get("c", 0.0))
+    rs = ringe(eave, fuss, z_t, z_f, c_, n=max(12, int(math.ceil((z_f - z_t) / 0.3))))
+    _, ein = ringe_dom1_veto(rs, D["o"], D["d"], D["n"], iso)
+    ueber = [e["foto_m"] - e["laser_m"] for e in ein]
+    V = dict(aktiv=True, tol_m=VETO_TOL, isolinien=[[z] + iso[z] for z in sorted(iso)], eingriffe=len(ein),
+             groesster_ueberstand_m=round(max(ueber), 2) if ueber else 0.0, median_ueberstand_m=round(float(np.median(ueber)), 2) if ueber else 0.0,
+             quelle="dach_profil_wolke.dom1_veto-Regeln (Klippe 3 m) auf die Ringe der gebauten Fotoflaeche; bauteile.flaeche_aus_foto setzt die Seiten auf die Isolinie")
+    print(f"DOM1-VETO Fotoflaeche: {len(ein)} Ringseiten mehr als {VETO_TOL} m ausserhalb der Laser-Isolinie (Median {V['median_ueberstand_m']} m, groesster {V['groesster_ueberstand_m']} m)"
+          + (" -> Seiten auf die Isolinie (Knick/Aufschiebling statt gerader Ebene ab der Ueberstand-Aussenkante)" if ein else " -> Fotoflaeche passt zum Laser"))
+    return dict(dom1_veto=V)
 
 
 def bild(aus, bilder, A, E):
