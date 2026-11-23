@@ -443,6 +443,7 @@ def drehkoerper_aus_wolkenrest(koerper, datei, nseg=48):
 
 def kegeldach_teile(KD, x, y, P, nseg=48):
     """KEGELDACH eines Rundkoerpers (23.11.2026) aus dem Block 'dach' (tools/rund_aus_umriss.kegeldach: Traufe z/r und Spitze aus den Umriss-Mantellinien der Fotos).
+    Formfamilie gerade (ein Kegel) oder geschweift/gebaucht (Block "profil": Traufe -> Knick -> Spitze, je Stueck ein Kegelstumpf; Guard: z steigend, r nicht wachsend).
     -> ((z_traufe, [Teile]) | None, Belege). Gueltigkeits-Guard: Block gueltig, Spitze >= 0,2 m ueber der Traufe, Traufradius 0,5..2 x Schaft, mind. 2 Profilhoehen unter der Traufe;
     sonst None (Rundkoerper bleibt oben flach, Beleg nennt den Grund). Druckbar: Traufbrett mind. MINMM x SCALE dick (0,8 mm in H0 = 7 cm), Spitze als Kegelstumpf mit
     Radius MINMM/2 x SCALE (keine Nadelspitze unter dem Druckmass)."""
@@ -453,12 +454,22 @@ def kegeldach_teile(KD, x, y, P, nseg=48):
     unter = [p for p in P if p[0] < z_t - 1e-6]
     if z_s < z_t + 0.2 or not 0.5 * r_s <= r_e <= 2.0 * r_s or len(unter) < 2:
         return None, [dict(seite="dach", element=f"Kegeldach Rundkoerper bei x {x:.2f} y {y:.2f} NICHT gebaut (Guard)", quelle="bauteile.kegeldach_teile", hinweis=f"Traufe z {z_t} r {r_e}, Spitze z {z_s}, Schaft r {r_s:.2f}, Profilhoehen unter der Traufe {len(unter)}")]
-    r_top = max(0.5 * dmin, 0.01); h_k = (z_s - z_t) * (1.0 - r_top / r_e); brett = dmin
-    teile = [M.cylinder(brett + 0.005, r_e, r_e, nseg).translate((x, y, z_t - brett)),             # Traufbrett (sonst Messerkante am Ueberstand)
-             M.cylinder(h_k, r_e, r_top, nseg).translate((x, y, z_t))]
-    return (z_t - brett, teile), [dict(seite="dach", element=f"Kegeldach Rundkoerper bei x {x:.2f} y {y:.2f}: Traufe z {z_t:.2f} r {r_e:.2f} (Schaft {r_s:.2f}), Spitze z {z_s:.2f}, Neigung {KD.get('neigung_grad')} Grad",
-                                       quelle=f"tools/rund_aus_umriss.kegeldach: Umriss-Mantellinien in {KD.get('fotos')} kalibrierten Fotos, {KD.get('einig')} einig ueber die Spitze, Stuetze {KD.get('stuetze')}",
-                                       hinweis=f"ANNAHME: Traufhoehe = Traufe/Oberkante des Drehprofils (Mantellinie koppelt z und r); Traufbrett {brett:.2f} m und Spitzenradius {r_top:.3f} m = Druckmindestmass, nicht gemessen; Knauf/Wetterfahne nicht gebaut")]
+    r_top = max(0.5 * dmin, 0.01); brett = dmin
+    # 23.11.2026 geschweiftes/gebauchtes Dach: Profil (Traufe -> Knick -> Spitze) aus rund_aus_umriss.kegeldach, je Stueck ein Kegelstumpf; gerade = ein Stumpf
+    PR = [[float(z), float(r)] for z, r in (KD.get("profil") or [[z_t, r_e], [z_s, 0.0]])]
+    if any(z1 <= z0 + 1e-3 or r1 > r0 + 1e-6 for (z0, r0), (z1, r1) in zip(PR[:-1], PR[1:])) or abs(PR[0][0] - z_t) > 1e-3 or abs(PR[-1][0] - z_s) > 1e-3:
+        return None, [dict(seite="dach", element=f"Kegeldach Rundkoerper bei x {x:.2f} y {y:.2f} NICHT gebaut (Guard Profil)", quelle="bauteile.kegeldach_teile", hinweis=f"Profil {PR} nicht steigend/verjuengend")]
+    z_o, r_o = PR[-2]; PR[-1] = [z_s - (z_s - z_o) * r_top / max(r_o, 1e-9), r_top]                 # Spitze als Stumpf mit Druckradius (auf der Mantellinie des obersten Stuecks)
+    teile = [M.cylinder(brett + 0.005, r_e, r_e, nseg).translate((x, y, z_t - brett))]                 # Traufbrett (sonst Messerkante am Ueberstand)
+    for (z0, r0), (z1, r1) in zip(PR[:-1], PR[1:]):
+        teile.append(M.cylinder(z1 - z0 + (0.005 if (z1, r1) != tuple(PR[-1]) else 0.0), r0, max(r1, r_top), nseg).translate((x, y, z0)))
+    fam = KD.get("familie") or "kegel"; kn = KD.get("knick")
+    return (z_t - brett, teile), [dict(seite="dach", element=f"Kegeldach ({fam}) Rundkoerper bei x {x:.2f} y {y:.2f}: Traufe z {z_t:.2f} r {r_e:.2f} (Schaft {r_s:.2f}), "
+                                       + (f"Knick z {kn['z']:.2f} r {kn['r']:.2f} (unten {KD.get('neigung_unten_grad')} / oben {KD.get('neigung_oben_grad')} Grad), " if kn else f"Neigung {KD.get('neigung_grad')} Grad, ")
+                                       + f"Spitze z {z_s:.2f}",
+                                       quelle=f"tools/rund_aus_umriss.kegeldach: Umriss-Mantellinien in {KD.get('fotos')} kalibrierten Fotos, {KD.get('einig')} einig ueber die Spitze, Stuetze {KD.get('stuetze')}"
+                                       + (f"; Formwahl {KD.get('formwahl')}" if KD.get("formwahl") else ""),
+                                       hinweis=f"ANNAHME: Traufhoehe = Traufe/Oberkante des Drehprofils (Mantellinie koppelt z und r); Profil aus geraden Kegelstuempfen (Knick statt stetiger Schweifung); Traufbrett {brett:.2f} m und Spitzenradius {r_top:.3f} m = Druckmindestmass, nicht gemessen; Knauf/Wetterfahne nicht gebaut")]
 
 
 def dach_aus_profil(koerper, datei):

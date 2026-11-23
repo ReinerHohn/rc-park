@@ -289,58 +289,144 @@ def kegel_fuesse(Cxyz, x, y, z_t, r_e, z_s):
 
 def kegel_quer(B, x, y, z_t, r_e, z_s, seite):
     """Mittlerer |Gradient quer zur projizierten Mantellinie| ueber KEGEL_ANTEILE fuer alle Kandidaten (K) - nan, wo nicht beurteilbar."""
-    F, ok = kegel_fuesse(B.C, x, y, z_t, r_e, z_s); K = len(r_e); Fs = F[seite]
-    pF, zF = B.pix(np.c_[Fs, np.full(K, z_t)]); pS, zS = B.pix(np.c_[np.full(K, x), np.full(K, y), z_s])
-    d = pS - pF; L = np.linalg.norm(d, axis=1); nrm = np.c_[-d[:, 1], d[:, 0]] / np.maximum(L, 1e-9)[:, None]; ok &= (L > 6) & (zF > 0.5) & (zS > 0.5)
-    h, w = B.gx.shape; werte = []
-    for f in KEGEL_ANTEILE:
-        p = pF + f * d; xx = p[:, 0] - B.x0; yy = p[:, 1] - B.y0; inn = (xx >= 1) & (yy >= 1) & (xx < w - 2) & (yy < h - 2)
-        xi = np.clip(xx, 1, w - 2); yi = np.clip(yy, 1, h - 2); x0 = np.floor(xi).astype(int); y0 = np.floor(yi).astype(int); fx = xi - x0; fy = yi - y0
-        def bil(G): return (G[y0, x0] * (1 - fx) * (1 - fy) + G[y0, x0 + 1] * fx * (1 - fy) + G[y0 + 1, x0] * (1 - fx) * fy + G[y0 + 1, x0 + 1] * fx * fy).astype(np.float32)
-        if getattr(B, "sperre", None) is not None:                                       # 23.11.2026: verdeckte Mantelpunkte / Kante eines Koerpers davor zaehlen nicht
-            Xm = np.c_[Fs + f * (np.c_[np.full(K, x), np.full(K, y)] - Fs), z_t + f * (z_s - z_t)]; inn &= ~B.sperre.gesperrt(Xm)
-            if getattr(B, "hinter_nah", 0) > 0:
-                nh_ = Xm[:, :2] - [x, y]; nh_ /= np.maximum(np.linalg.norm(nh_, axis=1), 1e-9)[:, None]; inn &= ~B.sperre.hintergrund_nah(Xm, np.c_[nh_, np.zeros(K)], B.hinter_nah)
-        werte.append(np.where(inn, bil(B.gx) * nrm[:, 0] + bil(B.gy) * nrm[:, 1], np.nan))    # VORZEICHEN behalten: eine Umrisskante hat innen/aussen ueberall dieselbe Richtung, Streifen/Fugen quer dazu wechseln
-    W_ = np.array(werte); n_ok = np.isfinite(W_).sum(0); m = np.where(n_ok >= len(KEGEL_ANTEILE) // 2 + 1, np.abs(np.nanmean(W_, 0)), np.nan)
+    W_, ok = mantel_werte(B, x, y, z_t, r_e, z_s, seite, KEGEL_ANTEILE); n_ok = np.isfinite(W_).sum(0)
+    m = np.where(n_ok >= len(KEGEL_ANTEILE) // 2 + 1, np.abs(np.nanmean(np.where(n_ok > 0, W_, 0.0), 0)), np.nan)
     return np.where(ok, m, np.nan)
 
 
-def kegeldach(bilder, x, y, z_t, r_s, verdeckt=None, log=print):
+def mantel_werte(B, x, y, z_t, r_e, z_s, seite, anteile):
+    """Gradient quer zur projizierten Mantellinie (MIT Vorzeichen) an den Anteilen 'anteile' (Fuss 0 .. Spitze 1) fuer alle Kandidaten (K) -> (len(anteile), K), ok (K).
+    Ein Kegelstumpf (Segment eines geschweiften Dachs) ist der untere Teil des Kegels mit seiner GEDACHTEN Spitze z_s; sein Umriss ist das Stueck der Mantellinie bis zum Anteil
+    (r_unten - r_oben) / r_unten (23.11.2026, profil_quer)."""
+    r_e = np.asarray(r_e, float); z_s = np.asarray(z_s, float); z_t = np.broadcast_to(np.asarray(z_t, float), r_e.shape)
+    F, ok = kegel_fuesse(B.C, x, y, z_t, r_e, z_s); K = len(r_e); Fs = F[seite]; anteile = np.asarray(anteile, float)
+    if anteile.ndim == 1: anteile = np.broadcast_to(anteile[:, None], (len(anteile), K))
+    pF, zF = B.pix(np.c_[Fs, z_t]); pS, zS = B.pix(np.c_[np.full(K, x), np.full(K, y), z_s])
+    d = pS - pF; L = np.linalg.norm(d, axis=1); nrm = np.c_[-d[:, 1], d[:, 0]] / np.maximum(L, 1e-9)[:, None]; ok &= (L * (anteile[-1] - anteile[0]) > 4) & (zF > 0.5) & (zS > 0.5)
+    h, w = B.gx.shape; werte = []
+    A_ = np.c_[np.full(K, x), np.full(K, y)]
+    for f in anteile:
+        Xm = np.c_[Fs + f[:, None] * (A_ - Fs), z_t + f * (z_s - z_t)]; p, zp = B.pix(Xm)          # Punkt auf der 3D-Mantellinie projiziert (exakt, auch fuer kurze Segmente)
+        xx = p[:, 0] - B.x0; yy = p[:, 1] - B.y0; inn = (xx >= 1) & (yy >= 1) & (xx < w - 2) & (yy < h - 2) & (zp > 0.5)
+        xi = np.clip(xx, 1, w - 2); yi = np.clip(yy, 1, h - 2); x0 = np.floor(xi).astype(int); y0 = np.floor(yi).astype(int); fx = xi - x0; fy = yi - y0
+        def bil(G): return (G[y0, x0] * (1 - fx) * (1 - fy) + G[y0, x0 + 1] * fx * (1 - fy) + G[y0 + 1, x0] * (1 - fx) * fy + G[y0 + 1, x0 + 1] * fx * fy).astype(np.float32)
+        if getattr(B, "sperre", None) is not None:                                       # 23.11.2026: verdeckte Mantelpunkte / Kante eines Koerpers davor zaehlen nicht
+            inn &= ~B.sperre.gesperrt(Xm)
+            if getattr(B, "hinter_nah", 0) > 0:
+                nh_ = Xm[:, :2] - [x, y]; nh_ /= np.maximum(np.linalg.norm(nh_, axis=1), 1e-9)[:, None]; inn &= ~B.sperre.hintergrund_nah(Xm, np.c_[nh_, np.zeros(K)], B.hinter_nah)
+        werte.append(np.where(inn, bil(B.gx) * nrm[:, 0] + bil(B.gy) * nrm[:, 1], np.nan))    # VORZEICHEN behalten: eine Umrisskante hat innen/aussen ueberall dieselbe Richtung, Streifen/Fugen quer dazu wechseln
+    return np.array(werte), ok
+
+
+def profil_knick(z_t, R, Z, A, Q):
+    """Dachprofil mit einem Knick (23.11.2026): Traufe (z_t, R), Spitze Z; Knick auf Anteil A der Dachhoehe mit Radius Q x (Radius der Geraden Traufe-Spitze dort).
+    Q = 1 gerader Kegel, Q < 1 geschweift (unten flach ausgestellt, oben steil), Q > 1 gebaucht. -> z_k, r_k (Arrays)."""
+    A = np.asarray(A, float); Q = np.asarray(Q, float); R = np.asarray(R, float); Z = np.asarray(Z, float)
+    return z_t + A * (Z - z_t), R * (1 - A) * Q
+
+
+def profil_quer(B, x, y, z_t, R, Z, A, Q, seite):
+    """Umriss-Abstimmung fuer Dachprofile aus ZWEI Kegelstuempfen (Traufe -> Knick -> Spitze), K Kandidaten. Jeder Stumpf ist Teil eines Kegels mit eigener (gedachter)
+    Spitze; sein Umriss ist das Stueck seiner Mantellinie (exakte Silhouette je Stumpf). Je Stueck Mittel MIT Vorzeichen; Wert = harmonisches Mittel der Betraege (0, wenn die Vorzeichen verschieden sind).
+    nan, wo ein Stueck nicht beurteilbar ist (verdeckt, Kamera ueber der gedachten Spitze, zu kurz im Bild)."""
+    R = np.asarray(R, float); Z = np.asarray(Z, float); z_k, r_k = profil_knick(z_t, R, Z, A, Q)
+    fr1 = (R - r_k) / R; za1 = z_t + (z_k - z_t) / np.maximum(fr1, 1e-6)
+    W1, ok1 = mantel_werte(B, x, y, z_t, R, za1, seite, fr1[None, :] * PROFIL_ANTEILE_UNTEN[:, None])
+    W2, ok2 = mantel_werte(B, x, y, z_k, r_k, Z, seite, PROFIL_ANTEILE_OBEN)
+    n1 = np.isfinite(W1).sum(0); n2 = np.isfinite(W2).sum(0)
+    m1 = np.nansum(W1, 0) / np.maximum(n1, 1); m2 = np.nansum(W2, 0) / np.maximum(n2, 1)
+    ok = ok1 & ok2 & (n1 >= len(PROFIL_ANTEILE_UNTEN) // 2 + 1) & (n2 >= len(PROFIL_ANTEILE_OBEN) // 2 + 1)
+    gleich = np.sign(m1) == np.sign(m2)                                                  # beide Stuecke derselbe Umriss: gleiche Kantenrichtung
+    hm = 2 * np.abs(m1) * np.abs(m2) / np.maximum(np.abs(m1) + np.abs(m2), 1e-9)          # harmonisches Mittel: BEIDE Stuecke muessen auf der Kante liegen (ein kurzes, flaches
+    return np.where(ok, np.where(gleich, hm, 0.0), np.nan)                               # unteres Stueck ging im Laengenmittel unter - Traufradius lief auf den Schaft, Test D 23.11.)
+
+
+PROFIL_ANTEILE_UNTEN = np.linspace(0.12, 0.92, 5)   # unterer Stumpf ohne Traufbrett (Anteil seiner Laenge)
+PROFIL_ANTEILE_OBEN = np.linspace(0.08, 0.85, 6)    # oberer Stumpf ohne Knauf
+PROFIL_A = np.round(np.arange(0.15, 0.651, 0.1), 2)  # Knickhoehe als Anteil der Dachhoehe
+PROFIL_Q = np.round(np.arange(0.4, 1.201, 0.1), 2)   # Knickradius / Radius der Geraden (1 = gerade, < 1 geschweift, > 1 gebaucht)
+PROFIL_VORZUG = 0.05      # Beobachtung "bevorzugt" eine Formfamilie, wenn ihr normierter Wert um >= 5 % hoeher liegt (ANNAHME, Rauschen der Abstimmung ~2-3 %)
+TRAUFE_SPIEL = 0.12       # Traufradius mind. Profilradius - 0,12 m (Streuung des Drehprofils 2-3 cm, Traufbrett/Untersicht; ANNAHME)
+TRAUFE_DZ = np.array([-1.25, -1.0, -0.75, -0.5, -0.25, 0.0, 0.25])   # Traufhoehe frei um die Profil-Traufe: von unten gesehen liegt der Dachumriss im Bild HOEHER als
+                          # der Dachpunkt, die waagrechten Tangenten (vermessen) setzen die Traufe darum zu hoch (schwabentor-1122: Profil-Traufe 13,75, Foto ~13; ANNAHME Spiel)
+PROFIL_GEWINN = 1.02      # geknickte Familie nur, wenn die Gesamtabstimmung >= 2 % ueber der Geraden liegt (sonst gerade: einfachere Form)
+
+
+def kegeldach(bilder, x, y, z_t, r_s, verdeckt=None, log=print, r_traufe=None):
     """Kegeldach ueber dem Rundkoerper (Achse x, y, Schaftradius r_s, Traufe z_t) aus den Umriss-Mantellinien aller Fotos. bilder: Liste Bild (.C, .Cxy).
-    Abstimmung wie vermessen(): jede Beobachtung (Foto x Seite) auf ihr Maximum normiert, Gewicht 1 / Fotos im selben 15-Grad-Faecher. -> dict (gueltig, grund, Masse)."""
+    Abstimmung wie vermessen(): jede Beobachtung (Foto x Seite) auf ihr Maximum normiert, Gewicht 1 / Fotos im selben 15-Grad-Faecher. -> dict (gueltig, grund, Masse).
+    23.11.2026 (schwabentor-1122, Treppentuermchen: Dach GESCHWEIFT, unten flach ausgestellt, oben steil - eine Gerade passte nur oben, Traufradius lief an den Suchrand):
+    Profil aus zwei Kegelstuempfen (profil_quer), gesucht Traufradius, Spitze, Knickhoehe A und Knickradius Q. Formfamilie (gerade Q=1 / geschweift Q<1 / gebaucht Q>1)
+    nach dem Rest: geknickt nur, wenn >= KEGEL_EINIG Fotos sie einzeln bevorzugen, mehr Fotos dafuer als dagegen und Gesamtabstimmung >= PROFIL_GEWINN x gerade.
+    r_traufe: groesster Radius des Umriss-Drehprofils oben (vermessen(), waagrechte Tangenten). Ein Dach, das sich nach oben verjuengt, hat an der Traufe mind. diesen Radius:
+    Traufradius >= r_traufe - TRAUFE_SPIEL (ohne diese Schranke zog die Kante Schaft/Untersicht das kurze, flache untere Stueck auf den Schaftradius, Test D 23.11.).
+    Traufhoehe: frei in z_t + TRAUFE_DZ (die Profil-Traufe liegt von unten gesehen zu hoch)."""
     obs = [(bi, s) for bi in range(len(bilder)) for s in (0, 1) if not (verdeckt and verdeckt(bi, s))]
-    erg = dict(z_traufe=round(float(z_t), 2), r_schaft=round(float(r_s), 3), quelle="tools/rund_aus_umriss.kegeldach: Umriss-Mantellinien (exakte Kegelsilhouette) in kalibrierten Fotos")
+    erg = dict(z_traufe=round(float(z_t), 2), r_schaft=round(float(r_s), 3), quelle="tools/rund_aus_umriss.kegeldach: Umriss-Mantellinien (exakte Silhouette je Kegelstumpf) in kalibrierten Fotos")
     if not obs: return dict(erg, gueltig=False, grund="keine Beobachtung")
     az = np.array([int(np.degrees(math.atan2(bilder[bi].Cxy[1] - y, bilder[bi].Cxy[0] - x)) // FAECHER_GRAD) for bi, _ in obs]); u_, c_ = np.unique(az, return_counts=True); cnt = dict(zip(u_, c_))
     gw = np.array([1.0 / cnt[a] for a in az])
-    def punkte(R, Z):
-        S = np.zeros(len(R)); roh = []
-        for (bi, s), w in zip(obs, gw):
-            v = kegel_quer(bilder[bi], x, y, z_t, R, Z, s); m = np.nanmax(v) if np.isfinite(v).any() else 0.0
-            if m <= 0: roh.append(None); continue
-            v = np.nan_to_num(v / m); S += w * v; roh.append(v)
-        return S, roh
-    r_lo, r_hi = KEGEL_R[0] * r_s, KEGEL_R[1] * r_s; h_lo, h_hi = KEGEL_H[0] * r_s, KEGEL_H[1] * r_s
-    rr, hh = np.meshgrid(np.arange(r_lo, r_hi + 1e-9, 0.04), np.arange(h_lo, h_hi + 1e-9, 0.08), indexing="ij"); R = rr.ravel(); Z = z_t + hh.ravel()
-    S, roh = punkte(R, Z); i = int(np.argmax(S)); r0, z0 = R[i], Z[i]
-    rr, zz = np.meshgrid(np.arange(r0 - 0.04, r0 + 0.04 + 1e-9, 0.01), np.arange(z0 - 0.08, z0 + 0.08 + 1e-9, 0.02), indexing="ij"); R2 = rr.ravel(); Z2 = zz.ravel()
-    S2, roh2 = punkte(R2, Z2); j = int(np.argmax(S2)); r_e, z_s = float(R2[j]), float(Z2[j]); h = z_s - z_t
+    def punkte(R, T, Z, A, Q, norm=None):
+        S = np.zeros(len(R)); roh = []; mx = []
+        for k_, ((bi, s), w) in enumerate(zip(obs, gw)):
+            v = profil_quer(bilder[bi], x, y, T, R, Z, A, Q, s); m = (norm[k_] if norm is not None else (np.nanmax(v) if np.isfinite(v).any() else 0.0))
+            mx.append(m)
+            if not m or m <= 0: roh.append(None); continue
+            v = np.minimum(np.nan_to_num(v / m), 1.0); S += w * v; roh.append(v)
+        return S, roh, mx
+    z_t0 = float(z_t); r_lo, r_hi = KEGEL_R[0] * r_s, KEGEL_R[1] * r_s; h_lo, h_hi = KEGEL_H[0] * r_s, KEGEL_H[1] * r_s
+    dz_ = np.array([0.0])                                                                  # ohne Profil-Traufe (nur Oberkante): Traufhoehe fest (Rot-Probe flacher Zylinder)
+    if r_traufe and r_lo < r_traufe < r_hi: r_lo = max(r_lo, r_traufe - TRAUFE_SPIEL); dz_ = TRAUFE_DZ; erg["r_traufe_profil"] = round(float(r_traufe), 3)
+    g = np.meshgrid(np.arange(r_lo, r_hi + 1e-9, 0.04), z_t0 + dz_, np.arange(h_lo, h_hi + 1e-9, 0.12), PROFIL_A, PROFIL_Q, indexing="ij"); R, T, H_, A, Q = (v.ravel() for v in g)
+    _, r_k = profil_knick(T, R, T + H_, A, Q); gut_ = (r_k < 0.97 * R) & (r_k > 0.03)
+    R, T, H_, A, Q = R[gut_], T[gut_], H_[gut_], A[gut_], Q[gut_]; Z = T + H_
+    S, roh, norm = punkte(R, T, Z, A, Q)
+    def fein(i, nur_gerade):
+        r0, t0, z0, a0, q0 = R[i], T[i], Z[i], A[i], Q[i]
+        da = [-0.05, 0.0, 0.05]; dq = [0.0] if nur_gerade else [-0.05, 0.0, 0.05]      # gerade: Teilung A frei (gleiche Abtastung wie die geknickten), Q bleibt 1
+        gg = np.meshgrid(np.arange(r0 - 0.06, r0 + 0.06 + 1e-9, 0.02), t0 + (np.array([-0.1, 0.0, 0.1]) if len(dz_) > 1 else np.zeros(1)), np.arange(z0 - 0.12, z0 + 0.12 + 1e-9, 0.04), a0 + np.array(da), q0 + np.array(dq), indexing="ij")
+        R2, T2, Z2, A2, Q2 = (v.ravel() for v in gg); _, rk2 = profil_knick(T2, R2, Z2, A2, Q2)
+        ok = (rk2 < 0.97 * R2) & (rk2 > 0.03) & (A2 > 0.05) & (A2 < 0.95) & (R2 >= r_lo - 1e-9) & (R2 <= r_hi + 1e-9) & (Z2 > T2 + 0.2)
+        R2, T2, Z2, A2, Q2 = R2[ok], T2[ok], Z2[ok], A2[ok], Q2[ok]; S2, _, _ = punkte(R2, T2, Z2, A2, Q2, norm); j = int(np.argmax(S2))
+        return float(R2[j]), float(T2[j]), float(Z2[j]), float(A2[j]), float(Q2[j]), float(S2[j])
+    ig = np.where(Q == 1.0)[0]; i_s = int(ig[np.argmax(S[ig])]); i_b = int(np.argmax(S))
+    gerade = fein(i_s, True); best = fein(i_b, False) if Q[i_b] != 1.0 else gerade
+    # Formfamilie nach dem Rest: Beobachtungen am feinen Bestwert der Geraden und der geknickten Form vergleichen
+    S_v, roh_v, _ = punkte(*[np.array([gerade[k], best[k]]) for k in range(5)], norm)
+    fuer, gegen = set(), set()
+    for (bi, s), v in zip(obs, roh_v):
+        if v is None: continue
+        if v[1] - v[0] >= PROFIL_VORZUG: fuer.add(bi)
+        elif v[0] - v[1] >= PROFIL_VORZUG: gegen.add(bi)
+    gegen -= fuer
+    knick = best is not gerade and abs(best[4] - 1.0) >= 0.08 and len(fuer) >= KEGEL_EINIG and len(fuer) > len(gegen) and S_v[1] >= PROFIL_GEWINN * S_v[0]
+    r_e, z_t, z_s, a_, q_, s_ = best if knick else gerade; h = z_s - z_t; erg["z_traufe"] = round(z_t, 2); erg["z_traufe_profil"] = round(z_t0, 2)
+    familie = ("geschweift" if q_ < 1 else "gebaucht") if knick else "kegel"
     # Einigkeit: Einzelbestwert je Beobachtung im Grobraster; ein Foto ist einig, wenn eine seiner Seiten die Spitze auf max(0,25 m, 12 % der Dachhoehe) trifft
     tol = max(0.25, 0.12 * h); einig = set(); fotos = set()
     for (bi, s), v in zip(obs, roh):
         if v is None: continue
         fotos.add(bi); k = int(np.argmax(v))
-        if abs(Z[k] - z_s) <= tol and abs(R[k] - r_e) <= max(0.15, 0.1 * r_e): einig.add(bi)
-    rand = (h <= h_lo + 0.1 or h >= h_hi - 0.1 or r_e <= r_lo + 0.05 or r_e >= r_hi - 0.05)
+        if abs(Z[k] - z_s) <= tol and abs(R[k] - r_e) <= max(0.15, 0.1 * r_e) and abs(T[k] - z_t) <= 0.3: einig.add(bi)
+    rand = (h <= h_lo + 0.1 or h >= h_hi - 0.1 or r_e <= r_lo + 0.03 or r_e >= r_hi - 0.03)
+    rand = rand or (len(dz_) > 1 and z_t <= z_t0 + dz_[0] + 0.01)
+    if knick: rand = rand or q_ <= PROFIL_Q[0] + 0.01 or q_ >= PROFIL_Q[-1] - 0.01
+    z_k, r_k = (float(v) for v in profil_knick(z_t, r_e, z_s, a_, q_))
     erg.update(r_traufe=round(r_e, 3), z_spitze=round(z_s, 2), hoehe=round(h, 2), neigung_grad=round(math.degrees(math.atan2(h, r_e)), 1), fotos=len(fotos), einig=len(einig),
-               beobachtungen=sum(v is not None for v in roh), stuetze=round(float(S2[j] / max(gw.sum(), 1e-9)), 3))
+               beobachtungen=sum(v is not None for v in roh), stuetze=round(float(s_ / max(gw.sum(), 1e-9)), 3),
+               formwahl=dict(stuetze_gerade=round(float(S_v[0] / max(gw.sum(), 1e-9)), 3), stuetze_knick=round(float(S_v[1] / max(gw.sum(), 1e-9)), 3), q_knick=round(best[4], 2),
+                             fotos_fuer_knick=len(fuer), fotos_gegen_knick=len(gegen), gerade=dict(r_traufe=round(gerade[0], 3), z_traufe=round(gerade[1], 2), z_spitze=round(gerade[2], 2))))
+    if knick:
+        erg.update(knick=dict(z=round(z_k, 2), r=round(r_k, 3)), profil=[[round(float(z_t), 2), round(r_e, 3)], [round(z_k, 2), round(r_k, 3)], [round(z_s, 2), 0.0]],
+                   neigung_unten_grad=round(math.degrees(math.atan2(z_k - z_t, r_e - r_k)), 1), neigung_oben_grad=round(math.degrees(math.atan2(z_s - z_k, r_k)), 1))
     grund = None
     if len(fotos) < KEGEL_MIN_FOTOS: grund = f"nur {len(fotos)} Fotos sehen den Dachumriss (verlangt {KEGEL_MIN_FOTOS})"
     elif len(einig) < KEGEL_EINIG: grund = f"nur {len(einig)} Fotos einig ueber die Spitze (verlangt {KEGEL_EINIG}) - keine Formfamilie Kegel"
-    elif rand: grund = f"Bestwert am Suchrand (h {h:.2f} m in {h_lo:.2f}..{h_hi:.2f}, r {r_e:.2f} in {r_lo:.2f}..{r_hi:.2f}) - kein Kegel (flach/offen) oder ausserhalb der Formfamilie"
-    erg.update(gueltig=grund is None, grund=grund, familie="kegel" if grund is None else None)
-    log(f"  KEGELDACH: Traufe z {z_t:.2f} r {r_e:.2f} (Schaft {r_s:.2f}), Spitze z {z_s:.2f} (h {h:.2f}, {erg['neigung_grad']} Grad), Fotos {len(fotos)}, einig {len(einig)} -> "
+    elif rand: grund = (f"Bestwert am Suchrand (h {h:.2f} m in {h_lo:.2f}..{h_hi:.2f}, r {r_e:.2f} in {r_lo:.2f}..{r_hi:.2f}" + (f", Knick q {q_:.2f}" if knick else "")
+                        + ") - kein Kegel (flach/offen) oder ausserhalb der Formfamilie")
+    erg.update(gueltig=grund is None, grund=grund, familie=familie if grund is None else None, familie_bestwert=familie)
+    log(f"  KEGELDACH ({familie}): Traufe z {z_t:.2f} r {r_e:.2f} (Schaft {r_s:.2f}), " + (f"Knick z {z_k:.2f} r {r_k:.2f}, " if knick else "")
+        + f"Spitze z {z_s:.2f} (h {h:.2f}, {erg['neigung_grad']} Grad), Fotos {len(fotos)}, einig {len(einig)}, Formwahl {erg['formwahl']} -> "
         + ("GUELTIG" if grund is None else "UNGUELTIG: " + grund))
     return erg
 
@@ -446,7 +532,10 @@ def main(argv=None):
                         if not okf[0]: continue
                         X = np.array([[*(0.5 * (F_[s, 0] + [U["x"], U["y"]])), z_t + 0.5 * U["r_schaft"]]])
                         vk[(bi, s)] = bool(verdeckt_strahlen(inter, normalen, B.C, X, eigen)[0])
-            U["dach"] = kegeldach(stufe[1], U["x"], U["y"], z_t, U["r_schaft"], verdeckt=lambda bi, s: vk.get((bi, s), False))
+            r_tr = next((p[1] for p in U["profil"] if abs(p[0] - z_t) < 1e-6), None) if U["traufe"] is not None else None   # Traufradius aus dem Drehprofil (nur bei erkannter Traufe)
+            U["dach"] = kegeldach(stufe[1], U["x"], U["y"], z_t, U["r_schaft"], verdeckt=lambda bi, s: vk.get((bi, s), False), r_traufe=r_tr)
+            try: dach_bild(stufe[1], U["x"], U["y"], U["dach"], os.path.join(A, f"rund_dach_{H.get('id', 'r')}.jpg"), verdeckt=lambda bi, s: vk.get((bi, s), False))
+            except Exception as e: print("  Dachbild fehlgeschlagen:", e)
         H["umriss"] = U
         print(f"  FOTO-UMRISS: x {U['x']:.2f} y {U['y']:.2f} r {U['r']:.3f} m (Wolke r {r0:.2f}), Rest je Beobachtung {U['rest_beob']} m, {U['beobachtungen']} Beob., "
               f"Fotos {U['fotos']} (links {U['fotos_links']}, rechts {U['fotos_rechts']}), Schaft r {U['r_schaft']}, Traufe {U['traufe']}, Oberkante Umriss {U['oberkante']}  -> {'GUELTIG' if gut else 'UNGUELTIG: ' + U['grund']}")
@@ -462,6 +551,45 @@ def main(argv=None):
         except Exception as e: print("  Bild fehlgeschlagen:", e)
     if not a.nur_messen: json.dump(KA, open(kp, "w"), indent=1, ensure_ascii=False); print("->", kp)
     return rc
+
+
+def dach_bild(bilder, x, y, KD, aus, verdeckt=None, n=6):
+    """Pruefbild Dach (23.11.2026): 6 Fotos ueber den Blickwinkel verteilt (nur unverdeckte Dachumrisse), darauf die Umriss-Mantellinien des gemessenen Dachprofils
+    (gruen; geknickt: je Stumpf), der besten Geraden (rot) und der Traufkreis (blau). Bild schlaegt Zahl: passt gruen auf die Dachkante, rot nur oben, ist die Formwahl richtig."""
+    import cv2
+    if not KD or KD.get("r_traufe") is None: return
+    z_t = KD["z_traufe"]; pro = {(0, 200, 0): KD.get("profil") or [[z_t, KD["r_traufe"]], [KD["z_spitze"], 0.0]]}
+    G = (KD.get("formwahl") or {}).get("gerade")
+    if G and KD.get("profil"): pro[(0, 0, 255)] = [[G.get("z_traufe", z_t), G["r_traufe"]], [G["z_spitze"], 0.0]]
+    kand = [bi for bi in range(len(bilder)) if not (verdeckt and verdeckt(bi, 0) and verdeckt(bi, 1))]
+    if not kand: return
+    az = np.array([math.atan2(bilder[bi].Cxy[1] - y, bilder[bi].Cxy[0] - x) for bi in kand]); o = np.argsort(az); pick = [kand[o[int(i)]] for i in np.linspace(0, len(o) - 1, min(n, len(o)))]
+    kacheln = []
+    for bi in pick:
+        B = bilder[bi]; im = cv2.imread(B.pf)
+        if im is None: continue
+        s = im.shape[1] / (B.c["cx"] * 2); lw = max(1, im.shape[1] // 700); pts = []
+        for col, P in pro.items():
+            for (z0, r0), (z1, r1) in zip(P[:-1], P[1:]):
+                za = z0 + (z1 - z0) * r0 / max(r0 - r1, 1e-6); F, ok = kegel_fuesse(B.C, x, y, z0, np.array([r0]), np.array([za]))
+                if not ok[0]: continue
+                fr = (r0 - r1) / r0
+                for sd in (0, 1):
+                    X = np.array([[*(F[sd, 0] + f * (np.array([x, y]) - F[sd, 0])), z0 + f * (za - z0)] for f in np.linspace(0, fr, 12)]); p, zz, _ = B.proj(X, B.c)
+                    if (zz > 0.5).all(): p = (p * s).astype(int); pts.append(p); cv2.polylines(im, [p.reshape(-1, 1, 2)], False, col, lw)
+        zt_, re_ = pro[(0, 200, 0)][0]; zs_ = pro[(0, 200, 0)][-1][0]
+        Xk = np.array([[x + re_ * math.cos(t), y + re_ * math.sin(t), zt_] for t in np.linspace(0, 2 * math.pi, 40)]); pk, zk_, _ = B.proj(Xk, B.c)
+        if (zk_ > 0.5).all(): pk = (pk * s).astype(int); cv2.polylines(im, [pk.reshape(-1, 1, 2)], True, (255, 160, 0), lw); pts.append(pk)    # Traufkreis (blau)
+        ps_, zz_, _ = B.proj(np.array([[x, y, zs_]]), B.c)
+        if zz_[0] > 0.5: pts.append((ps_ * s).astype(int))
+        if not pts: continue
+        Q = np.vstack(pts); w_ = max(Q[:, 0].max() - Q[:, 0].min(), 20); x0 = int(max(0, Q[:, 0].min() - 0.6 * w_)); x1 = int(min(im.shape[1], Q[:, 0].max() + 0.6 * w_))
+        y0 = int(max(0, Q[:, 1].min() - 0.5 * w_)); y1 = int(min(im.shape[0], Q[:, 1].max() + 0.5 * w_)); k = im[y0:y1, x0:x1]
+        if k.size == 0: continue
+        k = cv2.resize(k, (max(1, int(k.shape[1] * 360 / k.shape[0])), 360)); cv2.putText(k, B.nr[-14:], (4, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 0), 1); kacheln.append(k)
+    if not kacheln: return
+    out = np.hstack(kacheln); cv2.putText(out, f"gruen: {KD.get('familie_bestwert') or KD.get('familie')} {KD.get('profil') or ''}  rot: beste Gerade  gueltig {KD.get('gueltig')}", (4, 352), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 255), 1)
+    cv2.imwrite(aus, out, [cv2.IMWRITE_JPEG_QUALITY, 85]); print("  Dachbild:", aus)
 
 
 def bild(bilder, H, U, aus, verd=None):
