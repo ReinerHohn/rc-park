@@ -31,15 +31,40 @@ def _modell(rec):
     return out
 
 
+def fremde_kameras(con, rec, M=None):
+    """Kamera-IDs, die im Modell UND in der Datenbank stehen, dort aber eine ANDERE Kamera bezeichnen -> {id: (modell_werte, db_werte, rest_bilder)}.
+    WARUM (23.11.2026, Kette 1122r): das aus Seitenmodellen vereinte sparse/0 (tools/sfm_seiten_modelle.py modelle_zusammen) gibt einer Kamera, die in beiden Teilen
+    getrennt ausgeglichen wurde, fuer den zweiten Teil die ID max(Modell)+1 = 822..824 - in der Datenbank sind 822..824 aber die Kameras der Videobilder vf_007..vf_009
+    (822: 1920x1080, im Modell 1280x720). angleichen haengte die Modellbilder auf DB-Kamera 822 um -> triangulate_points: "[reconstruction.cc:303] Check failed:
+    existing_camera.width == camera.width (1280 vs. 1920)"; bei 823/824 (gleiche Groesse) haetten die Videobilder still die Intrinsik der fremden Kamera bekommen.
+    Fremd = Modell/Breite/Hoehe verschieden ODER die DB-Kamera traegt Bilder, die nicht im Modell sind, und keines der Modellbilder dieser Kamera sitzt in der DB auf ihr
+    (geteilte Videokamera mit unregistrierten Frames ist dagegen dieselbe Kamera und bleibt). rest_bilder = DB-Bilder auf dieser ID, die nicht im Modell stehen."""
+    M = M or _modell(rec)
+    dbk = {c: (int(m), int(w), int(h)) for c, m, w, h in con.execute("select camera_id, model, width, height from cameras")}
+    db_cam = dict(con.execute("select image_id, camera_id from images"))
+    auf = {}
+    for i, c in db_cam.items(): auf.setdefault(c, set()).add(i)
+    modell_auf = {}
+    for iid, (_, cam, _, _) in M.items(): modell_auf.setdefault(cam, set()).add(iid)
+    out = {}
+    for cam, ims in modell_auf.items():
+        if cam not in dbk: continue
+        c = rec.cameras[cam]; mw = (_enum_int(c.model), int(c.width), int(c.height)); rest = sorted(auf.get(cam, set()) - set(M))
+        if mw != dbk[cam] or (rest and not (auf.get(cam, set()) & ims)): out[cam] = (mw, dbk[cam], rest)
+    return out
+
+
 def konflikte(dbp, rec):
-    """Bilder, deren Name/Kamera/Frame/Rig in der Datenbank anders ist als im Modell -> Liste von dict(name, art, modell, db)."""
+    """Bilder, deren Name/Kamera/Frame/Rig in der Datenbank anders ist als im Modell, und Kamera-IDs, die in der DB eine fremde Kamera sind
+    -> Liste von dict(name, art, modell, db)."""
     con = sqlite3.connect(f"file:{dbp}?mode=ro", uri=True)
     try:
         bild = {i: (n, c) for i, n, c in con.execute("select image_id, name, camera_id from images")}
         frame_von = {d: f for f, d in con.execute("select frame_id, data_id from frame_data where sensor_type=0")}
         rig_von = dict(con.execute("select frame_id, rig_id from frames"))
+        fremd = fremde_kameras(con, rec)
     finally: con.close()
-    out = []
+    out = [dict(name=f"Kamera {c}", art="Kamera-ID fremd belegt", modell=mw, db=dict(werte=dw, bilder_ausserhalb=len(r))) for c, (mw, dw, r) in sorted(fremd.items())]
     for iid, (name, cam, fid, rig) in _modell(rec).items():
         if iid not in bild: out.append(dict(name=name, art="Bild fehlt in der Datenbank", modell=iid, db=None)); continue
         if bild[iid][0] != name: out.append(dict(name=name, art="Name anders", modell=name, db=bild[iid][0])); continue
@@ -60,6 +85,21 @@ def angleichen(dbp, rec):
         cams = {c for (c,) in con.execute("select camera_id from cameras")}; rigs = {r for (r,) in con.execute("select rig_id from rigs")}
         spalten = [r[1] for r in con.execute("pragma table_info(cameras)")]
         namen = {x["name"] for x in k}; n = 0
+        for cam, (_, _, rest) in sorted(fremde_kameras(con, rec, M).items()):      # 23.11.2026: fremd belegte Kamera-ID (vereintes Seitenmodell) - DB-Bilder ausserhalb des Modells
+            if rest:                                                                  # behalten IHRE Kamera unter neuer ID (Zeile kopiert, eigener trivialer Rig), dann bekommt die ID die Werte des Modells
+                if con.execute("select count(*) from rig_sensors where sensor_id=? and sensor_type=0", (cam,)).fetchone()[0]:
+                    raise ValueError(f"Kamera {cam} ist in der Datenbank Teil eines Mehrsensor-Rigs - fremde Belegung nicht automatisch loesbar")
+                neu_c = max(cams | set(rec.cameras)) + 1; neu_r = max(rigs | set(rec.rigs)) + 1
+                con.execute(f"insert into cameras ({','.join(spalten)}) select {','.join('?' if s == 'camera_id' else s for s in spalten)} from cameras where camera_id=?", (neu_c, cam)); cams.add(neu_c)
+                con.execute("insert into rigs (rig_id, ref_sensor_id, ref_sensor_type) values (?,?,0)", (neu_r, neu_c)); rigs.add(neu_r)
+                for iid in rest:
+                    con.execute("update images set camera_id=? where image_id=?", (neu_c, iid))
+                    for (fid,) in con.execute("select frame_id from frame_data where data_id=? and sensor_type=0", (iid,)).fetchall():
+                        con.execute("update frames set rig_id=? where frame_id=?", (neu_r, fid))
+                        con.execute("update frame_data set sensor_id=? where frame_id=? and data_id=? and sensor_type=0", (neu_c, fid, iid))
+            c = rec.cameras[cam]
+            con.execute("update cameras set model=?, width=?, height=?, params=? where camera_id=?", (_enum_int(c.model), int(c.width), int(c.height), np.asarray(c.params, dtype="<f8").tobytes(), cam))
+            n += len(rest)
         for iid, (name, cam, fid, rig) in M.items():
             if name not in namen: continue
             if cam not in cams:

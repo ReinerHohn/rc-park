@@ -96,6 +96,51 @@ try:
     lauf(); pruef((zahl("n1"), zahl("n2"), zahl("n3")) == (1, 1, 1), "naechster Lauf: Schritt 1 aus Zwischenstand, 2 und 3 gerechnet")
     lauf(); pruef((zahl("n1"), zahl("n2"), zahl("n3")) == (1, 1, 1), "unveraendert: alle Schritte aus Zwischenstand")
     open(wz, "w").write("a = 2\n"); lauf(); pruef((zahl("n1"), zahl("n2"), zahl("n3")) == (1, 2, 2), "Code von Schritt 2 geaendert: nur 2 und 3 neu")
+
+    # --- Teil 3 (23.11.2026, Kette 1122r): VEREINTES Seitenmodell vergibt eine Kamera-ID, die in der DB eine FREMDE Kamera ist ---------------------------------
+    # sfm_seiten_modelle.modelle_zusammen gab einer doppelt ausgeglichenen Kamera max(Modell)+1 = 822; in der DB war 822 die 1920er-Kamera eines anderen Videobilds
+    # -> probe: "[reconstruction.cc:303] Check failed: existing_camera.width == camera.width (1280 vs. 1920)". Nachbau: Modell haengt Bilder 4-6 (DB: Kamera 2) an Kamera 9;
+    # in der DB ist 9 die Kamera eines Bildes 'fremd.png' ausserhalb des Modells (a: andere Breite, b: gleiche Groesse, andere Brennweite = stille Verfaelschung).
+    def vereint_nachbau(d3, breite_anders):
+        os.makedirs(d3); dbp3, sp3 = aufbau(d3); con = sqlite3.connect(dbp3)                  # aufbau: Bild 2 eigene Kamera 7 -> wieder auf Kamera 1 (hier nur die ID-Kollision)
+        con.execute("update images set camera_id=1 where image_id=2"); con.execute("update frames set rig_id=1 where frame_id=2"); con.execute("update frame_data set sensor_id=1 where frame_id=2 and data_id=2")
+        m, w, h, p, pf = con.execute("select model, width, height, params, prior_focal_length from cameras where camera_id=2").fetchone()
+        pa = np.frombuffer(p, "<f8").copy(); pa[0] *= 1.37
+        con.execute("insert into cameras (camera_id, model, width, height, params, prior_focal_length) values (9,?,?,?,?,?)", (m, w * 2 if breite_anders else w, h * 2 if breite_anders else h, pa.tobytes(), pf))
+        con.execute("insert into rigs (rig_id, ref_sensor_id, ref_sensor_type) values (9, 9, 0)"); con.execute("insert into frames (frame_id, rig_id) values (20, 9)")
+        con.execute("insert into frame_data (frame_id, data_id, sensor_id, sensor_type) values (20, 20, 9, 0)"); con.execute("insert into images (image_id, name, camera_id) values (20, 'fremd.png', 9)")
+        con.commit(); con.close()
+        Q = pycolmap.Reconstruction(sp3); V = pycolmap.Reconstruction(); kmap = {1: 1, 2: 9}     # Nachbau von modelle_zusammen: Kamera 2 -> neue ID 9
+        for c_alt, c_neu in kmap.items():
+            q = Q.cameras[c_alt]; V.add_camera_with_trivial_rig(pycolmap.Camera(model=q.model, width=q.width, height=q.height, params=q.params, camera_id=c_neu))
+        for i in sorted(Q.reg_image_ids()):
+            im = Q.images[i]; xy = np.array([p_.xy for p_ in im.points2D], float).reshape(-1, 2)
+            V.add_image_with_trivial_frame(pycolmap.Image(name=im.name, keypoints=xy, camera_id=kmap[im.camera_id], image_id=i), im.cam_from_world())
+        for pid in sorted(Q.points3D):
+            tr = pycolmap.Track()
+            for el in Q.points3D[pid].track.elements: tr.add_element(el.image_id, el.point2D_idx)
+            V.add_point3D(Q.points3D[pid].xyz, tr, Q.points3D[pid].color)
+        sv = os.path.join(d3, "vereint"); os.makedirs(sv); V.write(sv); return dbp3, sv, pa, (w * 2 if breite_anders else w)
+    for fall, anders in (("a andere Breite", True), ("b gleiche Groesse, andere Brennweite", False)):
+        d3 = os.path.join(d, "vereint_" + fall[0]); dbp3, sv, pa, w9 = vereint_nachbau(d3, anders); rv = pycolmap.Reconstruction(sv)
+        k3 = RA.konflikte(dbp3, rv); pruef(any(x["art"] == "Kamera-ID fremd belegt" and x["name"] == "Kamera 9" for x in k3), f"{fall}: Kamera 9 als fremd belegt erkannt ({[(x['name'], x['art']) for x in k3][:4]})")
+        if anders:
+            alt = os.path.join(d3, "alt.db"); shutil.copy(dbp3, alt); con = sqlite3.connect(alt)
+            for iid in (4, 5, 6): con.execute("update images set camera_id=9 where image_id=?", (iid,)); con.execute("update frames set rig_id=9 where frame_id=?", (iid,)); con.execute("update frame_data set sensor_id=9 where frame_id=? and data_id=?", (iid, iid))
+            con.commit(); con.close()                                                        # = altes angleichen (nur Kamera-ID umhaengen)
+            try: tri(alt, sv, d3, "t_alt"); pruef(False, "a: altes Angleichen haette scheitern muessen (Nachbau stimmt nicht)")
+            except ValueError as e: pruef("width" in str(e), f"a: Nachbau des Kettenfehlers mit altem Angleichen ({str(e)[:80]})")
+        ok, t = RA.probe(dbp3, sv, os.path.join(d3, "probe")); pruef(ok, f"{fall}: probe besteht ({t[:100]})")
+        kop = os.path.join(d3, "kopie.db"); shutil.copy(dbp3, kop); RA.angleichen(kop, rv); pruef(RA.konflikte(kop, rv) == [], f"{fall}: nach angleichen 0 Konflikte")
+        r3 = tri(kop, sv, d3, "t3"); pruef(r3.num_points3D() > 100, f"{fall}: triangulate_points auf der angeglichenen Kopie: {r3.num_points3D()} Punkte")
+        con = sqlite3.connect(kop); c_f, = con.execute("select camera_id from images where name='fremd.png'").fetchone()
+        w_f, p_f = con.execute("select width, params from cameras where camera_id=?", (c_f,)).fetchone()
+        rig_f = con.execute("select f.rig_id, r.ref_sensor_id from frame_data d join frames f on f.frame_id=d.frame_id join rigs r on r.rig_id=f.rig_id where d.data_id=20").fetchone()
+        w9n, p9 = con.execute("select width, params from cameras where camera_id=9").fetchone(); con.close()
+        pruef(c_f not in (1, 2, 9) and w_f == w9 and np.allclose(np.frombuffer(p_f, "<f8"), pa) and rig_f == (rig_f[0], c_f),
+              f"{fall}: fremdes Bild behaelt SEINE Kamera unter neuer ID {c_f} (Breite {w_f}, f {np.frombuffer(p_f, '<f8')[0]:.0f}, eigener Rig {rig_f})")
+        pruef(w9n == rv.cameras[9].width and np.allclose(np.frombuffer(p9, "<f8"), rv.cameras[9].params), f"{fall}: Kamera 9 der DB-Kopie traegt die Werte des Modells")
+        pruef(dbp3 != kop and sqlite3.connect(dbp3).execute("select camera_id from images where name='fremd.png'").fetchone()[0] == 9, f"{fall}: Quelle unberuehrt (probe arbeitet auf Mini-DB)")
 finally:
     shutil.rmtree(d, ignore_errors=True)
 print("ERGEBNIS:", "alles bestanden" if not fehler else f"{fehler} Fehler"); sys.exit(1 if fehler else 0)
