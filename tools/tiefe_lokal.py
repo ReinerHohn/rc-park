@@ -86,7 +86,7 @@ def main():
     ap.add_argument("--aussen", nargs=2, type=float, required=True); ap.add_argument("--feld", nargs=4, type=float, required=True); ap.add_argument("--k", type=int, default=12); ap.add_argument("--max_size", type=int, default=4000); ap.add_argument("--px", type=float, default=0.01)
     ap.add_argument("--band", type=float, default=0.5); ap.add_argument("--massstab", nargs=4, type=float); ap.add_argument("--nur_raster", action="store_true"); ap.add_argument("--ausrichtung")
     ap.add_argument("--arbeit", help="Arbeitsordner (Standard <rc-park_daten>/<objekt>/tiefe_lokal/<name>)"); ap.add_argument("--min_abdeckung", type=float, default=0.10, help="rc 3, wenn weniger Zellen echte Punkte haben (Ergebnis wird nicht als Relief geschrieben)"); a = ap.parse_args(); t0 = time.time()
-    od = os.path.dirname(os.path.abspath(a.objekt)); name = os.path.basename(od); W = a.arbeit or f"/media/oem/scan/rc-park_daten/{name}/tiefe_lokal/{a.name}"; os.makedirs(W, exist_ok=True)
+    od = os.path.dirname(os.path.abspath(a.objekt)); name = os.path.basename(od); W = a.arbeit or os.path.join(os.environ.get("RCPARK_TIEFE_LOKAL_WURZEL") or f"/media/oem/scan/rc-park_daten/{name}/tiefe_lokal", a.name); os.makedirs(W, exist_ok=True)   # Wurzel per Umgebung: Nachlaeufe auf Objektkopien schreiben nicht in den echten Arbeitsordner (23.11.2026)
     A = np.array(a.a); B = np.array(a.b); t = (B - A) / np.linalg.norm(B - A); n = np.array([t[1], -t[0]]); n = n if (np.array(a.aussen) - A) @ n > 0 else -n; u0, u1, z0, z1 = a.feld
     T = json.load(open(a.ausrichtung or os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{name}.json")))["transformation"]; s = T["s"]; R = Rot.from_rotvec(T["rvec"]).as_matrix(); tt = np.array(T["t"])
     Am, Bm = A + u0 * t, A + u1 * t                                        # Feldenden im Rahmen der Wandangabe; fuer die Fotowahl in den Kamerarahmen (korrigiert) bringen
@@ -96,12 +96,19 @@ def main():
     if not a.nur_raster or not os.path.exists(fused):
         # Fotowahl FUER STEREO (erster Lauf 15.11.: die 12 besten Fotos standen fast am selben Fleck -> Schnittwinkel < 3 Grad, der Geometriefilter warf 70-85 % der Tiefen weg):
         # gierig nach Guete, aber jedes neue Foto muss zu einem gewaehlten 4-35 Grad Blickwinkel-Unterschied haben und zu keinem < 1,5 Grad (Doppel).
-        _, kand = fotos_fuer_wand(od, Am, Bm, n, z0 * zf, z1 * zf, k=60); mitte = np.r_[0.5 * (Am + Bm), 0.5 * (z0 + z1) * zf]; gew = []; ri = []
+        _, kand = fotos_fuer_wand(od, Am, Bm, n, z0 * zf, z1 * zf, k=60); mitte = np.r_[0.5 * (Am + Bm), 0.5 * (z0 + z1) * zf]; gew = []; ri = []; ueber = []
+        from kamera_standort import kamera_standort_grund
         for sc, _, f in kand:
-            K_ = json.load(open(os.path.join(od, "messprotokoll", "K-" + f + ".json")))["kamera"]; v = np.array(K_["standort_xyz"], float) - mitte; v /= np.linalg.norm(v)
+            # 23.11.2026 (Kette 1122r: KeyError 'standort_xyz' an 5 Waenden -> fassaden_kette rc 3, kein Relief): kameras_nachtragen/kamera_verfeinern schreiben 'standort',
+            # andere nur die Pose -> Standort ueber kamera_standort (standort_xyz > standort > -R^T t); ohne beides Foto mit Grund ueberspringen, nie abstuerzen
+            try: S_, grund_ = kamera_standort_grund(json.load(open(os.path.join(od, "messprotokoll", "K-" + f + ".json"))).get("kamera"))
+            except (OSError, ValueError) as e_: S_, grund_ = None, f"K-Datei unlesbar ({type(e_).__name__})"
+            if S_ is None or np.linalg.norm(S_ - mitte) < 1e-6: ueber.append((f, grund_ or "Standort in der Feldmitte")); continue
+            v = S_ - mitte; v /= np.linalg.norm(v)
             w_ = [np.degrees(np.arccos(np.clip(v @ r_, -1, 1))) for r_ in ri]
             if not ri or (min(w_) >= 1.5 and any(4.0 <= x <= 35.0 for x in w_)): gew.append((sc, f)); ri.append(v)
             if len(gew) >= a.k: break
+        if ueber: print(f"UEBERSPRUNGEN {len(ueber)} Foto(s) ohne Standort:", "; ".join(f"{f[-24:]}: {g}" for f, g in ueber[:5]), flush=True)
         fotos = [f for _, f in gew]; print("Fotos:", [(f[-12:], round(sc)) for sc, f in gew], flush=True)
         rec = pycolmap.Reconstruction(a.sparse); namen = {os.path.splitext(im.name)[0]: im.name for im in rec.images.values()}; nimm = {namen[f] for f in fotos if f in namen}
         if len(nimm) < 4: print(f"ABBRUCH: nur {len(nimm)} der gewaehlten Fotos im Netz"); return 1

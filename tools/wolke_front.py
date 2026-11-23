@@ -5,6 +5,7 @@ Tiefe kommt aus der 3D-Lage der Punkte (KEINE Ebenenannahme wie im Foto-Median B
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/wolke_front.py modelle/<obj>/objekt.json --dicht <sfm/dicht_*> --box x0,y0,z0,x1,y1,z1 --normale nx,ny --aus ordner [--zelle 0.01]
 Ausgabe: front_farbe.png, front_tiefe.png (w in m ab Ebene), front_abdeckung.png (Fotos je Punkt, 0..8+), front.json (Kennzahlen, Rahmenrest, Luecken je Hoehenband)."""
 import os, sys, json, argparse, numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from kamera_standort import kamera_standort   # 23.11.2026: standort_xyz > standort > Pose (231 K-Dateien ohne standort_xyz)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import freiraum_pruefen as FP
 
@@ -14,8 +15,9 @@ def rahmen_umeyama(dicht, od):
         p = os.path.join(od, "messprotokoll", f"K-{i}.json")
         if not os.path.exists(p): continue
         k = json.load(open(p)).get("kamera", {})
-        if "standort_xyz" not in k: continue
-        S.append(-np.array(c["R"]).T @ np.array(c["t"])); M.append(k["standort_xyz"])
+        Sk = kamera_standort(k)
+        if Sk is None: continue
+        S.append(-np.array(c["R"]).T @ np.array(c["t"])); M.append(Sk)
     S = np.array(S); M = np.array(M); ms, mm = S.mean(0), M.mean(0); A = S - ms; B = M - mm
     U, D, Vt = np.linalg.svd(B.T @ A / len(S)); Sg = np.eye(3); Sg[2, 2] = np.sign(np.linalg.det(U @ Vt)); Rm = U @ Sg @ Vt
     s = np.trace(np.diag(D) @ Sg) / A.var(0).sum(); t0 = mm - s * Rm @ ms; rest = np.linalg.norm(s * (Rm @ S.T).T + t0 - M, axis=1)

@@ -134,7 +134,8 @@ def innenflaechen(grundflaeche, teile, z_band=Z_BAND, min_punkte=INNEN_MIN_PUNKT
             for t, (x, s_) in band.items():
                 m = np.abs(x - mitte) < INNEN_FENSTER * INNEN_BIN_M + INNEN_BIN_M
                 if m.sum() < min_punkte: break
-                Q = np.c_[s_[m], x[m]]; _, _, Vt = np.linalg.svd(Q - Q.mean(0)); ang = (np.degrees(np.arctan2(Vt[0, 1], Vt[0, 0])) + 90) % 180 - 90
+                # 23.11.2026 (Kette 1122r, vereintes Modell: 126197 Bandpunkte -> svd baute U (n x n) = 119 GiB, ArrayMemoryError): full_matrices=False, U nur n x 2, Vt gleich
+                Q = np.c_[s_[m], x[m]]; _, _, Vt = np.linalg.svd(Q - Q.mean(0), full_matrices=False); ang = (np.degrees(np.arctan2(Vt[0, 1], Vt[0, 0])) + 90) % 180 - 90
                 ebene["teile"][t] = dict(n=int(m.sum()), lage_m=round(float(np.median(x[m])), 3), winkel_grad=round(float(ang), 2))
             else:
                 v = list(ebene["teile"].values()); ebene["lageunterschied_m"] = round(max(x["lage_m"] for x in v) - min(x["lage_m"] for x in v), 3)

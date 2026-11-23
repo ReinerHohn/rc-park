@@ -53,7 +53,7 @@ def main():
         b = cv2.imread(orig[0])
         if b is None: continue
         f = b.shape[1] / cam.width; p = list(cam.params); K = dict(rvec=cv2.Rodrigues(Rm)[0].ravel().tolist(), t=(-Rm @ Cm).tolist(), f_px=p[0] * f, cx=p[1] * f, cy=p[2] * f, k1=float(p[3]) if len(p) > 3 else 0.0,
-                                                                 standort=Cm.tolist(), quelle=f"nachregistriert ({os.path.basename(os.path.dirname(os.path.abspath(a.sparse)))}), Abbildung aus {int(gut.sum())} gemeinsamen Kameras, Rest {np.median(rest[gut]):.2f} m", punkte3d=int(im.num_points3D))
+                                                                 standort=Cm.tolist(), standort_xyz=[round(float(x), 3) for x in Cm], quelle=f"nachregistriert ({os.path.basename(os.path.dirname(os.path.abspath(a.sparse)))}), Abbildung aus {int(gut.sum())} gemeinsamen Kameras, Rest {np.median(rest[gut]):.2f} m", punkte3d=int(im.num_points3D))
         d = json.load(open(kdatei(im.name))) if os.path.exists(kdatei(im.name)) else dict(foto=stem, seite="unbekannt", punkte={}, linien={})
         if isinstance(d.get("kamera"), dict) and "rvec" in d["kamera"]: d["kamera_vorher"] = d["kamera"]
         d["kamera"] = K; json.dump(d, open(kdatei(im.name), "w"), indent=1); bericht["neu"].append(dict(foto=stem, standort=[round(float(v), 1) for v in Cm], f_px=round(K["f_px"]), punkte3d=int(im.num_points3D)))

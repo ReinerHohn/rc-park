@@ -9,6 +9,7 @@ ueber eine Aehnlichkeit auf die K-Kameras des Objekts (Umeyama ueber gemeinsame 
 Modell vor dem Einbau nutzbar. Ausgabe je Gruppe: Punkt (m), Strahlabstaende; Abstaende der Gruppen untereinander. rc 3 ueber --tol.
 """
 import sys, os, json, glob, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from kamera_standort import kamera_standort   # 23.11.2026: standort_xyz > standort > Pose (231 K-Dateien ohne standort_xyz)
 
 
 def umeyama(A, B):
@@ -23,7 +24,8 @@ def main():
     A, B = [], []
     for f in glob.glob(os.path.join(od, "messprotokoll", "K-*.json")):
         n = os.path.basename(f)[2:-5]
-        if n in nach: A.append(nach[n].projection_center()); B.append(json.load(open(f))["kamera"]["standort_xyz"])
+        Sk = kamera_standort(json.load(open(f)).get("kamera")) if n in nach else None
+        if Sk is not None: A.append(nach[n].projection_center()); B.append(Sk)
     A, B = np.array(A), np.array(B); ok = np.ones(len(A), bool)
     for _ in range(4):
         s, R, t = umeyama(A[ok], B[ok]); res = np.linalg.norm((s * (R @ A.T).T + t) - B, axis=1); ok = res < max(3 * np.median(res[ok]), 0.5)
