@@ -14,7 +14,9 @@ Ablauf:
      diese Bilder kommen zu den Kandidaten.
      --holen: das Skript sofort ausfuehren (GPU; nur ueber tools/job_start.sh starten, wenn es lange laeuft).
   4. Bericht <audit>/seiten_luecken.json. Exit-Code 3, solange eine Wand ungesehen ist.
-Letzter Skriptschritt: tools/kameras_nachtragen.py (K-Dateien im Modellrahmen). Danach je ungesehener Wand: registrierte Neuzugaenge -> fassade_ortho/fassade_fein neu; bleibt ein Foto unregistriert, das die Wand zeigt (Kontaktbogen
+Letzte Skriptschritte: tools/kameras_nachtragen.py (K-Dateien im Modellrahmen), kamera_verfeinern.py je neuer Kamera, tools/kameras_nachtragen_tor.py (Gueltigkeits-Tor:
+unplausible/nicht am Modell belegte neue Kameras gesperrt; audit/kameras_nachtragen_tor.json je Wand: belegte neue Kameras mit Sicht). Die Kette (tools/gesamtkette.py, Stufe seiten)
+wiederholt damit EINMAL Wandbild/Bau/Tore im selben Lauf, wenn die Abdeckung einer ungesehenen Wand messbar steigt (tools/seiten_wiederholung.py). Danach je ungesehener Wand: registrierte Neuzugaenge -> fassade_ortho/fassade_fein neu; bleibt ein Foto unregistriert, das die Wand zeigt (Kontaktbogen
 <audit>/seiten_luecken_kandidaten.jpg ANSEHEN): Kamera aus gemessenen Modellpunkten + tools/fassade_ein_foto.py (modelle/PIPELINE_FASSADEN.md "Ungesehene Seite").
 Grenze: Schritt 1 braucht einen fassade_ortho-Lauf; ob ein Kandidat die Wand wirklich zeigt, entscheidet erst die Registrierung bzw. der Blick auf den Kontaktbogen.
 Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/seiten_luecken.py ... (oder `tools/py tools/seiten_luecken.py ...`); SEITEN_NEU=1 erzwingt
@@ -34,7 +36,7 @@ from code_stand import code_stand, dateien as code_dateien
 from speicher_muster import speicher_fehler
 # Werkzeuge des Nachhol-Skripts (Unterprozesse - die Importsuche von code_stand sieht sie nicht, darum hier genannt): CODE-STAND der Fehlschlag-Marke
 NACHHOL_WERKZEUGE = ("seiten_luecken.py", "colmap_rig_abgleich.py", "zusatzfotos_registrieren.py", "zusatzfotos_lightglue.py", "kameras_nachtragen.py", "kamera_verfeinern.py",
-                     "commons_harvest.py", "online_ansichten_holen.py", "openverse_holen.py")
+                     "kameras_nachtragen_tor.py", "commons_harvest.py", "online_ansichten_holen.py", "openverse_holen.py")
 
 
 def sperrt(F, cs):
@@ -117,6 +119,20 @@ def roh_neu_zeile(Z):
             f"echo \"roh/: $ALT Verknuepfungen frueherer Laeufe entfernt (davon $TOT tot), Neuaufbau aus den Kandidaten dieses Laufs\"")
 
 
+def wand_abdeckung(fassaden_dir, F, i, im=None, maske=None):
+    """Anteil der Wandzellen (polys_uz im Raster) mit Bilddaten in ortho_<id>.png - EIN Mass fuer 'gesehen' (seiten_luecken und tools/seiten_wiederholung.py).
+    None = Bild fehlt oder passt nicht zum Raster."""
+    R = F["raster"]
+    if maske is None:
+        maske = np.zeros((R["nz"], R["nu"]), np.uint8)
+        for poly in F["polys_uz"]: cv2.fillPoly(maske, [np.array([[(u - R["u0"]) / R["zelle"], (R["z1"] - z) / R["zelle"]] for u, z in poly], np.int32)], 1)
+    if im is None: im = cv2.imread(os.path.join(fassaden_dir, f"ortho_{F.get('id', 'f%02d' % i)}.png"))
+    if im is None or im.shape[:2] != maske.shape: return None
+    daten = im.max(2) > 8; un_ = cv2.imread(os.path.join(fassaden_dir, f"uneinig_f{i:02d}.png"), 0) if os.environ.get("LUECKEN_MIT_UNEINIG") == "1" else None
+    if un_ is not None and un_.shape == daten.shape: daten &= cv2.blur(un_.astype(np.float32), (9, 9)) <= 28      # widerspruechliche Zonen zaehlen nicht als gesehen (16.11.2026)
+    return float((daten & (maske > 0)).sum() / max(maske.sum(), 1))
+
+
 def registrierte(sparse):
     namen = []
     with open(os.path.join(sparse, "images.bin"), "rb") as f:
@@ -143,10 +159,8 @@ def main():
         if im_ is None or im_.shape[:2] != maske.shape:                # 17.11.2026: ein fehlendes/unlesbares oder nicht zu fassaden.json passendes Bild zaehlte als "Wand ungesehen" und loeste Download + 30 min Nachregistrieren aus
             print(f"FEHLER: Fassadenbild {p} " + ("fehlt/unlesbar" if im_ is None else f"hat {im_.shape[1]}x{im_.shape[0]} px, fassaden.json sagt {R['nu']}x{R['nz']}") + " - Ausgabe von fassade_ortho unvollstaendig oder aus zwei Laeufen gemischt; KEINE Luecken-Aussage"); return 2
         for poly in F["polys_uz"]: cv2.fillPoly(maske, [np.array([[(u - R["u0"]) / R["zelle"], (R["z1"] - z) / R["zelle"]] for u, z in poly], np.int32)], 1)
-        im = im_; daten = (im.max(2) > 8) if im is not None else np.zeros(maske.shape, bool); un_ = cv2.imread(os.path.join(a.fassaden, f"uneinig_f{i:02d}.png"), 0)
-        if os.environ.get("LUECKEN_MIT_UNEINIG") == "1" and un_ is not None and im is not None and un_.shape == daten.shape: daten &= cv2.blur(un_.astype(np.float32), (9, 9)) <= 28      # widerspruechliche Zonen zaehlen nicht als gesehen (16.11.2026)
-        ant = float((daten & (maske > 0)).sum() / max(maske.sum(), 1))
-        waende.append(dict(nr=i, normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle, ohne_daten_m2=round(float(F["flaeche_m2"]) * (1 - ant), 1)))
+        ant = wand_abdeckung(a.fassaden, F, i, im_, maske)
+        waende.append(dict(nr=i, id=F.get("id", "f%02d" % i), normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle, ohne_daten_m2=round(float(F["flaeche_m2"]) * (1 - ant), 1)))
         print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else (f"   <-- TEILWEISE: {F['flaeche_m2'] * (1 - ant):.0f} m2 ohne Bilddaten" if F["flaeche_m2"] * (1 - ant) >= 30 else "")))
     reg = set(os.path.splitext(os.path.basename(n))[0] for n in registrierte(a.sparse)); fd = os.path.join(root, obj["fotos_dir"]); alle = sorted(f for f in glob.glob(os.path.join(fd, "*")) if f.lower().endswith((".jpg", ".jpeg", ".png")))
     if not waende: print(f"FEHLER: KEINE Wand geprueft (keine Fassade >= {a.min_m2:g} m2 unter {len(FJ['fassaden'])} in fassaden.json) - das ist KEIN 'alle Waende gesehen'; --min_m2 senken oder fassade_ortho pruefen"); return 2      # 17.11.2026: lief mit rc 0 und 'alle Waende gesehen' durch
@@ -175,7 +189,10 @@ def main():
                 ("einlesen", "zusatzfotos_lightglue.py colmap_rig_abgleich.py", "", f"{VC} {T}/zusatzfotos_lightglue.py einlesen --ziel {Z} --ref-sparse {a.sparse}"),
                 ("registrieren", "zusatzfotos_registrieren.py", "", f"{VC} {T}/zusatzfotos_registrieren.py registrieren --sparse {Z}/lg/ref_tri --aus {Z}/lg --je-bild --kalibrieren"),
                 ("kameras_nachtragen", "kameras_nachtragen.py", "", f"{VC} {T}/kameras_nachtragen.py {os.path.abspath(a.objekt)} {Z}/lg/sparse_handy/0 --bilder {Z}/roh   # neue Posen als K-Dateien in den Modellrahmen (Gegenprobe gegen vorhandene Kameras)"),
-                ("kamera_verfeinern", "kamera_verfeinern.py", "", vf)]
+                ("kamera_verfeinern", "kamera_verfeinern.py", "", vf),
+                # 23.11.2026 (Kette 1122q: 327 neue Kameras, 'gegenprobe' 0 pruefte keine davon): Gueltigkeits-Tor - unplausible und nicht am Modell belegte neue Kameras gesperrt,
+                # je Wand Zahl der belegten neuen Kameras, die sie sehen (audit/kameras_nachtragen_tor.json; die Kette entscheidet damit ueber die Wiederholung von Wandbild/Bau)
+                ("kameras_tor", "kameras_nachtragen_tor.py kamera_plausibel.py", "", f"{VS} -W ignore {T}/kameras_nachtragen_tor.py {os.path.abspath(a.objekt)} --fassaden {os.path.join(os.path.abspath(a.fassaden), 'fassaden.json')} || [ $? = 3 ]   # rc 3 = keine belegte Kamera (kein Abbruch)")]
     zeilen.append(f"KETTE=$(ls -lL {Z}/roh | sha1sum | cut -c1-16)   # Kette der Schritt-Schluessel beginnt mit dem Kandidatenbestand (Downloads aendern ihn)")
     for n_, cw, weg, cmd in schritte:
         zeilen += [f"if schritt_noetig {n_} '{cw}' {hashlib.sha1(cmd.encode()).hexdigest()[:12]}; then"] + ([f"  rm -rf {weg}"] if weg else []) + [f"  {cmd}", f"  schritt_fertig {n_}", "fi"]

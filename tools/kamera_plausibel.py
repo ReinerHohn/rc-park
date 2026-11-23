@@ -27,6 +27,23 @@ def plausibel(f_px, bild_wh, standort, bezug=None, max_m=1500.0, tief_m=None, k1
     return True, ""
 
 
+def messkamera(name, k, mit_tor):
+    """EINE Regel "zaehlt diese K-Kamera fuer Messbilder (fassade_ortho) / Abdeckungsschaetzung?" (vorher nur in fassade_ortho._ok).
+    k = K-Datei 'kamera'; mit_tor = irgendeine Kamera des Objekts traegt 'buendel_tor'.
+      - am Modell nachgezogen ('vertrauen', tools/kamera_verfeinern.py, >= 2 Waende mit >= 15 Inliern) und nicht 'tiefe_unsicher' -> ja, auch Videobilder
+        (23.11.2026, Kette 1122q: 10 nachgezogene Videobilder sahen die ungesehene Wand f01 und fielen trotzdem weg);
+      - NACHREGISTRIERT (tools/kameras_nachtragen.py, quelle 'nachregistriert ...') ohne 'vertrauen' -> nein: reine SfM-Pose ohne Gegenprobe am Modell
+        (1122q: 327 neue Kameras, 'gegenprobe' 0 = keine pruefte sie; Standorte bis 119 m unter / 250 m ueber dem Gelaende). Die alte Namensregel (dl_, neu__) erfasste
+        sie nicht mehr, seit der Sammelordner Quellpraefixe (eigen__, commons_..., netz_...) vergibt;
+      - Fremdfotos dl_/neu__ nur mit 'vertrauen'; sonst bestandenes 'buendel_tor' oder (kein Siegel im Objekt) alles ausser Videobildern."""
+    if not isinstance(k, dict) or "rvec" not in k: return False
+    if k.get("vertrauen") and not k.get("tiefe_unsicher"): return True
+    if str(k.get("quelle", "")).startswith("nachregistriert"): return False
+    if name.startswith(("dl_", "neu__")): return False
+    if (k.get("buendel_tor") or {}).get("ok"): return True
+    return (not mit_tor) and not name.startswith("video")
+
+
 def datei_pruefen(pfad, tief_m=None):
     import cv2
     k = json.load(open(pfad)).get("kamera")

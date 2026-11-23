@@ -279,10 +279,8 @@ def main(argv=None):
     def _kam(k_): c_ = json.load(open(k_)).get("kamera"); return c_ if isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ else None
     alle_k = {os.path.basename(k)[2:-5]: _kam(k) for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))}; alle_k = {n_: c_ for n_, c_ in alle_k.items() if c_}
     mit_tor = any("buendel_tor" in c_ for c_ in alle_k.values())          # 16.11.2026: gibt es das Pruefsiegel im Objekt gar nicht (uebernommene/neu ausgerichtete Kameras), zaehlen alle eigenen/Commons/online-Kameras;
-    def _ok(n_, c_):                                                     # Fremdfotos (dl_, neu__) immer nur mit 'vertrauen' (kamera_verfeinern.py), Videobilder nur mit bestandenem Siegel
-        if n_.startswith(("dl_", "neu__")): return bool(c_.get("vertrauen"))
-        if c_.get("buendel_tor", {}).get("ok"): return True
-        return (not mit_tor) and not n_.startswith("video")
+    def _ok(n_, c_):                                                     # Fremdfotos (dl_, neu__) und NACHREGISTRIERTE nur mit 'vertrauen' (kamera_verfeinern.py), Videobilder nur mit Siegel oder 'vertrauen'
+        return __import__("kamera_plausibel").messkamera(n_, c_, mit_tor)      # 23.11.2026: Regel nach kamera_plausibel.messkamera (gleiche Regel fuer die Abdeckungsschaetzung der Stufe seiten)
     fotos = a.fotos.split(",") if a.fotos else sorted(n_ for n_, c_ in alle_k.items() if _ok(n_, c_))
     print(f"{len(fotos)} Messkameras" + ("" if mit_tor else " (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)"), flush=True)
     if EBEN:

@@ -109,12 +109,20 @@ def fernsicht_gruppen(gps_je_gruppe, mitte, fern_m=FERN_M, fern_max_m=FERN_MAX_M
     return aus
 
 
-def fernsicht_behalten(verb, fern):
-    """Je Fernsicht-Gruppe die 'unklare' Verbindung mit den meisten Paaren -> Menge (a, b), die --streng NICHT loescht. Markiert sie in verb ('fernsicht_behalten')."""
+def fernsicht_behalten(verb, fern, quer=None):
+    """Je Fernsicht-Gruppe die 'unklare' Verbindung mit den meisten Paaren -> Menge (a, b), die --streng NICHT loescht. Markiert sie in verb ('fernsicht_behalten').
+    quer = {(a, b): [Paare >= --min-inlier]}: hat die Gruppe KEINE vom Pruefer gesehene Verbindung (Gruppe unter --min-bilder, Verbindung unter --min-paare), gilt ihre
+    staerkste UNGEPRUEFTE Verbindung (neuer Eintrag in verb, urteil 'ungeprueft'). Grund 23.11.2026 (Kette 1122q): die 10 Fernfotos 110741-111237 bildeten Gruppe 26 mit
+    11 Bildern (< 12) -> der Pruefer sah sie nie -> keine 'unklare' Verbindung -> --streng schnitt sie ab (Teil 3, 11 Bilder, kein Modell) -> lage_frueh nur mit Nah-GPS
+    +9,9 Grad x0,902 (1122o mit Fernfotos +1,2 Grad x0,980). Weiterhin nur EINE Verbindung je Fernsicht-Gruppe; eine Gruppe mit 'echt'/'verwechselt'-Urteil bekommt keine."""
     beh = set()
     for k in sorted(fern):
         kand = [v for v in verb if k in (v["a"], v["b"]) and v["urteil"] == "unklar"]
-        if not kand: continue
+        if not kand:
+            if quer is None or any(k in (v["a"], v["b"]) for v in verb): continue   # Pruefer/GPS hat die Gruppe gesehen ('echt' traegt schon, 'verwechselt' bleibt geloescht)
+            uq = sorted(((kk, len(vv)) for kk, vv in quer.items() if k in kk and vv), key=lambda t: (-t[1], t[0]))
+            if not uq: continue
+            (x, y), n = uq[0]; verb.append(dict(a=x, b=y, paare=n, p_median=None, urteil="ungeprueft", fernsicht_behalten=True)); beh.add((x, y)); continue
         v = max(kand, key=lambda v: v["paare"]); v["fernsicht_behalten"] = True; beh.add((v["a"], v["b"]))
     return beh
 
@@ -222,6 +230,7 @@ def main(argv=None):
     ap.add_argument("--pruefer-aus", help="Pruefer-Ergebnisse (p je Verbindung) aus einer frueheren seiten.json derselben Datenbank uebernehmen statt neu zu rechnen (Cache)")
     ap.add_argument("--masken", help="Ordner mit Vordergrund-Masken (tools/handy_masken.py; <bildname>.png, 0 = Person/Fahrzeug): der Paar-Pruefer sieht den Vordergrund grau (Martinstor 21.11.2026: Person auf beiden Torseiten = falsche Bruecke)"); ap.add_argument("--objekt", help="objekt.json: mit Objektmitte + EXIF-GPS der Fotos entscheidet die STANDRICHTUNG je Bildgruppe vor dem Pruefer (Nutzer 19.11.2026: kuenftig GPS im EXIF; muss auch ohne gehen)")
     ap.add_argument("--durchblick", action="store_true", help="Stufe Durchblick/Umgebung (auch RCPARK_SEITEN_DURCHBLICK=1): einzelne Paare verwechselter/unklarer/ungepruefter Verbindungen mit >= 200 nicht-statischen Inliern ueber >= 12/64 Bildzellen bleiben (Uebereck-/Umgebungsfotos); GPS-Veto bei --objekt/--fernsicht")
+    ap.add_argument("--durchblick-getrennt", action="store_true", help="wie --durchblick (auch RCPARK_SEITEN_DURCHBLICK=getrennt), aber die Brueckenpaare vereinen die Teile NICHT: nur Liste 'durchblick' + Paare in --db-aus fuer tools/seiten_eck_koppeln.py (Kette)")
     ap.add_argument("--fernsicht", help="objekt.json: NUR die Fernsicht-Regel (Gruppen mit GPS-Fotos >= 100 m behalten unter --streng ihre staerkste unklare Verbindung), ohne GPS-Richtungs-Urteil (--objekt)")
     a = ap.parse_args(argv); db = sqlite3.connect(f"file:{a.db}?mode=ro", uri=True); nm = dict(db.execute("select image_id, name from images"))
     K = [(pid // MAXID, pid % MAXID, rows) for pid, rows in db.execute("select pair_id, rows from two_view_geometries where rows >= ?", (a.min_inlier,))]
@@ -283,14 +292,18 @@ def main(argv=None):
         print(f"GPS-Anker: {n_gps} Fotos mit Standort 15-300 m um die Objektmitte, {len(gr)} Bildgruppen mit Standrichtung; {sum(1 for v in verb if v.get('quelle') == 'gps')} Verbindungen durch GPS entschieden" if mitte else "GPS-Anker: objekt.json ohne Objektmitte (koordinate_utm) - uebersprungen")
     falsch = {(v["a"], v["b"]) for v in verb if v["urteil"] == "verwechselt"}
     if a.streng:                                                                   # nur BESTAETIGTE Verbindungen behalten: alles zwischen zwei Gruppen, was nicht 'echt' ist, faellt weg
-        echt = {(v["a"], v["b"]) for v in verb if v["urteil"] == "echt"} | fernsicht_behalten(verb, fern); falsch = {k for k in quer_alle if k not in echt}
+        echt = {(v["a"], v["b"]) for v in verb if v["urteil"] == "echt"} | fernsicht_behalten(verb, fern, quer); falsch = {k for k in quer_alle if k not in echt}
         if fern: print(f"FERNSICHT: Gruppen {sorted(fern)} (GPS-Fotos >= {FERN_M:.0f} m) - behaltene Verbindung(en): {sorted((v['a'], v['b']) for v in verb if v.get('fernsicht_behalten'))}")
     # Zusammenhang der Gruppen ohne die verwechselten Verbindungen (kleine Gruppen und ungepruefte schwache Verbindungen zaehlen als echt)
     ref = lambda k: sum(1 for i in C[k] if nm[i].startswith(a.referenz))
     durch = []; behalten = set()
-    if a.durchblick or os.environ.get("RCPARK_SEITEN_DURCHBLICK", "0") == "1":     # Stufe Durchblick/Umgebung: einzelne starke Paare verwechselter/unklarer Verbindungen behalten
+    if a.durchblick or a.durchblick_getrennt or os.environ.get("RCPARK_SEITEN_DURCHBLICK", "0") in ("1", "getrennt"):   # Stufe Durchblick/Umgebung: einzelne starke Paare verwechselter/unklarer Verbindungen behalten
         durch, behalten = durchblick_einbauen(a, db, nm, g, C, quer_alle, falsch, ref, verb)
-    S = teile(len(C), [k for k in quer_alle if k not in falsch] + [tuple(sorted((d["ga"], d["gb"]))) for d in durch if d["urteil"] == "durchblick"])
+    # --durchblick-getrennt (Kette, 23.11.2026): Brueckenpaare messen, in seiten.json 'durchblick' melden und in --db-aus BEHALTEN (das Eckmodell der Stufe
+    # tools/seiten_eck_koppeln.py braucht sie), aber die Teile NICHT darueber vereinen - ein Mapper ueber die duenne Bruecke knickte 1122 Teil 1 um 16-25 Grad
+    # (lage-seiten.md 22.11.); gekoppelt wird erst nach den Teilmodellen ueber das Eckmodell.
+    getrennt = a.durchblick_getrennt or os.environ.get("RCPARK_SEITEN_DURCHBLICK", "") == "getrennt"
+    S = teile(len(C), [k for k in quer_alle if k not in falsch] + ([] if getrennt else [tuple(sorted((d["ga"], d["gb"]))) for d in durch if d["urteil"] == "durchblick"]))
     seiten = [s for s in S if sum(ref(k) for k in s) > 0]; fremd_g = {k for s in S if sum(ref(k) for k in s) == 0 for k in s}; fremd = sorted(nm[i] for k in fremd_g for i in C[k])
     for v in sorted(verb, key=lambda v: v.get("p90") if v.get("p90") is not None else 9)[:40]:
         print(f"  Gruppe {v['a']:3d} ({len(C[v['a']]):4d} Bilder) <-> {v['b']:3d} ({len(C[v['b']]):4d}): {v['paare']:5d} Paare, p_gleich Median {v['p_median']}, 90 % unter {v.get('p90')}, eindeutig gleich {v.get('anteil_hoch')}  {v['urteil'].upper() if v['urteil'] != 'echt' else 'echt'}" + (f"  [GPS {v['gps_richtung'][0]} / {v['gps_richtung'][1]} Grad]" if v.get("gps_richtung") else ""))
@@ -306,7 +319,7 @@ def main(argv=None):
     json.dump(dict(db=os.path.abspath(a.db), gemeinschaft={nm[i]: k for i, k in g.items()}, groessen=[len(c) for c in C], verbindungen=verb, verwechselt=[list(k) for k in sorted(falsch)],
                    seiten=[dict(gruppen=s, bilder=sum(len(C[k]) for k in s)) for s in seiten], fremd=fremd, geloeschte_paare=geloescht, schwelle=a.schwelle, fernsicht=sorted(fern),
                    durchblick=[{k: v for k, v in x.items() if k != "pair_id"} for x in durch if x["urteil"] == "durchblick"],
-                   durchblick_abgelehnt=len(durch) - len(behalten)), open(a.aus, "w"), indent=1)
+                   durchblick_abgelehnt=len(durch) - len(behalten), durchblick_getrennt=bool(durch) and getrennt), open(a.aus, "w"), indent=1)
     print(f"Seitenerkennung: {len(falsch)} verwechselte Gruppenverbindung(en), {sum(1 for v in verb if v['urteil'] == 'unklar')} unklar; {len(seiten)} Teil(e) mit Objektfotos, {len(fremd)} fremde Bilder"
           + (f"; {geloescht} Paare geloescht -> {a.db_aus}" if a.db_aus and not a.trocken else ""))
     if falsch: print("WARNUNG SEITENVERWECHSLUNG: Bildgruppen zeigen aehnliche, aber verschiedene Seiten - ihre Paare duerfen nicht in den Mapper (bereinigte Datenbank nehmen).")

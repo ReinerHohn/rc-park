@@ -463,10 +463,10 @@ def bild(fotos, A, erg, aus):
     import cv2, flaeche_ortho as FO
     Z = erg["zonen"]; kach = []; Pf = erg.get("pfosten") or {}
     mit_pf = [F for F in fotos if F["nr"] in (Pf.get("baender") or {})]
-    for F in bild_auswahl(mit_pf + [F for F in fotos if F not in mit_pf] if len(mit_pf) >= 4 else fotos):
+    for F in bild_auswahl(mit_pf if len(mit_pf) >= 4 else fotos):                  # gezeigt werden die Fotos, die die Pfosten tragen (offene Zone gefunden)
         im = cv2.imread(F["pf"]) if F.get("pf") else cv2.cvtColor(F["im"], cv2.COLOR_GRAY2BGR); c, sb, q = F["c"], F["sb"], F["q"]
         P_ = lambda x, z: tuple(int(v) for v in (FO.projektion(np.array([[A[0] + x * q[0], A[1] + x * q[1], z]]), c)[0] * sb)[0])
-        if Pf:
+        if Pf and F["nr"] in (Pf.get("baender") or {}):
             xe = ecken_x(Pf["n"], Pf["phase"], F["az"], Pf["R"])[0]; zb = Pf.get("baender", {}).get(F["nr"]) or Pf["band"]
             xe = xe + Pf.get("mitten", {}).get(F["nr"], 0.0) - (xe.max() + xe.min()) / 2          # wie ecken_bewerten: Mitte der Eckenspannweite = Mitte der Ausdehnung
             for x in xe: cv2.line(im, P_(x, zb[0]), P_(x, zb[1]), (0, 200, 0), 2)
