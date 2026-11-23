@@ -18,6 +18,10 @@ ABLAUF (beliebig viele Teile, Bruecken jeder Art):
      NACHMATCHEN (RCPARK_ECK_NACHMATCHEN, Standard an): vor dem Mapper die Zwischenmodell-Bilder + EXIF-Zeitnachbarn (Rundgang, ZEIT_FENSTER_S) mit ALIKED+LightGlue
      paarweise nachmatchen (tools/bruecke_nachmatchen.py, an SIFT angehaengt, SIFT-Indizes unveraendert -> Kopplung ueber SIFT-Punkte bleibt gueltig). Gescheitert ->
      SIFT-Datenbank. Selbsttest Martinstor k=3: 0,83 -> 0,21 Grad, Lage 0,14 -> 0,024 m.
+     DUENNE BRUECKE MERKEN (23.11.2026, Befund 1122t): registriert das Modell der strengsten verbindenden Schwelle NICHT alle Listenbilder der beruehrten Teile, ist die
+     Bruecke dort duenn -> die Leiter geht weiter; genommen wird die strengste Schwelle mit den MEISTEN registrierten Teil-Bildern (Gleichstand -> strengere), die
+     naechst lockerere bleibt Sensitivitaet ('bruecke_duenn' im JSON). Kopplungsgrenzen bleiben unberuehrt.
+     TEILKAMERAS (23.11.2026, RCPARK_ECK_TEILKAMERAS, Standard an; Kopf 'TEILKAMERAS' unten): dritte Variante - Mapper mit den Kameras (Intrinsik) der Teilmodelle, fest.
      WIEDERHOLBARKEIT (Stabilitaetsmass): WIEDERHOLUNGEN Laeufe mit je WEGLASSEN der Nicht-Brueckenbilder weg -> Streuung der Kantenlage im JSON ('wiederholbarkeit').
   3. KOPPLUNG Zwischenmodell -> jeder beruehrte Teil ueber GEMEINSAME 3D-PUNKTE (gleicher Bildpunkt gemeinsamer Bilder), robuste Sim3 (sim3_robust.sim3_meter, Schwelle
      SCHWELLE_REL x Ausdehnung). Stimmig nur bei >= MIN_PUNKTE stimmigen Punkten, Anteil >= MIN_ANTEIL, Rest <= REST_REL x Ausdehnung, Massstab Haelften-Probe <= MASS_REL
@@ -55,7 +59,21 @@ REST_REL = 0.005         # Rest-Median (tiefenbezogen) hoechstens 0,5 % - EICHUN
 #   decken nur einen Teil des Teils ab, lokal ist die Verformung fast eine Aehnlichkeit. Das kann KEINE Kopplungspruefung sehen -> unabhaengige Tore noetig
 #   (Kreisschluss, Innenflaechen, GPS-Veto, Grundriss). Ein Trend-Kriterium (Rest waechst mit Abstand) trennt in den Daten ebenfalls nicht (richtig bis 2,6).
 SCHWELLE_REL = 0.02      # Inlier-Schwelle der Sim3: 2 % der Ausdehnung
-MASS_REL = 0.02          # Massstab-Unsicherheit (Haelften-Probe) hoechstens 2 %
+MASS_REL = 0.02          # Massstab-Unsicherheit (Haelften-Probe) hoechstens 2 % - ANNAHME seit 6a01c48d6 (22.11.), NICHT geeicht (Stand 23.11., unveraendert):
+# Eichdaten /media/oem/rcdaten/tmp/durchblick/eichung_rest.json (20 richtige Kopplungen): Haelften 0,14-2,96 %, Median 0,54 %; 1 von 20 nur an dieser Grenze abgelehnt.
+# Spiegel 0,01-2,17 % (Median 0,29 %) -> die Haelften-Probe trennt richtig/Spiegel NICHT; sie misst einen MASSSTABSVERLAUF zwischen Eckmodell und Teil (systematisch,
+# Bootstrap 1122t Teil 1 2,31 +- 0,06 %), kein Rauschen. Grosser Hebel macht sie empfindlicher (lange Strecke), nicht wertlos.
+# TEILKAMERAS (23.11.2026, Befund 1122t, Proben /media/oem/rcdaten/tmp/bruecke_sued_agent): der Eck-Mapper verfeinert die Brennweite JEDES Bildes neu - mit 35 statt
+# 127 Bildern landen Netzfotos 8-18 % neben dem Teilmodell (netz_commons_geo__120: 2978 vs 3514 px, commons_orig2__104: 1926 vs 2110), Handyfotos +-3 %. Falsche
+# Brennweite = tiefenabhaengige Verzerrung: Massstab Eck->Teil 1 faellt mit der Tiefe (Quintile 0,1249 -> 0,1214 bei Tiefe 4,2 -> 6,9) -> Haelften 2,3 %. Dieselben 35
+# Bilder mit den Kameras der Teilmodelle (fest): Teil 1 Haelften 0,07 %, Rest 0,09 % (vorher 0,32 %), Kamerazentren 0,33 % statt 4,2 % der Tiefe. Das Eckmodell
+# muss dieselbe Kamerageometrie haben wie die Teile, die es koppelt - sonst misst die Kopplung die Kameraabweichung statt der Lage.
+TEILKAMERAS = os.environ.get("RCPARK_ECK_TEILKAMERAS", "1") != "0"
+# KAMERA-PROBE (23.11.2026): Sim3 aus den Punkten muss auch die KAMERAZENTREN der gemeinsamen Bilder treffen: Median |M*C_eck - C_teil| / (s * Median-Tiefe) <= KAM_REL.
+# ROT-PROBE ohne sie: eine Wand ist fast ihr eigenes Spiegelbild - der gespiegelte Teil 1 (1122t, Teilkameras) bestand Anteil 0,815 / Rest 0,30 %; in den Selbsttests
+# bestanden 2 weitere Spiegel. Spiegel bringt die Kameras auf die andere Wandseite. EICHUNG (b2_kam_eich, Selbsttests Martinstor/Kaufhaus + 1122t, 119 Paare):
+# alle 93 angenommenen richtigen Kopplungen 0,33-3,9 % (Median 1,3 %); alle 119 Spiegel 117-265 %. KAM_REL = 0,2: ANNAHME in der Luecke (5x ueber richtig, 6x unter Spiegel).
+KAM_REL = 0.2
 KREIS_SIGMA = 3.0
 WIEDERHOLUNGEN = int(os.environ.get("RCPARK_ECK_WIEDERHOLUNGEN", "3"))   # Stabilitaetsmass: Laeufe mit weggelassenen Bildern
 NACHMATCHEN = os.environ.get("RCPARK_ECK_NACHMATCHEN", "1") != "0"   # Brueckenbilder mit ALIKED+LightGlue nachmatchen (tools/bruecke_nachmatchen.py, GPU)
@@ -99,7 +117,14 @@ def punkte(rE, rZ, mit_tiefe=False):
     return aus + (np.array(td),) if mit_tiefe else aus
 
 
-def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewicht=None):
+def kamera_probe(M, kameras, tiefe):
+    """KAMERA-PROBE (Kopf KAM_REL): kameras = (C_eck, C_teil) der gemeinsamen Bilder. -> Median-Abweichung relativ zur Median-Tiefe (im Teil-Massstab) oder None."""
+    if kameras is None or tiefe is None or len(kameras[0]) == 0: return None
+    s1 = float(np.cbrt(np.linalg.det(M[:3, :3]))); CX, CY = (np.asarray(k, float).reshape(-1, 3) for k in kameras)
+    return float(np.median(np.linalg.norm(anwenden(M, CX) - CY, axis=1)) / max(abs(s1) * float(np.median(tiefe)), 1e-12))
+
+
+def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewicht=None, kameras=None):
     """Sim3 X -> Y (X im Zwischenmodell, Y im Teilmodell; ausd = Ausdehnung des Zwischenmodells, ausd_ziel = des Teils fuer den Hebel). -> (M, pruefung, ok, grund).
     FEHLERMASS (22.11.2026, Selbsttest Martinstor): mit 'tiefe' (Abstand Punkt - beobachtende Kamera im Zwischenmodell) wird der Rest RELATIV ZUR TIEFE gemessen (= Blickstrahl-
     Winkel, 2 % ~ 1,1 Grad). Relativ zur Ausdehnung bestrafte es ferne, schlecht triangulierte Punkte: ein nachweislich RICHTIGES Zwischenmodell stimmte gegen das Ursprungs-
@@ -130,8 +155,11 @@ def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewich
     hael = float(abs(hs[0] - hs[1]) / np.mean(hs)) if len(hs) == 2 else 1.0
     pr = dict(punkte=len(X), stimmig=n_in, anteil=round(ant, 3), rest_rel=round(rest_rel, 5), fehlermass=mass, massstab_haelften_rel=round(hael, 4))
     if ausd_ziel: pr["hebel"] = round(ausdehnung(Y[i_]) / max(ausd_ziel, 1e-12), 3)
+    kam = kamera_probe(M, kameras, tiefe)
+    if kam is not None: pr["kameras_rel"] = round(kam, 4)
     gr = [x for x, schlecht in ((f"Anteil stimmig {ant:.0%} < {MIN_ANTEIL:.0%}", ant < MIN_ANTEIL), (f"stimmig {n_in} < {MIN_PUNKTE}", n_in < MIN_PUNKTE),
-                                (f"Rest {rest_rel:.2%} > {REST_REL:.1%}", rest_rel > REST_REL), (f"Massstab nicht belegt (Haelften {hael:.1%} > {MASS_REL:.0%})", hael > MASS_REL)) if schlecht]
+                                (f"Rest {rest_rel:.2%} > {REST_REL:.1%}", rest_rel > REST_REL), (f"Massstab nicht belegt (Haelften {hael:.1%} > {MASS_REL:.0%})", hael > MASS_REL),
+                                (f"Kameras widersprechen ({(kam or 0):.0%} der Tiefe > {KAM_REL:.0%}; Spiegel/andere Seite?)", kam is not None and kam > KAM_REL)) if schlecht]
     return M, pr, not gr, "; ".join(gr) or "stimmig"
 
 
@@ -171,16 +199,62 @@ def eckbilder(sj, A, B, db):
     return [d for k in ks for d in k["paare"]], sorted({x for k in ks for x in k["bilder"]})
 
 
-def mapper(liste, db, fotos, aus, faeden, schwelle):
+def mapper(liste, db, fotos, aus, faeden, schwelle, kameras_fest=False):
     os.makedirs(aus, exist_ok=True); lp = os.path.join(aus, "bilder.txt"); open(lp, "w").write("\n".join(liste) + "\n"); sp = os.path.join(aus, "sparse")
     if os.path.isdir(sp): shutil.move(sp, sp + ".alt_" + str(int(os.path.getmtime(sp))))
     os.makedirs(sp); cmd = [COLMAP, "mapper", "--database_path", db, "--image_path", fotos, "--output_path", sp, "--Mapper.image_list_path", lp,
                             "--Mapper.num_threads", str(MAPPER_FAEDEN if MAPPER_FAEDEN > 0 else faeden), "--Mapper.random_seed", str(MAPPER_KEIM),
                             "--Mapper.ba_use_gpu", "0", "--Mapper.abs_pose_min_num_inliers", str(schwelle), "--Mapper.abs_pose_min_inlier_ratio", "0.1"]
+    if kameras_fest: cmd += ["--Mapper.ba_refine_focal_length", "0", "--Mapper.ba_refine_extra_params", "0", "--Mapper.ba_refine_principal_point", "0"]   # TEILKAMERAS
     from sfm_seiten_modelle import CUDA_LIBS                                            # die COLMAP-Binaerdatei braucht die CUDA-Bibliotheken (auch ausserhalb der Kette)
     env = dict(os.environ, LD_LIBRARY_PATH=":".join(CUDA_LIBS + [x for x in [os.environ.get("LD_LIBRARY_PATH", "")] if x]))
     with open(os.path.join(aus, "mapper.log"), "w") as lg: rc = subprocess.call(cmd, stdout=lg, stderr=subprocess.STDOUT, env=env)
     return rc, sorted(os.path.join(sp, d) for d in os.listdir(sp) if os.path.isfile(os.path.join(sp, d, "images.bin")))
+
+
+def teilkameras_setzen(db, bilder, R, ersatz=None):
+    """TEILKAMERAS: Kamera-Parameter der Bilder in der ARBEITS-DB (nie der Ketten-DB) durch die des Teilmodells ersetzen, das das Bild registriert.
+    Teilt sich eine DB-Kamera Bilder mehrerer Teile mit verschiedenen Werten, gilt der Teil mit den meisten dieser Bilder (Gleichstand: kleinere Teilnummer) -> 'konflikte'.
+    Kamera nur ersetzt bei gleichem Modell und gleicher Bildgroesse. ERSATZ (Rekonstruktion, i. d. R. das SIFT-Eckmodell): Bilder in KEINEM Teil (Zeitnachbarn, neue
+    Fotos) bekommen dessen verfeinerte Intrinsik statt des DB-Startwerts (mit festen Kameras sonst falsche Schaetzbrennweite); Teile haben Vorrang.
+    -> (alte Zeilen [(camera_id, params)] zum Zuruecksetzen, info)"""
+    c = sqlite3.connect(db)
+    try:
+        cam = {n: i for n, i in c.execute("select name, camera_id from images")}; zeile = {i: (m, w, h, p) for i, m, w, h, p in c.execute("select camera_id, model, width, height, params from cameras")}
+    except sqlite3.Error as ex: c.close(); return [], dict(gesetzt=0, grund=f"DB ohne Kameratabelle ({str(ex)[:80]})")
+    wahl = {}                                                                          # camera_id -> {teil: [params...]}
+    Q = dict(R, **({"eck": ersatz} if ersatz is not None else {}))
+    for n in bilder:
+        for t in sorted(R) + (["eck"] if ersatz is not None else []):
+            try:
+                im = next((x for x in Q[t].images.values() if x.name == n and x.has_pose), None)
+                if im is None or n not in cam: continue
+                k = Q[t].cameras[im.camera_id]; m, w, h, _ = zeile[cam[n]]
+                if int(k.model.value if hasattr(k.model, "value") else k.model) != m or int(k.width) != w or int(k.height) != h: continue
+                wahl.setdefault(cam[n], {}).setdefault(t, []).append(np.asarray(k.params, np.float64))
+            except Exception: continue
+            break
+    alt, konf = [], 0
+    for i, je in wahl.items():
+        t = max(je, key=lambda x: (x != "eck", len(je[x]), -x if x != "eck" else 0)); p = je[t][0]
+        konf += any(not np.allclose(q, p) for tt in je for q in je[tt])
+        alt.append((i, zeile[i][3])); c.execute("update cameras set params=? where camera_id=?", (p.tobytes(), i))
+    c.commit(); c.close()
+    ohne = sum(1 for n in bilder if n in cam and cam[n] not in wahl); vom_eck = sum(1 for je in wahl.values() if set(je) == {"eck"})
+    return alt, dict(gesetzt=len(alt), konflikte=konf, bilder_ohne_teilkamera=ohne, kameras_aus_eckmodell=vom_eck)
+
+
+def teilkameras_zurueck(db, alt):
+    c = sqlite3.connect(db); c.executemany("update cameras set params=? where camera_id=?", [(p, i) for i, p in alt]); c.commit(); c.close()
+
+
+def schwelle_waehlen(treffer, voll):
+    """DUENNE BRUECKE MERKEN: treffer = [(schwelle, modell, registrierte Teil-Bilder)] in Leiter-Reihenfolge, voll = Listenbilder der beruehrten Teile.
+    -> (Index der Wahl, Index der Sensitivitaet oder None, fertig). Wahl = strengste mit den meisten registrierten Bildern; fertig, sobald die Wahl voll ist und die naechste
+    Schwelle als Sensitivitaet gerechnet wurde (ohne Luecke wie bisher: erste Treffer-Schwelle + eine lockerere)."""
+    if not treffer: return None, None, False
+    n = [x[2] for x in treffer]; w = n.index(max(n)); sens = w + 1 if w + 1 < len(treffer) else None
+    return w, sens, bool(n[w] >= voll and sens is not None)
 
 
 def db_fingerabdruck(db):
@@ -199,6 +273,14 @@ def arbeits_db(db, aus):
     return ziel
 
 
+def kamerazentren(rE, rZ, ns):
+    """Projektionszentren der gemeinsamen Bilder ns in beiden Modellen -> (C_eck, C_teil) fuer die KAMERA-PROBE; None, wenn das Modell keine Posen liefert."""
+    try:
+        E = {im.name: im for im in rE.images.values()}; Z = {im.name: im for im in rZ.images.values()}
+        return np.array([E[n].projection_center() for n in ns]), np.array([Z[n].projection_center() for n in ns])
+    except Exception: return None
+
+
 def koppeln(m, teile, R, P, ausd_teil):
     """Zwischenmodell m an alle Teile koppeln. -> (info, {teil: (M_teil_von_E, pruefung)} nur stimmige, alle pruefungen)."""
     import pycolmap
@@ -206,25 +288,46 @@ def koppeln(m, teile, R, P, ausd_teil):
     for t in teile:
         X, Y, ns, td = punkte(rE, R[t], mit_tiefe=True)
         if len(ns) < MIN_BILDER_TEIL: alle[t] = dict(bilder=len(ns), grund=f"nur {len(ns)} gemeinsame Bilder"); continue
-        M, pr, ok, g = kopplung_pruefen(X, Y, ausd, ausd_teil[t], tiefe=td); pr.update(bilder=len(ns), grund=g); alle[t] = pr
+        M, pr, ok, g = kopplung_pruefen(X, Y, ausd, ausd_teil[t], tiefe=td, kameras=kamerazentren(rE, R[t], ns)); pr.update(bilder=len(ns), grund=g); alle[t] = pr
         if ok: gut[t] = (M, pr)
     return dict(modell=m, ausdehnung=round(ausd, 4)), gut, alle
 
 
 def zwischenmodell(k, i, db, fotos, aus, faeden, R, ausd_teil):
-    """Beide Varianten: SIFT (Kettendatenbank) und - wenn NACHMATCHEN - mit ALIKED+LightGlue nachgematcht. Gewaehlt wird die Nachmatchen-Variante, wenn sie mindestens
-    so viele Teile stimmig koppelt wie SIFT, sonst SIFT. Beide im JSON ('varianten'), Unterschied der Kantenlage als Stabilitaetsangabe. -> dict wie _zwischen."""
-    z0 = _zwischen(k, f"{i}", db, fotos, aus, faeden, R, ausd_teil, False)
-    if not NACHMATCHEN: return z0
-    z1 = _zwischen(k, f"{i}lg", db, fotos, aus, faeden, R, ausd_teil, True); g0, g1 = z0.get("_gut", {}), z1.get("_gut", {})
-    wahl = "nachmatchen" if len(g1) >= 2 and len(g1) >= len(g0) else "sift"; z = dict(z1 if wahl == "nachmatchen" else z0)
-    kurz = lambda zz: {x: zz.get(x) for x in ("bilder", "schwelle", "modell", "kopplungen", "nachmatchen", "zeitnachbarn") if x in zz}
-    z["varianten"] = dict(gewaehlt=wahl, sift=kurz(z0), nachmatchen=kurz(z1), unterschied=vergleich(g0, g1, ausd_teil) or "nicht beide gekoppelt")
+    """Varianten: SIFT (Kettendatenbank), NACHMATCHEN (ALIKED+LightGlue), TEILKAMERAS (Intrinsik der Teile fest; Bilder ohne Teil: aus dem SIFT-Eckmodell). Wahl: variante_waehlen.
+    Alle im JSON ('varianten'), Unterschied der Kantenlage zur gewaehlten als Stabilitaetsangabe. -> dict wie _zwischen."""
+    vs = {"sift": _zwischen(k, f"{i}", db, fotos, aus, faeden, R, ausd_teil, False)}
+    if NACHMATCHEN: vs["nachmatchen"] = _zwischen(k, f"{i}lg", db, fotos, aus, faeden, R, ausd_teil, True)
+    if TEILKAMERAS:
+        er = None
+        try: import pycolmap; er = pycolmap.Reconstruction(vs["sift"]["modell"]) if vs["sift"].get("modell") else None
+        except Exception: er = None
+        alt, info = teilkameras_setzen(db, k["bilder"], R, ersatz=er)
+        if alt:
+            try: vs["teilkameras"] = dict(_zwischen(k, f"{i}tk", db, fotos, aus, faeden, R, ausd_teil, False, kameras_fest=True), teilkameras=info)
+            finally: teilkameras_zurueck(db, alt)
+        else: vs["teilkameras"] = dict(grund="keine Teilkameras gesetzt", teilkameras=info)
+    if len(vs) == 1: return vs["sift"]
+    wahl = variante_waehlen({v: z.get("_gut", {}) for v, z in vs.items()}); z = dict(vs[wahl])
+    kurz = lambda zz: {x: zz.get(x) for x in ("bilder", "schwelle", "modell", "kopplungen", "nachmatchen", "zeitnachbarn", "teilkameras", "bruecke_duenn", "grund") if x in zz}
+    gw = vs[wahl].get("_gut", {})
+    z["varianten"] = dict(gewaehlt=wahl, **{v: kurz(zz) for v, zz in vs.items()},
+                          unterschied={v: vergleich(gw, zz.get("_gut", {}), ausd_teil) or "nicht beide gekoppelt" for v, zz in vs.items() if v != wahl})
     return z
 
 
-def _zwischen(k, i, db, fotos, aus, faeden, R, ausd_teil, nachmatchen):
-    """Strengste verbindende Schwelle + Sensitivitaet an der naechst lockereren + Wiederholbarkeit. -> dict"""
+VORRANG = ("teilkameras", "nachmatchen", "sift")   # bei gleich vielen stimmig gekoppelten Teilen: gleiche Kamerageometrie wie die Teile zuerst (Kopf TEILKAMERAS)
+
+
+def variante_waehlen(gut_je):
+    """gut_je: {variante: {teil: (M, pruefung)}} -> Name. Eine Variante ausser 'sift' zaehlt nur mit >= 2 stimmig gekoppelten Teilen (sonst keine Kante); gewaehlt wird die
+    mit den meisten, bei Gleichstand nach VORRANG. Ohne Teilkameras wie bisher: Nachmatchen, wenn >= 2 und >= SIFT."""
+    wert = lambda v: len(gut_je[v]) if (v == "sift" or len(gut_je[v]) >= 2) else -1
+    return max((v for v in gut_je), key=lambda v: (wert(v), -VORRANG.index(v) if v in VORRANG else -99))
+
+
+def _zwischen(k, i, db, fotos, aus, faeden, R, ausd_teil, nachmatchen, kameras_fest=False):
+    """Schwelle nach schwelle_waehlen (strengste verbindende, bei duenner Bruecke die mit den meisten Teil-Bildern) + Sensitivitaet + Wiederholbarkeit. -> dict"""
     import pycolmap
     erg = dict(teile=k["teile"], brueckenpaare=len(k["paare"]), bilder=len(k["bilder"]), versuche=[]); treffer = []
     if nachmatchen:                                                                   # mehr und breiter verteilte Zuordnungen im Brueckenbereich (Kette: SIFT)
@@ -234,26 +337,31 @@ def _zwischen(k, i, db, fotos, aus, faeden, R, ausd_teil, nachmatchen):
                              stdout=open(os.path.join(lo, "log.txt"), "w"), stderr=subprocess.STDOUT)
         if rc == 0 and os.path.isfile(os.path.join(lo, "db.db")): db = os.path.join(lo, "db.db"); erg["nachmatchen"] = dict(rc=0, db=db)
         else: erg["nachmatchen"] = dict(rc=rc, grund="Nachmatchen gescheitert/gesperrt - SIFT-Datenbank", log=os.path.join(lo, "log.txt"))
+    voll = sum(len(set(k["bilder"]) & NAMEN[t]) for t in k["teile"]); w_ = s_ = None
     for s in SCHWELLEN:
-        rc, mods = mapper(k["bilder"], db, fotos, os.path.join(aus, f"zwischen{i}_s{s}"), faeden, s); best = None
+        rc, mods = mapper(k["bilder"], db, fotos, os.path.join(aus, f"zwischen{i}_s{s}"), faeden, s, kameras_fest=kameras_fest); best = None
         for m in mods:
             E = {im.name for im in pycolmap.Reconstruction(m).images.values() if im.has_pose}; je = {t: len(E & NAMEN[t]) for t in k["teile"]}
             n2 = sum(v >= MIN_BILDER_TEIL for v in je.values())
             if n2 >= 2 and (best is None or (n2, sum(je.values())) > best[0]): best = ((n2, sum(je.values())), m, je)
         erg["versuche"].append(dict(schwelle=s, modelle=len(mods), bilder_je_teil=best[2] if best else None))
-        if best: treffer.append((s, best[1]))
-        if len(treffer) == 2: break
+        if best: treffer.append((s, best[1], sum(best[2].values())))
+        w_, s_, fertig = schwelle_waehlen(treffer, voll)
+        if fertig: break
     if not treffer: erg["grund"] = f"kein Zwischenmodell mit >= {MIN_BILDER_TEIL} Bildern aus >= 2 Teilen (Schwellen {list(SCHWELLEN)})"; return erg
-    s0, m0 = treffer[0]; info, gut, alle = koppeln(m0, k["teile"], R, None, ausd_teil); erg.update(schwelle=s0, kopplungen={str(t): v for t, v in alle.items()}, **info); erg["_gut"] = gut
-    if len(treffer) > 1:
-        _, gut1, _ = koppeln(treffer[1][1], k["teile"], R, None, ausd_teil)
-        erg["sensitivitaet"] = dict(schwelle=treffer[1][0], vergleich=vergleich(gut, gut1, ausd_teil) or "zu wenige stimmige Kopplungen bei der lockereren Schwelle")
+    if w_ > 0 or treffer[w_][2] < voll:                                                # DUENNE BRUECKE: strengste verbindende Schwelle liess Teil-Bilder der Liste aus
+        erg["bruecke_duenn"] = dict(listenbilder_teile=voll, registriert={t[0]: t[2] for t in treffer}, gewaehlt=treffer[w_][0],
+                                    grund=f"bei Schwelle {treffer[0][0]} nur {treffer[0][2]}/{voll} Teil-Bilder im Eckmodell" + (f" -> Schwelle {treffer[w_][0]}: {treffer[w_][2]}" if w_ else ""))
+    s0, m0 = treffer[w_][:2]; info, gut, alle = koppeln(m0, k["teile"], R, None, ausd_teil); erg.update(schwelle=s0, kopplungen={str(t): v for t, v in alle.items()}, **info); erg["_gut"] = gut
+    if s_ is not None:
+        _, gut1, _ = koppeln(treffer[s_][1], k["teile"], R, None, ausd_teil)
+        erg["sensitivitaet"] = dict(schwelle=treffer[s_][0], vergleich=vergleich(gut, gut1, ausd_teil) or "zu wenige stimmige Kopplungen bei der lockereren Schwelle")
     else: erg["sensitivitaet"] = dict(schwelle=None, vergleich="keine lockerere Schwelle verbindet")
     # WIEDERHOLBARKEIT (Stabilitaetsmass): WIEDERHOLUNGEN Laeufe mit je WEGLASSEN der Nicht-Brueckenbilder zufaellig weggelassen (feste Keime) -> Streuung der Kantenlage
     kern = {d["a"] for d in k["paare"]} | {d["b"] for d in k["paare"]}; rest = [b for b in k["bilder"] if b not in kern]; wd = []
     for w in range(WIEDERHOLUNGEN if len(gut) >= 2 else 0):
         rng = np.random.default_rng(w); weg = set(rng.choice(rest, int(len(rest) * WEGLASSEN), replace=False)) if rest else set()
-        _, mods = mapper([b for b in k["bilder"] if b not in weg], db, fotos, os.path.join(aus, f"zwischen{i}_wdh{w}"), faeden, s0); gw = {}
+        _, mods = mapper([b for b in k["bilder"] if b not in weg], db, fotos, os.path.join(aus, f"zwischen{i}_wdh{w}"), faeden, s0, kameras_fest=kameras_fest); gw = {}
         for m in mods:
             _, g_, _ = koppeln(m, k["teile"], R, None, ausd_teil)
             if len(g_) > len(gw): gw = g_
