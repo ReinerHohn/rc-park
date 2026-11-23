@@ -454,6 +454,15 @@ def ausrichten(argv=None):
     if rec is not None:
         ims = list(rec.images.values()); C = np.array([im.projection_center() for im in ims])
     print(f"SfM: {len(ims)} Kameras, {len(P)} Punkte ({gut.sum()} mit Spur >= 3)")
+    # 23.11.2026 (Kettenlauf 1122p, lage_frueh rc 3): KAMERA-KLUMPEN raus aus dem Fit - ein stehendes Video mit Einblendung trianguliert 13,6 % der sparse-Punkte
+    # in eine 1-m-Kugel UM die Kamera; der DGM1-Feinfit legte diesen Klumpen auf den Boden (Kameras -0,4 statt +1,4 m ueber DGM1), die Kamerahoehen-Probe sah 0,26 m.
+    # Massstabsfrei (lage_proben.kamera_nah). Abschalten zum Vergleich: AUSR_KLUMPEN=0.
+    if os.environ.get("AUSR_KLUMPEN") != "0" and len(Pg) and len(C):
+        _kl = LP.kamera_nah(Pg, C)
+        if _kl.any():
+            print(f"KAMERA-KLUMPEN: {int(_kl.sum())} von {len(Pg)} Punkten ({100 * _kl.mean():.1f} %) naeher an einem Kamerazentrum als {LP.KAMERA_NAH_ANTEIL} x Median-Abstand "
+                  "(Einblendung/stehendes Video, wandern mit der Kamera) - nicht im Fit", flush=True)
+            Pg = Pg[~_kl]
     # 1. Lot aus der Kameraebene
     _cmed = np.median(C, 0); _dc = np.linalg.norm(C - _cmed, axis=1); _nah = _dc <= np.percentile(_dc, 70)   # 15.11.: ferne Kameras (Schlossberg, Commons, Drohne) kippten Lot und Mitte (v2)
     cm = C[_nah].mean(0); _, sv, vt = np.linalg.svd(C[_nah] - cm); up = vt[2]
