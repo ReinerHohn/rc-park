@@ -33,6 +33,13 @@ KAMERAHOEHE_BEREICH = (1.35, 1.85)  # ANNAHME: Median der Handkamera ueber Boden
                              # nach oben (Schuhe). Gemessen: 1120 1,55 m (gute Lage), 1122g 1,28 m (x0,80 zu klein).
 KAMERAHOEHE_MIN_N = 20       # so viele Kameras mit Wolkenboden unter sich, sonst kein Urteil
 KAMERA_BODEN_R = 1.5         # m, Umkreis fuer den Boden unter der Kamera
+KAMERA_NAH_ANTEIL = 0.12     # ANNAHME: Punkte naeher an einem Kamerazentrum als 0,12 x Median(Abstand Punkt -> naechste Kamera) sind KAMERA-KLUMPEN (Einblendung/Logo
+                             # eines Videos, Scheibe/Schmutz vor der Linse: wandern mit der Kamera und triangulieren AN ihr). Massstabsfrei. Gemessen 1122p (23.11.2026):
+                             # Median 7,8 m -> Grenze 0,94 m; der Klumpen am stehenden Video LMS3Va6psfY (10431 von 76908 sparse-Punkten, k10-Abstand 8 mm statt 25 cm)
+                             # liegt ganz darunter (max 0,87 m), von den uebrigen fallen 1,7 %. Klein genug, dass der echte Boden unter einer Handkamera (>= ~1,3 m)
+                             # erst bei Median > 11 m mitfiele; in Metern (Proben) deckelt KAMERA_NAH_MAX_M.
+KAMERA_NAH_MAX_M = 1.0       # m, Deckel der Klumpengrenze im Modellrahmen: Boden unter der Handkamera liegt >= 1,35 m x 0,8 (Massstabsfehler) = 1,08 m tiefer
+KAMERA_GLEICH_M = 0.1        # m: Kameras naeher als das sind EINE Aufnahmestelle (stehendes Video: 33 Bilder auf 1 cm) - zaehlen in der Kamerahoehe einmal
 WAND_BAND = (1.0, 12.0)      # ANNAHME wie seiten_lod2_je_teil.Z_BAND: Wandband ueber DGM1 (Sockel/Fahrzeuge darunter, Erker/Daecher darueber)
 SICHT_MAX_M = 40.0           # ANNAHME: weiter entfernte Fassaden traegt die Wolke kaum (Handyfotos in Gassen)
 SICHT_MIN_KAMERAS = 2
@@ -127,14 +134,42 @@ def probe_oberkante(P, obj, ziel_polys, ring=(1.0, 6.0), dom=None):
     return erg
 
 
+def kamera_nah(P, C, anteil=KAMERA_NAH_ANTEIL, max_abstand=None):
+    """KAMERA-KLUMPEN (23.11.2026, Kettenlauf 1122p): Punkte, die am Kamerazentrum statt in der Szene liegen -> bool-Maske (n). Massstabsfrei: Grenze = anteil x Median
+    des Abstands Punkt -> naechste Kamera (P, C im selben System, beliebige Einheit); max_abstand (gleiche Einheit) deckelt die Grenze (Proben in Metern).
+    WARUM: ein stehendes Video (LMS3Va6psfY, 33 Bilder auf 1 cm) mit fester Einblendung trianguliert 10431 von 76908 sparse-Punkten (13,6 %) in eine 1-m-Kugel UM
+    die Kamera (Spur >= 3, kleiner Fehler - die Spur-/Fehlerauswahl laesst sie durch). Folgen in lage_frueh 1122p: (1) Kamerahoehe 0,26 m statt ~1,6 m ueber dem
+    'Wolkenboden' (58 von 66 Kameras standen ueber dem Klumpen) -> faellt, x5,9; (2) Massstab aus Kamerahoehe 0,0234 statt ~0,077; (3) der LoD2/DGM1-Feinfit legt
+    den dichten Klumpen auf das DGM1 -> alle Kameras 0,2 m UNTER dem Gelaende (Median -0,40 m; die dichte Wolke ohne Klumpen: +1,43 m)."""
+    from scipy.spatial import cKDTree
+    P = np.asarray(P, float); C = np.asarray(C, float)
+    if len(P) == 0 or len(C) == 0: return np.zeros(len(P), bool)
+    d = cKDTree(C[:, :3]).query(P[:, :3])[0]; g = anteil * float(np.median(d))
+    return d < (g if max_abstand is None else min(g, max_abstand))
+
+
+def kameras_einmal(C, zelle=KAMERA_GLEICH_M):
+    """Indizes je Aufnahmestelle einmal (Kameras, die ueber Ketten < zelle zusammenhaengen, Modellrahmen): ein stehendes Video zaehlt wie ein Foto."""
+    from scipy.spatial import cKDTree
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    C = np.asarray(C, float)[:, :3]
+    if len(C) == 0: return np.zeros(0, int)
+    pr = cKDTree(C).query_pairs(zelle, output_type="ndarray")
+    _, lab = connected_components(coo_matrix((np.ones(len(pr)), (pr[:, 0], pr[:, 1])), shape=(len(C), len(C))), directed=False)
+    _, i = np.unique(lab, return_index=True); return np.sort(i)
+
+
 # ---------- b) Kamerahoehe
 def probe_kamerahoehe(P, C, r=KAMERA_BODEN_R):
-    """P = Wolke, C = Kamerazentren (Modellrahmen). Boden je Kamera = 10-%-Hoehe der Wolkenpunkte im Umkreis r UNTER der Kamera."""
+    """P = Wolke, C = Kamerazentren (Modellrahmen). Boden je Kamera = 10-%-Hoehe der Wolkenpunkte im Umkreis r UNTER der Kamera.
+    23.11.2026: ohne KAMERA-KLUMPEN (kamera_nah) und je Aufnahmestelle eine Kamera (kameras_einmal) - 1122p: 0,26 m (Klumpen, 58 Bilder eines stehenden Videos)."""
     from scipy.spatial import cKDTree
     # 22.11.2026 (1122j) SCHWACH: der Bereich 1,35-1,85 m laesst -13..+19 % Massstab zu und ist drehblind - im Lauf 1122j bestanden 4 von 5 FALSCHEN Loesungen
     # (1,54-1,67 m) die Kamerahoehe. Sie darf darum nur VERWERFEN, nie allein eine Lage bestaetigen (bestanden(): 'besteht' braucht eine starke Probe).
-    erg = dict(probe="kamerahoehe", schwach=True); baum = cKDTree(P[:, :2]); h = []
-    for c in np.asarray(C, float):
+    P = np.asarray(P, float); C = np.asarray(C, float); kl = kamera_nah(P, C, max_abstand=KAMERA_NAH_MAX_M); P = P[~kl]; C = C[kameras_einmal(C)]
+    erg = dict(probe="kamerahoehe", schwach=True, klumpen_punkte=int(kl.sum()), aufnahmestellen=int(len(C))); baum = cKDTree(P[:, :2]); h = []
+    for c in C:
         ix = baum.query_ball_point(c[:2], r)
         if len(ix) < 10: continue
         z = P[ix, 2]; z = z[z < c[2]]
