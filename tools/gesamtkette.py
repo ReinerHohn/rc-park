@@ -49,6 +49,9 @@ DATEN = "/media/oem/scan"                                                    # D
 TEILLAUF = os.environ.get("RCPARK_TEILLAUF") == "1"                          # 23.11.2026: Wiederholung nach dem Nachholen (seiten_wiederholen) - kein Nachholen, kein zweites Wiederholen, keine Schlussberichte
 
 
+KB_frisch = lambda p_, seit_: __import__("kette_beleg").frisch(p_, seit_)
+
+
 def platz_fehler(pfade, min_gb=None):
     """Freier Platz auf den Dateisystemen, auf denen `pfade` WIRKLICH liegen (Verknuepfungen aufgeloest). '' = in Ordnung, sonst Fehlertext.
     17.11.2026: tools/platz_pruefen.py sieht nur / und die Datenplatte; kaufhaus_gk/pipe ist aber eine Verknuepfung auf eine externe Platte - voll oder nicht eingehaengt blieb unbemerkt
@@ -188,6 +191,29 @@ def notiz(B, name, ok, **k):
     B["schritte"].append(dict(stufe=name, ok=ok, **k)); __import__("json_sicher").schreiben(B["_pfad"], B); print(f"    {name}: {k}", flush=True)
 
 
+def beleg(B, name, pfade, seit, inhalt=None, folge="", altstand_beiseite=False):
+    """23.11.2026 AUDIT STILLE ERFOLGE (tools/kette_beleg.py, modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md): die erwarteten Ausgaben einer Stufe muessen in DIESEM Lauf
+    (seit Stufenstart `seit`) geschrieben sein und ihren sachlichen Mindestinhalt haben - sonst Zeile '<name>_beleg' NICHT in Ordnung mit Grund und Folge.
+    seit=None = Erzeugerstufe lief in diesem Lauf nicht (Einstieg --ab ...): nur Existenz. altstand_beiseite: Altdateien -> .veraltet_<zeit> (nicht geloescht), damit kein
+    Verbraucher sie als frisch liest. Rueckgabe True = belegt."""
+    import kette_beleg as KB
+    f_ = KB.pruefen(pfade, seit, inhalt)
+    if not f_: return True
+    weg_ = KB.beiseite(pfade, seit) if altstand_beiseite else []
+    notiz(B, f"{name}_beleg", False, fehler="; ".join(f_)[:400] + (f" - {folge}" if folge else ""), beiseite=[os.path.basename(w_) for w_ in weg_] or None)
+    return False
+
+
+def sweep_altstand(B, name, fo, i_, seit):
+    """23.11.2026 AUDIT STILLE ERFOLGE (Lauf 1122t, bauplan_sweep_f01 rc 2 'nur 2 Fotos'): tools/fassade_tiefe.py endet bei zu wenigen Fotos VOR dem Schreiben - vorbauten_bauplan
+    las dann vorbauten_f01.json + tiefe_f01.npz des Laufs von 12:25 (Fassadennummern koennen zwischen Laeufen wechseln). Was diese Stufe nicht neu schrieb, kommt beiseite
+    (.veraltet_<zeit>, nicht geloescht); vorbauten_bauplan meldet dann ehrlich 'kein Sweep'. Die Stufe bleibt in Ordnung (rc 2/4 ist ein Urteil), der Schutz steht im Bericht."""
+    import kette_beleg as KB
+    weg_ = KB.beiseite([os.path.join(fo, f"vorbauten_f{i_:02d}.json"), os.path.join(fo, f"tiefe_f{i_:02d}.npz"), os.path.join(fo, f"tiefe_f{i_:02d}.jpg")], seit)
+    if weg_: notiz(B, f"{name}_altstand", True, beiseite=[os.path.basename(w_) for w_ in weg_], hinweis="Sweep schrieb in diesem Lauf nichts - Altstand eines frueheren Laufs beiseite, damit vorbauten_bauplan/seiten ihn nicht als frisch lesen")
+    return weg_
+
+
 def verbund_hinweise(B, sp, P, FV, log):
     """22.11.2026 HINWEIS-STUFEN nach der SfM (Recherche duenne Bruecken, Methoden 6 + 2): (a) Schwachstellen-Radar tools/verbund_schwachstellen.py -> sfm/radar.json
     (Format verbund_schwachstellen/1: Gelenkbilder, duenne Schnitte; Ausloeser fuer Nachmatchen/Kopplung), (b) Lotfeld tools/teil_verformung.py -> sfm/teil_verformung.json
@@ -196,7 +222,8 @@ def verbund_hinweise(B, sp, P, FV, log):
     for name, cmd, aus in (("radar", [PYC, "-I", "tools/verbund_schwachstellen.py", "--modell", sp], os.path.join(P, "sfm", "radar.json")),
                            ("lotfeld", [PYC, "-I", "tools/teil_verformung.py", sp, FV, "--max-n", "300", "--faeden", "4"], os.path.join(P, "sfm", "teil_verformung.json"))):
         if name == "lotfeld" and os.environ.get("RCPARK_LOTFELD", "1") == "0": continue
-        rc_ = lauf(B, f"hinweis_{name}", cmd + ["--aus", aus], log, ok=(0, 2, 3, 4))[0]
+        t_h = time.time(); rc_ = lauf(B, f"hinweis_{name}", cmd + ["--aus", aus], log, ok=(0, 2, 3, 4))[0]
+        if not beleg(B, f"hinweis_{name}", [aus], t_h, folge="Hinweis eines frueheren Laufs wird nicht gemeldet"): continue
         try: notiz(B, f"hinweis_{name}_urteil", rc_ in (0, 4), hinweis=json.load(open(aus)).get("zeile", "")[:400], json=aus)
         except Exception as e_: notiz(B, f"hinweis_{name}_urteil", False, fehler=f"{aus} nicht lesbar: {e_}")
 
@@ -208,8 +235,10 @@ def foto_auftrag_skizze(B, wann, ZR, Z, P, W, AU, FV, log):
     if os.environ.get("RCPARK_FOTOAUFTRAG_SKIZZE", "1") == "0" or not (os.path.exists(W) or os.path.exists(AU)): return
     smj = os.path.join(P, "sfm", "seiten_modelle.json"); aus = os.path.join(Z, "audit"); os.makedirs(aus, exist_ok=True)
     try:
+        t_f = time.time()
         lauf(B, f"foto_auftrag_skizze_{wann}", [PY, "-W", "ignore", "-I", "tools/foto_auftrag_skizze.py", ZR, "--wolke", W, "--ausrichtung", AU, "--fotos", FV, "--aus", aus]
              + (["--seiten-modelle", smj] if os.path.isfile(smj) else []), log, ok=(0, 2))
+        if not beleg(B, f"foto_auftrag_{wann}", [os.path.join(aus, "foto_auftrag.json")], t_f, folge="Fotoauftrag eines frueheren Laufs wird dem Nutzer NICHT als aktuell gemeldet"): return
         e = json.load(open(os.path.join(aus, "foto_auftrag.json")))
         notiz(B, f"foto_auftrag_{wann}", True, bild=e.get("bild"), text=e.get("text"), luecken=[f"{l_.get('seite')}: {l_.get('satz', '')[:160]}" for l_ in e.get("luecken") or []],
               standpunkte=len(e.get("standpunkte") or []), fotos=sum(s_.get("anzahl", 0) for s_ in e.get("standpunkte") or []),
@@ -552,12 +581,16 @@ def main():
     if dran("bauen"):
         t_b = time.time(); lauf(B, "bauen", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1)); stl_b = os.path.join(ROOT, json.load(open(ZJ)).get("stl") or os.path.join("modelle", "stl", f"{a.ziel}_1-87.stl"))
         if not frisch(stl_b, t_b): notiz(B, "bauen_stl", False, fehler=f"{os.path.relpath(stl_b, ROOT)} wurde vom Bau NICHT neu geschrieben - Kanten, Foto-Tor, Fassadenbilder und 3D-Seite dieses Laufs zeigen das Modell eines frueheren Baus")      # 17.11.2026: nach gescheitertem Bau lasen alle Folgestufen das alte STL als frisch
-    KD = os.path.join(D, "kanten")
+    KD = os.path.join(D, "kanten"); t_k = None                          # t_k: Start der Kantenstufe in DIESEM Lauf (None = nicht gelaufen -> Kantendateien nur auf Existenz)
     if dran("kanten"):
         if os.path.exists(AU):
+            t_k = time.time()
             if lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD] + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 4))[0] == 4:      # 22.11.2026 KREISFALL: Suchraum = modellfreier Messkoerper (Standard der Kantenstufe), Wolke nur Lage-Veto      # 17.11.2026: rc 4 (< 6 Kameras sehen das Modell / < 2000 Kantenpunkte) stand als 'in Ordnung' im Bericht -
                 notiz(B, "kanten_ergebnis", False, fehler="Kantenstufe OHNE Ergebnis (rc 4: zu wenige Kameras oder Kantenpunkte, kein Kanten-F1) - Kernmethode nicht erfuellt; Kameras/Stabilkarten pruefen (kanten_bericht.json 'fehler')")      # die Kernmethode (Fotokanten) lief leer
         else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
+    if t_k is not None:                                                  # 23.11.2026 AUDIT: kantenstufe endet bei fehlendem Suchraum (rc 4) VOR kam/kam_wahl, bei < 6 Kameras VOR dem Sweep -
+        beleg(B, "kanten", [os.path.join(KD, n_) for n_ in ("kam.json", "kam_wahl.json", "sweep.npz")], t_k, altstand_beiseite=True,      # Foto-Tor, Ebenen-Bauplan, Vordach und
+              folge="Altstaende beiseite; Foto-Tor, bauplan_ebenen/vordach_profil und kanten_fertig rechnen in diesem Lauf NICHT mit Kameras/Sweep eines frueheren Laufs")   # kanten_fertig lasen sonst den Stand eines frueheren Laufs
     for s_ in ("fototor", "fassaden", "seiten"):                         # 17.11.2026: ohne Ausrichtung fielen diese Stufen STILL aus ("alle in Ordnung" bei 0 Stufen)
         if dran(s_) and not os.path.exists(AU): notiz(B, s_, False, fehler=f"keine Ausrichtung {AU} - Stufe {s_} NICHT gelaufen")
     if dran("fototor") and os.path.exists(AU):
@@ -591,13 +624,17 @@ def main():
         try: return not json.load(open(os.path.join(Z, "dach.json"))).get("teile")
         except Exception: return True
     if dran("fassaden") and os.path.exists(AU) and dach_leer(): lauf(B, "dach_nachholen", [PY, "-I", "tools/dach_vermessen.py", ZR] + (["--wolke", W] if os.path.exists(W) else []), log)      # 17.11.2026: Einstieg ab 'fassaden' ohne dach.json -> fassaden_kette stuerzte ab (Martinstor)
+    t_fk = None                                                          # Start der fassaden_kette in DIESEM Lauf mit rc 0 (sonst None)
     if dran("fassaden") and os.path.exists(AU):                         # 15.11.2026: Fassaden-Kette automatisch (Netz -> Relief je LoD2-Wand -> Putz per Fotofarbe -> Steine in Loechern), danach neu bauen
         dd = os.path.join(P, "dicht"); nz = os.path.join(P, "openmvs", "mesh_modell_ausschnitt.npz")
         t_n = time.time()
         if os.path.exists(os.path.join(dd, "fused.ply")) and lauf(B, "fassaden_netz", [PY, "-I", "tools/netz_aus_dicht.py", ZR, dd], log)[0] == 0 and frisch(nz, t_n):      # frisch: ein Netzausschnitt eines frueheren Laufs gilt nicht
-            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + fein_paar(P, FV), log)[0] == 0: bauen(B, "bauen_mit_fassaden", a.ziel, log)   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
+            t_fk = time.time()
+            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + fein_paar(P, FV), log)[0] == 0: bauen(B, "bauen_mit_fassaden", a.ziel, log)
+            else: t_fk = None                                            # gescheitert: fassaden_kette.json gilt in diesem Lauf nicht (Stufe mono unten)   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
         else: notiz(B, "fassaden", False, fehler=f"kein dichter Ordner ({dd}/fused.ply) oder Netzstufe ohne neues Ergebnis ({nz})")
-    if dran("fassaden") and os.path.exists(os.path.join(Z, "audit", "fassaden_kette.json")) and os.environ.get("RCPARK_OHNE_MONO") != "1":      # 17.11.2026 Stufe 'mono' (nach relief_putz/steine der Fassaden-Kette): Feinrelief aus Einzelfotos,
+    fk_beleg = not dran("fassaden") or beleg(B, "fassaden_kette", [os.path.join(Z, "audit", "fassaden_kette.json")], t_fk or time.time() + 9, folge=("fassaden_kette lief in diesem Lauf nicht mit rc 0 - " if t_fk is None else "") + "Stufe mono NICHT gelaufen (sie las sonst Relief/Wandliste eines frueheren Laufs und schrieb die alte Datei mit neuem Zeitstempel zurueck)") if os.path.exists(os.path.join(Z, "audit", "fassaden_kette.json")) else False   # 23.11.2026 AUDIT
+    if dran("fassaden") and fk_beleg and os.environ.get("RCPARK_OHNE_MONO") != "1":      # 17.11.2026 Stufe 'mono' (nach relief_putz/steine der Fassaden-Kette): Feinrelief aus Einzelfotos,
         fkj = os.path.join(Z, "audit", "fassaden_kette.json"); FK = json.load(open(fkj)); stl_m = os.path.join(D, "messkoerper.stl"); mono_w = []
         if lauf(B, "mono_messkoerper", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--nur-messkoerper", stl_m], log)[0] != 0 and os.path.exists(stl_m): os.remove(stl_m)      # 22.11.2026 KREISFALL: Fotowahl (Sicht) gegen den modellfreien Messkoerper statt gegen das gebaute Modell      # tools/relief_aus_fotos_mono.py (Depth Anything V2 Small, Apache-2.0), Feld = Wand bis 10 m
         for w_ in FK.get("waende", []):                                   # TOR: Korrelation je Foto mit dem Scan-Bandpass >= 0,2 (schwaechere Fotos verwirft das Werkzeug; keins uebrig = rc 4 = Wand ohne Mono-Relief)
@@ -615,7 +652,7 @@ def main():
         json.dump(FK, open(fkj, "w"), indent=1, ensure_ascii=False)
         notiz(B, "mono", True, waende=mono_w, hinweis="ANSEHEN: relief/<wand>_mono.jpg (Foto | Scan | neu); fassaden_kette.anbauen baut <wand>_mono.npz ein (seit 21.11.2026; OHNE_MONO=1 schaltet ab)")
     if dran("fenster") and os.path.exists(AU):                          # 15.11.2026: Fenster automatisch (Mehrfoto-Ortho -> OWLv2 -> Scheiben gruppieren); Probe Nordgiebel Schwabentor-Nachbarhaus: 6 von 6 sichtbaren Fenstern, 1-4 cm
-        fo = os.path.join(D, "fassade"); fa = os.path.join(Z, "audit", "fenster_auto.json")
+        fo = os.path.join(D, "fassade"); fa = os.path.join(Z, "audit", "fenster_auto.json"); t_fen = time.time()
         if lauf(B, "fenster_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--messflaeche", "eben", "--aus", fo, "--einzeln", "--min-flaeche", "6"], log)[0] == 0:      # 22.11.2026 KREISFALL: Messorthos auf modellfreier Flaeche (LoD2 flach + Wandversatz aus Fotokanten), nie auf dem STL des vorigen Laufs (Tor 4,3/5,2 m je Lauf); Lauf von null braucht kein STL
             try: nfo = sum(len(f_.get("fotos") or {}) for f_ in json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])
             except Exception: nfo = 0
@@ -632,6 +669,10 @@ def main():
                 if os.path.exists(W) and os.path.exists(os.path.join(Z, "audit", "oeffnungen_auto.json")): lauf(B, "oeffnungen_durchfahrt", [PY, "-W", "ignore", "-I", "tools/durchfahrt_pruefen.py", os.path.join(fo, "fassaden.json"), os.path.join(Z, "audit", "oeffnungen_auto.json"), "--wolke", W], log, ok=(0, 3))
                 bauen(B, "bauen_mit_fenstern", a.ziel, log)
             os.environ.clear(); os.environ.update(env_alt)
+        # 23.11.2026 AUDIT STILLE ERFOLGE: scheiterte eine Stufe der Fensterkette (oder endete sie ohne zu schreiben), lasen bauplan/seiten das Wandbild und der Generator die
+        # Fenster/Oeffnungen eines FRUEHEREN Laufs (anderer Rahmen, andere Fassadennummern). Ausgaben muessen aus diesem Lauf stammen, sonst beiseite (.veraltet_<zeit>) + rot.
+        beleg(B, "fenster", [os.path.join(fo, "fassaden.json"), os.path.join(fo, "elemente.json"), fa, os.path.join(Z, "audit", "oeffnungen_auto.json")], t_fen, altstand_beiseite=True,
+              folge="Altstand beiseite - Bauplan, Seiten und Generator verwenden in diesem Lauf KEIN Wandbild/Fenster/Tor eines frueheren Laufs")
     if dran("fenster") and os.path.exists(os.path.join(Z, "messprotokoll")):
         if not json.load(open(ZJ)).get("neben_fotos"): lauf(B, "neben_fotos_waehlen", [PY, "-W", "ignore", "-I", "tools/neben_fotos_waehlen.py", ZR, "--eintragen"], log, ok=(0, 3))      # 16.11.2026: ohne neben_fotos liefen Umriss-Tor und 'Modell neben Foto' leer durch
         lauf(B, "umriss_tor", [PY, "-W", "ignore", "-I", "tools/umriss_tor.py", ZR, "--eintragen"], log, ok=(0, 3))  # rc 2 (nichts geprueft) = Fehler im Bericht      # 16.11.2026: Dachlinie Modell gegen Himmelskante; Befunde -> beobachtungen_offen
@@ -649,7 +690,11 @@ def main():
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
             # 18.11.2026: Innenwandsuche ZUERST - ihre Tiefenkarten (bauplan/tiefe/tiefe_fNN.npz, Sweep bis Gebaeudetiefe) entscheiden, ob ein Bogen offen ist (Laube; Kaufhaus: 3 von 4 Boegen fielen weg)
             erg_["innenwaende_rc"] = lauf(B, "bauplan_innenwaende", [PY, "-W", "ignore", "-I", "tools/innenwaende_finden.py", ZR, fo, "--arbeit", os.path.join(bp_, "tiefe"), "--schreiben"], log, ok=(0, 3))[0]
-            if os.path.isdir(ffn) and lauf(B, "bauplan_oeffnungen_aussen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_wandbild.py", ZR, ffn, "--grob", fo, "--aus", oa_, "--tiefe_ordner", os.path.join(bp_, "tiefe")], log)[0] == 0: pass
+            t_oa = time.time()
+            if os.path.isdir(ffn): lauf(B, "bauplan_oeffnungen_aussen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_wandbild.py", ZR, ffn, "--grob", fo, "--aus", oa_, "--tiefe_ordner", os.path.join(bp_, "tiefe")], log)
+            # 23.11.2026 AUDIT: rc wurde hier verworfen ('== 0: pass') - nach Absturz oder ohne feines Wandbild lasen rueckwand_tiefe und loch_gewaende die Aussenoeffnungen eines frueheren Laufs
+            beleg(B, "bauplan_oeffnungen_aussen", [oa_], t_oa, altstand_beiseite=True, folge="Altstand beiseite - Rueckwandtiefe (dann ANNAHME) und Tueren in loch_gewaende ohne Aussenoeffnungen dieses Laufs"
+                  + ("" if os.path.isdir(ffn) else f" (kein feines Wandbild {ffn})"))
             erg_["rueckwand_rc"] = lauf(B, "bauplan_rueckwand", [PY, "-I", "tools/rueckwand_tiefe.py", ZR, oa_, "--schreiben"], log, ok=(0, 3))[0]
             oz_ = json.load(open(ZJ)); IW_ = [x_["name"] for x_ in oz_.get("innenwaende", []) if x_.get("auto")]; IO_ = oz_.get("innenwand_oeffnungen")
             if IW_ and not (IO_ and not IO_.get("auto")):
@@ -673,15 +718,17 @@ def main():
             # Der Sweep lief bisher erst in Stufe 'seiten' (nach dem Bau) und endete als Vorschlagsliste - hier vor dem Bau, Ergebnis audit/vorbauten_auto.json -> bauteile.vorbauten_aus_json
             vb_ = {}
             for i_ in range(len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])):
-                vb_[f"f{i_:02d}"] = lauf(B, f"bauplan_sweep_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
+                t_sw = time.time(); vb_[f"f{i_:02d}"] = lauf(B, f"bauplan_sweep_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
+                sweep_altstand(B, f"bauplan_sweep_f{i_:02d}", fo, i_, t_sw)
             # 22.11.2026 (1122n, Bilderker fehlte): Wand im Kamerarahmen geneigt (Lotfehler ~2,6 Grad) -> fassade_tiefe schaetzt die geneigte Wandebene; Neigung je Fassade in den Bericht
             erg_["wand_neigung"] = {i_: json.load(open(p_))["wand_ebene"].get("neigung_grad") for i_ in vb_ for p_ in [os.path.join(fo, f"vorbauten_{i_}.json")] if os.path.exists(p_) and json.load(open(p_)).get("wand_ebene")}
             if erg_["wand_neigung"]: print(f"WARNUNG Wandebene geneigt gegen LoD2 (Grad je Fassade) {erg_['wand_neigung']} - Lot der Ausrichtung pruefen (gegenueberliegende Waende gleichsinnig = Lotfehler, gegensinnig = Anzug)", flush=True)
             erg_["vorbauten_rc"] = lauf(B, "bauplan_vorbauten", [PY, "-I", "tools/vorbauten_bauplan.py", ZR, fo] + (["--fein", ffn] if os.path.isdir(ffn) else []), log, ok=(0, 3))[0]
             fa_ = os.path.join(Z, "audit", "fenster_auto.json")      # 21.11.2026: Fensterliste am Sweep pruefen (Konsolenfelder als 'Fenster' verworfen, Nischen unter der Stimmenschwelle ergaenzt)
             # 21.11.2026 SCHLEIFE Schritt 1+2 (Leitbild Nutzer: Bauplaene auf mehreren Ebenen, Masse aus Kanten): dichte triangulierte Fotokanten je Wand-/Sweep-Ebene, daraus die Masse der Vorbauten
-            eb_ = os.path.join(D, "ebenen")
-            if os.path.exists(os.path.join(KD, "kam_wahl.json")) and lauf(B, "bauplan_ebenen", [PY, "-W", "ignore", "-I", "tools/ebenen_bauplan.py", ZR, fo, KD, eb_], log, ok=(0, 3))[0] == 0:
+            eb_ = os.path.join(D, "ebenen"); t_eb = time.time()
+            if not os.path.exists(os.path.join(KD, "kam_wahl.json")): notiz(B, "bauplan_ebenen", False, fehler=f"{KD}/kam_wahl.json fehlt (Kantenstufe ohne Kameraauswahl in diesem Lauf) - Ebenen-Bauplan, Vorbau-Masse aus Kanten und Vordachprofil NICHT gerechnet")   # 23.11.2026 AUDIT: vorher still uebersprungen
+            elif lauf(B, "bauplan_ebenen", [PY, "-W", "ignore", "-I", "tools/ebenen_bauplan.py", ZR, fo, KD, eb_], log, ok=(0, 3))[0] == 0:
                 erg_["ebenen_masse_rc"] = lauf(B, "bauplan_ebenen_masse", [PY, "-W", "ignore", "-I", "tools/ebenen_masse.py", ZR, eb_], log, ok=(0, 3))[0]
                 # 21.11.2026 (Nutzer: Vordach im Foto geschweiftes Walmdach, Modell ebene Platte): Profil/Walm aus Foto-Silhouetten (SfM-Kameras) -> audit/vordach_profil.json -> bauteile.vordach_walm
                 if os.path.exists(os.path.join(KD, "kam.json")): erg_["vordach_profil_rc"] = lauf(B, "bauplan_vordach_profil", [PY, "-W", "ignore", "-I", "tools/vordach_profil.py", ZR, KD], log, ok=(0, 3))[0]
@@ -689,6 +736,7 @@ def main():
                 # verworfene Gruppen bekommen 'verworfen' in vorbauten_auto.json, bauteile.vorbauten_aus_json baut sie nicht (rc 2 = verworfen, kein Fehler)
                 if os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")):
                     erg_["vorbau_beleg_rc"] = lauf(B, "bauplan_vorbau_beleg", [PY, "-W", "ignore", "-I", "tools/vorbau_fototor.py", "--beleg", os.path.join(Z, "audit", "vorbauten_auto.json"), fo, os.path.join(eb_, "ebenen.json")], log, ok=(0, 2, 3))[0]
+            beleg(B, "bauplan_ebenen", [os.path.join(eb_, "ebenen.json")], t_eb, altstand_beiseite=True, folge="Altstand beiseite - Oeffnungen aus Kanten und Abweichung je Ebene rechnen NICHT mit den Ebenen eines frueheren Laufs")   # 23.11.2026 AUDIT
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
             # 23.11.2026 (1122o neben_detail fenster_f03/_2, oeffnung f04): Erkennerkasten = Loch + Gewaende -> Loch (dunkle Komponente) und Gewaende (Nicht-Wand-Farbe am Loch)
@@ -739,8 +787,8 @@ def main():
                 tr_rc_ = lauf(B, "bauplan_traufe_foto", [PY, "-u", "-W", "ignore", "-I", "tools/traufe_aus_fotos.py", ZR], log, ok=(0, 3, 4))[0] if os.path.exists(dp_) else 3; erg_["traufe_foto_rc"] = tr_rc_
                 # 22.11.2026: Dachflaechen-Form (gerade/geschweift/gewoelbt) + Fuss des Aufsatzes aus Foto-Silhouetten (Analyse durch Synthese), ersetzt die Wolkenscheiben ueber der Traufe
                 fl_rc_ = lauf(B, "bauplan_dachflaeche_foto", [PY, "-u", "-W", "ignore", "-I", "tools/dachflaeche_aus_umriss.py", ZR], log, ok=(0, 3, 4))[0] if os.path.exists(dp_) else 3; erg_["dachflaeche_foto_rc"] = fl_rc_
-                rc_ = lauf(B, "bauplan_koerper_schleife", [PY, "-W", "ignore", "-I", "tools/koerper_schleife.py", ZR, W, "--bild", os.path.join(Z, "audit", "wolke_rest.jpg")] + (["--erst_bauen"] if dach_neu_ else []), log, ok=(0, 3))[0]
-                try: k_ = json.load(open(ks_)) if rc_ in (0, 3) else {}
+                t_ks = time.time(); rc_ = lauf(B, "bauplan_koerper_schleife", [PY, "-W", "ignore", "-I", "tools/koerper_schleife.py", ZR, W, "--bild", os.path.join(Z, "audit", "wolke_rest.jpg")] + (["--erst_bauen"] if dach_neu_ else []), log, ok=(0, 3))[0]
+                try: k_ = json.load(open(ks_)) if rc_ in (0, 3) and beleg(B, "bauplan_koerper_schleife", [ks_], t_ks, folge="Wolkenkoerper/Abgleich eines frueheren Laufs NICHT verwendet") else {}      # 23.11.2026 AUDIT: Altstand stoesst sonst Bau/Abgleich an
                 except Exception: k_ = {}
                 erg_.update({n_: k_.get(n_) for n_ in ("wolke_am_modell_vorher", "wolke_am_modell_nachher")}, wolkenkoerper=dict(angenommen=[x_["id"] for x_ in k_.get("angenommen", [])], verworfen=[x_["id"] for x_ in k_.get("verworfen", [])], gemeldet=[f"{x_['id']} {x_['form']}" for x_ in k_.get("gemeldet", [])]))
                 # 21.11.2026 (KERNMETHODE, Nutzer: "Form aus Fotos, Wolke nur Lage"): runde Koerper aus den FOTO-UMRISSEN nachmessen (tools/rund_aus_umriss.py, Bildpyramide,
@@ -771,7 +819,9 @@ def main():
         elif os.path.exists(os.path.join(fo, "fassaden.json")) and sp and os.path.exists(db):
             nf = len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"]); vb = {}
             for i_ in range(nf):                                              # 16.11.2026: Vorbauten/Nischen automatisch (Ebenen-Sweep je Fassade); rc 2 = zu wenige Fotos, rc 4 = nicht belastbar
-                if lauf(B, f"vorbauten_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0] == 0:
+                t_sw = time.time(); rc_sw = lauf(B, f"vorbauten_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0]
+                sweep_altstand(B, f"vorbauten_f{i_:02d}", fo, i_, t_sw)
+                if rc_sw == 0:
                     vj = os.path.join(fo, f"vorbauten_f{i_:02d}.json"); vb[f"f{i_:02d}"] = len(json.load(open(vj))["kandidaten"]) if os.path.exists(vj) else 0
             notiz(B, "vorbauten", True, kandidaten=vb, hinweis="Vorschlaege mit eigener Messebene (vorbauten_fNN.json, Bild tiefe_fNN.jpg ansehen); noch kein automatischer Bau")
             t_sl = time.time(); rc, out = lauf(B, "seiten_luecken", [PY, "-I", "tools/seiten_luecken.py", ZR, fo, "--sparse", sp, "--ref-db", db] + ([] if TEILLAUF else ["--download", "--holen"]), log, ok=(0, 3))   # rc 3 = Wand ohne Foto: freie Quellen laden (Commons, Hochblicke, Openverse), Kandidaten nachregistrieren; im Teillauf nur der Bericht
@@ -828,8 +878,9 @@ def main():
     # Laterne flach/fehlend, das STL hatte beides. Je Bauteil (audit/*_auto.json, vordach_profil, dach_profil laterne/spitze) beste SfM-Kamera -> audit/neben_detail_<bauteil>.jpg
     # + Raster audit/neben_details.jpg. Bericht, kein Tor (rc 3 = kein Bauteil/keine Kamera). CPU-Render, kein GPU-Bedarf.
     if os.path.isdir(os.path.join(Z, "audit")) and os.path.exists(os.path.join(ROOT, json.load(open(ZJ)).get("stl") or "-")) and not TEILLAUF:
-        rc_d, _ = lauf(B, "neben_details", [PY, "-W", "ignore", "-I", "tools/neben_details.py", ZR, "--daten", D], log, ok=(0, 3))
+        t_nd = time.time(); rc_d, _ = lauf(B, "neben_details", [PY, "-W", "ignore", "-I", "tools/neben_details.py", ZR, "--daten", D], log, ok=(0, 3))
         try:
+            if not KB_frisch(os.path.join(Z, "audit", "neben_details.json"), t_nd): raise FileNotFoundError("nicht in diesem Lauf geschrieben (Stand eines frueheren Laufs)")      # 23.11.2026 AUDIT
             nd_ = json.load(open(os.path.join(Z, "audit", "neben_details.json")))
             notiz(B, "neben_details_ergebnis", rc_d == 0, bauteile=len(nd_.get("bauteile") or []), bilder=sum(1 for b_ in nd_.get("bauteile") or [] if b_.get("bild")),
                   ohne_kamera=[b_["name"] for b_ in nd_.get("bauteile") or [] if not b_.get("bild")],
@@ -838,8 +889,9 @@ def main():
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
     if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
-        rc_b, _ = lauf(B, "befundliste", [PY, "-W", "ignore", "-I", "tools/befundliste.py", ZR, "--daten", D, "--bericht", bp, "--ab-schritt", str(n_start), "--log", log, "--ab-zeile", str(log_ab)], log, ok=(0, 3))
+        t_bf = time.time(); rc_b, _ = lauf(B, "befundliste", [PY, "-W", "ignore", "-I", "tools/befundliste.py", ZR, "--daten", D, "--bericht", bp, "--ab-schritt", str(n_start), "--log", log, "--ab-zeile", str(log_ab)], log, ok=(0, 3))
         try:
+            if not KB_frisch(os.path.join(Z, "audit", "befunde.json"), t_bf): raise FileNotFoundError("nicht in diesem Lauf geschrieben - die Agenten-Schleife wuerde Befunde eines frueheren Laufs abarbeiten")      # 23.11.2026 AUDIT
             bf_ = json.load(open(os.path.join(Z, "audit", "befunde.json"))); top_ = [b_ for b_ in bf_["befunde"] if b_["stufe"] == "FEHLER"][:5]
             notiz(B, "befundliste_ergebnis", True, zusammenfassung=bf_.get("zusammenfassung"), ohne_fotos=bf_.get("ohne_fotos"),
                   oben=[f"{b_['id']} {b_['art']} {(b_.get('ort') or {}).get('fassade') or ''} {(b_.get('ort') or {}).get('bauteil') or ''} -> {(b_.get('vorschlag') or {}).get('werkzeug', '')[:60]}" for b_ in top_],
