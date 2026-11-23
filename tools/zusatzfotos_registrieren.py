@@ -158,6 +158,23 @@ def sift_sicher(pycolmap, db, bilddir, bilder, names, f0, extrahieren=None, wart
     return out
 
 
+def sift_nur_gewaehlt():
+    """Schalter RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT (Standard AUS): SIFT-Matching nur auf den von LightGlue gewaehlten Paaren (+ Marge) statt auf allen Kandidaten.
+    Bleibt AUS, bis tools/versuche/nachhol_sift_gewaehlt_messen.py gezeigt hat, dass keine Registrierung/Kameralage verloren geht."""
+    return os.environ.get("RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT", "0") == "1"
+
+
+def sift_paare_matchen(db, paare_txt, pycolmap=None, saat=False):
+    """SIFT-Matching + geometrische Verifikation der Paare aus <paare_txt> (Zeilen 'a b') in <db> (wie bisher: Standardoptionen, RANSAC-Saat 0).
+    Jedes Paar wird fuer sich gematcht - die Ergebnisse haengen nicht davon ab, welche anderen Paare in der Liste stehen. -> verifizierte Paare in der DB gesamt."""
+    if pycolmap is None: import pycolmap
+    if saat: pycolmap.set_random_seed(0)      # eigener Prozess (Stufe einlesen); in merkmale ist die Saat schon gesetzt (Standardweg bleibt bitgleich)
+    mo = pycolmap.FeatureMatchingOptions(); vo = pycolmap.TwoViewGeometryOptions(); vo.ransac.random_seed = 0
+    pycolmap.match_image_pairs(db, matching_options=mo, pairing_options=pycolmap.ImportedPairingOptions(match_list_path=paare_txt), verification_options=vo)
+    con = sqlite3.connect(db); ver = con.execute("select count(*) from two_view_geometries where rows>0").fetchone()[0]; con.close()
+    return ver
+
+
 def merkmale(a):
     import pycolmap
     pycolmap.set_random_seed(0)
@@ -176,15 +193,17 @@ def merkmale(a):
         print(f"FEHLER: {a.sparse} ist ein entzerrtes Modell (nur PINHOLE) - passt nicht zur Merkmalsdatenbank der Originalbilder; das SfM-Modell (sfm/sparse/0) angeben", flush=True); sys.exit(2)
     paare = [(n, r) for n in names for r in reg] + list(itertools.combinations(names, 2))
     pf = os.path.join(a.aus, "paare.txt"); open(pf, "w").write("\n".join(f"{x} {y}" for x, y in paare) + "\n")
-    mo = pycolmap.FeatureMatchingOptions(); vo = pycolmap.TwoViewGeometryOptions(); vo.ransac.random_seed = 0
-    pycolmap.match_image_pairs(db, matching_options=mo, pairing_options=pycolmap.ImportedPairingOptions(match_list_path=pf), verification_options=vo)
-    con = sqlite3.connect(db); nk = {n: con.execute("select rows from keypoints where image_id=?", (ids[n],)).fetchone()[0] for n in names}
-    ver = con.execute("select count(*) from two_view_geometries where rows>0").fetchone()[0]; con.close()
+    aufgeschoben = sift_nur_gewaehlt()
+    if aufgeschoben:      # 23.11.2026 (Kette 1122q: 19,8 min fuer 438.900 Paare): Matching erst in zusatzfotos_lightglue.py einlesen, nur auf lg/sift_paare.txt
+        print(f"RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT=1: SIFT-Matching der {len(paare)} Kandidatenpaare AUFGESCHOBEN - nur die LightGlue-Auswahl (mit Marge) wird in der Stufe einlesen gematcht", flush=True)
+        ver = None
+    else: ver = sift_paare_matchen(db, pf, pycolmap)
+    con = sqlite3.connect(db); nk = {n: con.execute("select rows from keypoints where image_id=?", (ids[n],)).fetchone()[0] for n in names}; con.close()
     leer = [n for n, k in nk.items() if not k]
     if leer: raise SystemExit(f"FEHLER: {len(leer)} Bilder ohne Schluesselpunkte (SiftGPU scheitert bei VRAM-Mangel STILL mit rc 0): {leer[:5]} - VRAM pruefen (nvidia-smi), RCPARK_SIFT_MAX=1600")
-    json.dump(dict(paare=len(paare), neu=len(names), referenz=len(reg), schluesselpunkte_mittel=float(np.mean(list(nk.values()))), verifizierte_paare_gesamt=ver, f_prior_px=f0,
+    json.dump(dict(paare=0 if aufgeschoben else len(paare), kandidatenpaare=len(paare), sift_matching="aufgeschoben" if aufgeschoben else "alle", neu=len(names), referenz=len(reg), schluesselpunkte_mittel=float(np.mean(list(nk.values()))), verifizierte_paare_gesamt=ver, f_prior_px=f0,
                    sift_nachgeholt=dict(gpu_klein=len(sift["gpu_klein"]), cpu=len(sift["cpu"]))), open(os.path.join(a.aus, "merkmale.json"), "w"), indent=1)
-    print(f"merkmale: {len(names)} neu, {len(paare)} Paare gematcht, mittl. Schluesselpunkte {np.mean(list(nk.values())):.0f}")
+    print(f"merkmale: {len(names)} neu, {0 if aufgeschoben else len(paare)} Paare gematcht, mittl. Schluesselpunkte {np.mean(list(nk.values())):.0f}")
 
 
 def korrespondenzen(db, ref, name2id, n_id, mind=15):

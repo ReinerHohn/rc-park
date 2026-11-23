@@ -155,6 +155,7 @@ def main():
     info = image_info(titles, a.width)
 
     manifest, n, schon = [], 0, 0
+    http_holen.vorrat_melden(sum(1 for p_ in glob.glob(os.path.join(a.out, "[0-9][0-9][0-9]_*")) if bild_ok(p_)))      # 23.11.2026: Vorrat da + frische Drossel-Marke -> nicht warten (tools/http_holen.py)
     for t, meta in info.items():
         if not meta["url"]: continue
         safe = t.replace("File:", "").replace(" ", "_")
