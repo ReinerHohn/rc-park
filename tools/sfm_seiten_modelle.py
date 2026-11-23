@@ -295,10 +295,27 @@ def _kamera_gleich(a, b):
     return a.model == b.model and a.width == b.width and a.height == b.height and len(a.params) == len(b.params) and np.allclose(a.params, b.params, rtol=1e-9, atol=0)
 
 
-def modelle_zusammen(teile, ziel, herkunft=None):
+def db_kameras(*dbs):
+    """Kamera-IDs aller genannten Datenbanken (fehlende/unlesbare uebersprungen - dann loest colmap_rig_abgleich.angleichen eine Kollision) - fuer modelle_zusammen(belegt=...)."""
+    import sqlite3
+    out = set()
+    for p in dbs:
+        if not (p and os.path.isfile(p)): continue
+        try:
+            con = sqlite3.connect(f"file:{os.path.abspath(p)}?mode=ro", uri=True)
+            try: out |= {int(c) for (c,) in con.execute("select camera_id from cameras")}
+            finally: con.close()
+        except sqlite3.DatabaseError as e: sag(f"SEITENMODELLE: Kamera-IDs aus {p} nicht lesbar ({e}) - neue Kamera-IDs nur ueber den Modell-IDs")
+    return out
+
+
+def modelle_zusammen(teile, ziel, herkunft=None, belegt=()):
     """teile = [(Modellordner, 4x4 oder None)] -> EIN COLMAP-Modell in <ziel> (System des ersten Teils); Weg und Grenzen im Dateikopf. Rueckgabe dict(bilder, punkte, kameras_neu,
     teile=[dict(pfad, bilder, punkte)]). ValueError, wenn es nicht sauber geht (Bild doppelt, Rig mit mehreren Sensoren, keine Aehnlichkeitsabbildung) - dann schreibt die
-    Funktion NICHTS und der Aufrufer bleibt beim Rueckfall (Teil A allein, gemeldet)."""
+    Funktion NICHTS und der Aufrufer bleibt beim Rueckfall (Teil A allein, gemeldet).
+    belegt = Kamera-IDs der Datenbank(en) (db_kameras). 23.11.2026 (Kette 1122r): die neue ID einer doppelt ausgeglichenen Kamera war max(Modell)+1 = 822..824 und damit in
+    der Datenbank schon die Kamera ANDERER Videobilder -> Nachholen (tools/colmap_rig_abgleich.py probe) scheiterte an "existing_camera.width == camera.width (1280 vs. 1920)".
+    Neue IDs liegen jetzt ueber allen belegten DB-IDs; colmap_rig_abgleich.angleichen legt die Kamera in der DB-Kopie an (und loest Altmodelle mit Kollision selbst)."""
     import pycolmap
     V = pycolmap.Reconstruction(); namen = set(); info = []; kneu = 0
     for pfad, M in teile:
@@ -312,7 +329,7 @@ def modelle_zusammen(teile, ziel, herkunft=None):
             q = Q.cameras[c]; neu = c
             if V.exists_camera(c):
                 if _kamera_gleich(V.cameras[c], q): kmap[c] = c; continue
-                neu = max(max(V.cameras), max(Q.cameras), max(kmap.values(), default=0)) + 1; kneu += 1   # gleiche ID, andere Werte: getrennt ausgeglichene Kamera
+                neu = max(max(V.cameras), max(Q.cameras), max(kmap.values(), default=0), max(belegt, default=0)) + 1; kneu += 1   # gleiche ID, andere Werte: getrennt ausgeglichene Kamera
             V.add_camera_with_trivial_rig(pycolmap.Camera(model=q.model, width=q.width, height=q.height, params=q.params, camera_id=neu, has_prior_focal_length=q.has_prior_focal_length)); kmap[c] = neu
         for i in reg:
             im = Q.images[i]
@@ -335,7 +352,7 @@ def modelle_zusammen(teile, ziel, herkunft=None):
     os.rename(tmp, ziel); return erg
 
 
-def dicht_zusammen(teile, ziel):
+def dicht_zusammen(teile, ziel, belegt=()):
     """teile = [(dicht-Arbeitsordner eines Teils, 4x4 oder None)] -> EIN COLMAP-Arbeitsordner <ziel> im System des ersten Teils: images/ (Verknuepfungen), sparse/ (entzerrte Modelle
     vereint), stereo/depth_maps (Teil A verknuepft; umgerechnete Teile als KOPIE mit Massstab), stereo/normal_maps (Verknuepfungen: Normalen stehen im Kamerasystem),
     stereo/*.cfg (aneinandergehaengt), fused.ply (wolken_zusammen). fused.ply.vis und consistency_graphs fehlen (GRENZE)."""
@@ -351,7 +368,7 @@ def dicht_zusammen(teile, ziel):
                 else: os.symlink(os.path.join(d, u, f), z)
         for c in ("fusion.cfg", "patch-match.cfg"):
             if os.path.isfile(os.path.join(d, "stereo", c)): open(os.path.join(tmp, "stereo", c), "a").write(open(os.path.join(d, "stereo", c)).read().rstrip("\n") + "\n")
-    erg = dict(sparse=modelle_zusammen([(os.path.join(d, "sparse"), M) for d, M in teile], os.path.join(tmp, "sparse")))
+    erg = dict(sparse=modelle_zusammen([(os.path.join(d, "sparse"), M) for d, M in teile], os.path.join(tmp, "sparse"), belegt=belegt))
     erg["punkte"] = wolken_zusammen([(os.path.join(d, "fused.ply"), M) for d, M in teile], os.path.join(tmp, "fused.ply"))
     if os.path.isdir(ziel): shutil.rmtree(ziel)
     os.rename(tmp, ziel); return erg
@@ -445,7 +462,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         if rc == 0 and "B_nach_A" in v:
             kand = os.path.join(vz, f"versuch_{B['teil']}"); tj = os.path.join(vo, "seiten_blick.json")
             try:
-                me = modelle_zusammen([(A["modell"], None)] + [(x["modell"], m) for x, m in ang] + [(B["modell"], v["B_nach_A"])], kand, herkunft=dict(teil_a=A["teil"], teile=[x["teil"] for x, _ in ang] + [B["teil"]]))
+                me = modelle_zusammen([(A["modell"], None)] + [(x["modell"], m) for x, m in ang] + [(B["modell"], v["B_nach_A"])], kand, herkunft=dict(teil_a=A["teil"], teile=[x["teil"] for x, _ in ang] + [B["teil"]]), belegt=db_kameras(db_ursprung, ber.get("db_mapper")))
             except Exception as ex:
                 e["zusammenlegen"] = f"gescheitert: {ex}"; M_.append(f"Teil {B['teil']}: seiten_vereinen rc 0, aber das Zusammenlegen der Modelle scheiterte ({ex}) - Teil NICHT im Ergebnis"); ber["nicht_vereint"].append(B["teil"]); continue
             rt = LAUF([PYC, "-I", os.path.join(T, "seiten_blick_tor.py"), kand, sj, "--aus", tj], os.path.join(vo, "seiten_blick.log")); e["blick_tor"] = rt
@@ -485,7 +502,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         if not dicht_ok: pass
         elif all((x.get("dicht") or {}).get("fused") for x, _ in dichte):
             try:
-                dz = dicht_zusammen([(x["dicht"]["ordner"], m) for x, m in dichte], os.path.join(vz, "dicht")); ber["ergebnis"].update(dicht=os.path.join(vz, "dicht"), fused=os.path.join(vz, "dicht", "fused.ply"), punkte=dz["punkte"])
+                dz = dicht_zusammen([(x["dicht"]["ordner"], m) for x, m in dichte], os.path.join(vz, "dicht"), belegt=db_kameras(db_ursprung, ber.get("db_mapper"))); ber["ergebnis"].update(dicht=os.path.join(vz, "dicht"), fused=os.path.join(vz, "dicht", "fused.ply"), punkte=dz["punkte"])
             except Exception as ex: M_.append(f"vereinte dichte Wolke NICHT geschrieben ({ex}) - die Kette rechnet die dichte Wolke auf dem vereinten Modell selbst")
         else: M_.append("vereinte dichte Wolke NICHT geschrieben (einem vereinten Teil fehlt die dichte Wolke) - die Kette rechnet sie auf dem vereinten Modell selbst")
     else:

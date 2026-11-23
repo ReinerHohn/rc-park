@@ -79,6 +79,10 @@ XS = np.array(list(PS.values())); pb = [p.xyz for p in V.points3D.values() if p.
 assert e1["kameras_neu"] == 1 and V.num_cameras() == 4, f"Kamera 2 (in A und B verschieden) nicht getrennt: {V.num_cameras()} Kameras, {e1['kameras_neu']} neu"
 kn = {im.name: V.cameras[im.camera_id].params[0] for im in V.images.values()}
 assert kn["clip__vf_012.jpg"] == 1000.0 and kn["clip__vf_100.jpg"] == 1010.0 and kn["eigen__s07.jpg"] == 1300.0 and kn["eigen__n00.jpg"] == 1200.0, f"Kamerawerte vertauscht: {kn}"
+neu_ids = set(V.cameras) - set(rA.cameras) - set(pycolmap.Reconstruction(mB).cameras)                 # 23.11.2026 (Kette 1122r): neue ID darf keine DB-Kamera treffen
+zb = os.path.join(S, "vereint_belegt"); eb = SM.modelle_zusammen([(mA, None), (mB, M_wahr)], zb, belegt=set(range(1, 51))); Vb = pycolmap.Reconstruction(zb)
+nb = set(Vb.cameras) - set(V.cameras) | (set(Vb.cameras) - set(rA.cameras) - set(pycolmap.Reconstruction(mB).cameras))
+assert eb["kameras_neu"] == 1 and nb and min(nb) > 50 and neu_ids and max(neu_ids) <= 50, f"neue Kamera-ID {nb} muss ueber den belegten DB-IDs 1..50 liegen (ohne belegt: {neu_ids})"
 assert sum(im.num_points3D for im in V.images.values()) == sum(len(p.track.elements) for p in V.points3D.values()) > 500, "Spuren und Bildpunkte uneins"
 assert all(abs(p.error - 0.5) < 1e-9 for p in V.points3D.values()), "Punktfehler nicht uebernommen"
 V.update_point_3d_errors(); fe = V.compute_mean_reprojection_error(); assert fe < 0.01, f"Bildfehler des vereinten Modells {fe} px (neu gerechnet aus Lage, Kamera, Punkt)"
