@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (117)
+# Werkzeuge: sonstige (118)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -82,6 +82,7 @@
 - `tools/sp_led_dome_bores.py` [gen] sp_led_dome_bores.py — Petersdom-KUPPEL mit ECHTEN Ø3,5-DURCHBOHRUNGEN statt flacher Mini-Schlitze. Jedes Loch bricht komplett in den Hohlraum durch → im Druck klar sichtbares rund
 - `tools/sp_led_facade.py` [gen] sp_led_facade.py — rüstet die Petersdom-FASSADE (sp-facade.stl) für 0402-LEDs auf.
 - `tools/sparse_modell_schreiben.py` [col] sparse_modell_schreiben.py - COLMAP-Modell ins Modellsystem (Meter) bringen, aus einer geschriebenen Ausrichtung (messprotokoll/SFM-AUSRICHTUNG-<name>.json).
+- `tools/speicher_muster.py` [-] speicher_muster.py - EIN Muster fuer "Stufe scheiterte am Speicher (RAM oder GPU-VRAM)" fuer Kette (gesamtkette.lauf) und Stufen mit Fehlschlag-Marke (seiten_luecken).
 - `tools/spitze_aus_umriss.py` [seg] spitze_aus_umriss.py - TURMSPITZE / LATERNE / DACHREITER aus den FOTO-SILHOUETTEN gegen den Himmel (21.11.2026).
 - `tools/spitze_hoehe.py` [seg] spitze_hoehe.py - Hoehe von Helm-/Nadelspitzen AUTOMATISCH aus der Himmelssilhouette aller kalibrierten Fotos (2026-11-05).
 - `tools/stabil_alle.py` [seg] Stabilitaetskarten fuer alle kalibrierten Fotos (GPU, sequentiell) -> OUTDIR/<foto>.png (uint8 = Laufanteil*255, Breite 1500). Aufruf: stabil_alle.py KAM.json BILDER OUTDIR

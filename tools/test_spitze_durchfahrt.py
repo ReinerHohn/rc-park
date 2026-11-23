@@ -65,6 +65,15 @@ c, C = kamera(0.5, 4.5, 1.6, ziel_z=45.0)                                       
 z_sp, g, _ = SU.foto_messen(maske(c), lambda X: FO.projektion(np.atleast_2d(X), c), AX, zs, C)
 pruef(z_sp is None or abs(z_sp - Z_SPITZE) <= 0.3, f"Kamera unter der Traufe: {'verworfen (' + str(g) + ')' if z_sp is None else 'Spitze ' + str(z_sp)} - keine falsche Spitze")
 pruef(SU.auswerten(mess[:3], zs, SU.SEKTOR_GRAD)["gueltig"] is False, "3 Fotos reichen nicht (MIN_FOTOS)")
+# 23.11.2026 (Kettenlauf 1122o: 129 Fotos 'obere Bildkante unter der Suchhoehe', Laterne nie gebaut): Bildkante zwischen Spitze und Suchende -> trotzdem messen;
+# Bildkante schneidet die Laterne -> verwerfen (keine falsche Spitze an der Bildkante)
+def kamera_eng(az, dist, h, ziel_z, f=2500.0):
+    c, C = kamera(az, dist, h, ziel_z); c["f_px"] = f; return c, C
+for ziel, soll in ((32.0, "gemessen"), (28.0, "verworfen")):
+    c, C = kamera_eng(1.0, 60.0, 1.6, ziel); oben = FO.projektion(np.array([[AX[0], AX[1], 58.0]]), c)[0][0, 1]
+    z_sp, g, _ = SU.foto_messen(maske(c), lambda X, c=c: FO.projektion(np.atleast_2d(X), c), AX, zs, C)
+    if soll == "gemessen": pruef(oben < 0 and z_sp is not None and abs(z_sp - Z_SPITZE) <= 0.3, f"Bildkante unter dem Suchende (z 58 bei y {oben:.0f} px), Spitze sichtbar: {z_sp} ({g})")
+    else: pruef(z_sp is None, f"Bildkante schneidet die Laterne: {'verworfen (' + str(g) + ')' if z_sp is None else 'FALSCHE Spitze ' + str(z_sp)}")
 import bauteile as BT
 ab = BT.spitze_ab(dict(E, achse=AX.tolist()))
 pruef(ab is not None and Z_TRAUFE + 4 < ab <= Z_KREMPE, f"spitze_ab {ab}: Fotoblock ab Laternenhals (zwischen {Z_TRAUFE + 4} und {Z_KREMPE})")
