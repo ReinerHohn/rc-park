@@ -1,4 +1,4 @@
-# Werkzeuge: test (170)
+# Werkzeuge: test (174)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -19,6 +19,7 @@
 - `tools/test_dachflaeche_aus_umriss.py` [-] Test dachflaeche_aus_umriss.py + bauteile.flaeche_aus_foto (synthetisch, Sekunden): Profil-Familie aus gerenderten Silhouetten zurueckgewinnen, Formfamilie nur aus >= 3 einigen Fot
 - `tools/test_dachflaeche_dom1_veto.py` [-] Test DOM1-Veto der Foto-Dachflaeche (23.11.2026, Schwabentor-1122p HOEHEN-TOR +1,73 m / k 0,958): dachflaeche_aus_umriss.laser_isolinien / ringe_dom1_veto / veto_block + bauteile.f
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
+- `tools/test_durchfahrt_wandbild.py` [gen] test_durchfahrt_wandbild.py - Tordurchfahrt, deren Sweep-Form verworfen wurde, kommt ueber die Fotokanten doch ins Modell (23.11.2026). Ohne Dateien, < 30 s.
 - `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
 - `tools/test_element_einpassen.py` [seg] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
 - `tools/test_farbteile_neigung.py` [gen] test_farbteile_neigung.py - Schnelltest fuer tools/druck_farbteile.py: Plattentiefe folgt der OERTLICHEN Wand (18.11.2026). Synthetisch: Quader 12 x 8 x 10 m, um 2 Grad gegen die M
@@ -59,6 +60,7 @@
 - `tools/test_kamera_ausgleich.py` [seg] test_kamera_ausgleich.py - BS3d synthetischer Beweis: Kameras absichtlich verschieben (Kamerazentrum 3/5/10 cm, Rotation 0,3/0,5/1 Grad), pruefen ob der Ausgleich (kamera_ausgleich
 - `tools/test_kamera_klumpen.py` [-] Fester Test (Sekunden, CPU) fuer KAMERA-KLUMPEN (tools/lage_proben.kamera_nah / kameras_einmal, tools/sfm_lod2_ausrichten.py AUSR_KLUMPEN). Befund Kettenlauf schwabentor-1122p (23.
 - `tools/test_kamera_lod2.py` [seg] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
+- `tools/test_kamera_verfeinern_stapel.py` [seg] test_kamera_verfeinern_stapel.py - Stapelmodus von tools/kamera_verfeinern.py (--liste) == Folge der Einzelaufrufe (23.11.2026, Kette 1122q: 327 Einzelprozesse = 75 von 165 min der
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
 - `tools/test_kantenstufe_kreis.py` [seg] test_kantenstufe_kreis.py - WAECHTER gegen den Kreis in der KERNMETHODE (CPU, ohne Daten, ~1 min; 22.11.2026).
@@ -80,12 +82,14 @@
 - `tools/test_lage_pruefstand.py` [-] Fester Test (CPU, synthetisch, ~1 min): Lage-Pruefstand + Zwischenstand der Ausrichtung (22.11.2026). 1 sfm_lod2_ausrichten.ausrichten als Funktion auf einer kuenstlichen Szene (3 
 - `tools/test_laibung_aus_fotos.py` [seg] test_laibung_aus_fotos.py - fester synthetischer Test fuer tools/laibung_aus_fotos.py (21.11.2026 spaet), < 10 s, nur CPU.
 - `tools/test_laterne_aus_fotos.py` [gen] test_laterne_aus_fotos.py - feste synthetische Tests fuer tools/laterne_aus_fotos.py und bauteile.laterne (22.11.2026). Ohne Dateien, Sekunden.
+- `tools/test_laterne_drehprofil.py` [-] test_laterne_drehprofil.py - Haube der Laterne als DREHKOERPER aus Silhouetten (tools/laterne_aus_fotos.py: Sehstrahl-Huelle, Registrierung, Querschnitt), 23.11.2026.
 - `tools/test_leistung_messen.py` [-] test_leistung_messen.py - Kurztest fuer tools/leistung_messen.py (22.11.2026): synthetische numpy-Schleife (~1 s, ~120 MB, 1-2 Threads), Sweep mit Platzhalter, Auswertung 'kleinste
 - `tools/test_loch_gewaende.py` [seg] test_loch_gewaende.py - fester synthetischer Test fuer den Befund 'Oeffnungen und Fenster' aus Kettenlauf 1122o (23.11.2026), < 20 s, nur CPU.
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_lot_wandneigung.py` [-] Test Lot-Runde 22.11.2026: lot_wandneigung (Kippung vs. Anzug, Urteile), kipp_rotvec (echte Kippung im Kasten), lage_bestanden mit Lot, Pruefstand-Vergleich mit Mondkamera.
 - `tools/test_messflaeche_kreis.py` [seg] test_messflaeche_kreis.py - WAECHTER gegen zirkulaere Messung (CPU, wenige Sekunden, ohne Daten; 22.11.2026, Kreisfall Einzelorthos schwabentor-1120).
 - `tools/test_modell_zerlegen.py` [-] Fester Test fuer modell_zerlegen.stuecke: zwei Bildgruppen ohne gemeinsame Punkte in EINEM Modell (Martinstor-Fall 20.11.) muessen getrennt werden; eine schwache Bruecke (< min_pun
+- `tools/test_nachhol_tempo.py` [-] test_nachhol_tempo.py - Tempo des Nachholens (Kette 1122q: merkmale 20 min, paare 50 min, Downloads 13,5 min davon 12 min HTTP-429-Warten), 23.11.2026. Nur CPU, vorgespielte Daten 
 - `tools/test_neben_details.py` [seg] test_neben_details.py - synthetische Pruefung von tools/neben_details.py (Detailansicht je Bauteil, 22.11.2026). Kein echtes Objekt, Sekunden. 1. Kamerawahl front: von vier Kameras
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
 - `tools/test_nischen_fenster.py` [seg] test_nischen_fenster.py - fester synthetischer Test fuer tools/nischen_fenster.py (+ Bau in bauteile.fenster_aus_json), < 10 s, nur CPU.

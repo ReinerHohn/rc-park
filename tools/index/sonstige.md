@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (122)
+# Werkzeuge: sonstige (123)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -38,6 +38,7 @@
 - `tools/knoten_abstimmung.py` [seg] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
 - `tools/konsolen_zelle.py` [seg] konsolen_zelle.py - Konsolenform aus der GEFALTETEN Musterzelle (wie baluster_fit: Profil aus der Faltung), danach Phase je Quelle, Entscheidregel.
 - `tools/lg_match.py` [seg] lg_match.py - Merkmale + Zuordnungen mit ALIKED + LightGlue (gelernter Matcher) fuer grosse Blickwinkel (Luftbild gegen Strasse).
+- `tools/lg_zwischenspeicher.py` [-] lg_zwischenspeicher.py - Zwischenspeicher fuer ALIKED-Merkmale und Grob-LightGlue-Paarwerte des Nachholens (tools/zusatzfotos_lightglue.py paare), 23.11.2026.
 - `tools/light_prep.py` [gen] light_prep.py — schneidet automatisch LICHT-GEOMETRIE in ein Druckmodell: - LED-Taschen (Durchmesser/Tiefe) MIT Ausrichtung (Lichtkegel zeigt in dir) - Kabelkanäle von der Tasche z
 - `tools/lizenz_register.py` [-] lizenz_register.py - JEDES Bild nach Lizenzklasse ordnen, damit spaeter (Veroeffentlichung/Verkauf) sichtbar ist, was erlaubt ist und was nicht. Zentrales Modul der Pipeline.
 - `tools/loch_gewaende.py` [seg] loch_gewaende.py - LOCH UND GEWAENDE eines Fensters/einer Tuer aus dem feinen Wandbild (23.11.2026, Kettenstufe 'bauplan' nach nischen_fenster.py).
