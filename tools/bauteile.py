@@ -530,12 +530,20 @@ def flaeche_aus_foto(P, D, n=12):
     if ir is None: ir = max([k for k, p in enumerate(P) if p[0] <= float(FF.get("z_traufe", P[0][0])) + 1e-6] or [0])
     r_ = P[ir]; z_t, z_f = float(r_[0]), float(FF["z_fuss"]); a_f = float(FF["fuss"]["halb"])
     if z_f < z_t + 1.0 or a_f >= 0.9 * min(r_[2] - r_[1], r_[4] - r_[3]) / 2: return None, [dict(seite="dach", element="Dachflaeche aus Fotos NICHT gebaut (Guard)", quelle="bauteile.flaeche_aus_foto", hinweis=f"Fuss z {z_f} / halb {a_f} gegen Traufe z {z_t}")]
-    from dachflaeche_aus_umriss import ringe as _ringe
+    from dachflaeche_aus_umriss import ringe as _ringe, ringe_dom1_veto as _veto
     A = np.array(FF.get("achse") or D["o"], float); c_ = 0.0 if FF.get("familie") == "gerade" else float(FF.get("c", 0.0))   # Familie 'gerade' -> Ebenen (Koordinator 22.11.), c innerhalb der Familie = Messrauschen
+    # 23.11.2026 (Schwabentor-1122p HOEHEN-TOR +1,73 m): DOM1-Veto der Fotoflaeche (Block flaeche_foto.dom1_veto aus tools/dachflaeche_aus_umriss.py) - feinere Ringe (0,3 m),
+    # damit die Flaeche dem Laser-Knick an der Traufe folgen kann; Seiten > tol ausserhalb der Isolinie auf die Isolinie
+    V = FF.get("dom1_veto") or {}; iso = {round(float(q[0]), 2): q[1:5] for q in V.get("isolinien") or []} if V.get("aktiv") else {}
+    if iso: n = max(n, int(math.ceil((z_f - z_t) / 0.3)))
     rs = _ringe((np.array(D["o"], float), np.array(D["d"], float), np.array(D["n"], float), r_[1], r_[2], r_[3], r_[4]), (A, a_f, None if FF["fuss"].get("theta") is None else float(FF["fuss"]["theta"])), z_t, z_f, c_, n=n)
+    vt = ""
+    if iso:
+        rs, ein_ = _veto(rs, D["o"], D["d"], D["n"], iso, tol=float(V.get("tol_m", 0.3)))
+        vt = (f"; DOM1-VETO: {len(ein_)} Ringseiten auf die Laser-Isolinie gesetzt (Foto bis {max(e['foto_m'] - e['laser_m'] for e in ein_):.2f} m weiter draussen)" if ein_ else "; DOM1-Veto: Fotoflaeche innerhalb der Laser-Isolinie")
     return (ir, rs, z_f), [dict(seite="dach", element=f"Dachflaeche aus Foto-Silhouetten: {FF.get('familie')} (gemessen c {FF.get('c')}, gebaut c {c_}) von der Traufe z {z_t:.2f} bis zum Fuss des Aufsatzes z {z_f:.2f} (halb {a_f:.2f} m)",
                                 quelle=f"tools/dachflaeche_aus_umriss.py: Himmelskante in {FF.get('fotos_gut')} guten Fotos gegen gerenderte Profil-Hypothesen, Konsens {FF.get('konsens')}, Restfehler {FF.get('fehler_median')} m (gerade {FF.get('fehler_gerade_median')} m)",
-                                hinweis="ersetzt die Wolkenscheiben ueber der Traufe (Wolke/DOM1 dort glockig gestuft); ANNAHME: Fussquerschnitt " + str(FF["fuss"].get("quelle")) + ", Ecken der Traufe laufen gerade zu den Fussecken (Grate)")]
+                                hinweis="ersetzt die Wolkenscheiben ueber der Traufe (Wolke/DOM1 dort glockig gestuft); ANNAHME: Fussquerschnitt " + str(FF["fuss"].get("quelle")) + ", Ecken der Traufe laufen gerade zu den Fussecken (Grate)" + vt)]
 
 
 TRAUF_SEITEN = {"-d": (1, -1), "+d": (2, 1), "-n": (3, -1), "+n": (4, 1)}      # Seite -> (Index in der Scheibe [z, u_lo, u_hi, v_lo, v_hi], Vorzeichen)
