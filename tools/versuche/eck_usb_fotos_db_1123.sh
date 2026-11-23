@@ -10,7 +10,7 @@ import sqlite3;s=sqlite3.connect('file:$B/db.db?mode=ro',uri=True);d=sqlite3.con
 ls $Q | grep -E "^eigen__IMG_20261123_15" > $N/neu.txt
 for f in $(cat $N/neu.txt); do ln -sf $Q/$f $N/mix/$f; done
 for f in $(cat $B/eck/bilder.txt); do ln -sf $K/$f $N/mix/$f; done
-$C feature_extractor --database_path $N/db.db --image_path $N/mix --image_list_path $N/neu.txt --FeatureExtraction.use_gpu 1 --FeatureExtraction.num_threads 2 --FeatureExtraction.max_image_size 3200 > $N/fe.log 2>&1
+$C feature_extractor --database_path $N/db.db --image_path $N/mix --image_list_path $N/neu.txt --FeatureExtraction.use_gpu 1 --FeatureExtraction.num_threads 4 --FeatureExtraction.max_image_size 2400 > $N/fe.log 2>&1
 /media/oem/scan/venv-colmap/bin/python -I -c "
 neu=[x.strip() for x in open('$N/neu.txt') if x.strip()]; alt=[x.strip() for x in open('$B/eck/bilder.txt') if x.strip()]
 P=set()
