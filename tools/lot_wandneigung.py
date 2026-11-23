@@ -59,7 +59,7 @@ def waende(obj, min_m=WAND_MIN_M):
     if not flaechen: return []
     mitte = np.vstack(alle)[:, :2].mean(0); roh = []
     for Q in flaechen:
-        xy = Q[:, :2]; c = xy.mean(0); _, _, vt = np.linalg.svd(xy - c); d = vt[0]; n = np.array([d[1], -d[0]])
+        xy = Q[:, :2]; c = xy.mean(0); _, _, vt = np.linalg.svd(xy - c, full_matrices=False); d = vt[0]; n = np.array([d[1], -d[0]])
         if (c - mitte) @ n < 0: n = -n
         u = (xy - c) @ d; roh.append(dict(c=c, d=d, n=n, u0=float(u.min()), u1=float(u.max()), z_oben=float(Q[:, 2].max())))
     # koplanare Flaechen zusammenfassen (gleiche Normale < 5 Grad, Ebenenabstand < 0,3 m, Laengsueberlappung oder Luecke < 1 m)

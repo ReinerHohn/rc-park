@@ -116,7 +116,7 @@ def kopplung_pruefen(X, Y, ausd, ausd_ziel=None, tiefe=None, fitter=None, gewich
     else: rest_rel = f["rest_median_m"] / max(ausd * s_, 1e-12)
     n_in = int(inl.sum()); ant = n_in / len(X); i_ = np.flatnonzero(inl)
     if n_in < 3: return None, dict(punkte=len(X)), False, "keine Sim3"
-    Q = X[i_]; _, _, Vt = np.linalg.svd(Q - Q.mean(0)); u = (Q - Q.mean(0)) @ Vt[0]
+    Q = X[i_]; _, _, Vt = np.linalg.svd(Q - Q.mean(0), full_matrices=False); u = (Q - Q.mean(0)) @ Vt[0]
     hs = [fit(i_[w])[0] for w in (u < np.median(u), u >= np.median(u)) if w.sum() >= 3]
     hael = float(abs(hs[0] - hs[1]) / np.mean(hs)) if len(hs) == 2 else 1.0
     pr = dict(punkte=len(X), stimmig=n_in, anteil=round(ant, 3), rest_rel=round(rest_rel, 5), fehlermass=mass, massstab_haelften_rel=round(hael, 4))
