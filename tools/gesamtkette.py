@@ -22,6 +22,8 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   kanten     KERNMETHODE (15.11.): tools/kantenstufe.py - SfM-Kameras -> Stabilkarten -> Kanten-Tiefen-Sweep um den MODELLFREIEN Messkoerper (22.11.: 2 m vor bis 0,5 m hinter LoD2-flach + Wandversatz, Wolke nur Lage-Veto; vorher Vormodell = Kreis) -> 3D-Kanten-F1 + Liste fehlender Kanten
   fototor    tools/kameras_aus_buendel.py (K-<foto>.json) -> tools/foto_diff.py auf den Fotos mit bester Modellsicht (Foto-Tor)
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
+  seiten     tools/seiten_luecken.py --holen (Fotos fuer ungesehene Waende nachregistrieren, Tor tools/kameras_nachtragen_tor.py); sehen BELEGTE neue Kameras eine ungesehene Wand
+             und steigt deren Abdeckung messbar: EIN Teillauf ab fenster bis seiten im selben Lauf (tools/seiten_wiederholung.py, 23.11.2026)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
   (immer am Ende) tools/befundliste.py -> audit/befunde.json + audit/befunde/bNN.jpg: sichtbare Fehler je Ort/Art/Beleg/Werkzeug fuer die Agenten-Schleife
@@ -44,6 +46,7 @@ class _Erg:                                                                  # w
 
 _ABSCHLUSS = [None]                                                          # Abschlussfunktion des laufenden Kettenlaufs (fuer Abbrueche aus lauf())
 DATEN = "/media/oem/scan"                                                    # Datenplatte: alles Grosse liegt hier (CLAUDE.md); Test: RCPARK_DATEN
+TEILLAUF = os.environ.get("RCPARK_TEILLAUF") == "1"                          # 23.11.2026: Wiederholung nach dem Nachholen (seiten_wiederholen) - kein Nachholen, kein zweites Wiederholen, keine Schlussberichte
 
 
 def platz_fehler(pfade, min_gb=None):
@@ -214,6 +217,42 @@ def foto_auftrag_skizze(B, wann, ZR, Z, P, W, AU, FV, log):
     except Exception as e_: print(f"Fotoauftrag-Skizze ({wann}) nicht erzeugt: {type(e_).__name__} {e_}", flush=True)
 
 
+def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
+    """23.11.2026 KETTENLUECKE (Lauf 1122q): Stufe seiten holte Fotos fuer ungesehene Waende nach (327 Kameras), aber erst NACH Wandbild/Bauplan/Bau - der Lauf baute ohne sie.
+    Jetzt (tools/seiten_wiederholung.py): (1) ungesehene Waende mit >= 1 BELEGTEN neuen Kamera (audit/kameras_nachtragen_tor.json dieses Laufs), (2) Wandbild nur dieser
+    Waende neu in <daten>/fassade_nachgeholt, (3) Abdeckung vorher/nachher mit dem Mass von seiten_luecken; steigt sie >= MIN_GEWINN -> (4) EIN Teillauf dieser Kette
+    ab RCPARK_SEITEN_WIEDERHOLUNG_AB (Standard fenster) bis seiten mit RCPARK_TEILLAUF=1 (kein Nachholen, keine zweite Wiederholung). Der Bericht B wird danach neu
+    geladen (der Teillauf schreibt dieselbe Datei). Rueckgabe True = Teillauf lief (seine Stufen stehen im Bericht), sonst False (wie bisher)."""
+    import seiten_wiederholung as SW
+    kand, grund = SW.kandidaten(os.path.join(Z, "audit", "kameras_nachtragen_tor.json"), sl, seit=t_sl)
+    if not kand: notiz(B, "seiten_wiederholung", True, wiederholt=False, grund=grund); return False
+    ids = ",".join(w_["id"] for w_ in kand); fn = fo + "_nachgeholt"; gj = os.path.join(Z, "audit", "seiten_gewinn.json")
+    if os.path.isdir(fn): shutil.rmtree(fn)                               # eigener Ausgabeordner dieser Probe (Stand eines frueheren Laufs gilt nicht)
+    t0 = time.time()
+    if lauf(B, "seiten_gewinn_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--messflaeche", "eben", "--aus", fn, "--nur", ids, "--min-flaeche", "6"], log)[0] != 0:
+        notiz(B, "seiten_wiederholung", False, wiederholt=False, fehler=f"Wandbild der Waende {ids} mit den neuen Kameras gescheitert - nachgeholte Kameras bleiben fuer diesen Lauf ungenutzt"); return False
+    rc_g = lauf(B, "seiten_gewinn", [PY, "-I", "tools/seiten_wiederholung.py", "gewinn", sl, fn, "--aus", gj], log, ok=(0, 3))[0]
+    g = json.load(open(gj)) if frisch(gj, t0) else None
+    if rc_g != 0 or not g or not g.get("wiederholen"):
+        notiz(B, "seiten_wiederholung", rc_g in (0, 3), wiederholt=False, kandidaten=kand, gewinn=(g or {}).get("waende"), grund="Abdeckung der ungesehenen Waende steigt nicht messbar" if rc_g == 3 else f"seiten_wiederholung gewinn rc {rc_g}"); return False
+    ab_ = os.environ.get("RCPARK_SEITEN_WIEDERHOLUNG_AB", "fenster")
+    cmd = SW.teillauf_befehl(py_kette or sys.executable, a.quelle, a.ziel, ab_, trotz_lage="--trotz-lage" in sys.argv)
+    tB = dict(schritte=[], _pfad=os.path.join(D, "seiten_wiederholung_schritt.json")); alt = os.environ.get("RCPARK_TEILLAUF"); os.environ["RCPARK_TEILLAUF"] = "1"
+    try: rc_t, _ = _lauf_einmal(tB, "seiten_wiederholung_teillauf", cmd, log, ok=(0, 4), timeout=2 * float(os.environ.get("RCPARK_STUFE_MAX_S", "10800")))      # rc 4 = eine Stufe des Teillaufs rot (steht einzeln im Bericht)
+    finally:
+        if alt is None: os.environ.pop("RCPARK_TEILLAUF", None)
+        else: os.environ["RCPARK_TEILLAUF"] = alt
+    try: neu_ = json.load(open(bp))
+    except Exception as e_: neu_ = None; print(f"Bericht nach dem Teillauf nicht lesbar ({type(e_).__name__} {e_}) - Stufen des Teillaufs fehlen im Bericht", flush=True)
+    if neu_ and len(neu_.get("schritte") or []) >= len(B["schritte"]): B.clear(); B.update(neu_); B["_pfad"] = bp
+    B["schritte"].extend(tB["schritte"])
+    try: nach_ = {w_["nr"]: w_.get("abdeckung") for w_ in json.load(open(sl)).get("waende", [])} if os.path.getmtime(sl) > t0 else {}
+    except Exception: nach_ = {}
+    notiz(B, "seiten_wiederholung", rc_t in (0, 4), wiederholt=True, ab=ab_, teillauf_rc=rc_t, waende=[dict(w_, nachher_ortho=next((x_["nachher"] for x_ in g["waende"] if x_["id"] == w_["id"]), None), nachher_bericht=nach_.get(w_["nr"])) for w_ in kand],
+          hinweis="ANSEHEN: audit/seiten.jpg, audit/neben_*.jpg - die nachgeholten Waende sind jetzt im Wandbild/Bau dieses Laufs; Teillauf-Stufen im Bericht nach LAUF_START ab=" + ab_)
+    return True
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
     ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
@@ -247,10 +286,10 @@ def main():
         except Exception as e: print("Verlustbilanz nicht erstellt:", type(e).__name__, e, flush=True)
         rot = [e for e in B["schritte"][n_start:] if e.get("ok") is False]      # 16.11.2026: die Kette endete IMMER mit rc 0 - auch mit abgestuerzten Stufen
         rc = rc or (4 if rot else 0)
-        B["lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot], rc=rc, abbruch=abbruch, verlust_warnungen=len((B.get("verlustbilanz") or {}).get("warnungen") or [])); __import__("json_sicher").schreiben(bp, B)
-        print(f"ERGEBNIS DES LAUFS: {len(B['schritte']) - n_start} Stufen, " + (f"{len(rot)} NICHT in Ordnung: " + ", ".join(e["stufe"] for e in rot) if rot else "alle in Ordnung") + (" - ABGEBROCHEN" if abbruch else ""), flush=True)
+        B["teillauf_ergebnis" if TEILLAUF else "lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot], rc=rc, abbruch=abbruch, verlust_warnungen=len((B.get("verlustbilanz") or {}).get("warnungen") or [])); __import__("json_sicher").schreiben(bp, B)
+        print(f"ERGEBNIS DES {'TEILLAUFS (seiten_wiederholung)' if TEILLAUF else 'LAUFS'}: {len(B['schritte']) - n_start} Stufen, " + (f"{len(rot)} NICHT in Ordnung: " + ", ".join(e["stufe"] for e in rot) if rot else "alle in Ordnung") + (" - ABGEBROCHEN" if abbruch else ""), flush=True)
         for e in rot: print(f"    {e['stufe']}: {str(e.get('fehler') or ' | '.join(e.get('ende', [])) or e.get('hinweis', ''))[:200]}", flush=True)
-        print("GESAMTKETTE_ENDE", bp, flush=True); return rc
+        print("GESAMTKETTE_TEILLAUF_ENDE" if TEILLAUF else "GESAMTKETTE_ENDE", bp, flush=True); return rc      # Teillauf: eigene Marke (Waechter/Skills suchen GESAMTKETTE_ENDE)
     _ABSCHLUSS[0] = abschluss
     if os.path.islink(P) and not os.path.exists(P) and any(dran(s_) for s_ in ("sfm", "tore", "fassaden", "seiten")):      # 17.11.2026: kaufhaus_gk/pipe zeigt auf eine externe Platte; ist sie nicht eingehaengt, sind alle `exists(pipe/...)` falsch und die Stufen fielen still aus
         notiz(B, "pipe", False, fehler=f"{P} ist eine Verknuepfung auf {os.path.realpath(P)} - Ziel fehlt (Platte nicht eingehaengt?). Stufen sfm/tore/fassaden/seiten finden ihr SfM-Netz, die dichte Wolke und das Netz nicht")
@@ -703,16 +742,20 @@ def main():
                 if lauf(B, f"vorbauten_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0] == 0:
                     vj = os.path.join(fo, f"vorbauten_f{i_:02d}.json"); vb[f"f{i_:02d}"] = len(json.load(open(vj))["kandidaten"]) if os.path.exists(vj) else 0
             notiz(B, "vorbauten", True, kandidaten=vb, hinweis="Vorschlaege mit eigener Messebene (vorbauten_fNN.json, Bild tiefe_fNN.jpg ansehen); noch kein automatischer Bau")
-            t_sl = time.time(); rc, out = lauf(B, "seiten_luecken", [PY, "-I", "tools/seiten_luecken.py", ZR, fo, "--sparse", sp, "--ref-db", db, "--download", "--holen"], log, ok=(0, 3))   # rc 3 = Wand ohne Foto: freie Quellen laden (Commons, Hochblicke, Openverse), Kandidaten nachregistrieren
+            t_sl = time.time(); rc, out = lauf(B, "seiten_luecken", [PY, "-I", "tools/seiten_luecken.py", ZR, fo, "--sparse", sp, "--ref-db", db] + ([] if TEILLAUF else ["--download", "--holen"]), log, ok=(0, 3))   # rc 3 = Wand ohne Foto: freie Quellen laden (Commons, Hochblicke, Openverse), Kandidaten nachregistrieren; im Teillauf nur der Bericht
             sl = os.path.join(Z, "audit", "seiten_luecken.json"); ung = json.load(open(sl)).get("ungesehen", []) if frisch(sl, t_sl) else ["?"]      # 17.11.2026: nach einem Absturz von seiten_luecken galt der Bericht eines frueheren Laufs (oder 'keine Luecke', wenn es keinen gab)
             if ung == ["?"]: notiz(B, "seiten_bericht", False, fehler=f"{sl} wurde nicht neu geschrieben (seiten_luecken rc {rc}) - Luecken UNBEKANNT")
-            wj = os.path.join(Z, "fotowuensche.json"); lauf(B, "foto_auftrag", [PY, "-W", "ignore", "-I", "tools/foto_auftrag.py", ZR, fo, os.path.join(D, f"fotoauftrag_{a.ziel}.html")] + (["--wunsch", wj] if os.path.exists(wj) else []) + (["--seiten-modelle", os.path.join(P, "sfm", "seiten_modelle.json")] if os.path.isfile(os.path.join(P, "sfm", "seiten_modelle.json")) else []), log)   # 16.11.2026: dem Nutzer zeigen, welche Fotos fehlen (Lageplan, Standorte, markierte Ziele)
-            notiz(B, "seiten", not ung, ungesehen=ung, hinweis="" if not ung else "nach dem Nachregistrieren fassade_ortho/fassade_fein neu; bleibt die Wand leer: Kontaktbogen audit/seiten_luecken_kandidaten.jpg ansehen, Kamera aus Modellpunkten + tools/fassade_ein_foto.py (PIPELINE_FASSADEN.md 'Ungesehene Seite')")
+            # 23.11.2026 KETTENLUECKE (Lauf 1122q: 327 nachgeholte Kameras, aber Wandbild/Bau liefen VORHER - nichts davon kam ins Modell): neue BELEGTE Kameras auf einer
+            # ungesehenen Wand + messbar mehr Abdeckung -> EINMAL Wandbild/Bauplan/Bau/Tore/seiten-Bericht im selben Lauf wiederholen (tools/seiten_wiederholung.py)
+            wiederholt = bool(ung and ung != ["?"] and not TEILLAUF and seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp))      # True: der Teillauf schrieb Fotoauftrag + 'seiten' mit dem neuen Stand
+            wj = os.path.join(Z, "fotowuensche.json")
+            if not wiederholt: lauf(B, "foto_auftrag", [PY, "-W", "ignore", "-I", "tools/foto_auftrag.py", ZR, fo, os.path.join(D, f"fotoauftrag_{a.ziel}.html")] + (["--wunsch", wj] if os.path.exists(wj) else []) + (["--seiten-modelle", os.path.join(P, "sfm", "seiten_modelle.json")] if os.path.isfile(os.path.join(P, "sfm", "seiten_modelle.json")) else []), log)   # 16.11.2026: dem Nutzer zeigen, welche Fotos fehlen (Lageplan, Standorte, markierte Ziele)
+            if not wiederholt: notiz(B, "seiten", not ung, ungesehen=ung, hinweis="" if not ung else "Nachholen brachte keine belegte Kamera / keinen messbaren Abdeckungsgewinn (Schritt 'seiten_wiederholung'), oder Teillauf-Bericht; bleibt die Wand leer: Kontaktbogen audit/seiten_luecken_kandidaten.jpg ansehen, Kamera aus Modellpunkten + tools/fassade_ein_foto.py (PIPELINE_FASSADEN.md 'Ungesehene Seite')")
         else: notiz(B, "seiten", False, fehler="kein fassaden.json (Stufe fenster) oder kein SfM-Netz/Datenbank")
     # 21.11.2026 SACKGASSEN-TOR (Nutzer: "Warum wurde das nicht bemerkt? ... die fliessen nicht in die Kette ein"): der Ebenen-Sweep schrieb vier Tage lang Vorbau-'Vorschlaege',
     # die kein Generator las, und die Stufe stand als 'in Ordnung' im Bericht. Hier je Kettenergebnis: liegt die Datei vor und hat Inhalt, MUSS der Generator (oder das von ihm
     # gerufene Werkzeug) sie verbauen - sonst 'ok: False' mit Namen. Liste der bekannten offenen Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md.
-    if os.path.exists(gp_) and (dran("bauplan") or dran("fassaden") or dran("seiten")):
+    if os.path.exists(gp_) and (dran("bauplan") or dran("fassaden") or dran("seiten")) and not TEILLAUF:      # Teillauf: der aeussere Lauf prueft auf dem Endstand
         gtxt = open(gp_).read(); fk_txt = open(os.path.join(ROOT, "tools", "fassaden_kette.py")).read(); sg_ = []
         def hat(f_, schl_=None):
             if not os.path.exists(f_): return False
@@ -752,7 +795,7 @@ def main():
     # 22.11.2026 DETAILANSICHT JE BAUTEIL (0_DURCHBRUCH_AGENTEN_SCHLEIFE.md "Ein Nebenbild reicht nicht"): am festen Nebenbild (Steilblick 113231) wirkten Vordach und
     # Laterne flach/fehlend, das STL hatte beides. Je Bauteil (audit/*_auto.json, vordach_profil, dach_profil laterne/spitze) beste SfM-Kamera -> audit/neben_detail_<bauteil>.jpg
     # + Raster audit/neben_details.jpg. Bericht, kein Tor (rc 3 = kein Bauteil/keine Kamera). CPU-Render, kein GPU-Bedarf.
-    if os.path.isdir(os.path.join(Z, "audit")) and os.path.exists(os.path.join(ROOT, json.load(open(ZJ)).get("stl") or "-")):
+    if os.path.isdir(os.path.join(Z, "audit")) and os.path.exists(os.path.join(ROOT, json.load(open(ZJ)).get("stl") or "-")) and not TEILLAUF:
         rc_d, _ = lauf(B, "neben_details", [PY, "-W", "ignore", "-I", "tools/neben_details.py", ZR, "--daten", D], log, ok=(0, 3))
         try:
             nd_ = json.load(open(os.path.join(Z, "audit", "neben_details.json")))
@@ -762,7 +805,7 @@ def main():
         except Exception as e: notiz(B, "neben_details_ergebnis", False, fehler=f"audit/neben_details.json nicht lesbar (rc {rc_d}): {type(e).__name__} {e}"[:240])
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
-    if os.path.isdir(os.path.join(Z, "audit")):
+    if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
         rc_b, _ = lauf(B, "befundliste", [PY, "-W", "ignore", "-I", "tools/befundliste.py", ZR, "--daten", D, "--bericht", bp, "--ab-schritt", str(n_start), "--log", log, "--ab-zeile", str(log_ab)], log, ok=(0, 3))
         try:
             bf_ = json.load(open(os.path.join(Z, "audit", "befunde.json"))); top_ = [b_ for b_ in bf_["befunde"] if b_["stufe"] == "FEHLER"][:5]
@@ -770,7 +813,7 @@ def main():
                   oben=[f"{b_['id']} {b_['art']} {(b_.get('ort') or {}).get('fassade') or ''} {(b_.get('ort') or {}).get('bauteil') or ''} -> {(b_.get('vorschlag') or {}).get('werkzeug', '')[:60]}" for b_ in top_],
                   hinweis="ANSEHEN: audit/befunde/bNN.jpg; je Befund ein Agent (Skill kette-schleife)")
         except Exception as e: notiz(B, "befundliste_ergebnis", False, fehler=f"audit/befunde.json nicht lesbar (befundliste rc {rc_b}): {type(e).__name__} {e}"[:240])
-    foto_auftrag_skizze(B, "ende", ZR, Z, P, W, AU, FV, log)               # 22.11.2026: Fotoauftrag mit dem Stand am Laufende
+    if not TEILLAUF: foto_auftrag_skizze(B, "ende", ZR, Z, P, W, AU, FV, log)               # 22.11.2026: Fotoauftrag mit dem Stand am Laufende
     return abschluss()
 
 
