@@ -74,6 +74,17 @@ for ziel, soll in ((32.0, "gemessen"), (28.0, "verworfen")):
     z_sp, g, _ = SU.foto_messen(maske(c), lambda X, c=c: FO.projektion(np.atleast_2d(X), c), AX, zs, C)
     if soll == "gemessen": pruef(oben < 0 and z_sp is not None and abs(z_sp - Z_SPITZE) <= 0.3, f"Bildkante unter dem Suchende (z 58 bei y {oben:.0f} px), Spitze sichtbar: {z_sp} ({g})")
     else: pruef(z_sp is None, f"Bildkante schneidet die Laterne: {'verworfen (' + str(g) + ')' if z_sp is None else 'FALSCHE Spitze ' + str(z_sp)}")
+# Offene Laterne: Himmel zwischen den Pfosten an der Achse (z 46,3..48,0, +-0,35 m) - das Achsenende dort ist KEINE Spitze (Probe 1122p: Einzelwerte 46,5..49,8 bei Median 52,6)
+falsch = []
+for i in range(6):
+    c, C = kamera(2 * math.pi * i / 6 + 0.2, 60.0, 1.6); m = maske(c).copy(); b = np.array([AX[0] - C[0], AX[1] - C[1], 0.0]); b /= np.linalg.norm(b); q = np.array([-b[1], b[0], 0.0])
+    for z in np.arange(46.3, 48.0, 0.02):
+        P2 = np.array([[AX[0], AX[1], z]]) + np.outer(np.linspace(-0.35, 0.35, 15), q); p2 = np.round(FO.projektion(P2, c)[0]).astype(int)
+        for (x_, y_) in p2:
+            if 0 <= y_ < HI and 0 <= x_ < WI: m[max(0, y_ - 1):y_ + 2, max(0, x_ - 1):x_ + 2] = True
+    z_sp, g, _ = SU.foto_messen(m, lambda X, c=c: FO.projektion(np.atleast_2d(X), c), AX, zs, C)
+    if z_sp is not None and z_sp < Z_SPITZE - 1.0: falsch.append(round(z_sp, 2))
+pruef(not falsch, f"offene Laterne: keine Spitze in der Pfostenluecke ({falsch or 'keine'})")
 import bauteile as BT
 ab = BT.spitze_ab(dict(E, achse=AX.tolist()))
 pruef(ab is not None and Z_TRAUFE + 4 < ab <= Z_KREMPE, f"spitze_ab {ab}: Fotoblock ab Laternenhals (zwischen {Z_TRAUFE + 4} und {Z_KREMPE})")

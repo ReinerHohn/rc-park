@@ -87,6 +87,10 @@ def foto_messen(maske, proj, A, zs, C):
             yt = int(np.argmax(col))
             if best is None or yt < best[0] - 1: best = (yt, k / ppm[it])
     if best is not None and abs(best[1]) > GIPFEL_TOL_M: return None, f"Silhouettengipfel {best[1]:+.1f} m neben der Achse (Traufe/Dach verdeckt die Spitze)", {}
+    # 23.11.2026 (Probe 1122p: Einzelspitzen 46,5..49,8 m bei Median 52,6): in einer OFFENEN Laterne ist die Achse zwischen den Pfosten Himmel - das Achsenband endet dort,
+    # die Haube liegt aber darueber. Bauwerk an der Achse mehr als LUECKE_M ueber dem Ende = keine Spitze (Foto entfaellt, statt die Luecke als Spitze zu zaehlen).
+    vpm = abs(p[min(top + 1, len(zs) - 1), 1] - p[max(top - 1, 0), 1]) / max(zs[min(top + 1, len(zs) - 1)] - zs[max(top - 1, 0)], 1e-9)   # Bildpixel je Meter entlang der Achse
+    if best is not None and best[0] < p[top, 1] - (LUECKE_M + dz) * vpm: return None, "Bauwerk ueber dem Achsenende (offene Laterne/Luecke)", {}
     # Spitze genauer: zwischen top und top+1 die Zeile des letzten Bauwerkspixels auf der Achse (Unterabtastung dz)
     z_sp = float(zs[top] + dz / 2)
     halb = {}
