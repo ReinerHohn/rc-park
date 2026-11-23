@@ -228,13 +228,29 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
     if not kand: notiz(B, "seiten_wiederholung", True, wiederholt=False, grund=grund); return False
     ids = ",".join(w_["id"] for w_ in kand); fn = fo + "_nachgeholt"; gj = os.path.join(Z, "audit", "seiten_gewinn.json")
     if os.path.isdir(fn): shutil.rmtree(fn)                               # eigener Ausgabeordner dieser Probe (Stand eines frueheren Laufs gilt nicht)
-    t0 = time.time()
-    if lauf(B, "seiten_gewinn_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--messflaeche", "eben", "--aus", fn, "--nur", ids, "--min-flaeche", "6"], log)[0] != 0:
+    sj = os.path.join(Z, "audit", "ortho_sperre.json"); sp_alt = os.environ.get("RCPARK_ORTHO_SPERRE"); gesperrt = None
+    if os.path.exists(sj): os.remove(sj)                                  # Sperre eines frueheren Laufs gilt nicht
+    def probe(name_o, name_g):                                            # Wandbild der Kandidaten (mit Einzelbildern fuer wandbild_einigkeit) + Gewinn-Tor (Abdeckung UND Deckungsgleichheit, 23.11.2026)
+        if os.path.isdir(fn): shutil.rmtree(fn)
+        t0_ = time.time()
+        if lauf(B, name_o, [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--messflaeche", "eben", "--aus", fn, "--nur", ids, "--min-flaeche", "6", "--einzeln"], log)[0] != 0: return None, None
+        rc_ = lauf(B, name_g, [PY, "-I", "tools/seiten_wiederholung.py", "gewinn", sl, fn, "--aus", gj, "--alt", fo] + ([] if gesperrt else ["--sperre-aus", sj]), log, ok=(0, 3))[0]
+        return rc_, (json.load(open(gj)) if frisch(gj, t0_) else None)
+    t0 = time.time(); rc_g, g = probe("seiten_gewinn_ortho", "seiten_gewinn")
+    if rc_g is None:
         notiz(B, "seiten_wiederholung", False, wiederholt=False, fehler=f"Wandbild der Waende {ids} mit den neuen Kameras gescheitert - nachgeholte Kameras bleiben fuer diesen Lauf ungenutzt"); return False
-    rc_g = lauf(B, "seiten_gewinn", [PY, "-I", "tools/seiten_wiederholung.py", "gewinn", sl, fn, "--aus", gj], log, ok=(0, 3))[0]
-    g = json.load(open(gj)) if frisch(gj, t0) else None
+    if rc_g == 3 and g and g.get("sperre") and os.path.exists(sj):        # (c) uneiniges Wandbild: EINMAL ohne die uneinigsten Fotos (wandbild_einigkeit.ausschluss_vorschlag); gilt dann auch fuer den Teillauf
+        gesperrt = json.load(open(sj)); os.environ["RCPARK_ORTHO_SPERRE"] = sj; g0 = g.get("waende")
+        rc_g, g = probe("seiten_gewinn_ortho_gesperrt", "seiten_gewinn_gesperrt")
+        if rc_g != 0 or not g or not g.get("wiederholen"):
+            if sp_alt is None: os.environ.pop("RCPARK_ORTHO_SPERRE", None)
+            else: os.environ["RCPARK_ORTHO_SPERRE"] = sp_alt
+            notiz(B, "seiten_wiederholung", rc_g in (0, 3), wiederholt=False, kandidaten=kand, gewinn=g0, gewinn_gesperrt=(g or {}).get("waende"), sperre=gesperrt,
+                  grund="Abdeckung ohne Deckungsgleichheit - Kameras ungenau; auch ohne die uneinigsten Fotos kein Gewinn"); return False
     if rc_g != 0 or not g or not g.get("wiederholen"):
-        notiz(B, "seiten_wiederholung", rc_g in (0, 3), wiederholt=False, kandidaten=kand, gewinn=(g or {}).get("waende"), grund="Abdeckung der ungesehenen Waende steigt nicht messbar" if rc_g == 3 else f"seiten_wiederholung gewinn rc {rc_g}"); return False
+        mel_ = "; ".join(f"{w_['id']}: {w_['meldung']}" for w_ in (g or {}).get("waende") or [] if w_.get("meldung"))
+        notiz(B, "seiten_wiederholung", rc_g in (0, 3), wiederholt=False, kandidaten=kand, gewinn=(g or {}).get("waende"),
+              grund=(mel_ or "Abdeckung der ungesehenen Waende steigt nicht messbar") if rc_g == 3 else f"seiten_wiederholung gewinn rc {rc_g}"); return False
     ab_ = os.environ.get("RCPARK_SEITEN_WIEDERHOLUNG_AB", "fenster")
     cmd = SW.teillauf_befehl(py_kette or sys.executable, a.quelle, a.ziel, ab_, trotz_lage="--trotz-lage" in sys.argv)
     tB = dict(schritte=[], _pfad=os.path.join(D, "seiten_wiederholung_schritt.json")); alt = os.environ.get("RCPARK_TEILLAUF"); os.environ["RCPARK_TEILLAUF"] = "1"
@@ -242,6 +258,9 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
     finally:
         if alt is None: os.environ.pop("RCPARK_TEILLAUF", None)
         else: os.environ["RCPARK_TEILLAUF"] = alt
+        if gesperrt is not None:
+            if sp_alt is None: os.environ.pop("RCPARK_ORTHO_SPERRE", None)
+            else: os.environ["RCPARK_ORTHO_SPERRE"] = sp_alt
     try: neu_ = json.load(open(bp))
     except Exception as e_: neu_ = None; print(f"Bericht nach dem Teillauf nicht lesbar ({type(e_).__name__} {e_}) - Stufen des Teillaufs fehlen im Bericht", flush=True)
     if neu_ and len(neu_.get("schritte") or []) >= len(B["schritte"]): B.clear(); B.update(neu_); B["_pfad"] = bp
@@ -249,7 +268,7 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
     try: nach_ = {w_["nr"]: w_.get("abdeckung") for w_ in json.load(open(sl)).get("waende", [])} if os.path.getmtime(sl) > t0 else {}
     except Exception: nach_ = {}
     notiz(B, "seiten_wiederholung", rc_t in (0, 4), wiederholt=True, ab=ab_, teillauf_rc=rc_t, waende=[dict(w_, nachher_ortho=next((x_["nachher"] for x_ in g["waende"] if x_["id"] == w_["id"]), None), nachher_bericht=nach_.get(w_["nr"])) for w_ in kand],
-          hinweis="ANSEHEN: audit/seiten.jpg, audit/neben_*.jpg - die nachgeholten Waende sind jetzt im Wandbild/Bau dieses Laufs; Teillauf-Stufen im Bericht nach LAUF_START ab=" + ab_)
+          sperre=gesperrt, hinweis="ANSEHEN: audit/seiten.jpg, audit/neben_*.jpg - die nachgeholten Waende sind jetzt im Wandbild/Bau dieses Laufs; Teillauf-Stufen im Bericht nach LAUF_START ab=" + ab_)
     return True
 
 

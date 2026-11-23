@@ -39,6 +39,8 @@ def wand(fid, n, o, d):
 def ortho(ordner, F, anteil):
     """ortho_<id>.png mit Bilddaten auf dem linken <anteil> der Wand."""
     im = np.zeros((110, 110, 3), np.uint8); im[5:105, 5:5 + int(round(100 * anteil))] = 120; cv2.imwrite(os.path.join(ordner, f"ortho_{F['id']}.png"), im)
+    # 23.11.2026: wie fassade_ortho auch abdeckung_ (3 Fotos x 20) und struktur_ (10 = Fotos einig) - das Gewinn-Tor verlangt Deckungsgleichheit (wandbild_einigkeit)
+    cv2.imwrite(os.path.join(ordner, f"abdeckung_{F['id']}.png"), np.where(im[:, :, 0] > 0, 60, 0).astype(np.uint8)); cv2.imwrite(os.path.join(ordner, f"struktur_{F['id']}.png"), np.where(im[:, :, 0] > 0, 10, 0).astype(np.uint8))
 
 
 def objekt_bauen(d):
