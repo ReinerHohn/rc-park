@@ -787,6 +787,7 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
         o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0)); w0 = min(0.0, ww) - einbinden
         P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
         for gi_, g in enumerate(F["gruppen"]):
+            if g.get("verworfen"): continue      # 23.11.2026: Beleg-/Fototor (tools/vorbau_fototor.py) hat die Gruppe verworfen (Phantom f03 1122t) - Index gi_ bleibt fuer vordach_profil gleich
             KM_ = g.get("kanten_mass"); G_ = g.get("galerie")
             if KM_ and KM_.get("kasten") and os.environ.get("OHNE_KANTENMASS") != "1":
                 # 21.11.2026 (Nutzer: "so wenig allgemeine Bauteile wie moeglich ... was nicht moeglich ist, wird aus allgemeinen Bauteilen gebaut"): Vorbau aus den dichten triangulierten
@@ -1372,11 +1373,18 @@ def rueckwaende(koerper, felder, tiefe, d, rand=0.6, schliessen=0.05, schritt=0.
             if vorn - 0.6 < w < sv and (S ^ innen).area() > 1e-4: tiefst = float(w)
         ziel = vorn - tiefe if t_f is None else min(vorn - tiefe, -t_f)       # gemessene Laibung absolut (vorn liegt bei einer Nische schon auf deren Grund - nicht doppelt zaehlen)
         wp = ziel if tiefst is None else min(ziel, tiefst - schritt / 2 - 0.01)
-        ring = Q.offset(d, JoinType.Miter) - Q
-        k_ = M.extrude(ring, 0.5 * (sv + sh) - (wp - d)).translate((0, 0, wp - d)) + M.extrude(Q, d).translate((0, 0, wp - d))
-        k_ = k_.transform(W.matrix(0)); zus = k_ if zus is None else zus + k_
+        ring = Q.offset(d, JoinType.Miter) - Q; h_ = 0.5 * (sv + sh) - (wp - d)
+        if not h_ > 0: info.append(dict(e, fehlt="Kragenhoehe %.3f <= 0 (Platte vor der Wandschale: vorn %.2f, Schale %.2f..%.2f, Platte %.2f)" % (h_, vorn, sh, sv, wp))); continue   # 24.11.2026 (1122u): sonst InvalidConstruction -> ganzer Koerper leer
+        k_ = M.extrude(ring, h_).translate((0, 0, wp - d)) + M.extrude(Q, d).translate((0, 0, wp - d))
+        k_ = k_.transform(W.matrix(0))
+        if k_.status() != k_.status().__class__.NoError or k_.num_tri() == 0: info.append(dict(e, fehlt="Rueckwand ungueltig (%s)" % k_.status())); continue
+        zus = k_ if zus is None else zus + k_
         info.append(dict(e, vorn=round(vorn, 3), schale=[round(sh, 3), round(sv, 3)], tiefe_ist=round(vorn - wp, 3), flaeche_m2=round(float(Q.area()), 3), erkannt=k, nur_feld=bool(nur)))
-    return (koerper if zus is None else koerper + zus), info
+    if zus is None: return koerper, info
+    neu = koerper + zus
+    if neu.num_tri() == 0 or neu.status() != neu.status().__class__.NoError:   # 24.11.2026: nie einen leeren Koerper zurueckgeben (1122u: STL 84 Byte, Kette meldete rc 0)
+        print("rueckwaende: Vereinigung ungueltig (%s) - Rueckwaende weggelassen" % neu.status()); info.append(dict(fehlt="Vereinigung ungueltig (%s), alle Rueckwaende weggelassen" % neu.status())); return koerper, info
+    return neu, info
 
 
 def entlueften(koerper, breite=0.3, schritt=0.3):
@@ -1469,7 +1477,9 @@ def Z_F(me): return np.asarray(me.tri_verts)
 def stl_schreiben(model, pfad, kopf=b"rcpark"):
     """Binaeres STL; Ecken auf 1 Mikrometer verschweisst, entartete Dreiecke entfernt (sonst fallen Splitter als Einzelkoerper heraus)."""
     import os
-    model = kneifkanten_schliessen(model, r=0.25, stellen=3)            # im Druckmassstab (mm): Beruehrkanten, die erst nach dem Skalieren zusammenfallen (16.11.2026 Blendmasswerk)
+    if model.num_tri() == 0 or model.status() != model.status().__class__.NoError:   # 24.11.2026 (1122u): leeres Modell nie als STL schreiben - Generator bricht ab statt still Erfolg zu melden
+        raise SystemExit("stl_schreiben: Modell LEER oder ungueltig (%s, %d Dreiecke) - kein STL geschrieben: %s" % (model.status(), model.num_tri(), pfad))
+    model = kneifkanten_schliessen(model, r=0.25, stellen=3)           # im Druckmassstab (mm): Beruehrkanten, die erst nach dem Skalieren zusammenfallen (16.11.2026 Blendmasswerk)
     mesh = model.to_mesh(); V = np.array(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
     vq, inv = np.unique(np.round(V.astype(np.float64), 3), axis=0, return_inverse=True); F = inv.ravel()[F]; V = vq.astype(np.float32)
     F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
