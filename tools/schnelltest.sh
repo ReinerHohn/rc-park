@@ -36,7 +36,18 @@ import sys; sys.path.insert(0, "tools"); from fenster_aus_parsing import raster_
 f = [dict(u0=u, u1=u + 1.2, z0=z, z1=z + 2.0, teiler=[], kaempfer=None, scheiben=1, stimmen_min=3) for z in (3.5, 6.5) for u in (-3, -0.5, 2)]; del f[2]
 r = raster_regel(f, None, dict(u0=-5, z1=10, zelle=0.05), 28); assert len(r) == 6 and sum(1 for x in r if x.get("ergaenzt")) == 1
 PY
-S=$(mktemp -d); O=ober_tvdr; FO=/media/oem/scan/rc-park_daten/$O/fassade; STL_O=$(eingabe modelle/stl/${O}_1-87.stl); FD_O=$(eingabe "$(python3 -c "import json; print(json.load(open('modelle/$O/objekt.json'))['fotos_dir'])")")
+$G -I - <<'PY' && ok "fassaden_kette.steinzone_oben: Leerstreifen unten (fehlendes Netz) bricht die Steinzone nicht ab" || rot "fassaden_kette.steinzone_oben"
+import sys; sys.path.insert(0, "tools"); import numpy as np
+from fassaden_kette import steinzone_oben
+px = 0.05; H, W = 740, 150; z = (H - 1 - np.arange(H))[:, None] * px * np.ones((1, W))     # Zeile 0 = oben
+rng = np.random.default_rng(0); rel = np.where(rng.random((H, W)) < 0.97, 0.02, 0.0); putz = z > 9.0
+r1 = rel.copy(); r1[z < 1.55] = 0.0; r1[(z >= 1.55) & (z < 1.9) & (rng.random((H, W)) < 0.75)] = 0.0   # Kette 1122t, Schwabentor West w00: 1,55 m ohne Netz + Uebergang
+assert 8.9 <= steinzone_oben(r1, putz, px) <= 9.1, steinzone_oben(r1, putz, px)      # vorher 1,5 m -> keine Feinrechnung
+assert 8.9 <= steinzone_oben(rel, putz, px) <= 9.1                                    # Block ab Boden: wie bisher
+r3 = rel.copy(); r3[z < 8.0] = 0.0; assert steinzone_oben(r3, putz, px) == 1.5       # Steine erst ab 8 m: kein Block von unten (wie bisher nur Sockel)
+assert steinzone_oben(rel, None, px) == 12.0 and steinzone_oben(np.zeros((10, 5)), None, px) == 0.5
+PY
+S=$(mktemp -d); O=ober_tvdr;FO=/media/oem/scan/rc-park_daten/$O/fassade; STL_O=$(eingabe modelle/stl/${O}_1-87.stl); FD_O=$(eingabe "$(python3 -c "import json; print(json.load(open('modelle/$O/objekt.json'))['fotos_dir'])")")
 if [ ! -f $FO/elemente.json ]; then ueb "Fenster/Fassadenbild ober_tvdr (4 Pruefungen): $FO/elemente.json fehlt (Datenplatte?)"
 else
   fp=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1)      # 22.11.2026: einmal rechnen, f01 und f02 aus derselben Ausgabe (lief vorher zweimal gleich)
