@@ -499,3 +499,8 @@ Stand und naechste Schritte: `.claude/UEBERGABE.md`. Kette 1122o in fassaden_ket
 
 ## UEBERGABE 23.11.2026 14:25
 Stand und naechste Schritte: `.claude/UEBERGABE.md`. Kette 1122s laeuft (Sued erneut NICHT vereint - Kopplung kippelt, Agent a8ff); Agenten a78d (K-Dateien alter Rahmen), a150 (Treppentuermchen); fertig ungemergt adff (Fotosteine je Standort).
+
+## 23.11.2026 ~14:50 Probe 21 in main, 1122s abgebrochen
+- Probe 21 = adff (steine_aus_foto max 4 je Standort) + a8ff (Eckstufe rechnet auf DB-Kopie, fester Keim/1 Faden; URSACHE Kippeln: Eck-Mapper beruehrte db_mapper.db -> mtime neu -> Teilmodelle neu gewuerfelt; Teil 1 Haelften-Probe 1,8-1,9 % (r) vs 2,0-2,3 % (s), Grenze 2 % - liegt AN der Grenze, nicht gelockert) + a78d (tools/kamera_rahmen.py: 231 K-Dateien aus 1122q im alten Rahmen, 48-60 m/137-174 Grad daneben -> Stempel, ersetzen/sperren) + a150 (tools/rund_aus_huelle.py + drehkoerper_aus_fotos.py: Tuermchen Traufe 11,6/Spitze 13,7 statt Zylinder 14,0 flach; ~35 -> ~60 %). Schnelltest 0 Fehler (558 s).
+- 1122s auf Nutzer-Ja abgebrochen (bei fassaden_kette; Sued flach, Sued-Kameras alter Rahmen = verdaechtig). Naechster Lauf 1122t = erster mit allen Fixes; Sued-Kopplung wird einmal neu gewuerfelt (DB von 1122s beruehrt).
+- Offen: Teil 1 an der 2-%-Grenze -> Messversuch a/b gemeinsam bewerten (Eichung) oder Uebereck-Fotos Sued/West.

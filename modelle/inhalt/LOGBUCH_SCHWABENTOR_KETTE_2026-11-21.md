@@ -48,3 +48,5 @@
 - Z.401: ## 20:30 Agent Dachueberstand-Rueckschritt (1121p PASST -> 1121q 0,12 statt 0,9 m)
 - Z.459: ## UEBERGABE 22.11.2026 16:00
 - Z.480: ## UEBERGABE 22.11.2026 23:15
+- Z.500: ## UEBERGABE 23.11.2026 14:25
+- Z.503: ## 23.11.2026 ~14:50 Probe 21 in main, 1122s abgebrochen

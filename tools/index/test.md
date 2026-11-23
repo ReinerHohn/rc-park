@@ -1,4 +1,4 @@
-# Werkzeuge: test (175)
+# Werkzeuge: test (178)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -60,6 +60,7 @@
 - `tools/test_kamera_ausgleich.py` [seg] test_kamera_ausgleich.py - BS3d synthetischer Beweis: Kameras absichtlich verschieben (Kamerazentrum 3/5/10 cm, Rotation 0,3/0,5/1 Grad), pruefen ob der Ausgleich (kamera_ausgleich
 - `tools/test_kamera_klumpen.py` [-] Fester Test (Sekunden, CPU) fuer KAMERA-KLUMPEN (tools/lage_proben.kamera_nah / kameras_einmal, tools/sfm_lod2_ausrichten.py AUSR_KLUMPEN). Befund Kettenlauf schwabentor-1122p (23.
 - `tools/test_kamera_lod2.py` [seg] test_kamera_lod2.py - BEWEIS (synthetisch, bekannte Wahrheit) fuer kamera_lod2_nachfuehren.py. Generisch: jedes Objekt mit LoD2 und einer K-Kamerapose. Bild = LoD2-Szene (Maleralgo
+- `tools/test_kamera_rahmen.py` [-] test_kamera_rahmen.py - K-Kameras im alten Rahmen (schwabentor-1122, 23.11.2026: 231 nachgetragene/verfeinerte Kameras aus dem Nachholen 1122q blieben nach neuem SfM 1122r liegen, 
 - `tools/test_kamera_verfeinern_stapel.py` [seg] test_kamera_verfeinern_stapel.py - Stapelmodus von tools/kamera_verfeinern.py (--liste) == Folge der Einzelaufrufe (23.11.2026, Kette 1122q: 327 Einzelprozesse = 75 von 165 min der
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
@@ -112,6 +113,7 @@
 - `tools/test_rumpf_wolke.py` [gen] test_rumpf_wolke.py - synthetischer Beweis fuer bauteil_rumpf_wolke (bekanntes Haus: Quader + Satteldach, gedreht 15 Grad; Rauschen 3 cm, Ausreisser, Luecken, Sims; Szenario A = al
 - `tools/test_rund_aus_umriss.py` [seg] test_rund_aus_umriss.py - fester synthetischer Test fuer tools/rund_aus_umriss.py (21.11.2026). Zylinder r 1,50 m (Mitte 0,3 / -0,2) mit Steinfugen-Textur vor gestreiftem Hintergru
 - `tools/test_rund_eigenverdeckung.py` [seg] test_rund_eigenverdeckung.py - Verdeckungspruefung in tools/rund_aus_umriss.py ignoriert das VORMODELL des gemessenen Rundkoerpers (23.11.2026). Befund Kettenlauf 1122p (Schwabento
+- `tools/test_rund_huelle.py` [gen] test_rund_huelle.py - Rundkoerper mit Dach aus EINSEITIGEN Silhouetten (tools/rund_aus_huelle.py, tools/drehkoerper_aus_fotos.py), 23.11.2026.
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_bruecke_kette.py` [-] test_seiten_bruecke_kette.py - Befund Kette 1122q (23.11.2026): Suedseite (Teil 1) nicht gebaut, Fernfotos abgeschnitten. Ursache 1: die Kette rief tools/seiten_erkennen.py nie mit
@@ -139,6 +141,7 @@
 - `tools/test_stabil_schnitt.py` [-] test_stabil_schnitt.py - Schnelltest fuer tools/sfm_stabil_schnitt.schnitt(): synthetische Kameras entlang einer Strasse (fast kollinear, wie Martinstor), Lauf B = Aehnlichkeitstra
 - `tools/test_standort_und_svd.py` [-] test_standort_und_svd.py - Kette 1122r (23.11.2026): zwei Abstuerze, die das vereinte Sued-Modell zerstoerten.
 - `tools/test_steine_paar.py` [seg] Test steine_aus_foto.py Paar-Probe (21.11.2026, Schwabentor West w00): synthetische Quaderwand (3 x 3 m, Schichten 35 cm, Fugen 2 cm) und vier Fotos. A1 = naechstes Foto, aber verw
+- `tools/test_steine_standort.py` [seg] Test steine_aus_foto.py Fotowahl je STANDORT (23.11.2026, Schwabentor Sued w05/w07 "STRENG: kein Ergebnis (kein Gegenfoto)"). Befund: die Rangliste nahm die 12 Fotos mit der feinst
 - `tools/test_stoermaske.py` [seg] test_stoermaske.py - SYNTHETISCHER BEWEIS fuer teil_fotoform --stoermaske (SPEC_STOERMASKE). Foto t1 = echtes Foto, t2 = dasselbe mit eingesetztem 'Stoerer' (Schachbrett-Rechteck m
 - `tools/test_sweep_synth.py` [-] test_sweep_synth.py <objekt> --wolke w.npy: Beweistest der GPU-Sweep-Methode fuer ALLE aktiven Bauteile (modelle/archiv/METHODE_GPU_SWEEP.md). Wolke = Modellflaeche um bekannten Ve
 - `tools/test_teil_fotoform.sh` [sh] Beweis (L-KR25): Varianten per Generator; bestanden 10.11. 11:20: OG-Fenster F1 0,891 -> 0,860 (u+0,3 m) / 0,826 (1 statt 3 Lichter), rumpf_og 0,750 -> 0,711 / 0,715. Gegenprobe te

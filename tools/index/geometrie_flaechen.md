@@ -1,4 +1,4 @@
-# Werkzeuge: geometrie_flaechen (37)
+# Werkzeuge: geometrie_flaechen (38)
 - `tools/arkaden_fit.py` [seg] arkaden_fit.py - Arkadenboegen als FORMFAMILIE statt freier Kettenbildung (Koordinator 9.11., Runde 3). Eingabe: Gitter mit "saeulen" [{cx,cy,R,z_fuss,z_kopf}], ein oder mehrere Sw
 - `tools/auto_fit_alle.py` [-] auto_fit_alle.py <objekt> --wolke w.npy --fotos kam.json --bilder dir [--typen a,b,..] [--iter 40] Automatische Annaeherung ALLER parametrischen Bauteile an die Wolke (Nutzerwunsch
 - `tools/autofit.py` [seg] autofit.py — ARCHETYP-AGNOSTISCHER Autofit-Kern.
@@ -33,6 +33,7 @@
 - `tools/objekte_zuschnitt.py` [seg] Netz-Zuschnitt per SAM-Masken-Abstimmung (robuster als Umrisslinien): je Dreieck (Schwerpunkt) in jedem Foto prufen, ob es innerhalb der SAM-Maske SEINES Objekts liegt (nur wo es s
 - `tools/plane_segment.py` [seg] plane_segment.py — SAUBERE Flächen + Geo-Kanten statt Linien-Konfetti. Ansatz (Computer-Vision, library-basiert): Oberflächen-NORMALEN aus dem DEM -> Felzenszwalb- Segmentierung (s
 - `tools/restfeld_ausgleich.py` [-] restfeld_ausgleich.py - Ebene 1 der Konvergenzschleife (5.11.): je beobachteter Ebene (Wand/Dachflaeche) aus dem Restfeld (tools/restfeld_fassade.py) eine robuste lineare Korrektur
+- `tools/rund_aus_huelle.py` [seg] rund_aus_huelle.py - RUNDKOERPER (Treppentuermchen, Rundturm) mit DACH als Drehkoerper aus EINSEITIGEN Foto-Silhouetten (Sehstrahl-Huelle), 23.11.2026.
 - `tools/saeulen_fit.py` [seg] Pfeiler/Saeulen als Formfamilie (senkrechter Zylinder) aus der dichten Wolke - Kanten runder Pfeiler sind Silhouetten und wandern mit dem Blick, der Tiefen-Sweep verwirft sie zu Re
 - `tools/scan_zu_koerper.py` [seg] scan_zu_koerper.py — beliebiges Objekt aus einer Punktwolke/einem Scan-Mesh -> sauberer Schichtkoerper (STL, Meter).
 - `tools/viadukt_autofit.py` [seg] viadukt_autofit.py — GESCHLOSSENE SCHLEIFE: Foto messen → Modell anpassen → nachmessen → wiederholen bis konvergiert. Die Realität (Foto-Ziele) ist fix; die Generator-Parameter wer
