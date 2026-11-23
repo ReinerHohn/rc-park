@@ -13,11 +13,39 @@ Automatik ohne Handpicks:
   --schreiben: K-<FOTO>.json 'kamera' ersetzen (alte bleibt als 'kamera_vorher'). Ohne Schalter nur Bericht.
 Grenzen: so gut wie Modell und Referenzkamera; mindestens 2 Flaechenrichtungen mit je >= 15 Inliern,
 sonst gilt die Kamera weiter als unsicher (rc 3).
+STAPEL (--liste, 23.11.2026, Kette 1122q: 327 Einzelprozesse = 75 von 165 min der Stufe seiten_luecken, je Prozess ~5 s nur Importe + STL-Laden, dazu je Foto
+die Merkmale und Tiefenbilder von ~6 Referenzen neu - 1962 Referenzaufrufe auf nur 259 verschiedene Referenzen): EIN Prozess, Fotos in der Reihenfolge der Liste,
+K-Dateien werden je Foto frisch gelesen (ein im Stapel geschriebenes Foto ist fuer die folgenden Referenz wie beim Einzelaufruf). Ergebnis = Folge der Einzelaufrufe:
+Tiefenbild-Zwischenspeicher je (Foto, rvec, t, f_px, cx, cy) - ein frueher nachgezogenes Referenzfoto bekommt ein NEUES Tiefenbild (der alte Schluessel nur nach Name
+haette das veraltete benutzt); Speicher begrenzt (LRU: RCPARK_KV_TIEFE_MB Tiefenbilder im RAM, Standard 768; RCPARK_KV_MERKMALE Merkmalssaetze auf der GPU, Standard 96).
+Test: tools/test_kamera_verfeinern_stapel.py (Stapel == Einzelaufrufe, bitgleiche K-Dateien).
 """
 import sys, os, json, glob, argparse, numpy as np, cv2, torch, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import collections
 import render_kern as rk
 from scipy.optimize import least_squares
+GERAET = "cuda"      # Test (tools/test_kamera_verfeinern_stapel.py) setzt "cpu" mit Ersatz-Merkmalen/-Renderer
+
+
+class LRU(collections.OrderedDict):
+    """Zwischenspeicher mit Obergrenze (Anzahl oder Summe von groesse(wert)); verdraengt das am laengsten nicht benutzte. Verdraengen aendert kein Ergebnis
+    (Merkmale/Tiefenbild werden dann neu gerechnet wie beim Einzelaufruf), nur die Laufzeit."""
+    def __init__(self, grenze, groesse=lambda v: 1):
+        super().__init__(); self.grenze = grenze; self.groesse = groesse; self.summe = 0
+    def holen(self, k):
+        if k not in self: return None
+        self.move_to_end(k); return self[k]
+    def ablegen(self, k, v):
+        if k in self: self.summe -= self.groesse(self.pop(k))
+        self[k] = v; self.summe += self.groesse(v)
+        while len(self) > 1 and self.summe > self.grenze: _, alt = self.popitem(last=False); self.summe -= self.groesse(alt)
+
+
+def tiefen_schluessel(n, k):
+    """Schluessel des Tiefenbild-Zwischenspeichers: Foto UND Kamera (das Tiefenbild haengt an rvec/t/f_px/cx/cy). Nur der Name waere im Stapel falsch,
+    sobald die Referenz selbst vorher im Stapel nachgezogen wurde."""
+    return (n,) + tuple(json.dumps(k.get(x)) for x in ("rvec", "t", "f_px", "cx", "cy"))
 
 
 def exif_f_px(pfad_, W, H):
@@ -29,10 +57,10 @@ def exif_f_px(pfad_, W, H):
     except Exception: return None
 
 
-def main():
+def main(argv=None):
     from lightglue import LightGlue, ALIKED
     from lightglue.utils import load_image, rbd
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassaden"); ap.add_argument("foto"); ap.add_argument("--liste", help="Datei mit Fotonamen (einer je Zeile) - alle in einem Lauf, Referenzen werden nur einmal gerechnet; Argument FOTO dann beliebig"); ap.add_argument("--gegen"); ap.add_argument("--n", type=int, default=6); ap.add_argument("--schreiben", action="store_true"); ap.add_argument("--min_tiefe", type=float, default=0.06, help="kleinste Tiefenspanne der Inlier relativ zum Abstand, ab der die Brennweite frei geschaetzt werden darf"); ap.add_argument("--stl", help="weitere STL (Nachbarobjekte im selben Rahmen), Komma-Liste"); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassaden"); ap.add_argument("foto"); ap.add_argument("--liste", help="Datei mit Fotonamen (einer je Zeile) - alle in einem Lauf, Referenzen werden nur einmal gerechnet; Argument FOTO dann beliebig"); ap.add_argument("--gegen"); ap.add_argument("--n", type=int, default=6); ap.add_argument("--schreiben", action="store_true"); ap.add_argument("--min_tiefe", type=float, default=0.06, help="kleinste Tiefenspanne der Inlier relativ zum Abstand, ab der die Brennweite frei geschaetzt werden darf"); ap.add_argument("--stl", help="weitere STL (Nachbarobjekte im selben Rahmen), Komma-Liste"); a = ap.parse_args(argv)
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll")
     ms = [trimesh.load(q_) for q_ in ([os.path.join(root, obj["stl"])] + (a.stl.split(",") if a.stl else []))]; mm = trimesh.util.concatenate(ms) if len(ms) > 1 else ms[0]; mm.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0)
     def kam(n):
@@ -40,7 +68,9 @@ def main():
         if not os.path.exists(p): return None
         k = json.load(open(p)).get("kamera"); return k if isinstance(k, dict) and "rvec" in k else None
     def pfad(n): g = glob.glob(os.path.join(fd, n + ".*")); return g[0] if g else None
-    dev = "cuda"; ex = ALIKED(max_num_keypoints=4096).eval().to(dev); mt = LightGlue(features="aliked").eval().to(dev); MK = {}; TK = {}      # Merkmale und Tiefenbilder der Referenzen je Lauf nur einmal
+    dev = GERAET; ex = ALIKED(max_num_keypoints=4096).eval().to(dev); mt = LightGlue(features="aliked").eval().to(dev)
+    MK = LRU(int(os.environ.get("RCPARK_KV_MERKMALE", "96")))                                                         # Merkmale der Referenzen (GPU, ~2 MB je Satz)
+    TK = LRU(float(os.environ.get("RCPARK_KV_TIEFE_MB", "768")) * 2 ** 20, lambda v: v[0].nbytes + v[1].nbytes)      # Tiefenbild + Dreiecksnummer je (Referenz, Kamera), RAM
     fotos = [z_.strip() for z_ in open(a.liste) if z_.strip()] if a.liste else [a.foto]; rcs = []
     def eins():
         K0 = kam(a.foto)
@@ -63,9 +93,10 @@ def main():
                 R = cv2.Rodrigues(np.array(k["rvec"]))[0]; C = -R.T @ np.array(k["t"]); kand.append((np.linalg.norm(C - C0) * (2.0 - float(R[2] @ blick0)), n))
             refs = [n for _, n in sorted(kand)[:a.n]]
         def merk(n):
-            if n in MK: return MK[n], 1.0
+            f = MK.holen(n)
+            if f is not None: return f, 1.0
             im = load_image(pfad(n)); h, w = im.shape[1:]; s = min(1.0, 1600.0 / max(h, w)); f = ex.extract(im.to(dev), resize=int(max(h, w) * s))
-            if n != a.foto: MK[n] = f
+            if n != a.foto: MK.ablegen(n, f)
             return f, 1.0
         fA, _ = merk(a.foto); P2, P3, WN, RF = [], [], [], []
         for n in refs:
@@ -79,8 +110,11 @@ def main():
             for _ in range(4): q = 1 + k1 * (xu * xu + yu * yu); xu, yu = x / q, y / q
             D = np.stack([xu, yu, np.ones_like(xu)], 1) @ R                     # Weltstrahl je Treffer, Kamera-z-Anteil = 1
             hb, wb = int(round(2 * k["cy"])), int(round(2 * k["cx"])); sk = min(1.0, 1800.0 / max(hb, wb)); Wr, Hr = int(wb * sk), int(hb * sk)
-            if n not in TK: TK[n] = [np.asarray(v_) for v_ in rk.dreiecke_rastern(mm, R, np.array(k["t"]), k["f_px"] * sk, k["cx"] * sk, k["cy"] * sk, Wr, Hr)[:2]]      # Tiefenbild des MODELLS aus der Referenzkamera (GPU), je Lauf einmal
-            tiefe, fid = TK[n]
+            tk_ = tiefen_schluessel(n, k); tf_ = TK.holen(tk_)
+            if tf_ is None:                                                    # Tiefenbild des MODELLS aus der Referenzkamera (GPU), je (Referenz, Kamera) einmal
+                d_, i_ = [np.asarray(v_) for v_ in rk.dreiecke_rastern(mm, R, np.array(k["t"]), k["f_px"] * sk, k["cx"] * sk, k["cy"] * sk, Wr, Hr)[:2]]
+                tf_ = (d_, i_.astype(np.int32) if len(mm.faces) < 2 ** 31 else i_); TK.ablegen(tk_, tf_)      # Dreiecksnummer int32 (verlustfrei): 8 statt 12 Byte je Pixel
+            tiefe, fid = tf_
             ui = np.clip((xb[:, 0] * sk).astype(int), 0, Wr - 1); vi = np.clip((xb[:, 1] * sk).astype(int), 0, Hr - 1); best = tiefe[vi, ui].astype(np.float64); f_ = fid[vi, ui]; tr = f_ >= 0
             for du, dv in ((-2, 0), (2, 0), (0, -2), (0, 2)):                  # nicht an Tiefenkanten heben (Nachbarpixel muessen dieselbe Tiefe haben)
                 tr &= np.abs(tiefe[np.clip(vi + dv, 0, Hr - 1), np.clip(ui + du, 0, Wr - 1)] - best) < 0.15
@@ -117,7 +151,10 @@ def main():
     for f_ in fotos:
         a.foto = f_
         try: rcs.append(eins())
-        except Exception as e_: print(f"{f_}: Fehler {str(e_)[:120]}"); rcs.append(9)
+        except Exception as e_:
+            print(f"{f_}: Fehler {str(e_)[:120]}"); rcs.append(9)
+            if dev == "cuda": torch.cuda.empty_cache()      # Stapel: ein GPU-Speicherfehler bei einem Foto soll die folgenden nicht mitreissen (Einzelaufruf: neuer Prozess)
+        if len(fotos) > 1: print(f"FOTO {len(rcs)}/{len(fotos)} {f_}: rc {rcs[-1]}", flush=True)
     print(f"FERTIG: {sum(1 for r_ in rcs if r_ == 0)} von {len(rcs)} Kameras bestimmt"); return 0 if any(r_ == 0 for r_ in rcs) else 3
 
 
