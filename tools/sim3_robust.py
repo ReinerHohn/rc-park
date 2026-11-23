@@ -17,6 +17,13 @@ def umeyama(X, Y):
     s = float((S * np.diag(D)).sum() / max(((X - mx) ** 2).sum(), 1e-18)); return s, R, my - s * R @ mx
 
 
+def umeyama_w(X, Y, w):
+    """Gewichtete Umeyama (22.11.2026, tools/bruecke_hebel.py): minimiert sum w |s R X + t - Y|^2. -> (s, R, t)."""
+    X = np.asarray(X, float); Y = np.asarray(Y, float); w = np.asarray(w, float) / max(float(np.sum(w)), 1e-300); mx, my = w @ X, w @ Y; Xc, Yc = X - mx, Y - my
+    U, S, Vt = np.linalg.svd((Yc * w[:, None]).T @ Xc); D = np.eye(3); D[2, 2] = np.sign(np.linalg.det(U @ Vt)) or 1.0; R = U @ D @ Vt
+    s = float((S * np.diag(D)).sum() / max(float(w @ (Xc ** 2).sum(1)), 1e-18)); return s, R, my - s * R @ mx
+
+
 def matrix(s, R, t):
     M = np.eye(4); M[:3, :3] = s * np.asarray(R); M[:3, 3] = t; return M
 
