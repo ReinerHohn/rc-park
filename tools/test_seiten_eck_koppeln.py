@@ -51,4 +51,39 @@ pruef(rc == 2 and "teile" not in ej and "unveraendert" in ej["urteil"], "ein zus
 src = open(os.path.join(T, "sfm_seiten_modelle.py")).read()
 pruef("seiten_eck_koppeln.py" in src and "weg=\"eckmodell\"" in src and "RCPARK_ECK_KOPPELN" in src and src.index("seiten_vereinen.py\"), A[\"modell\"]") < src.index("eck_stufe(os.path"),
       "Verdrahtung in sfm_seiten_modelle (abschaltbar, erst nach der Klappung)")
+# GLEICHE EINGABE = GLEICHES ERGEBNIS (23.11.2026, Kippeln 1122r/1122s): der Mapper schreibt in seine DB -> Aenderungszeit der Ketten-DB neu -> naechster Lauf rechnet die
+# Teilmodelle neu. Vorgespielt mit einem falschen COLMAP, das in die DB schreibt und seine Argumente protokolliert; pycolmap durch zwei Mini-Teilmodelle ersetzt.
+import types, shutil
+fk = os.path.join(d, "colmap_falsch.py"); flog = os.path.join(d, "colmap_falsch.log"); os.environ["FALSCH_LOG"] = flog
+open(fk, "w").write("#!/usr/bin/env python3\nimport sys, sqlite3, json, os\na = sys.argv; db = a[a.index('--database_path') + 1]\n"
+                    "c = sqlite3.connect(db); c.execute('create table if not exists schreib (x)'); c.execute('insert into schreib values (1)'); c.commit(); c.close()\n"
+                    "open(os.environ['FALSCH_LOG'], 'a').write(json.dumps(dict(db=db, argv=a[1:])) + '\\n')\n"); os.chmod(fk, 0o755)
+EK.COLMAP = fk; EK.NACHMATCHEN = False
+db_rot = os.path.join(d, "rot.db"); shutil.copyfile(db, db_rot); f0 = EK.db_fingerabdruck(db_rot)
+os.utime(db_rot, ns=(f0[1] - 5 * 10**9, f0[1] - 5 * 10**9)); f0 = EK.db_fingerabdruck(db_rot)
+EK.mapper(["a1", "b1"], db_rot, d, os.path.join(d, "rot_m"), 4, 30)
+pruef(EK.db_fingerabdruck(db_rot) != f0, "Gegenprobe (Befund 1122): Mapper direkt auf der Ketten-DB aendert deren Fingerabdruck (Groesse/Aenderungszeit)")
+class _Bild:
+    def __init__(s, n): s.name = n; s.has_pose = True
+class _Rek:
+    def __init__(s, p):
+        nm = {"tA": ["a1", "a2"], "tB": ["b1", "b2"]}.get(os.path.basename(p), []); s.images = {i: _Bild(n) for i, n in enumerate(nm)}
+        s.points3D = {0: types.SimpleNamespace(xyz=np.zeros(3)), 1: types.SimpleNamespace(xyz=np.ones(3))}
+pc_alt = sys.modules.get("pycolmap"); sys.modules["pycolmap"] = types.SimpleNamespace(Reconstruction=_Rek)
+os.utime(db, ns=(10**18, 10**18)); g0 = EK.db_fingerabdruck(db); sjp = os.path.join(d, "seiten.json"); json.dump(sj, open(sjp, "w")); open(flog, "w").close()
+o2 = os.path.join(d, "zwei")
+try: rc = EK.main([db, sjp, d, "--aus", o2, "--teil", "0=" + os.path.join(d, "tA"), "--teil", "1=" + os.path.join(d, "tB"), "--faeden", "8"])
+finally:
+    if pc_alt is not None: sys.modules["pycolmap"] = pc_alt
+    else: sys.modules.pop("pycolmap", None)
+aufrufe = [json.loads(z) for z in open(flog) if z.strip()]; ej = json.load(open(os.path.join(o2, "eck.json")))
+hat_schreib = sqlite3.connect(f"file:{db}?mode=ro", uri=True).execute("select count(*) from sqlite_master where name='schreib'").fetchone()[0]
+pruef(len(aufrufe) == len(EK.SCHWELLEN) and all(x["db"] == os.path.join(o2, "db_eck_arbeit.db") for x in aufrufe),
+      f"alle Eck-Mapper laufen auf der Kopie, nie auf der Ketten-DB ({[x['db'] for x in aufrufe][:2]})")
+pruef(EK.db_fingerabdruck(db) == g0 and not hat_schreib and ej.get("eingabe_db", {}).get("unveraendert") is True,
+      f"Ketten-DB nach der Stufe unveraendert (Fingerabdruck, Inhalt, eck.json eingabe_db) ({ej.get('eingabe_db')})")
+arg = lambda x, k: x["argv"][x["argv"].index(k) + 1]
+pruef(all(arg(x, "--Mapper.random_seed") == str(EK.MAPPER_KEIM) and arg(x, "--Mapper.num_threads") == "1" for x in aufrufe),
+      "Eck-Mapper reproduzierbar: fester Keim, ein Faden (trotz --faeden 8)")
+pruef(not os.path.exists(os.path.join(o2, "db_eck_arbeit.db")) and rc == 2, f"Arbeitskopie wieder entfernt, ohne Zwischenmodell rc 2 ({rc})")
 print("FEHLER:" if fehler else "alle ok", len(fehler)); sys.exit(1 if fehler else 0)

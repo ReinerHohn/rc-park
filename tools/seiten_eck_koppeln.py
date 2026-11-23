@@ -63,6 +63,15 @@ ZEIT_FENSTER_S = float(os.environ.get("RCPARK_ECK_ZEITFENSTER", "30"))  # ANNAHM
 WEGLASSEN = 0.2          # ANNAHME: je Wiederholung 20 % der Nicht-Brueckenbilder weg (Bruecke selbst bleibt)
 COLMAP = os.environ.get("RCPARK_COLMAP", "/media/oem/scan/colmap-build/prefix/bin/colmap")
 NACHMATCH_VRAM_MB = int(os.environ.get("RCPARK_ECK_VRAM_MB", "4500"))
+# GLEICHE EINGABE = GLEICHES ERGEBNIS (23.11.2026, Befund Kippeln 1122r 'vereint' / 1122s 'nicht vereint', tools/test_seiten_eck_koppeln.py):
+#  (1) Der COLMAP-Mapper oeffnet die Datenbank schreibend - jeder Eck-Mapper-Lauf setzte die Aenderungszeit von db_mapper.db neu (1122r 11:41:57, 1122s 14:14:48,
+#      Inhalt/Groesse gleich). sfm_seiten_modelle bindet die Teilmodelle an (Groesse, Aenderungszeit) der DB -> der NAECHSTE Kettenlauf hielt die Eingabe fuer geaendert,
+#      rechnete die Teilmodelle neu (globaler Mapper, nicht deterministisch: Teil 1 127 -> 125 Bilder) und die Haelften-Probe von Teil 1 sprang 1,8 % -> 2,2 % (Grenze 2 %),
+#      der Rest von Teil 0 0,47 % -> 0,54 % (Grenze 0,5 %) - mit JEDEM der 31 Eckmodelle beider Laeufe (Kreuzprobe), Bootstrap-Streuung der Probe nur +-0,1 %.
+#      Daher: alle Mapper laufen auf einer KOPIE (sqlite-Backup, Quelle nur lesend), die Eingabe-DB wird vor/nach verglichen ('eingabe_db' im JSON).
+#  (2) Eck-Mapper mit festem Keim und einem Faden: 1122r/1122s lieferten aus derselben Bildliste verschiedene Eckmodelle (lg-Variante: Schwelle 30 verband einmal, einmal nicht).
+MAPPER_KEIM = int(os.environ.get("RCPARK_ECK_KEIM", "0"))              # --Mapper.random_seed (COLMAP -1 = zufaellig)
+MAPPER_FAEDEN = int(os.environ.get("RCPARK_ECK_MAPPER_FAEDEN", "1"))   # ANNAHME: 1 Faden = reproduzierbar (Ceres/RANSAC mehrfaedig reihenfolgeabhaengig); Eckmodelle 35-47 Bilder; 0 = --faeden
 NAMEN = {}               # Teil -> registrierte Bildnamen (main)
 
 
@@ -165,12 +174,29 @@ def eckbilder(sj, A, B, db):
 def mapper(liste, db, fotos, aus, faeden, schwelle):
     os.makedirs(aus, exist_ok=True); lp = os.path.join(aus, "bilder.txt"); open(lp, "w").write("\n".join(liste) + "\n"); sp = os.path.join(aus, "sparse")
     if os.path.isdir(sp): shutil.move(sp, sp + ".alt_" + str(int(os.path.getmtime(sp))))
-    os.makedirs(sp); cmd = [COLMAP, "mapper", "--database_path", db, "--image_path", fotos, "--output_path", sp, "--Mapper.image_list_path", lp, "--Mapper.num_threads", str(faeden),
+    os.makedirs(sp); cmd = [COLMAP, "mapper", "--database_path", db, "--image_path", fotos, "--output_path", sp, "--Mapper.image_list_path", lp,
+                            "--Mapper.num_threads", str(MAPPER_FAEDEN if MAPPER_FAEDEN > 0 else faeden), "--Mapper.random_seed", str(MAPPER_KEIM),
                             "--Mapper.ba_use_gpu", "0", "--Mapper.abs_pose_min_num_inliers", str(schwelle), "--Mapper.abs_pose_min_inlier_ratio", "0.1"]
     from sfm_seiten_modelle import CUDA_LIBS                                            # die COLMAP-Binaerdatei braucht die CUDA-Bibliotheken (auch ausserhalb der Kette)
     env = dict(os.environ, LD_LIBRARY_PATH=":".join(CUDA_LIBS + [x for x in [os.environ.get("LD_LIBRARY_PATH", "")] if x]))
     with open(os.path.join(aus, "mapper.log"), "w") as lg: rc = subprocess.call(cmd, stdout=lg, stderr=subprocess.STDOUT, env=env)
     return rc, sorted(os.path.join(sp, d) for d in os.listdir(sp) if os.path.isfile(os.path.join(sp, d, "images.bin")))
+
+
+def db_fingerabdruck(db):
+    """(Groesse, Aenderungszeit ns) - dasselbe Merkmal, an das sfm_seiten_modelle/_stand die Teilmodelle bindet."""
+    st = os.stat(db); return [st.st_size, st.st_mtime_ns]
+
+
+def arbeits_db(db, aus):
+    """Konsistente Kopie der Ketten-DB fuer alle Mapper dieser Stufe (sqlite-Backup, Quelle nur lesend; WAL-Inhalt eingeschlossen). -> Pfad"""
+    ziel = os.path.join(aus, "db_eck_arbeit.db")
+    for x in (ziel, ziel + "-wal", ziel + "-shm"):
+        if os.path.exists(x): os.remove(x)
+    src = sqlite3.connect(f"file:{os.path.abspath(db)}?mode=ro", uri=True); dst = sqlite3.connect(ziel)
+    try: src.backup(dst)
+    finally: dst.close(); src.close()
+    return ziel
 
 
 def koppeln(m, teile, R, P, ausd_teil):
@@ -335,8 +361,15 @@ def main(argv=None):
                                          for t, _ in tl if t not in erreicht]
     if not ks: return ende(2, "keine bestaetigten Brueckenpaare zwischen den Teilen (seiten.json 'durchblick')", fotoluecken=luecke({A}))
     zw, kanten = [], []
-    for i, k in enumerate(ks):
-        z = zwischenmodell(k, i, a.db, a.fotos, a.aus, a.faeden, R, ausd_teil); gut = z.pop("_gut", {}); zw.append(z); ts = sorted(gut)
+    fa0 = db_fingerabdruck(a.db); dba = arbeits_db(a.db, a.aus)                       # Mapper nur auf der Kopie (Kopf: GLEICHE EINGABE = GLEICHES ERGEBNIS)
+    try: zk = [zwischenmodell(k, i, dba, a.fotos, a.aus, a.faeden, R, ausd_teil) for i, k in enumerate(ks)]
+    finally:
+        for x in (dba, dba + "-wal", dba + "-shm"):
+            if os.path.exists(x): os.remove(x)
+    fa1 = db_fingerabdruck(a.db); edb = dict(pfad=os.path.abspath(a.db), unveraendert=fa0 == fa1, vorher=fa0, nachher=fa1, mapper_keim=MAPPER_KEIM, mapper_faeden=MAPPER_FAEDEN)
+    if fa0 != fa1: print(f"WARNUNG ECK-KOPPLUNG: Eingabe-DB {a.db} hat sich waehrend der Stufe geaendert ({fa0} -> {fa1}) - Teilmodelle werden im naechsten Lauf neu gerechnet", flush=True)
+    for i, (k, z) in enumerate(zip(ks, zk)):
+        gut = z.pop("_gut", {}); zw.append(z); ts = sorted(gut)
         for x in range(len(ts)):
             for y in range(x + 1, len(ts)):
                 (Mi, pi), (Mj, pj) = gut[ts[x]], gut[ts[y]]
@@ -363,7 +396,7 @@ def main(argv=None):
     rc = 0 if len(erreicht) > 1 else (3 if kanten or any(z.get("kopplungen") for z in zw) else 2)
     txt = (f"Teile {sorted(erreicht - {A})} an Teil {A} gekoppelt ({len(kanten)} Kanten, {len(kr)} Kreise{', Widerspruch' if raus else ''})" if rc == 0 else
            "keine stimmige Kopplung" if rc == 3 else "kein Zwischenmodell aus >= 2 Teilen - die Bruecke traegt nicht")
-    return ende(rc, txt, teile=teile, kanten=kj, kreise=kr, zwischenmodelle=zw, fotoluecken=fl)
+    return ende(rc, txt, teile=teile, kanten=kj, kreise=kr, zwischenmodelle=zw, fotoluecken=fl, eingabe_db=edb)
 
 
 if __name__ == "__main__": sys.exit(main())
