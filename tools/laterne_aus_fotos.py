@@ -454,6 +454,18 @@ GLATT_ZEILEN = 5        # Huellenprofil: gleitender Median ueber 5 Zeilen (0,25 
                         # Knauf (0,4 m hoch) bleibt erhalten
 
 
+KREMPE_DELLE = 0.05     # Krempe in der Huelle: erstes oertliches Maximum (+-0,15 m) ueber der Pfostenoberkante, ueber dem die Huelle in 0,6 m um >= 5 % einzieht (Taille)
+
+
+def krempe_index(zh, r, z_median):
+    """Krempe in der Huelle: die Kreis-Huelle der eckigen Krempe ist nur ihr Innenkreis (Schwabentor 0,84 m gegen Bauch 1,1 m), darum weder 'breiteste Stelle' noch fester
+    Sprung ueber die Pfosten; im Median liegt sie wegen der Verschmierung von unten zu tief (Test: 0,3 m). Erstes oertliches Maximum (Fenster +-3 Zeilen) mit einer
+    Einziehung >= KREMPE_DELLE in 0,6 m darueber; sonst die Zeile der Median-Krempe."""
+    for i in range(1, len(zh) - 1):
+        if r[i] < np.max(r[max(0, i - 3):i + 4]) - 1e-9 or r[i] <= 0: continue
+        ob = (zh > zh[i]) & (zh <= zh[i] + 0.6)
+        if ob.any() and np.min(r[ob]) <= (1 - KREMPE_DELLE) * r[i]: return i
+    return int(np.argmin(np.abs(zh - z_median)))
 KNAUF_FENSTER_M = 0.1   # Knaufradius: Halbbreiten +-0,1 m um die Knaufmitte (Restversatz der Registrierung ~5 cm)
 KNAUF_MAX = 1.5
 
@@ -477,15 +489,13 @@ def haube_huelle(fotos, A, zs, P, Z):
     if len(zh) < 10: return None, None
     band = (float(zh[0]), float(zh[-1])); zentrieren(beob, band); alle = list(beob)
     beob, weg = registrieren(beob, A, zh, band)
-    if len(beob) < MIN_FOTOS: return None, None
+    if len(beob) < MIN_FOTOS: print(f"Haube Huelle: nach Registrierung nur {len(beob)} Fotos (raus {weg})"); return None, None
     r, S, bd = drehprofil(beob, A, zh); r = glaetten(r)
     P2 = [list(p) for p in P if p[0] < Z["z_pfosten_oben"] - 1e-6] + [[float(z), float(v), int(b)] for z, v, b in zip(zh, r, bd) if v > 0]
     HB = dict(beob=beob, zh=zh, r=r, S=S, bindend=bd, profil=P2, weg=weg, alle=alle)
-    # Krempe = breiteste Stelle der Huelle bis 1,2 m ueber der (Median-)Pfostenoberkante (im Median liegt sie wegen der Verschmierung von unten zu tief)
-    w_ = zh <= Z["z_pfosten_oben"] + 1.2
-    if not w_.any(): return HB, None
-    Z2 = zonen_ab_krempe(zh, r, int(np.argmax(np.where(w_, r, -1.0))))
-    if not Z2["z_krempe"] < Z2["z_taille"] < Z2["z_bauch"] < Z2["z_hals"]: return HB, None
+    Z2 = zonen_ab_krempe(zh, r, krempe_index(zh, r, Z["z_krempe"]))
+    if not Z2["z_krempe"] < Z2["z_taille"] < Z2["z_bauch"] < Z2["z_hals"]:
+        print("Haube Huelle: Zonen ungeordnet", {k: round(v, 2) for k, v in Z2.items() if k != "i"}); return HB, None
     # Pfostenzone und Krempenbreite bleiben aus dem Median (offene Pfosten sind kein Drehkoerper; Krempe meist n-Eck wie die Pfosten - Kreis-Huelle gaebe den Innenkreis)
     Z3 = dict(Z2, z_pfosten_unten=Z["z_pfosten_unten"], z_pfosten_oben=Z["z_pfosten_oben"], r_pfosten_silh=Z["r_pfosten_silh"], r_krempe=max(Z["r_krempe"], Z2["r_krempe"]), i=None)
     Z3["z_krempe"] = max(Z2["z_krempe"], Z["z_pfosten_oben"])
@@ -601,7 +611,7 @@ def main(argv=None):
     # 23.11.2026 HAUBE ALS DREHKOERPER: ueber der Krempe Sehstrahl-Huelle (Kreis) statt Median der Halbbreiten (Krempe von unten ragt in die Taillen-Zeilen), Zonen neu
     HB, HZ = haube_huelle(fotos_alle, A, zs, P, Z)
     if HZ is not None: Z = HZ
-    if a.roh and HB is not None:
+    if a.roh and HB is not None and "alle" in HB:
         json.dump(dict(achse=[float(A[0]), float(A[1])], zh=[float(z) for z in HB["zh"]], P=P, Z0={k: v for k, v in zonen_aus_profil(P).items() if k != "i"},
                        beob=[dict(nr=B["nr"], C=B["C"], az=B["az"], A0=[float(v) for v in B["A0"]], zg=[float(z) for z in B["zg"]], dz=B.get("dz"), mitte=B.get("mitte"), rest=B.get("rest"), l=[None if not np.isfinite(v) else round(float(v), 4) for v in B["l"]],
                                   r=[None if not np.isfinite(v) else round(float(v), 4) for v in B["r"]]) for B in HB["alle"]], gut=[B["nr"] for B in HB["beob"]]), open(a.roh, "w"))
