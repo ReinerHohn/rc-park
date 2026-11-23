@@ -291,6 +291,10 @@ def bauteil_zonen(audit):
             elif all(isinstance(x.get(a), (int, float)) for a in ("u0", "u1", "z_t", "z_a")): k = (x["u0"], x["u1"], x["z_t"] - 0.5, x["z_a"])
             if k and f2 and k[1] - k[0] < 30 and k[3] - k[2] < 40:
                 Z.append(dict(fassade=f2, u0=float(k[0]), u1=float(k[1]), z0=float(k[2]), z1=float(k[3]), name=name + (("/" + x["art"]) if isinstance(x.get("art"), str) else "")))
+                # 23.11.2026 (Uhr f00, 1122q): runde Bauteile (Mitte u/z + gemessener d_aussen, z. B. uhren_auto.json) tragen ihre BELEGTE Kontur mit - der Kasten
+                # ist der Erkennerkasten (OWLv2), die Ecken ausserhalb des Kreises sind Wand
+                if all(isinstance(x.get(a), (int, float)) for a in ("u", "z", "d_aussen")) and x["d_aussen"] > 0:
+                    Z[-1]["kreis"] = [float(x["u"]), float(x["z"]), 0.5 * float(x["d_aussen"])]
                 return
             for a, v in x.items():
                 geh(v, a if re.fullmatch(r"f\d\d", str(a)) else f2, name, tiefe + 1)

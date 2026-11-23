@@ -677,6 +677,9 @@ def laterne(achse, n, phase_grad, r_pfosten, b_pfosten, z_fuss, z_pfosten_oben, 
     return M.batch_boolean(teile, OpType.Add), hin
 
 
+N_RUND = 48             # Haube 'rund': 48-Eck (Sehne 3 mm bei r 1,1 m in H0 << Druckaufloesung)
+
+
 def laterne_aus_block(LF, SF=None, massstab=87.0):
     """Block 'laterne_foto' (tools/laterne_aus_fotos.py) -> Parameter fuer laterne(); None, wenn ungueltig/abgelehnt. Haube: eigene Eckenzahl nur wenn eindeutig,
     sonst die der Pfosten (ANNAHME im Beleg). Radien = Silhouetten-Halbbreite / Silhouettenfaktor des Vielecks. Nadel: eigene Messung, sonst spitze_foto.spitze_z."""
@@ -686,6 +689,15 @@ def laterne_aus_block(LF, SF=None, massstab=87.0):
     else: nh, phh, fh, hq = int(Pf["n"]), float(Pf["phase"]), float(Pf.get("silh_faktor") or 1.0), f"ANNAHME: Haube {Pf['n']}-Eck wie die Pfosten (Facettenprobe unentschieden: bestes {H.get('n')}-Eck, Abstand {H.get('abstand')})"
     fp = float(Pf.get("silh_faktor") or 1.0)
     hb = [(p[0], p[1] / fh) for p in LF["profil"] if Z["z_taille"] - 1e-6 <= p[0] <= Z["z_hals"] + 1e-6]
+    # 23.11.2026 (Kette 1122r: Haube als Kasten statt Zwiebel): Haube als DREHKOERPER aus der Sehstrahl-Huelle (laterne_aus_fotos.haube_huelle: registrierte Farbsilhouetten,
+    # Umkreis je Hoehe), Querschnitt rund/n-Eck nach Fotobeleg bzw. benannter ANNAHME (querschnitt_haube); ohne Huelle wie bisher Median-Halbbreite / Silhouettenfaktor.
+    HH = LF.get("haube_huelle") or {}; Q = HH.get("querschnitt") or {}
+    hh = [(float(p[0]), float(p[1])) for p in HH.get("profil") or [] if Z["z_taille"] - 1e-6 <= p[0] <= Z["z_hals"] + 1e-6]
+    if Q.get("art") in ("rund", "n-eck") and len(hh) >= 3 and (Q["art"] == "rund" or Q.get("n")):
+        hb = hh
+        if Q["art"] == "rund": nh, phh, hq = N_RUND, 0.0, Q.get("annahme") or f"Haube rund ({Q.get('quelle')})"
+        else: nh, phh, hq = int(Q["n"]), float(Q.get("phase") or 0.0), Q.get("annahme") or f"Haube {Q['n']}-Eck ({Q.get('quelle')})"
+        hq += f"; Profil Sehstrahl-Huelle aus {len(HH.get('bindende_fotos') or [])} bindenden Fotos, Familie {HH.get('familie')}"
     if len(hb) < 3: return None
     nz = LF.get("nadel_z") or (SF or {}).get("spitze_z")
     return dict(achse=LF["achse"], n=int(Pf["n"]), phase_grad=float(Pf["phase"]), r_pfosten=float(Pf["R"]), b_pfosten=float(Pf["breite"]), z_fuss=float(Z.get("z_pfosten_unten", LF["z_fuss"])),

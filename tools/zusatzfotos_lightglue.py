@@ -18,25 +18,91 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
+def grob_runde(kand, h, rechne, speicher=None, melden=print, alle=4000):
+    """Grob-Vorfilter-Werte fuer alle Kandidatenpaare kand [(x, y)] (x = image0). h {name: Inhalts-Hash}; rechne(x, y) -> Anzahl Grob-Matches (GPU).
+    Mit <speicher> (lg_zwischenspeicher.Speicher): gespeicherte Werte (gleiche Bildinhalte, gleiche Parameter) werden uebernommen, nur Neues gerechnet und
+    alle <alle> Paare abgelegt (ein Abbruch behaelt den Fortschritt). -> (sc {x: {y: n}} symmetrisch, dict(gespeichert, gerechnet))."""
+    import time
+    bekannt = speicher.grob_holen_alle([(h[x], h[y]) for x, y in kand]) if speicher else {}
+    sc = collections.defaultdict(dict); neu_ = []; n_neu = 0; t0 = time.time()
+    if bekannt: melden(f"  grob: {len(bekannt)}/{len(kand)} Paarwerte aus dem Zwischenspeicher, {len(kand) - len(bekannt)} zu rechnen", flush=True)
+    for i, (x, y) in enumerate(kand):
+        k = bekannt.get((h[x], h[y]))
+        if k is None:
+            k = int(rechne(x, y)); n_neu += 1
+            if speicher is not None:
+                neu_.append((h[x], h[y], k))
+                if len(neu_) >= alle: speicher.grob_ablegen(neu_); neu_ = []
+            if n_neu % alle == 0: melden(f"  grob {i}/{len(kand)} (gerechnet {n_neu}) {time.time() - t0:.0f} s", flush=True)
+        sc[x][y] = k; sc[y][x] = k
+    if speicher is not None: speicher.grob_ablegen(neu_)
+    return sc, dict(gespeichert=len(kand) - n_neu, gerechnet=n_neu)
+
+
+def auswahl(sc, neu, k, min_n=8):
+    """je neuem Bild die <k> besten Partner (Grob-Matches >= min_n), symmetrisch vereinigt -> {(a, b) sortiert}. (Regel CY, unveraendert seit 06.11.)"""
+    sel = set()
+    for x in neu:
+        for y, n in sorted(sc[x].items(), key=lambda t: -t[1])[:k]:
+            if n >= min_n: sel.add(tuple(sorted((x, y))))
+    return sel
+
+
+def sift_marge():
+    """(Faktor, Mindestwert) der SIFT-Paarliste fuer RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT: je neuem Bild die ceil(k*Faktor) besten Grob-Partner mit >= Mindestwert."""
+    try: f = float(os.environ.get("RCPARK_NACHHOL_SIFT_MARGE", "3"))
+    except ValueError: f = 3.0
+    try: m = int(os.environ.get("RCPARK_NACHHOL_SIFT_MIN", "4"))
+    except ValueError: m = 4
+    return max(1.0, f), max(0, m)
+
+
+def sift_auswahl(sc, neu, k):
+    """Paare fuer das SIFT-Matching, wenn es nur auf den LightGlue-gewaehlten Paaren laufen soll: Obermenge von auswahl() (groesseres k, kleinere Schwelle)."""
+    import math
+    f, m = sift_marge(); return auswahl(sc, neu, int(math.ceil(k * f)), m) | auswahl(sc, neu, k)
+
+
+def speicher_ordner(Z):
+    """Zwischenspeicher-Ordner (RCPARK_LG_CACHE; '0' = aus). Standard <Z>/zwischenspeicher_lg: unter dem Datenordner, NICHT in <Z>/lg
+    (das Nachhol-Skript loescht lg/, db.db und stand/ am Ende)."""
+    o = os.environ.get("RCPARK_LG_CACHE", "")
+    if o == "0": return None
+    return o or os.path.join(Z, "zwischenspeicher_lg")
+
+
 def paare(a):
     import torch, time
     from lightglue import LightGlue, ALIKED
     from lightglue.utils import load_image
+    import lg_zwischenspeicher as LZ
     dev = "cuda"; Z = a.ziel; V = json.load(open(os.path.join(Z, "vorbereitet.json"))); lg = os.path.join(Z, "lg"); os.makedirs(lg, exist_ok=True)
     refn = json.load(open(os.path.join(lg, "refnamen.json")))        # Stufe refnamen (venv-colmap; pycolmap fehlt in venv-seg)
     pfad = {n: os.path.join(Z, "bilder", n) for n in V["bilder"]}; pfad.update({n: os.path.join(a.ref_bilder, n) for n in refn})
-    namen = sorted(pfad); ext = ALIKED(max_num_keypoints=a.max_kp).eval().to(dev); mt = LightGlue(features="aliked", mp=os.environ.get("RCPARK_LG_MP", "1") != "0").eval().to(dev)   # 20.11.2026 wie lg_match.py (tools/versuche/lg_mp_ab2.py)
+    mp_ = os.environ.get("RCPARK_LG_MP", "1") != "0"; rs_ = int(os.environ.get("RCPARK_LG_RESIZE", "2048"))
+    namen = sorted(pfad); ext = ALIKED(max_num_keypoints=a.max_kp).eval().to(dev); mt = LightGlue(features="aliked", mp=mp_).eval().to(dev)   # 20.11.2026 wie lg_match.py (tools/versuche/lg_mp_ab2.py)
+    # 23.11.2026 (Kette 1122q: paare 50 min, jeder Folgelauf alles neu): Zwischenspeicher je Bild-INHALT + Parameter (tools/lg_zwischenspeicher.py)
+    so = speicher_ordner(Z); sp = None; t0 = time.time(); h = {n: LZ.inhalt_hash(pfad[n]) for n in namen}
+    if so:
+        ms = LZ.modellstand()
+        sp = LZ.Speicher(so, LZ.kennung(art="aliked", stand=ms, conf=vars(ext.conf), max_kp=a.max_kp, resize=rs_),
+                         LZ.kennung(art="grob", stand=ms, conf_ext=vars(ext.conf), conf_lg=vars(mt.conf), max_kp=a.max_kp, resize=rs_, grob=a.grob, mp=mp_),
+                         merkmale=os.environ.get("RCPARK_LG_CACHE_MERKMALE", "1") != "0")
+        print(f"Zwischenspeicher {so} (Hash {len(namen)} Bilder {time.time() - t0:.0f} s)", flush=True)
     F = {}; t0 = time.time()
     for n in namen:
+        d = sp.merkmale_holen(h[n]) if sp else None
+        if d is not None: F[n] = {k: torch.from_numpy(v) for k, v in d.items()}; continue
         for _v in range(int(os.environ.get("RCPARK_LG_OOM_RETRY", "0")) + 1):   # geteilte GPU: bei VRAM-Knappheit dieses Bild nach Pause nochmal (Standard 0 = wie bisher)
             try:
-                with torch.no_grad(): F[n] = {k: v.cpu() for k, v in ext.extract(load_image(pfad[n]).to(dev), resize=int(os.environ.get("RCPARK_LG_RESIZE", "2048"))).items()}
+                with torch.no_grad(): F[n] = {k: v.cpu() for k, v in ext.extract(load_image(pfad[n]).to(dev), resize=rs_).items()}
                 break
             except torch.OutOfMemoryError:
                 if _v >= int(os.environ.get("RCPARK_LG_OOM_RETRY", "0")): raise
                 torch.cuda.empty_cache(); time.sleep(20)
         torch.cuda.empty_cache()
-    print(f"Merkmale {len(namen)} Bilder {time.time() - t0:.0f} s", flush=True)
+        if sp: sp.merkmale_ablegen(h[n], {k: v.numpy() for k, v in F[n].items()})
+    print(f"Merkmale {len(namen)} Bilder {time.time() - t0:.0f} s" + (f" (aus dem Zwischenspeicher {sp.stat['merkmale_gespeichert']}, gerechnet {sp.stat['merkmale_gerechnet']})" if sp else ""), flush=True)
     def gross(f, k): return {"keypoints": f["keypoints"][:, :k], "descriptors": f["descriptors"][:, :k], "keypoint_scores": f["keypoint_scores"][:, :k], "image_size": f["image_size"]}
     neu = sorted(V["bilder"]); kand = [(x, y) for x in neu for y in namen if y != x and (y not in V["bilder"] or x < y)]
     if getattr(a, "gps_radius", 0):                                  # GPS-Vorwahl (tools/paarvorwahl.py): entfaellt nur, wenn BEIDE Bilder GPS haben und weiter als Radius auseinander liegen
@@ -44,16 +110,17 @@ def paare(a):
         gps = {n: g for n in namen for g in [paarvorwahl.gps_aus_exif(pfad[n])] if g}
         kand, st = paarvorwahl.gps_filter(kand, gps, a.gps_radius)
         print(f"GPS-Vorwahl {a.gps_radius} m: {st['vorher']} -> {st['nachher']} Paare, ohne GPS behalten: {st['ohne_gps']}, Bilder mit GPS: {len(gps)}/{len(namen)}", flush=True)
-    G = {n: {k: v.to(dev) for k, v in gross(F[n], a.grob).items()} for n in namen}; sc = collections.defaultdict(dict); t0 = time.time()
-    for i, (x, y) in enumerate(kand):
+    G = {n: {k: v.to(dev) for k, v in gross(F[n], a.grob).items()} for n in namen}; t0 = time.time()
+    def rechne(x, y):
         with torch.no_grad(): m = mt({"image0": G[x], "image1": G[y]})
-        k = int(m["matches"][0].shape[0]); sc[x][y] = k; sc[y][x] = k
-        if i % 4000 == 0: print(f"  grob {i}/{len(kand)} {time.time() - t0:.0f} s", flush=True)
-    sel = set()
-    for x in neu:
-        for y, k in sorted(sc[x].items(), key=lambda t: -t[1])[:a.k]:
-            if k >= 8: sel.add(tuple(sorted((x, y))))
+        return int(m["matches"][0].shape[0])
+    sc, gst = grob_runde(kand, h, rechne, sp)
+    print(f"Grob-Runde {len(kand)} Paare {time.time() - t0:.0f} s (aus dem Zwischenspeicher {gst['gespeichert']}, gerechnet {gst['gerechnet']})", flush=True)
+    sel = auswahl(sc, neu, a.k)
     print(f"Vorfilter: {len(kand)} Kandidatenpaare -> {len(sel)} gewaehlt", flush=True)
+    # 23.11.2026: Paarliste fuer SIFT nur auf gewaehlten Paaren (RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT; Stufe einlesen matcht sie, wenn merkmale das Matching aufgeschoben hat)
+    ssel = sift_auswahl(sc, neu, a.k); open(os.path.join(lg, "sift_paare.txt"), "w").write("".join(f"{x} {y}\n" for x, y in sorted(ssel)))
+    json.dump({x: sorted(sc[x].items(), key=lambda t: -t[1])[:max(96, 8 * a.k)] for x in neu}, open(os.path.join(lg, "grob_rang.json"), "w"))      # Rangliste je neuem Bild (Messskript tools/versuche/nachhol_sift_gewaehlt_messen.py)
     out = {"namen": np.array(namen)}
     for n in namen: out["kp_" + n] = F[n]["keypoints"][0].cpu().numpy().astype(np.float32)
     npz = 0
@@ -62,9 +129,12 @@ def paare(a):
         idx = m["matches"][0].cpu().numpy().astype(np.int32)
         if len(idx) >= 15: out[f"m_{x}|{y}"] = idx; npz += 1
     np.savez_compressed(os.path.join(lg, "lg.npz"), **out)
-    json.dump(dict(neu=len(neu), referenz=len(refn), kandidaten=len(kand), gewaehlt=len(sel), mit_matches=npz, k=a.k, grob=a.grob, max_kp=a.max_kp,
+    auf = sp.aufraeumen(set(h.values())) if sp else None
+    if sp: sp.schliessen()
+    json.dump(dict(neu=len(neu), referenz=len(refn), kandidaten=len(kand), gewaehlt=len(sel), mit_matches=npz, k=a.k, grob=a.grob, max_kp=a.max_kp, sift_paare=len(ssel),
+                   zwischenspeicher=dict(ordner=so, grob=gst, merkmale=(dict(sp.stat) if sp else None), aufgeraeumt=auf),
                    grob_matches={x: sorted(sc[x].values())[-a.k:] for x in neu}), open(os.path.join(lg, "paare.json"), "w"))
-    print(f"voll gematcht: {npz} Paare mit >= 15 Matches", flush=True)
+    print(f"voll gematcht: {npz} Paare mit >= 15 Matches; SIFT-Paarliste (Marge) {len(ssel)} Paare", flush=True)
 
 
 def refnamen(a):
@@ -111,9 +181,27 @@ def lg_anhaengen(db, D):
     return off, pl
 
 
+def sift_nachholen(Z, matchen=None):
+    """Hat die Stufe merkmale das SIFT-Matching aufgeschoben (merkmale.json sift_matching = 'aufgeschoben', Schalter RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT),
+    werden jetzt NUR die Paare aus lg/sift_paare.txt (LightGlue-Auswahl mit Marge, Stufe paare) in Z/db.db gematcht. -> Anzahl Paare oder None (nichts zu tun).
+    <matchen>(db, paare_txt): Ersatz fuer zusatzfotos_registrieren.sift_paare_matchen (Test)."""
+    mj = os.path.join(Z, "merkmale.json"); M = json.load(open(mj))
+    if M.get("sift_matching") != "aufgeschoben": return None
+    pf = os.path.join(Z, "lg", "sift_paare.txt")
+    if not os.path.exists(pf): raise SystemExit(f"FEHLER: SIFT-Matching aufgeschoben, aber {pf} fehlt (Stufe paare zu alt?) - Schalter RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT aus und neu rechnen")
+    paare_ = [z.split() for z in open(pf) if z.strip()]
+    if matchen is None:
+        import zusatzfotos_registrieren as ZR; matchen = ZR.sift_paare_matchen
+    ver = matchen(os.path.join(Z, "db.db"), pf, saat=True)
+    M.update(sift_matching="nur_gewaehlt", paare=len(paare_), verifizierte_paare_gesamt=ver); json.dump(M, open(mj, "w"), indent=1)
+    print(f"SIFT-Matching nur auf den LightGlue-gewaehlten Paaren (mit Marge): {len(paare_)} Paare, verifiziert gesamt {ver}", flush=True)
+    return len(paare_)
+
+
 def einlesen(a):
     import pycolmap, shutil
     Z = a.ziel; lg = os.path.join(Z, "lg"); db = os.path.join(lg, "db.db")
+    sift_nachholen(Z)      # 23.11.2026: RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT - SIFT-Matching nur auf lg/sift_paare.txt (vor der Kopie von Z/db.db)
     if os.path.exists(db): os.remove(db)
     shutil.copy(os.path.join(Z, "db.db"), db)
     for f in ("vorbereitet.json", "merkmale.json"): shutil.copy(os.path.join(Z, f), os.path.join(lg, f))

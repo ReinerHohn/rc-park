@@ -683,6 +683,9 @@ def main():
             if os.path.exists(os.path.join(eb_, "ebenen.json")) and os.path.exists(oa_):
                 erg_["oeffnungen_wandbild_rc"] = lauf(B, "bauplan_oeffnungen_wandbild", [PY, "-u", "-W", "ignore", "-I", "tools/oeffnungen_aus_kanten.py", ZR, eb_, "--uebernehmen", oa_]
                                                       + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3))[0]
+                # 23.11.2026 (1122q: Stadttor fehlte - Sweep-Form verworfen, erst die Wandbild-Stufe baut es): Durchfahrt-Pruefung NACH der Uebernahme wiederholen (prueft nur gebaute ohne Durchfahrt)
+                if erg_["oeffnungen_wandbild_rc"] == 0 and os.path.exists(W) and os.path.exists(os.path.join(fo, "fassaden.json")):
+                    erg_["durchfahrt_nach_wandbild_rc"] = lauf(B, "bauplan_oeffnungen_durchfahrt", [PY, "-W", "ignore", "-I", "tools/durchfahrt_pruefen.py", os.path.join(fo, "fassaden.json"), oa_, "--wolke", W], log, ok=(0, 3))[0]
             if os.path.exists(gp_): bauen(B, "bauen_mit_bauplan", a.ziel, log)
             # 22.11.2026 (1122n: Bilderker fehlte ohne Meldung): Foto-F1 je gebautem Vorbau (teil_fotoform) - rc 2 = NICHT BELEGT (Praezision < 0,5), rc 3 = nichts zu pruefen
             vba_ = os.path.join(Z, "audit", "vorbauten_auto.json")
