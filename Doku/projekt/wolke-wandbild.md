@@ -85,6 +85,7 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - 16.11. · Spitzbogen: Sturz → Vier-Zentren → zwei Kreisbögen → ✓ dritte Fassung · Bogenform immer neben Foto prüfen [PIPELINE_FASSADEN 15:00; NICHTS_GEBRACHT 11.11.]
 - 17.11. · `oeffnungen_bogen` (Kasten + Durchblick + Formfit) → ✓ Methode · Tordurchfahrt Nord ±0,35 m; Arkadenreihen noch nicht [PIPELINE_FASSADEN Agentenrunde]
 - 16.11. · Vorbauten per Ebenen-Sweep `fassade_tiefe` → ⏸ nur Hinweis · Nord belastbar; Baum/ein Standort/LoD2 2,5 m daneben → Tor lehnt ab [PIPELINE_FASSADEN Z.182, Z.384]
+- 23.11. · Erkennerkasten = Öffnung (1122o: Gitterfenster 2,8×3,1 m, Schlitz als 1,28-m-Rundbogen, Tür nie gebaut, Treppenturm als „Bogen“) → ↺ `loch_gewaende.py` (Loch = dunkle Komponente, Gewände = Nicht-Wand-Farbe am Loch, Tiefe je Zelle gegen Wandring außerhalb) + `bauteile.loch_gewaende_spaet` (Schnitt auf der echten Oberfläche nach Turm/Vorbau) + `wand_anteil` (Zone außerhalb des Fassadenpolygons = Körper davor) · Kopie: Loch 1,05×1,83 / 0,14×0,87 / Tür 0,86×2,11 m; Tür 0,67 m vor der LoD2-Facette [Agent 23.11., test_loch_gewaende]
 
 ## Offen
 - `tiefe_lokal`: Abdeckung (4000 px, Tiefenkarten statt Fusion), Figuren-Feld, Aufnahme als Kettenstufe (Stand 15.11.)
@@ -97,3 +98,5 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - Unscharfe Fotos aus der Fotowahl der Feinausrichtung werfen (17.11.)
 - `dicht_bildwahl`: Obergrenze nach Platz; PatchMatch-Zwischenweg (Fenster 9, window_step 3) und „Wand-Zellen belegt“ als Tor prüfen (18./19.11.)
 - Rückwand schwab_v3: Plattenecke 8 cm verzogen, Ursache ungeklärt (18.11.)
+- Wandbild auf gekrümmtem Rundbau (Turmtür f04): Ortho auf der LoD2-Facette, echte Fläche 0,67 m davor → Tür im Modell ~0,3 m seitlich versetzt; Ortho auf Zylinderfläche nötig (23.11.)
+- Treppenturm-Kegeldach fehlt (1122o); Türblatt-Segmentbogen und Fenstergitter noch Rechteck/offen (23.11.)
