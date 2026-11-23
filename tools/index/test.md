@@ -1,4 +1,4 @@
-# Werkzeuge: test (168)
+# Werkzeuge: test (170)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -110,6 +110,7 @@
 - `tools/test_rund_eigenverdeckung.py` [seg] test_rund_eigenverdeckung.py - Verdeckungspruefung in tools/rund_aus_umriss.py ignoriert das VORMODELL des gemessenen Rundkoerpers (23.11.2026). Befund Kettenlauf 1122p (Schwabento
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
+- `tools/test_seiten_bruecke_kette.py` [-] test_seiten_bruecke_kette.py - Befund Kette 1122q (23.11.2026): Suedseite (Teil 1) nicht gebaut, Fernfotos abgeschnitten. Ursache 1: die Kette rief tools/seiten_erkennen.py nie mit
 - `tools/test_seiten_durchblick.py` [-] test_seiten_durchblick.py - Stufe 'Durchblick/Umgebung' in tools/seiten_erkennen.py (22.11.2026): einzelne starke Paare verwechselter/unklarer Verbindungen behalten. Synthetisch (E
 - `tools/test_seiten_eck_koppeln.py` [-] Test seiten_eck_koppeln (22.11.2026, verallgemeinert): Kopplungs-Pruefung (stimmig / Zufall / Verformung / zu wenig), Brueckenwahl mit mehreren Teilen (Martinstor ohne Bruecke, Ver
 - `tools/test_seiten_erkennen.py` [-] test_seiten_erkennen.py - feste Erwartungen fuer tools/seiten_erkennen.py (ohne GPU, ohne Bilder): Gemeinschaften, Zusammenhangsteile, Urteil.
@@ -123,6 +124,7 @@
 - `tools/test_seiten_querspur_binden.py` [-] Fester Test (synthetisch, Sekunden, ohne GPU/pycolmap) fuer tools/seiten_querspur_binden.py (22.11.2026, Nulllauf schwabentor-1122f: per GPS vereinte Teile 1-3 m versetzt). Synthet
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
 - `tools/test_seiten_vereinen_robust.py` [-] Fester Test: BELASTUNGSPROBE fuer seiten_vereinen.vereinen OHNE echte Daten (Vorbild tools/versuche/vereinen_robust_1121.py, dort an den Martinstor-Wolken: 8 verfaelschte Laeufe en
+- `tools/test_seiten_wiederholung.py` [seg] test_seiten_wiederholung.py - Kettenluecke 23.11.2026 (Lauf 1122q, schwabentor-1122): seiten_luecken holte Fotos fuer die ungesehenen Waende f01/f02 nach (327 Kameras, 'gegenprobe'
 - `tools/test_selbstbau_verdecker.py` [seg] test_selbstbau_verdecker.py - MESSFEHLER 21.11.2026 (zirkulaere Messung): Messungen gegen das eigene Modell duerfen selbst gebaute Vorbauten nicht als Verdecker nutzen.
 - `tools/test_sfm_gps_ausgleich.py` [col] Fester Test tools/sfm_gps_ausgleich.py (synthetisch, < 30 s, < 1 GB): Turm 10 x 10 x 30 m, zwei Seitenteile (Nord 60 Kameras, Sued 50) OHNE gemeinsame 3D-Punkte (wie das vereinte M
 - `tools/test_sim3_robust.py` [-] Test sim3_robust.sim3_meter (22.11.2026): eine Kamera "am Mond" darf die Lage nicht verschieben; zu viele Ausreisser -> None; wand_dicke_tor nutzt die robuste Sim3.

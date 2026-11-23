@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (121)
+# Werkzeuge: sonstige (122)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -73,6 +73,7 @@
 - `tools/seiten_erkennen.py` [-] seiten_erkennen.py <db.db> <bilder_ordner> --aus <seiten.json> [--db-aus <kopie.db>] [--min-bilder 12] [--min-paare 20] [--stichprobe 24] [--schwelle 0.45] [--referenz eigen__] [--
 - `tools/seiten_luecken.py` [seg] seiten_luecken.py <objekt.json> <fassaden-ordner> --sparse <SfM-Ordner mit images.bin> --ref-db <db.db> [--schwelle 0.2] [--min_m2 40] [--holen] [--download]
 - `tools/seiten_querspur_binden.py` [col] seiten_querspur_binden.py <modell_a> <modell_b> <ursprungs-db> --gps <vereinen.json> --aus <ordner> [--dicht-a fused.ply --dicht-b fused.ply]
+- `tools/seiten_wiederholung.py` [-] seiten_wiederholung.py - Entscheidung der Kette, ob nachgeholte Kameras Wandbild/Bau im SELBEN Lauf noch einmal speisen (Stufe seiten, tools/gesamtkette.py).
 - `tools/selbstbau_verdecker.py` [seg] selbstbau_verdecker.py - Verdecker-Modell fuer MESSUNGEN ohne selbst erzeugte Bauteile (21.11.2026, MESSFEHLER zirkulaere Messung).
 - `tools/shape_extract.py` [-] shape_extract.py — FORM AUTOMATISCH AUS DEM FOTO MESSEN (statt Augenmaß).
 - `tools/sichtrichtung_kohaerenz.py` [-] Sichtrichtungs-Kohaerenz je Wolkenpunkt (allgemein, fuer jedes Objekt mit Dichte-Wolke + vis + Kameras).

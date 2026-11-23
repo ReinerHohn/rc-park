@@ -1,4 +1,4 @@
-# Werkzeuge: sfm_mapper (59)
+# Werkzeuge: sfm_mapper (60)
 - `tools/ansichten_foto_paare.py` [seg] ansichten_foto_paare.py - FUER JEDES MODELL: Kantenbild des Modells aus den kalibrierten Kameras NEBEN dem Foto, ueber alle Blickrichtungen UND Hoehenwinkel (von oben, eben, von un
 - `tools/bildsuche_paare.py` [seg] bildsuche_paare.py <bilder-ordner> --aus <paare.txt> [--k 40] [--liste namen.txt] [--pruefen-db <db>]
 - `tools/colmap_db_schema.py` [-] colmap_db_schema.py <db.db> - KOPIE einer COLMAP-Datenbank auf das Schema von pycolmap 4.2.1 (venv-colmap) zurueckfuehren. 18.11.2026 (Kaufhaus gk2h, Stufe seiten_luecken: "No regi
@@ -30,6 +30,7 @@
 - `tools/kameras_am_ziel.py` [seg] kameras_am_ziel.py - ALLE kalibrierten Kameras eines Objekts nach Aufloesung am Ziel sortieren (VOR jeder Aufnahmebitte laufen lassen). Aufruf: /media/oem/scan/venv-seg/bin/python 
 - `tools/kameras_aus_buendel.py` [-] kameras_aus_buendel.py - PIPELINE-BRUECKE (2026-11-04): Kameras des Buendelausgleichs (sfm_lod2_buendel.py, an LoD2/DGM1 verankert, ohne Handpicks) als K-<foto>.json 'kamera' schre
 - `tools/kameras_nachtragen.py` [col] kameras_nachtragen.py <objekt.json> <sparse-neu> [--bilder ORDNER] [--ueberschreiben] - nachregistrierte Fotos als Messkameras K-<foto>.json in den MODELLRAHMEN bringen.
+- `tools/kameras_nachtragen_tor.py` [seg] kameras_nachtragen_tor.py <objekt.json> [--fassaden <fassaden.json>] [--min-sicht 0.1] - GUELTIGKEITS-TOR fuer nachgetragene Kameras (Stufe seiten).
 - `tools/llm_urteil_paare.py` [seg] llm_urteil_paare.py - BLIND-Paarbilder aus foto_diff-Overlays fuer einen LLM-Plausibilitaetspruefer (7.11., Nutzerwunsch). NICHT der Diff: kosten_lr bleibt das Mass; der Beurteiler
 - `tools/mapper_bewerten.py` [col] mapper_bewerten.py <sparse-ordner> --fotos <fotoordner> [--label NAME] [--sek N] [--befehl "..."] [--protokoll datei.jsonl] Einheitliche Kennzahlen fuer SfM-Varianten (globaler/sch
 - `tools/mapper_gps_vergleich.py` [col] mapper_gps_vergleich.py FOTOORDNER SPARSE_A SPARSE_B ... - SfM-Modelle ohne LoD2 gegen Foto-GPS vergleichen (15.11.): gemeinsame eigene Fotos, robuste 2D-Aehnlichkeit je Modell, GP
