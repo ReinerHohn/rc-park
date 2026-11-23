@@ -11,7 +11,7 @@ Darum hier die KANTEN IM INNERN der Silhouette in voller Fotoaufloesung (KERNMET
 
  1. Je Foto (Kameras aus messprotokoll, Achse aus dach_profil.json 'spitze_foto') wird die Zeile quer zur Blickrichtung an der Achse in voller Aufloesung
     abgetastet (Median ueber ein Hoehenband): Helligkeit I(x), Dunkelheit gegen den Himmel s(x) in 0..1, x in Metern quer zur Blickrichtung.
- 2. PFOSTEN (offene Zone, Band PF_BAND der Pfostenhoehe - unter der Glocke, ueber dem First): ein regelmaessiges n-Eck mit Umkreis R und Lage phase zeigt
+ 2. PFOSTEN (offene Zone je Foto aus der Silhouette: Zeilen mit Himmel zwischen den Pfosten, unter Glocke/Krempe, ueber dem First): ein regelmaessiges n-Eck mit Umkreis R und Lage phase zeigt
     seine Pfosten bei x = c + R sin(az - alpha_k) (vorne UND hinten sichtbar, weil offen). Bewertung je (n, phase, R): mittlere Dunkelheit an den Pfosten minus
     mittlere Dunkelheit an den Kantenmitten (dort muss Himmel sein). Ein Achteck bei einem Quadrat verliert, weil seine Zwischenpfosten im Himmel liegen.
  3. HAUBE (geschlossen): Facettenkanten sind Helligkeitsstufen (Flaechen verschiedener Neigung zum Licht), Blechnaehte nur duenne Linien -> Stufensignal
@@ -29,7 +29,6 @@ H_ = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, H_)
 
 # ---- Schwellen (Grund je Zeile; nicht an einem Bauwerk eingestellt) ---------------------------------------------------------------------------
 N_KAND = (3, 4, 5, 6, 8, 10, 12, 16)  # gepruefte Eckenzahlen (regelmaessige Vielecke der Laternen/Hauben; Kreis = keine Zahl gewinnt)
-PF_BAND = (0.30, 0.45)  # Pfostenband als Anteil der Pfostenhoehe: ueber dem Dachfirst (der steht in der Mitte bis ~25 % hinauf), unter Glocke/Krempen-Untersicht
 HB_BAND = (0.1, 0.4)    # Facettenband der Haube als Anteil Bauch -> Hals: obere, vom Himmel beleuchtete Haelfte (unter dem Bauch liegt die Haube im eigenen
                         # Schatten - die Licht/Schatten-Grenze ist eine waagrecht gekruemmte Stufe und taeuschte im ersten Lauf Kanten vor)
 MIN_FOTOS = 3           # Formfamilie/Eckenzahl aus >= 3 Fotos (CLAUDE.md)
@@ -47,6 +46,17 @@ ABW_M = 0.15            # Foto-Ausreisser: Halbbreiten im Median > 15 cm neben d
 NADEL_STREUUNG_M = 0.3  # Nadelende nur gueltig, wenn die Fotos auf 30 cm einig sind (sonst Mischpixel/Ueberbelichtung - Fallback Himmelsmasken-Spitze)
 NADEL_FENSTER_M = 0.12  # Nadel/Kreuzstange: Fenster quer um die Knaufmitte (Stange 3-10 cm, Achse/Knaufmitte auf ~5 cm)
 MIN_OFFEN = 0.2        # Pfostenband nur verwendbar, wenn >= 20 % zwischen den aeusseren Pfosten Himmel ist (offene Laterne gesehen, nicht verdeckt)
+# 23.11.2026 (Kette 1122q, Befund 'Laterne geschlossen statt offen', laterne_foto: 'Pfosten None'): das feste Band (30-45 % der Pfostenhoehe) lag in den Fotos
+# von unten am Dachfirst; die hellgruenen Pfosten erreichten gegen die tiefschwarze Krempen-Untersicht (lo = 3-%-Wert der ganzen Laterne) die Schwelle DUNKEL nicht.
+# Jetzt je Foto die OFFENE ZONE aus der Silhouette (Zeilen mit Himmel zwischen den Pfosten), Dunkelheit je Zeile normiert, und Fotos aus allen Blickrichtungen.
+OFFEN_REL = 0.85       # offene Zeilen: Himmelsanteil >= 85 % des offensten Werts dieses Fotos (darunter Dachfirst/Glocke zwischen den Pfosten)
+BREITE_REL = 0.15      # ... und Silhouetten-Halbbreite auf 15 % wie der Median der offenen Zeilen (Dachflaeche/Krempe sind breiter)
+MIN_ZEILEN = 3         # offene Zone mind. 3 Zeilen (0,15 m bei 5 cm Schritt), sonst Foto fuer die Pfosten nicht verwendbar
+ZEILE_LO_ANTEIL = 0.3  # Zeilen-Normierung: Nenner mind. 30 % des Foto-Kontrasts (reine Himmelszeile bleibt hell, Rauschen wird nicht zu 'dunkel')
+MIN_HIMMEL = 0.8       # Fotoauswahl: >= 80 % der Randpunkte neben der Laterne (Krempe .. Spitze) sind in der Himmelsmaske Himmel (Laterne frei vor Himmel)
+SEKTOR_GRAD = 45.0     # Fotoauswahl je Blickrichtungs-Sektor ...
+MAX_JE_SEKTOR = 8      # ... hoechstens 8 Fotos (die mit den meisten px/m) - sonst bestimmen 10 Fotos aus 16 Grad die Eckenzahl allein
+MAX_FOTOS = 40         # Speicher: 40 Fotos x 12 MP Graustufen ~ 0,5 GB
 
 
 def ecken_x(n, phase, az, R=1.0):
@@ -90,20 +100,27 @@ def ecken_bewerten(beob, offen, n_kand=N_KAND, phase_schritt=1.0, r_anteile=np.l
       Ein Achteck-Modell bei einem Quadrat sagt Pfosten in den Himmel voraus, ein Quadrat-Modell beim Achteck laesst Pfosten aus - beides senkt die Korrelation.
     offen=False (Haube): Stufensignal = Dreiecke (Halbbreite STUFE_W_M) an den vorderen Ecken, normiert u = sin(...)/max|sin| auf die Silhouette (c, h); nur im Inneren
       (|x - c| < 0,92 h; die Silhouette selbst ist keine Facettenkante).
-    -> dict(n -> dict(kontrast [Korrelation], phase, R_anteil)), bestes n, Abstand zum zweiten."""
+    -> dict(n -> dict(kontrast [Korrelation], phase, R_anteil)), bestes n, Abstand zum zweiten.
+    23.11.2026: offen - Umkreis R in METERN fuer alle Fotos gleich, je (n, phase) aus den Silhouetten bestimmt (aeussere Pfostenkante = Ausdehnung:
+    R_F = (h_F - breite/2) / halbe Spannweite der Ecken; R = Median) statt R = Anteil x h je Foto (ein Vieleck ist je Blickrichtung verschieden breit; das freie R
+    liess die Pfosten nach innen rutschen - Kette 1122: Marken bei R 0,55 m zwischen Pfosten bei 0,75 m). Bewertet nur im Silhouettenbereich (|x - c| <= h + breite).
+    Je Foto die beste Eckenzahl -> 'stimmen' (Formfamilie aus >= 3 Fotos, main prueft)."""
     if offen and breite is None:
         bb = [b for B in beob for b in aussen_breite(B)]; breite = float(np.median(bb)) if bb else 0.1
     erg = {}
     for n in n_kand:
         best = (-np.inf, 0.0, 1.0)
         for ph in np.arange(0.0, 360.0 / n, phase_schritt):
-            for ra in (r_anteile if offen else [1.0]):
+            if offen:
+                X_ = [ecken_x(n, ph, B["az"])[0] for B in beob]
+                R_ = float(np.median([(B["h"] - breite / 2) / max((x_.max() - x_.min()) / 2, 1e-3) for B, x_ in zip(beob, X_)]))
+            for ra in ([R_] if offen else [1.0]):
                 ks = []
-                for B in beob:
+                for i, B in enumerate(beob):
                     x, s = B["x"], B["s"]; xe, ve = ecken_x(n, ph, B["az"])
                     if offen:
-                        m = np.zeros_like(x); reg = np.ones(len(x), bool)
-                        for p in B["c"] + ra * B["h"] * xe: m = np.maximum(m, (np.abs(x - p) <= breite / 2).astype(float))
+                        m = np.zeros_like(x); reg = np.abs(x - B["c"]) <= B["h"] + breite; c_ = B["c"] - ra * (xe.max() + xe.min()) / 2     # Mitte der Eckenspannweite = Mitte der Ausdehnung
+                        for p in c_ + ra * xe: m = np.maximum(m, (np.abs(x - p) <= breite / 2).astype(float))
                     else:
                         lo, hi = xe.min(), xe.max(); m_ = (lo + hi) / 2; hh = max((hi - lo) / 2, 1e-9); ue = (xe - m_) / hh
                         reg = np.abs(x - B["c"]) < 0.92 * B["h"]; m = np.zeros_like(x)
@@ -114,7 +131,15 @@ def ecken_bewerten(beob, offen, n_kand=N_KAND, phase_schritt=1.0, r_anteile=np.l
                 k = float(np.mean(ks)) if ks else -np.inf
                 if k > best[0]: best = (k, float(ph), float(ra), ks)
         erg[n] = dict(kontrast=round(best[0], 3), phase=round(best[1], 1), R_anteil=round(best[2], 3), einzel=[round(v, 3) for v in (best[3] if len(best) > 3 else [])])
+        if offen: erg[n].update(R=round(best[2], 3), R_anteil=round(best[2] / max(float(np.median([B["h"] for B in beob])), 1e-6), 3), breite=round(breite, 3))
     o = sorted(erg, key=lambda n: -erg[n]["kontrast"])
+    # Stimmen: je Foto die Eckenzahl mit der hoechsten Einzel-Korrelation (Formfamilie erst aus >= MIN_FAMILIE Fotos)
+    ein = {n: erg[n]["einzel"] for n in erg if len(erg[n]["einzel"]) == len(beob)}
+    if ein:
+        st = {}
+        for i in range(len(beob)):
+            nb = max(ein, key=lambda n: ein[n][i]); st[nb] = st.get(nb, 0) + 1
+        erg[o[0]]["stimmen"] = {str(k): v for k, v in sorted(st.items())}
     # Sicherheit: gepaarter t-Wert der Korrelations-Differenz bestes - zweites n ueber die Fotos (Streuung der Fotos statt fester Schwelle)
     d_ = np.array(erg[o[0]]["einzel"]) - np.array(erg[o[1]]["einzel"]) if len(erg[o[0]]["einzel"]) == len(erg[o[1]]["einzel"]) and len(erg[o[0]]["einzel"]) > 1 else np.array([0.0])
     erg[o[0]]["t"] = round(float(d_.mean() / max(d_.std(ddof=1) if len(d_) > 1 else 1.0, 1e-6) * math.sqrt(len(d_))), 2)
@@ -138,6 +163,66 @@ def ausdehnung(s, x, c0=0.0, schwelle=DUNKEL):
     """Aeussere Ausdehnung der Dunkelheit (erste/letzte Stelle > schwelle) -> (links, rechts) oder None."""
     j = np.where(s > schwelle)[0]
     return None if len(j) == 0 else (float(x[j[0]]), float(x[j[-1]]))
+
+
+def dunkel_zeile(I, hi, lo_foto):
+    """Dunkelheit einer Zeile gegen den Himmel (hi), normiert auf das Dunkelste DIESER Zeile (1-%-Wert): helle Pfosten vor Himmel werden ~1, auch wenn die Krempen-Untersicht
+    im selben Foto viel dunkler ist; Nenner mind. ZEILE_LO_ANTEIL des Foto-Kontrasts (reine Himmelszeile bleibt ~0)."""
+    lo = float(np.nanpercentile(I, 1)) if np.isfinite(I).any() else hi
+    return np.clip((hi - I) / max(hi - lo, ZEILE_LO_ANTEIL * (hi - lo_foto), 1e-6), 0, 1)
+
+
+def offene_zone(S, zs, x):
+    """Offene Zone der Pfosten in EINEM Foto aus der Silhouette: S [Zeilen, x] Dunkelheit je Hoehe zs (Fuss .. Pfostenoberkante). Je Zeile aeussere Ausdehnung (> DUNKEL)
+    und Himmelsanteil dazwischen. Offen = Himmelsanteil >= MIN_OFFEN und >= OFFEN_REL x offenster Wert, Halbbreite auf BREITE_REL wie der Median der offenen Zeilen
+    (Dachfirst, Glocke hinter den Pfosten, Krempe fallen heraus). -> dict(s [Median der offenen Zeilen], z0, z1, zeilen, offen, c, h) oder (None, Grund)."""
+    hf, of, ce = [], [], []
+    for s in S:
+        e_ = ausdehnung(np.nan_to_num(s, nan=0.0), x)
+        if not e_: hf.append(np.nan); of.append(0.0); ce.append(np.nan); continue
+        inn = (x > e_[0]) & (x < e_[1]); hf.append((e_[1] - e_[0]) / 2); ce.append((e_[0] + e_[1]) / 2)
+        of.append(float(np.mean(s[inn] < 1 - DUNKEL)) if inn.any() else 0.0)
+    hf, of, ce = np.array(hf), np.array(of), np.array(ce)
+    k = of >= MIN_OFFEN
+    if not k.any(): return None, f"kein Himmel zwischen den Pfosten (offen max {of.max():.2f})"
+    k &= of >= OFFEN_REL * of[k].max(); hm = float(np.median(hf[k])); k &= np.abs(hf - hm) <= BREITE_REL * hm
+    if k.sum() < MIN_ZEILEN: return None, f"offene Zone nur {int(k.sum())} Zeilen"
+    s = np.median(np.asarray(S)[k], 0)
+    e_ = ausdehnung(s, x)
+    if not e_: return None, "Pfosten im Median der offenen Zeilen nicht dunkel"
+    return dict(s=s, z0=float(zs[k].min()), z1=float(zs[k].max()), zeilen=int(k.sum()), offen=round(float(np.median(of[k])), 3), c=(e_[0] + e_[1]) / 2, h=(e_[1] - e_[0]) / 2), None
+
+
+def himmel_anteil(maske, proj, A, q, zs, xr):
+    """Anteil Himmel (maske True) an den Randpunkten A + x q (x = +-xr) in den Hoehen zs; Punkte ausserhalb des Bilds zaehlen als nicht Himmel."""
+    H, W = maske.shape; n = 0; h = 0
+    for z in zs:
+        for x in xr:
+            p = proj(np.array([[A[0] + x * q[0], A[1] + x * q[1], z]]))[0][0]; n += 1
+            xi, yi = int(round(p[0])), int(round(p[1]))
+            if 0 <= xi < W and 0 <= yi < H and maske[yi, xi]: h += 1
+    return h / max(n, 1)
+
+
+def fotos_streuen(kand, sektor=SEKTOR_GRAD, je=MAX_JE_SEKTOR, gesamt=MAX_FOTOS):
+    """Fotoauswahl ueber die Blickrichtungen: kand = [(ppm, az, nr, ...)]; je Sektor die je besten (ppm), dann insgesamt hoechstens 'gesamt' (beste ppm). -> Liste."""
+    sek = {}
+    for k in sorted(kand, key=lambda k: -k[0]): sek.setdefault(int((k[1] % 360.0) // sektor), []).append(k)
+    aus = [k for v in sek.values() for k in v[:je]]
+    return sorted(aus, key=lambda k: -k[0])[:gesamt]
+
+
+def profil_abweichung(halb, pm, k_grenze=1.45):
+    """Abweichung eines Foto-Breitenprofils vom Median-Profil MIT freiem Massstab k (Vieleck: je Blickrichtung bis sqrt(2) breiter/schmaler - ohne k flogen am
+    Schwabentor genau die Fotos aus anderen Richtungen als 'Ausreisser' raus). halb {z: (l, r)}, pm {z: halb}. -> (Median |h - k pm|, k)."""
+    zz = [z for z in halb if z in pm]
+    if not zz: return np.inf, 1.0
+    h = np.array([(halb[z][1] - halb[z][0]) / 2 for z in zz]); p = np.array([pm[z] for z in zz])
+    best = (np.inf, 1.0)
+    for k in np.exp(np.linspace(-math.log(k_grenze), math.log(k_grenze), 41)):
+        d = float(np.median(np.abs(h - k * p)))
+        if d < best[0]: best = (d, float(k))
+    return best
 
 
 def familie_aus_profil(zr):
@@ -189,6 +274,7 @@ def main(argv=None):
     import cv2, flaeche_ortho as FO
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--profil"); ap.add_argument("--aus"); ap.add_argument("--bild"); ap.add_argument("--min-ppm", type=float, default=25.0)
     ap.add_argument("--root", help="Wurzel fuer fotos_dir (Standard wie flaeche_ortho)")
+    ap.add_argument("--cache", help="Himmelsmasken-Cache (Standard audit/himmel_cache; nur lesen)")
     a = ap.parse_args(argv)
     if a.root: FO.ROOT = a.root
     od = os.path.dirname(os.path.abspath(a.objekt)); Au = os.path.join(od, "audit"); pp = a.profil or os.path.join(Au, "dach_profil.json")
@@ -198,16 +284,41 @@ def main(argv=None):
     if not SF.get("gueltig") or not SF.get("einzel"): print("kein gueltiger Block spitze_foto (tools/spitze_aus_umriss.py)"); return 3
     from bauteile import spitze_ab
     A = np.array(SF["achse"], float); z_fuss = spitze_ab(SF) or float(SF["profil"][0][0]); z_top = float(SF["spitze_z"]) + 1.5
-    _, cams = FO.kameras_laden(a.objekt, fotos={e[0] for e in SF["einzel"]})
-    zs = np.round(np.arange(z_fuss, z_top, 0.05), 2); fotos = []
+    # 23.11.2026 FOTOAUSWAHL ueber ALLE Kameras (vorher nur spitze_foto.einzel: am Schwabentor 10 Fotos aus 16 Grad Blickrichtung): Laterne ganz im Bild, gross genug
+    # (--min-ppm) und FREI VOR HIMMEL (Himmelsmaske aus dem Cache von spitze_aus_umriss/dach_aus_fotos: Randpunkte neben der Laterne von der Krempe bis zur Spitze);
+    # Fotos ohne Maske nur, wenn spitze_aus_umriss sie schon vor dem Himmel gemessen hat (einzel). Je 45-Grad-Sektor die besten, damit viele Richtungen zaehlen.
+    import dach_aus_fotos as DA
+    _, cams = FO.kameras_laden(a.objekt); sf_ein = {e[0] for e in SF["einzel"]}; cache = a.cache or os.path.join(Au, "himmel_cache")
+    r_max = max([float(p[1]) for p in SF["profil"] if p[0] >= z_fuss - 1e-6] or [1.5]); xr_ = (1.25 * r_max + 0.2, 1.25 * r_max + 0.5)
+    z_rand = np.linspace(float(SF.get("krempe_roh_z") or SF.get("krempe_z") or z_fuss + 1.0), float(SF["spitze_z"]), 8)
+    kand = []; gruende = {}
+    def grund(g): gruende[g] = gruende.get(g, 0) + 1
     for nr, (c, pf) in sorted(cams.items()):
+        W0, H0 = c.get("bild") or (c["cx"] * 2, c["cy"] * 2)
+        C = FO.projektion(np.array([[A[0], A[1], 0.0]]), c)[2]; az = math.degrees(math.atan2(C[1] - A[1], C[0] - A[0])); q = np.array([math.sin(math.radians(az)), -math.cos(math.radians(az))])
+        ecken = np.array([[A[0] + x * q[0], A[1] + x * q[1], z] for x in (-xr_[1], xr_[1]) for z in (z_fuss, z_top)])
+        pe, ze, _ = FO.projektion(ecken, c)
+        if (ze <= 0).any() or (pe[:, 0] < 0).any() or (pe[:, 1] < 0).any() or (pe[:, 0] > W0 - 1).any() or (pe[:, 1] > H0 - 1).any(): grund("Laterne nicht ganz im Bild"); continue
+        p0 = FO.projektion(np.array([[A[0], A[1], z_fuss + 2]]), c)[0]; p1 = FO.projektion(np.array([[A[0] + q[0], A[1] + q[1], z_fuss + 2]]), c)[0]; ppm0 = float(np.linalg.norm(p1 - p0))
+        if ppm0 < a.min_ppm: grund("zu klein (px/m)"); continue
+        M_, s_ = DA.himmel_laden(dict(name=nr, W0=int(round(W0)), H0=int(round(H0)), foto=pf), cache, nur_cache=True)
+        if M_ is None:
+            if nr not in sf_ein: grund("keine Himmelsmaske"); continue
+            ha = None
+        else:
+            sm = M_.shape[1] / float(W0); ha = himmel_anteil(M_, lambda X: (FO.projektion(X, c)[0] * sm,), A, q, z_rand, (-xr_[1], -xr_[0], xr_[0], xr_[1]))
+            if ha < MIN_HIMMEL: grund("nicht frei vor Himmel"); continue
+        kand.append((ppm0, az, nr, c, pf, ha))
+    kand = fotos_streuen(kand)
+    print(f"Fotoauswahl: {len(kand)} Fotos aus Sektoren {sorted({int((k[1] % 360) // SEKTOR_GRAD) for k in kand})}; verworfen {gruende}")
+    zs = np.round(np.arange(z_fuss, z_top, 0.05), 2); fotos = []
+    for ppm0, az, nr, c, pf, ha in kand:
         im = cv2.imread(pf, cv2.IMREAD_GRAYSCALE)
         if im is None: continue
         sb = im.shape[1] / (c["cx"] * 2)                                                          # uint8 behalten (17 Fotos x 12 MP; float waeren 0,8 GB)
-        C = FO.projektion(np.array([[A[0], A[1], 0.0]]), c)[2]; az = math.degrees(math.atan2(C[1] - A[1], C[0] - A[0])); q = np.array([math.sin(math.radians(az)), -math.cos(math.radians(az))])
-        p0 = FO.projektion(np.array([[A[0], A[1], z_fuss + 2]]), c)[0] * sb; p1 = FO.projektion(np.array([[A[0] + q[0], A[1] + q[1], z_fuss + 2]]), c)[0] * sb; ppm = float(np.linalg.norm(p1 - p0))
+        q = np.array([math.sin(math.radians(az)), -math.cos(math.radians(az))]); ppm = ppm0 * sb
         if ppm < a.min_ppm: continue
-        xs = np.arange(-2.5, 2.5, 0.5 / ppm)
+        xs = np.arange(-max(2.5, xr_[1]), max(2.5, xr_[1]), 0.5 / ppm)
         # Breitenprofil in voller Aufloesung (aeussere Ausdehnung der Dunkelheit je Hoehe; Himmel/Dunkel je Foto aus einem Referenzband ueber die ganze Laterne)
         ref = zeile(im, c, sb, A, q, z_fuss, z_top - 1.0, xs, nz=25); hi = np.nanpercentile(ref, 97); lo = np.nanpercentile(ref, 3)
         dk = lambda I: np.clip((hi - I) / max(hi - lo, 1e-6), 0, 1)
@@ -215,7 +326,7 @@ def main(argv=None):
         for z in zs:
             s = dk(np.nan_to_num(zeile(im, c, sb, A, q, z, z, xs, nz=1), nan=hi)); e_ = ausdehnung(s, xs, schwelle=NADEL_DUNKEL if z > SF.get("krempe_z", z_fuss) + 3 else DUNKEL)
             if e_: halb[float(z)] = (e_[0], e_[1])
-        fotos.append(dict(nr=nr, az=az, ppm=ppm, c=c, sb=sb, q=q, xs=xs, dk=dk, halb=halb, im=im, pf=pf))
+        fotos.append(dict(nr=nr, az=az, ppm=ppm, c=c, sb=sb, q=q, xs=xs, dk=dk, hi=hi, lo=lo, halb=halb, im=im, pf=pf, himmel=ha))
         print(f"{nr}: az {az:6.1f} ppm {ppm:.0f} Hoehen {len(halb)}")
     if len(fotos) < MIN_FOTOS: return schreiben(D, pp, a, dict(gueltig=False, grund=f"nur {len(fotos)} Fotos mit >= {a.min_ppm} px/m"), 4)
     # Median-Breitenprofil (Halbbreite = halbe Ausdehnung, Mitte = Mitte der Ausdehnung)
@@ -229,8 +340,8 @@ def main(argv=None):
     # Ausreisser-Fotos (falsche Kamera, Laterne hinter Traufe/Giebel, Fremdkoerper): Halbbreiten weichen im Median > ABW_M vom Median aller ab -> raus
     pm = {p[0]: p[1] for p in P}; weg = []
     for F in fotos:
-        d_ = [abs((e_[1] - e_[0]) / 2 - pm[z]) for z, e_ in F["halb"].items() if z in pm]
-        if not d_ or float(np.median(d_)) > ABW_M: weg.append(F["nr"])
+        d_, F["k_profil"] = profil_abweichung(F["halb"], pm)                     # freier Massstab: Vieleck je Blickrichtung verschieden breit
+        if d_ > ABW_M: weg.append(F["nr"])
     if weg:
         fotos = [F for F in fotos if F["nr"] not in weg]; print("Ausreisser-Fotos (Breitenprofil):", weg)
         if len(fotos) < MIN_FOTOS: return schreiben(D, pp, a, dict(gueltig=False, grund=f"nach Ausreissern nur {len(fotos)} Fotos", ausreisser=weg), 4)
@@ -252,15 +363,15 @@ def main(argv=None):
         if top is None: continue
         nadel_einzel[F["nr"]] = top
         if Z["z_knauf"] + 0.3 <= top <= zs[-1] - 0.2: spitzen.append(top)     # Nadel ueberhaupt gesehen (nicht nur der Knauf) und Himmel darueber (nicht Suchende)
-    # Pfosten: Band PF_BAND der Pfostenzone
-    zu_ = Z["z_pfosten_unten"]; zp0 = zu_ + PF_BAND[0] * (Z["z_pfosten_oben"] - zu_); zp1 = zu_ + PF_BAND[1] * (Z["z_pfosten_oben"] - zu_)
-    bp, bh = [], []; zu_offen = []
+    # Pfosten: OFFENE ZONE je Foto aus der Silhouette (23.11.2026; vorher festes Band PF_BAND der Pfostenhoehe - lag in Fotos von unten am Dachfirst):
+    # Zeilen vom Laternenfuss bis zur Pfostenoberkante, Dunkelheit je Zeile normiert (helle Pfosten vor Himmel), offene Zeilen = Himmel zwischen den Pfosten.
+    zpf = zs[(zs >= zs[0]) & (zs <= Z["z_pfosten_oben"] + 1e-6)]
+    bp, bh = [], []; zu_offen = {}
     for F in fotos:
-        s = F["dk"](np.nan_to_num(zeile(F["im"], F["c"], F["sb"], A, F["q"], zp0, zp1, F["xs"]), nan=0.0)); e_ = ausdehnung(s, F["xs"])
-        if e_:
-            inn = (F["xs"] > e_[0]) & (F["xs"] < e_[1]); hell = float(np.mean(s[inn] < 1 - DUNKEL)) if inn.any() else 0.0
-            if hell >= MIN_OFFEN: bp.append(dict(az=F["az"], x=F["xs"], s=s, c=(e_[0] + e_[1]) / 2, h=(e_[1] - e_[0]) / 2, nr=F["nr"]))
-            else: zu_offen.append(F["nr"])           # kein Himmel zwischen den Pfosten (Glocke/Dach dahinter/verdeckt) -> fuer die Pfostenzahl nicht verwendbar
+        S = np.array([dunkel_zeile(zeile(F["im"], F["c"], F["sb"], A, F["q"], z, z, F["xs"], nz=1), F["hi"], F["lo"]) for z in zpf])
+        oz, g_ = offene_zone(S, zpf, F["xs"]) if len(zpf) >= MIN_ZEILEN else (None, "Pfostenzone zu kurz")
+        if oz: bp.append(dict(az=F["az"], x=F["xs"], s=oz["s"], c=oz["c"], h=oz["h"], nr=F["nr"], band=[round(oz["z0"], 2), round(oz["z1"], 2)], offen=oz["offen"]))
+        else: zu_offen[F["nr"]] = g_                  # kein Himmel zwischen den Pfosten (Glocke/Dach dahinter/verdeckt) -> fuer die Pfostenzahl nicht verwendbar
         zb0, zb1 = Z["z_bauch"] + HB_BAND[0] * (Z["z_hals"] - Z["z_bauch"]), Z["z_bauch"] + HB_BAND[1] * (Z["z_hals"] - Z["z_bauch"])
         I = np.nan_to_num(zeile(F["im"], F["c"], F["sb"], A, F["q"], zb0, zb1, F["xs"]), nan=255.0)
         sd = F["dk"](I); e_ = ausdehnung(sd, F["xs"])
@@ -284,10 +395,15 @@ def main(argv=None):
                 k0 = j[-1] if sg > 0 else j[0]; k = k0
                 while 0 < k < len(B["x"]) - 1 and B["s"][k - sg] > DUNKEL: k -= sg
                 br.append(abs(B["x"][k0] - B["x"][k]))
-        b = float(np.median(br)) if br else None; R = E[n]["R_anteil"] * hm
+        b = float(np.median(br)) if br else None; R = E[n]["R"]
+        st_ = E[n].get("stimmen") or {}; sn = int(st_.get(str(n), 0))      # Formfamilie: die Eckenzahl muss in >= MIN_FAMILIE Fotos einzeln gewinnen
         fpf = float(np.median([np.max(np.abs(ecken_x(n, E[n]["phase"], B["az"])[0])) for B in bp]))      # Silhouette eines n-Ecks in dieser Lage = Umkreis x max|sin|
-        erg["pfosten"] = dict(n=n, phase=E[n]["phase"], R=round(R, 3), silh_faktor=round(fpf, 3), breite=None if b is None else round(b, 3), abstand=ab, fotos=len(bp), band=[round(zp0, 2), round(zp1, 2)],
-                              kandidaten={str(k): v for k, v in E.items()}, t=E[n].get("t"), t_grenze=t_grenze(len(bp)), eindeutig=bool(E[n].get("t", 0) >= t_grenze(len(bp))))
+        erg["pfosten"] = dict(n=n, phase=E[n]["phase"], R=round(R, 3), silh_faktor=round(fpf, 3), breite=None if b is None else round(b, 3), abstand=ab, fotos=len(bp),
+                              band=[round(float(np.median([B["band"][0] for B in bp])), 2), round(float(np.median([B["band"][1] for B in bp])), 2)],
+                              baender={B["nr"]: B["band"] for B in bp}, mitten={B["nr"]: round(float(B["c"]), 3) for B in bp}, offen={B["nr"]: B["offen"] for B in bp}, az_bereich=[round(min(B["az"] for B in bp), 1), round(max(B["az"] for B in bp), 1)],
+                              kandidaten={str(k): v for k, v in E.items()}, t=E[n].get("t"), t_grenze=t_grenze(len(bp)), stimmen=st_,
+                              eindeutig=bool(E[n].get("t", 0) >= t_grenze(len(bp)) and sn >= MIN_FAMILIE))
+    else: erg["pfosten_grund"] = f"nur {len(bp)} Fotos mit offener Pfostenzone (verlangt {MIN_FOTOS}) - keine Pfostenzahl, kein offener Bau"
     if len(bh) >= MIN_FOTOS:
         E, n, ab, ds = ecken_bewerten_beide(bh, offen=False)
         sg = 1 if ds == "kameras" else -1
@@ -307,11 +423,17 @@ def main(argv=None):
     if erg["nadel_z"] is not None and erg["nadel_streuung"] > NADEL_STREUUNG_M:
         erg.update(nadel_grund=f"Nadelende streut {erg['nadel_streuung']} m (> {NADEL_STREUUNG_M}) - Bauteil nimmt spitze_foto.spitze_z", nadel_z_roh=erg["nadel_z"], nadel_z=None)
     ok_ = erg.get("pfosten", {}).get("eindeutig") and erg.get("haube") is not None and erg["familie"] is not None
-    erg.update(gueltig=bool(ok_), grund=None if ok_ else "Pfosten-Eckenzahl nicht eindeutig / Haube oder Familie ohne >= 3 Fotos",
+    Pf_ = erg.get("pfosten") or {}
+    g_ = [] if ok_ else ([erg.get("pfosten_grund")] if not Pf_ else [] if Pf_.get("eindeutig") else
+                         [f"Pfosten-Eckenzahl {Pf_.get('n')} nicht eindeutig (t {Pf_.get('t')} / Grenze {Pf_.get('t_grenze')}, Stimmen {Pf_.get('stimmen')}, verlangt >= {MIN_FAMILIE})"])
+    g_ += [] if ok_ or erg.get("haube") is not None else [f"Haube ohne >= {MIN_FOTOS} Fotos"]
+    g_ += [] if ok_ or erg["familie"] is not None else [f"Haubenfamilie ohne >= {MIN_FAMILIE} einige Fotos"]
+    erg.update(gueltig=bool(ok_), grund=None if ok_ else "; ".join(g_),
                annahmen=["ANNAHME: regelmaessiges n-Eck um die Dachachse (Lage aus dach_profil.json)",
                          "ANNAHME: Krempe hat die Eckenzahl und Lage der Pfosten (Dach ueber dem Pfostenviereck), Haube eigene Eckenzahl aus den Facettenstufen",
                          "Pfostenbreite = Breite der Dunkelheit um die aeusseren Pfosten (Unschaerfe macht sie etwas breiter)", "Glocke/Zifferblaetter im Inneren nicht gebaut"])
-    print(f"Pfosten {erg.get('pfosten', {}).get('n')} (Abstand {erg.get('pfosten', {}).get('abstand')}, R {erg.get('pfosten', {}).get('R')}, Breite {erg.get('pfosten', {}).get('breite')}); "
+    if not ok_: print("UNGUELTIG:", erg["grund"])
+    print(f"Pfosten {erg.get('pfosten', {}).get('n')} (Stimmen {erg.get('pfosten', {}).get('stimmen')}, t {erg.get('pfosten', {}).get('t')}, Band {erg.get('pfosten', {}).get('band')}, Abstand {erg.get('pfosten', {}).get('abstand')}, R {erg.get('pfosten', {}).get('R')}, Breite {erg.get('pfosten', {}).get('breite')}); "
           f"Haube {erg.get('haube', {}).get('n')} (Abstand {erg.get('haube', {}).get('abstand')}); Familie {erg['familie']} {fam}; Nadel z {erg['nadel_z']}")
     if a.bild:
         try: bild(fotos, A, erg, a.bild)
@@ -325,23 +447,39 @@ def schreiben(D, pp, a, erg, rc):
     return rc
 
 
+def bild_auswahl(fotos, k=4, min_abstand=20.0):
+    """Bis k Fotos fuer das Pruefbild: zuerst verschiedene Blickrichtungen (>= min_abstand Grad auseinander, je die meisten px/m), dann nach px/m auffuellen."""
+    o = sorted(fotos, key=lambda F: -F["ppm"]); aus = []
+    for F in o:
+        if len(aus) < k and all(abs((F["az"] - G["az"] + 180) % 360 - 180) >= min_abstand for G in aus): aus.append(F)
+    for F in o:
+        if len(aus) < k and F not in aus: aus.append(F)
+    return aus
+
+
 def bild(fotos, A, erg, aus):
-    """Pruefbild: bis 4 Fotos (Ausschnitt um die Laterne) mit den vorhergesagten Pfosten (gruen, im Pfostenband) und Haubenkanten (magenta, im Bauchband)."""
+    """Pruefbild: bis 4 Fotos aus verschiedenen Blickrichtungen (Ausschnitt um die Laterne) mit den vorhergesagten Pfosten (gruen, in der offenen Zone DIESES Fotos,
+    Zonengrenzen als kurze Querstriche) und Haubenkanten (magenta, im Bauchband)."""
     import cv2, flaeche_ortho as FO
-    Z = erg["zonen"]; kach = []
-    for F in sorted(fotos, key=lambda F: -F["ppm"])[:4]:
+    Z = erg["zonen"]; kach = []; Pf = erg.get("pfosten") or {}
+    mit_pf = [F for F in fotos if F["nr"] in (Pf.get("baender") or {})]
+    for F in bild_auswahl(mit_pf + [F for F in fotos if F not in mit_pf] if len(mit_pf) >= 4 else fotos):
         im = cv2.imread(F["pf"]) if F.get("pf") else cv2.cvtColor(F["im"], cv2.COLOR_GRAY2BGR); c, sb, q = F["c"], F["sb"], F["q"]
         P_ = lambda x, z: tuple(int(v) for v in (FO.projektion(np.array([[A[0] + x * q[0], A[1] + x * q[1], z]]), c)[0] * sb)[0])
-        for key, zb, col in (("pfosten", sum(erg["pfosten"]["band"]) / 2 if erg.get("pfosten") else None, (0, 200, 0)), ("haube", Z["z_bauch"], (255, 0, 255))):
-            E = erg.get(key)
-            if not E or zb is None: continue
-            if key == "pfosten": xe = ecken_x(E["n"], E["phase"], F["az"], E["R"])[0]; sel = np.ones(len(xe), bool)
-            else: xe, sel = ecken_x(E["n"], E["phase"], F["az"], Z["r_bauch"] / E["silh_faktor"])
-            for x in xe[sel]: cv2.line(im, P_(x, zb - 0.3), P_(x, zb + 0.3), col, 2)
+        if Pf:
+            xe = ecken_x(Pf["n"], Pf["phase"], F["az"], Pf["R"])[0]; zb = Pf.get("baender", {}).get(F["nr"]) or Pf["band"]
+            xe = xe + Pf.get("mitten", {}).get(F["nr"], 0.0) - (xe.max() + xe.min()) / 2          # wie ecken_bewerten: Mitte der Eckenspannweite = Mitte der Ausdehnung
+            for x in xe: cv2.line(im, P_(x, zb[0]), P_(x, zb[1]), (0, 200, 0), 2)
+            for zz in zb: cv2.line(im, P_(xe.min() - 0.35, zz), P_(xe.min() - 0.1, zz), (0, 200, 0), 2)     # Grenzen der offenen Zone
+        E = erg.get("haube")
+        if E:
+            xe, sel = ecken_x(E["n"], E["phase"], F["az"], Z["r_bauch"] / E["silh_faktor"])
+            for x in xe[sel]: cv2.line(im, P_(x, Z["z_bauch"] - 0.3), P_(x, Z["z_bauch"] + 0.3), (255, 0, 255), 2)
         a0 = P_(0, erg["z_fuss"] - 0.5); a1 = P_(0, (erg.get("nadel_z") or Z["z_knauf"]) + 0.5); h = abs(a0[1] - a1[1])
         k = im[max(0, a1[1]):a0[1], max(0, a0[0] - int(0.45 * h)):a0[0] + int(0.45 * h)]
         if k.size == 0: continue
-        k = cv2.resize(k, (int(k.shape[1] * 500 / k.shape[0]), 500)); cv2.putText(k, F["nr"][-14:], (4, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1); kach.append(k)
+        k = cv2.resize(k, (int(k.shape[1] * 500 / k.shape[0]), 500))
+        cv2.putText(k, f"{F['nr'][-14:]} az {F['az']:.0f}", (4, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1); kach.append(k)
     if kach: cv2.imwrite(aus, np.hstack(kach), [cv2.IMWRITE_JPEG_QUALITY, 88]); print("Bild:", aus)
 
 

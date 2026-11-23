@@ -7,7 +7,10 @@ A) Offene Pfosten: Quadrat (n 4) und Achteck (n 8) aus Fotos in NUR 25 Grad Blic
 B) Geschlossene facettierte Haube (Helligkeitsstufen je Facette, duenne Naehte als Stoerung): Achteck aus 8 Fotos ueber 60 Grad -> n 8; gespiegelte Bilder -> n 8 + 'gespiegelt'.
 C) Formfamilie: Zwiebel / gerade Pyramide / geschweift; Zonen aus einem synthetischen Breitenprofil (Pfosten, Krempe, Taille, Bauch, Hals, Knauf).
 D) bauteile.laterne: 4 offene Pfosten (Schnitt in Pfostenhoehe = 4 Teile), ein zusammenhaengender Koerper bis zur Nadel; Pfosten unter dem Druckmindestmass -> geschlossener
-   Koerper (Schnitt = 1 Teil); laterne_aus_block: unentschiedene Haube -> Eckenzahl der Pfosten + ANNAHME."""
+   Koerper (Schnitt = 1 Teil); laterne_aus_block: unentschiedene Haube -> Eckenzahl der Pfosten + ANNAHME.
+E) 23.11.2026 (Kette 1122q 'Pfosten None', Laterne geschlossen gebaut): offene Zone je Foto aus der Silhouette (Dachfirst unten, Glocke oben fallen heraus), helle Pfosten
+   gegen schwarze Krempe per Zeilen-Normierung (Rot-Probe: alte Foto-Normierung sieht sie nicht), geschlossener Koerper -> keine offene Zone; Pfosten-Umkreis in Metern
+   aus den Silhouetten ueber 3 Sektoren + Stimmen je Foto; Fotoauswahl je Sektor; Ausreisser-Test mit freiem Massstab (Quadrat aus anderer Richtung bleibt, z-Versatz fliegt)."""
 import sys, os, math, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import laterne_aus_fotos as LA
@@ -124,5 +127,46 @@ with tempfile.TemporaryDirectory() as td:
     zt = kg.bounding_box()[5]; ns = len(kg.slice(47.5).decompose())
     pruef(abs(zt - 53.8) < 0.05 and len(kg.decompose()) == 1 and ns == 4 and any("Laterne aus Fotokanten" in b["element"] for b in bel),
           f"Generator dach_aus_profil + laterne_foto: oben {zt:.2f} (Nadel 53,8), Koerper {len(kg.decompose())}, Schnitt z 47,5: {ns} Pfosten, Beleg {[b['element'][:40] for b in bel if 'Laterne' in b['element']]}")
+
+# ---- E: offene Zone, Zeilen-Normierung, Fotoauswahl, Stimmen (23.11.2026) -----------------------------------------------------------------------
+def zone_bild(n=4, phase=45.0, az=0.0, R=0.7, b=0.15, hell_pf=150.0, offen=True):
+    """Helligkeit je Hoehe z 0..1,7 m (5 cm): unten Dachflaeche (breit, 0..0,4), Dachfirst zwischen den Pfosten (0,4..0,6), offene Pfosten (0,6..1,2), Glocke dahinter (1,2..1,7).
+    Pfosten HELL (150) gegen Himmel 240; schwarz (30) nur Dach/Glocke - wie am Schwabentor (lindgruene Pfosten, schwarze Krempen-Untersicht)."""
+    zz = np.round(np.arange(0.0, 1.71, 0.05), 2); rows = []
+    for z in zz:
+        I = np.full_like(X, 240.0)
+        if z < 0.4: I[np.abs(X) < 1.4 - z] = 60.0
+        for x in LA.ecken_x(n, phase, az, R)[0]: I[np.abs(X - x) <= b / 2] = np.minimum(I[np.abs(X - x) <= b / 2], hell_pf)
+        if 0.4 <= z < 0.6: I[np.abs(X) < 0.3] = 60.0
+        if z >= 1.2 or not offen: I[np.abs(X) < R * 0.95] = 30.0
+        rows.append(I + rng.normal(0, 1.0, len(X)))
+    return zz, np.array(rows)
+zz, Ir = zone_bild(az=10.0)
+S = np.array([LA.dunkel_zeile(I, 240.0, 30.0) for I in Ir]); oz, g = LA.offene_zone(S, zz, X)
+pruef(oz is not None and abs(oz["z0"] - 0.6) <= 0.06 and abs(oz["z1"] - 1.15) <= 0.06 and oz["zeilen"] >= 8,
+      f"E offene Zone aus der Silhouette: {None if oz is None else (oz['z0'], oz['z1'], oz['zeilen'], oz['offen'])} (soll 0,60..1,15; Dachfirst/Glocke draussen) {g or ''}")
+x0_ = LA.ecken_x(4, 45.0, 10.0, 0.7)[0][0]; S_alt = np.clip((240.0 - Ir) / (240.0 - 30.0), 0, 1); pf_alt = float(S_alt[15][np.abs(X - x0_) < 0.03].mean())
+pruef(pf_alt < LA.DUNKEL and oz is not None and float(oz["s"][np.abs(X - x0_) < 0.03].mean()) > 0.9,
+      f"E Rot-Probe Ursache: helle Pfosten mit Foto-Normierung Dunkelheit {pf_alt:.2f} < {LA.DUNKEL} (unsichtbar), mit Zeilen-Normierung sichtbar")
+zz, Ic = zone_bild(offen=False); oz, g = LA.offene_zone(np.array([LA.dunkel_zeile(I, 240.0, 30.0) for I in Ic]), zz, X)
+pruef(oz is None, f"E geschlossener Koerper (kein Himmel zwischen den Pfosten): keine offene Zone ({g})")
+beob = []
+for az in list(np.linspace(-14, 2, 5)) + [100.0, 110.0, 150.0, 200.0]:
+    zz, Ir = zone_bild(n=4, phase=30.0, az=az, R=0.72)
+    oz, _ = LA.offene_zone(np.array([LA.dunkel_zeile(I, 240.0, 30.0) for I in Ir]), zz, X)
+    if oz: beob.append(dict(az=float(az), x=X, s=oz["s"], c=oz["c"], h=oz["h"]))
+E, n, ab = LA.ecken_bewerten(beob, offen=True, n_kand=(3, 4, 6, 8, 12, 16), phase_schritt=2.0)
+st = E[n].get("stimmen", {})
+pruef(len(beob) == 9 and n == 4 and abs(E[n]["R"] - 0.72) < 0.04 and st.get("4", 0) >= LA.MIN_FAMILIE and E[n]["t"] >= LA.t_grenze(len(beob)),
+      f"E Pfosten 4-Eck aus 3 Sektoren (offene Zonen): {n}-Eck, R {E[n]['R']} (soll 0,72 m), Stimmen {st}, t {E[n]['t']}, Fotos {len(beob)}")
+kand = [(50.0 + i, 5.0 + i, f"a{i}") for i in range(12)] + [(30.0, 160.0 + i, f"b{i}") for i in range(3)]
+aus = LA.fotos_streuen(kand, je=8, gesamt=40)
+pruef(len(aus) == 11 and sum(k[2].startswith("b") for k in aus) == 3, f"E Fotoauswahl je Sektor: {len(aus)} Fotos, davon Gegenseite {sum(k[2].startswith('b') for k in aus)} (soll 11 / 3)")
+zp = np.round(np.arange(0, 3, 0.05), 2); pm = {float(z): (0.75 if z < 1.0 else 1.25 if z < 2.0 else 0.3) for z in zp}      # Pfosten / Haube / Knauf
+quad = {float(z): (-1.35 * pm[float(z)], 1.35 * pm[float(z)]) for z in zp}
+vers = {float(z): (-2.0, 2.0) for z in zp}                                                                      # Fremdkoerper: breite Wand statt Laterne
+d1, k1 = LA.profil_abweichung(quad, pm); d2, _ = LA.profil_abweichung(vers, pm)
+pruef(d1 < LA.ABW_M and abs(k1 - 1.35) < 0.05 and d2 > LA.ABW_M,
+      f"E Ausreisser mit freiem Massstab: Vieleck aus anderer Richtung (x1,35) Abweichung {d1:.3f} (k {k1:.2f}) bleibt; Fremdkoerper {d2:.3f} fliegt (> {LA.ABW_M})")
 
 print(("FEHLER " if fehler else "OK ") + f"test_laterne_aus_fotos: {len(fehler)} Fehler"); sys.exit(1 if fehler else 0)
