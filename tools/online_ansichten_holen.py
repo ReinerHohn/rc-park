@@ -4,10 +4,13 @@ Generisch: Ort/Objekt nur als Parameter. Ergebnis AUS/orig/od_NN.jpg + AUS/herku
 Aufruf: python3 tools/online_ansichten_holen.py --aus DIR --suche "Historisches Kaufhaus Freiburg" "Blick vom Muensterturm Freiburg" --kategorien "Category:Muensterplatz (Freiburg im Breisgau)"
           [--muster REGEX] [--max 30] [--nur-liste] [--min-breite 1000]
 Standard-Muster fuer Hochblick: Blick vom|Turm|Aussicht|Aerial|Luftbild|von oben|Dach|Drohne|drone|Panorama|view from|rooftop.
-Wikimedia-Etikette (Lehre 9.11.): 1 Datei je >= 25 s, KEIN Retry-Sturm (HTTP 429 = IP-Drosselung ~15 min, Retries verlaengern sie), Abbruch bei 429.
+Wikimedia-Etikette (Lehre 9.11.): 1 Datei je >= 25 s, KEIN Retry-Sturm (HTTP 429 = IP-Drosselung ~15 min, Retries verlaengern sie);
+  seit 23.11.: 429 -> Retry-After bzw. Backoff 60/120/240 s (tools/http_holen.py, Budget RCPARK_429_BUDGET_S), erst danach Abbruch.
 Lizenz: nur freie Lizenzen (CC0/CC BY/CC BY-SA/PD) werden genommen; Urheber+Lizenz bleiben in herkunft.json (Verkauf: Namensnennung beilegen). Pruefung: Tool nimmt nur Treffer mit LicenseShortName.
 Registrierung danach: tools/online_dach_registrieren.py rein/reg (EXIF-Brennweite je Bild), Schwaechen: Turmblicke ohne Bodenueberlapp scheitern (siehe REZEPT Lehren-Register)."""
 import sys, os, re, json, time, argparse, urllib.request, urllib.parse
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import http_holen      # 23.11.2026: HTTP 429 mit Retry-After/Backoff statt Abbruch beim ersten 429 (Lauf 1122p: od_02)
 UA = {"User-Agent": "RCParkResearchBot/1.0 (private non-commercial research)"}
 STD = r"Blick vom|Turm|Aussicht|Aerial|Luftbild|von oben|Dach|Drohne|drone|Panorama|view from|rooftop|Kreuzblume|Achteck"
 
@@ -20,7 +23,7 @@ def jpeg_ok(p):
 
 def api(**p):
     p["format"] = "json"; u = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode(p)
-    r = urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=60); return json.load(r)
+    return json.loads(http_holen.hole(u, UA, timeout=60))
 
 
 def main():
@@ -53,9 +56,11 @@ def main():
         p = f"{a.aus}/orig/{m['datei']}"
         if os.path.exists(p) and jpeg_ok(p): continue
         # Erst laden und pruefen, dann atomar schreiben: ein Fehler hinterlaesst KEINE leere Datei (Lehre Schwabentor 13.11.: od_10 war 0 Byte, Abbruch per 429 mitgezaehlt).
-        try: daten = urllib.request.urlopen(urllib.request.Request(m["url"], headers=UA), timeout=120).read()
+        try: daten = http_holen.hole(m["url"], UA, timeout=120)
+        except http_holen.Gedrosselt as e:
+            print("Abbruch (Drosselung, Wartebudget erschoepft)", m["datei"], e, "- naechster Lauf setzt fort, bereits geladene werden uebersprungen"); break
         except Exception as e:
-            print("Abbruch", m["datei"], e, "- erneut starten, bereits geladene werden uebersprungen"); break
+            print("Fehler", m["datei"], str(e)[:150], "- Bild uebersprungen"); continue
         if not daten[:2] == b"\xff\xd8":
             print("kein JPEG, verworfen:", m["datei"], len(daten), "Byte"); continue
         open(p + ".tmp", "wb").write(daten); os.replace(p + ".tmp", p)

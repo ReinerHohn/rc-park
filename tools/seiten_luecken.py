@@ -103,6 +103,20 @@ def utm32_nach_geo(e, n):
     return math.degrees(lat), math.degrees(lon)
 
 
+def nur_vorhandene(pfade):
+    """(vorhandene, tote): tote = Verknuepfungen/Pfade ohne lesbares Ziel - nie als Kandidat ins Nachholskript."""
+    tot = [f for f in pfade if not os.path.isfile(f)]; ts = set(tot)
+    return [f for f in pfade if f not in ts], tot
+
+
+def roh_neu_zeile(Z):
+    """Bash-Zeile: alle Verknuepfungen (nur symlinks, nie echte Dateien) in Z/roh entfernen, bevor das Skript die Kandidaten DIESES Laufs verlinkt.
+    23.11.2026 (Lauf 1122p): roh/ behielt 362 Verknuepfungen vom 22.11. (Fotoordner seither mit anderen Namen neu gebaut, eigen__vf_007.jpg ...), 305 davon tot -
+    vorbereiten brach mit FileNotFoundError ab, die Ostseite blieb leer."""
+    return (f"ALT=$(find {Z}/roh -maxdepth 1 -type l | wc -l); TOT=$(find {Z}/roh -maxdepth 1 -xtype l | wc -l); find {Z}/roh -maxdepth 1 -type l -delete; "
+            f"echo \"roh/: $ALT Verknuepfungen frueherer Laeufe entfernt (davon $TOT tot), Neuaufbau aus den Kandidaten dieses Laufs\"")
+
+
 def registrierte(sparse):
     namen = []
     with open(os.path.join(sparse, "images.bin"), "rb") as f:
@@ -136,11 +150,13 @@ def main():
         print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else (f"   <-- TEILWEISE: {F['flaeche_m2'] * (1 - ant):.0f} m2 ohne Bilddaten" if F["flaeche_m2"] * (1 - ant) >= 30 else "")))
     reg = set(os.path.splitext(os.path.basename(n))[0] for n in registrierte(a.sparse)); fd = os.path.join(root, obj["fotos_dir"]); alle = sorted(f for f in glob.glob(os.path.join(fd, "*")) if f.lower().endswith((".jpg", ".jpeg", ".png")))
     if not waende: print(f"FEHLER: KEINE Wand geprueft (keine Fassade >= {a.min_m2:g} m2 unter {len(FJ['fassaden'])} in fassaden.json) - das ist KEIN 'alle Waende gesehen'; --min_m2 senken oder fassade_ortho pruefen"); return 2      # 17.11.2026: lief mit rc 0 und 'alle Waende gesehen' durch
+    alle, tot = nur_vorhandene(alle)      # 23.11.2026: tote Verknuepfung im Fotoordner waere ein Kandidat ohne Datei (Nachholen stuerzte in vorbereiten/md5 ab)
+    if tot: print(f"WARNUNG: {len(tot)} tote Verknuepfung(en) im Fotoordner {fd} - KEINE Kandidaten (z. B. {os.path.basename(tot[0])} -> {os.readlink(tot[0]) if os.path.islink(tot[0]) else '?'})")
     if not alle: print(f"FEHLER: kein Foto in fotos_dir {fd} - Einrichtungsfehler, keine Luecken-Aussage"); return 2
     kand = [f for f in alle if os.path.splitext(os.path.basename(f))[0] not in reg]; print(f"Fotobestand {len(alle)}, im SfM registriert {len(alle) - len(kand)}, NICHT registriert {len(kand)}")
     ung = [w for w in waende if w["ungesehen"]]; daten = os.path.join(os.environ.get("SEITEN_LUECKEN_DATEN", "/media/oem/scan/rc-park_daten"), os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
     zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh {Z}/stand", f"rm -f {Z}/stand/aktuell",
-              f"{VC} {T}/colmap_rig_abgleich.py probe --db {a.ref_db} --sparse {a.sparse}   # 22.11.2026 SCHNELL SCHEITERN: Lade-Check von triangulate_points (Kamera/Rig Modell vs. DB) in Sekunden statt nach 44 min"] + schritt_helfer(Z, T)
+              f"{VC} {T}/colmap_rig_abgleich.py probe --db {a.ref_db} --sparse {a.sparse}   # 22.11.2026 SCHNELL SCHEITERN: Lade-Check von triangulate_points (Kamera/Rig Modell vs. DB) in Sekunden statt nach 44 min", roh_neu_zeile(Z)] + schritt_helfer(Z, T)
     if a.download and obj.get("koordinate_utm"):
         lat, lon = utm32_nach_geo(*obj["koordinate_utm"][:2])
         zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 60 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons || echo \"Commons: nichts geholt (rc $?) - weiter mit den anderen Quellen\"   # freie Lizenzen, manifest.json; 17.11.2026: rc 2 bei 0 Bildern darf das Nachholen (set -e) nicht abbrechen")
