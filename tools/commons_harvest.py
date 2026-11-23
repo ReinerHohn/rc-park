@@ -15,17 +15,26 @@ Erfasst PFLICHT für legale Nutzung: Lizenz + Autor je Bild im manifest.json
       --category "Freiburg Minster" --max 300 --width 2048 \
       --out daten/muenster/commons
 """
-import argparse, os, sys, json, time, urllib.parse, urllib.request
+import argparse, os, sys, json, time, glob, urllib.parse, urllib.request
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import http_holen      # 23.11.2026: 429/503 mit Retry-After/Backoff (tools/http_holen.py)
 
 API = "https://commons.wikimedia.org/w/api.php"
 UA = "rcpark-landmark/1.0 (3d-print research; contact via opmd1988@googlemail.com)"
 
 
+def bild_ok(p):
+    """Vorhandene Datei ist ein Bild (JPEG/PNG/GIF/WebP-Kennung, > 1 kB) - nur dann wird sie statt eines neuen Downloads uebernommen."""
+    try:
+        with open(p, "rb") as f: k = f.read(12)
+        return os.path.getsize(p) > 1024 and (k[:2] == b"\xff\xd8" or k[:8] == b"\x89PNG\r\n\x1a\n" or k[:4] == b"GIF8" or (k[:4] == b"RIFF" and k[8:12] == b"WEBP"))
+    except OSError: return False
+
+
 def api(params):
     params = {**params, "format": "json"}
     url = f"{API}?{urllib.parse.urlencode(params)}"
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    return json.loads(urllib.request.urlopen(req, timeout=40).read())
+    return json.loads(http_holen.hole(url, {"User-Agent": UA}, timeout=40))
 
 
 def geosearch(lat, lon, radius, limit):
@@ -145,25 +154,23 @@ def main():
     print(f"  {len(titles)} Bildkandidaten → hole URLs/Lizenzen ...")
     info = image_info(titles, a.width)
 
-    manifest, n = [], 0
+    manifest, n, schon = [], 0, 0
     for t, meta in info.items():
         if not meta["url"]: continue
         safe = t.replace("File:", "").replace(" ", "_")
         safe = "".join(c for c in safe if c.isalnum() or c in "._-"); stamm_, ext_ = os.path.splitext(safe)
         safe = stamm_[:max(1, 80 - len(ext_))] + ext_      # 19.11.2026 (Martinstor, 75 LABW-Bilder): der Schnitt auf 80 Zeichen nahm langen Titeln die Endung - Vorpruefung und SfM sahen die Dateien nie
         dst = os.path.join(a.out, f"{n:03d}_{safe}")
-        daten = None
-        for versuch in range(4):                                   # 429 (Ratenlimit) mit Wartezeit wiederholen; Datei erst nach Erfolg schreiben
-            try:
-                req = urllib.request.Request(meta["url"], headers={"User-Agent": UA})
-                daten = urllib.request.urlopen(req, timeout=60).read(); break
-            except urllib.error.HTTPError as ex:
-                if ex.code == 429 and versuch < 3: time.sleep(60 * (versuch + 1)); continue
-                print(f"  dl-err {t[:40]}: {ex}"); break
-            except Exception as ex:
-                print(f"  dl-err {t[:40]}: {ex}"); break
-        if daten is None: continue
-        open(dst, "wb").write(daten); time.sleep(a.pause)
+        # 23.11.2026 (Lauf 1122p): jeder Lauf lud alle 60 Bilder NEU (70 s, 0,5 s Pause) - die Folgewerkzeuge bekamen danach von upload.wikimedia.org nur noch HTTP 429.
+        # Schon vorhandene, gueltige Datei desselben Titels (gleicher Name hinter der laufenden Nummer) wird uebernommen statt neu geladen.
+        alt = [p for p in glob.glob(os.path.join(a.out, "[0-9][0-9][0-9]_" + safe)) if bild_ok(p)]
+        if alt:
+            manifest.append({"file": os.path.basename(alt[0]), "title": t, **meta}); n += 1; schon += 1; continue
+        try: daten = http_holen.hole(meta["url"], {"User-Agent": UA}, timeout=60)      # 429/503: Retry-After bzw. Backoff; Datei erst nach Erfolg schreiben
+        except http_holen.Gedrosselt as ex: print(f"  Drosselung, Abbruch der Downloads: {ex}"); break
+        except Exception as ex: print(f"  dl-err {t[:40]}: {ex}"); continue
+        if not daten: continue
+        open(dst + ".tmp", "wb").write(daten); os.replace(dst + ".tmp", dst); time.sleep(a.pause)
         manifest.append({"file": os.path.basename(dst), "title": t, **meta})
         n += 1
         if n % 25 == 0:
@@ -173,7 +180,7 @@ def main():
               open(os.path.join(a.out, "manifest.json"), "w"), indent=2, ensure_ascii=False)
     lics = {}
     for m in manifest: lics[m["license"]] = lics.get(m["license"], 0) + 1
-    print(f"\n{n} frei lizenzierte Fotos → {a.out}")
+    print(f"\n{n} frei lizenzierte Fotos → {a.out}" + (f" (davon {schon} schon vorhanden, nicht neu geladen)" if schon else ""))
     print(f"Lizenzen: {lics}")
     print("Nächster Schritt: tools/opensfm_run.py --images <out> ...  (oder COLMAP)")
     print("ACHTUNG Attribution: manifest.json führt Autor+Lizenz je Bild (Namensnennung wahren).")
