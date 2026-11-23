@@ -1,4 +1,4 @@
-# Werkzeuge: sfm_mapper (60)
+# Werkzeuge: sfm_mapper (61)
 - `tools/ansichten_foto_paare.py` [seg] ansichten_foto_paare.py - FUER JEDES MODELL: Kantenbild des Modells aus den kalibrierten Kameras NEBEN dem Foto, ueber alle Blickrichtungen UND Hoehenwinkel (von oben, eben, von un
 - `tools/bildsuche_paare.py` [seg] bildsuche_paare.py <bilder-ordner> --aus <paare.txt> [--k 40] [--liste namen.txt] [--pruefen-db <db>]
 - `tools/colmap_db_schema.py` [-] colmap_db_schema.py <db.db> - KOPIE einer COLMAP-Datenbank auf das Schema von pycolmap 4.2.1 (venv-colmap) zurueckfuehren. 18.11.2026 (Kaufhaus gk2h, Stufe seiten_luecken: "No regi
@@ -25,6 +25,7 @@
 - `tools/kamera_plausibel.py` [seg] kamera_plausibel.py [modelle/<objekt> ...] [--beiseite] [--tief=3] - EINE Regel fuer "kann diese Kamera stimmen?", von allen Werkzeugen benutzt, die K-Dateien schreiben.
 - `tools/kamera_profil.py` [seg] kamera_profil.py - eigenes Handy EINMAL kalibrieren (Brennweite, Hauptpunkt, Verzeichnung) per ChArUco-Tafel (OpenCV, Apache-2.0), 2026-11-05.
 - `tools/kamera_sfm_guete.py` [-] kamera_sfm_guete.py - Kamera-Guete JE FOTO aus einer COLMAP-SfM (sparse/0): Reprojektionsfehler und Zahl der Beobachtungen.
+- `tools/kamera_standort.py` [-] kamera_standort.py - Kamerastandort aus einer K-Datei (messprotokoll/K-<foto>.json, Block "kamera"), egal welcher Schreiber.
 - `tools/kamera_unabhaengig.py` [col] kamera_unabhaengig.py - UNABHAENGIGE Kameraprobe (Leave-One-Out-Registrierung, Gegenstueck zum zirkulaeren Wolke-ueber-Foto, BS10). Foto aus dem Buendel nehmen (Beobachtungen loesc
 - `tools/kamera_verfeinern.py` [seg] kamera_verfeinern.py <objekt.json> <fassaden.json> <FOTO> [--gegen FOTO,FOTO,...] [--n 6] [--schreiben] - Kamera eines (nach)registrierten Fotos am MODELL nachziehen.
 - `tools/kameras_am_ziel.py` [seg] kameras_am_ziel.py - ALLE kalibrierten Kameras eines Objekts nach Aufloesung am Ziel sortieren (VOR jeder Aufnahmebitte laufen lassen). Aufruf: /media/oem/scan/venv-seg/bin/python 

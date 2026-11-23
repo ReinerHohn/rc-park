@@ -1,4 +1,4 @@
-# Werkzeuge: test (174)
+# Werkzeuge: test (175)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -137,6 +137,7 @@
 - `tools/test_spitze_durchfahrt.py` [seg] test_spitze_durchfahrt.py - feste synthetische Tests fuer tools/spitze_aus_umriss.py und tools/durchfahrt_pruefen.py (21.11.2026). Ohne Dateien, < 30 s.
 - `tools/test_spitze_hoehe.py` [-] test_spitze_hoehe.py - synthetischer Beweis der Spitzen-Triangulation (2026-11-05): 12 Kameras im Kreis sehen eine Spitze bei (1, 2, 16); 5 davon liefern Fehlspuren (Giebelstufe/Ka
 - `tools/test_stabil_schnitt.py` [-] test_stabil_schnitt.py - Schnelltest fuer tools/sfm_stabil_schnitt.schnitt(): synthetische Kameras entlang einer Strasse (fast kollinear, wie Martinstor), Lauf B = Aehnlichkeitstra
+- `tools/test_standort_und_svd.py` [-] test_standort_und_svd.py - Kette 1122r (23.11.2026): zwei Abstuerze, die das vereinte Sued-Modell zerstoerten.
 - `tools/test_steine_paar.py` [seg] Test steine_aus_foto.py Paar-Probe (21.11.2026, Schwabentor West w00): synthetische Quaderwand (3 x 3 m, Schichten 35 cm, Fugen 2 cm) und vier Fotos. A1 = naechstes Foto, aber verw
 - `tools/test_stoermaske.py` [seg] test_stoermaske.py - SYNTHETISCHER BEWEIS fuer teil_fotoform --stoermaske (SPEC_STOERMASKE). Foto t1 = echtes Foto, t2 = dasselbe mit eingesetztem 'Stoerer' (Schachbrett-Rechteck m
 - `tools/test_sweep_synth.py` [-] test_sweep_synth.py <objekt> --wolke w.npy: Beweistest der GPU-Sweep-Methode fuer ALLE aktiven Bauteile (modelle/archiv/METHODE_GPU_SWEEP.md). Wolke = Modellflaeche um bekannten Ve
