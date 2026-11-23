@@ -11,6 +11,7 @@ st = {k: np.asarray(v["standort"], float) for k, v in json.load(open(a.ausrichtu
 r = pycolmap.Reconstruction(a.teil_a); ns = [im for im in r.images.values() if im.has_pose and os.path.splitext(im.name)[0] in st]
 f = sim3_meter(np.array([im.projection_center() for im in ns]), np.array([st[os.path.splitext(im.name)[0]] for im in ns]))
 var = {k: v for k, v in (e.get("_M") or {}).items() if v} | {"ausgleich_" + k: v["M"] for k, v in (e.get("ausgleich") or {}).items() if v.get("M")}
+if ((e.get("fuehren") or {}).get("epipolar") or {}).get("M"): var["epipolar"] = e["fuehren"]["epipolar"]["M"]
 out = {}
 for k, M in var.items():
     if isinstance(M, str): M = json.loads(M)

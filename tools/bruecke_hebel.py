@@ -16,6 +16,14 @@ C  GEMEINSAMER AUSGLEICH: ausgleich (B als starrer Koerper 7 bzw. mit Lot 5 Para
    die Lotachse je Teillaenge, ueber die Hauptachse von B) - die starke Bindung ist das Modell selbst (2 statt 6 x Kameras Freiheitsgrade); angenommen nur, wenn
    signifikant (> SIG_VERFORMUNG sigma). Ausgabe a, b +- sigma = Messwert "Teil in sich verformt".
 D  URTEIL: urteil_kante (stark / duenn / zu duenn) aus Hebel, Wiederholbarkeit, unabhaengigen Spuren, Kreisschluss; Schwellen siehe dort.
+   ausgleich_epipolar: B starr gegen die festen A-Kameras ueber die bestaetigten 2D-2D-Zuordnungen (Sampson) - fuer Naehte ohne 3D-Punkte (1122: 0 direkte Spuren).
+BELEG (22./23.11.2026, bruecke2_selbsttest / bruecke2_stufe2, Wahrheit bekannt):
+ - Lot ist KEIN Zwang: relativer Lotfehler der Teile 0,7-1,0 Grad (Martinstor k3/k5, Kaufhaus k3) > Kopplungskippung; Lot-Zwang 1,0 Grad statt 0,8 (MT k3), 9,3 statt
+   4,4 cm (KA k3), Stufe 2 KA k3 Ende 1,52 statt 1,27 m. Lot bleibt PRUEFUNG (unabhaengige Quelle) und Messwert der Leiter.
+ - Direkte Spuren tragen: MT k3 frei 13,8 cm -> direkt 0,9 cm -> Ausgleich nur direkt 0,3 cm; KA k3 frei 4,4 -> nur direkt 2,2 cm; Mischen mit E schlechter (MT 2,0 cm).
+   Negativfaelle: 0,5 m / 3 m Versatz nicht bestaetigt, 180 Grad keine Paare, 2 Grad bestaetigt und korrigiert.
+ - Stufe 2 (neu gerechnete, in sich verformte Teile): direkt verbessert die NAHT (KA k3 0,29 -> 0,23 m, Massstab 5 %: 0,99 -> 0,30 m) und ERKENNT Massstabsabweichung
+   (+7,2 % gegen das Zwischenmodell), faengt sie starr aber nicht ueber die ganze Laenge auf (Ende 1,8 -> 2,1 m). Halbstarr: meldet Verformung, verbessert nichts -> aus.
 Datenstruktur: Modell (aus pycolmap.Reconstruction, eigene Arrays: Posen, Merkmale, Punkte) - transformierbar/verformbar ohne pycolmap-Schreibzugriff."""
 import os, sys, json, subprocess, numpy as np
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)

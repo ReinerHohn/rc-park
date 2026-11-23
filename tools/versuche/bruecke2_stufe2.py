@@ -45,6 +45,7 @@ def main():
         for k, M, X, Y, td in (("ea", MA, XA_, YA_, tA_), ("eb", MB, XB_, YB_, tB_)):
             w = np.flatnonzero(BH._rest(M, X, Y, td) <= EK.SCHWELLE_REL)[:4000]; q[k] = (X[w], Y[w], td[w])
         V["ausgleich_e"] = BH.ausgleich(q, M0, MA)["M_AB"]
+        if la.get("quelle") == "fluchtpunkte" and lb.get("quelle") == "fluchtpunkte": V["ausgleich_e_lot"] = BH.ausgleich(q, M0, MA, lot=(oa, ob))["M_AB"]   # Lot-Zwang (5 FG)
         fo = os.path.join(wieder or aus, "fuehren"); npz = os.path.join(fo, "lg.npz")
         if not os.path.isfile(npz):
             kp = BH.kandidaten_paare(A, B.transformiert(V["ausgleich_e"])); erg["kandidatenpaare"] = len(kp)
@@ -56,6 +57,7 @@ def main():
             if Md is not None:
                 erg["fuehren"]["bestaetigt"] = BH.bestaetigt(Md, V["ausgleich_e"], B.P, sig); V["direkt"] = Md
                 w = np.flatnonzero(BH._rest(Md, X, Y, td) <= EK.SCHWELLE_REL); qd = dict(direkt=(X[w], Y[w], td[w])); V["direkt_ausgleich"] = BH.ausgleich(qd, Md)["M_AB"]
+                if "ausgleich_e_lot" in V: V["direkt_lot"] = BH.ausgleich(qd, Md, lot=(oa, ob))["M_AB"]
                 fp = BH.feld_parameter(B.P, ob); gh = BH.ausgleich(qd, Md, fp=fp, verformung=True); erg["halbstarr_direkt"] = dict(a=gh["a"], b_grad=float(np.degrees(gh["b"])), urteil=BH.verformung_urteil(gh))
                 erg["massstab_direkt_gegen_e_prozent"] = round((EK.zerlegen(V["direkt_ausgleich"])[0] / EK.zerlegen(V["ausgleich_e"])[0] - 1) * 100, 3)
                 erg["varianten"] = {k: dict(ev(M), lot_winkel_grad=lw(M)) for k, M in V.items()}
