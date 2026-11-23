@@ -3,6 +3,7 @@
 (Tiefenfehler entlang der Sehstrahlen). Statistik-Filter (SOR) + Radiusfilter + Normalen-Planaritaet in Open3D (venv-o3d). Ausgabe npy im Kamerarahmen (K).
   venv-o3d/bin/python tools/wolke_bereinigen.py <dicht_ordner> <objekt.json> --aus x.npy [--nb 30 --std 1.2 --r 0.12 --minpkt 15]"""
 import sys, os, json, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from kamera_standort import kamera_standort   # 23.11.2026: standort_xyz > standort > Pose (231 K-Dateien ohne standort_xyz)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import open3d as o3d
 ap = argparse.ArgumentParser(); ap.add_argument("dicht"); ap.add_argument("objekt"); ap.add_argument("--aus", required=True)
@@ -14,7 +15,8 @@ for i, c in Kd.items():
     p = os.path.join(od, "messprotokoll", f"K-{i}.json")
     if not os.path.exists(p): continue
     k = json.load(open(p)).get("kamera", {})
-    if "standort_xyz" in k: S.append(-np.array(c["R"]).T @ np.array(c["t"])); M.append(k["standort_xyz"])
+    Sk = kamera_standort(k)
+    if Sk is not None: S.append(-np.array(c["R"]).T @ np.array(c["t"])); M.append(Sk)
 S = np.array(S); M = np.array(M); ms, mm = S.mean(0), M.mean(0); A = S - ms; B = M - mm
 U, D, Vt = np.linalg.svd(B.T @ A / len(S)); Sg = np.eye(3); Sg[2, 2] = np.sign(np.linalg.det(U @ Vt)); Rm = U @ Sg @ Vt
 s = np.trace(np.diag(D) @ Sg) / A.var(0).sum(); t0 = mm - s * Rm @ ms

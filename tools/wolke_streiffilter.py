@@ -3,9 +3,10 @@
 (max_c |n.v_c| < --schwelle, v_c = Einheitsvektor Punkt->Kamerazentrum c): Streifen entlang der Sehstrahlen. Kameras aus messprotokoll/K-*.json standort_xyz (Kamerarahmen).
   venv-seg/bin/python -I tools/wolke_streiffilter.py in.npy objekt.json out.npy [--k 20 --schwelle 0.35]"""
 import sys, os, json, glob, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from kamera_standort import kamera_standort   # 23.11.2026: standort_xyz > standort > Pose (231 K-Dateien ohne standort_xyz)
 ap = argparse.ArgumentParser(); ap.add_argument("ein"); ap.add_argument("objekt"); ap.add_argument("aus"); ap.add_argument("--k", type=int, default=20); ap.add_argument("--schwelle", type=float, default=0.35)
 a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt))
-C = np.array([json.load(open(p))["kamera"]["standort_xyz"] for p in glob.glob(os.path.join(od, "messprotokoll", "K-*.json")) if "standort_xyz" in json.load(open(p)).get("kamera", {})], float)
+C = np.array([s for s in (kamera_standort(json.load(open(p)).get("kamera")) for p in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))) if s is not None], float)
 print("Kameras", len(C)); X = np.load(a.ein).astype(np.float64); m = np.empty(len(X), np.float32)
 sys.path.insert(0, "/media/oem/scan/p3d_site"); import torch; from pytorch3d.ops import knn_points         # GPU (Nutzerregel): kNN + Eigenzerlegung batchweise auf CUDA
 def kleinster_ev(A):

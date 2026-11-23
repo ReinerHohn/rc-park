@@ -109,7 +109,10 @@ def wandbild_fotos(objekt_json, a, t, n, zone, px, w=0.0, k=5, fotos=None, fein=
     X = np.c_[(a[0] + U * t[0] + Wz * n[0]).ravel(), (a[1] + U * t[1] + Wz * n[1]).ravel(), Z.ravel()]; mitte = X.mean(0); wert = []
     for nm, kk in K.items():
         if fotos and nm not in fotos: continue
-        S = np.array(kk.get("standort_xyz", [0, 0, 0]), float)[:3]; v = S - mitte; dist = np.linalg.norm(v)
+        sys.path.insert(0, HIER); from kamera_standort import kamera_standort
+        S = kamera_standort(kk)                                            # 23.11.2026: frueher standort_xyz mit Ersatz Ursprung -> 231 Kameras mit 'standort'/nur Pose standen im Ursprung
+        if S is None: continue
+        v = S - mitte; dist = np.linalg.norm(v)
         if dist < 1e-3: continue
         cs = (v[:2] @ n) / dist
         if cs < min_cos: continue

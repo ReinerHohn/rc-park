@@ -145,7 +145,7 @@ def main(argv=None):
         if a.schreiben:
             kp = os.path.join(mp, "K-" + a.foto + ".json"); d = json.load(open(kp)) if os.path.exists(kp) else dict(foto=a.foto, seite="unbekannt", punkte={}, linien={})
             if d.get("kamera"): d["kamera_vorher"] = d["kamera"]
-            d["kamera"] = dict(rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", tiefenspanne=round(tiefe_rel, 3), vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
+            d["kamera"] = dict(rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), standort_xyz=[round(float(x), 3) for x in C], quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", tiefenspanne=round(tiefe_rel, 3), vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
             __import__("json_sicher").schreiben(kp, d); print("geschrieben:", kp)
         return 0
     for f_ in fotos:
