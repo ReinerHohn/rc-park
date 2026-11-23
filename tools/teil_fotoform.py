@@ -181,7 +181,8 @@ def main(argv=None):
         for nm in a.nur.split(","):
             pb = os.path.join(a.bereich_von, nm + ".stl")
             if nm not in da and os.path.exists(pb): teile.append(pb); phantom.append(nm)
-    fotos = a.fotos.split(",") if a.fotos else sorted(os.path.basename(p)[2:-5] for p in glob.glob(os.path.join(os.path.dirname(objp), "messprotokoll", "K-*.json")))
+    fotos = a.fotos.split(",") if a.fotos else sorted(os.path.basename(p)[2:-5] for p in glob.glob(os.path.join(os.path.dirname(objp), "messprotokoll", "K-*.json"))
+                                                      if __import__("kamera_rahmen").kamera_ok(p, (json.load(open(p)).get("kamera") or {}), os.path.dirname(p)))      # 23.11.2026: alter Rahmen raus
     bd = a.bilder_dir or os.path.join(os.path.dirname(objp), "audit", "teil_fotoform"); os.makedirs(bd, exist_ok=True)
     import hashlib, time
     erg = {"objekt": a.objekt, "stl_sha": hashlib.sha256(open(stl, "rb").read()).hexdigest()[:16], "bilder_dir": bd, "schwelle_m": round(a.schwelle * 0.35, 3), "fotos": {}, "teile": {}}

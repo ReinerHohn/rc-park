@@ -23,10 +23,11 @@ HIER = os.path.dirname(os.path.abspath(__file__)); PY = "/media/oem/scan/venv-se
 def fotos_fuer_wand(od, a, b, n, z0, z1, k=3, max_winkel=65.0):
     """Beste Fotos fuer eine Wandflaeche: Anteil der 5 x 7 Rasterpunkte im Bild x Pixel je Meter x cos(Blickwinkel). Keine Verdeckungspruefung."""
     import cv2
+    if HIER not in sys.path: sys.path.insert(0, HIER)                    # kamera_rahmen (Aufruf als Skript mit -I)
     a = np.array(a, float); b = np.array(b, float); G = np.array([[*(a + s * (b - a)), z] for s in np.linspace(0.08, 0.92, 5) for z in np.linspace(z0 + 0.08 * (z1 - z0), z1 - 0.08 * (z1 - z0), 7)]); c = G.mean(0); erg = []
     for f in glob.glob(os.path.join(od, "messprotokoll", "K-*.json")):
         K = json.load(open(f)).get("kamera")
-        if not K or "rvec" not in K: continue
+        if not K or "rvec" not in K or not __import__("kamera_rahmen").kamera_ok(f, K, os.path.dirname(f)): continue      # 23.11.2026: alter Rahmen (kamera_rahmen.py)
         R = cv2.Rodrigues(np.array(K["rvec"]))[0]; t = np.array(K["t"]); S = -R.T @ t; d = S - c; L = float(np.linalg.norm(d)); w = np.degrees(np.arccos(np.clip(d[:2] @ n / max(np.linalg.norm(d[:2]), 1e-9), -1, 1)))
         if w > max_winkel or L > 400: continue
         p = G @ R.T + t; ok = (p[:, 2] > 0); x = K["f_px"] * p[:, 0] / np.where(ok, p[:, 2], 1) + K["cx"]; y = K["f_px"] * p[:, 1] / np.where(ok, p[:, 2], 1) + K["cy"]

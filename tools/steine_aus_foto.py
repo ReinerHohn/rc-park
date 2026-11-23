@@ -62,7 +62,7 @@ def main():
             G_ = P_.reshape(U.shape + (3,))[::25, ::25].reshape(-1, 3); Pm_ = G_.mean(0); kand = []
             for kf in glob.glob(os.path.join(mp_, "K-*.json")):
                 n_ = os.path.basename(kf)[2:-5]; K_ = FE.kamera(kf)
-                if K_ is None or n_.startswith("video") or (n_.startswith(("dl_", "neu__")) and not K_.get("vertrauen")) or not glob.glob(os.path.join(root_, obj_["fotos_dir"], n_ + ".*")): continue
+                if K_ is None or not __import__("kamera_rahmen").kamera_ok(kf, K_, mp_) or n_.startswith("video") or (n_.startswith(("dl_", "neu__")) and not K_.get("vertrauen")) or not glob.glob(os.path.join(root_, obj_["fotos_dir"], n_ + ".*")): continue
                 R_ = cv2.Rodrigues(np.array(K_["rvec"]))[0]; C_ = -R_.T @ np.array(K_["t"]); v_ = C_ - Pm_; di_ = np.linalg.norm(v_); cw_ = float(v_[:2] @ nv_[:2] / di_)
                 if cw_ >= 0.3 and di_ <= 250: kand.append((di_ / (K_["f_px"] * cw_), n_, K_, C_))
             # 23.11.2026 (Schwabentor Sued w05/w07 "STRENG: kein Gegenfoto"): die 12 feinsten Fotos waren 8 Aufnahmen EINER Serie (ein Standort) + 4 mit falscher

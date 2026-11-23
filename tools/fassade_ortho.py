@@ -276,7 +276,8 @@ def main(argv=None):
         if not a.ohne_innenwaende and obj.get("innenwaende"): print(f"  Innenwaende ({len(obj['innenwaende'])}) entfallen: der Messkoerper ist geschlossen (Sicht durch Oeffnungen nur mit --messflaeche modell)", flush=True)
     elif not a.ohne_innenwaende: fas += innenwaende(obj)                                            # 18.11.2026 (Rueckwand/Laube): zurueckgesetzte Waende (Laube/Arkade) als eigene Fassaden i00..
     if a.nur: fas = [F_ for F_ in fas if F_["_id"] in set(a.nur.split(","))]
-    def _kam(k_): c_ = json.load(open(k_)).get("kamera"); return c_ if isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ else None
+    _st = __import__("kamera_rahmen").aktuell(os.path.join(od, "messprotokoll"))       # 23.11.2026: Kameras eines frueheren Rahmens nicht benutzen (kamera_rahmen.py)
+    def _kam(k_): c_ = json.load(open(k_)).get("kamera"); return c_ if isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ and __import__("kamera_rahmen").kamera_ok(k_, c_, os.path.dirname(k_), _st) else None
     alle_k = {os.path.basename(k)[2:-5]: _kam(k) for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))}; alle_k = {n_: c_ for n_, c_ in alle_k.items() if c_}
     mit_tor = any("buendel_tor" in c_ for c_ in alle_k.values())          # 16.11.2026: gibt es das Pruefsiegel im Objekt gar nicht (uebernommene/neu ausgerichtete Kameras), zaehlen alle eigenen/Commons/online-Kameras;
     def _ok(n_, c_):                                                     # Fremdfotos (dl_, neu__) und NACHREGISTRIERTE nur mit 'vertrauen' (kamera_verfeinern.py), Videobilder nur mit Siegel oder 'vertrauen'
