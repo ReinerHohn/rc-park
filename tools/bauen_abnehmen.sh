@@ -17,7 +17,13 @@ PY=/media/oem/scan/venv-seg/bin/python
 MIT=$(mktemp); exec > >(tee "$MIT") 2>&1      # 16.11.2026: Mitschrift, damit am Ende gezaehlt wird, was NEBEN dem Pruefstand schiefging (die Nebenpruefungen enden mit "|| true")
 if [ "$2" != "--nur-pruefen" ]; then
   GEN=$($PY -c "import json;print(json.load(open('$OBJ'))['generator'])")
-  echo "+ $GEN"; eval "$GEN"
+  T_BAU=$(date +%s); echo "+ $GEN"; eval "$GEN"
+  # 24.11.2026 (Kettenlauf 1122u): Generator schrieb ein LEERES STL (84 Byte), im Modus RCPARK_NUR_BAUEN=1 kam trotzdem rc 0 + ERGEBNIS-Zeile -> alle Folgestufen
+  # stuerzten mit KeyError 'world'. Bau gilt nur, wenn das STL aus objekt.json existiert, seit Baubeginn geschrieben wurde und > 0 Dreiecke hat (tools/kette_beleg.py).
+  STL_B=$($PY -c "import json;o=json.load(open('$OBJ'));print(o.get('stl') or 'modelle/stl/$1_1-87.stl')")
+  if ! python3 -I tools/kette_beleg.py stl "$STL_B" "$T_BAU"; then
+    echo "FEHLER: Bau ohne gueltiges STL ($STL_B) - KEIN Ergebnis, Folgestufen duerfen dieses Modell nicht lesen"; rm -f "$MIT"; sleep 0.2; exit 4
+  fi
 fi
 # 21.11.2026 (Tempo, Kettenlauf 1121o: 4 Zwischenbauten je ~125 s): RCPARK_NUR_BAUEN=1 = NUR der Generator (STL fuer die naechste Kettenstufe), Pruefstand/Tore/Bilder
 # folgen mit dem letzten Bau der Kette (tools/gesamtkette.py: abnahme_nachholen -> bauen_abnehmen.sh <obj> --nur-pruefen). Von Hand nie setzen - eine Abnahme braucht den vollen Lauf.

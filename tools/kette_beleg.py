@@ -11,6 +11,8 @@ Altstaende werden NICHT geloescht, sondern beiseitegelegt (<datei>.veraltet_<mar
   pruefen(pfade, seit, inhalt)  -> Liste der Verstoesse (leer = belegt)
   beiseite(pfade, seit, marke)  -> Liste der beiseitegelegten Altdateien (nur die, die NICHT seit 'seit' geschrieben wurden)
   db_fehlende_bilder(db, namen) -> Bilder ohne Eintrag/ohne Schluesselpunkte in einer COLMAP-Datenbank (SIFT laesst sie bei GPU-Speichermangel still weg)
+  stl_pruefen(pfad, seit)       -> Bau belegt: STL frisch und > 0 Dreiecke (1122u: 84-Byte-STL bei rc 0); CLI 'kette_beleg.py stl <pfad> <seit>' fuer bauen_abnehmen.sh
+  bearbeitet_urteil(...)        -> Listenstufe ohne ein bearbeitetes Element (mono: 0 Waende) ist NICHT in Ordnung
 """
 import os, json, time, sqlite3
 
@@ -58,6 +60,37 @@ def beiseite(pfade, seit, marke=None):
     return weg
 
 
+def stl_dreiecke(pfad):
+    """Dreiecke eines STL (binaer: Kopfzahl, nur wenn die Dateigroesse dazu passt; ASCII: 'facet'-Zeilen). Unlesbar/kaputt -> -1. Ohne numpy/trimesh (System-Python)."""
+    try:
+        g = os.path.getsize(pfad)
+        with open(pfad, "rb") as f: kopf = f.read(84)
+        if len(kopf) == 84:
+            n = int.from_bytes(kopf[80:84], "little")
+            if g == 84 + 50 * n: return n
+        if kopf[:5].lower() == b"solid":
+            with open(pfad, "rb") as f: return sum(1 for z in f if z.lstrip().lower().startswith(b"facet"))
+        return -1
+    except OSError: return -1
+
+
+def stl_pruefen(pfad, seit=None):
+    """24.11.2026 (Kettenlauf 1122u): der Generator schrieb ein LEERES STL (84 Byte, 0 Dreiecke), bauen_abnehmen.sh meldete im Modus RCPARK_NUR_BAUEN=1 rc 0, alle
+    Folgestufen stuerzten mit KeyError 'world'. Ein Bau ist nur belegt, wenn das STL existiert, seit dem Stufenstart geschrieben wurde und > 0 Dreiecke hat."""
+    f_ = pruefen([pfad], seit)
+    if f_: return f_
+    n = stl_dreiecke(pfad)
+    return [] if n > 0 else [f"{os.path.basename(pfad)}: {'unlesbar/kaputt' if n < 0 else '0 Dreiecke (leeres Modell)'} ({os.path.getsize(pfad)} Byte)"]
+
+
+def bearbeitet_urteil(bearbeitet, versucht=None, uebersprungen=None, was="Waende"):
+    """24.11.2026 (Audit Punkt 9, Stufe mono): eine Stufe, die ueber eine Liste laeuft und KEIN Element bearbeitet hat, hat nichts belegt - auch wenn jedes Einzelwerkzeug
+    sein Urteil (rc 4) sauber meldete. Rueckgabe (ok, fehler): ok = mindestens ein Element bearbeitet; fehler nennt Versuche (rc je Element) und Uebersprungene."""
+    if bearbeitet: return True, ""
+    v_ = ", ".join(f"{k} rc {r}" for k, r in (versucht or {}).items()) or "keiner"
+    return False, f"0 {was} bearbeitet (versucht: {v_}; uebersprungen: {', '.join(map(str, uebersprungen or [])) or 'keine'})"
+
+
 def db_fehlende_bilder(db, namen):
     """Namen aus `namen`, die in der COLMAP-Datenbank fehlen oder 0 Schluesselpunkte haben. COLMAP/SiftGPU schreibt bei 'out of memory' nur 'Failed to process the image'
     und laesst das Bild WEG - extract_features endet trotzdem normal (Fall zusatzfotos_registrieren 23.11.2026). Datenbank ohne Tabellen -> alle fehlen."""
@@ -67,3 +100,10 @@ def db_fehlende_bilder(db, namen):
         finally: con.close()
     except sqlite3.Error: return list(namen)
     return [n for n in namen if not kp.get(ids.get(n), 0)]
+
+
+if __name__ == "__main__":      # 24.11.2026: Aufruf aus tools/bauen_abnehmen.sh:  python3 -I tools/kette_beleg.py stl <pfad> <seit (Unix-Zeit)>  -> rc 0 belegt, rc 4 Verstoss
+    import sys
+    if len(sys.argv) != 4 or sys.argv[1] != "stl": sys.exit("Aufruf: kette_beleg.py stl <pfad.stl> <seit>")
+    f_ = stl_pruefen(sys.argv[2], float(sys.argv[3]))
+    print("STL-BELEG: " + ("; ".join(f_) if f_ else f"{sys.argv[2]} frisch, {stl_dreiecke(sys.argv[2])} Dreiecke")); sys.exit(4 if f_ else 0)
