@@ -22,6 +22,8 @@ Angelegt 23.11.2026 auf Nutzerwunsch („eigener Projektbaum für Bahn und Anlag
 
 - Nutzer 23.11.: großer Laser für viele m² über Nacht? → Sculpfun-Verlängerung S9 auf 410x950 mm (~50-130 $, LightBurn-Größe anpassen) [sculpfun.com, manuals.plus]; Großformat-CO2 130x90/160x100 cm (Vorwissen, Preise ungeprüft). Hersteller einig: NIE unbeaufsichtigt (Holzbrand) [Epilog, Thunder, xTool, Stanford EHS] → lange beaufsichtigte Blöcke + dichtes Packen statt Nachtbetrieb. Vorschlag: erst Verlängerung + Probemodul, dann CO2-Kauf entscheiden.
 
+- ENTSCHIEDEN Nutzer 23.11.: Stufenplan. (1) Kleines Spur-N-Probemodul (1:160) mit dem S9: Unterbau, Malen, Feuchtigkeit, Bahn testen. (2) Erst wenn alles trägt: große Spur (H0) + Laser, der 4 mm in EINEM Durchgang schneidet (CO2), möglichst Open Source/verlängerbar. Verlängerung des Diodenlasers verworfen: Mehrfachdurchgänge vervielfachen die Zeit je Fläche. Hinweis: in N entspricht 0,8 mm Mindestmaß 13 cm Realmaß (H0: 7 cm) → Feindetail-Test fürs Malen nur bedingt übertragbar; Kette kann 1:160 ausgeben (Maßstab beim Export). Recherche offene CO2-Großlaser: später.
+
 **Gleis & Fahrzeuge**
 - H0-Gleis eines großen Herstellers (Code 83/100), Weichen per Servo. Fahrzeuge robust wählen (Dauerbetrieb), Ersatzloks im Umlauf. ANNAHME: Verschleißtempo im Dauerbetrieb je Fahrzeug stark verschieden - Nutzerwert „bei MiWuLa nach ~3 Monaten ausgeleiert" unbelegt, zu prüfen.
 
