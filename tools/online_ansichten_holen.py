@@ -52,6 +52,7 @@ def main():
     for i, m in enumerate(info): m["datei"] = f"od_{i:02d}.jpg"
     json.dump(info, open(a.aus + "/herkunft.json", "w"), ensure_ascii=False, indent=1); print(len(info), "Treffer")
     if a.nur_liste: return
+    http_holen.vorrat_melden(sum(1 for m in info if jpeg_ok(f"{a.aus}/orig/{m['datei']}")))      # 23.11.2026 (Lauf 1122q: 6 min Warten fuer 0 neue): schon Bilder da + frische Drossel-Marke -> nicht warten
     for m in info:
         p = f"{a.aus}/orig/{m['datei']}"
         if os.path.exists(p) and jpeg_ok(p): continue

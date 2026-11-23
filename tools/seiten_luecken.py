@@ -62,6 +62,12 @@ def skript_laufen(sk, logpfad, rest_zeilen=4000):
     return rc, "".join(schluss)
 
 
+def sift_schalter():
+    """23.11.2026: RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT=1 beim Erzeugen des Skripts -> in den Befehl der Stufe merkmale schreiben (der Befehls-Hash der Schritt-Kette
+    aendert sich mit, ein umgeschalteter Lauf uebernimmt keinen Zwischenstand des anderen Wegs). Standard AUS = Befehl unveraendert."""
+    return "RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT=1 " if os.environ.get("RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT", "0") == "1" else ""
+
+
 def schritt_helfer(Z, T):
     """Bash-Funktionen fuer ZWISCHENSTAENDE je Teilschritt des Nachhol-Skripts (22.11.2026: ein Absturz im 6. Schritt verwarf jedes Mal ~44 min Merkmale/LightGlue).
     Schluessel je Schritt = Kette (vorheriger Schluessel | Name | CODE-STAND der genannten Werkzeuge | Befehls-Hash); Kettenbeginn = Kandidatenbestand roh/.
@@ -192,7 +198,7 @@ def main():
     vf = kamera_verfeinern_zeile(VS, T, os.path.abspath(a.objekt), os.path.join(os.path.abspath(a.fassaden), 'fassaden.json'), audit, Z)
     # (name, Werkzeuge im CODE-STAND (nur billige Folgeschritte, tools/code_stand.py), vor dem Neurechnen loeschen, Befehl) - teure Schritte haengen nur an den Eingaben
     schritte = [("vorbereiten", "", f"{Z}/bilder {Z}/vorbereitet.json {Z}/merkmale.json {Z}/db.db {Z}/lg", f"{VC} {T}/zusatzfotos_registrieren.py vorbereiten --fotos {Z}/roh --aus {Z} --unten 0.0"),
-                ("merkmale", "", f"{Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/merkmale.json", f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}"),
+                ("merkmale", "", f"{Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/merkmale.json", sift_schalter() + f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}"),
                 ("probe_db", "colmap_rig_abgleich.py", "", f"{VC} {T}/colmap_rig_abgleich.py probe --db {Z}/db.db --sparse {a.sparse}   # zweite Vorpruefung auf der erweiterten DB, VOR den GPU-Paaren"),
                 ("refnamen", "", "", f"{VC} {T}/zusatzfotos_lightglue.py refnamen --ziel {Z} --ref-sparse {a.sparse}"),
                 ("paare", "", "", f"{VS} {T}/zusatzfotos_lightglue.py paare --ziel {Z} --ref-sparse {a.sparse} --ref-bilder {fd}"),
