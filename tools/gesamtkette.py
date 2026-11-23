@@ -665,6 +665,10 @@ def main():
                 erg_["ebenen_masse_rc"] = lauf(B, "bauplan_ebenen_masse", [PY, "-W", "ignore", "-I", "tools/ebenen_masse.py", ZR, eb_], log, ok=(0, 3))[0]
                 # 21.11.2026 (Nutzer: Vordach im Foto geschweiftes Walmdach, Modell ebene Platte): Profil/Walm aus Foto-Silhouetten (SfM-Kameras) -> audit/vordach_profil.json -> bauteile.vordach_walm
                 if os.path.exists(os.path.join(KD, "kam.json")): erg_["vordach_profil_rc"] = lauf(B, "bauplan_vordach_profil", [PY, "-W", "ignore", "-I", "tools/vordach_profil.py", ZR, KD], log, ok=(0, 3))[0]
+                # 23.11.2026 (1122t: Phantom-Vorbau f03 - Ebene ohne Kantenpunkt, Sweep-Tiefen am Rand des Suchraums, Fototor trotzdem BELEGT): BELEG-TOR vor dem Bau -
+                # verworfene Gruppen bekommen 'verworfen' in vorbauten_auto.json, bauteile.vorbauten_aus_json baut sie nicht (rc 2 = verworfen, kein Fehler)
+                if os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")):
+                    erg_["vorbau_beleg_rc"] = lauf(B, "bauplan_vorbau_beleg", [PY, "-W", "ignore", "-I", "tools/vorbau_fototor.py", "--beleg", os.path.join(Z, "audit", "vorbauten_auto.json"), fo, os.path.join(eb_, "ebenen.json")], log, ok=(0, 2, 3))[0]
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
             # 23.11.2026 (1122o neben_detail fenster_f03/_2, oeffnung f04): Erkennerkasten = Loch + Gewaende -> Loch (dunkle Komponente) und Gewaende (Nicht-Wand-Farbe am Loch)
@@ -690,7 +694,8 @@ def main():
             # 22.11.2026 (1122n: Bilderker fehlte ohne Meldung): Foto-F1 je gebautem Vorbau (teil_fotoform) - rc 2 = NICHT BELEGT (Praezision < 0,5), rc 3 = nichts zu pruefen
             vba_ = os.path.join(Z, "audit", "vorbauten_auto.json")
             if os.path.exists(gp_) and os.path.exists(vba_) and json.load(open(vba_)).get("fassaden"):
-                erg_["vorbau_fototor_rc"] = lauf(B, "bauplan_vorbau_fototor", [PY, "-W", "ignore", "-I", "tools/vorbau_fototor.py", a.ziel, os.path.join(fo, "fassaden.json")], log, ok=(0, 2, 3))[0]
+                erg_["vorbau_fototor_rc"] = lauf(B, "bauplan_vorbau_fototor", [PY, "-W", "ignore", "-I", "tools/vorbau_fototor.py", a.ziel, os.path.join(fo, "fassaden.json")], log, ok=(0, 2, 3, 4))[0]
+                if erg_["vorbau_fototor_rc"] == 4: bauen(B, "bauen_nach_vorbau_tor", a.ziel, log)      # 23.11.2026: Regel (c) hat eine Gruppe verworfen -> ohne sie neu bauen
             # 21.11.2026 (ANALYSE_SACKGASSEN: Koerper, die auf keiner Wandebene liegen - Treppenturm, Dachueberstand, Laterne - kamen im Handlauf aus der dichten Wolke): Rest der Wolke am
             # gebauten Modell -> Dach-Schichtprofil (audit/dach_profil.json, nur einmal gegen das LoD2-Dach) und KOERPER-SCHLEIFE (tools/koerper_schleife.py: Haufen benennen, Nachbarn/Hohlraeume
             # abtrennen, Kandidaten bauen, JE KANDIDAT nachmessen, annehmen/verwerfen -> audit/koerper_auto.json) -> volle Abnahme, wenn die Schleife gebaut hat.
