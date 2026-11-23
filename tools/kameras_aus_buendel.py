@@ -7,6 +7,8 @@ Umrechnung: SfM-Bildpixel -> Originalfoto (Faktor s = Breite_Original / Breite_S
 Werkzeugrahmen (STL skaliert + zentriert wie textur_projektion.modell_laden: X_w = X_modell + T_, t' = t - R T_). rms_px = Median-Rueckprojektion
 dieser Kamera im Buendelnetz (pycolmap), in Originalpixeln. Ankerzone = DGM-Boden bis Modelloberkante (LoD2/DGM1 tragen das ganze Gebaeude).
 Vorhandene K-Kameras (handkalibriert, amtliche Picks) werden NICHT ueberschrieben (--ueberschreiben erzwingt); Picks/Linien bleiben immer erhalten.
+RAHMEN (23.11.2026, tools/kamera_rahmen.py): jede geschriebene Kamera traegt kamera.rahmen, messprotokoll/RAHMEN.json den gueltigen Rahmen. ABGELEITETE Kameras
+(nachregistriert / kamera_verfeinern) eines FRUEHEREN Rahmens sind keine Handkalibrierung: Buendelkamera ersetzt sie; sonst gleiches SfM -> umgerechnet, neues SfM -> .veraltet.
   /media/oem/scan/venv-colmap/bin/python -I tools/kameras_aus_buendel.py modelle/<objekt>/objekt.json --ausrichtung <SFM-AUSRICHTUNG-buendel.json> [--ueberschreiben] [--trocken]
 GRENZEN: k1 wird gespeichert, aber foto_diff/fehlteile rendern ohne Verzeichnung (|k1| ~0,06 -> Ecken ~1-2 % radial); Kameras gelten fuer den Rahmen T_
 (im Protokoll) - aendert sich die STL-Unterkante, neu schreiben.
@@ -16,6 +18,7 @@ Ausgabe: modelle/<objekt>/messprotokoll/K-<foto>.json je Foto. Exit 0 = Kameras 
 import sys, os, json, glob, struct, argparse, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import kamera_plausibel as KP
+import kamera_rahmen as KR
 
 
 def stl_punkte(p):
@@ -50,23 +53,30 @@ def main():
     def beiseite(kp_):                                   # alte Buendel-Kamera derselben Aufnahme nicht liegen lassen (umbenennen, nichts loeschen)
         if os.path.exists(kp_) and not a.trocken and json.load(open(kp_)).get("kamera", {}).get("brennweite_quelle") == "buendel": os.replace(kp_, kp_ + ".unplausibel")
     neu = gesch = 0; ber = []; behandelt = set()
+    # 23.11.2026 RAHMEN: Stempel dieser Ausrichtung; abgeleitete Kameras (nachgetragen/verfeinert) eines frueheren Rahmens sind KEINE Handkalibrierung (kamera_rahmen.py)
+    mp_ = os.path.join(od, "messprotokoll"); ST = KR.stempel(A, T_, os.path.relpath(ap_, root), zeit=os.path.getmtime(ap_)); RL = KR.lesen(mp_) or {}
+    ST_alt = {f["id"]: f for f in [RL.get("aktuell")] + list(RL.get("frueher") or []) if f}         # bekannte fruehere Rahmen (fuer die Umrechnung bei gleichem SfM)
     for nr, k in sorted(A["kameras"].items()):
         fp = sorted(glob.glob(os.path.join(a.fotos or os.path.join(root, obj["fotos_dir"]), glob.escape(nr) + "_*")) or glob.glob(os.path.join(a.fotos or os.path.join(root, obj["fotos_dir"]), glob.escape(nr) + ".*")))
         if not fp: ber.append((nr, "Foto fehlt")); continue
         behandelt.add(nr)
         W, H = Image.open(fp[0]).size; bw, bh = float(k.get("bild_b", W)), float(k.get("bild_h", H)); s = W / bw
         if abs(H / bh - s) > 0.01 * s: ber.append((nr, f"Seitenverhaeltnis {W}x{H} vs SfM {bw:.0f}x{bh:.0f}")); continue
-        R = np.array(k["R"], float); t = np.array(k["t"], float) - R @ T_; Cw = -R.T @ t
+        R = np.array(k["R"], float); t = np.array(k["t"], float) - R @ T_; Cw = -R.T @ t; alt_kamera = None
         kp = os.path.join(od, "messprotokoll", f"K-{nr}.json"); K = json.load(open(kp)) if os.path.exists(kp) else dict(foto=nr, seite=obj.get("fotos", {}).get(nr, {}).get("seite", "unbekannt"), punkte={}, linien={})
-        if K.get("kamera") and K["kamera"].get("brennweite_quelle") != "buendel" and not a.ueberschreiben: gesch += 1; ber.append((nr, "handkalibriert - nicht ueberschrieben")); continue
+        abg_alt = KR.abgeleitet(K.get("kamera")) and KR.veraltet(K["kamera"], mp_, kp, ST)        # abgeleitet + alter Rahmen -> Buendelkamera dieses Laufs ersetzt sie
+        if K.get("kamera") and K["kamera"].get("brennweite_quelle") != "buendel" and not a.ueberschreiben and not abg_alt:
+            gesch += 1; ber.append((nr, "abgeleitet, gilt im aktuellen Rahmen - nicht ueberschrieben" if KR.abgeleitet(K["kamera"]) else "handkalibriert - nicht ueberschrieben")); continue
+        alt_kamera = K.get("kamera")
         ok_p, grund_p = KP.plausibel(float(k["f_px_original"]) * s, (W, H), Cw, k1=float((k.get("k") or [0.0])[0]), bild_diag=float(np.hypot(W, H)))
         if not ok_p: ber.append((nr, "UNPLAUSIBEL, nicht geschrieben: " + grund_p)); beiseite(kp); continue
         if G and G.get(nr, {}).get("n_beob", 0) < a.min_beob: ber.append((nr, f"nur {G.get(nr, {}).get('n_beob', 0)} Netzpunkte (< {a.min_beob}) - Lage unbelegt, nicht geschrieben")); beiseite(kp); continue      # 16.11.2026: 9 solche Kameras lagen tagelang unbemerkt im Bestand
         K["kamera"] = dict(rvec=rodrigues(R).tolist(), t=t.tolist(), f_px=float(k["f_px_original"]) * s, cx=float(k["cx"]) * s, cy=float(k["cy"]) * s, k1=float((k.get("k") or [0.0])[0]),
                            bild=[W, H], standort_xyz=[round(float(x), 3) for x in Cw], hoehe_ueber_gelaende=round(float(Cw[2]), 2), rms_px=round(rms.get(nr, float("nan")) * s, 2) if nr in rms else None,
                            brennweite_quelle="buendel", sfm_guete=(dict(klasse=G[nr]["klasse"], n_beob=G[nr]["n_beob"]) if nr in G else None), ankerzone_z=zone, rahmen_verschiebung=T_.round(4).tolist(),
-                           quelle=f"kameras_aus_buendel.py aus {os.path.relpath(ap_, root)} (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x {s:.4f}")
-        neu += 1; ber.append((nr, f"f {K['kamera']['f_px']:.0f} px, rms {K['kamera']['rms_px']} px"))
+                           quelle=f"kameras_aus_buendel.py aus {os.path.relpath(ap_, root)} (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x {s:.4f}", rahmen=ST["id"])
+        if abg_alt: K.pop("kamera_vorher", None); K["kamera_veraltet"] = dict(alt_kamera, ersetzt="Buendelkamera im neuen Rahmen " + ST["id"])
+        neu += 1; ber.append((nr, f"f {K['kamera']['f_px']:.0f} px, rms {K['kamera']['rms_px']} px" + (" (ersetzt abgeleitete Kamera im alten Rahmen)" if abg_alt else "")))
         if not a.trocken: os.makedirs(os.path.dirname(kp), exist_ok=True); __import__("json_sicher").schreiben(kp, K)
     # 17.11.2026 VERALTETE KAMERAS: K-Dateien, die dieses Werkzeug frueher aus DERSELBEN Ausrichtungsdatei schrieb, deren Foto jetzt aber nicht mehr in der Ausrichtung steht (neue SfM mit weniger Bildern)
     # oder dessen Foto fehlt, blieben als Messkamera liegen - im ALTEN Rahmen. fassade_ortho/foto_diff nehmen jede K-Datei. Sie werden beiseitegelegt (umbenannt, nichts geloescht).
@@ -79,8 +89,30 @@ def main():
         if kk_.get("brennweite_quelle") == "buendel" and str(kk_.get("quelle", "")).startswith(marke):
             alt += 1; ber.append((nr_, "VERALTET (nicht mehr in der Ausrichtung bzw. Foto fehlt; Datei aelter als die Ausrichtung) - beiseitegelegt als .veraltet"))
             if not a.trocken: os.replace(kp_, kp_ + ".veraltet")
+    # 23.11.2026 ABGELEITETE KAMERAS IM ALTEN RAHMEN, die dieses Buendel NICHT ersetzt hat (Foto nicht im neuen SfM bzw. dort unplausibel): gleiches SfM -> exakt umrechnen,
+    # sonst sperren (umbenannt .veraltet; mit Picks bleibt die Datei, nur kamera -> kamera_veraltet). Das naechste Nachholen bestimmt sie im neuen Rahmen neu.
+    umg = gesp = 0
+    for kp_ in sorted(glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))):
+        nr_ = os.path.basename(kp_)[2:-5]
+        try: d_ = json.load(open(kp_))
+        except Exception: continue
+        kk_ = d_.get("kamera")
+        if not KR.abgeleitet(kk_) or not KR.veraltet(kk_, mp_, kp_, ST): continue
+        alt_st = ST_alt.get(kk_.get("rahmen") or "")
+        if alt_st and KR.gleiches_sfm(alt_st, A):
+            umg += 1; ber.append((nr_, f"abgeleitete Kamera aus Rahmen {alt_st['id']} (gleiches SfM) in Rahmen {ST['id']} umgerechnet"))
+            if not a.trocken: d_["kamera"] = KR.umrechnen(kk_, alt_st, ST); d_.pop("kamera_vorher", None); __import__("json_sicher").schreiben(kp_, d_)
+            continue
+        gesp += 1; grund_ = f"VERALTET: abgeleitete Kamera ({str(kk_.get('quelle', ''))[:40]}) im Rahmen {kk_.get('rahmen') or 'unbekannt (aelter als die Ausrichtung)'}, neues SfM - keine Abbildung"
+        if any(d_.get(s_) for s_ in ("punkte", "linien")):
+            ber.append((nr_, grund_ + " - Kamera gesperrt (Picks bleiben)"))
+            if not a.trocken: d_["kamera_veraltet"] = dict(d_.pop("kamera"), sperre=grund_); d_.pop("kamera_vorher", None); __import__("json_sicher").schreiben(kp_, d_)
+        else:
+            ber.append((nr_, grund_ + " - beiseitegelegt als .veraltet"))
+            if not a.trocken: os.replace(kp_, kp_ + ".veraltet")
+    if not a.trocken: KR.setzen(mp_, ST)
     for nr, b in ber: print(f"  K-{nr}: {b}")
-    print(f"{neu} K-Kameras aus dem Buendel {'(trocken) ' if a.trocken else ''}geschrieben, {gesch} handkalibrierte behalten" + (f", {alt} veraltete beiseitegelegt" if alt else "") + f"; Rahmen T_ {T_.round(3).tolist()}, Ankerzone {zone}")
+    print(f"{neu} K-Kameras aus dem Buendel {'(trocken) ' if a.trocken else ''}geschrieben, {gesch} handkalibrierte behalten" + (f", {alt} veraltete beiseitegelegt" if alt else "") + (f", abgeleitete im alten Rahmen: {umg} umgerechnet, {gesp} gesperrt" if umg + gesp else "") + f"; Rahmen {ST['id']}, T_ {T_.round(3).tolist()}, Ankerzone {zone}")
     fehlt = sum(1 for _, b in ber if b == "Foto fehlt")
     if fehlt > 0.5 * max(len(A["kameras"]), 1): print(f"WARNUNG: zu {fehlt} von {len(A['kameras'])} Kameras der Ausrichtung fehlt das Foto - falscher Fotoordner (--fotos / fotos_dir)?")
     if neu + gesch == 0:                                               # 17.11.2026: rc 0 ohne eine einzige Kamera (leere Ausrichtung, falscher Fotoordner) - die Kette rechnete mit den K-Dateien eines frueheren Laufs weiter

@@ -25,9 +25,10 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("sparse"); ap.add_argument("--bilder", help="Ordner mit den Originalen der neuen Fotos (z. B. <ziel>/roh)"); ap.add_argument("--ueberschreiben", action="store_true"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll"); rec = pycolmap.Reconstruction(a.sparse)
     def kdatei(n): return os.path.join(mp, "K-" + os.path.splitext(n)[0] + ".json")
-    def kam(n):
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import kamera_rahmen as KR; ST = KR.aktuell(mp)
+    def kam(n):                                                           # 23.11.2026: Anker nur im gueltigen Rahmen (kamera_rahmen.py; 1122q-Kameras im alten Rahmen verzogen die Abbildung)
         if not os.path.exists(kdatei(n)): return None
-        k = json.load(open(kdatei(n))).get("kamera"); return k if isinstance(k, dict) and "rvec" in k else None
+        k = json.load(open(kdatei(n))).get("kamera"); return k if isinstance(k, dict) and "rvec" in k and not KR.veraltet(k, mp, kdatei(n), ST) else None
     alt_s, alt_m, neu = [], [], []
     for im in rec.images.values():
         if not im.has_pose: continue
@@ -53,9 +54,10 @@ def main():
         b = cv2.imread(orig[0])
         if b is None: continue
         f = b.shape[1] / cam.width; p = list(cam.params); K = dict(rvec=cv2.Rodrigues(Rm)[0].ravel().tolist(), t=(-Rm @ Cm).tolist(), f_px=p[0] * f, cx=p[1] * f, cy=p[2] * f, k1=float(p[3]) if len(p) > 3 else 0.0,
-                                                                 standort=Cm.tolist(), standort_xyz=[round(float(x), 3) for x in Cm], quelle=f"nachregistriert ({os.path.basename(os.path.dirname(os.path.abspath(a.sparse)))}), Abbildung aus {int(gut.sum())} gemeinsamen Kameras, Rest {np.median(rest[gut]):.2f} m", punkte3d=int(im.num_points3D))
+                                                                 standort=Cm.tolist(), standort_xyz=[round(float(x), 3) for x in Cm], quelle=f"nachregistriert ({os.path.basename(os.path.dirname(os.path.abspath(a.sparse)))}), Abbildung aus {int(gut.sum())} gemeinsamen Kameras, Rest {np.median(rest[gut]):.2f} m", punkte3d=int(im.num_points3D), rahmen=(ST or {}).get("id"))
         d = json.load(open(kdatei(im.name))) if os.path.exists(kdatei(im.name)) else dict(foto=stem, seite="unbekannt", punkte={}, linien={})
-        if isinstance(d.get("kamera"), dict) and "rvec" in d["kamera"]: d["kamera_vorher"] = d["kamera"]
+        if isinstance(d.get("kamera"), dict) and "rvec" in d["kamera"] and not KR.veraltet(d["kamera"], mp, kdatei(im.name), ST): d["kamera_vorher"] = d["kamera"]
+        elif isinstance(d.get("kamera"), dict): d.pop("kamera_vorher", None)          # alter Rahmen: nicht als Rueckfall aufheben (kameras_nachtragen_tor.sperren stellte kamera_vorher wieder her)
         d["kamera"] = K; json.dump(d, open(kdatei(im.name), "w"), indent=1); bericht["neu"].append(dict(foto=stem, standort=[round(float(v), 1) for v in Cm], f_px=round(K["f_px"]), punkte3d=int(im.num_points3D)))
     au = os.path.join(root, obj.get("audit", os.path.join(od, "audit"))); json.dump(bericht, open(os.path.join(au, "kameras_nachtragen.json"), "w"), indent=1)
     print(f"{len(bericht['neu'])} neue Messkameras geschrieben; Gegenprobe (vorhandene Kamera weicht > 1 m ab): {bericht['gegenprobe'][:6]}")

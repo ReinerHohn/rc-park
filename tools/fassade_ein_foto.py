@@ -14,10 +14,11 @@ Ablauf fuer eine schlecht belegte Wand: (1) tools/seiten_luecken.py --download -
 Lehre 16.11.: dasselbe Motiv liegt oft mehrfach vor (Flickr 1024 px, Commons-Original 3840 px) - auto nimmt von selbst das schaerfste.
 """
 import sys, os, json, glob, argparse, numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 def kamera(kf):
-    k = json.load(open(kf)).get("kamera"); return k if isinstance(k, dict) and "rvec" in k and "cx" in k else None
+    k = json.load(open(kf)).get("kamera"); return k if isinstance(k, dict) and "rvec" in k and "cx" in k and __import__("kamera_rahmen").kamera_ok(kf, k, os.path.dirname(kf)) else None   # 23.11.2026: alter Rahmen -> keine Kamera
 
 
 def sichtbar(mm, K, X, rk, tol=0.35):

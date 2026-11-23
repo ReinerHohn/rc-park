@@ -75,6 +75,7 @@ def kameras_laden(od, fotos_dir):
         try: k = json.load(open(kf)).get("kamera")
         except Exception: continue
         if not isinstance(k, dict) or "rvec" not in k or "f_px" not in k or k.get("tiefe_unsicher"): continue
+        if not __import__("kamera_rahmen").kamera_ok(kf, k, os.path.dirname(kf)): continue      # 23.11.2026: Kamera eines frueheren Rahmens (kamera_rahmen.py)
         if "buendel_tor" in k and not (k["buendel_tor"] or {}).get("ok", True): continue
         pf = glob.glob(os.path.join(fotos_dir, glob.escape(nm) + ".*")) or glob.glob(os.path.join(fotos_dir, glob.escape(nm) + "_*"))
         pf = [p for p in pf if p.lower().endswith((".jpg", ".jpeg", ".png"))]

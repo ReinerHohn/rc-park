@@ -63,10 +63,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassaden"); ap.add_argument("foto"); ap.add_argument("--liste", help="Datei mit Fotonamen (einer je Zeile) - alle in einem Lauf, Referenzen werden nur einmal gerechnet; Argument FOTO dann beliebig"); ap.add_argument("--gegen"); ap.add_argument("--n", type=int, default=6); ap.add_argument("--schreiben", action="store_true"); ap.add_argument("--min_tiefe", type=float, default=0.06, help="kleinste Tiefenspanne der Inlier relativ zum Abstand, ab der die Brennweite frei geschaetzt werden darf"); ap.add_argument("--stl", help="weitere STL (Nachbarobjekte im selben Rahmen), Komma-Liste"); a = ap.parse_args(argv)
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll")
     ms = [trimesh.load(q_) for q_ in ([os.path.join(root, obj["stl"])] + (a.stl.split(",") if a.stl else []))]; mm = trimesh.util.concatenate(ms) if len(ms) > 1 else ms[0]; mm.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0)
-    def kam(n):
+    import kamera_rahmen as KR; ST = KR.aktuell(mp)
+    def kam(n):                                                           # 23.11.2026: Kameras im alten Rahmen (kamera_rahmen.py) weder als Start noch als Referenz
         p = os.path.join(mp, "K-" + n + ".json")
         if not os.path.exists(p): return None
-        k = json.load(open(p)).get("kamera"); return k if isinstance(k, dict) and "rvec" in k else None
+        k = json.load(open(p)).get("kamera"); return k if isinstance(k, dict) and "rvec" in k and not KR.veraltet(k, mp, p, ST) else None
     def pfad(n): g = glob.glob(os.path.join(fd, n + ".*")); return g[0] if g else None
     dev = GERAET; ex = ALIKED(max_num_keypoints=4096).eval().to(dev); mt = LightGlue(features="aliked").eval().to(dev)
     MK = LRU(int(os.environ.get("RCPARK_KV_MERKMALE", "96")))                                                         # Merkmale der Referenzen (GPU, ~2 MB je Satz)
@@ -144,8 +145,9 @@ def main(argv=None):
         if not np.isfinite(C).all() or dist > 600 or p[6] > 10 * max(W, H) or p[6] < 0.4 * max(W, H): print(f"{a.foto}: Loesung unplausibel (Abstand {dist:.0f} m, f {p[6]:.0f} px bei {max(W, H)} px Bildbreite) - entartete Tele-Loesung, nicht geschrieben"); return 3      # 16.11.2026: PnP mit freier Brennweite lief bei fast ebenen Punkten ins Unendliche (Kamera 350 000 km entfernt, trotzdem 2 Flaechen >= 15 Inlier)
         if a.schreiben:
             kp = os.path.join(mp, "K-" + a.foto + ".json"); d = json.load(open(kp)) if os.path.exists(kp) else dict(foto=a.foto, seite="unbekannt", punkte={}, linien={})
-            if d.get("kamera"): d["kamera_vorher"] = d["kamera"]
-            d["kamera"] = dict(rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), standort_xyz=[round(float(x), 3) for x in C], quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", tiefenspanne=round(tiefe_rel, 3), vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
+            if d.get("kamera") and not KR.veraltet(d["kamera"], mp, kp, ST): d["kamera_vorher"] = d["kamera"]
+            elif d.get("kamera"): d.pop("kamera_vorher", None)
+            d["kamera"] = dict(rahmen=(ST or {}).get("id"), rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), standort_xyz=[round(float(x), 3) for x in C], quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", tiefenspanne=round(tiefe_rel, 3), vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
             __import__("json_sicher").schreiben(kp, d); print("geschrieben:", kp)
         return 0
     for f_ in fotos:
