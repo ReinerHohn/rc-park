@@ -8,6 +8,8 @@ angewandt auf die neuen Kameras. Pixelmassstab: SfM-Bild (verkleinert) -> Origin
 Neue Fotos, die nicht im fotos_dir liegen (Downloads), werden dorthin verlinkt (Name wie im SfM), damit alle Werkzeuge sie finden.
 Ausgabe: messprotokoll/K-<foto>.json mit kamera {rvec, t, f_px, cx, cy, k1, quelle, inlier}, Bericht audit/kameras_nachtragen.json (Restfehler der Abbildung,
 je vorhandener K-Datei eines neuen Fotos der Standortunterschied = Gegenprobe). Vorhandene Kameras bleiben (ausser --ueberschreiben).
+ACHTUNG 'gegenprobe' (23.11.2026, Kette 1122q: 327 neu, gegenprobe 0): sie vergleicht NUR Fotos, die schon eine K-Datei hatten - 0 heisst "keine Doppelbestimmung
+widerspricht", NICHT "die neuen Kameras sind geprueft". Die neuen Posen prueft erst tools/kameras_nachtragen_tor.py (plausibel + am Modell nachgezogen, sonst gesperrt).
   /media/oem/scan/venv-colmap/bin/python -I tools/kameras_nachtragen.py modelle/<objekt>/objekt.json <ziel>/lg/sparse_handy/0 --bilder <ziel>/roh
 """
 import sys, os, json, glob, argparse, numpy as np, cv2
