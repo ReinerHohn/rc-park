@@ -270,6 +270,23 @@ def koerper_flaeche(basis, a, t, n, felder, w_aussen=1.0, w_innen=-1.5, schritt=
     return float(np.median(ws)) if ws else None
 
 
+def flaeche_relief(basis, npz, grund=10):
+    """Gemessene Koerperflaeche (m zur Wandebene) fuer EIN Reliefbild, so dass relief_einsatz.koerper(npz, flaeche=...) dessen Wandniveau genau auf den Grundkoerper legt.
+    Proben im eigenen Feld des Reliefs (Mono z 0-10 m misst dort, wo es gebaut wird). Relief ohne Putzniveau: Niveau = Median der Wandzellen (relief_roh 'vorstand').
+    24.11.2026 (Kette 1122u, Schwabentor Sued w05): Mono-/Misch-/Netzrelief der Quaderwaende wurden mit trend (Ausgleichsebene des Netzes) gebaut - die lag 0,23-0,26 m
+    HINTER dem Grundkoerper (Wandversatz der Abweichungsschleife) -> 165 berechnete Steine im Koerper versenkt, Quaderzone glatt. RELIEF_NETZEBENE=1 = alter Stand (None)."""
+    if os.environ.get("RELIEF_NETZEBENE") == "1" or not npz or not os.path.exists(npz): return None
+    Z = np.load(npz); hh, ww = Z["rel"].shape; px = float(Z["px"]); u0, z0 = float(Z["u0"]), float(Z["z0"])
+    fl = koerper_flaeche(basis, Z["a"], Z["t"], Z["n"], [(u0 + fu * ww * px, z0 + fz * hh * px) for fu in (0.3, 0.5, 0.7) for fz in (0.3, 0.6, 0.9)])
+    if fl is not None:
+        # Bezug = FUGENGRUND (Perzentil 'grund' der Wandzellen), nicht Putzniveau/Median: das Relief wird mit dem Koerper VEREINIGT, kann also keine Fugen in ihn schneiden.
+        # Steht der Median (= Steinstirn einer Quaderzone) auf der Flaeche, liegen die Fugen im Koerper und die Wand ist glatt; Putzniveau war in w01_mono (1122u)
+        # +0,14 m ueber dem Steinmedian -> Steine 14 cm im Koerper. relief_einsatz rechnet rel - niv + flaeche -> flaeche = fl + niv - Grund.
+        rel = Z["rel"]; mw = (Z["wand"] if "wand" in Z.files else np.ones(rel.shape, bool)) & ~(Z["oeffnung"] if "oeffnung" in Z.files else np.zeros(rel.shape, bool)) & (rel != 0)
+        fl += (float(Z["putz_niveau_m"]) if "putz_niveau_m" in Z.files else 0.0) - (float(np.percentile(rel[mw], grund)) if mw.any() else 0.0)
+    return fl
+
+
 def fein_ordner(objekt_json):
     """Ordner des feinen Wandbilds (Kettenstufe fenster: fassade_ortho --zelle 0.01 --einzeln -> <daten>/fassade_fein). objekt.json 'fassade_fein' (relativ zum Repo oder absolut)
     geht vor, sonst /media/oem/scan/rc-park_daten/<objektordner>/fassade_fein wie tools/gesamtkette.py. '' wenn nicht da."""
@@ -459,6 +476,9 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
                                        quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
                                        lagen_m=qi_.get("lagen_m", [])[:40], keilsteine=[{k_: v_ for k_, v_ in x_.items() if k_ not in ("ruecken_je_stein", "bogenbreite_je_stein_m")} for x_ in (qi_.get("keilsteine") or [])], eckquader={k_: {kk: v_ for kk, v_ in e_.items() if kk != "bloecke"} | dict(n=len(e_.get("bloecke", []))) for k_, e_ in (qi_.get("eckquader") or {}).items()}, front_p5_p95_m=qi_.get("relief_front_p5_p95_m"), verworfen=qi_.get("verworfen"),
                                        hinweis="ANNAHME: Rillenbreite/-tiefe = Druckmass (MINMM x SCALE), echte Fugen 1-3 cm; Stirnflaeche eben (Bossen nicht gemessen); Bild relief/<datei>_q.jpg ansehen"))
+        if fl_w is None and w.get("quader") is not False and not w.get("nur_foto"):      # 24.11.2026: auch Quaderwaende auf die gemessene Koerperflaeche (flaeche_relief)
+            fl_w = flaeche_relief(basis, f)
+            if fl_w is not None: belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} auf der gemessenen Koerperflaeche ({fl_w:+.2f} m zur Wandebene)", quelle="fassaden_kette.flaeche_relief (Stab-Sonde gegen den Grundkoerper)", relief_auf_flaeche_m=round(fl_w, 3)))
         if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else []), flaeche=fl_w) ^ hu)
         fl_ = None
         if hat_foto and os.environ.get("FOTOSTEINE_NETZEBENE") != "1":   # 21.11.2026: Fotosteine auf die gemessene Koerperflaeche (Netzebene lag 0,24-0,5 m hinter der korrigierten Wand -> Steine unsichtbar)
@@ -475,10 +495,11 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
                                    relief_auf_flaeche_m=None if fl_ is None else round(fl_, 3),
                                    hinweis="Quader = Fotorelief (Fugenlage aus dem Foto, Bosse ANNAHME); Ecke = Wandende ohne gleichgerichtete Nachbarwand; Relief auf der gemessenen Koerperflaeche (fassaden_kette.koerper_flaeche)"))
         if mono_:
-            koerper = koerper + offen(relief_koerper(fmo, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu)
+            fl_mo = flaeche_relief(basis, fmo)                              # 24.11.2026: Mono-Steine auf die Koerperflaeche (Netzebene lag 0,23 m dahinter -> Steine versenkt)
+            koerper = koerper + offen(relief_koerper(fmo, tiefe=tiefe, trend=True, rand_auslauf=False, flaeche=fl_mo) ^ hu)
             belege.append(dict(seite="wand", element=f"Feinrelief Fassade {w['name']} aus Einzelfotos (Feld u {feld_mo[0]:.1f}..{feld_mo[1]:.1f}, z {feld_mo[2]:.1f}..{feld_mo[3]:.1f})", quelle="Kettenstufe mono: tools/relief_aus_fotos_mono.py (Tiefpass Scan/Feinrechnung + Hochpass Depth Anything V2 Small, Apache-2.0), Tor Korrelation >= 0,2",
                                korrelation=(w.get("mono") or {}).get("korrelation"), hinweis="relief/<wand>_mono.jpg ansehen"))
-        elif tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
+        elif tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True, flaeche=flaeche_relief(basis, fm)) ^ hu)                # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle=("Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt" if w.get("quader") is False else "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert"),
                            generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + (f"; ANNAHME: Relief {w.get('vorstand', 0) * 100:.0f} cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung" + (f"; ANNAHME: {w['putz_eben'] * 100:.0f} % der Wand naeher als {w.get('putz_band', 0.05) * 100:.0f} cm am Wandniveau = glatter Putz (Netzrauschen weg)" if w.get("putz_eben") else "") if w.get("quader") is False else "; generierte Steine = ANNAHME")))
     return koerper, belege
