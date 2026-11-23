@@ -1,64 +1,36 @@
-# Übergabe 22.11.2026 23:15
-Weiter mit: „weiter“ (oder /uebergabe fortsetzen; vorher Skill `sitzungsbeginn`). Zuerst Kettenlauf `1122o` auswerten (siehe „Läuft gerade“).
+# Übergabe 23.11.2026 ~01:30
+Weiter mit: „weiter“ (vorher Skill `sitzungsbeginn`). Zuerst Kettenlauf `1122p` auswerten.
 
-## Auftrag
-- „Keine Handangriffe, nur Automatik.“ → Tore nie per Eintrag in objekt.json bestehen lassen, Detektor erweitern (Memory feedback-keine-handeintraege-nur-automatik).
-- „Ich will die Südseite“ (Seite Richtung Schlossbergring), „parallel“ (darf neben der Kette laufen, Jobs sollen sich drosseln statt abzustürzen).
-- „Ja, bau alles ein.“ (8 Pipeline-Verbesserungen) · „Ich will es jetzt generalisiert gelöst“ (Eckmodell allgemein).
-- „versuche die Brücke noch stabiler zu machen“ (ohne neue Fotos).
-- Zuletzt: „Die Methode muss vollautomatisiert so robust sein, dass sie auch mit dünnen Brücken umgehen kann … vollautomatisch merkt, an Stellen, wo es schwach wird, dann mit Software nochmal mehr rausholt als Nachmatchen. Suche nach weiteren solchen geilen Methoden.“
-- Ziel in einem Satz: Die Kette baut das Schwabentor von null inkl. Südseite, alle Lage-Tore (GPS, Grundriss, Wanddicke, Lot) grün, Bild + Fehlerliste + Realitäts-% an den Nutzer.
+## Auftrag (Nutzerworte, unverändert seit 22.11.)
+- „Keine Handangriffe, nur Automatik.“ · „Ich will die Südseite“ (Richtung Schlossbergring = Feldseite f01, im Objekt „Sued“) · „parallel“.
+- „Die Methode muss vollautomatisiert so robust sein, dass sie auch mit dünnen Brücken umgehen kann … vollautomatisch merkt, wo es schwach wird … Suche nach weiteren solchen geilen Methoden.“
+- Ziel: Kette baut Schwabentor von null inkl. Südseite, alle Lage-Tore grün, Bild + Fehlerliste + Realitäts-% an Nutzer.
 
-## Erledigt und geprüft (main fa33bf9ef, gepusht)
-- Lage-Prüfstand d1ee43eb4 · Haufen-Automatik (Grundriss-Tor klärt Straßenhaufen selbst, Wandklinge ≥ 3 m = rot) 9b7c2cac1.
-- Betrieb + Fotoauftrag 526d42e18 (verlustbilanz.py, foto_auftrag_skizze.py, pfade.temp_ordner + Temp-Wächter).
-- Dach + Erker 04f32a646 (teil_fotoform findet `<nr>.jpg`, geneigte Wandebene im Ebenen-Sweep).
-- Lot 02020bc75: Fluchtpunkt-Lot trägt die Ausrichtung, Kippung fest ±0,1°, Lot-Tor `tools/lot_wandneigung.py` (≤ 2 cm/m), Vorstufe `lage_frueh.py`.
-- Recherche fa33bf9ef: `research_notes/duenne_bruecken_methoden_2026-11-22.md` (13 Methoden, Rangfolge, Lizenzen).
-- Kette 1122o (Stand 23:10): Lage-Tore grün – Lot 1,4 cm/m, GPS +1,2° ×0,980, Grundriss 1,2 %. Modell noch nicht fertig.
-- Südseite (Zweig a0747, NICHT auf main): Eck-Kopplung über gemeinsame 3D-Punkte → Südwand +1,1°, 0,38 m innerhalb LoD2; Innen-Durchgangswände 0,16/0,17 m. Selbsttest Martinstor mit Nachmatchen 0,2° / 2,4 cm. Rest ~0,4 m ungeklärt (Teil 1 evtl. in sich verformt).
+## Erledigt (main 8a049c988, gepusht)
+- Kette 1122o ausgewertet: ~22 % (Nord ~55, West ~30, Süd/Ost < 10), Fehlerliste im Logbuch 23.11. 00:30. 3D https://claude.ai/artifact/ScV8KGvyjJrxxHCAzCM6pi (V2).
+- In main gemergt (je Schnelltest 0): Südseiten-Kopplung a0747, Radar `verbund_schwachstellen.py` + Lotfeld `teil_verformung.py` (ae06), Nachhol-Fix (ac34: GPU-OOM bei SIFT abfangen, keine Sperre bei Speichermangel), Dach-Fix (a028: Sichtschatten/Gitterrand, Gegenprobe 28/101 -> 65/89), Testfixes test_kette_tempo/test_dach_sichtschatten.
+- Lizenzbefunde Brücken-Recherche in LIZENZ_WERKZEUGE.md.
 
 ## Läuft gerade
-- Kette `rcpark-kette-schwabentor-null-1122o` (Start 22:39, `--ab sfm`), 23:10 in Stufe `fassaden_kette`. Log `/media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122o.log`, Stufen: `grep -a "=== " /media/oem/scan/rc-park_daten/schwabentor-1122/gesamtkette.log | tail -3`. Danach: ERGEBNIS-Zeile, `modelle/schwabentor-1122/audit/seiten.jpg` + `neben_*.jpg` ANSEHEN, Fehlerliste + Realitäts-% + 3D-HTML `/media/oem/scan/rc-park_daten/schwabentor-1122/schwabentor-1122_3d.html` an Nutzer.
-- Warter brcp7gqqh (Kettenende) und bptei9uy6 (Schnelltest der Merge-Probe nach Fassadenstufe → `/media/oem/rcdaten/tmp/schnelltest_merge_sued.log`): gehen bei /clear evtl. verloren, dann von Hand prüfen.
-- Merge-Probe `/media/oem/scan/rc-park_tmp/merge_probe12`, Zweig `merge-probe-1122-abend` (08efe7975 = main + a0747: Südseiten-Kopplung, bruecke_nachmatchen, sim3_robust, fotos_sammeln-Herkunft, wand_dicke Normalen/Gültigkeit, Durchblick).
-- Job `rcpark-bruecke2-b1` (Agent a724, Brücken-Selbsttest, Log `/media/oem/rcdaten/tmp/bruecke2/b1.log`) läuft neben der Kette.
-- Agent a724bf0d78cfa2afc (Worktree): Lot-Zwang in der Kopplung, geführtes Nachmessen, gemeinsamer Ausgleich, Eskalationsleiter.
-- Agent ae06ef85afac99e13 (Worktree): Selbsttest Stufe 2, Lotfeld je Kamera (Frage: ist Teil 1 in sich verformt?), Schwachstellen-Radar.
-- Agenten-Stand nach /clear: `git log --oneline main..worktree-agent-<id> | head`.
+- Kette `rcpark-kette-schwabentor-null-1122p` (Start 01:07, `--ab vorpruefen`, JOB_RAM_MB 11000). Log `/media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122p.log`. Warter bm4swiekt (geht bei /clear verloren -> von Hand: `grep -a "ERGEBNIS DES LAUFS\|JOB_ENDE" <log> | tail -3`).
+- Merge-Probe `/media/oem/scan/rc-park_tmp/merge_probe13` (Zweig merge-probe-1123-fenster = main + a243 Fenster/Tür/loch_gewaende + a724 Brücke/Leiter/ausgleich_epipolar). Schnelltest mit a243 = 0; nach a724 nur Einzeltests grün -> NACH Kettenende voller Schnelltest, bei 0 in main mergen.
+- Agent a4effedf10a2c8bdc: gemeinsamer BA über beide Teile (Eigenverformung). Agent acc3e1a2c02b80d5e: Kegeldach Treppentürmchen + Laterne. Beide nur Code bis Kettenende.
 
 ## Nächste Schritte
-1. Kette 1122o prüfen: `systemctl --user is-active rcpark-kette-schwabentor-null-1122o; grep -a "ERGEBNIS DES LAUFS\|ABBRUCH\|JOB_ENDE" /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122o.log | tail -3 | cut -c1-700` → auswerten (Bilder ansehen!).
-2. Schnelltest Merge-Probe: `grep -a "SCHNELLTEST:" /media/oem/rcdaten/tmp/schnelltest_merge_sued.log | tail -1`; fehlt er: nach Kettenende `cd /media/oem/scan/rc-park_tmp/merge_probe12 && bash tools/schnelltest.sh`. Nur bei „0 Fehler“: in main `git fetch` und dann `git merge --ff-only merge-probe-1122-abend`, push.
-3. Danach Nachtlauf von null ab Vorprüfung (wegen fotos_sammeln-Fix) per Skill `langer-job`, JOB_RAM_MB 11000, nur EIN Kettenlauf.
-4. Agenten a724/ae06 auswerten → je Zweig Merge-Probe, Merge nur bei Schnelltest 0.
-5. Lizenzbefunde aus der Recherche in `modelle/LIZENZ_WERKZEUGE.md` nachtragen.
-6. Offen: unabhängiges Höhen-Tor aus Fotokanten (nur Vorschlag); Foto-Tor „nicht beurteilbar“ 15/15 (teils behoben); Dublettenprüfung für Videobilder zu grob; Zweig a879 (video_bruecke, Lage nicht belegt) nicht gemergt.
-7. Aufräumen nur nach „Ja“: `/dev/shm/rcpark_netz_*` (1,5 GB), `/media/oem/rcdaten/tmp/nachmatch_insp2/k.db` (834 MB).
+1. 1122p auswerten (seiten.jpg, neben_*.jpg, neben_details.jpg ANSEHEN; registrierte Fotos von 766? f01 gefüllt?), Fehlerliste + % + 3D-Artifact (gleiche URL), Logbuch.
+2. Probe13 voller Schnelltest -> main, push. Danach 1122-Messung von a724: `bash /media/oem/rcdaten/tmp/bruecke2/lauf_b4.sh` nur letzter Befehl (s1122), dann `tools/versuche/bruecke2_suedwand_1122.py`.
+3. Nächster Kettenlauf mit Leiter (RCPARK_ECK_LEITER=1?) – vorher prüfen, ob Schalter Standard ist.
+4. Offen: Massstab ~1,027 zu gross (Dach Traufe/First), Tür f04 0,3 m versetzt (Ortho auf Zylinder), lage_frueh Lageproben rc 3.
 
-## Entscheidungen des Nutzers
-- ✓ Keine Handeinträge, nur Automatik · ✓ Root aufräumen · ✓ Südseite parallel zur Kette · ✓ alle 8 Verbesserungen einbauen · ✓ Eckmodell generalisiert · ✓ Brücke ohne neue Fotos stabilisieren.
-- ? Regelungs-Zweig a7cb464f361175467 (JOB_KLASSE, neben_bremse.py, gpu_grenze.py, RAM-Buchung je Stufe): Lasttests offen; Merge und Regeländerung nur mit Zustimmung.
-- ? YouTube-Cookies nur nach ausdrücklichem „Cookies ja“.
+## Entscheidungen / Fragen an Nutzer
+- ? Löschen/Auslagern (Root nur 9,9 GB, Ziel 15): /dev/shm/rcpark_netz_* 1,5 GB, nachmatch_insp2/k.db 834 MB, /media/oem/rcdaten/tmp/nachholen_agent 1,7 GB, bruecke2/k1122 11 GB (rcdaten), Worktree ac64 (1 unversionierte Datei). Nur nach „Ja“.
+- ? Regelungs-Zweig a7cb464f361175467 nur mit Zustimmung. ? YouTube-Cookies nur nach „Cookies ja“.
+- Seitennamen bleiben (Agent ac34 vermutete Fehlbenennung; „Süd“ = Feldseite passt zum Nutzer).
 
-## Fehler und Lehren dieser Sitzung
-- Handeintrag `grundriss_haufen_geklaert` gesetzt → Nutzer verbot es, zurückgenommen, Detektor gebaut (Memory).
-- Himmelsrichtungen falsch benannt (Rahmen +x Nord, +y West); −6,5° falsch der gewählten Lösung zugeordnet.
-- Warter feuerte zu früh (alte Logzeilen) → Logs ab Zeilennummer lesen.
-- Sim3 durch eine Kamera 2277 km entfernt verdorben (relative Schwelle) → feste 1-m-Schwelle, sim3_robust.
-- Merge-Proben scheiterten am Temp-Wächter (Tests mit mkdtemp) → pfade.temp_ordner.
-- Realitäts-% 1122n erst 25 % gemeldet, richtig ~15 %.
-- Doppelgänger-Prüfer nutzte 5,86 GB VRAM trotz 2500-MiB-Buchung (an Regelungs-Agent gemeldet).
-- Lehren stehen in `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` und `Doku/projekt/lage-seiten.md` (Versucht).
-
-## Wichtige Pfade und Befehle
-- Kettenordner `/media/oem/scan/rc-park_daten/schwabentor-1122/` (gesamtkette.log, pipe/), Objekt `modelle/schwabentor-1122/objekt.json` (unversioniert).
-- Kopplung `tools/seiten_eck_koppeln.py`, Nachmatchen `tools/bruecke_nachmatchen.py`, Selbsttest `eck_selbsttest.py` (im Zweig a0747 / merge_probe12).
-- Selbsttest-Daten `/media/oem/rcdaten/tmp/durchblick/`, `/media/oem/rcdaten/tmp/bruecke2/`.
+## Lehren dieser Sitzung
+- Tests, die /proc/meminfo lesen, kippen unter Kettenlast -> vorspielen (builtins.open, nicht Modul-Attribut wegen importe_pruefen).
+- Agenten-Jobs buchen RAM (b4 5 GB) und blockieren den Kettenstart -> Agenten vor Kettenstart anhalten lassen.
+- Worktrees je ~620 MB auf Root -> gemergte sauber entfernen (unlock + remove, nie --force).
 
 ## Vorsicht
-- Root nur 8,2 GB frei (Mindest 15 GB!) → nichts Neues auf Root, Abgelöstes per `tools/auslagern.sh` nach rcdaten.
-- Fremde uncommittete Dateien nicht committen (modelle/kaufhaus_grob3/*, martinstor_gk, *MASSNACHWEIS.md, schwabentor-1120/audit/*).
-- Worktree `ram-je-stufe-1120` nicht anfassen; Worktrees nie mit --force entfernen.
-- Kein zweiter Kettenlauf neben 1122o; Agenten rechnen nicht während der Kette (Ausnahme bruecke2-b1 läuft – beobachten).
-- Nie pkill -f mit Muster aus der eigenen Befehlszeile; Toshiba-Platte nie anfassen.
+- Fremde uncommittete Dateien nicht committen (kaufhaus_grob3, martinstor_gk, *MASSNACHWEIS.md, schwabentor-1120/audit, ...). Worktree ram-je-stufe-1120 nicht anfassen. Kein zweiter Kettenlauf. Toshiba nie anfassen.
