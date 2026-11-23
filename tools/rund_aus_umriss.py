@@ -12,6 +12,10 @@ Verfahren (Umriss-Tangenten, "visual hull" fuer einen Drehkoerper):
  3. Abstimmung: jede Beobachtung (Foto x Seite x Hoehe) wird auf ihr Maximum ueber alle Kandidaten normiert - jedes Foto zaehlt gleich, ein starker Fugen-
     oder Eckkantenzug in einem Foto kann nicht allein gewinnen; nur ein Kreis, der in VIELEN Fotos auf einer Kante liegt, gewinnt.
     Verdeckt (Strahl zum Umrisspunkt trifft vorher das Modell, z. B. Turmwand) -> Beobachtung entfaellt.
+    23.11.2026 (Kettenlauf 1122p, Treppentuermchen r 2,09 statt ~1,6, Umriss auf der Hauptturmkante): (a) das VORMODELL desselben Koerpers im STL ist kein Verdecker
+    (eigenkoerper/ist_eigen - sonst misst die Stufe ihr eigenes Vormodell), (b) Verdeckung JE KANDIDAT (Sperrkarte: Strahlenraster je Foto, Kante eines Koerpers davor
+    sperrt die Nachbarschaft; Innenkarte: Umrisspunkt im Nachbarkoerper), (c) nur Umrisse vor FERNEM Hintergrund stimmen ab (hintergrund_nah: Wand < 2 Radien dahinter
+    -> deren Textur, z. B. Eckquader, ist vom Umriss nicht zu trennen), (d) fehlende Beobachtungen je Kandidat auf volle Abdeckung hochgerechnet (ABDECKUNG_MIN).
  4. Grob-fein: Mitte +-0,6 m, Radius 0,5..1,4 x Start; dann Feinraster. Danach je Hoehe nur noch r (Mitte fest) -> Drehprofil r(z).
  5. Oberkante: Umriss-Stuetze je Hoehe (mittlere Abstimmung am besten r), auch 3 m ueber der Wolke; Ende = letzte Hoehe mit >= 50 % der Median-Stuetze (ANNAHME).
  6. KEGELDACH (23.11.2026, kegeldach()): ueber der Traufe/Oberkante Traufradius und Spitze aus den beiden geraden Umriss-Mantellinien je Foto (exakte Kegelsilhouette,
@@ -37,9 +41,59 @@ FAECHER_GRAD = 15      # Richtungsfaecher fuer die Gewichtung der Beruehrlinien 
 SUCHE_R = (0.5, 1.4)   # x Startradius: Wolke misst eher zu dick (Fasen, Rauschen), daher nach unten weiter offen
 
 
+EIGEN_BAND = 0.25      # m: Flaeche des VORMODELLS desselben Rundkoerpers liegt +-25 cm um dessen gebauten Radius (Fasen, Segmentierung 48-Eck, Profilrundung 5 mm)
+EIGEN_RADIAL = 0.6     # |Normale . radial| >= 0,6 (Abweichung < 53 Grad): Mantelflaeche zeigt nach aussen; angrenzende Hauptturmwand hat dort tangentiale Normale
+VERDECKT_VOR = 0.15    # m: Treffer erst 15 cm vor dem Umrisspunkt zaehlt als Verdeckung (Netzrauschen am Punkt selbst)
+SPERR_ZELLEN = 60      # Strahlenraster je Foto: ~60 Zellen ueber die Ausschnittbreite (3,2 x Startradius -> Zelle ~ 9 cm); feiner kostet Strahlen ohne Nutzen (Netz ~5 cm genau)
+SPERR_RAND = 1         # +-1 Zelle um den Umrisspunkt: Kante eines Koerpers DAVOR sperrt auch die Nachbarschaft (Lage-/Kalibrierfehler ~ 1 Zelle)
+INNEN_SCHRITT = 0.05   # m: Raster der Innen-Pruefung (Lage des Umrisspunkts im Nachbarkoerper) - halbe Wandfuge, feiner als die Mittelstufe (3 cm Kreis / 5 cm Ort)
+SPERR_AUSSEN = 0.10    # m: Hintergrund-Probe 10 cm ausserhalb des Umrisspunkts (gut 1 Rasterzelle, sicher nicht mehr auf dem Koerper)
+HINTERGRUND_NAH = 2.0  # x Startradius: fremde Flaeche weniger als 2 Radien hinter dem Umriss = "naher Hintergrund" (Parallaxe der Wandtextur zum Umriss < ~10 %)
+ABDECKUNG_MIN = 0.6    # Kandidat mit weniger als 60 % der besten gueltigen Beobachtungsgewichte wird nur bis dahin hochgerechnet (Strafe fuer "versteckt")
+
+
 def lade(p):
     try: return json.load(open(p))
     except Exception: return None
+
+
+def eigenkoerper(H):
+    """23.11.2026 (Kettenlauf 1122p, Treppentuermchen r 2,09 statt ~1,56): die Verdeckungspruefung lief gegen das Modell-STL, das den Rundkoerper aus dem
+    VORLAUF schon enthaelt (r 2,1, Mitte 0,55 m versetzt). Die Umrisspunkte des Startkreises lagen IN diesem Vormodell -> 3770 von 6240 Beobachtungen als
+    'verdeckt' verworfen, es blieben v. a. Blicke ueber die Hauptturmkante = zirkulaere Messung (die Stufe misst ihr eigenes Vormodell).
+    -> Liste der moeglichen Vormodelle dieses Haufens (Foto-Mass 'kreis'/'profil' und Wolken-Mass 'kreis_wolke'/'profil_wolke'): (x, y, zs, rs, z_lo, z_hi)."""
+    kz = H.get("kasten") or [0, 0, 0, 0, 0, 1e9]; aus = []
+    for kk, pk in (("kreis", "profil"), ("kreis_wolke", "profil_wolke")):
+        k = H.get(kk); P = [p for p in (H.get(pk) or []) if len(p) >= 2]
+        if not k: continue
+        if P: zs = np.array([p[0] for p in P], float); rs = np.array([p[1] for p in P], float); z_hi = max(float(zs.max()), kz[5])
+        else: zs = np.array([kz[2], kz[5]], float); rs = np.array([k["r"], k["r"]], float); z_hi = kz[5]
+        o = np.argsort(zs); aus.append((float(k["x"]), float(k["y"]), zs[o], rs[o], kz[2] - 0.3, z_hi))
+    return aus
+
+
+def ist_eigen(loc, nrm, eigen):
+    """Treffer (loc n x 3, Flaechennormale nrm n x 3) auf dem Vormodell eines der eigen-Koerper? Mantel: Abstand zur Achse = Profilradius +- EIGEN_BAND, Normale radial
+    nach aussen; Dach (ueber dem Profil bis 3,5 x r hoch, Kegel/Haube): innerhalb 1,5 x Profilradius, Normale nach aussen-oben. Angrenzende Waende anderer Koerper
+    (Normale tangential oder nach innen) bleiben Verdecker."""
+    e = np.zeros(len(loc), bool)
+    for x, y, zs, rs, z_lo, z_hi in eigen:
+        v = loc[:, :2] - [x, y]; d = np.linalg.norm(v, axis=1); rad = v / np.maximum(d, 1e-9)[:, None]; nr = (nrm[:, :2] * rad).sum(1)
+        rz = np.interp(loc[:, 2], zs, rs); rt = float(rs[-1])
+        mantel = (loc[:, 2] >= z_lo) & (loc[:, 2] <= z_hi + 0.3) & (np.abs(d - rz) <= EIGEN_BAND) & (nr >= EIGEN_RADIAL)
+        dach = (loc[:, 2] > z_hi - 0.3) & (loc[:, 2] <= z_hi + 3.5 * rt) & (d <= 1.5 * rt) & (nr >= 0) & (nrm[:, 2] > 0.2)
+        e |= mantel | dach
+    return e
+
+
+def verdeckt_strahlen(inter, normalen, C, X, eigen=()):
+    """Je Zielpunkt X (n x 3): liegt zwischen Kamera C und X eine Modellflaeche (mehr als VERDECKT_VOR vor X), die NICHT zum Vormodell des gemessenen Koerpers gehoert?"""
+    v = X - C; dist = np.linalg.norm(v, axis=1); vor = np.full(len(X), np.inf)
+    tri, ri, loc = inter.intersects_id(np.broadcast_to(C, X.shape), v / dist[:, None], multiple_hits=True, return_locations=True)
+    if len(ri):
+        t = np.linalg.norm(loc - C, axis=1); fremd = ~ist_eigen(loc, normalen[tri], eigen) if eigen else np.ones(len(ri), bool)
+        np.minimum.at(vor, ri[fremd], t[fremd])
+    return vor < dist - VERDECKT_VOR
 
 
 def tangenten(c, r, Cxy):
@@ -76,19 +130,95 @@ class Bild:
         ok = (z > 0.5) & (x >= 1) & (y >= 1) & (x < w - 2) & (y < h - 2); xi = np.clip(x, 1, w - 2); yi = np.clip(y, 1, h - 2)
         x0 = np.floor(xi).astype(int); y0 = np.floor(yi).astype(int); fx = xi - x0; fy = yi - y0
         def bil(G): return (G[y0, x0] * (1 - fx) * (1 - fy) + G[y0, x0 + 1] * fx * (1 - fy) + G[y0 + 1, x0] * (1 - fx) * fy + G[y0 + 1, x0 + 1] * fx * fy)
+        if getattr(self, "sperre", None) is not None:                                      # 23.11.2026: Kandidaten-Umrisspunkt verdeckt, an fremder Verdeckerkante oder vor nahem Hintergrund
+            ok &= ~self.sperre.gesperrt(X)
+            if getattr(self, "hinter_nah", 0) > 0: ok &= ~self.sperre.hintergrund_nah(X, N3, self.hinter_nah)
         return np.where(ok, np.abs(bil(self.gx) * d[:, 0] + bil(self.gy) * d[:, 1]), np.nan)
+
+
+class Sperrkarte:
+    """23.11.2026 (Kettenlauf 1122p: Treppentuermchen r 2,09/1,86 statt ~1,56, gruene Umrisslinie auf der Hauptturmkante): Verdeckung JE KANDIDAT statt nur am Startkreis.
+    Je Foto ein grobes Strahlenraster ueber den Ausschnitt (Schritt SPERR_PX Kalibrierpixel): Abstand zur ersten Modellflaeche, die NICHT zum Vormodell des gemessenen
+    Koerpers gehoert (ist_eigen). Ein Kandidaten-Umrisspunkt X ist gesperrt, wenn in der Rasterzelle ODER einer Nachbarzelle (+-SPERR_RAND) eine Flaeche mehr als
+    VERDECKT_VOR vor X liegt: verdeckt, oder direkt an der Silhouette eines Koerpers DAVOR - dessen Kante (Stein gegen Himmel/Putz) ist der staerkste Gradient im
+    Ausschnitt und zog die Abstimmung auf einen Kreis, der die Hauptturmkante beruehrt. Nur Umrisse mit Hintergrund (nichts davor) stimmen ab."""
+    def __init__(self, inter, normalen, c, C, box, eigen=(), schritt=None):
+        import cv2
+        u0, v0, u1, v1 = box; sp = schritt or max(4.0, (u1 - u0) / SPERR_ZELLEN)
+        us = np.arange(u0, u1 + sp, sp); vs = np.arange(v0, v1 + sp, sp); U_, V_ = np.meshgrid(us, vs)
+        xd = (U_.ravel() - c["cx"]) / c["f_px"]; yd = (V_.ravel() - c["cy"]) / c["f_px"]; xn, yn = xd.copy(), yd.copy(); k1 = float(c.get("k1") or 0.0)
+        for _ in range(5): s_ = 1 + k1 * (xn * xn + yn * yn); xn, yn = xd / s_, yd / s_                 # radiale Verzeichnung umkehren (Fixpunkt)
+        R = cv2.Rodrigues(np.asarray(c["rvec"], float))[0]; dw = np.c_[xn, yn, np.ones_like(xn)] @ R; dw /= np.linalg.norm(dw, axis=1)[:, None]
+        vor = np.full(len(dw), np.inf); C = np.asarray(C, float)
+        tri, ri, loc = inter.intersects_id(np.broadcast_to(C, dw.shape), dw, multiple_hits=True, return_locations=True)
+        if len(ri):
+            t = np.linalg.norm(loc - C, axis=1); fremd = ~ist_eigen(loc, normalen[tri], eigen) if eigen else np.ones(len(ri), bool); np.minimum.at(vor, ri[fremd], t[fremd])
+            ri_f, t_f, nd = ri[fremd], t[fremd], (normalen[tri[fremd]] * dw[ri[fremd]]).sum(1); erst = np.isclose(t_f, vor[ri_f])
+            rueck = np.zeros(len(dw), bool); rueck[ri_f[erst & (nd > 0.1)]] = True    # erste fremde Flaeche von INNEN getroffen: Strahl lief durch das ausgenommene Vormodell in einen Koerper
+        else: rueck = np.zeros(len(dw), bool)
+        self.tief = np.where(rueck, -np.inf, vor).reshape(U_.shape)                    # roher Abstand zum Hintergrund (-inf = im Koerper) fuer hintergrund_nah
+        V = vor.reshape(U_.shape); k = SPERR_RAND; P = np.pad(V, k, constant_values=np.inf)
+        self.vor = np.min([P[k + i:k + i + V.shape[0], k + j:k + j + V.shape[1]] for i in range(-k, k + 1) for j in range(-k, k + 1)], axis=0)   # naechster Verdecker in der Nachbarschaft
+        self.u0, self.v0, self.sp, self.c, self.C = float(us[0]), float(vs[0]), sp, c, C
+
+    def gesperrt(self, X):
+        import flaeche_ortho as FO
+        p, z, _ = FO.projektion(np.asarray(X, float), self.c); j = np.round((p[:, 0] - self.u0) / self.sp).astype(int); i = np.round((p[:, 1] - self.v0) / self.sp).astype(int)
+        h, w = self.vor.shape; inn = (i >= 0) & (j >= 0) & (i < h) & (j < w); d = np.linalg.norm(np.asarray(X, float) - self.C, axis=1)
+        v = np.where(inn, self.vor[np.clip(i, 0, h - 1), np.clip(j, 0, w - 1)], np.inf); g = v < d - VERDECKT_VOR
+        return g | self.innen.innen(X) if getattr(self, "innen", None) is not None else g
+
+    def hintergrund_nah(self, X, N3, nah):
+        """23.11.2026 (Bild 114101: wahrer Umriss weiss vor weisser Hauptturmwand kaum sichtbar, die Eckquader-Kante der Wand DAHINTER ist der staerkste Gradient und
+        zog den Kreis auf r 2,0): liegt hinter dem Umrisspunkt (Strahl knapp ausserhalb, X + SPERR_AUSSEN x Normale) eine fremde Flaeche naeher als 'nah' m? Dann ist die
+        Bildkante dort nicht vom Umriss zu trennen (Textur der Wand dahinter, kaum Parallaxe) -> Beobachtung zaehlt fuer diesen Kandidaten nicht. Nur Umrisse vor
+        fernem Hintergrund (Himmel, Strasse, Nachbarhaeuser) stimmen ab."""
+        import flaeche_ortho as FO
+        Y = np.asarray(X, float) + SPERR_AUSSEN * np.asarray(N3, float); p, z, _ = FO.projektion(Y, self.c)
+        j = np.round((p[:, 0] - self.u0) / self.sp).astype(int); i = np.round((p[:, 1] - self.v0) / self.sp).astype(int); h, w = self.tief.shape
+        inn = (i >= 0) & (j >= 0) & (i < h) & (j < w); t = np.where(inn, self.tief[np.clip(i, 0, h - 1), np.clip(j, 0, w - 1)], np.inf)
+        return t < np.linalg.norm(Y - self.C, axis=1) + nah
+
+
+class Innenkarte:
+    """23.11.2026: Umrisspunkt eines Kandidaten liegt IM Nachbarkoerper (Hauptturm), an den der Rundkoerper angebaut ist? Das Modell-STL ist eine Vereinigung: die
+    Hauptturmwand innerhalb des Vormodells fehlt, ein Strahl durch das (ausgenommene) Vormodell trifft dort nichts -> Sperrkarte allein sieht den Punkt als frei.
+    Test je Rasterpunkt (Schritt INNEN_SCHRITT, waagrecht um die Achse, je Hoehe): Strahl von der Achse radial nach aussen durch den Punkt; trifft er zuerst (ohne
+    Vormodell-Flaechen) eine fremde Flaeche VON INNEN (Normale in Strahlrichtung), liegt der Punkt in einem festen Koerper. Ein Umriss im Inneren ist kein Umriss
+    (die Kante dort ist die Anschlusslinie an die Wand, nicht die Beruehrlinie)."""
+    def __init__(self, inter, normalen, x, y, halb, zs, eigen=()):
+        g = np.arange(-halb, halb + 1e-9, INNEN_SCHRITT); self.x, self.y, self.g0, self.n = x, y, -halb, len(g); self.zs = np.asarray(sorted(zs), float)
+        A, B_ = np.meshgrid(g, g, indexing="ij"); a, b = A.ravel(), B_.ravel(); rl = np.hypot(a, b); ok = rl > 0.05
+        dxy = np.c_[a[ok], b[ok]] / rl[ok, None]; self.m = np.zeros((len(self.zs), self.n, self.n), bool)
+        for k, z in enumerate(self.zs):
+            O = np.c_[np.full(ok.sum(), x), np.full(ok.sum(), y), np.full(ok.sum(), z)]; D = np.c_[dxy, np.zeros(ok.sum())]
+            tri, ri, loc = inter.intersects_id(O, D, multiple_hits=True, return_locations=True); erst = np.full(ok.sum(), np.inf); dot = np.zeros(ok.sum())
+            if len(ri):
+                t = np.linalg.norm(loc[:, :2] - [x, y], axis=1); rp = rl[ok][ri]; jenseits = t > rp + 1e-3    # erste fremde Flaeche JENSEITS des Punkts
+                fremd = (~ist_eigen(loc, normalen[tri], eigen) if eigen else np.ones(len(ri), bool)) & jenseits
+                o = np.lexsort((t[fremd], ri[fremd])); rf, tf, nf = ri[fremd][o], t[fremd][o], (normalen[tri[fremd]][o][:, :2] * D[ri[fremd][o], :2]).sum(1)
+                _, first = np.unique(rf, return_index=True); erst[rf[first]] = tf[first]; dot[rf[first]] = nf[first]
+            mm = np.zeros(len(a), bool); mm[np.where(ok)[0]] = np.isfinite(erst) & (dot > 0.1); self.m[k] = mm.reshape(self.n, self.n)
+
+    def innen(self, X):
+        X = np.asarray(X, float); i = np.round((X[:, 0] - self.x - self.g0) / INNEN_SCHRITT).astype(int); j = np.round((X[:, 1] - self.y - self.g0) / INNEN_SCHRITT).astype(int)
+        k = np.clip(np.searchsorted(self.zs, X[:, 2]), 0, len(self.zs) - 1); inn = (i >= 0) & (j >= 0) & (i < self.n) & (j < self.n)
+        return inn & self.m[k, np.clip(i, 0, self.n - 1), np.clip(j, 0, self.n - 1)]
 
 
 def bewerten(bilder, obs, c, r, gew=None):
     """Summe der normierten Abstimmungen fuer Kreise (c: K x 2, r: K). obs: Liste (bildindex, seite, z). gew: Gewicht je Beobachtung. -> Punkte (K), Zahl Beob. (K), je Beob. Werte."""
-    K = len(r); summe = np.zeros(K); n = np.zeros(K); roh = []
+    K = len(r); summe = np.zeros(K); n = np.zeros(K); roh = []; wv = np.zeros(K)
     for oi, (bi, seite, z) in enumerate(obs):
         B = bilder[bi]; T, N, ok = tangenten(c, r, B.Cxy)
         X = np.c_[T[seite], np.full(K, z)]; N3 = np.c_[N[seite], np.zeros(K)]
         s = B.quer(X, N3); s[~ok] = np.nan
         m = np.nanmax(s) if np.isfinite(s).any() else 0
         if m <= 0: roh.append(None); continue
-        s = np.nan_to_num(s / m); w = 1.0 if gew is None else gew[oi]; summe += w * s; n += 1; roh.append(s)
+        w = 1.0 if gew is None else gew[oi]; wv += w * np.isfinite(s); s = np.nan_to_num(s / m); summe += w * s; n += 1; roh.append(s)
+    # 23.11.2026: Beobachtungen, deren Umrisspunkt fuer einen Kandidaten verdeckt/gesperrt ist, fehlen nur DIESEM Kandidaten -> Summe auf volle Abdeckung hochrechnen
+    # (Mittel ueber die gueltigen), aber hoechstens bis ABDECKUNG_MIN der besten Abdeckung: ein Kandidat, der sich hinter Verdeckern versteckt, gewinnt nicht.
+    if K and wv.max() > 0: summe = summe * wv.max() / np.maximum(wv, ABDECKUNG_MIN * wv.max())
     return summe, n, roh
 
 
@@ -167,6 +297,10 @@ def kegel_quer(B, x, y, z_t, r_e, z_s, seite):
         p = pF + f * d; xx = p[:, 0] - B.x0; yy = p[:, 1] - B.y0; inn = (xx >= 1) & (yy >= 1) & (xx < w - 2) & (yy < h - 2)
         xi = np.clip(xx, 1, w - 2); yi = np.clip(yy, 1, h - 2); x0 = np.floor(xi).astype(int); y0 = np.floor(yi).astype(int); fx = xi - x0; fy = yi - y0
         def bil(G): return (G[y0, x0] * (1 - fx) * (1 - fy) + G[y0, x0 + 1] * fx * (1 - fy) + G[y0 + 1, x0] * (1 - fx) * fy + G[y0 + 1, x0 + 1] * fx * fy).astype(np.float32)
+        if getattr(B, "sperre", None) is not None:                                       # 23.11.2026: verdeckte Mantelpunkte / Kante eines Koerpers davor zaehlen nicht
+            Xm = np.c_[Fs + f * (np.c_[np.full(K, x), np.full(K, y)] - Fs), z_t + f * (z_s - z_t)]; inn &= ~B.sperre.gesperrt(Xm)
+            if getattr(B, "hinter_nah", 0) > 0:
+                nh_ = Xm[:, :2] - [x, y]; nh_ /= np.maximum(np.linalg.norm(nh_, axis=1), 1e-9)[:, None]; inn &= ~B.sperre.hintergrund_nah(Xm, np.c_[nh_, np.zeros(K)], B.hinter_nah)
         werte.append(np.where(inn, bil(B.gx) * nrm[:, 0] + bil(B.gy) * nrm[:, 1], np.nan))    # VORZEICHEN behalten: eine Umrisskante hat innen/aussen ueberall dieselbe Richtung, Streifen/Fugen quer dazu wechseln
     W_ = np.array(werte); n_ok = np.isfinite(W_).sum(0); m = np.where(n_ok >= len(KEGEL_ANTEILE) // 2 + 1, np.abs(np.nanmean(W_, 0)), np.nan)
     return np.where(ok, m, np.nan)
@@ -253,7 +387,7 @@ def main(argv=None):
     obj, cams = FO.kameras_laden(a.objekt)
     stlp = a.stl or os.path.join(FO.ROOT, obj["stl"]) if obj.get("stl") else a.stl; inter = None
     if stlp and os.path.exists(stlp):
-        import trimesh; m = trimesh.load(stlp); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); inter = m.ray   # Embree, falls vorhanden (21.11.2026: ray_triangle in numpy auf 2,4 Mio. Dreiecken = 11 GB, Lauf beendet)
+        import trimesh; m = trimesh.load(stlp); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); inter = m.ray; normalen = np.asarray(m.face_normals)  # Embree, falls vorhanden (21.11.2026: ray_triangle in numpy auf 2,4 Mio. Dreiecken = 11 GB, Lauf beendet)
     rc = 4
     for H in rund:
         k = H.get("kreis_wolke") or H["kreis"]; x0, y0, r0 = k["x"], k["y"], k["r"]; kz = H["kasten"]; za, zb = max(kz[2], 0.3), kz[5]
@@ -267,7 +401,7 @@ def main(argv=None):
             if rpx >= MIN_R_PX: wahl.append((rpx, nr, c, pf, C))
         wahl.sort(key=lambda w: -w[0]); wahl = wahl[:a.max_fotos]
         print(f"{H.get('id')}: Start (Wolke) x {x0:.2f} y {y0:.2f} r {r0:.2f}, z {za:.1f}..{zb:.1f} (+{a.ueber} m darueber); {len(wahl)} Fotos mit r >= {MIN_R_PX} px")
-        bilder = []; verd = {}; stufe = ([], [], [])
+        bilder = []; verd = {}; stufe = ([], [], []); eigen = eigenkoerper(H); innen = None    # 23.11.2026: Vormodell DIESES Koerpers im STL ist kein Verdecker (zirkulaer, s. eigenkoerper)
         for rpx, nr, c, pf, C in wahl:
             im = cv2.imread(pf, cv2.IMREAD_GRAYSCALE)
             if im is None: continue
@@ -279,15 +413,18 @@ def main(argv=None):
             rpx_bild = rpx * im.shape[1] / (c["cx"] * 2); drei = []
             for ziel in (STUFEN_R_PX[0], STUFEN_R_PX[1], a.max_r_px):
                 B = Bild(c, im, box, FO.projektion, min(1.0, ziel / max(rpx_bild, 1e-6))); B.Cxy = np.asarray(C[:2], float); B.C = np.asarray(C, float); B.nr = nr; B.pf = pf; drei.append(B)
+            if inter is not None:                                                 # 23.11.2026: Verdeckung je Kandidat (Sperrkarte), Vormodell dieses Koerpers ausgenommen
+                sk = Sperrkarte(inter, normalen, c, C, [v / (im.shape[1] / (c["cx"] * 2)) for v in box], eigen)
+                if innen is None: innen = Innenkarte(inter, normalen, x0, y0, SUCHE_R[1] * r0 + SUCHE_MITTE + 0.3, list(zs) + [z_box], eigen)
+                sk.innen = innen
+                for B in drei: B.sperre = sk; B.hinter_nah = HINTERGRUND_NAH * r0
             del im; bilder.append(drei[0]); stufe[0].append(drei[0]); stufe[1].append(drei[1]); stufe[2].append(drei[2])
         if inter is not None:                                                     # Verdeckung des Umrisspunkts (Startkreis + 8 %, ausserhalb des Wolken-Rundkoerpers)
             for bi, B in enumerate(bilder):
                 T, N, ok = tangenten(np.array([[x0, y0]]), np.array([r0 * 1.08 + 0.05]), B.Cxy)
                 for s in (0, 1):
-                    X = np.array([[T[s, 0, 0], T[s, 0, 1], z] for z in zs]); v = X - B.C; dist = np.linalg.norm(v, axis=1)
-                    _, ri, loc = inter.intersects_id(np.broadcast_to(B.C, X.shape), v / dist[:, None], multiple_hits=False, return_locations=True)
-                    vor = np.full(len(X), np.inf); vor[ri] = np.linalg.norm(loc - B.C, axis=1)
-                    for z, vz, dz in zip(zs, vor, dist): verd[(bi, s, z)] = bool(vz < dz - 0.15)
+                    X = np.array([[T[s, 0, 0], T[s, 0, 1], z] for z in zs])
+                    for z, vd in zip(zs, verdeckt_strahlen(inter, normalen, B.C, X, eigen)): verd[(bi, s, z)] = bool(vd)
         nv = sum(verd.values()); print(f"  {len(bilder)} Fotos geladen; {nv} von {len(verd)} Umrissbeobachtungen verdeckt (Modell davor)")
         U = vermessen(list(stufe), (x0, y0, r0), zs, verdeckt=lambda bi, s, z: verd.get((bi, s, z), False))
         if not U: print("  keine Beobachtung"); continue
@@ -307,9 +444,8 @@ def main(argv=None):
                     F_, okf = kegel_fuesse(B.C, U["x"], U["y"], z_t, [1.1 * U["r_schaft"]], [z_t + U["r_schaft"]])
                     for s in (0, 1):
                         if not okf[0]: continue
-                        X = np.array([[*(0.5 * (F_[s, 0] + [U["x"], U["y"]])), z_t + 0.5 * U["r_schaft"]]]); v = X - B.C; dist = np.linalg.norm(v, axis=1)
-                        _, ri, loc = inter.intersects_id(B.C[None], v / dist[:, None], multiple_hits=False, return_locations=True)
-                        vk[(bi, s)] = bool(len(ri) and np.linalg.norm(loc[0] - B.C) < dist[0] - 0.15)
+                        X = np.array([[*(0.5 * (F_[s, 0] + [U["x"], U["y"]])), z_t + 0.5 * U["r_schaft"]]])
+                        vk[(bi, s)] = bool(verdeckt_strahlen(inter, normalen, B.C, X, eigen)[0])
             U["dach"] = kegeldach(stufe[1], U["x"], U["y"], z_t, U["r_schaft"], verdeckt=lambda bi, s: vk.get((bi, s), False))
         H["umriss"] = U
         print(f"  FOTO-UMRISS: x {U['x']:.2f} y {U['y']:.2f} r {U['r']:.3f} m (Wolke r {r0:.2f}), Rest je Beobachtung {U['rest_beob']} m, {U['beobachtungen']} Beob., "
@@ -322,14 +458,15 @@ def main(argv=None):
             H["kreis"] = dict(x=U["x"], y=U["y"], r=U["r"], rest=U["rest_beob"], quelle="foto_umriss"); H["profil"] = [[p[0], p[1], p[2]] for p in ok_]; H["mass_quelle"] = "foto_umriss"
             H["dach"] = U.get("dach")                                                  # bauteile.drehkoerper_aus_wolkenrest baut den Kegel nur, wenn gueltig
         if gut: rc = 0
-        try: bild(bilder, H, U, os.path.join(A, f"rund_umriss_{H.get('id', 'r')}.jpg"))
+        try: bild(bilder, H, U, os.path.join(A, f"rund_umriss_{H.get('id', 'r')}.jpg"), verd)
         except Exception as e: print("  Bild fehlgeschlagen:", e)
     if not a.nur_messen: json.dump(KA, open(kp, "w"), indent=1, ensure_ascii=False); print("->", kp)
     return rc
 
 
-def bild(bilder, H, U, aus):
-    """Pruefbild: 6 Fotos ueber den Blickwinkel verteilt, Ausschnitt mit Foto-Umriss (gruen) und Wolkenkreis (rot); rechts Profil r(z)."""
+def bild(bilder, H, U, aus, verd=None):
+    """Pruefbild: 6 Fotos ueber den Blickwinkel verteilt, Ausschnitt mit Foto-Umriss (gruen) und Wolkenkreis (rot); rechts Profil r(z).
+    23.11.2026: Hoehen, an denen die Umrissbeobachtung als VERDECKT verworfen wurde, als graue Punkte neben dem gruenen Umriss (zaehlt dort nicht)."""
     import cv2
     if not bilder: return
     w0 = U["start_wolke"]; az = [math.atan2(B.Cxy[1] - U["y"], B.Cxy[0] - U["x"]) for B in bilder]; o = np.argsort(az); pick = [bilder[o[int(i)]] for i in np.linspace(0, len(o) - 1, min(6, len(o)))]
@@ -341,6 +478,11 @@ def bild(bilder, H, U, aus):
             for sd in (0, 1):
                 X = np.array([[T[sd, 0, 0], T[sd, 0, 1], z] for z in np.linspace(min(zs), max(zs), 30)]); p, zz, _ = B.proj(X, B.c); p = (p * s).astype(int)
                 cv2.polylines(im, [p.reshape(-1, 1, 2)], False, col, max(1, im.shape[1] // 600))
+                if verd and col == (0, 220, 0):
+                    bi = next((i for i, b in enumerate(bilder) if b is B), None); zv = [z for (b_, s_, z), v in verd.items() if v and b_ == bi and s_ == sd]
+                    if zv:
+                        Xv = np.array([[T[sd, 0, 0], T[sd, 0, 1], z] for z in zv]); pv, _, _ = B.proj(Xv, B.c)
+                        for q in (pv * s).astype(int): cv2.circle(im, (int(q[0]) + 3 * max(1, im.shape[1] // 600), int(q[1])), 2 * max(1, im.shape[1] // 600), (150, 150, 150), -1)
         X = np.array([[U["x"], U["y"], z] for z in (min(zs), max(zs))]); p, _, _ = B.proj(X, B.c); p = p * s; rpx = U["r"] * B.c["f_px"] * s / max(np.linalg.norm(B.Cxy - [U["x"], U["y"]]), 1)
         x0 = int(max(0, p[:, 0].min() - 3 * rpx)); x1 = int(min(im.shape[1], p[:, 0].max() + 3 * rpx)); y0 = int(max(0, p[:, 1].min() - rpx)); y1 = int(min(im.shape[0], p[:, 1].max() + rpx))
         k = im[y0:y1, x0:x1]

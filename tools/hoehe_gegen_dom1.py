@@ -11,6 +11,8 @@ Schreibt audit/hoehe_gegen_dom1.json. STL im Rahmen (zentrierung 'achse').
 VORSICHT k (Lehre Schwabentor-1120 21.11.2026: +1,62 m / k 0,9605 sah aus wie 3,5 % Hoehenmassstab, war aber ein 1-1,3 m je Seite zu breites Wolken-Dachprofil):
 auf steilen Daechern ist "zu breit" von "zu hoch" auf Dachpixeln nicht zu trennen. Massstab erst, wenn auch Traufe/Wandoberkante (LoD2-Traufe, Wolken-Wandende)
 und Grundriss abweichen; sonst Dachform (tools/dach_profil_wolke.py, DOM1-Veto) pruefen.
+Zweiter Fall (Schwabentor-1122p 23.11.2026: +1,73 m / k 0,958): Stufe bauplan_dachflaeche_foto (tools/dachflaeche_aus_umriss.py) ersetzte die DOM1-geprueften
+Scheiben durch eine gerade Foto-Ebene ab der Ueberstand-Aussenkante (1,1-1,7 m je Seite zu weit draussen) - seitdem eigenes DOM1-Veto dort (Block dom1_veto).
 """
 import sys, os, json, argparse, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
