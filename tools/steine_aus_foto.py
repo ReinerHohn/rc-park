@@ -41,6 +41,7 @@ def main():
     ap.add_argument("--tor", type=float, default=0.12, help="Quader-Tor: Mindestanteil der Feldhoehe mit regelmaessigen, durchlaufenden Lagerfugen (0 = aus). Gemessen 17.11.2026: Gemessen 17.11.2026: echtes Quaderwerk (Schwabentor Sued/West/Nord, beide Polaritaeten) 18-40 %% mit 7-25 Schichten; kein Quaderwerk (kaufhaus_gk Hauptfassade roter Putz mit Fenstern/Gesimsen, Seitenstreifen) 0-3 %% mit 0-1 Schichten. Schwelle dazwischen; ausserdem >= 4 Schichten. Schwelle dazwischen; rc 5 bei Ablehnung")
     ap.add_argument("--paar", type=float, default=0.3, help="Paar-Probe: Haupt- und Gegenfoto muessen auf mindestens diesem Anteil der gemeinsam gesehenen Struktur uebereinstimmen, sonst ist eine Kamera falsch (kein Verdecker) und das naechste Foto wird versucht")
     ap.add_argument("--haupt_max", type=int, default=3, help="so viele Hauptfotos (Rangfolge) hoechstens versuchen"); ap.add_argument("--gegen_max", type=int, default=4, help="so viele Gegenfotos je Hauptfoto hoechstens versuchen")
+    ap.add_argument("--je_standort", type=int, default=4, help="--foto auto: hoechstens so viele Fotos eines Standorts (Serie) unter den 12 Kandidaten, damit Gegenfotos anderer Standorte nicht verdraengt werden (4: verwackelte Serienbilder haben noch scharfe Nachbarn)")
     ap.add_argument("--schwelle", type=float, default=2.4, help="Fuge ab so vielen Standardabweichungen der Abweichung vom oertlichen Median"); a = ap.parse_args()
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float32); H, W = rel.shape; rp = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); A = Z["a"]; t = Z["t"]; niv = float(Z.get("putz_niveau_m", 0.0))
     if not a.foto: F = json.load(open(a.fassaden))["fassaden"][int(a.nr)]; R = F["raster"]; o = np.array(F["o"]); d = np.array(F["d"]); im = cv2.imread(a.ortho)
@@ -63,8 +64,19 @@ def main():
                 n_ = os.path.basename(kf)[2:-5]; K_ = FE.kamera(kf)
                 if K_ is None or n_.startswith("video") or (n_.startswith(("dl_", "neu__")) and not K_.get("vertrauen")) or not glob.glob(os.path.join(root_, obj_["fotos_dir"], n_ + ".*")): continue
                 R_ = cv2.Rodrigues(np.array(K_["rvec"]))[0]; C_ = -R_.T @ np.array(K_["t"]); v_ = C_ - Pm_; di_ = np.linalg.norm(v_); cw_ = float(v_[:2] @ nv_[:2] / di_)
-                if cw_ >= 0.3 and di_ <= 250: kand.append((di_ / (K_["f_px"] * cw_), n_, K_))
-            for mpp_, n_, K_ in sorted(kand, key=lambda q_: q_[0])[:12]:
+                if cw_ >= 0.3 and di_ <= 250: kand.append((di_ / (K_["f_px"] * cw_), n_, K_, C_))
+            # 23.11.2026 (Schwabentor Sued w05/w07 "STRENG: kein Gegenfoto"): die 12 feinsten Fotos waren 8 Aufnahmen EINER Serie (ein Standort) + 4 mit falscher
+            # Kamera; die richtigen Gegenfotos von anderen Standorten (5,7 m daneben, einig 48-85 %) lagen auf Rang 13+ und wurden nie geprueft. Je Standort
+            # (gleiche Grenze wie die Gegenfoto-Bedingung unten: Abstand <= 0,08 x Entfernung zur Wand) hoechstens --je_standort Fotos in die Rangliste.
+            wahl = []; st_ = []
+            for q_ in sorted(kand, key=lambda q_: q_[0]):
+                j_ = next((i_ for i_, (C1_, _) in enumerate(st_) if np.linalg.norm(q_[3] - C1_) <= 0.08 * np.linalg.norm(C1_ - Pm_)), None)
+                if j_ is None: st_.append((q_[3], 1))
+                elif st_[j_][1] >= a.je_standort: continue
+                else: st_[j_] = (st_[j_][0], st_[j_][1] + 1)
+                wahl.append(q_[:3])
+                if len(wahl) >= 12: break
+            for mpp_, n_, K_ in wahl:
                 ok0 = FE.sichtbar(mm_, K_, G_, rk_, tol=0.6)[0]; rang.append((float(ok0.mean()) ** 2 / max(mpp_, 0.005), n_, float(ok0.mean()), mpp_))      # Abdeckung zaehlt quadratisch, Aufloesung nur bis 0,5 cm/px: sonst gewinnt eine Nahaufnahme, die 15 % der Wand zeigt (Haertetest ober_tvdr)
             rang.sort(key=lambda q_: -q_[0])
             if not rang or rang[0][2] < 0.3: print("kein vertrauenswuerdiges Foto sieht mindestens 30 % dieses Feldes"); return 3
