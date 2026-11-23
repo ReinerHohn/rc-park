@@ -722,7 +722,11 @@ def main():
                 # Beruehrlinien je Blickrichtung gewichtet) - ersetzt Wolkenradius/-profil (Schwabentor Treppenturm: Wolke r 1,73, Foto 1,585, Handstand 1,555; Traufe 11,25 / 11,57).
                 rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"], log, ok=(0, 3, 4))[0]
                 erg_["rund_umriss_rc"] = rr_
-                if k_.get("baulaeufe") or rr_ == 0 or sp_rc_ == 0 or tr_rc_ == 0 or fl_rc_ == 0: bauen(B, "bauen_mit_wolkenkoerpern", a.ziel, log)
+                # 23.11.2026 (Kette 1122s: Treppentuermchen hoher Zylinder ohne Dach - Umriss-Stuetze lief bis zum Suchende 13,75, Traufe/Dach nie gefunden): Schaft und DACH
+                # als Drehkoerper aus EINSEITIGEN Silhouetten gegen Himmel (tools/rund_aus_huelle.py, Bausteine tools/drehkoerper_aus_fotos.py wie die Laternenhaube)
+                rh_ = lauf(B, "bauplan_rund_huelle", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_huelle.py", ZR, "--uebernehmen", "--bild", os.path.join(Z, "audit", "rund_huelle.jpg")], log, ok=(0, 3, 4))[0] if rr_ in (0, 4) else 3
+                erg_["rund_huelle_rc"] = rh_
+                if k_.get("baulaeufe") or rr_ == 0 or rh_ == 0 or sp_rc_ == 0 or tr_rc_ == 0 or fl_rc_ == 0: bauen(B, "bauen_mit_wolkenkoerpern", a.ziel, log)
                 if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
                     notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)

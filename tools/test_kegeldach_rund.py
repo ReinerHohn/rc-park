@@ -35,11 +35,13 @@ def render(C, Rm, dach=True):
     t1 = np.where(hit1, t1, np.inf)
     # Deckel (flach, nur ohne Dach) bzw. Kegel
     if dach:
-        k = RE / (ZS - ZT); w0 = ZS - oz
-        a2 = a - k * k * d[..., 2] ** 2; b2 = b + 2 * k * k * w0 * d[..., 2]; c2 = ox * ox + oy * oy - k * k * w0 * w0; disc2 = b2 * b2 - 4 * a2 * c2; t2 = np.full(u.shape, np.inf)
-        for sg in (-1, 1):
-            tt = (-b2 + sg * np.sqrt(np.maximum(disc2, 0))) / (2 * np.where(np.abs(a2) < 1e-12, 1e-12, a2)); zz = oz + tt * d[..., 2]
-            ok = (disc2 >= 0) & (tt > 0) & (zz >= ZT) & (zz <= ZS); t2 = np.where(ok & (tt < t2), tt, t2)
+        prof = dach if isinstance(dach, list) else [(ZT, RE), (ZS, 0.0)]; t2 = np.full(u.shape, np.inf)
+        for (za, ra), (zb, rb) in zip(prof[:-1], prof[1:]):                       # je Kegelstumpf: Kegel mit gedachter Spitze, Treffer nur in za..zb
+            zs_ = za + (zb - za) * ra / (ra - rb); k = ra / (zs_ - za); w0 = zs_ - oz
+            a2 = a - k * k * d[..., 2] ** 2; b2 = b + 2 * k * k * w0 * d[..., 2]; c2 = ox * ox + oy * oy - k * k * w0 * w0; disc2 = b2 * b2 - 4 * a2 * c2
+            for sg in (-1, 1):
+                tt = (-b2 + sg * np.sqrt(np.maximum(disc2, 0))) / (2 * np.where(np.abs(a2) < 1e-12, 1e-12, a2)); zz = oz + tt * d[..., 2]
+                ok = (disc2 >= 0) & (tt > 0) & (zz >= za) & (zz <= zb); t2 = np.where(ok & (tt < t2), tt, t2)
         # Unterseite des Ueberstands (Ring r R..RE bei ZT)
         tu = (ZT - oz) / np.where(np.abs(d[..., 2]) < 1e-9, 1e-9, d[..., 2]); rx = ox + tu * d[..., 0]; ry = oy + tu * d[..., 1]; rr = np.hypot(rx, ry)
         t3 = np.where((tu > 0) & (rr <= RE) & (rr >= R), tu, np.inf)
@@ -52,10 +54,10 @@ def render(C, Rm, dach=True):
     return np.clip(img + rng.normal(0, 5, u.shape), 0, 255).astype(np.uint8)
 
 
-def bilder_fuer(dach):
+def bilder_fuer(dach, n=12):
     out = []
-    for i in range(12):
-        c, C, Rm = kamera(2 * math.pi * i / 12 + 0.15, 13 + 3 * (i % 3), 1.6 + (i % 2) * 4.0)
+    for i in range(n):
+        c, C, Rm = kamera(2 * math.pi * i / n + 0.15, 13 + 3 * (i % 3), 1.6 + (i % 2) * 4.0)
         B = RU.Bild(c, render(C, Rm, dach), (0, 0, W, Hh), FO.projektion); B.Cxy = C[:2]; B.C = C; out.append(B)
     return out
 
@@ -65,6 +67,18 @@ K = RU.kegeldach(bilder_fuer(True), CX, CY, ZT, R)
 pruef(bool(K.get("gueltig")), f"Kegel gueltig ({K.get('grund')}), Fotos {K.get('fotos')}, einig {K.get('einig')}")
 pruef(K.get("z_spitze") is not None and abs(K["z_spitze"] - ZS) <= 0.2, f"Spitze z {K.get('z_spitze')} (Soll {ZS} +- 0,2)")
 pruef(K.get("r_traufe") is not None and abs(K["r_traufe"] - RE) <= 0.1, f"Traufradius {K.get('r_traufe')} (Soll {RE} +- 0,1)")
+pruef(K.get("familie") == "kegel", f"gerader Kegel als Formfamilie 'kegel' erkannt (nicht geschweift): {K.get('familie')}, Formwahl {K.get('formwahl')}")
+KA2 = RU.kegeldach(bilder_fuer(True), CX, CY, ZT, R, r_traufe=RE - 0.02, log=lambda *a: None)    # mit Profil-Traufe: Traufhoehe frei gesucht
+pruef(KA2.get("familie") == "kegel" and abs(KA2.get("z_traufe", 0) - ZT) <= 0.15 and abs(KA2.get("r_traufe", 0) - RE) <= 0.1 and abs(KA2.get("z_spitze", 0) - ZS) <= 0.2,
+      f"gerader Kegel mit freier Traufhoehe: Traufe z {KA2.get('z_traufe')} r {KA2.get('r_traufe')}, Spitze {KA2.get('z_spitze')}, Familie {KA2.get('familie')}")
+# ---- D: GESCHWEIFTES Dach (schwabentor-1122 Treppentuermchen 23.11.: unten flach ausgestellt, oben steil) -> Familie geschweift, Knick gefunden ----
+ZK, RK = 8.7, 0.95                                                                  # unten ~39 Grad, oben ~64 Grad; Gerade Traufe-Spitze laege bei z 8,7 auf r 1,28
+KG = RU.kegeldach(bilder_fuer([(ZT, RE), (ZK, RK), (ZS, 0.0)]), CX, CY, ZT, R, r_traufe=RE + 0.03)    # Traufradius wie aus dem Drehprofil (vermessen), 3 cm Messfehler
+pruef(bool(KG.get("gueltig")) and KG.get("familie") == "geschweift", f"geschweift gueltig ({KG.get('grund')}), Familie {KG.get('familie')}, Formwahl {KG.get('formwahl')}")
+pruef(abs(KG.get("z_traufe", 0) - ZT) <= 0.15, f"geschweift: Traufhoehe z {KG.get('z_traufe')} (Soll {ZT}, frei gesucht)")
+pruef(KG.get("z_spitze") is not None and abs(KG["z_spitze"] - ZS) <= 0.25 and abs(KG.get("r_traufe", 0) - RE) <= 0.12, f"geschweift: Spitze z {KG.get('z_spitze')} (Soll {ZS}), Traufe r {KG.get('r_traufe')} (Soll {RE})")
+kn = KG.get("knick") or {}
+pruef(bool(kn) and abs(kn["z"] - ZK) <= 0.35 and abs(kn["r"] - RK) <= 0.15, f"Knick z {kn.get('z')} r {kn.get('r')} (Soll z {ZK} r {RK})")
 # ---- B: Rot-Probe ohne Dach ----
 K0 = RU.kegeldach(bilder_fuer(False), CX, CY, ZT, R, log=lambda *a: None)
 pruef(not K0.get("gueltig"), f"Zylinder ohne Dach: kein Kegel erfunden ({K0.get('grund')}; Spitze {K0.get('z_spitze')})")
@@ -87,6 +101,11 @@ pruef(k.genus() == 0 and k.volume() > 0, f"wasserdicht (ein Koerper), Geschlecht
 pruef(any("Kegeldach" in b["element"] for b in bel), "Beleg Kegeldach vorhanden")
 k2, bel2 = bau(dict(gueltig=False, grund="Rot-Probe"))
 pruef(abs(k2.bounding_box()[5] - (prof[-1][0] + 0.25)) < 0.02 and any("NICHT gebaut" in b["element"] for b in bel2), f"ungueltiger Block: flach bei z {k2.bounding_box()[5]:.2f}, Beleg NICHT gebaut")
+k4, bel4 = bau(dict(gueltig=True, z_traufe=ZT, r_traufe=RE, z_spitze=ZS, familie="geschweift", knick=dict(z=ZK, r=RK), profil=[[ZT, RE], [ZK, RK], [ZS, 0.0]]))
+s_k = k4.slice(ZK); r_k4 = (s_k.bounds()[2] - s_k.bounds()[0]) / 2 if not s_k.is_empty() else 0
+pruef(abs(r_k4 - RK) < 0.03 and k4.genus() == 0 and any("geschweift" in b["element"] for b in bel4), f"Generator geschweift: r am Knick {r_k4:.2f} (Soll {RK}), wasserdicht, Beleg")
+k5, bel5 = bau(dict(gueltig=True, z_traufe=ZT, r_traufe=RE, z_spitze=ZS, profil=[[ZT, RE], [ZK, RE + 0.3], [ZS, 0.0]]))
+pruef(any("Guard Profil" in b["element"] for b in bel5), "Guard: Profil, das nach oben breiter wird -> nicht gebaut")
 k3, _ = bau(dict(gueltig=True, z_traufe=ZT, r_traufe=RE, z_spitze=ZT + 0.1))
 pruef(abs(k3.bounding_box()[5] - (prof[-1][0] + 0.25)) < 0.02, "Guard: Spitze nur 0,1 m ueber der Traufe -> nicht gebaut")
 print("alle Tests bestanden" if not fehler else f"{len(fehler)} FEHLER")
