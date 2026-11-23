@@ -25,6 +25,8 @@ Kamerawahl (kamera_wertung, rein geometrisch, dann Bildguete fuer die besten --k
   Bild       Schaerfe (Laplace-Varianz, relativ zum besten Kandidaten) x Licht (Ausschnitt nicht viel dunkler als das Gesamtbild = kein Gegenlicht, Kontrast)
 Render: Maler-Algorithmus (cv2.fillPoly, fern -> nah, Rueckseiten weg) nur im Ausschnitt, CPU, kein GPU-Bedarf; Licht wie modell_neben_foto.py; Bauteil-Dreiecke
 leicht blau getoent. Foto wie modell_neben_foto.py mit k1 entzerrt.
+Bauteil-Dreiecke (auswahl/ecken_im_kasten, 23.11.2026): Mitte im Kasten UND alle Ecken im Kasten (+15 %, mind. 15 cm) und, falls belegt, in der Kreis-Kontur
+(Uhr: Mitte + d_aussen). Sonst malte der Fan der flachen Nachbarwand 'Keile bis zur Traufe' blau ins Bauteil (Uhr f00, 1122q); Zahl in neben_details.json 'fremd_dreiecke'.
 GRENZEN (ANNAHME): Baeume, Tram, Schilder sieht die Sicht-Wertung nicht (Beleg faengt nur einen Teil); Maler-Raster kann bei sehr grossen Dreiecken die Reihenfolge
 vertauschen. Die Bilder ANSEHEN - sie sind Sichtpruefung, kein Tor.
 rc 0 = Bilder geschrieben, rc 3 = kein Bauteil/keine Kamera gefunden (Bericht, kein Fehler der Kette).
@@ -210,6 +212,7 @@ def zonen_bauteile(audit, rahmen):
         nm = _kurz(zz["name"]) + "_" + zz["fassade"]
         out.append(dict(name=nm, art="fassade", fassade=zz["fassade"], o=fr["o"], d=fr["d"], n=fr["n"], u0=zz["u0"], u1=zz["u1"], z0=zz["z0"], z1=zz["z1"],
                         w0=-0.3, w1=None, profil=bool(PROFIL_NAMEN.search(zz["name"])), quelle=zz["name"], **_zonen_quelle(audit, zz)))
+        if zz.get("kreis"): out[-1]["kreis"] = zz["kreis"]                         # belegte runde Kontur (Uhr) - ecken_im_kasten prueft dagegen
     return out
 
 
@@ -222,11 +225,37 @@ def lokal(T, b):
     return rel @ np.asarray(b["d"], float), rel @ np.asarray(b["n"], float), c[:, 2]
 
 
-def auswahl(T, b, L=None):
+def _rand(a0, a1, k=0.15, mind=0.15):
+    """Spielraum, um den eine Bauteil-Dreiecksecke ueber den Kasten [a0, a1] hinaus darf: 15 % der Kastenseite, mind. 15 cm."""
+    return max(mind, k * (a1 - a0))
+
+
+def ecken_im_kasten(T, b):
+    """Gueltigkeits-Guard (23.11.2026, Befund Uhr f00 Lauf 1122q: 'Keile bis zur Traufe'): ein Dreieck gehoert nur zum Bauteil, wenn ALLE Ecken im Kasten
+    (+ _rand) liegen. Die flache Wand um eine Uhr ist nach der Boolean-Vereinigung als Faecher trianguliert (Splitter bis 10,9 m lang, Seitenverhaeltnis
+    bis 35000); deren Mitten fielen in den Uhrkasten -> 246 Wanddreiecke blau als 'Uhr' gemalt und in Sicht/Beleg mitgezaehlt."""
+    if b["art"] == "rund":
+        r = np.hypot(T[..., 0] - b["achse"][0], T[..., 1] - b["achse"][1]); z = T[..., 2]; dz = _rand(b["z0"], b["z1"]); dr = _rand(0.0, b["r"])
+        return (r <= b["r"] + 0.2 + dr).all(1) & (z >= b["z0"] - 0.1 - dz).all(1) & (z <= b["z1"] + 0.1 + dz).all(1)
+    rel = T[..., :2] - np.asarray(b["o"], float); u = rel @ np.asarray(b["d"], float); w = rel @ np.asarray(b["n"], float); z = T[..., 2]
+    du, dz, dw = _rand(b["u0"], b["u1"]), _rand(b["z0"], b["z1"]), _rand(b["w0"], b["w1"])
+    ok = ((u >= b["u0"] - 0.1 - du) & (u <= b["u1"] + 0.1 + du) & (z >= b["z0"] - 0.1 - dz) & (z <= b["z1"] + 0.1 + dz) & (w >= b["w0"] - dw) & (w <= b["w1"] + dw)).all(1)
+    if b.get("kreis"):                                                            # belegte runde Kontur (Uhr: Mitte + gemessener Aussendurchmesser), 5 % / mind. 10 cm Spiel
+        cu, cz, r = b["kreis"]; ok &= (np.hypot(u - cu, z - cz) <= r + max(0.10, 0.05 * r)).all(1)
+    return ok
+
+
+def auswahl(T, b, L=None, fremd=False):
+    """Bauteil-Dreiecke: Mitte im Kasten UND alle Ecken im Kasten + Spielraum (ecken_im_kasten). fremd=True -> (Auswahl, Anzahl der Dreiecke, deren Mitte im
+    Kasten liegt, die aber weit darueber hinausreichen = Flaechen der Nachbarschaft/Faecher, nicht Bauteil)."""
     L = lokal(T, b) if L is None else L
     if b["art"] == "rund":
-        r, z = L; return (r <= b["r"] + 0.2) & (z >= b["z0"] - 0.1) & (z <= b["z1"] + 0.1)
-    u, w, z = L; return (u >= b["u0"] - 0.1) & (u <= b["u1"] + 0.1) & (w >= b["w0"]) & (w <= b["w1"]) & (z >= b["z0"] - 0.1) & (z <= b["z1"] + 0.1)
+        r, z = L; m = (r <= b["r"] + 0.2) & (z >= b["z0"] - 0.1) & (z <= b["z1"] + 0.1)
+    else:
+        u, w, z = L; m = (u >= b["u0"] - 0.1) & (u <= b["u1"] + 0.1) & (w >= b["w0"]) & (w <= b["w1"]) & (z >= b["z0"] - 0.1) & (z <= b["z1"] + 0.1)
+    s = m.copy()
+    if m.any(): s[m] = ecken_im_kasten(T[m], b)
+    return (s, int(m.sum() - s.sum())) if fremd else s
 
 
 def tiefe_aus_modell(T, b):
@@ -472,7 +501,8 @@ def main(argv=None):
     for p in glob.glob(os.path.join(aus, "neben_detail_*.jpg")): os.remove(p)       # nur eigene Bilder des vorigen Laufs
     ergebnis = []; bilder = []
     for b in B:
-        sel = auswahl(T, b); e = dict(name=b["name"], quelle=b["quelle"], art=b["art"], profil=b["profil"], dreiecke=int(sel.sum()), ansichten=[])
+        sel, fremd = auswahl(T, b, fremd=True); e = dict(name=b["name"], quelle=b["quelle"], art=b["art"], profil=b["profil"], dreiecke=int(sel.sum()), ansichten=[])
+        if fremd: e["fremd_dreiecke"] = fremd                                      # Mitte im Kasten, Ecken weit draussen (Wand-Faecher) - nicht blau, nicht in Sicht/Beleg
         if b["art"] == "fassade": e.update(fassade=b["fassade"], u=[b["u0"], b["u1"]], z=[round(b["z0"], 2), round(b["z1"], 2)], w=[b["w0"], round(b["w1"], 2)])
         else: e.update(achse=b["achse"], r=round(b["r"], 2), z=[round(b["z0"], 2), round(b["z1"], 2)])
         if not sel.any(): e["fehlt"] = "keine Modelldreiecke im Bauteilkasten (Bauteil nicht gebaut?)"
