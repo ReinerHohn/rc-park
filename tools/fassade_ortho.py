@@ -353,6 +353,16 @@ def main(argv=None):
         with ThreadPoolExecutor(max(1, min(len(fas), a.arbeiter))) as ex: list(ex.map(wahl, fas))
     else:
         for F in fas: F["_wahl"] = None
+    # 23.11.2026 (Lauf 1122t, Sued-Wand verschmiert): Fotos mit schlechtester Deckungsgleichheit je Wand sperren (tools/wandbild_einigkeit.py ausschluss_vorschlag,
+    # gesetzt von gesamtkette.seiten_wiederholen). Datei {"waende": [{"id", "n", "ohne": [nr]}]}; gilt nur fuer Wand mit gleicher Kennung UND gleicher Normale
+    # (Innenwand-/Sicht-Orthos vergeben eigene f-Kennungen), sonst keine Wirkung.
+    _sp = os.environ.get("RCPARK_ORTHO_SPERRE")
+    if _sp and os.path.exists(_sp):
+        for w_ in json.load(open(_sp)).get("waende") or []:
+            for F in fas:
+                if F["_id"] == w_.get("id") and float(np.dot(F["n"][:2], (w_.get("n") or [0, 0])[:2])) > 0.98:
+                    F["_wahl"] = (set(fotos) if F["_wahl"] is None else F["_wahl"]) - set(w_.get("ohne") or []); F["fotos_gesperrt"] = sorted(set(w_.get("ohne") or []) & set(fotos))
+                    print(f"  {F['_id']}: {len(F['fotos_gesperrt'])} Fotos gesperrt (uneinig, {os.path.basename(_sp)})", flush=True)
     import threading, render_kern as rk; GPU_SPERRE = threading.Lock(); m_alle = trimesh.util.concatenate([m, nb]) if nb is not None else m
     # 17.11.2026 (2) ZELLRECHNUNG AUF DER GPU (Nutzer: "warum so viel CPU, so wenig GPU"). Profil 1 cm: nach dem Strahlkern war der groesste Posten die Rechnung ueber ALLE Zellen je Foto und Fassade
     # (Blickvektor, Entfernung, Projektion, Bildrand, Aufloesung: ~35 s auf einem Kern), obwohl meist nur ein Teil der Zellen im Bild liegt. Die GPU rechnet dieselben Formeln in float64 und gibt nur die
@@ -536,6 +546,7 @@ def main(argv=None):
         cv2.imwrite(os.path.join(a.aus, f"abdeckung_{tag}.png"), np.clip(cnt * 20, 0, 255).astype(np.uint8).reshape(r["nz"], r["nu"]))
         if a.einzeln:
             ed = os.path.join(a.aus, f"ortho_{tag}_einzeln"); os.makedirs(ed, exist_ok=True)
+            for alt_ in glob.glob(os.path.join(ed, "*.png")): os.remove(alt_)     # 23.11.2026: Einzelbilder frueherer Laeufe weg (1122t f01: 69 Dateien, 31 gueltig; fassade_parsing/oeffnungen_aus_kanten lesen per glob ALLE)
             for nr, x in beitr:
                 b_ = np.zeros((N, 3), np.uint8); b_[x[0]] = x[1]; cv2.imwrite(os.path.join(ed, f"{nr}.png"), b_.reshape(r["nz"], r["nu"], 3))
         F["id"] = tag; F["abdeckung_anteil"] = round(float((cnt > 0).mean()), 3); F["fotos_median_je_zelle"] = float(np.median(cnt[cnt > 0])) if (cnt > 0).any() else 0
