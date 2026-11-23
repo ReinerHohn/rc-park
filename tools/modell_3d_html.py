@@ -3,7 +3,8 @@ von objekt.json (u, v, z ueber rahmen.gelaende = Modellsystem der Pruefwerkzeuge
 
 Aufruf: python -I tools/modell_3d_html.py <objekt.json> <ausgabe.html> [--wolke npy] [--farben npy] [--n 250000] [--radius 45]
 Ebenen schaltbar: Modell (Flaechen/Draht), Wolke (Fotofarben), DOM1-Laser (1-m-Pixel), LoD2-Waende. Infokasten: dach.json + Belege (ANNAHMEN).
-Weitere Argumente: --netz_raster <m> (Anzeige-Netz vergroebern, automatisch ab 800 000 Dreiecken), --extra <stl ...> (Nachbarobjekte dazu).
+Weitere Argumente: --netz_raster <m> (Anzeige-Netz vergroebern, automatisch ab 800 000 Dreiecken), --max_mb 14 (Zielgroesse; --n und --netz_raster
+werden selbst verkleinert, 0 = aus), --extra <stl ...> (Nachbarobjekte dazu).
 Umgebung: manifold3d (dach_bauen) + trimesh -> ~/.venvs/rcpark/bin/python bzw. `tools/py tools/modell_3d_html.py ...`. Ausgabe: <ausgabe.html> (eine Datei,
 Vorlage tools/modell_3d_html.tpl.html; Grenze fuer Artifacts 16 MB). Exit 0 = geschrieben.
 """
@@ -14,6 +15,7 @@ from dach_bauen import gebaeude_aus_lod2, seiten_aus_rahmen
 from lod2_gebaeude import grundflaechen
 from dom1_kachel import dom1_hoehe
 
+RASTER = (0.02, 0.03, 0.04, 0.06, 0.08, 0.10, 0.12, 0.16, 0.20)                # Anzeige-Raster (m), Stufen der Auto-Vergroeberung (--max_mb)
 TPL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "modell_3d_html.tpl.html")
 
 
@@ -21,10 +23,28 @@ def b64(a): return base64.b64encode(np.ascontiguousarray(a).tobytes()).decode()
 def cm16(X): return b64(np.round(np.asarray(X, float) * 100).clip(-32767, 32767).astype(np.int16))
 
 
+def zielgroesse(seite, n, raster, max_mb, n_min=20000):
+    """23.11.2026 (Kette 1122p: html-Stufe 20 MB, Artifact-Grenze 16 MB): Zielgroesse max_mb einhalten. seite(n, raster) -> (html, Dreiecke, Wolkenpunkte).
+    Je Runde den groesseren Anteil verkleinern: Wolke (~12 Zeichen je Punkt) -> n x 0,7 bis n_min; Netz (~32 Zeichen je Dreieck) -> naechstes Anzeige-Raster
+    aus RASTER. Gemessen 1122p: Standard (--n 250000) = 20 MB, 100000 Punkte / 3 cm = 13,1 MB. Rueckgabe (html, Dreiecke, Punkte, raster)."""
+    html, nf, nw = seite(n, raster)
+    for _ in range(40):
+        mb = len(html.encode("utf-8")) / 1e6
+        if max_mb <= 0 or mb <= max_mb: break
+        stufen = [r_ for r_ in RASTER if r_ > raster]
+        if (nw * 12 >= nf * 32 or not stufen) and nw > n_min: n = max(n_min, int(nw * 0.7))
+        elif stufen: raster = stufen[0]
+        else: print(f"WARNUNG: Zielgroesse {max_mb} MB nicht erreichbar ({mb:.1f} MB bei Wolke {nw}, Raster {raster * 100:.0f} cm)"); break
+        print(f"Seite {mb:.1f} MB > {max_mb} MB -> Wolke {n} Punkte, Anzeige-Raster {raster * 100:.0f} cm"); html, nf, nw = seite(n, raster)
+    return html, nf, nw, raster
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("aus")
     ap.add_argument("--wolke", default=""); ap.add_argument("--farben", default=""); ap.add_argument("--n", type=int, default=250000)
     ap.add_argument("--radius", type=float, default=45.0); ap.add_argument("--netz_raster", type=float, default=0.0, help="Anzeige-Netz vergroebern: Ecken auf dieses Raster (m) zusammenziehen (Seitenlimit 16 MB)"); ap.add_argument("--extra", nargs="*", default=[], help="weitere STL im selben Rahmen (z. B. Nachbarhaus als eigenes Objekt), werden mit angezeigt")
+    ap.add_argument("--max_mb", type=float, default=14.0, help="Zielgroesse der Seite (Artifact-Grenze 16 MB): --n und --netz_raster werden selbst verkleinert; 0 = aus")
+    ap.add_argument("--n_min", type=int, default=20000, help="kleinste Wolke beim Verkleinern")
     a = ap.parse_args()
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); r = obj["rahmen"]
     m0 = np.array(r["mitte_utm"], float); xh = np.array(r["xhat_utm"], float); yh = np.array(r["yhat_utm"], float); g0 = float(r["gelaende"])
@@ -43,18 +63,11 @@ def main():
             _, i_ = np.unique(np.round(V / r_).astype(np.int64), axis=0, return_inverse=True); f_ = i_.ravel()[F]; a.netz_raster = r_
             if int(((f_[:, 0] != f_[:, 1]) & (f_[:, 1] != f_[:, 2]) & (f_[:, 0] != f_[:, 2])).sum()) <= 500000: break
         print(f"Anzeige-Netz automatisch auf {a.netz_raster * 100:.0f}-cm-Raster vergroebert ({len(F)} Dreiecke im STL; das STL bleibt unveraendert)")
-    if a.netz_raster > 0:                                                   # Eckpunkt-Clustering nur fuer die Anzeige (das STL bleibt unveraendert)
-        q_, inv_ = np.unique(np.round(V / a.netz_raster).astype(np.int64), axis=0, return_inverse=True); F = inv_.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])].astype(np.uint32)
-        n_ = np.bincount(inv_.ravel(), minlength=len(q_)).astype(np.float64); V = np.stack([np.bincount(inv_.ravel(), weights=V[:, k_].astype(np.float64), minlength=len(q_)) / n_ for k_ in range(3)], 1).astype(np.float32)   # 16.11.2026: Schwerpunkt der Gruppe statt Rasterpunkt - der Rasterpunkt liegt bis 2 cm NEBEN der Wandebene, lange Wanddreiecke kippten und schattierten als 'Strahlen' (Nutzerbild)
-    c = haupt.mean(0)
-    D = dict(name=obj.get("name", os.path.basename(od)), mitte=c.round(2).tolist(), seiten=seiten_aus_rahmen(obj),
-             mv=b64(V), mf=b64(F), belege=belege)
-    # Wolke (Modellsystem = Rahmen)
+    V0, F0 = V, F; c = haupt.mean(0)
+    D = dict(name=obj.get("name", os.path.basename(od)), mitte=c.round(2).tolist(), seiten=seiten_aus_rahmen(obj), belege=belege)
+    # Wolke (Modellsystem = Rahmen); Auswahl je Seitengroesse in seite()
     if a.wolke and os.path.exists(a.wolke):
-        X = np.load(a.wolke, mmap_mode="r"); ok = np.flatnonzero(np.hypot(X[:, 0] - c[0], X[:, 1] - c[1]) < a.radius)
-        idx = np.sort(np.random.default_rng(0).choice(ok, min(a.n, len(ok)), replace=False)); D["w"] = cm16(X[idx]); D["wn"] = len(idx)
-        if a.farben and os.path.exists(a.farben):
-            C = np.load(a.farben, mmap_mode="r")[idx]; C = C if C.max() > 1 else C * 255; D["wc"] = b64(np.asarray(C, np.uint8))
+        X = np.load(a.wolke, mmap_mode="r"); ok_w = np.flatnonzero(np.hypot(X[:, 0] - c[0], X[:, 1] - c[1]) < a.radius)
         D["wquelle"] = os.path.basename(a.wolke)
     # DOM1 im Umkreis des Hauptgrundrisses (+8 m)
     u0, v0 = haupt.min(0) - 8; u1, v1 = haupt.max(0) + 8
@@ -72,10 +85,24 @@ def main():
     dp = os.path.join(od, "dach.json")
     if os.path.exists(dp): D["dach"] = [dict(teil=t["teil"], **{x: t["beste"][x] for x in ("form", "first", "neigung_grad", "rms_m")},
                                              eindeutig=t.get("eindeutig"), spitze=(t.get("spitze") or {}).get("dom1_max")) for t in json.load(open(dp))["teile"]]
-    D["hoehe"] = float(V[:, 2].max())
-    html = open(TPL).read().replace("/*__DATA__*/null", json.dumps(D, ensure_ascii=False)).replace("__NAME__", D["name"])
+    D["hoehe"] = float(V0[:, 2].max()); tpl = open(TPL).read()
+
+    def seite(n, raster):
+        """Seite mit Wolke n Punkte und Anzeige-Raster raster (0 = Netz wie gebaut) -> (html, Dreiecke, Punkte)."""
+        V, F = V0, F0
+        if raster > 0:                                                   # Eckpunkt-Clustering nur fuer die Anzeige (das STL bleibt unveraendert)
+            q_, inv_ = np.unique(np.round(V / raster).astype(np.int64), axis=0, return_inverse=True); F = inv_.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])].astype(np.uint32)
+            n_ = np.bincount(inv_.ravel(), minlength=len(q_)).astype(np.float64); V = np.stack([np.bincount(inv_.ravel(), weights=V[:, k_].astype(np.float64), minlength=len(q_)) / n_ for k_ in range(3)], 1).astype(np.float32)   # 16.11.2026: Schwerpunkt der Gruppe statt Rasterpunkt - der Rasterpunkt liegt bis 2 cm NEBEN der Wandebene, lange Wanddreiecke kippten und schattierten als 'Strahlen' (Nutzerbild)
+        D_ = dict(D, mv=b64(V), mf=b64(F))
+        if a.wolke and os.path.exists(a.wolke):
+            idx = np.sort(np.random.default_rng(0).choice(ok_w, min(n, len(ok_w)), replace=False)); D_["w"] = cm16(X[idx]); D_["wn"] = len(idx)
+            if a.farben and os.path.exists(a.farben):
+                C = np.load(a.farben, mmap_mode="r")[idx]; C = C if C.max() > 1 else C * 255; D_["wc"] = b64(np.asarray(C, np.uint8))
+        return tpl.replace("/*__DATA__*/null", json.dumps(D_, ensure_ascii=False)).replace("__NAME__", D["name"]), len(F), D_.get("wn", 0)
+
+    html, nf, nw, raster = zielgroesse(seite, a.n, a.netz_raster, a.max_mb, a.n_min)
     open(a.aus, "w").write(html)
-    print(f"-> {a.aus} ({os.path.getsize(a.aus) / 1e6:.1f} MB): Modell {len(F)} Dreiecke, Wolke {D.get('wn', 0)}, DOM1 {D['dn']}, LoD2-Kanten {len(lin)}")
+    print(f"-> {a.aus} ({os.path.getsize(a.aus) / 1e6:.1f} MB): Modell {nf} Dreiecke (Raster {raster * 100:.0f} cm), Wolke {nw}, DOM1 {D['dn']}, LoD2-Kanten {len(lin)}")
 
 
 if __name__ == "__main__":

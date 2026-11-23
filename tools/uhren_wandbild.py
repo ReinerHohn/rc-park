@@ -8,6 +8,8 @@ Ablauf je Fassade:
   2. MASS = Kreis im feinen Wandbild (fassade_fein, 1 cm): Kantenbild, Kreis-Hough in der Zone (Radius 0,35-0,65 x Kastengroesse); Aussenkreis = Kreis mit der
      staerksten Kantenstuetze; Innenkreis (Ziffernring innen) = staerkster konzentrischer Kreis mit 0,45-0,85 x Aussenradius (Mitte < 6 % R daneben), sonst keiner.
      Stuetze = Anteil der Kreispunkte mit Kante in 2 cm; Tor >= --min_stuetze, sonst verworfen (Name der Ursache im JSON).
+  3. BELEG (23.11.2026, 1122p: Heiligenschein im Wandgemaelde als Uhr gebaut) = 12er-Teilung (Ziffern/Striche) im Ring 0,55-0,97 R, zifferblatt_beleg();
+     ohne Beleg verworfen. Konzentrische Kreise derselben Stelle (Aussenrand + Ziffernring) -> eine Uhr (dubletten_zusammenfassen).
 Aufruf:  uhren_wandbild.py <objekt.json> <fassade_fein-ordner> --elemente <fassade/elemente.json> [--aus audit/uhren_auto.json]
 Ausgabe: {fid: {o, d, n, uhren: [{u, z, d_aussen, d_innen, stuetze_aussen, stuetze_innen, kasten, quelle}], verworfen: [...]}} + Bild <aus>.jpg
 rc 0 = mindestens eine Uhr, rc 3 = keine.
@@ -20,6 +22,38 @@ def stuetze(kanten, cx, cy, r, tol=2):
     H, W = kanten.shape; ok = (x >= tol) & (x < W - tol) & (y >= tol) & (y < H - tol)
     if ok.mean() < 0.8: return 0.0
     k = cv2.dilate(kanten, np.ones((2 * tol + 1, 2 * tol + 1), np.uint8)); return float((k[y[ok], x[ok]] > 0).mean())
+
+
+def zifferblatt_beleg(g, cx, cy, r, f0=0.55, f1=0.97, min_r=25, min_verh=1.2):
+    """ZIFFERBLATT-BELEG (23.11.2026, 1122p: goldener Heiligenschein im Wandgemaelde f01 als Uhr gebaut). Ein beliebiger Kreis ist keine Uhr:
+    Ziffern/Stundenstriche sitzen in 12er-Teilung im Ring f0..f1 x r. Winkelprofil (mittlere Helligkeit je Winkel im Ring, 720 Winkel) ohne langsamen
+    Verlauf (gleitendes Mittel ueber 45 Grad weg: Schlagschatten ueber der halben Scheibe), Fourier-Betrag je Periodenzahl k = 6..60.
+    Beleg = staerkste Periode ist ein Vielfaches von 12 (12 Stunden, 60 Minutenstriche) und >= min_verh x staerkste Nicht-12er-Periode.
+    Schwabentor 1122p (feines Wandbild): Uhr f00 2,87, Uhr f01 (halb im Schatten) 1,63; Heiligenschein 0,64 (staerkste k=2-11), Innenring-Dublette 0,25.
+    g = Grauwertbild, cx/cy/r in Pixeln. Rueckgabe dict(ok, k, verh, grund)."""
+    if r < min_r: return dict(ok=False, k=None, verh=0.0, grund=f"Scheibe nur {r:.0f} px Radius im Wandbild (< {min_r}), 12er-Teilung nicht pruefbar")
+    na, nr = 720, 24; t = np.linspace(0, 2 * np.pi, na, endpoint=False); rr = np.linspace(f0, f1, nr) * r
+    X = (cx + np.outer(rr, np.cos(t))).astype(np.float32); Y = (cy - np.outer(rr, np.sin(t))).astype(np.float32)
+    q = cv2.remap(g.astype(np.float32), X, Y, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT).mean(0)
+    w = na // 8; q = q - np.convolve(np.r_[q[-w:], q, q[:w]], np.ones(w) / w, "same")[w:-w]
+    A = np.abs(np.fft.rfft(q)); ks = np.arange(6, 61); a_ = A[ks]; zw = ks % 12 == 0
+    k_max = int(ks[np.argmax(a_)]); verh = float(a_[zw].max() / max(a_[~zw].max(), 1e-9))
+    ok = k_max % 12 == 0 and verh >= min_verh
+    return dict(ok=bool(ok), k=k_max, verh=round(verh, 2), grund="" if ok else f"kein Zifferblatt: 12er-Teilung im Ring nur {verh:.2f} x staerkste Fremdperiode (staerkste Periode k={k_max}, Tor >= {min_verh} und k=12/24/../60)")
+
+
+def dubletten_zusammenfassen(uhren, tol=0.25):
+    """Konzentrische Kreise derselben Uhr (Aussenrand + Ziffernring als zwei Erkennerkaesten, 1122p f01: d 5,05 und 3,33 m, Mitten 3 cm auseinander) -> eine Uhr.
+    Gleiche Stelle = Mittenabstand < tol x Radius der groesseren. Die groessere bleibt; passt die kleinere als Innenring (0,45-0,85 x) und fehlt d_innen, wird sie das.
+    Rueckgabe (bleibt, weg) - weg mit Grund."""
+    bleibt, weg = [], []
+    for U in sorted(uhren, key=lambda U: -U["d_aussen"]):
+        gross = next((V for V in bleibt if np.hypot(U["u"] - V["u"], U["z"] - V["z"]) < tol * 0.5 * V["d_aussen"]), None)
+        if gross is None: bleibt.append(U); continue
+        f_ = U["d_aussen"] / gross["d_aussen"]
+        if not gross.get("d_innen") and 0.45 <= f_ <= 0.85: gross["d_innen"] = U["d_aussen"]; gross["d_innen_quelle"] = "konzentrische Dublette (zweiter Erkennerkasten)"
+        weg.append(dict(kasten=U.get("kasten"), grund=f"Dublette: konzentrisch zur Uhr u {gross['u']:.2f} z {gross['z']:.2f} (Abstand {np.hypot(U['u'] - gross['u'], U['z'] - gross['z']):.2f} m, d {U['d_aussen']:.2f} von {gross['d_aussen']:.2f} m)"))
+    return [U for U in uhren if any(U is V for V in bleibt)], weg                  # Reihenfolge wie Eingabe
 
 
 def gold_maske(bgr):
@@ -124,7 +158,7 @@ def main():
         gr = cv2.imread(os.path.join(a.fein, f"ortho_{fid}.png"), cv2.IMREAD_GRAYSCALE)      # wie oeffnungen_wandbild: wo das feine Bild leer ist, das grobe auf demselben Raster einsetzen
         if gr is not None: gr = cv2.resize(gr, (im.shape[1], im.shape[0]), interpolation=cv2.INTER_CUBIC); im = np.where(im > 0, im, gr)
         c = float(R_["zelle"]); u0r, z1r = float(R_["u0"]), float(R_["z1"]); px = lambda u, z: ((u - u0r) / c, (z1r - z) / c)
-        e_ = dict(o=F["o"], d=F["d"], n=F["n"], uhren=[], verworfen=[])
+        e_ = dict(o=F["o"], d=F["d"], n=F["n"], uhren=[], verworfen=[]); vis_ = {}
         for k in kand:
             g = max(k["u1"] - k["u0"], k["z1"] - k["z0"]); x0, y0 = px(k["u0"] - 0.3 * g, k["z1"] + 0.3 * g); x1, y1 = px(k["u1"] + 0.3 * g, k["z0"] - 0.3 * g)
             x0, y0 = max(0, int(x0)), max(0, int(y0)); x1, y1 = min(im.shape[1], int(x1)), min(im.shape[0], int(y1)); A = im[y0:y1, x0:x1]
@@ -136,7 +170,10 @@ def main():
             if C is None: e_["verworfen"].append(dict(kasten=[k["u0"], k["u1"], k["z0"], k["z1"]], grund="kein Kreis im Wandbild")); continue
             best = max(((stuetze(kan, cx, cy, r), cx, cy, r) for cx, cy, r in C[0][:40]), key=lambda t: t[0])
             if best[0] < a.min_stuetze: e_["verworfen"].append(dict(kasten=[k["u0"], k["u1"], k["z0"], k["z1"]], grund=f"Kreis nur zu {best[0] * 100:.0f} % von Kanten gestuetzt")); continue
-            sa, cx, cy, r = best; innen = None
+            sa, cx, cy, r = best
+            zb_ = zifferblatt_beleg(im, x0 + cx / s, cy / s + y0, r / s)        # 23.11.2026: Kreis allein ist keine Uhr (Heiligenschein) - 12er-Teilung im Ring
+            if not zb_["ok"]: e_["verworfen"].append(dict(kasten=[k["u0"], k["u1"], k["z0"], k["z1"]], grund=zb_["grund"], beleg_12=zb_["verh"])); continue
+            innen = None
             for f_ in np.arange(0.45, 0.86, 0.01):
                 for dx in (-0.04, 0, 0.04):
                     for dy in (-0.04, 0, 0.04):
@@ -144,12 +181,13 @@ def main():
                         if innen is None or si > innen[0]: innen = (si, f_ * r)
             cx, cy, r = float(cx), float(cy), float(r); uc = u0r + (x0 + cx / s) * c; zc = z1r - (y0 + cy / s) * c; da = 2 * r / s * c; di = 2 * innen[1] / s * c if innen and innen[0] >= a.min_stuetze else None
             e_["uhren"].append(dict(u=round(uc, 3), z=round(zc, 3), d_aussen=round(da, 3), d_innen=round(di, 3) if di else None, stuetze_aussen=round(sa, 2), stuetze_innen=round(innen[0], 2) if innen else None,
-                                    kasten=[round(k["u0"], 2), round(k["u1"], 2), round(k["z0"], 2), round(k["z1"], 2)], stimmen=k.get("stimmen"),
-                                    quelle="Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze im feinen Wandbild (1 cm)"))
-            n_uhr += 1; print(f"{fid}: UHR Mitte u {uc:.2f} z {zc:.2f}, Durchmesser {da:.2f} m" + (f", innen {di:.2f} m" if di else ", Innenkreis nicht belegt") + f" (Kantenstuetze {sa * 100:.0f} %)")
+                                    kasten=[round(k["u0"], 2), round(k["u1"], 2), round(k["z0"], 2), round(k["z1"], 2)], stimmen=k.get("stimmen"), beleg_12=zb_["verh"],
+                                    quelle="Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze + 12er-Teilung im feinen Wandbild (1 cm)"))
+            print(f"{fid}: UHR Mitte u {uc:.2f} z {zc:.2f}, Durchmesser {da:.2f} m" + (f", innen {di:.2f} m" if di else ", Innenkreis nicht belegt") + f" (Kantenstuetze {sa * 100:.0f} %, 12er-Teilung {zb_['verh']:.2f})")
             vis = cv2.cvtColor(As, cv2.COLOR_GRAY2BGR); cv2.circle(vis, (int(cx), int(cy)), int(r), (0, 255, 0), 2)
             if di: cv2.circle(vis, (int(cx), int(cy)), int(innen[1]), (0, 200, 255), 2)
-            bilder.append(vis)
+            vis_[id(e_["uhren"][-1])] = vis
+        e_["uhren"], weg_ = dubletten_zusammenfassen(e_["uhren"]); e_["verworfen"] += weg_; n_uhr += len(e_["uhren"]); bilder += [vis_[id(U)] for U in e_["uhren"]]
         for v in e_["verworfen"]: print(f"{fid}: verworfen {v['kasten']}: {v['grund']}")
         erg[fid] = e_
     os.makedirs(os.path.dirname(aus), exist_ok=True)
