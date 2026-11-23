@@ -1,4 +1,4 @@
-# Werkzeuge: test (164)
+# Werkzeuge: test (166)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -17,6 +17,7 @@
 - `tools/test_dach_sichtschatten.py` [seg] test_dach_sichtschatten.py - Fotodach (tools/dach_aus_fotos.py) bei Fotos nur von einer/zwei Seiten (Befund Kette 1122o, 23.11.2026).
 - `tools/test_dach_veto_traufe.py` [-] test_dach_veto_traufe.py - DOM1-Veto darf den DACHUEBERSTAND nicht abschneiden (tools/dach_profil_wolke.dom1_veto + dom1_kachel.dom1_bilinear(klippe), 21.11.2026). Anlass Schwabent
 - `tools/test_dachflaeche_aus_umriss.py` [-] Test dachflaeche_aus_umriss.py + bauteile.flaeche_aus_foto (synthetisch, Sekunden): Profil-Familie aus gerenderten Silhouetten zurueckgewinnen, Formfamilie nur aus >= 3 einigen Fot
+- `tools/test_dachflaeche_dom1_veto.py` [-] Test DOM1-Veto der Foto-Dachflaeche (23.11.2026, Schwabentor-1122p HOEHEN-TOR +1,73 m / k 0,958): dachflaeche_aus_umriss.laser_isolinien / ringe_dom1_veto / veto_block + bauteile.f
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
 - `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
 - `tools/test_element_einpassen.py` [seg] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
@@ -105,6 +106,7 @@
 - `tools/test_repo_pfad.py` [-] test_repo_pfad.py - pfade.repo_pfad (22.11.2026): Schnelltest im git-Worktree liest fehlende unversionierte Eingaben (daten/<obj>/fotos, modelle/stl/*.stl) NUR LESEND aus dem Haupt
 - `tools/test_rumpf_wolke.py` [gen] test_rumpf_wolke.py - synthetischer Beweis fuer bauteil_rumpf_wolke (bekanntes Haus: Quader + Satteldach, gedreht 15 Grad; Rauschen 3 cm, Ausreisser, Luecken, Sims; Szenario A = al
 - `tools/test_rund_aus_umriss.py` [seg] test_rund_aus_umriss.py - fester synthetischer Test fuer tools/rund_aus_umriss.py (21.11.2026). Zylinder r 1,50 m (Mitte 0,3 / -0,2) mit Steinfugen-Textur vor gestreiftem Hintergru
+- `tools/test_rund_eigenverdeckung.py` [seg] test_rund_eigenverdeckung.py - Verdeckungspruefung in tools/rund_aus_umriss.py ignoriert das VORMODELL des gemessenen Rundkoerpers (23.11.2026). Befund Kettenlauf 1122p (Schwabento
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_durchblick.py` [-] test_seiten_durchblick.py - Stufe 'Durchblick/Umgebung' in tools/seiten_erkennen.py (22.11.2026): einzelne starke Paare verwechselter/unklarer Verbindungen behalten. Synthetisch (E
