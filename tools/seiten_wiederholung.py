@@ -8,7 +8,7 @@ eingetragen - aber die Stufe laeuft NACH Wandbild (fenster), Bauplan und Bau; da
      BELEGTE neue Kamera sieht. Keine -> wie bisher (kein Wiederholen).
   2. fassade_ortho --nur <diese Waende> in <daten>/fassade_nachgeholt (Messflaeche eben, wie fenster_ortho; Sekunden je Wand).
   3. gewinn() (dieses Programm, Unterbefehl 'gewinn'): Abdeckung je Wand mit DEMSELBEN Mass wie seiten_luecken (seiten_luecken.wand_abdeckung) vorher/nachher.
-     Steigt sie bei einer Wand um >= MIN_GEWINN (absolut), wiederholt die Kette EINMAL die Stufen ab RCPARK_SEITEN_WIEDERHOLUNG_AB (Standard 'fenster':
+     Steigt sie bei einer Wand um >= MIN_GEWINN (absolut), wiederholt die Kette EINMAL die Stufen ab RCPARK_SEITEN_WIEDERHOLUNG_AB (Standard seit 23.11. startstufe() = 'fassaden': Relief/fassaden_kette, dann
      Wandbild 5 cm + 1 cm, Parsing, Fenster/Oeffnungen, Bauplan mit Tiefe/Vorbauten/Tore, Bau + Abnahme, seiten-Bericht neu) als Teillauf (RCPARK_TEILLAUF=1:
      kein Nachholen, kein zweites Wiederholen, Schlussberichte macht der aeussere Lauf auf dem Endstand: html, neben_details, Befundliste).
 Warum ALLE Waende im Teillauf und nicht nur die betroffenen: das Wandbild selbst kostet ~2 min fuer alle Waende; die Zeit (~29 min, Lauf 1122p) liegt in Bau,
@@ -79,6 +79,45 @@ def gewinn(seiten_json, neu_dir, min_gewinn=MIN_GEWINN, alt_dir=None, e_min=None
                          einig_anteil=q_n, einig_flaeche_vorher=round(fl_v, 3), einig_flaeche_nachher=round(fl_n, 3), beurteilt=(en or {}).get("beurteilt_anteil"),
                          ok_abdeckung=ok_abd, ok_einig=ok_ein, ok=ok_abd and ok_ein, meldung=meldung))
     return dict(waende=raus, wiederholen=any(r["ok"] for r in raus), min_gewinn=min_gewinn, e_min=e_min, sperre=dict(waende=sperre) if sperre else None)
+
+
+KAMERA_MARKEN = ("messprotokoll", "K-*.json", "k_datei(")              # ein Werkzeug liest die Messkameras (K-Dateien), wenn sein Quelltext eine davon enthaelt
+KAMERA_SCHREIBER = ("kameras_aus_buendel.py",)                           # schreibt K-Dateien neu aus dem SfM-Buendel: ein Teillauf DAVOR wuerfe nachgeholte Kameras um
+
+
+def stufen_werkzeuge(kette_quelle, stufen):
+    """{stufe: [tools/<x>.py, ...]} aus dem Quelltext der Kette: Werkzeuge in der Zeile mit dran("<stufe>") und im eingerueckten Block darunter."""
+    import re
+    zeilen = kette_quelle.split("\n"); raus = {s_: [] for s_ in stufen}
+    for i, z in enumerate(zeilen):
+        st_ = [s_ for s_ in re.findall(r'dran\("([a-z_]+)"\)', z) if s_ in raus]
+        if not st_ or not z.lstrip().startswith("if "): continue
+        tief = len(z) - len(z.lstrip()); block = [z]
+        for z2 in zeilen[i + 1:]:
+            if z2.strip() and len(z2) - len(z2.lstrip()) <= tief: break
+            block.append(z2)
+        wz = sorted(set(re.findall(r'tools/([a-z0-9_]+\.py)', "\n".join(block))))
+        for s_ in st_: raus[s_] = sorted(set(raus[s_]) | set(wz))
+    return raus
+
+
+def liest_kameras(werkzeug, tools_dir=None):
+    p = os.path.join(tools_dir or os.path.dirname(os.path.abspath(__file__)), werkzeug)
+    try: q = open(p).read()
+    except OSError: return False
+    return any(m_ in q for m_ in KAMERA_MARKEN)
+
+
+def startstufe(kette_quelle, stufen, bis="seiten", tools_dir=None):
+    """Zusatz 23.11.2026 (Lauf 1122t): der Teillauf begann bei 'fenster', das Sued-Relief (fassaden_kette, Stufe 'fassaden', ~15:50) lief OHNE die 31 um 18:08
+    nachgeholten Kameras und wurde nicht wiederholt -> Sued bleibt flach. Jetzt generisch: frueheste Stufe bis <bis>, deren Werkzeuge die K-Dateien lesen,
+    aber NACH der letzten Stufe, die K-Dateien aus dem Buendel neu schreibt (sonst gingen die nachgeholten Kameras verloren). -> (stufe, begruendung)."""
+    sw = stufen_werkzeuge(kette_quelle, stufen); ende = stufen.index(bis) if bis in stufen else len(stufen) - 1
+    schreib = [i for i, s_ in enumerate(stufen[:ende + 1]) if any(w_ in KAMERA_SCHREIBER for w_ in sw[s_])]; ab = (max(schreib) + 1) if schreib else 0
+    for s_ in stufen[ab:ende + 1]:
+        lw = [w_ for w_ in sw[s_] if liest_kameras(w_, tools_dir)]
+        if lw: return s_, f"frueheste Stufe nach {stufen[ab - 1] if ab else 'Beginn'} (schreibt K-Dateien aus dem Buendel), deren Werkzeuge die Kameras lesen: {s_} ({', '.join(lw)})"
+    return "fenster", "keine Stufe mit kamera-lesendem Werkzeug gefunden - Rueckfall fenster"
 
 
 def teillauf_befehl(py, quelle, ziel, ab="fenster", trotz_lage=False):

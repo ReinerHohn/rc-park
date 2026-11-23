@@ -7,7 +7,7 @@ Prueft mit kleinen vorgespielten Daten (keine Rechenlaeufe):
       je Wand Zahl der belegten neuen Kameras mit Sicht; zweiter Lauf idempotent;
   (3) seiten_luecken: Nachhol-Skript endet mit dem Tor-Schritt (nach kamera_verfeinern), wand_abdeckung = Mass des Berichts;
   (4) seiten_wiederholung.kandidaten/gewinn: nur ungesehene Waende mit belegter neuer Kamera, Tor-Bericht eines frueheren Laufs gilt nicht, Gewinnschwelle;
-  (5) gesamtkette.seiten_wiederholen: Gewinn -> EIN Teillauf (--ab fenster --bis seiten, RCPARK_TEILLAUF=1), Bericht danach mit den Teillauf-Stufen;
+  (5) gesamtkette.seiten_wiederholen: Gewinn -> EIN Teillauf (--ab startstufe = fassaden --bis seiten, RCPARK_TEILLAUF=1), Bericht danach mit den Teillauf-Stufen;
       kein Gewinn -> kein Teillauf; Teillauf selbst holt nicht nach und wiederholt nicht.
 Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/test_seiten_wiederholung.py  (oder tools/py ...)   Exit 0 = alles bestanden."""
 import os, sys, json, time, struct, subprocess
@@ -142,7 +142,7 @@ def test_kette(d, od, au, fo, FJ):
     aufrufe = []
     def falsch_einmal(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
         aufrufe.append((name, cmd, os.environ.get("RCPARK_TEILLAUF")))
-        Bi = json.load(open(bp)); Bi["schritte"] += [dict(stufe="LAUF_START", ok=True, ab="fenster", bis="seiten"), dict(stufe="fenster_ortho", ok=True), dict(stufe="seiten", ok=False, ungesehen=[])]
+        Bi = json.load(open(bp)); Bi["schritte"] += [dict(stufe="LAUF_START", ok=True, ab="fassaden", bis="seiten"), dict(stufe="fenster_ortho", ok=True), dict(stufe="seiten", ok=False, ungesehen=[])]
         __import__("json_sicher").schreiben(bp, Bi); time.sleep(0.01); ortho(fo, FJ["fassaden"][1], 0.6)
         S_ = json.load(open(sl)); S_["waende"][1]["abdeckung"] = 0.6; S_["ungesehen"] = []; __import__("json_sicher").schreiben(sl, S_)
         e = dict(stufe=name, rc=0, ok=True); B["schritte"].append(e); return 0, ""
@@ -159,7 +159,7 @@ def test_kette(d, od, au, fo, FJ):
     pruef(r is True and len(aufrufe) == 1, f"Kette: Gewinn -> genau EIN Teillauf ({len(aufrufe)})")
     if aufrufe:
         n_, cmd, env_ = aufrufe[0]
-        pruef(env_ == "1" and cmd[cmd.index("--ab") + 1] == "fenster" and cmd[cmd.index("--bis") + 1] == "seiten" and "tools/gesamtkette.py" in cmd, "Kette: Teillauf mit RCPARK_TEILLAUF=1, --ab fenster --bis seiten")
+        pruef(env_ == "1" and cmd[cmd.index("--ab") + 1] == "fassaden" and cmd[cmd.index("--bis") + 1] == "seiten" and "tools/gesamtkette.py" in cmd, "Kette: Teillauf mit RCPARK_TEILLAUF=1, --ab fassaden (Relief mit den neuen Kameras, 1122t) --bis seiten")
     st = [e["stufe"] for e in B["schritte"]]
     pruef("fenster_ortho" in st and st[-2:] == ["seiten_wiederholung_teillauf", "seiten_wiederholung"] and B["schritte"][-1]["wiederholt"] is True, f"Kette: Bericht enthaelt die Teillauf-Stufen, danach Schritt + Notiz ({st[-5:]})")
     pruef(B["schritte"][-1]["waende"][0]["nachher_bericht"] == 0.6, "Kette: Abdeckung nachher aus dem neuen seiten-Bericht")

@@ -5,6 +5,7 @@
       alle versetzt -> uneinig, Ausschluss reicht nicht; Struktur aus dem Stapel = Mass der Karte struktur_<id>.png;
   (2) seiten_wiederholung.gewinn: Abdeckung UND Einigkeit -> wiederholen; Abdeckung ohne Einigkeit -> nicht, Meldung 'Kameras ungenau', Sperrvorschlag;
   (3) gesamtkette.seiten_wiederholen: uneinig -> EINE gesperrte Probe (RCPARK_ORTHO_SPERRE) -> einig -> Teillauf mit Sperre; Umgebung danach zurueck;
+  (5) seiten_wiederholung.startstufe: Teillauf ab der fruehesten Wandstufe, deren Werkzeuge die K-Dateien lesen (nach dem K-Schreiber aus dem Buendel);
   (4) fassade_ortho: Sperre nur bei gleicher Kennung UND Normale, Einzelbilder frueherer Laeufe werden geloescht (Quelltext).
 Aufruf: tools/py tools/test_wandbild_einigkeit.py   Exit 0 = alles bestanden."""
 import os, sys, json, time
@@ -138,6 +139,23 @@ def test_kette(d, M, sl, gut, teil):
     pruef(os.environ.get("RCPARK_ORTHO_SPERRE") is None and B["schritte"][-1].get("sperre"), "Kette: Umgebung danach zurueck, Sperre im Bericht")
 
 
+def test_startstufe(d):
+    """Zusatz 23.11.2026: Teillauf ab der fruehesten kamera-lesenden Wandstufe (1122t: Relief der Stufe fassaden ohne die nachgeholten Kameras)."""
+    td = os.path.join(d, "tools_fake"); os.makedirs(td)
+    open(os.path.join(td, "kameras_aus_buendel.py"), "w").write("# schreibt messprotokoll/K-*.json aus dem Buendel\n")
+    open(os.path.join(td, "relief.py"), "w").write("glob(os.path.join(od, 'messprotokoll', 'K-*.json'))\n")
+    open(os.path.join(td, "relief_ohne.py"), "w").write("netz = lade()\n")
+    open(os.path.join(td, "ortho.py"), "w").write("K = FF.k_datei(o, nr)\n")
+    st = ["anlegen", "fototor", "fassaden", "fenster", "seiten"]
+    q = lambda rel: "\n".join(['    if dran("fototor"):', '        lauf(B, "k", [PY, "tools/kameras_aus_buendel.py"])', '        lauf(B, "d", [PY, "tools/ortho.py"])',
+                                '    if dran("fassaden") and x:', f'        lauf(B, "r", [PY, "tools/{rel}"])', '    if dran("fenster"):', '        lauf(B, "o", [PY, "tools/ortho.py"])'])
+    s1, g1 = SW.startstufe(q("relief.py"), st, tools_dir=td); s2, _ = SW.startstufe(q("relief_ohne.py"), st, tools_dir=td)
+    pruef(s1 == "fassaden" and s2 == "fenster", f"startstufe: Relief liest Kameras -> fassaden, sonst fenster; nie vor/auf der Stufe, die K-Dateien aus dem Buendel schreibt ({s1}, {s2}; {g1[:90]})")
+    import re; src = open(os.path.join(T, "gesamtkette.py")).read(); STF = eval(re.search(r"^STUFEN = (\[.*\])", src, re.M).group(1))
+    s3, g3 = SW.startstufe(src, STF)
+    pruef(s3 == "fassaden" and "fassaden_kette.py" in g3, f"startstufe der echten Kette: fassaden (fassaden_kette liest K-Dateien) ({s3})")
+
+
 def test_quelltext():
     s = open(os.path.join(T, "fassade_ortho.py")).read()
     pruef('RCPARK_ORTHO_SPERRE' in s and 'F["_id"] == w_.get("id") and float(np.dot(F["n"][:2]' in s, "fassade_ortho: Sperre nur bei gleicher Kennung UND Normale")
@@ -149,6 +167,7 @@ def main():
     M = test_mass(d)
     sl, gut, teil = test_gewinn(d, M)
     test_kette(d, M, sl, gut, teil)
+    test_startstufe(d)
     test_quelltext()
     print(f"{'ALLES BESTANDEN' if not fehler else str(fehler) + ' FEHLER'}"); return 1 if fehler else 0
 

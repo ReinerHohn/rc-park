@@ -221,7 +221,7 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
     """23.11.2026 KETTENLUECKE (Lauf 1122q): Stufe seiten holte Fotos fuer ungesehene Waende nach (327 Kameras), aber erst NACH Wandbild/Bauplan/Bau - der Lauf baute ohne sie.
     Jetzt (tools/seiten_wiederholung.py): (1) ungesehene Waende mit >= 1 BELEGTEN neuen Kamera (audit/kameras_nachtragen_tor.json dieses Laufs), (2) Wandbild nur dieser
     Waende neu in <daten>/fassade_nachgeholt, (3) Abdeckung vorher/nachher mit dem Mass von seiten_luecken; steigt sie >= MIN_GEWINN -> (4) EIN Teillauf dieser Kette
-    ab RCPARK_SEITEN_WIEDERHOLUNG_AB (Standard fenster) bis seiten mit RCPARK_TEILLAUF=1 (kein Nachholen, keine zweite Wiederholung). Der Bericht B wird danach neu
+    ab RCPARK_SEITEN_WIEDERHOLUNG_AB (Standard: seiten_wiederholung.startstufe = frueheste Stufe nach fototor, deren Werkzeuge K-Dateien lesen; 23.11.: fassaden) bis seiten mit RCPARK_TEILLAUF=1 (kein Nachholen, keine zweite Wiederholung). Der Bericht B wird danach neu
     geladen (der Teillauf schreibt dieselbe Datei). Rueckgabe True = Teillauf lief (seine Stufen stehen im Bericht), sonst False (wie bisher)."""
     import seiten_wiederholung as SW
     kand, grund = SW.kandidaten(os.path.join(Z, "audit", "kameras_nachtragen_tor.json"), sl, seit=t_sl)
@@ -251,7 +251,8 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
         mel_ = "; ".join(f"{w_['id']}: {w_['meldung']}" for w_ in (g or {}).get("waende") or [] if w_.get("meldung"))
         notiz(B, "seiten_wiederholung", rc_g in (0, 3), wiederholt=False, kandidaten=kand, gewinn=(g or {}).get("waende"),
               grund=(mel_ or "Abdeckung der ungesehenen Waende steigt nicht messbar") if rc_g == 3 else f"seiten_wiederholung gewinn rc {rc_g}"); return False
-    ab_ = os.environ.get("RCPARK_SEITEN_WIEDERHOLUNG_AB", "fenster")
+    ab_ = os.environ.get("RCPARK_SEITEN_WIEDERHOLUNG_AB"); ab_grund = "RCPARK_SEITEN_WIEDERHOLUNG_AB" if ab_ else ""      # 23.11.2026 (1122t: Sued-Relief der Stufe fassaden lief ohne die nachgeholten Kameras):
+    if not ab_: ab_, ab_grund = SW.startstufe(open(os.path.abspath(__file__)).read(), STUFEN)                               # frueheste kamera-lesende Wandstufe nach fototor, nur bei echtem Gewinn (Einigkeits-Tor)
     cmd = SW.teillauf_befehl(py_kette or sys.executable, a.quelle, a.ziel, ab_, trotz_lage="--trotz-lage" in sys.argv)
     tB = dict(schritte=[], _pfad=os.path.join(D, "seiten_wiederholung_schritt.json")); alt = os.environ.get("RCPARK_TEILLAUF"); os.environ["RCPARK_TEILLAUF"] = "1"
     try: rc_t, _ = _lauf_einmal(tB, "seiten_wiederholung_teillauf", cmd, log, ok=(0, 4), timeout=2 * float(os.environ.get("RCPARK_STUFE_MAX_S", "10800")))      # rc 4 = eine Stufe des Teillaufs rot (steht einzeln im Bericht)
@@ -267,7 +268,7 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
     B["schritte"].extend(tB["schritte"])
     try: nach_ = {w_["nr"]: w_.get("abdeckung") for w_ in json.load(open(sl)).get("waende", [])} if os.path.getmtime(sl) > t0 else {}
     except Exception: nach_ = {}
-    notiz(B, "seiten_wiederholung", rc_t in (0, 4), wiederholt=True, ab=ab_, teillauf_rc=rc_t, waende=[dict(w_, nachher_ortho=next((x_["nachher"] for x_ in g["waende"] if x_["id"] == w_["id"]), None), nachher_bericht=nach_.get(w_["nr"])) for w_ in kand],
+    notiz(B, "seiten_wiederholung", rc_t in (0, 4), wiederholt=True, ab=ab_, ab_grund=ab_grund, teillauf_rc=rc_t, waende=[dict(w_, nachher_ortho=next((x_["nachher"] for x_ in g["waende"] if x_["id"] == w_["id"]), None), nachher_bericht=nach_.get(w_["nr"])) for w_ in kand],
           sperre=gesperrt, hinweis="ANSEHEN: audit/seiten.jpg, audit/neben_*.jpg - die nachgeholten Waende sind jetzt im Wandbild/Bau dieses Laufs; Teillauf-Stufen im Bericht nach LAUF_START ab=" + ab_)
     return True
 
