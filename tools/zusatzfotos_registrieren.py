@@ -83,6 +83,8 @@ def vorbereiten(a):
     for d in a.fotos: fs += sorted(glob.glob(os.path.join(d, "*.jpg")))
     seen = {}; liste = []; verworfen = []
     for f in fs:
+        if not os.path.isfile(f):      # 23.11.2026 (1122p): tote Verknuepfung in roh/ -> FileNotFoundError, ganzes Nachholen abgebrochen; jetzt aussortiert mit Grund
+            verworfen.append(dict(datei=f, grund="tote Verknuepfung -> " + (os.readlink(f) if os.path.islink(f) else "?") + " (Ziel fehlt)")); continue
         h = md5(f); b = os.path.basename(f)
         if h in seen: verworfen.append(dict(datei=f, grund="Dublette (MD5) von " + seen[h])); continue
         seen[h] = f
@@ -97,7 +99,10 @@ def vorbereiten(a):
         n = name_aus_pfad(f)
         cv2.imwrite(os.path.join(bd, n), im, [cv2.IMWRITE_JPEG_QUALITY, 95]); info[n] = dict(quelle=f, orig=[W, H], bild=[im.shape[1], im.shape[0]], skala=s)
     json.dump(dict(bilder=info, verworfen=verworfen, unten=a.unten, breite=a.breite), open(os.path.join(a.aus, "vorbereitet.json"), "w"), indent=1)
+    tot = [v for v in verworfen if v["grund"].startswith("tote Verknuepfung")]
+    if tot: print(f"WARNUNG: {len(tot)} tote Verknuepfung(en) aussortiert (z. B. {os.path.basename(tot[0]['datei'])}: {tot[0]['grund']}) - Kandidatenliste aus einem frueheren Lauf?")
     print(f"vorbereitet: {len(info)} Bilder, verworfen {len(verworfen)}")
+    if not info and fs: print(f"FEHLER: keines der {len(fs)} Bilder brauchbar ({collections.Counter(v['grund'].split(' ')[0] for v in verworfen).most_common(3)})"); sys.exit(2)
 
 
 def sift_fehlend(db, names):

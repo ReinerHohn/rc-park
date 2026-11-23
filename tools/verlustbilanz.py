@@ -90,6 +90,63 @@ def _schritt_fehler(B, name, n_start=0):
     return ""
 
 
+def _registriert(sparse):
+    """Bildnamen eines COLMAP-Modells (images.bin, nur stdlib)."""
+    import struct
+    namen = []
+    with open(os.path.join(sparse, "images.bin"), "rb") as f:
+        n = struct.unpack("<Q", f.read(8))[0]
+        for _ in range(n):
+            f.read(4 + 32 + 24 + 4); b = b""
+            while True:
+                c = f.read(1)
+                if c in (b"\x00", b""): break
+                b += c
+            k = struct.unpack("<Q", f.read(8))[0]; f.read(24 * k); namen.append(b.decode(errors="replace"))
+    return namen
+
+
+MIN_INLIER_ANBINDUNG = 15     # COLMAP-Standard min_num_inliers der Zwei-Bild-Geometrie
+
+
+def gruende_nicht_registriert(sfm, min_anbindung=3):
+    """Grund JE BILD, warum ein Bild der Merkmals-DB nicht im Modell sfm/sparse/0 steht (23.11.2026, Lauf 1122p: 36 von 504 Bildern 'OHNE benannten Grund' -
+    24 davon hatte der Konsens-Mapper selbst als 'fremde Seite' in konsens_arbeit/fremde_seite.txt benannt, der Rest liess sich aus der DB ablesen).
+    Reihenfolge: Seitenerkennung fremd -> Konsens fremde Seite -> nicht in der DB -> keine Merkmale -> kein verifiziertes Paar -> zu schwach angebunden -> Mapper.
+    -> {name: (kategorie, text mit Zahlen)}; leer, wenn sparse/0 oder db.db fehlt."""
+    import sqlite3
+    sp = os.path.join(sfm, "sparse", "0"); dbp = os.path.join(sfm, "db.db")
+    if not (os.path.isfile(os.path.join(sp, "images.bin")) and os.path.isfile(dbp)): return {}
+    reg = set(_registriert(sp))
+    S = _j(os.path.join(sfm, "seiten.json")) or {}
+    fremd = {os.path.basename(x if isinstance(x, str) else str((x or {}).get("name", ""))) for x in (S.get("fremd") or [])}
+    fs = set()
+    try: fs = {z.strip() for z in open(os.path.join(sfm, "konsens_arbeit", "fremde_seite.txt")) if z.strip()}
+    except OSError: pass
+    con = sqlite3.connect(f"file:{dbp}?mode=ro", uri=True)
+    try:
+        ids = {n: i for i, n in con.execute("select image_id,name from images")}
+        kp = dict(con.execute("select image_id,rows from keypoints").fetchall())
+        paare = {}
+        for pid, rows in con.execute("select pair_id,rows from two_view_geometries where rows>0"):
+            i2 = pid % 2147483647; i1 = (pid - i2) // 2147483647
+            paare.setdefault(i1, []).append((rows, i2)); paare.setdefault(i2, []).append((rows, i1))
+    finally: con.close()
+    regid = {ids[n] for n in reg if n in ids}; G = {}
+    for n, i in ids.items():
+        if n in reg: continue
+        P = paare.get(i, []); stark = [r for r, j in P if j in regid and r >= MIN_INLIER_ANBINDUNG]; mx = max((r for r, _ in P), default=0)
+        if n in fremd: G[n] = ("Seitenerkennung: fremd (kein Bezug zum Objekt)", "Seitenerkennung fremd")
+        elif n in fs: G[n] = ("Konsens-Mapper: fremde Seite (anderes Punkt-Stueck als das Rueckgrat, konsens_arbeit/fremde_seite.txt) - Stufe seiten_luecken holt nach",
+                              f"Konsens fremde Seite ({len(stark)} Paare zu registrierten Bildern, max {mx} Inlier)")
+        elif not kp.get(i): G[n] = ("keine Merkmale in der DB", "0 Schluesselpunkte")
+        elif not P: G[n] = ("kein verifiziertes Bildpaar (kein Ueberlapp mit anderen Fotos)", f"{kp.get(i)} Merkmale, 0 verifizierte Paare")
+        elif len(stark) < min_anbindung: G[n] = (f"zu schwach angebunden (< {min_anbindung} Paare >= {MIN_INLIER_ANBINDUNG} Inlier zu registrierten Bildern)",
+                                                f"{len(stark)} starke Paare zu registrierten Bildern von {len(P)}, max {mx} Inlier")
+        else: G[n] = ("Mapper hat trotz Anbindung nicht registriert (Pose nicht schaetzbar/verworfen)", f"{len(stark)} starke Paare zu registrierten Bildern, max {mx} Inlier")
+    return G
+
+
 # ---------------------------------------------------------------- Stufen
 def s_video(D, B, n_start, seit, **_):
     cj = os.path.join(D, "clips.json"); C = _j(cj)
@@ -155,7 +212,16 @@ def s_sfm(D, seit, **_):
         pb = os.path.join(P, "pipeline_bericht.json"); R = _j(pb) or {}
         for s in R.get("stufen", []):
             m = re.search(r"registriert (\d+) von (\d+)", str(s.get("detail", "")))
-            if s.get("name") == "sfm" and m: out.append(eintrag("sfm_registriert", "Bilder", int(m.group(2)), int(m.group(1)), [], pb, seit))
+            if s.get("name") == "sfm" and m:
+                G = {}
+                try: G = gruende_nicht_registriert(os.path.join(P, "sfm"))
+                except Exception as ex: G = {}; print(f"HINWEIS Verlustbilanz: Gruende je Bild nicht bestimmbar ({type(ex).__name__} {ex})"[:200])
+                kat = Counter(g[0] for g in G.values())
+                e = eintrag("sfm_registriert", "Bilder", int(m.group(2)), int(m.group(1)), [(n, k) for k, n in kat.most_common()], pb, seit)
+                if G: e["je_bild"] = {n: g[1] for n, g in sorted(G.items())}
+                tm = sum(1 for g in G.values() if g[0].startswith("Mapper hat trotz"))
+                if tm and int(m.group(2)) and tm / int(m.group(2)) > _grenze("sfm_registriert"): e["hinweis"] = f"{tm} gut angebundene Bilder trotzdem nicht registriert - Mapper/Konsens pruefen"
+                out.append(e)
     bw = os.path.join(P, "dicht", "sparse_dicht", "dicht_bildwahl.json"); W = _j(bw)
     if W and "registriert" in W:
         out.append(eintrag("dicht_bildwahl", "Bilder", W["registriert"], W["behalten"], [(v, k[4:].replace("_", " ")) for k, v in W.items() if k.startswith("weg_")], bw, seit))

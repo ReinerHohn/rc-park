@@ -10,13 +10,14 @@ Schon bekannte Bilder (gleiche URL oder gleicher Titel in --bekannt-Dateien bzw.
 Hoeflich: 1 Abfrage je 2 s, je Quelle 1 Bild je 1,5 s (Wikimedia 25 s); HTTP 429 sperrt nur diese Quelle fuer den Lauf. Danach: tools/seiten_luecken.py (Nachregistrieren) bzw. tools/fotos_eingang.py.
 """
 import sys, os, json, time, argparse, urllib.request, urllib.parse
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import http_holen      # 23.11.2026: HTTP 429 mit Retry-After/Backoff, erst danach Quelle fuer den Lauf sperren
 
 UA = {"User-Agent": "rc-park-modellbau/1.0 (Architekturmodell aus Fotos; nicht-automatisierte Einzelabrufe)"}
 
 
 def hole(url, roh=False):
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=40) as r:
-        b = r.read(); return b if roh else json.loads(b)
+    b = http_holen.hole(url, UA, timeout=40); return b if roh else json.loads(b)
 
 
 def main():
@@ -49,7 +50,7 @@ def main():
                     if len(b) < 20000: continue
                     open(os.path.join(a.aus, dn), "wb").write(b)
                 except Exception as e:
-                    if "429" in str(e): gesperrt.add(host); print(f"HTTP 429 von {host} - diese Quelle fuer diesen Lauf gesperrt (nicht wiederholen, Drosselung ~15 min)")
+                    if isinstance(e, http_holen.Gedrosselt) or "429" in str(e): gesperrt.add(host); print(f"HTTP 429 von {host} trotz Wartezeit/Backoff - diese Quelle fuer diesen Lauf gesperrt ({str(e)[:120]})")
                     continue
                 H.append(dict(datei=dn, titel=r.get("title"), url=r["url"], seite=r.get("foreign_landing_url"), lizenz=f"{r.get('license')} {r.get('license_version') or ''}".strip(), urheber=r.get("creator"), quelle=r.get("source"), breite=r.get("width"), hoehe=r.get("height"), suche=q))
                 bek.update([r["url"].lower(), (r.get("title") or "").strip().lower()]); n += 1

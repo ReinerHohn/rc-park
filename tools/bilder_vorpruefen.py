@@ -50,6 +50,17 @@ class Speicher:
         except Exception as e: print(f"HINWEIS Zwischenspeicher nicht geschrieben ({e})", flush=True)
 
 
+def kette_merkmale(p, cache, merkmale):
+    """Merkmale eines Bildes fuer die Videokette (verkleinert wie oben); None = unlesbar/fehlt (23.11.2026, Lauf 1122p: cv2.imread -> None, AttributeError
+    in mk, Stufe vorpruefen rot). Ein Ergebnis aus dem Zwischenspeicher ueberspringt die Lesepruefung der Hauptschleife - die Datei kann seither kaputt/weg sein."""
+    if p not in cache:
+        g = cv2.imread(p, cv2.IMREAD_GRAYSCALE) if os.path.isfile(p) else None
+        if g is None or g.size == 0: cache[p] = None; return None
+        k = min(1.0, 720 / min(g.shape), 1000 / max(g.shape))
+        g = cv2.resize(g, None, fx=k, fy=k, interpolation=cv2.INTER_AREA) if k < 1 else g; cache[p] = merkmale(g)
+    return cache[p]
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--ohne-cache", action="store_true"); ap.add_argument("objekt"); ap.add_argument("quellen", nargs="+"); ap.add_argument("--aus", required=True)
     ap.add_argument("--ref", type=int, default=24); ap.add_argument("--min-inlier", type=int, default=60)
@@ -81,11 +92,9 @@ def main():
         ordner = defaultdict(list)
         for p in bilder: ordner[os.path.dirname(p)].append(p)
         cache = {}
-        def mk(p):
-            if p not in cache:
-                g = cv2.imread(p, cv2.IMREAD_GRAYSCALE); k = min(1.0, 720 / min(g.shape), 1000 / max(g.shape))
-                g = cv2.resize(g, None, fx=k, fy=k, interpolation=cv2.INTER_AREA) if k < 1 else g; cache[p] = VS._merkmale(s, g)
-            return cache[p]
+        def mk(p): return kette_merkmale(p, cache, lambda g: VS._merkmale(s, g))
+        def unlesbar(p):
+            erg[p].update(inlier=0, foto=None, fehler="nicht lesbar" if os.path.exists(p) else "fehlt (tote Verknuepfung)")
         for d, L in ordner.items():
             L = sorted(L); schritt = {p: 0 for p in L if erg[p]["inlier"] >= a.min_inlier}; offen = list(schritt)
             while offen:
@@ -95,7 +104,14 @@ def main():
                     if not 0 <= j < len(L) or L[j] in schritt: continue
                     ia, ib = bild_id(L[j]), bild_id(q); pk = f"{ia}>{ib}" if ia and ib else None; n = SP.hole("paare", pk)
                     if n is None:
-                        P0, f0 = mk(L[j]); P1, f1 = mk(q)
+                        M0, M1 = mk(L[j]), mk(q)
+                        if M0 is None or M1 is None:
+                            for p_, M_ in ((L[j], M0), (q, M1)):
+                                if M_ is None: unlesbar(p_)
+                            print(f"HINWEIS Kette: {os.path.basename(L[j] if M0 is None else q)} unlesbar - aussortiert mit Grund, Kette laeuft weiter", flush=True)
+                            if M1 is None: break
+                            continue
+                        (P0, f0), (P1, f1) = M0, M1
                         with VS.torch.inference_mode() if hasattr(VS, "torch") else __import__("torch").inference_mode():
                             m = VS._LG["m"]({"image0": f0, "image1": f1})["matches"][0].cpu().numpy()
                         n = 0
