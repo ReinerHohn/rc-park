@@ -409,3 +409,7 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
   Generator und mit erneuerter Vorlage -> beide Durchdringung 0; Ursache nur ueber Mechanismus belegt (Stuetzen ragen aus dem Plattenprisma). Lehre: Fehlerfall-Objekte bis zur Klaerung behalten.
   (2) ringschicht weiter schliessen ueber ALLE Schnittstuecke: in einer 6,7-m-Oeffnung mit 10-cm-Splittern entstand ein falscher Hohlraum, die Innenschicht hinter den Splittern
   hing frei (3 neue offene Schnitte) -> nur Stuecke > 0,05 m2 schliessen.
+- ECK-REPROJ (23.11.2026, Agent align_reproj, Logbuch Schwabentor-Kette 23.11. 20:40): pycolmap.align_reconstructions_via_reprojections als Kopplungsweg der Eckstufe
+  koppelt 1122t in keinem Eckmodell beide Teile (Teil 0 Nord, 8-13 gemeinsame Bilder: Rest 0,53-0,87 % > 0,5 %; mit SIFT-Eckmodell auch Teil 1 nur 17-25 % stimmig) - Lage
+  nur aus wenigen eng stehenden Kamerazentren. Bleibt als automatisch gewaehlte Variante (gewinnt nur mit mehr Teilen). Ohne pycolmap.set_random_seed nicht reproduzierbar
+  (bis 0,96 Grad); align_reconstructions_via_points wirft IndexError bei Eckbildern ausserhalb des Teils.
