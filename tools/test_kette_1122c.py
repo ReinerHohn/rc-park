@@ -35,7 +35,7 @@ def teil_a():
     k = [(e["u0"], e["u1"], e["z0"], e["z1"], e["stimmen"]) for e in [x for x in E if x["klasse"] == "fenster"] + bo if e["stimmen"] >= 2]
     def stub_form(B, kasten, innen=None, **kw): return dict(u0=kasten[0], u1=kasten[1], z0=kasten[2], z1=kasten[3], bogen=dict(form="rund"), anteil=0.9)
     alt_f, alt_b, alt_t = NF.form_aus_kanten, NF.form_bestaetigen, NF.tiefen
-    NF.form_aus_kanten = stub_form; NF.form_bestaetigen = lambda *a_, **k_: None; NF.tiefen = lambda npz, n, f: dict(nische=-0.10, fenster=-0.70)
+    NF.form_aus_kanten = stub_form; NF.form_bestaetigen = lambda *a_, **k_: None; NF.tiefen = lambda npz, n, f, **k_: dict(nische=-0.10, fenster=-0.70)     # **k_: fremd= (24.11. weiter Wandring)
     try:
         class A_: kante = 4.0; anteil_min = 0.5; flaeche_max_anteil = 0.5; fenster_tiefe = 0.12; nische_min = 0.05
         neu, br = NF.fassade_auswerten(None, k, {}, A_, (), [], [])

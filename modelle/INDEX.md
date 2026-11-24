@@ -5,7 +5,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 ## Regeln, Methode, Vorlagen
 - `modelle/KI_AUFRAEUMEN_2026-11-20.md` (3 kB) KI-konformes Aufraeumen (20.11.2026)
 - `modelle/LIZENZ_WERKZEUGE.md` (37 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (18 Abschnitte)
-- `modelle/METHODE_EBENEN_BAUPLAN.md` (7 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)
+- `modelle/METHODE_EBENEN_BAUPLAN.md` (8 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)
 - `modelle/METHODE_MASSTABELLE.md` (13 kB) METHODE: Masstabelle + generischer Pruefstand (das Rueckgrat jeder Modellerzeugung aus Daten)
 - `modelle/METHODE_MESSEN_DANN_BAUEN.md` (26 kB) Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md) -> Inhalt `modelle/inhalt/METHODE_MESSEN_DANN_BAUEN.md` (10 Abschnitte)
 - `modelle/METHODE_SEITEN_SFM.md` (16 kB) Methode: Seiten-SfM für Bauten mit ähnlichen Seiten (ab 21.11.2026)
@@ -43,7 +43,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 ## Logbuecher
 - `modelle/LOGBUCH_GIEBEL_OST_KREIS1_2026-11-10.md` (1 kB) Logbuch Kreis1 Fehlteil fk_+16_+0_+26 (Ost-Staffelgiebel), 2026-11-10
 - `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` (74 kB) Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte -> Inhalt `modelle/inhalt/LOGBUCH_KETTENTEST_2026-11-19.md` (37 Abschnitte)
-- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (205 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (52 Abschnitte)
+- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (208 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (53 Abschnitte)
 
 ## Sonstiges
 - `modelle/ANALYSE_SACKGASSEN_2026-11-21.md` (3 kB) Analyse: Warum 19.-21.11.2026 in Sackgassen (Auftrag Nutzer 21.11. 09:57)
@@ -51,9 +51,10 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md` (7 kB) Audit "stille Erfolge" in tools/gesamtkette.py (23.11.2026)
 - `modelle/BELEUCHTUNG.md` (3 kB) Beleuchtung — „geile" Monument-Lichttechnik (Miniatur-Wunderland)
 - `modelle/CPU_LEISTUNG.md` (13 kB) CPU/GPU maximal auslasten - Messung, Werkzeuge, Einrichtung (Stand 2026-11-06)
-- `modelle/ERKENNTNISSE.md` (10 kB) Erkenntnis-Register (destilliert; Ablauf: allgemeiner Skill `erkenntnis` (~/git/claude-mds) + `.claude/erkenntnis.md`; Einzelheiten in den Logbuechern
+- `modelle/ERKENNTNISSE.md` (15 kB) Erkenntnis-Register (destilliert; Ablauf: allgemeiner Skill `erkenntnis` (~/git/claude-mds) + `.claude/erkenntnis.md`; Einzelheiten in den Logbuechern
 - `modelle/ERKLAERUNG_DRAHTGITTER.md` (3 kB) Wie das Kanten-Drahtgitter entsteht (einfach erklaert, Stand 9.11.2026 abends)
 - `modelle/ERKLAERUNG_FOTO_ZU_PUNKTWOLKE.md` (2 kB) Foto -> Punktwolke: wie es funktioniert (Kurzfassung zum Nachlesen)
+- `modelle/FEATURE_FORMSITZ.md` (13 kB) Feature: Trennscharfes Formmaß „Formsitz" (seit 24.11.2026)
 - `modelle/GPU_LUECKEN_2026-11-08.md` (8 kB) GPU-Luecken (Suche 8.11., Nutzerauftrag) - nach Code-Durchsicht, Laufzeiten NOCH NICHT gemessen
 - `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` (13 kB) GPU-Parallelbetrieb: Untersuchung (Zwischenstand 2026-11-06, wird laufend ergaenzt)
 - `modelle/HARDWARE_STAND_2026-11-20.md` (9 kB) Hardware-Stand und Aufruest-Optionen (gemessen 20.11.2026)
@@ -69,13 +70,16 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/PIPELINE_H0.md` (19 kB) Pipeline: beliebiges Objekt → druckfertiges H0-Modell (1:87) -> Inhalt `modelle/inhalt/PIPELINE_H0.md` (18 Abschnitte)
 - `modelle/PIPELINE_KOMPLETT_2026-11-07.md` (23 kB) RC-Park – Kaufhaus Freiburg: Pipeline-Review und Arbeitsplan -> Inhalt `modelle/inhalt/PIPELINE_KOMPLETT_2026-11-07.md` (30 Abschnitte)
 - `modelle/PIPELINE_LERNREGISTER.md` (7 kB) Pipeline-Lernregister (objektübergreifend)
+- `modelle/PLAN_HANDMODELL_IN_KETTE.md` (9 kB) PLAN: Handmodell in die Kette (Nutzer 24.11.2026: "extrem wichtig – davon haengt mein Projekt ab")
 - `modelle/PLAN_NACHT_2026-11-21.md` (7 kB) Nachtplan 21./22.11.2026 – Schwabentor fertig aus der Kette (für einfache Agenten)
 - `modelle/PROTOKOLL_VALIDATOR.md` (18 kB) Protokoll: Einheitlicher vollautomatischer Modell-Validator
 - `modelle/QUELLEN_REGISTER.md` (7 kB) QUELLEN-REGISTER — kanonische Liste ALLER Datenquellen für Bauwerks-/Geländemodelle
 - `modelle/SPEZIALCODE_AUDIT_2026-11-03.md` (3 kB) Spezialcode-Audit (2026-11-03, Nutzerauftrag "Suche nach Spezialcode. Ich will generalisieren.")
 - `modelle/SWEET_SPOTS.md` (3 kB) Sweet Spots — Miniatur-Wunderland-Pitch (Freiburg)
 - `modelle/TOSHIBA_INVENTAR.md` (4 kB) Toshiba-Auslagerung: Inventar (Stand 2026-11-08 14:30)
+- `modelle/WEG_HAND_ZU_KETTE.md` (11 kB) Weg Hand -> Kette: wie schwab_v3 entstand und wo die Kette denselben Weg verliert (24.11.2026)
 - `modelle/WERKZEUGKETTE_WUNDERLAND.md` (31 kB) Werkzeugkette Miniaturwunderland Freiburg (H0 1:87) - Bestand, Luecken, neue Werkzeuge (17.11.2026) -> Inhalt `modelle/inhalt/WERKZEUGKETTE_WUNDERLAND.md` (30 Abschnitte)
+- `modelle/WIDERSPRUECHE.md` (2 kB) Widerspruchsliste: gleiche Groesse, verschiedene Werte (mit Status)
 
 ## Objekte (modelle/<objekt>/: objekt.json, masstabelle.json, MASSNACHWEIS.md, audit/)
-`hg_tv9o`, `hg_tv9p`, `hg_tv9v`, `hg_tv9y`, `hg_tvac`, `kaufhaus`, `kaufhaus_gk`, `kaufhaus_gk2`, `kaufhaus_grob`, `kaufhaus_grob2`, `kaufhaus_grob3`, `kaufhaus_null4`, `kaufhaus_null5`, `kaufhaus_wolke`, `kaufhaus_wolke_detail`, `martinstor`, `martinstor-1120`, `martinstor_gk`, `martinstor_gk3`, `martinstor_torbau`, `ober_tvdr`, `schwab_auto`, `schwab_nachbar`, `schwab_v3`, `schwabentor`, `schwabentor-1120`, `schwabentor-1122`
+`hg_tv9o`, `hg_tv9p`, `hg_tv9v`, `hg_tv9y`, `hg_tvac`, `kaufhaus`, `kaufhaus_gk`, `kaufhaus_grob3`, `martinstor`, `martinstor_gk`, `martinstor_torbau`, `ober_tvdr`, `schwab_auto`, `schwab_nachbar`, `schwab_v3`, `schwabentor`, `schwabentor-1120`

@@ -12,8 +12,8 @@
 - Z.115: ## Nachtrag 2026-11-06 (Recherche Gaussian-Splatting-Mesh, noch NICHT eingesetzt)
 - Z.126: ## Nachtrag 2026-11-06 (SegFormer-B4 ADE20K, Handy-Masken)
 - Z.131: ## Nachtrag 2026-11-06 (OWLv2, Handy-Masken v2, Register DI)
-- Z.138: ## Nachtrag 7.11. (Recherche modelle/archiv/RECHERCHE_2026-11-07_MESH_KANTEN.md, Quelle Subagent aus Repo-Seiten/Suchtreffern - vor Verkauf 
-- Z.148: ## 2026-11-08 pymeshfix (GPL) nur Test
-- Z.153: ## 2026-11-11 Relief aus Einzelbild (Beweistest, tools/relief_aus_foto.py)
-- Z.157: ## Nachtrag 2026-11-22: Primaerquellen-Pruefung Code UND Gewichte (9 Werkzeuge)
-- Z.214: ## Nachtrag 2026-11-22 (spaet): Befunde aus der Bruecken-Recherche
+- Z.140: ## Nachtrag 7.11. (Recherche modelle/archiv/RECHERCHE_2026-11-07_MESH_KANTEN.md, Quelle Subagent aus Repo-Seiten/Suchtreffern - vor Verkauf 
+- Z.150: ## 2026-11-08 pymeshfix (GPL) nur Test
+- Z.155: ## 2026-11-11 Relief aus Einzelbild (Beweistest, tools/relief_aus_foto.py)
+- Z.159: ## Nachtrag 2026-11-22: Primaerquellen-Pruefung Code UND Gewichte (9 Werkzeuge)
+- Z.216: ## Nachtrag 2026-11-22 (spaet): Befunde aus der Bruecken-Recherche

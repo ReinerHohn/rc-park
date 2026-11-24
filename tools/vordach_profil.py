@@ -169,9 +169,24 @@ def fotos_waehlen(KA, welt, box_uzw, aussen, w_min, max_fotos, fdir, mindestabst
     return [nm for _, nm, _ in gew]
 
 
+def kasten_oder_ersatz(g):
+    """Seitliche Grenzen (u0, u1) des Vorbaus, an denen das Vordach haengt. 24.11.2026 (Nutzer: 'wir hatten schon mal einen viel besseren Stand' = Handstand schwab_v3
+    mit geneigtem, geschweiftem Vordach; Kette 1122w-zc: vordach_profil.json 'fassaden: []'): messen() verlangte kanten_mass.kasten - bei duennen Vorbau-Kanten
+    (ebenen_masse: keine zwei 'vollen' Linien) gab es keinen Kasten, das Profil wurde NIE gemessen und der Generator baute eine ebene Platte bzw. Hoehenfeld-Stufen.
+    Ersatz (Guard): die Galerie-Breite aus dem Ebenen-Sweep (vorbauten_bauplan.galerie_messen, ebenfalls aus den Fotos) - die Grenzen sind nur Startwerte,
+    Ueberstand/Grate/Profil misst die Foto-Silhouette. Ohne Galerie-Band mit Vordach: None (kein Vordach, wie bisher)."""
+    Kb = (g.get("kanten_mass") or {}).get("kasten")
+    if Kb: return dict(Kb, quelle="kanten_mass.kasten (Fotokanten)")
+    G = g.get("galerie") or {}
+    if not G.get("vordach") or G.get("u0") is None or G.get("u1") is None: return None
+    u0, u1 = float(G["u0"]), float(G["u1"])
+    if not (np.isfinite(u0) and np.isfinite(u1)) or u1 - u0 < 1.0: return None          # degeneriert: kein Ersatz
+    return dict(u0=u0, u1=u1, breite=round(u1 - u0, 3), quelle="Ersatz: Galerie-Band des Ebenen-Sweeps (kein Kanten-Kasten)")
+
+
 def messen(F, g, KA, fdir, max_fotos=16, min_fotos=3, log=print):
     """Ein Vordach (Gruppe g der Fassade F aus vorbauten_auto.json mit kanten_mass.kasten und galerie.vordach) messen. dict oder None."""
-    KM = g.get("kanten_mass") or {}; G = g.get("galerie") or {}; V = G.get("vordach"); Kb = KM.get("kasten")
+    KM = g.get("kanten_mass") or {}; G = g.get("galerie") or {}; V = G.get("vordach"); Kb = kasten_oder_ersatz(g)
     if not (V and Kb): return None
     o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float)
     # 22.11.2026 (Schwabentor-1122: Wand im Kamerarahmen geneigt, fassade_tiefe 'wand_ebene'): gemessen wird im Kamerarahmen an der OERTLICHEN Wand (Versatz kipp_),
@@ -260,7 +275,7 @@ def messen(F, g, KA, fdir, max_fotos=16, min_fotos=3, log=print):
     t = np.linspace(0, 1, 13); prof = [[round(float(w_t - x * A), 3), round(float(z_t + (z_a - z_t) * g_profil(x, c_b)), 3)] for x in t]
     return dict(id=F.get("id"), u0=round(u0, 3), u1=round(u1, 3), w_wand=ww, w_t=round(float(w_t), 3), z_t=round(z_t, 3), z_a=round(z_a, 3), c=c_b, As=As_b, familie=fam if belegt else "gerade",
                 familie_gemessen=fam, fotos_familie=n_fam, fotos=[f_.name for f_ in FO], guete=round(g_b, 3), guete_gerade=round(gerade, 3),
-                je_foto=je, profil=prof, belegt=belegt, ueberstand_seitlich=s_, front=round(wf, 3), ueberstand_front=round(float(w_t - wf), 3), guete_traufe=round(g_tr, 3), am_suchrand=am_rand,
+                je_foto=je, profil=prof, belegt=belegt, ueberstand_seitlich=s_, kasten_quelle=Kb.get("quelle"), front=round(wf, 3), ueberstand_front=round(float(w_t - wf), 3), guete_traufe=round(g_tr, 3), am_suchrand=am_rand,
                 traufenden=dict(links=TE["links"], rechts=TE["rechts"], hoehe=round(TE["hoehe"], 3), quelle="Traufkante je 0,1 m, Median ueber die Fotos; s = Mittel links/rechts (Vordach symmetrisch gebaut)"), sweep=dict(z_traufe=float(V["z_traufe"]), z_anschluss=float(V["z_anschluss"])),
                 annahme=("" if belegt else f"Familie nicht von >= {min_fotos} Fotos belegt -> gerade; ") + "Seitenflaechen mit demselben Profil wie die Front (auf As skaliert); Ziegel glatt (Reihen < 0,8 mm im Druck); Eckzier (Spitzen) nicht gebaut"), FO
 
@@ -287,7 +302,7 @@ def main():
     for F in json.load(open(vj)).get("fassaden", []):
         for gi, g in enumerate(F.get("gruppen", [])):
             print(f"Fassade {F.get('id')} Gruppe {gi}:"); r = messen(F, g, KA, fdir, a.max_fotos, a.min_fotos)
-            if r is None: print("  kein Vordach (kanten_mass.kasten + galerie.vordach fehlen)"); continue
+            if r is None: print("  kein Vordach (galerie.vordach oder Kasten/Galerie-Breite fehlen)"); continue
             if isinstance(r, dict): E.append(dict(id=F.get("id"), gruppe=gi, **r)); continue
             erg, FO = r; erg["gruppe"] = gi; E.append(erg); kontrollbild(aus[:-5] + ".jpg", erg, FO)
     json.dump(dict(quelle="tools/vordach_profil.py (Grate/Traufe aus Fotokanten, SfM-Kameras kanten/kam.json)", fassaden=E), open(aus, "w"), indent=1)

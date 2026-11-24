@@ -1,4 +1,5 @@
-# Werkzeuge: pruefung_abnahme (39)
+# Werkzeuge: pruefung_abnahme (40)
+- `tools/bestand_tor.py` [-] bestand_tor.py - BESTAND-TOR: nie schlechter als der beste bisherige Kettenstand (24.11.2026, HART; Nutzer: "wir hatten mal so einen geilen Stand und du machst KI-Muell" / "sichere
 - `tools/breite_quellenvergleich.py` [-] breite_quellenvergleich.py - Helmbreite quer (E-W) je Hoehe aus DERSELBEN Silhouetten-Schaetzung (hybrid_abgleich.silhouette_quer) fuer Strassenwolke, Generator-STL, Drohnenwolke g
 - `tools/diff_parallel.py` [-] diff_parallel.py - Foto-Diff-Auswertung (modell_wettbewerb.py) PARALLEL statt nacheinander (7.11., 'Zeit ist Geld'): je (Glaettung, Modus) ein eigener Job ueber tools/job_start.sh 
 - `tools/durchfahrt_pruefen.py` [-] durchfahrt_pruefen.py - Ist eine gebaute Bogenoeffnung eine DURCHFAHRT durch das ganze Gebaeude? (21.11.2026, Kettenstufe 'fenster' nach oeffnungen_bogen)

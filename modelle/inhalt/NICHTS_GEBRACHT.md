@@ -31,7 +31,7 @@
   - Z.64: - BS29 (7.11.) Autokorrelation ohne Vorlage (Ortho Hauptfassade x150-870, y215-480, nur belegte Zellen maskier
   - Z.66: - BS23-Ergebnis (kh28, 7.11., Raster g0.18): default -0,0934 (88 Fotos) vs Offset-Schale -0,0925 (86 Fotos; Sc
   - Z.67: - BS23b (7.11.) Schale gegen default auf den 86 gemeinsamen Fotos: -0,0931 vs -0,0925, Differenz +0,0006 (Medi
-  - Z.68: - BS22-Ergebnis g=0,10 (88 Fotos, Raster): default -0,1643 (Median -0,1440, besser als d03_fix 64/88) < saeule
+  - Z.68: - BS22b-Ergebnis g=0,10 (88 Fotos, Raster): default -0,1643 (Median -0,1440, besser als d03_fix 64/88) < saeul
   - Z.69: - BS30 (7.11.) tools/fenster_einbauen.py (manifold3d): Typfenster als Nische (Wand-Glas 4-10 cm aus Wolke, w_w
   - Z.70: - BS31 (7.11.) Web-Fotos Runde 2 (Agent, Wikimedia Commons, 23 Suchbegriffe, 37 neue Bilder 130 MB nach fotos_
   - Z.72: - BS32 (7.11.) FENSTER-DIFF (22 Fotos, Raster g0.18, B=d03_fix vs F=d03_fix+5 Fenster aus Wolke): Region B -0,
@@ -66,7 +66,7 @@
   - Z.104: - BS48 (7.11.) Eigenbau-Min-Cut Schritt 1: tools/wolke_ebenen_ransac.py (Open3D iterativ, 4 cm, >=3000 Pkt) au
   - Z.105: - BS49 (7.11., Nutzer 'Ja, Schale') DRUCKKANDIDAT 1: netze5/schale2_fenster_dicht.stl = Offset-Schale (netze4/
   - Z.106: - BS50 (7.11.) Foto-Diff Druckkandidat 1 (schale2_fenster_dicht = Offset-Schale + 5 Fenster mit Glasnische+Sta
-  - Z.107: - BS49 (7.11.) Eigenbau-Min-Cut komplett (tools/wolke_mincut.py, nur numpy/scipy/trimesh/manifold3d, scipy-max
+  - Z.107: - BS49b (7.11.) Eigenbau-Min-Cut komplett (tools/wolke_mincut.py, nur numpy/scipy/trimesh/manifold3d, scipy-ma
   - Z.110: - BS51d (7.11.) Ausrichtung alter Generator (kaufhaus_measured.glb, 12 Hauptteile) -> Wolke, GPU-Distanzfeld +
   - Z.111: - BS52 (7.11.) Bauteilweise Einpassung alter Generator (tools/generator_teile_einpassen.py, GPU, Verschiebung+
   - Z.112: - BS53 (7.11.) Foto-Diff alter Generator (22 Fotos, global): T = bauteilweise eingepasst (17 Teile, 5 uebernom
@@ -89,7 +89,7 @@
   - Z.129: - BS70 (7.11.) Netzglaettung + glatte Schale (22 Fotos, Mittel, g0.18 | g0.05): d03_fix Taubin 5 Iter -0.0786 
   - Z.130: - BS71 (7.11.) Formvergleich schale2 vs d03_fix: schale2 duenne Huelle (78 m3, 1984 m2, 2.13 M Fl., ~4 cm Wand
   - Z.131: - BS72 (7.11.) DICHTE OpenMVS-NETZE im Foto-Diff (netze4, 22 Fotos, Mittel g0.18 | g0.05; d03_fix -0.0855 | -0
-  - Z.132: - BS72 (7.11.) Grobgenerator Kaufhaus (modelle/kaufhaus_grob, neuer Bauteiltyp stl_teil in tools/baukasten_gen
+  - Z.132: - BS72b (7.11.) Grobgenerator Kaufhaus (modelle/kaufhaus_grob, neuer Bauteiltyp stl_teil in tools/baukasten_ge
   - Z.133: - BS73 (7.11.) Grobgenerator Befund: Gesamthoehe 16.45 m (z 1.48..17.93) vs Wolkennetz 19.33 m (P99.5 16.9 vs 
   - Z.134: - BS74 (7.11.) kaufhaus_grob parameter_raum: dz/sz fuer dach/staffelgiebel/helme/gauben auf dz -0.5..+3.5 m, s
   - Z.135: - BS75 (7.11.) Varianten mvs_default (22 Fotos, Mittel g0.18 | g0.05; d03_fix -0.0855 | -0.0848): default (Wie

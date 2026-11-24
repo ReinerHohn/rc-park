@@ -16,6 +16,9 @@ Ausgabe: fenster_auto.json (je gemessenem Fenster 'sohlbank' {u0, u1, z0, z1, au
 Gebaut von bauteile.sohlbank (aus fenster_aus_json); Druckmindestmass dort (ANNAHME vermerkt).
 Aufruf: sohlbank_aus_fotos.py <fenster_auto.json> <fassade_fein-ordner> <objekt.json> [--nur f00] [--aus ordner]
 rc 0 = mindestens eine Sohlbank gemessen, 3 = keine (nichts geaendert).
+NACHTRAG 24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2: Sohlbank Nord fehlte, Band in 14 Fotos, Auskragung -0,025): Band in >= --min_fotos Fotos (Form belegt), aber
+ Auskragung aus der Blickschraege unbestimmt -> annahme_bank: Auskragung = gemessene dunkle Stirnhoehe (Achsabschnitt, ANNAHME Profil so tief wie hoch),
+ nur wenn sie <= der gesehenen Bandhoehe ist und die Enden in >= 3 Fotos frei liegen (sonst keine Bank); 'auskragung_quelle' nennt die ANNAHME.
 """
 import sys, os, json, glob, argparse, numpy as np
 
@@ -198,6 +201,35 @@ def geschwister(PP, zonen, dz=0.15, breite=0.25):
     return gr
 
 
+def annahme_bank(P, kam, zone, A, gi, a, e):
+    """24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2; Nutzer 'Alle Masse muessen aus Fotos kommen', Plan 'belegte Form nie verwerfen'): das dunkle Band ist in >= min_fotos
+    Fotos da (Form belegt), nur die AUSKRAGUNG laesst sich aus der Blickschraege nicht bestimmen (Steigung negativ/unsicher). Dann ANNAHME aus denselben Fotos:
+    Auskragung = dunkle STIRNHOEHE (Achsabschnitt der Bandhoehe bei kappa 0 = Frontalsicht; ANNAHME Profil etwa so tief wie hoch), nur <= gesehene
+    Bandhoehe, Band ueber die ganze Zonenbreite und <= 0,15 m unter ihr; Lage/Hoehe/Laenge wie gemessen (abschluss: Enden frei in >= 3 Fotos, sonst keine Bank - Schattenkante ist keine Leiste). Nie eine feste Zahl."""
+    ab = ((A.get("auskragung_bandhoehe") or {}).get("achsabschnitt") or [])
+    hs = ab[gi] if gi < len(ab) else None; Hm = float(np.median([p["H"] for p in P]))
+    # Gegenprobe 24.11. (Kopie 1122, f04 Tuer: Achsabschnitt 0,41 bei Bandhoehe ~0,2): die Stirn ist in Frontalsicht nie hoeher als das gesehene Band
+    if hs is None or not (0.0 < hs <= min(Hm + 0.01, a.max_auskragung)):
+        return dict(e, fehler=e.get("fehler", "") + f"; keine ANNAHME: Stirnhoehe {hs} nicht in 0..Bandhoehe {Hm:.3f}", punkte=P)
+    bh = A.get("auskragung_bandhoehe") or {}
+    if bh.get("d") is not None and bh.get("streuung") is not None and bh["streuung"] <= 0.02 and bh["d"] <= 2 * max(bh["streuung"], 0.005):
+        return dict(e, fehler=e.get("fehler", "") + f"; keine ANNAHME: Fotos messen KEINE Auskragung ({bh['d']:+.3f} +- {bh['streuung']:.3f} m, flaches dunkles Band)", punkte=P)
+    z_b = float(np.median([p["Y_unten"] for p in P]))
+    if z_b + hs > zone[2] + 0.03:                                            # Band reicht in die Oeffnung/Nische hinein = deren Dunkel, keine Leiste darunter (test_sohlbank C)
+        return dict(e, fehler=e.get("fehler", "") + f"; keine ANNAHME: Bandoberkante {z_b + hs:.2f} ueber der Unterkante {zone[2]:.2f} der Zone", punkte=P)
+    d, her = float(hs), f"Stirnhoehe {hs:.3f} m (Achsabschnitt Bandhoehe gegen kappa, {len(P)} Fotos; Band im Median {Hm:.3f} m hoch)"
+    r = abschluss(P, kam, zone, dict(d=d), a)
+    if "fehler" in r: return dict(e, fehler=e.get("fehler", "") + "; keine ANNAHME: " + r["fehler"], punkte=P)     # Enden muessen aus >= 3 Fotos kommen (echte Leiste, kein Schatten)
+    r["z0"] = round(z_b, 3); r["z1"] = round(z_b + hs, 3)                     # Hoehe = Stirn (Frontalsicht), passend zur ANNAHME
+    # Kopie 1122 (f01 Schlitz: 10-cm-"Bank" 0,32 m unter der Oeffnung): eine Sohlbank traegt die GANZE Oeffnung und liegt direkt darunter
+    if r["u0"] > zone[0] + 0.02 or r["u1"] < zone[1] - 0.02 or zone[2] - (z_b + hs) > 0.15:
+        return dict(e, fehler=e.get("fehler", "") + f"; keine ANNAHME: Band u {r['u0']:.2f}..{r['u1']:.2f} z bis {z_b + hs:.2f} traegt die Zone u {zone[0]:.2f}..{zone[1]:.2f} ab z {zone[2]:.2f} nicht", punkte=P)
+    laenge_q = f"Fotoenden {r.get('laenge_fotos')}"
+    e = {k: v for k, v in e.items() if k != "fehler"}
+    return dict(e, **r, auskragung=round(d, 3), auskragung_streuung=None, auskragung_aus=["ANNAHME"], fotos=len(P),
+                auskragung_quelle=f"ANNAHME: Auskragung = {her}; Blickschraege unbestimmt ({A.get('fehler', '')[:120]}); Laenge: {laenge_q}", punkte=P)
+
+
 def sohlbank_messen(bilder, kam, rel, rast, fenster, a):
     """Alle Fenster einer Wand -> je Fenster dict(u0, u1, z0, z1, auskragung, ...) oder dict(fehler, punkte)."""
     PP = [punkte(bilder, kam, rel, rast, q, a) for q in fenster]; Z = [zone_von(q) for q in fenster]; out = [None] * len(fenster)
@@ -205,9 +237,12 @@ def sohlbank_messen(bilder, kam, rel, rast, fenster, a):
         if not P: out[i] = dict(fehler=f"weniger als {a.min_fotos} Fotos zeigen ein dunkles Band", punkte=P)
     for g in geschwister(PP, Z):
         A = auskragung([PP[i] for i in g], a)
-        for i in g:
+        for gi, i in enumerate(g):
             e = dict(A, geschwister=len(g)); e.pop("d", None); e.pop("streuung", None)
-            if "fehler" in A: out[i] = dict(e, punkte=PP[i]); continue
+            if "fehler" in A:
+                out[i] = dict(e, punkte=PP[i])
+                if len(PP[i]) >= a.min_fotos: out[i] = annahme_bank(PP[i], kam, Z[i], A, gi, a, e)
+                continue
             e.update(abschluss(PP[i], kam, Z[i], A, a), auskragung=round(A["d"], 3), auskragung_streuung=round(A["streuung"], 3), auskragung_aus=A["aus"])
             out[i] = dict(e, punkte=PP[i])
     return out
@@ -226,7 +261,7 @@ def bild(pfad, tafeln):
             if "auskragung" in e:
                 dd = e["auskragung"]; h0 = float(np.median(K[:, 1] - K[:, 0] * dd)); cv2.line(im, (X(k0), Yp(h0 + k0 * dd)), (X(k1), Yp(h0 + k1 * dd)), (0, 0, 220), 1)
         cv2.putText(im, name[:44], (5, 14), 0, 0.4, (0, 0, 0), 1)
-        cv2.putText(im, (f"Auskragung {e['auskragung']:.3f} +-{e['auskragung_streuung']} m, {e['fotos']} Fotos" if "auskragung" in e else "") + (" " + e["fehler"][:40] if "fehler" in e else ""), (5, 30), 0, 0.38, (0, 0, 160), 1)
+        cv2.putText(im, (f"Auskragung {e['auskragung']:.3f} +-{e['auskragung_streuung'] if e.get('auskragung_streuung') is not None else 'ANNAHME'} m, {e['fotos']} Fotos" if "auskragung" in e else "") + (" " + e["fehler"][:40] if "fehler" in e else ""), (5, 30), 0, 0.38, (0, 0, 160), 1)
         cv2.putText(im, "kappa -> Bandhoehe H (Steigung = Auskragung)", (5, H_ - 6), 0, 0.35, (90, 90, 90), 1); out.append(im)
     if out: cv2.imwrite(pfad, np.hstack(out))
 
@@ -266,10 +301,10 @@ def main():
         for q, e in zip(F["fenster"], sohlbank_messen(bilder, kam, rel, rast, F["fenster"], a)):
             e["fenster"] = [q["u0"], q["u1"], q["z0"], q["z1"]]; L.append(e); tafel.append((f"{fid} u {q['u0']:+.2f}..{q['u1']:+.2f}", e))
             if "fehler" in e: print(f"{fid} u {q['u0']:+.2f}: keine Sohlbank - {e['fehler']}"); q.pop("sohlbank", None); continue
-            q["sohlbank"] = {k: e.get(k) for k in ("u0", "u1", "z0", "z1", "auskragung", "auskragung_streuung", "fotos", "geschwister", "auskragung_aus", "auskragung_bandhoehe", "auskragung_laenge", "u_streuung", "laenge_fotos")}
+            q["sohlbank"] = {k: e.get(k) for k in ("u0", "u1", "z0", "z1", "auskragung", "auskragung_streuung", "fotos", "geschwister", "auskragung_aus", "auskragung_bandhoehe", "auskragung_laenge", "u_streuung", "laenge_fotos", "auskragung_quelle")}
             q["sohlbank"]["quelle"] = (f"Fotos: dunkles Band unter der Unterkante (Einzelfoto-Orthos + SfM-Kameras), Auskragung aus {'+'.join(e['auskragung_aus'])} gegen die Blickschraege, "
-                                       f"{e['fotos']} Fotos, {e['geschwister']} Geschwister gemeinsam (tools/sohlbank_aus_fotos.py)")
-            n_ok += 1; print(f"{fid} u {q['u0']:+.2f}: SOHLBANK u {e['u0']:+.2f}..{e['u1']:+.2f} z {e['z0']:.2f}..{e['z1']:.2f} Auskragung {e['auskragung']:.3f} +-{e['auskragung_streuung']:.3f} m ({e['fotos']} Fotos)")
+                                       f"{e['fotos']} Fotos, {e['geschwister']} Geschwister gemeinsam (tools/sohlbank_aus_fotos.py)" + (" - " + e["auskragung_quelle"] if e.get("auskragung_quelle") else ""))
+            n_ok += 1; print(f"{fid} u {q['u0']:+.2f}: SOHLBANK u {e['u0']:+.2f}..{e['u1']:+.2f} z {e['z0']:.2f}..{e['z1']:.2f} Auskragung {e['auskragung']:.3f} " + (f"+-{e['auskragung_streuung']:.3f} m" if e.get('auskragung_streuung') is not None else "m ANNAHME") + f" ({e['fotos']} Fotos)")
         bericht[fid] = L; bild(os.path.join(aus, f"sohlbank_{fid}.jpg"), tafel)
     json.dump(bericht, open(os.path.join(aus, "sohlbank_aus_fotos.json"), "w"), indent=1, ensure_ascii=False, default=lambda x: x.tolist() if hasattr(x, "tolist") else str(x))
     if not n_ok: print("keine Sohlbank gemessen"); return 3

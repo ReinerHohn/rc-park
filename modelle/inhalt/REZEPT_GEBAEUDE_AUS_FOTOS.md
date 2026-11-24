@@ -34,9 +34,9 @@
   - Z.73: - L13 Handmasse gelten nur auf ihrer Messebene: Handpixel auf die in der Wolke gefundene Ebene umrechnen, bevo
   - Z.74: - L14 Jedes Pruefwerkzeug braucht eine Mindest-Pixelgroesse je Pruefstruktur und meldet darunter UNGEPRUEFT st
   - Z.75: - L15 Ein Foto-Test auf Unterscheidungskanten ist erst gueltig, wenn seine Empfindlichkeit an einer sicher vor
-  - Z.76: - L11 Jede Kamera nennt ihren Rahmen ausdrücklich (rahmen_verschiebung, auch [0,0,0]). Eine fehlende Angabe da
-  - Z.77: - L12 Druckteilung folgt aus der Geometrie: Schnitt genau in waagerechte Unterseiten (Decke wird Bettfläche), 
-  - Z.78: - L13 Wiederholte Anbauteile ohne Raster: Lagen je Instanz aus der Messdatei, im Quellrahmen umgerechnet. Zähl
+  - Z.76: - L11b Jede Kamera nennt ihren Rahmen ausdrücklich (rahmen_verschiebung, auch [0,0,0]). Eine fehlende Angabe d
+  - Z.77: - L12b Druckteilung folgt aus der Geometrie: Schnitt genau in waagerechte Unterseiten (Decke wird Bettfläche),
+  - Z.78: - L13b Wiederholte Anbauteile ohne Raster: Lagen je Instanz aus der Messdatei, im Quellrahmen umgerechnet. Zäh
   - Z.80: - L16 Eine Messebene nie ungemessen aus einem Grobkoerper uebernehmen: zuerst Ebene aus Wolke (Histogramm) UND
   - Z.81: - L17 Steile/schlanke Aufbauten: Form r(z) aus Fotosilhouetten auf der Ebene durch die Bauteilachse quer zur B
   - Z.82: - L18 Vor jeder Messung pruefen, welches Bauteil im Foto wirklich wo liegt (Modellpunkt ins Foto projizieren),
@@ -76,10 +76,10 @@
 - Z.133: ## Neues Gebäude in Schritten
   - Z.155: - L29 Freistehende Figuren/Aufbauten: Achse (u, s) und Hoehenmarken (Scheitel, Spitze, Sohle) je Instanz mit Z
   - Z.156: - L30 Eine Pruefzeile auf ein freistehendes Teil darf nicht ueber Flaechenpunkte im Achsenfenster messen: die 
-  - Z.163: - L31 Ein Bauteil mit schlechtem Wolkenbeleg kann in der Lage stimmen und nur in der FORM falsch sein (Stirn d
-  - Z.164: - L32 Zwei Kameras nahe beieinander (Schnittwinkel 9 Grad) liefern +-0,27 m; erst die dritte Kamera mit >= 20 
-  - Z.165: - L33 Pruefzeilen auf Teile mit Vordach/Ueberstand als Schnitt in 2 Hoehen + Reichweite in n und +-u (Mitte de
-  - Z.207: - L32 Schwesterreihe gleichen Typs: Form (Breite, Vordach, Wandhoehe) uebertragbar, Lage/Hoehe NICHT (0,5-0,8 
+  - Z.163: - L31b Ein Bauteil mit schlechtem Wolkenbeleg kann in der Lage stimmen und nur in der FORM falsch sein (Stirn 
+  - Z.164: - L32b Zwei Kameras nahe beieinander (Schnittwinkel 9 Grad) liefern +-0,27 m; erst die dritte Kamera mit >= 20
+  - Z.165: - L33b Pruefzeilen auf Teile mit Vordach/Ueberstand als Schnitt in 2 Hoehen + Reichweite in n und +-u (Mitte d
+  - Z.207: - L32c Schwesterreihe gleichen Typs: Form (Breite, Vordach, Wandhoehe) uebertragbar, Lage/Hoehe NICHT (0,5-0,8
   - Z.232: - **L47 (11.11., Nutzer-Sichtfunde)**: Zielfinder-Schwellen nach BELEG (Anzahl Fotos), nicht nach Pixelsumme -
   - Z.233: - **L48 (11.11., Nutzer-Sichtfunde generalisieren)**: (a) JEDER Nutzer-Sichtfund wird automatisch Testfall: Be
   - Z.238: - **L49 (11.11., Formfund Westgiebel, Nutzerauftrag "Lerne aus heute")**: Ein Nutzer-Formfund kann richtig UND
@@ -89,10 +89,10 @@
   - Z.242: - **L53 (11.11., Laufzeit)**: Laufzeitaussagen ("45-90 min, nicht aenderbar") nur gemessen machen: Messung erg
   - Z.243: - **L54 (11.11., Reihenfolge Kreis)**: Nutzerfunde vor Fehlteilen und vor "schwaechstes Teil"; innerhalb Form 
   - Z.244: - **L55 (12.11., Konsolen)**: Eine konvexe Huelle ueber ein konkaves gemessenes Profil fuellt die Sehne (rote 
-  - Z.245: - **L55 (11.11., Kennzahl-Kopplung)**: Eine Teilnote darf nur vom Teil und vom Foto abhaengen. Foto-F1 hing ue
+  - Z.245: - **L55b (11.11., Kennzahl-Kopplung)**: Eine Teilnote darf nur vom Teil und vom Foto abhaengen. Foto-F1 hing u
   - Z.246: - **L56 (11.11., LLM-Pruefer)**: Ein Bildpruefer am Dreierbild sieht FORM (Kasten, Formfamilie 6/6 gefangen), 
   - Z.247: - **L57 (11.11., Leerlauf-Ursache)**: 24 von 30 verworfenen Grauzonen-Runden hatten unveraenderte Teile - Mech
-  - Z.249: - **L55 (11.11., Formkorrektur ohne F1-Gewinn)**: Eine Formkorrektur an kleinem Bauteilanteil (ein Block, ~1 m
-  - Z.252: - L55 (2026-11-11, Kreis2 Baldachin-Mitte): Relative Lage zweier Teile (Krone ueber Figur) nur in DEMSELBEN Ka
+  - Z.249: - **L55c (11.11., Formkorrektur ohne F1-Gewinn)**: Eine Formkorrektur an kleinem Bauteilanteil (ein Block, ~1 
+  - Z.252: - L55d (2026-11-11, Kreis2 Baldachin-Mitte): Relative Lage zweier Teile (Krone ueber Figur) nur in DEMSELBEN K
   - Z.254: - **L58 (11.11., Eckfiguren Erker)**: Ein Modell-Eckpunkt (Polygonvertex bei Gesimshoehe) in mehrere kalibrier
-  - Z.258: - L55 (12.11.): Aussparungen eines Profilteils an die lokale Front (n_front) binden; nach Aenderung Teilvolume
+  - Z.258: - L55e (12.11.): Aussparungen eines Profilteils an die lokale Front (n_front) binden; nach Aenderung Teilvolum

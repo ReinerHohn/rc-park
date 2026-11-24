@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (132)
+# Werkzeuge: sonstige (142)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -31,6 +31,8 @@
 - `tools/haufen_klaeren.py` [-] haufen_klaeren.py - Strassenhaufen des Grundriss-Tors (tools/wolke_grundriss_pruefen.py, Test A) AUTOMATISCH klaeren: Doppelwand oder Umgebung?
 - `tools/haut_find.py` [-] haut_find.py — Haut-Teil(e) auf der Bauplan-Karte FINDEN (Nummer -> wo hin).
 - `tools/hintergrundhaus.py` [seg] hintergrundhaus.py - HINTERGRUNDHAUS (Reifegrad 1) in Minuten: LoD2-Koerper + LoD2-Dach (DOM1 als Gegenprobe), Fenster aus vorhandenen Fotos, sonst Fensterraster als ANNAHME, duenn
+- `tools/hoehen_angleich.py` [seg] hoehen_angleich.py <objekt.json> [--stl P] [--wolke P] [--kanten sweep.npz] [--aus audit/hoehen_angleich.json] [--bild PNG] [--nur-messen] HOEHEN-ANGLEICH WAAGERECHTER BAUTEILE (Ke
+- `tools/hoehensitz.py` [seg] hoehensitz.py <objekt.json> [--fotosatz F] [--wolke P] [--stl P] [--json J] [--bild PNG] [--probe] [--rot] [--n-wolke N] [--n-modell N] HOEHENSENSITIVES FORMMASS je Seite (Auftrag 
 - `tools/http_holen.py` [-] http_holen.py - eine URL laden, bei HTTP 429/503 (Drosselung) mit Wartezeit und Backoff wiederholen (23.11.2026). Anlass Lauf schwabentor-1122p: commons_harvest lud 60 Bilder in 70
 - `tools/hybrid_abgleich.py` [gen] hybrid_abgleich.py - Dachflaechen je QUELLE getrennt fitten (Strassenwolke, Drohnenwolke, Generator) und Abweichungen melden (Register BR/BS).
 - `tools/insert_plate.py` [-] insert_plate.py — EBENE EINHÄNG-PLATTE für eine man-made Fläche (Einschnitt/Trog/ Portal-Deck/Stützwand), die das grobe Egg-Crate systematisch übertreppt.
@@ -38,6 +40,8 @@
 - `tools/kaufhaus_bauplan.py` [-] kaufhaus_bauplan.py — bemaßter Bauplan Historisches Kaufhaus Freiburg, aus dem Frontalfoto vermessen (Referenz Traufe 9,7 / First 21,4 m = LOD2 amtlich). Front-Ansicht + Querschnit
 - `tools/kaufhaus_measured.py` [gen] kaufhaus_measured.py — Historisches Kaufhaus Freiburg, FEIN vermessen aus den hochauflösenden Frontalen/Detailfotos (kh_front2025b, kh_fenster, kh_erker) gegen Referenz Traufe 9,7 
 - `tools/ketten_match.py` [seg] ketten_match.py - Linienzuege (Rippen) per Mehrfoto-Zuordnung triangulieren: Ketten werden in JEDEM Foto aus der Stabilitaetskarte extrahiert (Skelett, Lueckenschluss, Kreuzungen g
+- `tools/ketten_probe.py` [-] ketten_probe.py - Helfer des Ketten-Probelaufs (tools/ketten_probelauf.sh): Fotowahl, Marken verstellen, Sichern der Kettenausgaben im Code-Ordner, Auswertung.
+- `tools/ketten_probelauf.sh` [sh] ketten_probelauf.sh [--plan] [--grundstand] [--rev REV] [--bis1 STUFE] [--bis2 STUFE] [--n FOTOS] [--erneuern] [--ohne-job] KETTEN-PROBELAUF vor jedem Merge in main (Skill kette-sc
 - `tools/knoten_abstimmung.py` [seg] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
 - `tools/konsolen_zelle.py` [seg] konsolen_zelle.py - Konsolenform aus der GEFALTETEN Musterzelle (wie baluster_fit: Profil aus der Faltung), danach Phase je Quelle, Entscheidregel.
 - `tools/laufzeit_bericht.py` [-] laufzeit_bericht.py <kettenlog> [--vorlauf <kettenlog>] [--aus <json>] [--ab-zeile N]
@@ -52,11 +56,11 @@
 - `tools/malwerkzeug.py` [gen] malwerkzeug.py [--aus ORDNER] [teil ...] - druckbare Malhilfen fuer das Bemalen der Modellteile (17.11.2026, Nutzer: "Werkzeug ausdrucken, das Geiles zum Anmalen"). Teile (ohne Ang
 - `tools/manmade3d.py` [-] manmade3d.py — 3D: menschgemachte Objekte (scharfe Kanten + Flächen darin) auf neutralem Gelände. Farbige ebene Platten = die erkannten Flächen (plan-gefittet), rote Linien = die g
 - `tools/manmade_edges.py` [seg] manmade_edges.py — menschgemachte Objekte über SCHARFE Kanten erkennen (+ Flächen darin). Idee: natürliches Gelände ist GLATT (Normale dreht langsam), menschgemachtes (Einschnitt, 
+- `tools/merge_sperre.sh` [sh] merge_sperre.sh [OBJEKT ...] - MERGE-SPERRE nach main (24.11.2026, Nutzer: "sichere das hart ab!"; Skill kette-schleife Schritt 5, tools/ketten_probelauf.sh). Verweigert den Merge,
 - `tools/messen_interaktiv.py` [seg] messen_interaktiv.py <objekt> --wolke w.npy --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8765] Interaktives Messen AUS DER WOLKE (Nutzerwunsch 8.11.): lokaler Web
 - `tools/messung_uebernehmen.py` [gen] messung_uebernehmen.py <objekt> [--anwenden] Uebernimmt die BESTAETIGTEN Direktmessungen aus <objekt>/messungen_wolke.json (tools/messen_interaktiv.py) in die Parameter von objekt.
 - `tools/model3d_textured.py` [seg] (kein Docstring)
 - `tools/nachhol_zwischenspeicher.py` [-] nachhol_zwischenspeicher.py - Ergebnis-Zwischenspeicher nach EINGABE-HASH fuer das Nachholen (tools/seiten_luecken.py), 24.11.2026.
-- `tools/sift_paar_speicher.py` [-] sift_paar_speicher.py - SIFT-Abgleich JE PAAR wiederverwenden (Nachholen, Stufe merkmale in tools/zusatzfotos_registrieren.py), 24.11.2026.
 - `tools/neben_details.py` [seg] neben_details.py <objekt.json> [--daten DIR] [--stl a.stl] [--aus DIR] [--max 24] [--kandidaten 6] [--ohne-verdecker] - je erkanntem Bauteil eine DETAILANSICHT Foto | Modell aus de
 - `tools/objekt_daten.py` [-] objekt_daten.py - GENERISCH: amtliche Grunddaten eines neuen Objekts holen und daraus Modellrahmen + 3D-Anker bauen (Nullstart-Stufe 0).
 - `tools/openbuildings_fallback.py` [gen] openbuildings_fallback.py — HEBEL 5: Weltklasse-Fallback-Geometrie, wenn weder Google 3D Tiles (Hebel 1) noch lokales LOD2 (Hebel 3) ein Mesh liefern.
@@ -70,6 +74,7 @@
 - `tools/quellen_inventar.py` [-] quellen_inventar.py — ERSCHÖPFENDE, ERZWUNGENE Quellen-Inventur für ein Bauwerk.
 - `tools/quellfilter.py` [col] quellfilter.py <workspace> [--ply <workspace>/fused.ply] [--stichprobe N] [--nur_messen] [--threads 4] FREIRAUM-NACHFILTER DER DICHTEN WOLKE (24.11.2026, Kette schwabentor 1122z: b
 - `tools/real_vs_modell.py` [seg] real_vs_modell.py — scharfe Bewertung REALITÄT gegen MODELL.
+- `tools/register_ids_eindeutig.py` [-] register_ids_eindeutig.py - doppelt vergebene Register-IDs (REZEPT, NICHTS_GEBRACHT, VERSUCHSREGISTER) umbenennen: n-tes Vorkommen bekommt Buchstaben-Suffix (L-KR28#2 -> L-KR28b), 
 - `tools/rund_aus_umriss.py` [seg] rund_aus_umriss.py - RUNDE KOERPER (Treppenturm, Rundturm, Saeule, Erkertuermchen) aus den FOTO-UMRISSEN vermessen (21.11.2026).
 - `tools/saeulen_breite_suche.py` [-] saeulen_breite_suche.py - Breite JEDES verlaengerten Pfeilers vom Foto-Diff bestimmen lassen (statt Mittelprofil; Nutzer 7.11.: echter Unterschied darf nicht untergehen). Je Pfeile
 - `tools/saeulen_schliessen.py` [gen] saeulen_schliessen.py - GENERISCH: schwebende Saeulen/Pfeiler/Stuetzen eines Netzes bis zum Boden verlaengern (Nutzerfund 6.11.: Saeulen abgeschnitten). Regel (Statik, kein Objektw
@@ -88,6 +93,7 @@
 - `tools/shape_extract.py` [-] shape_extract.py — FORM AUTOMATISCH AUS DEM FOTO MESSEN (statt Augenmaß).
 - `tools/sichtrichtung_kohaerenz.py` [-] Sichtrichtungs-Kohaerenz je Wolkenpunkt (allgemein, fuer jedes Objekt mit Dichte-Wolke + vis + Kameras).
 - `tools/sift_einstellung.py` [-] sift_einstellung.py - EINE Stelle fuer die COLMAP-SIFT-Merkmalssuche der Gesamtkette (24.11.2026) + Pflicht-Tor gegen still verworfene Bilder.
+- `tools/sift_paar_speicher.py` [-] sift_paar_speicher.py - SIFT-Abgleich JE PAAR wiederverwenden (Nachholen, Stufe merkmale in tools/zusatzfotos_registrieren.py), 24.11.2026.
 - `tools/sim3_robust.py` [-] sim3_robust.py - EINE gemeinsame robuste Sim3 (Aehnlichkeit X -> Y) mit fester Meter-Schwelle im Zielrahmen (22.11.2026). ANLASS: wand_dicke_tor.teile_laden legte ein Modell per Um
 - `tools/skin_smart_split.py` [gen] skin_smart_split.py — teilt die 3D-Haut KLUG in druckoptimierte Stücke.
 - `tools/snap_in_objekt.py` [-] snap_in_objekt.py - wege3d.json (rippen_pfad_snap.py) -> rippen_pfade.pfade_ohne_spiegel eines erker_polygon (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/snap
@@ -128,6 +134,9 @@
 - `tools/viadukt_gelaende.py` [gen] viadukt_gelaende.py — Viadukt, der der ECHTEN Trasse + dem GELÄNDE folgt.
 - `tools/vorbauten_bauplan.py` [seg] vorbauten_bauplan.py - Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep in eine BAULISTE uebersetzen (20.11.2026).
 - `tools/vorwissen_empfindlichkeit.py` [-] vorwissen_empfindlichkeit.py - Wie viel Vorwissen steckt im Nullstart? (Register BI)
+- `tools/werkzeug_aehnlich.py` [-] werkzeug_aehnlich.py - Doppelgaenger-Warnung: welche tools/*.py tun schon (fast) dasselbe wie ein neuer Auftrag / ein neues Werkzeug?
+- `tools/wissen_suchen.py` [-] Wissen suchen: EIN Aufruf durchsucht Wissensbaum, Register, Archiv, Logbuecher, Memory, Werkzeug-Kopfkommentare und git log.
+- `tools/wissen_wiederfinden.py` [-] wissen_wiederfinden.py - NACHWEIS: findet die Baumsuche verlorenes Wissen wieder? Recall@5 auf echten Verlustfaellen.
 - `tools/zeit_je_modell.py` [-] zeit_je_modell.py - Wanduhr je Nullstart-Stufe und je Schritt aus ALLEN vorhandenen nullstart_bericht.json (Sweetspot 'viele Modelle in kurzer Zeit'). Zeigt, wo die Zeit eines Mode
 - `tools/zier_3d.py` [-] zier_3d.py - Bild-zu-3D fuer Zierteile (Figuren ...) aus zier_ausschnitt.py (2026-11-05).
 - `tools/zier_ausschnitt.py` [seg] zier_ausschnitt.py - Ausschnitte erkannter Zierteile (Figuren, Wappen ...) in VOLLER Fotoaufloesung aus den Originalfotos (2026-11-05).
