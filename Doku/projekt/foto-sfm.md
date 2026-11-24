@@ -79,6 +79,7 @@ Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTIN
 - 09.11. · Leave-one-out-Kameraguete (Flaechenfehler in m) → ✓ Methode · Median 2 mm, 13 unbrauchbar erkannt [archiv/LOG_KAMERA_GUETE_2026-11-09]
 - 16.11. · Kameras ohne Plausibilitaetspruefung nutzen → ✗ · 14 PnP-Tele-Loesungen bis 350 000 km liessen embree kriechen; Abstand > 600 m / f > 10 x Breite sperren [NICHTS_GEBRACHT 16.11.]
 - 15.11. · Kameras unter Gelaende als Hinweis-Tor (`kamera_plausibel.py`) → ✓ · fand Clip, der eine Geisterwand erzeugte [archiv/STAND_2026-11-14 08:10]
+- 24.11. · Nachholen nur fuer GANZ ungesehene Waende (< 20 %) → ✗ · 1122x f02 44 % gesehen, 239 m2 ohne Bilddaten, rc 0, nichts geschah; davon ~190 m2 hinter dem angebauten Nachbarhaus (nie fotografierbar), 57 m2 frei (z 17,7-23,5 m). ↺ `seiten_luecken` 'teilweise': fotografierbar >= 10 % UND >= 50 m2 (LoD2-Nachbar abgezogen) loest Nachholen/Wiederholung aus, je Kandidat nur ein Versuch (`versucht_kandidaten.json`), sonst Fotoauftrag [tools/test_seiten_teilweise.py]
 
 ## Offen
 - Martinstor-Kette von null (`kette-martinstor-1120`): tor_zerfall, fremde_seite.txt, Seiten getrennt pruefen (Stand 20.11.) [LOGBUCH UEBERGABE]

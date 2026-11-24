@@ -28,8 +28,8 @@ def kandidaten(tor_json, seiten_json, seit=None):
     """-> (waende, grund). waende = [{nr, id, abdeckung_vorher, neu_sicht}] der ungesehenen Waende mit >= 1 belegter neuer Kamera.
     seit: Zeitstempel - ein Tor-Bericht, der aelter ist, gilt nicht (Nachholen dieses Laufs uebersprungen oder abgebrochen)."""
     if not os.path.exists(seiten_json): return [], "kein seiten_luecken.json"
-    S = json.load(open(seiten_json)); ung = set(S.get("ungesehen") or [])
-    if not ung: return [], "keine ungesehene Wand"
+    S = json.load(open(seiten_json)); ung = set(S.get("ungesehen") or []) | set(S.get("teilweise") or [])      # 24.11.2026: teilweise ungesehen (seiten_luecken.teilweise_ungesehen) zaehlt mit
+    if not ung: return [], "keine ungesehene oder teilweise ungesehene Wand"
     if not os.path.exists(tor_json): return [], "kein kameras_nachtragen_tor.json (Nachholen ohne Tor-Schritt oder nicht gelaufen)"
     if seit is not None and os.path.getmtime(tor_json) < seit: return [], "kameras_nachtragen_tor.json stammt nicht aus diesem Lauf (Nachholen uebersprungen/abgebrochen)"
     T = json.load(open(tor_json))
@@ -39,7 +39,7 @@ def kandidaten(tor_json, seiten_json, seit=None):
     for w in S.get("waende") or []:
         if w["nr"] in ung and sicht.get(w["nr"], {}).get("neu_sicht", 0) >= 1:
             raus.append(dict(nr=w["nr"], id=w.get("id") or sicht[w["nr"]].get("id") or "f%02d" % w["nr"], abdeckung_vorher=w.get("abdeckung"), neu_sicht=sicht[w["nr"]]["neu_sicht"]))
-    return raus, ("" if raus else "keine belegte neue Kamera sieht eine ungesehene Wand")
+    return raus, ("" if raus else "keine belegte neue Kamera sieht eine ungesehene/teilweise ungesehene Wand")
 
 
 def gewinn(seiten_json, neu_dir, min_gewinn=MIN_GEWINN, alt_dir=None, e_min=None):
