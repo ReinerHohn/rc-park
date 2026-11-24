@@ -54,6 +54,7 @@ Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-
 - 9.11. · synthetischer Rundlauf als Kantenmetrik → ✗ verworfen · Metrik trennt die Verfahren nicht [archiv/LOGBUCH_2026-11-09]
 - 24.11. · Realitäts-% nach Augenmaß → ↺ `konvergenz.py` · fester Fotosatz je Seite, F1 grob+fein gepaart, PLATEAU = Methode wechseln; Probe 1122: nur 3/20 Satzfotos gemessen, 10/14 Torfotos Eckblicke [test_konvergenz]
 - 24.11. · Koerperwand auf LoD2-Ebene statt Fotokanten-Ebene → ↺ `wandlage_fotokanten.py` (Stufe bauplan_wandlage) · 1122x: f00 0,32 / f01 0,27 m zu weit aussen (Wolke bestaetigt), f02 schwach belegt, f03 Wolken-Veto; Guard Kanten+Wolke, Wand am Grundkoerper bis an die Ecken, Fenster folgen; Abnahme 1122za offen [test_wandlage_fotokanten]
+- 24.11. · Bauteile nach gesetzter Wand (Risiken a/b) → ↺ `bauteile.wand_gesetzt`/`ecken_gesetzt`: Tor/Bogen, Laube, Wandbild-Oeffnungen, Umgang (Kanten verschoben, nur wenn Scheibe den Hoehenbereich deckt), Vorbau-Einbindung ab gesetzter Wand; Gegenprobe ohne Versatz 7 Fehler (Tor 0,25 statt 0,6 m, Umgang schwebt 0,35 m vor, Vorbau Spalt, 2 Koerper). Dach (c) gemessen: Wolke zeigt Traufe 0,9-1,3 m vor der Fotokanten-Wand (f00 p90 +0,4..+0,6, f01 +1,0 m gegen LoD2) = echter Ueberstand, groesser als |w| -> Dach muss nicht mitwandern; am Bau 1122za ungeprueft [test_wandbezug_bauteile]
 
 **Messen und Zählen am Foto**
 - 10.11. · Triangulation mit 7-9° Schnittwinkel → ✗ · ±0,25-0,33 m; dritte Kamera mit ≥ 20° [NICHTS_GEBRACHT 11.11.; REZEPT L32]
