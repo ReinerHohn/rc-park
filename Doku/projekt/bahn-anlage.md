@@ -11,6 +11,7 @@ Angelegt 23.11.2026 auf Nutzerwunsch („eigener Projektbaum für Bahn und Anlag
 
 ## Versucht
 - (Hirschsprung, 1:160) · Gelände als Laser-Spanten/Egg-Crate, Druck-Hautplatten, Z-Etagen-Stapel → ✓ gebaut (Nutzer 23.11.: „Höhenreliefs haben wir im Hirschsprung schon geschafft") · noch nie für ein H0-Stadtmodul mit Straßen benutzt [WERKZEUGKETTE_WUNDERLAND Kurzfassung 2]
+- 24.11. · Malplan je Wand aus dem 1-cm-Wandbild (`tools/malplan.py`, Kettenstufe nach dem Bau, nur Ausgabe: audit/malplan.json/.md/_<wand>.jpg) → ✓ Zonen Putz/Sandstein/Scharten auf Schwabentor Nord/Sued plausibel · ✗ Zonenfarben sind fotografiert (Schattenseite Sued: Sandstein fast schwarz, Putz grau), Wandmalerei/Durchfahrt/Nachbarhaeuser nicht erkannt, Palette-Hex = ANNAHME [Agent 24.11.]
 - 08.10. · fahrende N-Bahn als Bewegung → ✗ zu viel Wartung · statisch + Magnet-Drehscheibe [konzept-geschaeft] → für H0 neu bewertet (s. Gilt)
 
 ## Offen (Vorschläge, Nutzer entscheidet)

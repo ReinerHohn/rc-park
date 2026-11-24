@@ -908,6 +908,17 @@ def main():
                   ohne_kamera=[b_["name"] for b_ in nd_.get("bauteile") or [] if not b_.get("bild")],
                   schwach=[b_["name"] for b_ in nd_.get("bauteile") or [] if any(v_.get("schwach") for v_ in b_.get("ansichten") or [])], hinweis="ANSEHEN: audit/neben_details.jpg - Befund je Bauteil erst an der Detailansicht bestaetigen")
         except Exception as e: notiz(B, "neben_details_ergebnis", False, fehler=f"audit/neben_details.json nicht lesbar (rc {rc_d}): {type(e).__name__} {e}"[:240])
+    # 24.11.2026 MALPLAN (Nutzer 23.11.: "das Malen ist fuer mich das Kritischste", Doku/projekt/bahn-anlage.md Gestaltung/Malen): Farbzonen je Wand aus dem
+    # 1-cm-Wandbild (fassade_fein, sonst fassade) -> audit/malplan.json + malplan_<wand>.jpg + malplan.md. NUR Ausgabe/Bericht, kein Tor, aendert nichts am Modell. CPU, Sekunden.
+    _mp_ein = next((q_ for q_ in (os.path.join(D, "fassade_fein"), os.path.join(D, "fassade")) if glob.glob(os.path.join(q_, "ortho_f*.png"))), None)
+    if _mp_ein and os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
+        t_mp = time.time(); rc_mp, _ = lauf(B, "malplan", [PY, "-W", "ignore", "-I", "tools/malplan.py", _mp_ein, "--aus", os.path.join(Z, "audit"), "--objekt", a.ziel], log, ok=(0, 3))
+        try:
+            if not KB_frisch(os.path.join(Z, "audit", "malplan.json"), t_mp): raise FileNotFoundError("nicht in diesem Lauf geschrieben (Stand eines frueheren Laufs)")
+            mp_ = json.load(open(os.path.join(Z, "audit", "malplan.json")))
+            notiz(B, "malplan_ergebnis", rc_mp == 0, waende=len(mp_.get("waende") or []), zonen={w_["wand"]: [f"{z_['material']} {z_['hex']} {round(100 * z_['anteil'])}%" for z_ in w_["zonen"]] for w_ in mp_.get("waende") or []},
+                  hinweis="ANSEHEN: audit/malplan_<wand>.jpg; Anleitung audit/malplan.md (Material = Farbregel-ANNAHME)")
+        except Exception as e: notiz(B, "malplan_ergebnis", False, fehler=f"audit/malplan.json nicht lesbar (rc {rc_mp}): {type(e).__name__} {e}"[:240])
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
     if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
