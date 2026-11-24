@@ -215,12 +215,21 @@ def kand_namen(kand):
     return sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)
 
 
+# 24.11.2026 (Kette 1122zb): der erste Versuch fuer f02 (244 Kandidaten, 29,6 min) lief mit der gekippten Abbildung SfM -> Modell (kameras_nachtragen, Massstab 0,0017):
+# alle neuen Kameras auf einem Punkt im Turm, 0 sehen eine Wand - und stand trotzdem als 'versucht' in der Liste, d. h. die Kandidaten waeren nie wieder nachgeholt worden.
+# Seitdem prueft kameras_nachtragen die Abbildung (rc 4 = Fehlschlag-Marke, kein Eintrag hier). Eintraege OHNE dieses Merkmal stammen von vor dem Tor und zaehlen nicht:
+# genau EIN neuer Versuch je Bestand (danach gilt die Liste wieder).
+VERSUCH_GEPRUEFT = "abbildung_geprueft"
+
+
 def kandidaten_versucht(Z, kand):
     """Liste versucht_kandidaten.json in <Z>: sind ALLE Kandidaten schon in einem frueheren erfolgreichen Nachholen gewesen (Vereinigung aller Versuche)?
     -> (ja, text). Fuer TEILWEISE ungesehene Waende: kein zweiter Versuch ohne neues Foto (das Skript registriert ohnehin alle Kandidaten, unabhaengig von den
     Zielwaenden). ANNAHME: dieselben Fotos gegen ein neu gerechnetes SfM bringen keine neue Sicht auf die Zone - neue Fotos/Downloads oeffnen den Weg wieder."""
     try: V = json.load(open(os.path.join(Z, "versucht_kandidaten.json"))).get("versuche") or []
     except (OSError, ValueError): return False, "noch kein Versuch"
+    n_alt = sum(1 for v in V if not v.get(VERSUCH_GEPRUEFT)); V = [v for v in V if v.get(VERSUCH_GEPRUEFT)]      # Versuche vor dem Abbildungs-Tor zaehlen nicht (siehe VERSUCH_GEPRUEFT)
+    if not V: return False, "noch kein gueltiger Versuch" + (f" ({n_alt} vor dem Abbildungs-Tor von kameras_nachtragen - einmal neu)" if n_alt else "")
     alle = set(); [alle.update(v.get("kandidaten") or []) for v in V]; neu = [k for k in kand_namen(kand) if k not in alle]
     if neu: return False, f"{len(neu)} neue Kandidaten (z. B. {neu[0].rsplit(':', 1)[0]})"
     return True, f"alle {len(kand)} Kandidaten schon nachgeholt ({len(V)} Versuch(e), zuletzt {V[-1].get('zeit')} fuer {V[-1].get('waende')})"
@@ -231,7 +240,7 @@ def kandidaten_merken(Z, kand, waende, hoechstens=20):
     p = os.path.join(Z, "versucht_kandidaten.json")
     try: V = json.load(open(p)).get("versuche") or []
     except (OSError, ValueError): V = []
-    V = (V + [dict(zeit=time.strftime("%Y-%m-%d %H:%M"), waende=list(waende), kandidaten=kand_namen(kand))])[-hoechstens:]
+    V = (V + [dict(zeit=time.strftime("%Y-%m-%d %H:%M"), waende=list(waende), kandidaten=kand_namen(kand), **{VERSUCH_GEPRUEFT: True})])[-hoechstens:]
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); __import__("json_sicher").schreiben(p, dict(versuche=V))
 
 
@@ -371,7 +380,9 @@ def main():
                 ("paare", "", "", f"{VS} {T}/zusatzfotos_lightglue.py paare --ziel {Z} --ref-sparse {a.sparse} --ref-bilder {fd}"),
                 ("einlesen", "zusatzfotos_lightglue.py colmap_rig_abgleich.py", "", f"{VC} {T}/zusatzfotos_lightglue.py einlesen --ziel {Z} --ref-sparse {a.sparse}"),
                 ("registrieren", "zusatzfotos_registrieren.py", "", f"{VC} {T}/zusatzfotos_registrieren.py registrieren --sparse {Z}/lg/ref_tri --aus {Z}/lg --je-bild --kalibrieren"),
-                ("kameras_nachtragen", "kameras_nachtragen.py", "", f"{VC} {T}/kameras_nachtragen.py {os.path.abspath(a.objekt)} {Z}/lg/sparse_handy/0 --bilder {Z}/roh   # neue Posen als K-Dateien in den Modellrahmen (Gegenprobe gegen vorhandene Kameras)"),
+                # 24.11.2026 (1122zb): VOR dem Nachtragen abgeleitete Altkameras im Gebaeude sperren - kameras_nachtragen ueberschreibt vorhandene K-Dateien nie
+                ("kameras_nachtragen", "kameras_nachtragen.py kameras_nachtragen_tor.py", "", f"{VS} -W ignore {T}/kameras_nachtragen_tor.py {os.path.abspath(a.objekt)} --fassaden {os.path.join(os.path.abspath(a.fassaden), 'fassaden.json')} --altbestand && "
+                 f"{VC} {T}/kameras_nachtragen.py {os.path.abspath(a.objekt)} {Z}/lg/sparse_handy/0 --bilder {Z}/roh   # neue Posen als K-Dateien in den Modellrahmen (Gegenprobe gegen vorhandene Kameras; rc 4 = Abbildung unbrauchbar)"),
                 ("kamera_verfeinern", "kamera_verfeinern.py", "", vf),
                 # 23.11.2026 (Kette 1122q: 327 neue Kameras, 'gegenprobe' 0 pruefte keine davon): Gueltigkeits-Tor - unplausible und nicht am Modell belegte neue Kameras gesperrt,
                 # je Wand Zahl der belegten neuen Kameras, die sie sehen (audit/kameras_nachtragen_tor.json; die Kette entscheidet damit ueber die Wiederholung von Wandbild/Bau)

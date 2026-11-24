@@ -98,7 +98,7 @@ def test_skript(d, od, au, fd, fo, FJ):
     r = subprocess.run([sys.executable, "-I", os.path.join(T, "seiten_luecken.py"), os.path.join(od, "objekt.json"), fo, "--sparse", sp, "--ref-db", os.path.join(d, "db.db"), "--min_m2", "10"], capture_output=True, text=True, env=env)
     pruef(r.returncode == 3, f"seiten_luecken: Wand f01 ungesehen -> rc 3 (rc {r.returncode} {r.stdout[-200:]} {r.stderr[-300:]})")
     sk = open(os.path.join(au, "seiten_luecken_holen.sh")).read() if os.path.exists(os.path.join(au, "seiten_luecken_holen.sh")) else ""
-    i_v, i_t = sk.find("kamera_verfeinern.py"), sk.find("kameras_nachtragen_tor.py")
+    i_v, i_t = sk.find("kamera_verfeinern.py"), sk.rfind("kameras_nachtragen_tor.py")      # rfind: seit 24.11.2026 laeuft das Tor zusaetzlich mit --altbestand VOR kameras_nachtragen
     pruef(i_v > 0 and i_t > i_v and "|| [ $? = 3 ]" in sk, "Nachhol-Skript: Tor-Schritt nach kamera_verfeinern, rc 3 bricht nicht ab")
     S = json.load(open(os.path.join(au, "seiten_luecken.json")))
     pruef(S["ungesehen"] == [1] and S["waende"][1]["id"] == "f01" and abs(S["waende"][1]["abdeckung"] - SL.wand_abdeckung(fo, FJ["fassaden"][1], 1)) < 1e-3, f"seiten_luecken: Bericht mit Kennung, Mass = wand_abdeckung ({S['waende'][1]['abdeckung']})")
