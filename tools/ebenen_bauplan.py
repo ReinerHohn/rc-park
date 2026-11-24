@@ -23,14 +23,41 @@ def kipp(ne, u, z):
     return ne["b_u"] * (np.asarray(u, float) - ne["u_ref"]) + ne["c_z"] * (np.asarray(z, float) - ne["z_ref"])
 
 
+def frontal_kameras(K, e, wahl, n_max=24, winkel=45.0, min_sicht=0.5, max_gsd=0.03, n_proben=600):
+    """24.11.2026 (Befund 1122z f02/Ost: 1316 Fotokantenpunkte statt 13 501 an f00): die Kantenstufe waehlt 80 Kameras GLOBAL (12 Azimut-Sektoren um die Modellmitte,
+    Abstand <= 80 m, Rang Sicht/sqrt(Abstand)). Fuer f02 lagen 49 SfM-Kameras frontal (< winkel Grad), sehen >= 50 % der Wand und hatten 1,2-6,6 cm/px - KEINE davon in
+    kam_wahl; dort sahen die 17 'frontalen' die Wand nur schraeg/nah (je Ref 0-265 Punkte). Jetzt je WAND: Kameras aus kam.json (alle SfM-Kameras) vor der Wand, Blick auf die
+    Wand (Winkel zur Normale < winkel), >= min_sicht der Wandflaeche im Bildfeld, Bodenaufloesung Abstand/f <= max_gsd m/px; die besten n_max (Aufloesung) zusaetzlich zu kam_wahl.
+    Reine Kameraauswahl - Sweep, Tore und Guards bleiben unveraendert. -> Liste Dateinamen (ohne die schon gewaehlten)."""
+    o = np.array(e["o"], float); d = np.array(e["d"], float); n = np.array(e["n"], float); u0, u1, z0, z1 = e["zone"]; z0 = max(z0, 0.0)
+    rg = np.random.default_rng(0); uu = rg.uniform(u0, u1, n_proben); zz = rg.uniform(z0, z1, n_proben); ww = float(e.get("w", 0.0))
+    VF = np.c_[o[0] + uu * d[0] + ww * n[0], o[1] + uu * d[1] + ww * n[1], zz]; c = np.cos(np.radians(winkel)); out = []
+    for f, k in K.items():
+        if f in wahl or "C" not in k or "Rn" not in k: continue
+        C = np.array(k["C"], float); R = np.array(k["Rn"], float); ab = float((C[:2] - o) @ n)
+        bl = R[2, :2]; nb_ = float(np.linalg.norm(bl))
+        if ab <= 1.0 or nb_ < 1e-6 or -(bl @ n) / nb_ < c: continue
+        X = VF @ R.T + np.array(k["tn"], float); z = X[:, 2]; ok = z > 0.5
+        if ok.sum() < min_sicht * n_proben: continue
+        uc = k["f"] * X[ok, 0] / z[ok] + k["cx"]; vc = k["f"] * X[ok, 1] / z[ok] + k["cy"]
+        sicht = float(((uc >= 0) & (uc < k["W"]) & (vc >= 0) & (vc < k["H"])).sum()) / n_proben; gsd = float(np.median(z[ok])) / float(k["f"])
+        if sicht >= min_sicht and gsd <= max_gsd: out.append((gsd, f))
+    out.sort(); return [f for _, f in out[:n_max]]
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassade"); ap.add_argument("kanten"); ap.add_argument("aus")
     ap.add_argument("--min_m2", type=float, default=40.0); ap.add_argument("--maxpx", type=int, default=150000); ap.add_argument("--refs", type=int, default=80); ap.add_argument("--nur", default="")
-    ap.add_argument("--bild", type=int, default=1); ap.add_argument("--stapel", nargs=3, type=float, help="w0 w1 schritt (m gegen die Wandebene): Schichtstapel je Wand"); ap.add_argument("--seiten", type=int, default=1, help="1 = je Vorbau auch die zwei Seitenebenen (senkrecht zur Wand)"); a = ap.parse_args()
+    ap.add_argument("--bild", type=int, default=1); ap.add_argument("--stapel", nargs=3, type=float, help="w0 w1 schritt (m gegen die Wandebene): Schichtstapel je Wand"); ap.add_argument("--seiten", type=int, default=1, help="1 = je Vorbau auch die zwei Seitenebenen (senkrecht zur Wand)")
+    ap.add_argument("--kam_ergaenzen", type=int, default=24, help="24.11.2026: je WAND bis zu N frontale SfM-Kameras aus kanten/kam.json zu kam_wahl (frontal_kameras); 0 = alter Weg")
+    ap.add_argument("--bilder", default="", help="Fotoordner der Kantenstufe (Stabilkarten fuer ergaenzte Kameras); Standard <kanten>/../fotos"); a = ap.parse_args()
     import trimesh
     od = os.path.dirname(os.path.abspath(a.objekt)); FA = json.load(open(os.path.join(a.fassade, "fassaden.json")))["fassaden"]; os.makedirs(a.aus, exist_ok=True)
     KW, SD = os.path.join(a.kanten, "kam_wahl.json"), os.path.join(a.kanten, "stabil")
     if not (os.path.exists(KW) and os.path.isdir(SD)): print("Kantenstufe fehlt (kam_wahl.json / stabil) - erst Stufe 'kanten'"); return 3
+    KWAHL = json.load(open(KW)); KJ_ = os.path.join(a.kanten, "kam.json"); KALLE = json.load(open(KJ_)) if a.kam_ergaenzen > 0 and os.path.exists(KJ_) else {}
+    BILDER = a.bilder or os.path.join(os.path.dirname(os.path.abspath(a.kanten)), "fotos")
+    if not os.path.isdir(BILDER): KALLE = {}
     E = []
     for i, F in enumerate(FA):
         vj = os.path.join(a.fassade, f"vorbauten_f{i:02d}.json"); vj_ = json.load(open(vj)) if os.path.exists(vj) else {}
@@ -69,7 +96,15 @@ def main():
         V = np.array([P(u0, z0), P(u1, z0), P(u1, z1), P(u0, z1)]); stl = os.path.join(ed, "ebene.stl"); trimesh.Trimesh(V, [[0, 1, 2], [0, 2, 3]]).export(stl)
         box = ",".join(f"{x:.2f}" for x in np.r_[V.min(0) - e["band"] - 1.0, V.max(0) + e["band"] + 1.0]); sw = os.path.join(ed, "sweep.npz")
         if os.path.exists(sw): os.remove(sw)
-        r = subprocess.run([PY, "-I", os.path.join(HIER, "kanten_tiefe_sweep_flaeche.py"), KW, SD, sw, "--flaeche", stl, "--flaeche_skala", "1.0", "--box3", box, "--band", str(e["band"]), "--ziel_auto",
+        kw_e = KW
+        if e["art"] == "wand" and a.kam_ergaenzen > 0 and KALLE:
+            plus = frontal_kameras(KALLE, e, KWAHL, n_max=a.kam_ergaenzen)
+            if plus:
+                kw_e = os.path.join(ed, "kam_wand.json"); json.dump({**KWAHL, **{f: KALLE[f] for f in plus}}, open(kw_e, "w")); kp = os.path.join(ed, "kam_plus.json"); json.dump({f: KALLE[f] for f in plus}, open(kp, "w"))
+                rs = subprocess.run([PY, "-I", os.path.join(HIER, "stabil_alle.py"), kp, BILDER, SD], capture_output=True, text=True)      # nur fehlende Karten (vorhandene bleiben)
+                e["kameras_ergaenzt"] = sum(os.path.exists(os.path.join(SD, os.path.splitext(f)[0] + ".png")) for f in plus)
+                if rs.returncode != 0: e["stabil_fehler"] = (rs.stderr.strip().splitlines() or ["?"])[-1][:200]
+        r = subprocess.run([PY, "-I", os.path.join(HIER, "kanten_tiefe_sweep_flaeche.py"), kw_e, SD, sw, "--flaeche", stl, "--flaeche_skala", "1.0", "--box3", box, "--band", str(e["band"]), "--ziel_auto",
                             "--nbdist", "80", "--refs", str(a.refs), "--nb", "12", "--maxpx", str(a.maxpx)], capture_output=True, text=True)
         e["punkte"] = int(len(np.load(sw)["P"])) if os.path.exists(sw) else 0; e["sweep"] = sw if e["punkte"] else None; e["sekunden"] = round(time.time() - t0)
         if r.returncode != 0 or not e["punkte"]: e["fehler"] = (r.stderr.strip().splitlines() or r.stdout.strip().splitlines() or ["?"])[-1][:200]
@@ -83,7 +118,8 @@ def main():
                 if img is not None: e["bild"] = os.path.join(ed, "bild.png"); cv2.imwrite(e["bild"], img)
             except Exception as x_: e["bild_fehler"] = str(x_)[:160]
         print(f"{e['id']}: Ebene w {e['w']:+.2f} m, Zone u {u0:.1f}..{u1:.1f} z {z0:.1f}..{z1:.1f}, Band {e['band']} m -> {e['punkte']} Kantenpunkte"
-              + (f", {e.get('auf_ebene_anteil', 0) * 100:.0f} % auf der Ebene (+-15 cm)" if e["punkte"] else f"  FEHLER: {e.get('fehler')}") + f" ({e['sekunden']} s)", flush=True)
+              + (f", {e.get('auf_ebene_anteil', 0) * 100:.0f} % auf der Ebene (+-15 cm)" if e["punkte"] else f"  FEHLER: {e.get('fehler')}")
+              + (f", +{e['kameras_ergaenzt']} frontale Kameras" if e.get("kameras_ergaenzt") else "") + f" ({e['sekunden']} s)", flush=True)
     json.dump(dict(quelle="tools/ebenen_bauplan.py", ebenen=E), open(os.path.join(a.aus, "ebenen.json"), "w"), indent=1)
     print(f"-> {os.path.join(a.aus, 'ebenen.json')}: {n_ok} von {len(E)} Ebenen mit Kantenpunkten"); return 0 if n_ok else 3
 
