@@ -1,5 +1,5 @@
 # 🧱 Dichte Wolke, Wandbild, Relief & Öffnungen  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fassaden` · Ast [kanten-messen](kanten-messen.md)
+Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fassaden` · Ast [kanten-messen](kanten-messen.md) · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [dichte-wolke](wolke-wandbild/dichte-wolke.md) · [oeffnungen](wolke-wandbild/oeffnungen.md) · [relief](wolke-wandbild/relief.md) · [wandbild](wolke-wandbild/wandbild.md)
 
 ## Gilt
 - Dichte Wolke bleibt Standard (Nutzer 16.11.), liefert aber nur Lage-Veto, Höhe, Bruchstein-Relief [archiv/AUFGABENLISTE_2026-11-16 Z.29; PIPELINE_FASSADEN Z.5]

@@ -122,6 +122,8 @@ def suchen(wurzel, begriffe, gruppen, memory=None, mit_git=True, und=False):
         f = falte(text)
         n = sum(1 for r in rxe if r.search(f))
         if n and (not und or n == len(rxe)):
+            # Datei, deren Name selbst passt (z. B. Unterast foto-sfm/fotoauswahl.md), zuerst
+            n += 0.5 if rx_alle.search(falte(Path(name).stem)) else 0
             treffer[gruppe].append((n, f"{name}:{nr}: {stelle(text, rx_alle)}"))
 
     for g, dateien in quellen(w, memory).items():

@@ -1,5 +1,5 @@
 # 🏗️ Bauteile, Generator, Kreis & Abnahme  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` · `modelle/REGELN_AUSFUEHRLICH.md` · Skills `bauteil-runde`, `abnahme`
+Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` · `modelle/REGELN_AUSFUEHRLICH.md` · Skills `bauteil-runde`, `abnahme` · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [abnahme](bauteile-kreis/abnahme.md) · [formfamilien](bauteile-kreis/formfamilien.md) · [generator](bauteile-kreis/generator.md) · [kreis](bauteile-kreis/kreis.md)
 
 ## Gilt
 - Masse sind Daten (`objekt.json` + `masstabelle.json` = einzige Wahrheit), kein Messcode je Objekt; neue Messart = generischer Messer in `pruefstand.py` [METHODE_MASSTABELLE §1]

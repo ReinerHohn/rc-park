@@ -1,5 +1,5 @@
 # 🧭 Lage, Maßstab, Seiten & Bildquellen  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/archiv/STAND_2026-11-14.md` · `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` · Skill `wolke-tore` · Ast [foto-sfm](foto-sfm.md)
+Details: `modelle/archiv/STAND_2026-11-14.md` · `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` · Skill `wolke-tore` · Ast [foto-sfm](foto-sfm.md) · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [ausrichtung](lage-seiten/ausrichtung.md) · [bildquellen](lage-seiten/bildquellen.md) · [seiten](lage-seiten/seiten.md)
 
 ## Gilt
 - **Tor-Reihenfolge nach jeder Ausrichtung (Nutzer 15.11. "lerne mit"):** Insel-Kette, Lot aus Fotos, GPS, Laser-Hoehe (DOM1), Gruppen-Punkt, Schnittbilder ansehen - erst dann messen [memory feedback-lehren-schwabentor-1511]
