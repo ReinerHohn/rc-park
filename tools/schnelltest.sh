@@ -515,6 +515,7 @@ k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_kamerahoehe_dgm.py 2>&1
 k=$($P -W ignore -I tools/test_dicht_alt_auto.py 2>&1); [ $? = 0 ] && ok "Dichte Wolke aelter als das SfM-Netz: --bis kameras nur Hinweis, sonst automatisch beiseitelegen + neu (1122za-Abbruch 24.11.)" || rot "dicht_alt_auto: $(echo "$k" | grep FEHLER | head -2)"
 k=$($P -W ignore -I tools/test_ebenen_kam_ergaenzen.py 2>&1); [ $? = 0 ] && ok "Ebenen-Bauplan ergaenzt je Wand frontale SfM-Kameras aus kam.json (1122z f02/Ost: 49 frontale Kameras fehlten in kam_wahl, 1316 Kantenpunkte); hinter/parallel/zu grob/schon gewaehlt -> nicht" || rot "ebenen_kam_ergaenzen: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"
 k=$(python3 -I tools/test_ketten_probelauf.py 2>&1); [ $? = 0 ] && ok "Ketten-Probelauf vor dem Merge: Auswertung (1122za = FEHLER, Lage = kein Urteil), Marken verstellen, Sichern, Fotowahl, Planmodus (ketten_probelauf.sh)" || rot "ketten_probelauf: $(echo "$k" | grep FEHLER | head -2)"
+k=$($P -W ignore -I tools/test_zonen_verworfen.py 2>&1); [ $? = 0 ] && ok "Verworfene Erkennungen sind keine Bauteil-Zonen (1122zb: uhr_f01_2 auf dem Goldnimbus, uhr_f01_3 Zackenrechteck = verworfene Uhr-Kandidaten in neben_details)" || { rot "zonen_verworfen: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 #<<< PRUEFUNGEN
 fi
 rm -rf $S

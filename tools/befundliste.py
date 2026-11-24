@@ -273,6 +273,17 @@ def ort_aus_rahmen(K, px_rahmen, skala, fassaden, raster=5):
 
 
 # ---------------------------------------------------------------- Bauteil-Zonen aus den Kettenergebnissen
+VERWERF_SCHLUESSEL = ("verworfen", "abgelehnt", "ausreisser")
+
+
+def verworfen_eintrag(x):
+    """True, wenn ein Erkennungseintrag (dict) als verworfen markiert ist: 'verworfen' = Grund-Text/True, oder status/urteil == 'verworfen'/'abgelehnt'.
+    Eine LISTE unter 'verworfen' (z. B. verworfene Fotos eines gebauten Teils) markiert den Eintrag selbst nicht."""
+    v = x.get("verworfen")
+    if v is True or (isinstance(v, str) and v.strip()): return True
+    return any(str(x.get(k, "")).lower() in ("verworfen", "abgelehnt") for k in ("status", "urteil"))
+
+
 def bauteil_zonen(audit):
     """Alle Zonen (fassade, u0, u1, z0, z1, name) aus audit/*_auto.json und vordach_profil.json - generisch: jedes Objekt mit u0/u1/z0/z1, 'kasten' [u0,u1,z0,z1]
     oder Vordach (u0/u1 + z_t/z_a); Fassade = naechster Schluessel/Eintrag 'fNN'."""
@@ -285,6 +296,11 @@ def bauteil_zonen(audit):
             # 23.11.2026 (1122o: neben_details zeigte den Treppenturm als 'oeffnung_bogen_f03' und das Turmstueck vor der Tuer als 'oeffnung_bogen_f04' - beide
             # Eintraege hatten gebaut=false): verworfene/nicht gebaute Erkennungen und Koerper vor der Wand sind KEIN Bauteil des Modells
             if x.get("gebaut") is False or x.get("koerper_vor_wand"): return
+            # 24.11.2026 (1122zb, neben_detail uhr_f01_2/_3): Erkennungen, die die messende Stufe VERWORFEN hat, sind kein Bauteil - weder als Eintrag mit
+            # 'verworfen': "<Grund>"/True bzw. status/urteil 'verworfen' (vorbau_fototor) noch als Liste unter einem Verwerf-Schluessel (uhren_wandbild:
+            # 'verworfen': [{kasten, grund}]). Vorher wurden die zwei verworfenen Uhr-Kandidaten auf f01 (Goldnimbus im Wandgemaelde, Innenkreis der echten Uhr)
+            # als 'uhr_f01_2'/'uhr_f01_3' mit Rechteck-Kasten ausgeschnitten -> Wandstueck bzw. Zackenrechteck als "Uhr" im Detailbild.
+            if verworfen_eintrag(x): return
             k = None
             if all(isinstance(x.get(a), (int, float)) for a in ("u0", "u1", "z0", "z1")): k = (x["u0"], x["u1"], x["z0"], x["z1"])
             elif isinstance(x.get("kasten"), list) and len(x["kasten"]) == 4: k = tuple(x["kasten"])
@@ -297,6 +313,7 @@ def bauteil_zonen(audit):
                     Z[-1]["kreis"] = [float(x["u"]), float(x["z"]), 0.5 * float(x["d_aussen"])]
                 return
             for a, v in x.items():
+                if str(a) in VERWERF_SCHLUESSEL and isinstance(v, list): continue      # Liste verworfener Kandidaten (nicht: Fotonamen eines gebauten Teils, die haben keinen Kasten)
                 geh(v, a if re.fullmatch(r"f\d\d", str(a)) else f2, name, tiefe + 1)
         elif isinstance(x, list):
             for v in x: geh(v, fid, name, tiefe + 1)
