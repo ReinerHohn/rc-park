@@ -17,6 +17,7 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 - 05.11. · Umgebungsvariable vor `systemd-run` → ⚠ Falle · wird nicht vererbt; `job_start.sh NAME LOG env VAR=… cmd` [Memory lange-jobs-systemd]
 - · `pgrep/pkill -f <skriptname>` → ⚠ Falle · trifft eigene Shell/Schleife; `systemctl --user is-active` [Memory lange-jobs-systemd, NICHTS_GEBRACHT 16.11.]
 - 06.11. · „nur ein GPU-Job“ → ↺ VRAM-Budget · Absturz (Xid 31) erst bei ~7,8 GB Summe; Torch 4 GB + SIFT stabil, ~+70 % Durchsatz [GPU_PARALLEL_UNTERSUCHUNG]
+- 24.11. · Schnelltest seriell (~160 Prüfungen, 1070 s) → ✔ parallel: Bereich `#>>> PRUEFUNGEN` in Anweisungen geteilt, Pool `SCHNELLTEST_JOBS` (1 = seriell), GPU-Prüfungen einzeln, RAM-Tor, Ausgabe in Originalreihenfolge; ⚠ Skript nie während eines Laufs editieren (bash liest nach) [tools/schnelltest.sh Kopf]
 - 06.11. · SiftGPU ohne Bildgrößen-Kappung → ⚠ Falle · nimmt bis 7,4 GB, scheitert still (0 Keypoints, rc 0); Keypoint-Tor nach Extraktion [GPU_PARALLEL_UNTERSUCHUNG]
 - 15.11. · GPU-Buchung unter flock + RAM-Buchung (85 % MemTotal) in `job_start.sh` → ✓ Methode · Anlass OOM durch zwei große Jobs [STAND_2026-11-14 Z.128, 02888769a]
 - 01.11. · GPU nur für Rasterung, Projektion in numpy → ✗ langsamer als CPU · GPU lohnt pro Datensatz, Daten oben halten (`render_kern.Szene` 17–21×) [Register S]
