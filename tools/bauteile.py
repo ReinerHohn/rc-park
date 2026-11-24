@@ -471,7 +471,7 @@ def nische_tiefe_guard(koerper, W, N, t0, tf, druck_min):
     Druckmindestmass, und Nische + Oeffnung (t0 + tf) nicht tiefer als die massive Wand an der Nischenmitte minus Druckmindestmass (Rueckwand bleibt druckbar).
     Liefert (t0, tf, vermerke)."""
     v = []
-    if t0 < druck_min: v.append(f"Nische u {N['u0']:.2f}: {t0:.3f} -> {druck_min:.3f} m (Druckmindestmass)"); t0 = druck_min
+    if t0 < druck_min - 1e-6: v.append(f"Nische u {N['u0']:.2f}: {t0:.3f} -> {druck_min:.3f} m (Druckmindestmass)"); t0 = druck_min
     d_ = wand_dicke(koerper, W, 0.5 * (N["u0"] + N["u1"]), N["z0"] + 0.25 * (N["z1"] - N["z0"]), w_vorn=0.0, w_max=t0 + tf + 2 * druck_min)
     grenze = d_ - druck_min
     if t0 + tf > grenze:
