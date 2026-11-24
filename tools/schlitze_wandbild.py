@@ -21,6 +21,8 @@ METHODE (je Fassade):
                     - ein Loch ist aus jedem Blick dunkel, ein dunkler Stein/Schatten nur bei passendem Licht (Schwabentor West: Schlitz 15 von 16, Luke 4 von 6,
                     dunkle Eckquader 4-12 von 14-30 = hoechstens 43 %); sonst verworfen (Grund im Bericht).
                     Masse = Median der Einzelfoto-Kanten (Streuung im Eintrag), Lage im Mosaikrahmen (Fotos aufs Mosaik ausgerichtet).
+                    UNSCHAERFE-TOR (24.11.2026, 1122zb fenster_f04 am Sockel): nur Fotos, die die Stelle scharf zeigen (Laplace-Varianz >= SCHAERFE_MIN x 80-%-Wert
+                    der sehenden Fotos), stimmen mit; verwaschene Videobilder verschmelzen Schatten zwischen Steinen zu einem 'Loch' (--schaerfe 0 = aus).
   Tiefe: Ebenen-Sweep im Loch gegen den Wandring (loch_gewaende.sweep_werte, Plausibilitaet dort), sonst ANNAHME wie nischen_fenster (0,12 m; Bau >= Druckmindestmass).
 Ausgabe: Eintraege in der Fensterliste (fenster_auto.json; Eingang als fenster_auto_vor_schlitze.json daneben) mit 'loch' (loch_gewaende misst sie nicht nochmal),
   bogen gerade, form_quelle 'n von m Einzelfotos', quelle, aufloesung_m; Bericht schlitze_wandbild.json, Bild schlitze_<fid>.jpg (ANSEHEN: gruen = gebaut, rot = verworfen
@@ -40,6 +42,8 @@ MAX_FLAECHE = 1.0     # Kastenflaeche (m2): groessere Oeffnungen liefert der Erk
 FUELL_MIN = 0.5       # Anteil dunkler Zellen im Kasten (Rechteck/Schlitz statt Schattenfleck/Fuge)
 TOL_FORM = 0.35       # Breite/Hoehe je Einzelfoto gegen das Mosaik
 MEHRHEIT = 0.6        # Anteil der sehenden Fotos, die das Loch bestaetigen muessen (Loch dunkel aus jedem Blick; Stein/Schatten lichtabhaengig)
+SCHAERFE_MIN = 0.4     # Unschaerfe-Tor: Foto stimmt nur mit, wenn seine Laplace-Varianz an der Stelle >= so viel x Bezug (ANNAHME; 1122zb Sockel f04: 5 von 7 Videobildern + 3 Fotos 10-40 %; Urteil 'verworfen' gleich fuer 0,15..0,4, echte Schlitze f03 bleiben 5/5, 14/15, 13/17)
+SCHAERFE_Q = 80        # Bezug = 80-%-Wert der sehenden Fotos (robust gegen ein einzelnes ueberscharfes/verrauschtes Foto)
 RING_STEIN_MAX = 0.4   # Ring 0,1-0,3 m um den Kandidaten hoechstens so viel Steinfarbe: im Quader-/Eckquaderwerk sind dunkle Steine und Schattenfugen nicht vom Loch zu trennen
 
 
@@ -175,12 +179,35 @@ def kanten_im_foto(rgb, i0, i1, j0, j1, R, k, dunkel=DUNKEL, ring=(0.15, 0.45)):
     return _kasten(best[1], i0, j0, R["u0"], R["z1"], c)
 
 
-def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM):
-    """Mehrfoto-Kanten: je Einzelfoto (im Mosaikrahmen, ortsteine.einzeln_vereinen) Kanten der dunklen Komponente. Liefert (anzahl, gesehen, kanten-Median, streuung, je_foto)."""
+def schaerfe(rgb, maske=None):
+    """Oertliche Bildschaerfe eines Ausschnitts: Varianz des Laplace-Bilds der Helligkeit L auf belegten Zellen (2 Zellen vom Rand weg). None = zu wenig Zellen."""
+    from scipy import ndimage as ndi
+    L = _L(rgb); bel = (np.asarray(rgb).astype(np.int32).sum(2) > 30) if maske is None else maske
+    er = ndi.binary_erosion(bel, np.ones((5, 5), bool))
+    if er.sum() < 20: return None
+    return float(ndi.laplace(L)[er].var())
+
+
+def scharfe_auswahl(werte, anteil=SCHAERFE_MIN, q=SCHAERFE_Q):
+    """UNSCHAERFE-TOR fuer Formbelege (24.11.2026): werte = Schaerfe je Foto (None = unbekannt -> zaehlt). Bezug = q-%-Wert der bekannten Werte (die scharfen
+    Fotos dieser Stelle), unscharf = unter anteil x Bezug. Liefert (Liste True = scharf, Bezug)."""
+    v = [x for x in werte if x is not None]
+    if len(v) < 2: return [True] * len(werte), None
+    ref = float(np.percentile(v, q))
+    return [x is None or ref <= 0 or x >= anteil * ref for x in werte], ref
+
+
+def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM, schaerfe_min=SCHAERFE_MIN):
+    """Mehrfoto-Kanten: je Einzelfoto (im Mosaikrahmen, ortsteine.einzeln_vereinen) Kanten der dunklen Komponente. Liefert (anzahl, gesehen, kanten-Median, streuung, je_foto).
+    UNSCHAERFE-TOR (24.11.2026, Befund 1122zb fenster_f04: 'Fenster' 0,39 x 0,26 m am Sockel zwischen Bossenquadern, 11 von 18 Fotos - davon 7 von 8 Videobildern,
+    aber nur 5 von 10 scharfen Fotos; das Detailbild zeigte ein verwaschenes Videobild): ein Foto, das die Stelle deutlich unschaerfer zeigt als die scharfen
+    (Laplace-Varianz < schaerfe_min x q-%-Wert der sehenden Fotos), stimmt NICHT mit - weder als Beleg noch als 'gesehen'. Bewegungs-/Fokusunschaerfe verschmilzt
+    Schatten zwischen Steinen zu einem dunklen 'Loch'. schaerfe_min=0 schaltet das Tor ab."""
     c = R["c"]; ru = max(0.5, 0.5 * (k["u1"] - k["u0"])); rz = max(0.5, 0.5 * (k["z1"] - k["z0"])); H, W = R["form"]
     i0 = max(0, int((R["z1"] - k["z1"] - rz) / c)); i1 = min(H, int((R["z1"] - k["z0"] + rz) / c) + 1)
     j0 = max(0, int((k["u0"] - ru - R["u0"]) / c)); j1 = min(W, int((k["u1"] + ru - R["u0"]) / c) + 1)
     b, h = k["u1"] - k["u0"], k["z1"] - k["z0"]; ja, je = [], {}; gesehen = 0
+    roh = []
     for e in fotos:
         a = e["rgb"] if not (e.get("dy") or e.get("dx")) else O.verschieben(e["rgb"], e["dy"], e["dx"])
         fm = e.get("fein_maske"); ci, cj = (i0 + i1) // 2, (j0 + j1) // 2
@@ -188,6 +215,10 @@ def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM):
         r = kanten_im_foto(a, i0, i1, j0, j1, R, k)
         nm = os.path.splitext(os.path.basename(e["datei"]))[0]
         if r is None: continue
+        roh.append((nm, r, au, schaerfe(a[i0:i1, j0:j1]) if schaerfe_min > 0 else None))
+    scharf, ref = scharfe_auswahl([x[3] for x in roh], schaerfe_min) if schaerfe_min > 0 else ([True] * len(roh), None)
+    for (nm, r, au, s_), sch in zip(roh, scharf):
+        if not sch: je[nm] = f"unscharf (Schaerfe {s_ / ref * 100:.0f} % der scharfen Fotos) - stimmt nicht mit"; continue
         gesehen += 1
         if r == "dunkel_fehlt": je[nm] = "sieht die Zone, kein dunkles Loch"; continue
         tb, th = max(tol * b, 2 * au), max(tol * h, 2 * au); bb, hh = r[1] - r[0], r[3] - r[2]
@@ -201,7 +232,7 @@ def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM):
 def eintrag(k, n, gesehen, kanten, streuung, npz, fenster_tiefe=0.12):
     u0, u1, z0, z1 = kanten
     e = dict(u0=u0, u1=u1, z0=z0, z1=z1, teiler=[], kaempfer=None, scheiben=1, stimmen_min=int(n), sprossen=[], bogen=dict(form="gerade", kaempfer=z1, scheitel=z1),
-             klein=True, aufloesung_m=k["aufloesung_m"], form_quelle=f"{n} von {gesehen} Einzelfotos (Mehrfoto-Kanten, Streuung u0/u1/z0/z1 {streuung} m)",
+             klein=True, aufloesung_m=k["aufloesung_m"], form_quelle=f"{n} von {gesehen} Einzelfotos (Mehrfoto-Kanten, Streuung u0/u1/z0/z1 {streuung} m)" + (f"; {k['fotos_unscharf']} unscharfe Fotos zaehlen nicht" if k.get("fotos_unscharf") else ""),
              quelle="schlitze_wandbild: dunkle kleine Komponente im Wandbild (fein, sonst grob) ohne Erkennerkasten, Kanten = Median der Einzelfoto-Kanten",
              loch=dict(u0=u0, u1=u1, z0=z0, z1=z1, L=k["L"], wand_L=k["hintergrund_L"], fuellung=k["fuellung"], quelle="schlitze_wandbild: Mehrfoto-Kanten der dunklen Komponente"))
     t = None
@@ -264,6 +295,7 @@ def main(argv=None):
     ap.add_argument("--min_fotos", type=int, default=3, help="Formfamilie: so viele Einzelfotos muessen die Form bestaetigen")
     ap.add_argument("--mehrheit", type=float, default=MEHRHEIT, help="Anteil der sehenden Fotos, die bestaetigen muessen")
     ap.add_argument("--fenster_tiefe", type=float, default=0.12, help="ANNAHME wie nischen_fenster/loch_gewaende")
+    ap.add_argument("--schaerfe", type=float, default=SCHAERFE_MIN, help="Unschaerfe-Tor: Foto stimmt nur ab so viel x Bezugsschaerfe mit (0 = aus)")
     a = ap.parse_args(argv)
     aus = a.aus or os.path.dirname(os.path.abspath(a.fenster)); os.makedirs(aus, exist_ok=True)
     J = json.load(open(a.fenster)) if os.path.exists(a.fenster) else {}
@@ -284,8 +316,8 @@ def main(argv=None):
             fotos = fotos_laden(a.fein, a.ordner, fid, R)
             nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
             for k in kand:
-                n, ges, kanten, st, je = bestaetigen(k, fotos, R, a.min_fotos)
-                k.update(fotos_bestaetigt=n, fotos_gesehen=ges, je_foto=je)
+                n, ges, kanten, st, je = bestaetigen(k, fotos, R, a.min_fotos, schaerfe_min=a.schaerfe)
+                k.update(fotos_bestaetigt=n, fotos_gesehen=ges, je_foto=je, fotos_unscharf=sum(1 for v in je.values() if v.startswith("unscharf")))
                 if n < a.min_fotos: k["grund"] = f"Formfamilie nur in {n} von {ges} Einzelfotos bestaetigt (< {a.min_fotos})"; weg.append(k); continue
                 if n < a.mehrheit * ges: k["grund"] = f"nur {n} von {ges} sehenden Fotos zeigen das Loch (< {a.mehrheit * 100:.0f} %: lichtabhaengig dunkel = Stein/Schatten)"; weg.append(k); continue
                 e = eintrag(k, n, ges, kanten, st, npz, a.fenster_tiefe); neu.append(e)

@@ -1,5 +1,5 @@
 # 📐 Kanten, Linien-Features, Foto-Tore & Messen am Foto  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-11-13.md` · `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Lehren L1–L57) · Skill `linien-features`
+Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-11-13.md` · `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Lehren L1–L57) · Skill `linien-features` · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [foto-tore](kanten-messen/foto-tore.md) · [kanten](kanten-messen/kanten.md) · [messen](kanten-messen/messen.md)
 
 ## Gilt
 - Linienhafte Features (Rippen, Bänder, Leisten) nie per Farbschwelle/Wolke: Mehrfoto-Sweep mit Stabilitätskarten → `kanten_features --farbe stabil --sweep` → `features_in_objekt` [CLAUDE.md; METHODE_MESSEN_DANN_BAUEN Nachtrag 12.11.]

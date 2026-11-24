@@ -21,6 +21,7 @@
 Jede Ast-Datei: **Gilt** (Vorgaben/Entscheidungen) · **Versucht** (Ansatz → Ergebnis → Lehre) · **Offen**.
 
 ## Pflege-Regel (für Mensch und Claude)
+- **Suchen in EINEM Aufruf (Baum, Register, Archiv, Logbücher, Memory inkl. Archiv, tools-Köpfe, git log; mit Synonymen):** `python3 -I tools/wissen_suchen.py "<begriff>"`. Jeder Ast hat Unteräste `Doku/projekt/<ast>/<thema>.md` mit einer Zeile je Quelleintrag; Vollständigkeit prüft `tools/wissensbaum_luecken.py` (Schnelltest, rc 1 bei Lücke). Ast zu lang ⇒ Zeilen in den Unterast verschieben, nie kürzen.
 - **Vor einem neuen Lösungsansatz:** im Ast unter „Versucht" nachsehen — ✗ nicht erneut probieren (außer die Lage hat sich belegbar geändert).
 - **Nach einem Versuch:** EINE Zeile `TT.MM. · Ansatz → ✓ | ✗ | ↺ ersetzt | ⚠ Falle | ⏸ · Lehre [Quelle/Commit]`.
 - Neue Vorgabe → „Gilt"; Erledigtes aus „Offen" löschen. Details gehören in `Doku/<thema>/` oder `modelle/METHODE_*.md`.
