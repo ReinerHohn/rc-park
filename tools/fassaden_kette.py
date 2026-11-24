@@ -319,6 +319,32 @@ def kantenbeleg(f, objekt_json, art="Relief"):
                     hinweis=f"ANNAHME: Abweichung >= 5 cm ohne gleichsinnige Kantentiefe = Netz-/Mono-Kruemel (Gemaelde, Brunnen davor); schmaler als {dm * 100:.0f} cm nicht druckbar; Bild relief/{os.path.basename(fo)[:-4]}.jpg")
 
 
+def kantenglatt(f, objekt_json, art="Relief"):
+    """Kettenstufe 'Feinrauschen ohne Fotokante glaetten' (24.11.2026, Befund 1122x f00_wand erfunden 0,984): Struktur feiner als 0,8 mm H0 nur mit triangulierter
+    Fotokante in tol oder Quaderraster-Beleg (tools/relief_kantenglatt.py). Laeuft auch auf Quaderwaenden (_voll ueber der Feinzone), die kantenbeleg nicht sieht.
+    Rueckgabe (Pfad, Beleg-dict oder None); ohne Kantenstufe/bei sinkendem Fotokanten-Recall unveraendert. OHNE_KANTENGLATT=1 = alter Stand."""
+    if os.environ.get("OHNE_KANTENGLATT") == "1" or not f or not os.path.exists(f): return f, None
+    from putz_wandbild import kanten_wand
+    from relief_kantenglatt import relief_kantenglatt
+    ffn = fein_ordner(objekt_json); ej = os.path.join(os.path.dirname(ffn), "ebenen", "ebenen.json") if ffn else ""
+    if not ej or not os.path.exists(ej): return f, None
+    K = kanten_wand(ej, np.load(f))
+    if K is None: return f, None
+    dm = 0.0008 * float(json.load(open(objekt_json)).get("stl_massstab", 87)); fo = f[:-4] + "_kg.npz"
+    try: inf = relief_kantenglatt(f, fo, K, dm)
+    except Exception as e:
+        print(f"    kantenglatt {os.path.basename(f)}: FEHLER {type(e).__name__}: {str(e)[:160]} - Relief unveraendert", flush=True)
+        if isinstance(e, (NameError, TypeError, AttributeError, IndexError, KeyError, ValueError)): _CODEFEHLER.append(f"kantenglatt {os.path.basename(f)}: {type(e).__name__}: {str(e)[:120]}")
+        return f, None
+    v, n_ = inf.get("vorher") or {}, inf.get("nachher") or {}
+    if inf.get("unveraendert"):
+        print(f"    kantenglatt {os.path.basename(f)}: unveraendert ({inf.get('grund')})", flush=True); return f, None
+    print(f"    kantenglatt {os.path.basename(f)}: Modellkanten {v.get('modellkanten')} -> {n_.get('modellkanten')}, erfunden {v.get('erfunden')} -> {n_.get('erfunden')}, Recall {v.get('recall')} -> {n_.get('recall')}", flush=True)
+    return fo, dict(seite="wand", element=f"{art} {os.path.basename(f)}: Feinrauschen ohne Fotokante geglaettet ({inf['geaendert_anteil'] * 100:.0f} % der Zellen, Fenster {inf['fenster_m'] * 100:.0f} cm)",
+                    quelle="tools/relief_kantenglatt.py (triangulierte Fotokanten der Wandebene, ebenen.json; Quaderraster bleibt)", vorher=v, nachher=n_,
+                    hinweis=f"ANNAHME: Struktur feiner als {dm * 100:.0f} cm (0,8 mm H0) ohne Fotokante in 0,15 m = Netz-/Mono-Rauschen; Bild relief/{os.path.basename(fo)[:-4]}.jpg")
+
+
 def fein_ordner(objekt_json):
     """Ordner des feinen Wandbilds (Kettenstufe fenster: fassade_ortho --zelle 0.01 --einzeln -> <daten>/fassade_fein). objekt.json 'fassade_fein' (relativ zum Repo oder absolut)
     geht vor, sonst /media/oem/scan/rc-park_daten/<objektordner>/fassade_fein wie tools/gesamtkette.py. '' wenn nicht da."""
@@ -506,6 +532,17 @@ def wand_vorbereiten(w, objekt_json, bereinigen=None):
         elif tf and os.path.exists(fm): fm, b_ = kantenbeleg(fm, objekt_json, "Feinrelief misch")
         else: b_ = None
         if b_: bel_b.append(b_)
+    # 24.11.2026 (Befund 1122x f00_wand: 392 544 Modellkanten gegen 18 975 Fotokanten): Feinrauschen unter dem Druckmass nur mit Fotokante, auf JEDER gebauten Reliefschicht
+    if not w.get("nur_foto"):
+        f, b_ = kantenglatt(f, objekt_json, "Relief")
+        if b_: bel_b.append(b_)
+    if hat_foto:
+        ff, b_ = kantenglatt(ff, objekt_json, "Fotorelief")
+        if b_: bel_b.append(b_)
+    if mono_: fmo, b_ = kantenglatt(fmo, objekt_json, "Feinrelief mono")
+    elif tf and os.path.exists(fm): fm, b_ = kantenglatt(fm, objekt_json, "Feinrelief misch")
+    else: b_ = None
+    if b_: bel_b.append(b_)
     for nm_, qi_ in qbel:
         if qi_: bel_b.append(dict(seite="wand", element=f"Quaderraster {nm_} Fassade {w['name']}: {qi_.get('relief_steine')} Steine eben, Rillen {qi_.get('relief_rille_mm')} mm (Breite, Tiefe H0)",
                                   quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
