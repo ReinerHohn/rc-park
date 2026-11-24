@@ -301,6 +301,10 @@ Nachtrag 16.11. ~15:00 - IN DER KETTE:
 - `bauteile.spitzbogen`: gedrueckter Bogen (Stich < halbe Breite) = zwei Kreisboegen mit Mittelpunkten 0,3 x halbe Breite unter der Kaempferlinie. Dritte Fassung an einem Tag:
   waagerechter Sturz (falsch) -> Vier-Zentren (Nutzer: "spitzes Fehlerding") -> diese; am Bild neben Foto 217 passt die Form. Lehre: Bogenform IMMER am Bild neben dem Foto pruefen, bevor veroeffentlicht wird.
 - Bogensteine der Tore werden NICHT generiert (Nutzerregel 15.11.: nichts Kuenstliches im Tor; die echten stehen im Scan-Relief).
+  24.11.2026: GEMESSENE Fugen erlaubt, generierte nie. `tools/bogen_gewaende.py` misst Fugen zwischen den Bogensteinen je Einzelfoto-Ortho als radiale Linie im
+  Gewaende-Band (Mehrfoto-Beleg >= 3 Fotos, Kopien zaehlen einmal, +- 3 cm) -> `gewaende_fugen` (Winkel + Fotozahl je Fuge) in audit/oeffnungen_auto.json;
+  `bauteile.bogen_fugen_rillen` baut NUR diese als Rillen (Breite >= 0,8 mm H0, Tiefe ANNAHME 0,5 mm H0). Keine Teilung, kein Mittelwert, unbelegt = glatt.
+  Schwabentor 1122: f00 21 / f01 22 gemessen (19 / 21 druckbar gebaut), Sichtzaehlung am Foto ~19-20 Steine je Bogen. Test `tests/test_bogen_fugen.py`.
 
 ## HAERTETEST 16.11.2026 nachmittags: drittes Gebaeude `ober_tvdr` (LoD2 DEBW_0010007Tvdr, Haeuserzeile Oberlinden noerdlich des Tors)
 NICHT von null: Rahmen, Kameras (630 K-Dateien), Wolke und Netz von schwab_v3 uebernommen; SfM/dichte Wolke nicht neu (Platte 10 GB frei, Laufzeit Stunden). Stufen von Hand in Kettenreihenfolge:
