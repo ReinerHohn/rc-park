@@ -1,7 +1,8 @@
-# Werkzeuge: fassade_relief (67)
+# Werkzeuge: fassade_relief (68)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
 - `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
+- `tools/bogen_gewaende.py` [seg] bogen_gewaende.py - GEWAENDE (Werkstein-Rahmenband) um gebaute Tor-/Bogenoeffnungen aus dem feinen Wandbild (24.11.2026, Kettenstufe 'bauplan' nach oeffnungen_aus_kanten).
 - `tools/bogen_kontur.py` [seg] bogen_kontur.py - KONTUR zuerst messen, dann benennen (Nutzerwunsch 7.11.2026, Pilot Arkadenboegen). Kein Familien-Raten. Stufen (Unterbefehle): ortho : je kalibriertem Foto metris
 - `tools/bogen_kontur_robust.py` [seg] bogen_kontur_robust.py - Laibungslinie der Bogenoeffnungen aus dem Belegungsbild (bogen_aus_wolke.py: platte_loecher.png, weiss = Wolke, schwarz = leer). Gegenueber bogen_unterkant
 - `tools/bogen_ratsche.py` [-] bogen_ratsche.py — ARC_BW so setzen, dass die Gold-Archivolte die Bogen-ÖFFNUNG genau rahmt.
