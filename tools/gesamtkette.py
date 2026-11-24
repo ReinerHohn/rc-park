@@ -710,7 +710,7 @@ def main():
     # Von Hand eingetragene Werte (ohne "auto") bleiben unberuehrt (die Werkzeuge melden rc 3).
     if dran("bauplan") and os.path.exists(AU):
         fo = os.path.join(D, "fassade"); ffn = fo + "_fein"; bp_ = os.path.join(D, "bauplan"); os.makedirs(bp_, exist_ok=True); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); erg_ = {}
-        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "wolkenrest_koerper", "dach_aus_profil", "umgang_aus_json", "loch_gewaende_spaet", "bogen_gewaende_spaet")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
+        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "wolkenrest_koerper", "dach_aus_profil", "umgang_aus_json", "loch_gewaende_spaet", "bogen_gewaende_spaet", "hoehen_aus_json")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
         if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
         else:
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
@@ -847,6 +847,13 @@ def main():
                 if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
                     notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
+            # 24.11.2026 (Hoehensitz-Befund 1122): HOEHEN-ANGLEICH waagerechter Bauteile - jede waagerechte Strukturlinie des GEBAUTEN Modells gegen Wolken-Linien UND
+            # triangulierte Fotokanten (Kantenstufe sweep.npz); angeglichen nur, wenn beide Quellen einig sind (tools/hoehen_angleich.py -> audit/hoehen_angleich.json,
+            # Generator bauteile.hoehen_aus_json als letzter Bauschritt). rc 0 = Korrektur angenommen -> Neubau; 2 = keine; 3 = keine Kantenpunkte (nur Bericht).
+            if os.path.exists(os.path.join(KD, "sweep.npz")):
+                rc_ha = lauf(B, "bauplan_hoehen", [PY, "-W", "ignore", "-I", "tools/hoehen_angleich.py", ZR, "--kanten", os.path.join(KD, "sweep.npz"), "--bild", os.path.join(Z, "audit", "hoehen_angleich.jpg")], log, ok=(0, 2, 3))[0]
+                erg_["hoehen_angleich_rc"] = rc_ha
+                if rc_ha == 0: bauen(B, "bauen_mit_hoehen", a.ziel, log)
             notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
     # --- Ende Stufe 'bauplan' ---
     abnahme_nachholen(B, a.ziel, log)                                    # 21.11.2026: volle Abnahme auf dem Endstand der Zwischenbauten (bauen)
