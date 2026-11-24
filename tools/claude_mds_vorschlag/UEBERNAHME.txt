@@ -20,3 +20,14 @@ Nach Uebernahme in rc-park: tools/wissen_suchen.py, werkzeug_aehnlich.py, wissen
 
 UEBERNOMMEN 24.11.2026 21:15: claude-mds Commit e1c78ab (gepusht). Projektkopien bleiben (Tests importieren sie);
 Schnelltest prueft Gleichstand Kopie = ~/.claude/skills/doku-pflege (rot bei Abweichung).
+
+NEU 24.11.2026 abends (Agent "Wissenssuche verallgemeinern", Zweig worktree-agent-a9c5caafddac0b967) - NOCH NICHT in claude-mds:
+  claude/skills/doku-pflege/wissen_suchen.py     + Alltagsfragen je Zeile mitsuchen (doc2query), Kompositazerlegung (teilwoerter),
+                                                 Rangfusion RRF mit Bedeutungssuche (--bedeutung an|aus, WISSEN_BEDEUTUNG=aus), weicher Rueckfall
+  claude/skills/doku-pflege/wissen_bedeutung.py  NEU: Satz-Embedding-Index (CPU, nice 19, 4 Threads), Konfig "wissen.bedeutung"
+  claude/skills/doku-pflege/wissen_fragen.py     NEU: offene Zeilen in Bloecken, Antworten einpflegen, --pruefen
+  claude/skills/doku-pflege/wiederfinden.py      + Saetze neu_*, ERSTVERSUCH-QUOTE, --satz, --ohne-synonyme, --bedeutung
+  claude/skills/doku-pflege/test_wissen.py       Bedeutungssuche im Wegwerf-Projekt aus (WISSEN_BEDEUTUNG=aus)
+  claude/skills/doku-pflege/SKILL.md             Abschnitt 4b: Alltagsfragen, Bedeutungssuche, neu_*-Saetze
+Schnelltest rc-park: Gleichstand Kopie = Vorschlag gilt bis zur Uebernahme als UEBERSPRUNGEN (nicht rot); Kopie weicht von beiden ab = rot.
+Modell: intfloat/multilingual-e5-small (MIT, HF-API geprueft 24.11.2026); liegt NICHT im Repo (Konfig nennt den Ordner).

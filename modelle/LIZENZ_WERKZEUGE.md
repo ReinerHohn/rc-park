@@ -227,3 +227,10 @@ Quelle: `research_notes/duenne_bruecken_methoden_2026-11-22.md` (dort Zitate und
 - Open3D: MIT (LICENSE gelesen) -> **ja**. TEASER++: MIT -> **ja**. pycolmap: BSD-3 -> **ja**. networkx/scipy: BSD -> **ja**.
 - pvlib: BSD-3 laut Recherche, an der Quelle **ungeprueft**.
 - Ungeprueft geblieben: RoMa-v2-Gewichte, Datensatzlizenzen Mapillary Planet-Scale Depth und Map-free, Datensatzliste LoMa-commercial.
+
+## Nachtrag 2026-11-25 (Wissenssuche: Satz-Embedding, nur internes Werkzeug)
+- **intfloat/multilingual-e5-small** (Gewichte von Hugging Face, 118 M Parameter): **MIT**, geprueft am 24.11.2026 ueber die HF-API (`cardData.license`). Status ✓.
+  Genutzt in `tools/wissen_bedeutung.py`, also in der Bedeutungssuche der Projekt-Doku. Es geht nicht ins Modell und nicht in den Bausatz.
+  Die Gewichte liegen unter `/media/oem/scan/rc-park_tmp/wissen_index/modell/`.
+- Nur verglichen, nicht eingesetzt: intfloat/multilingual-e5-base (MIT, HF-API) und BAAI/bge-m3 (MIT, HF-API).
+  e5-base war kaum besser, bge-m3 war auf der CPU unter Last zu langsam.

@@ -1,5 +1,5 @@
 # 📚 Wissen verwalten: ablegen, finden, nicht doppelt bauen  ← [PROJEKT.md](../../PROJEKT.md)
-Werkzeuge: `tools/wissen_suchen.py` (Suche mit Rangfolge) · `tools/werkzeug_aehnlich.py` (Doppelgaenger-Werkzeuge) · `tools/wissensbaum_luecken.py` (Vollstaendigkeit) · `tools/wissen_ablage_pruefen.py` (Ablage-Tor) · `tools/wissen_wiederfinden.py` (Nachweis Recall@5) · `modelle/WIDERSPRUECHE.md` · Vorschlag fuer alle Projekte: `tools/claude_mds_vorschlag/`
+Werkzeuge: `tools/wissen_suchen.py` (Suche mit Rangfolge) · `tools/werkzeug_aehnlich.py` (Doppelgaenger-Werkzeuge) · `tools/wissensbaum_luecken.py` (Vollstaendigkeit) · `tools/wissen_ablage_pruefen.py` (Ablage-Tor) · `tools/wissen_wiederfinden.py` (Nachweis Recall@5, Saetze neu_*, Erstversuch-Quote) · `tools/wissen_fragen.py` (Alltagsfragen je Zeile) · `tools/wissen_bedeutung.py` (Bedeutungssuche) · `tools/wissen_dev.json` (Entwicklungssatz) · `modelle/WIDERSPRUECHE.md` · Vorschlag fuer alle Projekte: `tools/claude_mds_vorschlag/`
 
 ## Gilt
 - Vor jedem neuen Ansatz, jedem Agentenauftrag und jedem neuen Werkzeug: `python3 -I tools/wissen_suchen.py <Befund in eigenen Worten>` und `python3 -I tools/werkzeug_aehnlich.py "<Befund>"`. Die TOP-5-Zeilen kommen woertlich unter "Vorarbeit" in den Auftrag [Skill kette-schleife 3., modelle/VORLAGE_BAUTEIL_RUNDE.md]
@@ -11,6 +11,8 @@ Werkzeuge: `tools/wissen_suchen.py` (Suche mit Rangfolge) · `tools/werkzeug_aeh
 - Hat dasselbe Mass mehrere Werte, kommt der Fall als Zeile mit Status in `modelle/WIDERSPRUECHE.md`, auch wenn er geklaert ist. Vor dem Rechnen mit einem Mass dort nachsehen
 - Fehlsuche = Lernstoff: Wer das richtige Wort erst im zweiten Anlauf findet, traegt es als Synonym ein (`tools/wissen_synonyme.json`). Den Fall traegt er mit natuerlichen Suchwoertern in `tools/wissen_wiederfinden.json` ein
 - Nachweis statt Behauptung: `wissen_wiederfinden.py` (Recall@5 der Verlustfaelle >= 0,9) laeuft im Schnelltest. Der Kontrollsatz wird nie zum Abstimmen benutzt
+- Neue Baumzeile oder neuer Register-/Archivkopf: gleich 3 Alltagsfragen dazuschreiben (`tools/wissen_fragen.py --offen ... --einpflegen`, Ablage `Doku/projekt/.fragen/`). `wissen_ablage_pruefen.py` meldet Zeilen ohne Fragen als Warnung mit Zahl
+- Neue echte Fehlsuche: zuerst als Satz `neu_<datum>` mit `erster_versuch: false` in `tools/wissen_wiederfinden.json` eintragen und ungelernt messen, erst danach daraus lernen. Abgestimmt wird nur auf `tools/wissen_dev.json`
 
 ## Versucht
 - 20.11. · Wissensbaum aus Auszuegen von Explore-Agenten, Ast-Budget 110 Zeilen → ✗ · Der Baum meldete "0 fehlend", tatsaechlich fehlten 942 Eintraege (66 von 125 Registerabschnitten beim Verdichten verloren) · Werkzeug `wissensbaum_luecken.py` statt Stichprobe [ERKENNTNISSE §Bildwert/Sweet-Spot]
@@ -22,8 +24,15 @@ Werkzeuge: `tools/wissen_suchen.py` (Suche mit Rangfolge) · `tools/werkzeug_aeh
 - 24.11. · Spec nur lokal (`archiv/SPEC_FLAECHENMASS`, 11.11., nie eingecheckt; `tools/flaechen_mass.py` verweist darauf) → ⚠ Falle · `formsitz.py` wurde 24.11. als "trennscharfes Formmass" neu erdacht (anderes Verfahren: Tiefen-IoU gegen die Wolke statt SAM-Flaechen; Oberkontur ~ iou_silhouette) · Ablage-Tor
 - 24.11. · Geklaertes Mass nicht als Widerspruch vermerkt → ⚠ Falle · Martinstor-Spitze: 31.10. Laser 54,8 m (60-66 m widerlegt); 19.11. Kettentest rechnete mit "Turm ~60 m" und dem LoD2-First 45 m als Turmhoehe · `modelle/WIDERSPRUECHE.md`
 - 24.11. · Bildwert-Stufe 1 mit Teilmenge der Fotos → ✗ wiederholt · Die Lehre "Teilmengen verlieren Dichte" (Register BM, 02.11.) stand nur im Martinstor-Register; Formsitz lag bei 60-70 % von "alle" [Commit 91a986e83]
+- 24.11. · Bedeutungssuche: Satz-Embedding multilingual-e5-small (MIT), Rangfusion mit der Wortsuche → ✗ allein · Dev-Satz (20 ganze Alltagssaetze, kein Wort >= 5 Buchstaben aus der Zielzeile): Probe-31-Wortsuche 0/20, nur Embedding 1/20, Fusion 1/20. Zielzeile im Mittel auf Rang 100-2000 von 2118 Baumzeilen. e5-base MRR 0,08 statt 0,06, bge-m3 auf der CPU zu langsam · Die Ursache ist die Vokabelluecke, nicht das Modell · `tools/wissen_bedeutung.py`
+- 24.11. · Automatische Synonyme als Wortnachbarn per Embedding (18 813 Projektwoerter) → ✗ · Dev 0/20 bei allen Schwellen. Die Nachbarn sind Schreibverwandte ("Tetraeder" -> "Tuersteher", "Batterien" -> "Elementen"), keine Bedeutungsverwandten
+- 24.11. · Kompositazerlegung (Grundwort/Bestimmungswort aus dem Projektwortschatz, "Arbeitsspeicher" -> arbeit+speicher) → ⚠ · Dev ohne Fragen 0/20 -> 0/20, mit Fragen 2/20 -> 3/20. neu_24abend 1/8 (Probe 31) -> 0/8 bei reiner Wortsuche
+- 25.11. · Alltagsfragen je Zeile (doc2query, 3 Fragen je Baumzeile + Register-/Archivkopf, 3757 Eintraege, geschrieben von Agenten, die den Dev-Satz nicht kannten) + Bedeutungssuche + RRF (k=20, Gewicht 1,5; nur am Dev abgestimmt) → ✓ teils · Dev 0/20 -> 4/20. Kontrolle 4/8 -> 7/8 (nie abgestimmt). Verlustfaelle ohne gelernte Synonyme 8/12 -> 10/12, mit 12/12 -> 12/12. neu_24abend (Stichwort-Anfragen, vor jeder Abstimmung gemessen) 1/8 -> 0/8 ✗. ~5 s je Anfrage · ⚠ Dev ist seitdem nicht mehr ganz blind (Ziele bekamen Fragen); Richter ist der versiegelte Pruefsatz · `tools/wissen_fragen.py`
+- 25.11. · Ganze Fragesaetze: Satzzeichen blieben am Wort ("schief,") → ✗ Falle · `begriffe_teilen` streift sie jetzt ab, Fuellwoerter der Alltagssprache (ich, kann, warum, ...) fallen weg
 
 ## Offen
+- Stichwort-Anfragen (neu_24abend 0/8: "gps massstab", "grobform daneben") verlieren gegen ganze Saetze. Pruefen, ob die Bedeutung bei 1-2 Woertern weniger Gewicht bekommen soll (nur am Dev, mit Stichwortfaellen darin)
+- Logbuch-Absaetze und Memory haben noch keine Alltagsfragen. Ein Reranker (Cross-Encoder, z. B. bge-reranker-v2-m3 Apache-2.0) ueber die Top 30 ist moeglich, braucht aber CPU-Zeit
 - Kontrollsatz-Recall (4/8) heben, ohne an ihm abzustimmen: Relevanz je Eintrag (Abschnitt) statt je Zeile; Logbuch-Absaetze als Einheit
 - ERLEDIGT 24.11. (Nutzer „ja"): eingecheckt - Archivdateien SPEC_FLAECHENMASS, STAND_2026-11-10_NACHMITTAG, STAND_2026-11-12_VORMITTAG_lang ; QUALITAETSSTUFEN.md gab es nie - Verweis in `tools/qualitaetsstufen.py` zeigt jetzt auf pipeline/methodik.md
 - 33 doppelt vergebene Register-IDs (49 Doppelungen, REZEPT 42) umbenennen. Das geht nur mit Nachziehen der Baumverweise und braucht den Nutzer

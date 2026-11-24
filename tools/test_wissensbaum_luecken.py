@@ -3,6 +3,7 @@
 import io
 import os
 import sys
+os.environ.setdefault("WISSEN_BEDEUTUNG", "aus")  # synthetische Wortsuche-Tests: ohne Embedding-Unterprozess (24.11.2026)
 import tempfile
 from contextlib import redirect_stdout
 from pathlib import Path

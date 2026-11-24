@@ -1,0 +1,421 @@
+{
+ "_hinweis": "ENTWICKLUNGSSATZ (24.11.2026) fuer die Abstimmung der Bedeutungssuche (tools/wissen_bedeutung.py + Rangfusion in wissen_suchen.py). 20 Baumzeilen per Zufall (random.seed(20261124), random.sample aus allen '- '-Zeilen > 80 Zeichen unter Doku/projekt/**, ohne wissen.md; Stand Commit 89a5bd256+merge-probe-31), Frage von Hand als ganzer Alltagssatz (Problem statt Loesung), kein Wort >= 5 Buchstaben aus der Zielzeile (auch nicht als Teilwort; geprueft per Skript), gesucht mit allen Woertern des Satzes (Form wie der versiegelte Pruefsatz, Hinweis Hauptagent 24.11.). NUR hieran wird abgestimmt; Verlustfaelle (faelle) und Kontrollsatz in wissen_wiederfinden.json werden nur gemessen. Erwartet = genau die Zielzeile (Datei:Zeile; verschiebt sich eine Zeile, Nummer nachziehen). Aufruf: python3 -I tools/wissen_wiederfinden.py --faelle tools/wissen_dev.json",
+ "mindest_recall": 0.0,
+ "faelle": [
+  {
+   "name": "fTetWild nicht wasserdicht",
+   "suche": [
+    "Ich",
+    "will",
+    "aus",
+    "dem",
+    "Punktehaufen",
+    "ein",
+    "geschlossenes",
+    "Volumen",
+    "fuer",
+    "den",
+    "Drucker",
+    "machen,",
+    "aber",
+    "die",
+    "Huelle",
+    "hat",
+    "ueberall",
+    "Loecher."
+   ],
+   "erwartet": "dichte-wolke\\.md:59:"
+  },
+  {
+   "name": "Auto-Beobachtungen haeufen sich",
+   "suche": [
+    "Die",
+    "Liste",
+    "der",
+    "selbst",
+    "erkannten",
+    "Befunde",
+    "wird",
+    "bei",
+    "jedem",
+    "Lauf",
+    "laenger,",
+    "weil",
+    "alte",
+    "Funde",
+    "nie",
+    "rausfliegen."
+   ],
+   "erwartet": "bauteile-kreis\\.md:82:"
+  },
+  {
+   "name": "Seitentest Blickrichtung je Bildgruppe",
+   "suche": [
+    "Wie",
+    "merke",
+    "ich,",
+    "ob",
+    "ein",
+    "Haufen",
+    "Kameras",
+    "wirklich",
+    "auf",
+    "dieselbe",
+    "Hausseite",
+    "guckt?"
+   ],
+   "erwartet": "lage-seiten\\.md:107:"
+  },
+  {
+   "name": "Unterbau Lasercutter",
+   "suche": [
+    "Kann",
+    "man",
+    "das",
+    "Gelaende",
+    "fuer",
+    "die",
+    "Schienen",
+    "aus",
+    "Holzplatten",
+    "automatisch",
+    "ausschneiden",
+    "lassen?"
+   ],
+   "erwartet": "bahn-anlage\\.md:21:"
+  },
+  {
+   "name": "Erker aus Wolke gemessen",
+   "suche": [
+    "Wie",
+    "breit",
+    "ist",
+    "der",
+    "Vorbau",
+    "am",
+    "Kaufhaus",
+    "und",
+    "wie",
+    "weit",
+    "ragt",
+    "er",
+    "nach",
+    "vorn?"
+   ],
+   "erwartet": "formfamilien\\.md:35:"
+  },
+  {
+   "name": "Klappung Teil 1 gescheitert",
+   "suche": [
+    "Das",
+    "eine",
+    "Teilstueck",
+    "laesst",
+    "sich",
+    "partout",
+    "kaum",
+    "sauber",
+    "umdrehen",
+    "und",
+    "landet",
+    "immer",
+    "beim",
+    "Haus",
+    "nebenan."
+   ],
+   "erwartet": "lage-seiten\\.md:98:"
+  },
+  {
+   "name": "NiMH nach 3 Monaten tot",
+   "suche": [
+    "Bei",
+    "den",
+    "alten",
+    "Autos",
+    "fuer",
+    "die",
+    "Rennbahn",
+    "halten",
+    "die",
+    "Batterien",
+    "nach",
+    "kurzer",
+    "Zeit",
+    "nicht",
+    "mehr."
+   ],
+   "erwartet": "rc-attraktionen\\.md:18:"
+  },
+  {
+   "name": "Zeiger-Aufsaetze 0,68 mm loesten sich",
+   "suche": [
+    "Die",
+    "kleinen",
+    "Teile",
+    "der",
+    "Uhr",
+    "fallen",
+    "nach",
+    "dem",
+    "Drucken",
+    "einfach",
+    "ab,",
+    "weil",
+    "sie",
+    "zu",
+    "fein",
+    "sind."
+   ],
+   "erwartet": "modellbau-druck\\.md:20:"
+  },
+  {
+   "name": "Faecher-Fit Zwei-Foto-Konsens flach",
+   "suche": [
+    "Ich",
+    "will",
+    "die",
+    "Gewoelbestrahlen",
+    "an",
+    "zwei",
+    "Bilder",
+    "anpassen,",
+    "aber",
+    "die",
+    "Guete",
+    "wird",
+    "beim",
+    "Suchen",
+    "kaum",
+    "besser."
+   ],
+   "erwartet": "kreis\\.md:53:"
+  },
+  {
+   "name": "Relief aus Einzelbild Depth Anything",
+   "suche": [
+    "Kann",
+    "eine",
+    "KI",
+    "aus",
+    "nur",
+    "einer",
+    "Aufnahme",
+    "ablesen,",
+    "wie",
+    "weit",
+    "die",
+    "Verzierungen",
+    "aus",
+    "der",
+    "Mauer",
+    "kommen?"
+   ],
+   "erwartet": "relief\\.md:9:"
+  },
+  {
+   "name": "Street View Rip Lizenzfalle",
+   "suche": [
+    "Darf",
+    "ich",
+    "die",
+    "Strassenbilder",
+    "von",
+    "dem",
+    "grossen",
+    "Kartendienst",
+    "fuer",
+    "unser",
+    "Modell",
+    "benutzen?"
+   ],
+   "erwartet": "bildquellen\\.md:51:"
+  },
+  {
+   "name": "Fotomassstab waagerechte Bekanntgroesse",
+   "suche": [
+    "Wie",
+    "bekomme",
+    "ich",
+    "Meter",
+    "pro",
+    "Pixel,",
+    "wenn",
+    "ich",
+    "nur",
+    "eine",
+    "vorgegebene",
+    "Strecke",
+    "quer",
+    "im",
+    "Bild",
+    "habe?"
+   ],
+   "erwartet": "messen\\.md:24:"
+  },
+  {
+   "name": "schnitt_reichweite mass Staffelgiebel",
+   "suche": [
+    "Der",
+    "Test",
+    "an",
+    "der",
+    "Turmspitze",
+    "erfasst",
+    "in",
+    "Wahrheit",
+    "ein",
+    "ganz",
+    "anderes",
+    "Bauteil",
+    "dahinter."
+   ],
+   "erwartet": "messen\\.md:74:"
+  },
+  {
+   "name": "Best-of-N-Varianten-Tor Ornament",
+   "suche": [
+    "Bringt",
+    "es",
+    "was,",
+    "viele",
+    "Fassungen",
+    "der",
+    "Verzierung",
+    "zu",
+    "bauen",
+    "und",
+    "dann",
+    "die",
+    "beste",
+    "zu",
+    "nehmen?"
+   ],
+   "erwartet": "bauteile-kreis\\.md:59:"
+  },
+  {
+   "name": "Foto-Diff Generator schlechter als Wolkennetz",
+   "suche": [
+    "Sieht",
+    "unser",
+    "gebautes",
+    "Tor",
+    "im",
+    "Bildvergleich",
+    "wirklich",
+    "gelungener",
+    "aus",
+    "als",
+    "das",
+    "rohe",
+    "Netz",
+    "aus",
+    "den",
+    "Punkten?"
+   ],
+   "erwartet": "validierung\\.md:29:"
+  },
+  {
+   "name": "Kanten-NCC Epipolarlinie kein Gipfel",
+   "suche": [
+    "Beim",
+    "Abtasten",
+    "auf",
+    "dem",
+    "Strich",
+    "im",
+    "zweiten",
+    "Bild",
+    "finde",
+    "ich",
+    "nirgends",
+    "eine",
+    "klare",
+    "Spitze",
+    "fuer",
+    "den",
+    "Abstand."
+   ],
+   "erwartet": "kanten\\.md:52:"
+  },
+  {
+   "name": "Recherche Mesh scharfe Kanten LIMAP",
+   "suche": [
+    "Welche",
+    "fertigen",
+    "Programme",
+    "gibt",
+    "es,",
+    "damit",
+    "die",
+    "Ecken",
+    "am",
+    "Haus",
+    "nicht",
+    "so",
+    "rund",
+    "und",
+    "weich",
+    "werden?"
+   ],
+   "erwartet": "kanten\\.md:24:"
+  },
+  {
+   "name": "Schaerfen auf unbekannten Fotos Overfitting",
+   "suche": [
+    "Die",
+    "Verbesserung",
+    "klappt",
+    "nur",
+    "auf",
+    "den",
+    "Bildern,",
+    "an",
+    "denen",
+    "wir",
+    "geuebt",
+    "haben,",
+    "auf",
+    "neuen",
+    "gar",
+    "keine."
+   ],
+   "erwartet": "dichte-wolke\\.md:87:"
+  },
+  {
+   "name": "Lot aus Foto-Vertikalen",
+   "suche": [
+    "Das",
+    "ganze",
+    "Modell",
+    "steht",
+    "schraeg,",
+    "wie",
+    "finde",
+    "ich",
+    "heraus,",
+    "wo",
+    "oben",
+    "ist?"
+   ],
+   "erwartet": "ausrichtung\\.md:52:"
+  },
+  {
+   "name": "zwei globale Laeufe parallel RAM",
+   "suche": [
+    "Wenn",
+    "ich",
+    "zwei",
+    "grosse",
+    "Rechnungen",
+    "gleichzeitig",
+    "starte,",
+    "wird",
+    "der",
+    "Rechner",
+    "furchtbar",
+    "langsam."
+   ],
+   "erwartet": "betrieb\\.md:67:"
+  }
+ ]
+}

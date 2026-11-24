@@ -32,10 +32,11 @@ def lade_modul(pfad):
     return m
 
 
-def erste_treffer(modul, wurzel, woerter, k, synonyme=None):
+def erste_treffer(modul, wurzel, woerter, k, synonyme=None, zusatz=()):
     buf = io.StringIO()
     with redirect_stdout(buf):
-        modul.main(list(woerter) + ["--wurzel", str(wurzel), "--memory", "aus", "--ohne-git"] + (["--synonyme", synonyme] if synonyme else []))
+        modul.main(list(woerter) + ["--wurzel", str(wurzel), "--memory", "aus", "--ohne-git"] + (["--synonyme", synonyme] if synonyme else [])
+                   + list(zusatz))
     aus = []
     for z in buf.getvalue().split("\n"):
         if z.startswith("==") or z.startswith("Suche ") or "(mehr: --max 0)" in z:
@@ -56,6 +57,9 @@ def main(argv=None):
     ap.add_argument("--k", type=int, default=5)
     ap.add_argument("--synonyme", default=None, help="andere Synonymdatei (vorher/nachher)")
     ap.add_argument("--zeigen", action="store_true", help="die k Treffer je Fall ausgeben")
+    ap.add_argument("--satz", default=None, help="nur diesen Satz messen (faelle, kontrolle, neu_...)")
+    ap.add_argument("--ohne-synonyme", action="store_true", help="Suche ohne gelernte Synonyme (Verallgemeinerung)")
+    ap.add_argument("--bedeutung", choices=["an", "aus"], default=None, help="Bedeutungssuche der gemessenen Fassung an/aus")
     a = ap.parse_args(argv)
     try:
         modul = lade_modul(a.modul)
@@ -69,10 +73,12 @@ def main(argv=None):
         print(f"FEHLER: {e}", file=sys.stderr)
         return 2
 
+    argzusatz = (["--ohne-synonyme"] if a.ohne_synonyme else []) + (["--bedeutung", a.bedeutung] if a.bedeutung else [])
+
     def satz(faelle):
         gefunden = 0
         for f in faelle:
-            tr = erste_treffer(modul, a.wurzel, f["suche"], a.k, a.synonyme)
+            tr = erste_treffer(modul, a.wurzel, f["suche"], a.k, a.synonyme, argzusatz)
             rx = re.compile(f["erwartet"])
             rang = next((i for i, t in enumerate(tr, 1) if rx.search(t)), None)
             gefunden += rang is not None
@@ -83,15 +89,29 @@ def main(argv=None):
                     print(f"       {t[:170]}")
         return gefunden, len(faelle)
 
-    gefunden, n = satz(d["faelle"])
-    r = gefunden / max(1, n)
     soll = float(d.get("mindest_recall", 0))
-    print(f"RECALL@{a.k} = {gefunden}/{n} = {r:.2f} (Soll >= {soll:.2f}) - {'OK' if r >= soll else 'ZU NIEDRIG'}")
-    if d.get("kontrolle"):
+    r = 1.0
+    if a.satz in (None, "faelle"):
+        gefunden, n = satz(d["faelle"])
+        r = gefunden / max(1, n)
+        print(f"RECALL@{a.k} = {gefunden}/{n} = {r:.2f} (Soll >= {soll:.2f}) - {'OK' if r >= soll else 'ZU NIEDRIG'}")
+    if d.get("kontrolle") and a.satz in (None, "kontrolle"):
         # Kontrollsatz: NICHT zum Abstimmen von Synonymen/Rangfolge benutzt -> zeigt, ob die Verbesserung verallgemeinert (nur Bericht)
         print("-- Kontrollsatz (nicht abgestimmt, nur Bericht):")
         g2, n2 = satz(d["kontrolle"])
         print(f"KONTROLLE RECALL@{a.k} = {g2}/{n2} = {g2 / max(1, n2):.2f}")
+    # neue echte Fehlsuchen (Saetze 'neu_*', 24.11.2026): zuerst ungelernt messen = Zukunftstest, nur Bericht
+    for sk in sorted(x for x in d if x.startswith("neu_") and isinstance(d[x], list)):
+        if a.satz in (None, sk):
+            print(f"-- Satz {sk} (echte Fehlsuchen, nur Bericht):")
+            g3, n3 = satz(d[sk])
+            print(f"{sk.upper()} RECALL@{a.k} = {g3}/{n3} = {g3 / max(1, n3):.2f}")
+    # Erstversuch-Quote: Anteil echter Faelle, die die damalige Suche beim ERSTEN Anlauf fand (Feld erster_versuch) - laufender
+    # Verallgemeinerungs-Nachweis; steigt nur, wenn kuenftige Suchen ohne Nachlernen treffen
+    echt = [f for x in d if isinstance(d[x], list) for f in d[x] if isinstance(f, dict) and "erster_versuch" in f]
+    if echt and a.satz is None:
+        ja = sum(bool(f["erster_versuch"]) for f in echt)
+        print(f"ERSTVERSUCH-QUOTE = {ja}/{len(echt)} = {ja / len(echt):.2f} (echte Suchen, beim ersten Anlauf gefunden)")
     return 0 if r >= soll else 1
 
 

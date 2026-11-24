@@ -1,0 +1,3 @@
+{"hash": "05991864d108", "fragen": ["Was macht das Werkzeug, das Teile bewertet?", "Welche Eingaben braucht das Werkzeug zur Sichtpruefung?", "Wo liegen die Teile eines Kreislaufs?"]}
+{"hash": "845f96f4c9f7", "fragen": ["Wie mache ich aus Nutzerfunden einen Test, der vorher fehlschlaegt?", "Warum zaehlt ein Sichtfund des Nutzers als automatischer Test?", "Wie pruefe ich Formfamilien an den Teilen, die der Nutzer bemaengelt hat?"]}
+{"hash": "f0d11ee20e5b", "fragen": ["Welche Grenzen gelten fuer einen Helfer, der nur ein neues Pruefwerkzeug schreiben soll?", "Darf der Auftrag bestehende Werkzeuge aendern oder nur neue Dateien anlegen?", "Was ist bei einem Auftrag erlaubt: Commit, Loeschen oder nur neue Dateien?"]}
