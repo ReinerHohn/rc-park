@@ -290,6 +290,9 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     if not mg: g, sv, ms, tr = gm, svm, mm, trm
     pr["massstab"] = dict(gegen_gps=round(mm, 4), uebernommen=not mg, gruende=mg, hebel_m=round(hb, 2), streuung_rel=round(min(sd_m, 9.9), 4), wandzuege=len(zg),
                           treffer_starr=round(float(tr0.mean()), 3), treffer_aehnlich=round(float(trm.mean()), 3))
+    # 24.11.2026: Skalierungsmittelpunkt c in B-Koordinaten ablegen -> gps_probe misst den Hebel der GEOTAGGTEN B-Kameras dazu (Massstab-Toleranz in gps_urteil)
+    _zc = float(np.median(wb[:, 2])) if len(wb) else 0.0
+    pr["massstab"]["mitte_b"] = [float(x) for x in anwenden(np.linalg.inv(L @ Mk @ Mg), np.array([[c[0], c[1], _zc]]))[0]]
     Q = bild2(B2, c, g, sv, ms)
     di, ii = cKDTree(A2).query(Q); d_nach = float(np.median(di))
     ax = (np.degrees(np.arctan2(NA2[:, 1], NA2[:, 0])) % 90); az = float(np.degrees(np.angle(np.exp(4j * np.radians(ax)).mean())) / 4 % 90)
@@ -362,7 +365,7 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     return erg
 
 
-def gps_probe(bilder, modell_a, modell_b, M_neu, M_gps):
+def gps_probe(bilder, modell_a, modell_b, M_neu, M_gps, mitte_b=None):
     """GEOTAGS VON B als Gegenprobe: A-Rahmen Modell -> ENU (seiten_gps_vereinen.rahmen, A hat Hunderte Geotags), B-Kameras ueber M_neu bzw. M_gps in A und weiter nach
     ENU; waagerechter Abstand zu den eigenen Geotags von B (Median, und Anteil < GRENZE_M). -> dict oder None (zu wenig GPS)."""
     import seiten_gps_vereinen as SG
@@ -375,14 +378,22 @@ def gps_probe(bilder, modell_a, modell_b, M_neu, M_gps):
     Y = np.array([G[B[0][i]] for i in k]); C = B[1][k]; aus = dict(n_gps_b=len(k))
     for name, M in (("gps", M_gps), ("neu", M_neu)):
         d = np.linalg.norm(anwenden(FA["M"] @ M, C)[:, :2] - Y, axis=1); aus[name] = dict(median_m=round(float(np.median(d)), 2), anteil_unter_grenze=round(float((d < SG.GRENZE_M).mean()), 3))
+    if mitte_b is not None:                                                             # 24.11.2026 (Nutzer "Ja, Hebel einrechnen"): Hebel der geotaggten B-Kameras um den Skalierungsmittelpunkt, ENU-Meter
+        P = anwenden(FA["M"] @ M_neu, np.asarray(mitte_b, float)[None])[0]
+        aus["hebel_kameras_m"] = round(float(np.median(np.linalg.norm(anwenden(FA["M"] @ M_neu, C)[:, :2] - P[:2], axis=1))), 2)
     return aus
 
 
-def gps_urteil(gp):
+def gps_urteil(gp, mass_sd=None):
     """Ergebnis von gps_probe -> Ablehnungsgrund (str) oder '' (bestanden). Ohne Probe (keine Geotags) = Ablehnung: dann waere die Lage nur von den Waenden getragen."""
     if not gp: return "Geotags von B nicht pruefbar (keine Gegenprobe)"
     gr = []
-    if gp["neu"]["median_m"] > gp["gps"]["median_m"] + GPS_MEHR_M: gr.append(f"Geotags von B im Median {gp['gps']['median_m']} -> {gp['neu']['median_m']} m (hoechstens +{GPS_MEHR_M} m)")
+    # 24.11.2026 (Nutzer "Ja, Hebel einrechnen"): ist der Massstab aus den Waenden uebernommen, verschiebt er die B-Kameras um (Massstabfehler x Hebel).
+    # Die Grenze darf dann die ehrliche GPS-Massstabsstreuung am Kamerahebel einrechnen: max(GPS_MEHR_M, mass_sd x Hebel). 1122y: 0,164 x ~24 m = 3,9 m statt 3,0 m.
+    mehr = GPS_MEHR_M
+    if mass_sd and gp.get("hebel_kameras_m"): mehr = max(GPS_MEHR_M, round(float(mass_sd) * gp["hebel_kameras_m"], 2))
+    gp["grenze_mehr_m"] = mehr
+    if gp["neu"]["median_m"] > gp["gps"]["median_m"] + mehr: gr.append(f"Geotags von B im Median {gp['gps']['median_m']} -> {gp['neu']['median_m']} m (hoechstens +{mehr} m)")
     if gp["neu"]["anteil_unter_grenze"] < GPS_ANTEIL_MIN: gr.append(f"nur {100 * gp['neu']['anteil_unter_grenze']:.0f} % der Geotags von B unter 12 m (noetig {100 * GPS_ANTEIL_MIN:.0f} %)")
     return "; ".join(gr)
 
@@ -435,9 +446,11 @@ def main(argv=None):
     if erg.get("ok"):
         gp = None
         if a.bilder and a.modell_a and a.modell_b and os.path.isdir(a.bilder):
-            try: gp = gps_probe(a.bilder, a.modell_a, a.modell_b, np.asarray(erg["B_nach_A"]), np.asarray(erg["B_nach_A_gps"]))
+            try: gp = gps_probe(a.bilder, a.modell_a, a.modell_b, np.asarray(erg["B_nach_A"]), np.asarray(erg["B_nach_A_gps"]),
+                                      mitte_b=(erg["pruefung"].get("massstab") or {}).get("mitte_b"))
             except Exception as ex: print(f"GPS-Probe nicht moeglich ({type(ex).__name__}: {ex})")
-        erg["pruefung"]["gps_probe"] = gp; gpr = gps_urteil(gp)
+        _ms = erg["pruefung"].get("massstab") or {}
+        erg["pruefung"]["gps_probe"] = gp; gpr = gps_urteil(gp, mass_sd=(max(G.get("mass_sd") or 0.0, G.get("mass_sd_ehrlich") or 0.0) if isinstance(G, dict) and _ms.get("uebernommen") else None))
         if gpr:
             erg.update(ok=False, urteil="ABGELEHNT: " + gpr + " - GPS-Lage bleibt"); erg.pop("B_nach_A", None)
             try:                                                                       # Kontrollbild entstand vor der Geotag-Probe ("GEBUNDEN") -> Ablehnung nachtragen
