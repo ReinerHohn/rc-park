@@ -29,6 +29,12 @@ HIMMEL_DICHTE = 0.75
 LUECKE = 0.04
 RES_PX = 2.5
 BIN_PX = 4
+# Abstand der Himmels-Fusionsmaske zur Silhouette (Arbeitspixel). himmel() selbst endet schon ~7 px vor jeder starken Kante (Streuung im 15-px-Fenster < 7 bei
+# Kontrast >= 60 erst ab ~7 px Abstand), also ausserhalb des PatchMatch-Fensters (COLMAP window_radius 5); 2 px mehr gegen weiche/unscharfe Kanten (JPEG, Dunst).
+HIMMEL_RAND_PX = 2
+# Wachsen in den Saum (himmelmaske): Farbabstand zur lokalen Himmelsfarbe, Kantensperre, Reichweite (Arbeitspixel). Saum am Beleg 1122z 8-25 px breit.
+HIMMEL_TOL, HIMMEL_GRAD, HIMMEL_WACHS = 22.0, 14.0, 40
+HIMMEL_BREIT = 41         # Kern = Himmel, in den ein Kreis von 41 Arbeitspixeln passt (~2 % der langen Seite); schmalere helle Baender nur ueber das begrenzte Wachsen
 
 
 def _kern(k): return cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k))
@@ -59,6 +65,22 @@ def himmel(g, geschlossen, linien, farbe=None):
     return gut[lab]
 
 
+def _vorstufe(bild, mit_farbe=False):
+    """Gemeinsame Vorstufe von drahtmaske() und himmelmaske(): Arbeitsmassstab s, Grau g, Black-Hat bh1, Duenn-Linien stark/schwach, Himmel (alles Arbeitsmassstab)."""
+    H0, W0 = bild.shape[:2]; s = min(1.0, ARBEIT_PX / max(H0, W0))
+    g = bild if bild.ndim == 2 else cv2.cvtColor(bild, cv2.COLOR_BGR2GRAY)
+    g = cv2.resize(g, (int(round(W0 * s)), int(round(H0 * s))), interpolation=cv2.INTER_AREA) if s < 1 else g.copy()
+    H, W = g.shape
+    cl1 = cv2.morphologyEx(g, cv2.MORPH_CLOSE, _kern(K_DUENN)); cl2 = cv2.morphologyEx(g, cv2.MORPH_CLOSE, _kern(K_BREIT))
+    bh1 = cl1.astype(np.float32) - g; bh2 = cl2.astype(np.float32) - g
+    duenn = bh1 >= DUENN_VERH * np.maximum(bh2, 1.0)
+    duenn[:4] = duenn[-4:] = False; duenn[:, :4] = duenn[:, -4:] = False   # Bildrand (Randabfall/Vignette gab eine 'Linie' entlang der Kante, 153319)
+    stark = (duenn & (bh1 > STARK)).astype(np.uint8); schwach = duenn & (bh1 > SCHWACH)
+    fb = None if bild.ndim == 2 else (cv2.resize(bild, (W, H), interpolation=cv2.INTER_AREA) if bild.shape[:2] != (H, W) else bild)
+    sky = himmel(g, cl2, schwach, fb)
+    return (s, g, bh1, stark, schwach, sky, fb) if mit_farbe else (s, g, bh1, stark, schwach, sky)
+
+
 def _poly(T, D, grad):
     if len(T) < 6 or np.ptp(T) < 10: return None
     return np.polyfit(T, D, grad)
@@ -67,17 +89,9 @@ def _poly(T, D, grad):
 def drahtmaske(bild, rand_px=0, info=None):
     """bild: BGR- oder Grau-Array beliebiger Groesse. -> uint8-Maske gleicher Groesse (255 = Draht). rand_px = zusaetzliche Aufweitung in Bildpixeln.
     info (dict, optional) bekommt Kandidaten/angenommen/verworfen mit Gruenden (fuer Test und Overlay)."""
-    H0, W0 = bild.shape[:2]; s = min(1.0, ARBEIT_PX / max(H0, W0))
-    g = bild if bild.ndim == 2 else cv2.cvtColor(bild, cv2.COLOR_BGR2GRAY)
-    g = cv2.resize(g, (int(round(W0 * s)), int(round(H0 * s))), interpolation=cv2.INTER_AREA) if s < 1 else g.copy()
-    H, W = g.shape; kurz = min(H, W)
-    cl1 = cv2.morphologyEx(g, cv2.MORPH_CLOSE, _kern(K_DUENN)); cl2 = cv2.morphologyEx(g, cv2.MORPH_CLOSE, _kern(K_BREIT))
-    bh1 = cl1.astype(np.float32) - g; bh2 = cl2.astype(np.float32) - g
-    duenn = bh1 >= DUENN_VERH * np.maximum(bh2, 1.0)
-    duenn[:4] = duenn[-4:] = False; duenn[:, :4] = duenn[:, -4:] = False   # Bildrand (Randabfall/Vignette gab eine 'Linie' entlang der Kante, 153319)
-    stark = (duenn & (bh1 > STARK)).astype(np.uint8); schwach = duenn & (bh1 > SCHWACH)
-    fb = None if bild.ndim == 2 else (cv2.resize(bild, (W, H), interpolation=cv2.INTER_AREA) if bild.shape[:2] != (H, W) else bild)
-    sky = himmel(g, cl2, schwach, fb); hs = cv2.dilate((stark.astype(bool) & sky).astype(np.uint8), _kern(11)).astype(bool)
+    H0, W0 = bild.shape[:2]
+    s, g, bh1, stark, schwach, sky = _vorstufe(bild); H, W = g.shape; kurz = min(H, W)
+    hs = cv2.dilate((stark.astype(bool) & sky).astype(np.uint8), _kern(11)).astype(bool)
     out = np.zeros((H, W), np.uint8); I = info if info is not None else {}; I.update(kandidaten=0, angenommen=[], verworfen=[])
     segs = cv2.HoughLinesP(stark * 255, 1, np.pi / 360, threshold=max(20, int(0.03 * kurz)), minLineLength=int(0.05 * kurz), maxLineGap=int(0.01 * kurz) + 2)
     if segs is None: return _hoch(out, H0, W0, rand_px)
@@ -137,6 +151,42 @@ def drahtmaske(bild, rand_px=0, info=None):
             cv2.polylines(out, [np.round(xy).astype(np.int32).reshape(-1, 1, 2)], False, 255, thickness=7)
         frei[fi[ok]] = False
     return _hoch(out, H0, W0, rand_px)
+
+
+def himmelmaske(bild, rand_px=HIMMEL_RAND_PX, info=None):
+    """HIMMEL fuer die Fusion (24.11.2026, blaues Geisterblatt 1122z): 255 = Himmel in Bildgroesse, bis rand_px Arbeitspixel an die Silhouette heran.
+    BELEG (/media/oem/scan/rc-park_tmp/himmel_maske/blatt_kontrolle_*.jpg): die Quellpixel des Blatts liegen im SAUM zwischen himmel() und Turmkante
+    (himmel() endet 7-25 px vor jeder Kante: Streuungsfenster + Liniendichte) - PatchMatch gibt diesen Himmelspixeln die Tiefe der Kante (Fenster-Verschleppung),
+    in vielen Videobildern gleich -> mehrsichtig 'bestaetigtes' Blatt entlang der Sehstrahlen. Daher:
+      1. Kern = himmel() NUR mit Himmelsfarbe: himmel() arbeitet im geschlossenen Bild und nimmt duenne dunkle Dinge (< 21 px: Turmspitze, Blitzableiter, Draht,
+         Zweig) mit - die bleiben frei (Draehte maskiert die Drahtmaske).
+      1b. Kern geoeffnet (HIMMEL_BREIT): nur flaechiger Himmel; helle glatte Baender (Gesims mit seitlichem Himmelsanschluss) fallen heraus.
+      2. WACHSEN in den Saum: Pixel mit Himmelsfarbe (Abstand zur lokalen Himmelsfarbe, 41-px-Mittel nur ueber Himmel, < HIMMEL_TOL) und ohne Kante (morphologischer
+         Gradient < HIMMEL_GRAD), mit dem Kern verbunden, hoechstens HIMMEL_WACHS px weit. Die Kante selbst (Gradient hoch) ist die Sperre -> weisse Wand neben
+         weissem Himmel waechst nur bis zur Kontur.
+      3. rand_px Abstand zu allem Nicht-Himmel: die Silhouette (Dachkante, Turmspitze, Laterne) und die ersten Pixel davor bleiben."""
+    H0, W0 = bild.shape[:2]
+    s, g, bh1, stark, schwach, sky, fb = _vorstufe(bild, mit_farbe=True)
+    f = (fb if fb is not None else g[..., None]).astype(np.float32); grad = cv2.morphologyEx(g, cv2.MORPH_GRADIENT, _kern(3)).astype(np.float32)
+    kern = sky.astype(np.uint8); m = kern
+    for _ in range(2):                                                    # lokale Himmelsfarbe (41-px-Mittel nur ueber Himmel); 2. Runde ohne die dunklen Pixel,
+        kw = kern.astype(np.float32); w = cv2.blur(kw, (41, 41))          # die himmel() im GESCHLOSSENEN Bild mitnimmt (Turmspitze/Draht/Zweig < 21 px)
+        ref = cv2.blur(f * kw[..., None], (41, 41)).reshape(f.shape) / np.maximum(w, 1e-6)[..., None]
+        farbe = (w > 0.02) & (np.abs(f - ref).max(axis=2) < HIMMEL_TOL); kern = (sky & farbe).astype(np.uint8)
+    kern = cv2.morphologyEx(kern, cv2.MORPH_OPEN, _kern(HIMMEL_BREIT))     # nur FLAECHIGER Himmel als Kern: helle glatte Baender (Gesims, Fries), die himmel() ueber
+    if kern.any():                                                        # einen seitlichen Himmelsanschluss mitnimmt, sind schmaler (Rot-Probe)
+        nah = cv2.dilate(kern, _kern(2 * HIMMEL_WACHS + 1)) > 0
+        kand = (farbe & (grad < HIMMEL_GRAD) & nah).astype(np.uint8) | kern
+        n, lab = cv2.connectedComponents(kand, connectivity=4)                  # nur mit dem Kern verbundene Saumpixel
+        mit = np.zeros(n, bool); mit[np.unique(lab[kern > 0])] = True; mit[0] = False; m = mit[lab].astype(np.uint8)
+    if info is not None: info.update(kern=float(kern.mean()), gewachsen=float(m.mean()))
+    if rand_px > 0: m = cv2.erode(m, _kern(2 * int(rand_px) + 1))
+    return _hoch(m * 255, H0, W0, 0)
+
+
+def fusionsmaske(bild, rand_px=0):
+    """Maske fuer die Fusion der dichten Wolke: Draht (drahtmaske, + rand_px) ODER sicherer Himmel (himmelmaske). 255 = nicht fusionieren."""
+    return np.maximum(drahtmaske(bild, rand_px), himmelmaske(bild))
 
 
 def _abschnitte(b, gap):

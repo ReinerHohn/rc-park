@@ -144,11 +144,21 @@ def fusionieren(ziel, D, stufe):
     pycolmap.stereo_fusion(ziel, D, options=fo, input_type="geometric" if stufe == "fein" else "photometric", output_type="ply")
 
 
-def main():
-    from scipy.spatial.transform import Rotation as Rot
-    objp, pipe = os.path.abspath(sys.argv[1]), sys.argv[2]; od = os.path.dirname(objp); name = os.path.basename(od)
-    stufe = sys.argv[sys.argv.index("--stufe") + 1] if "--stufe" in sys.argv else "schnell"; stamm = lambda b: os.path.splitext(b)[0]
-    listen = set(json.load(open(os.path.join(od, "audit", "kamera_plausibel.json")))["ausschliessen"]); D = os.path.join(pipe, "dicht"); cfg = os.path.join(D, "stereo", "fusion.cfg")
+VORAB = "fusion_vorab.json"    # 24.11.2026 Marke der VORAB-AUSSCHLUESSE (tools/fusion_vorab.py) in <pipe>/dicht/stereo/
+
+
+def vorab_marke(D):
+    """Marke der ersten Fusion mit Vorab-Ausschluss (None = erste Fusion lief mit der fusion.cfg wie vorgefunden)."""
+    try: return json.load(open(os.path.join(D, "stereo", VORAB)))
+    except Exception: return None
+
+
+def plan_berechnen(od, D, haufen=False, name=None, aktiv_vorher=None):
+    """Welche Bilder die Fusion nimmt - EINE Regel fuer die Neufusion (main) und den Vorab-Ausschluss vor der ersten Fusion (tools/fusion_vorab.py, 24.11.2026).
+    od = Ordner mit audit/kamera_plausibel.json (+ kette_insel.json, wolke_gruppen.json); D = <pipe>/dicht. aktiv_vorher: fusion.cfg VOR einem Vorab-Ausschluss
+    (die 'uebernommen'-Regel rechnet dann wie ohne Vorab). -> dict(alle, aktiv, bleibt, gem, gem_neu, aj, cfg)."""
+    stamm = lambda b: os.path.splitext(b)[0]
+    listen = set(json.load(open(os.path.join(od, "audit", "kamera_plausibel.json")))["ausschliessen"]); cfg = os.path.join(D, "stereo", "fusion.cfg")
     aktiv = zeilen(cfg) if os.path.exists(cfg) else None
     alle = zeilen(cfg + ".alle") if os.path.exists(cfg + ".alle") else (aktiv if aktiv is not None else sorted(os.listdir(os.path.join(D, "images"))))      # Grundmenge = ALLE Bilder, nicht die schon gekuerzte Liste
     if aktiv is None: aktiv = list(alle)
@@ -156,20 +166,40 @@ def main():
     if os.path.exists(ki): n0 = len(listen); listen |= set(json.load(open(ki))["ausschliessen"]); print(f"Insel-Ketten: {len(listen) - n0} weitere Bilder ausgeschlossen")
     wg = os.path.join(od, "audit", "wolke_gruppen.json")                  # 19.11.2026 (Martinstor): Bildgruppen/Einzelfotos, die Punkte hoch ueber die LoD2-Hoehe setzen (tools/wolke_gruppen_pruefen.py)
     if os.path.exists(wg): n0 = len(listen); listen |= {stamm(b) for b in json.load(open(wg)).get("ausschliessen", [])}; print(f"Wolken-Gruppen-Tor: {len(listen) - n0} weitere Bilder ausgeschlossen")
-    aj = os.path.join(D, "stereo", "fusion_ausschluss.json"); gem_neu = not os.path.exists(aj)
-    gem = dict(haufen=[], uebernommen=sorted(({stamm(b) for b in alle} - {stamm(b) for b in aktiv}) - listen)) if gem_neu else json.load(open(aj))
+    aj = os.path.join(D, "stereo", "fusion_ausschluss.json"); gem_neu = not os.path.exists(aj); basis = aktiv if aktiv_vorher is None else aktiv_vorher
+    gem = dict(haufen=[], uebernommen=sorted(({stamm(b) for b in alle} - {stamm(b) for b in basis}) - listen)) if gem_neu else json.load(open(aj))
     if gem_neu and gem["uebernommen"]: print(f"Ausschluss uebernommen: {len(gem['uebernommen'])} Bilder fehlen in fusion.cfg und stehen heute in keiner Liste (frueherer Listenstand oder Haufenquelle) - bleiben ausgeschlossen, gemerkt in {aj}")
-    if "--haufen" in sys.argv: gem["haufen"] = sorted(set(gem.get("haufen", [])) | haufen_quellen(od, D, name))
+    if haufen: gem["haufen"] = sorted(set(gem.get("haufen", [])) | haufen_quellen(od, D, name))
     aus = listen | set(gem.get("haufen", [])) | set(gem.get("uebernommen", []))
     bleibt = [b for b in alle if stamm(b) not in aus]; zurueck = len({stamm(b) for b in bleibt} - {stamm(b) for b in aktiv})
     print(f"Fusion: {len(alle)} Bilder, {len(alle) - len(bleibt)} ausgeschlossen (Listen: Kameras unter Gelaende/Insel-Ketten; gemerkt: {len(gem.get('haufen', []))} Haufenquelle, {len(gem.get('uebernommen', []))} uebernommen), {len(bleibt)} bleiben"
           + (f"; {zurueck} frueher ausgeschlossene Bilder kommen ZURUECK (stehen in keiner Liste mehr)" if zurueck else ""))
+    return dict(alle=alle, aktiv=aktiv, bleibt=bleibt, gem=gem, gem_neu=gem_neu, aj=aj, cfg=cfg)
+
+
+def main():
+    from scipy.spatial.transform import Rotation as Rot
+    objp, pipe = os.path.abspath(sys.argv[1]), sys.argv[2]; od = os.path.dirname(objp); name = os.path.basename(od)
+    stufe = sys.argv[sys.argv.index("--stufe") + 1] if "--stufe" in sys.argv else "schnell"; D = os.path.join(pipe, "dicht")
+    # 24.11.2026 VORAB-AUSSCHLUSS (tools/fusion_vorab.py): lief die erste Fusion schon ohne die vorhergesagten Bilder, prueft dieselbe Regel hier nur nach (rc 2 = eine Fusion je Lauf).
+    # --vorab-zurueck = die Kette hat NICHT neu fusioniert, die erste Fusion war aber gekuerzt -> RUECKFALL: Fusion mit der fusion.cfg von vorher (Ergebnis wie ohne Vorab).
+    vm = vorab_marke(D); vmp = os.path.join(D, "stereo", VORAB); zurueck_ = "--vorab-zurueck" in sys.argv
+    if zurueck_ and not vm: print("Vorab-Ausschluss: keine Marke - nichts zurueckzunehmen"); return 2
+    pl = plan_berechnen(od, D, "--haufen" in sys.argv, name, aktiv_vorher=(vm or {}).get("aktiv_vorher"))
+    alle, aktiv, bleibt, gem, gem_neu, aj, cfg = (pl[k] for k in ("alle", "aktiv", "bleibt", "gem", "gem_neu", "aj", "cfg"))
+    if zurueck_:
+        bleibt = list(vm["aktiv_vorher"]); gem_neu = False
+        print(f"RUECKFALL Vorab-Ausschluss: die Kette fusioniert diesmal NICHT neu, die erste Fusion lief aber ohne {len(vm['aktiv_vorher']) - len(vm['bleibt'])} vorhergesagte Bilder -> Fusion mit der fusion.cfg von vorher ({len(bleibt)} Bilder, wie vor dem 24.11.)", flush=True)
+    elif vm and "--haufen" not in sys.argv:
+        if bleibt == aktiv: print(f"Vorab-Ausschluss BESTAETIGT: die erste Fusion lief schon mit genau diesen {len(bleibt)} Bildern ({vm.get('grund', '')[:160]}) - keine zweite Fusion", flush=True)
+        else: print(f"RUECKFALL Vorab-Ausschluss: Vorhersage ({len(vm['bleibt'])} Bilder) weicht von den Listen nach der dichten Wolke ab ({len(bleibt)} Bilder; {len(set(vm['bleibt']) - set(bleibt))} zu viel, {len(set(bleibt) - set(vm['bleibt']))} zu wenig) -> zweite Fusion wie vor dem 24.11.", flush=True)
+    vorab_weg = lambda: os.path.exists(vmp) and "--haufen" not in sys.argv and os.remove(vmp)
     laeuft = cfg + ".laeuft"; f = os.path.join(D, "fused.ply"); fn = os.path.join(D, "fused_neu.ply")
     merken = lambda: text_atomar(aj, json.dumps(dict(gem, hinweis="tools/wolke_neu_fusionieren.py: gemerkte Ausschluesse (Haufenquellen lassen sich an der bereinigten Wolke nicht neu feststellen). Datei loeschen = Bilder kommen beim naechsten Lauf zurueck."), indent=1, ensure_ascii=False))
     if os.path.exists(laeuft): print(f"ACHTUNG: {laeuft} liegt noch da - ein frueherer Lauf wurde hart beendet; es wird in jedem Fall neu fusioniert")
     elif bleibt == aktiv and ply_punkte(f) > 0 and not draht_veraltet(f, D):
         if gem_neu and os.path.isdir(os.path.dirname(aj)): merken()
-        return 2
+        vorab_weg(); return 2
     if len(bleibt) < 2: print(f"FEHLER: nach dem Ausschluss blieben {len(bleibt)} Bilder - nichts geaendert (Listen pruefen: audit/kamera_plausibel.json, kette_insel.json, {aj})"); return 4
     if not os.path.exists(cfg + ".alle"): text_atomar(cfg + ".alle", "\n".join(alle) + "\n")
     open(laeuft, "w").write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} pid {os.getpid()}\n"); text_atomar(cfg, "\n".join(bleibt) + "\n")
@@ -183,14 +213,15 @@ def main():
         for q in (fn, fn + ".vis", laeuft):
             if os.path.exists(q): os.remove(q)
         print(f"FEHLER: Fusion gescheitert ({type(e).__name__}: {str(e)[:200]}) - fusion.cfg und fused.ply stehen wie vor dem Lauf", flush=True); raise
-    if os.path.exists(f) and not os.path.exists(os.path.join(D, "fused_alle.ply")): shutil.move(f, os.path.join(D, "fused_alle.ply"))
+    if os.path.exists(f) and not zurueck_ and not os.path.exists(os.path.join(D, "fused_alle.ply")): shutil.move(f, os.path.join(D, "fused_alle.ply"))
     os.replace(fn, f)
     if os.path.exists(fn + ".vis"): os.replace(fn + ".vis", f + ".vis")
     draht_marke(f, D)
     T = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{name}.json")))["transformation"]; s = T["s"]; R = Rot.from_rotvec(T["rvec"]).as_matrix(); t = np.array(T["t"])
     V = ply_lesen(f); X = np.c_[V["x"], V["y"], V["z"]].astype(float); Pm = ((X - t) / s) @ R
     npy_atomar(os.path.join(od, "sfm", f"punkte_modell_{name}.npy"), Pm.astype(np.float32)); npy_atomar(os.path.join(od, "sfm", f"punkte_farben_{name}.npy"), np.c_[V["red"], V["green"], V["blue"]].astype(np.uint8))
-    merken(); os.remove(laeuft)
+    if not zurueck_: merken()
+    vorab_weg(); os.remove(laeuft)
     print(f"neue Wolke: {len(Pm)} Punkte, z p1 {np.percentile(Pm[:, 2], 1):.1f} .. p99 {np.percentile(Pm[:, 2], 99):.1f} m -> sfm/punkte_modell_{name}.npy"); return 0
 
 
