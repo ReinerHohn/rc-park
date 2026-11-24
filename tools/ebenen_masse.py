@@ -66,8 +66,12 @@ def main():
                                 prof = [[round(float(za), 2), round(float(np.median(w[mu & (z >= za) & (z < za + 0.4) & (w > -0.3) & (w < aus + 0.2)])), 2)] for za in np.arange(max(z0, kb["z"] - 2.4), kb["z"], 0.4) if (mu & (z >= za) & (z < za + 0.4) & (w > -0.3) & (w < aus + 0.2)).sum() >= 30]
                                 km["streben"] = dict(z_fuss=round(float(np.percentile(z[q], 5)), 2), punkte_zwischen=int(q.sum()), tiefenprofil=prof, hinweis="gerade Strebe vom Wandfuss zur Konsole = ANNAHME (Profil zeigt die gemessene Tiefe je Hoehenband)")
                     mz = fr & (z > lo_["z"] + 0.2) & (z < (g.get("galerie") or {}).get("z_dach", g["z1"]) - 0.1)
-                    if mz.sum() >= 100:
-                        hu, eu = np.histogram(u[mz], bins=np.arange(u0, u1 + 0.02, 0.02)); su = np.convolve(hu, np.ones(3), "same"); pu, _ = find_peaks(su, height=max(25, 0.04 * mz.sum()), distance=4); pf = []
+                    # 24.11.2026 (Lauf 1122w: 'keine Pfosten belegt', Vordach schwebte ohne Stuetze ueber der Galerie): das Band zwischen Holm und Raehm war duenn
+                    # trianguliert (94 Punkte), die zwei Pfosten aber klar (24 / 61 Punkte je 6 cm, wie 1122t-v: u -3,45 / 4,25). Das Sammeltor 'mz >= 100' warf sie weg -
+                    # massgeblich ist der einzelne Haufen, nicht die Summe ueber das ganze Band. Haufen-Untergrenze 15 Punkte je 6 cm (vorher 25: linker Pfosten 1122w 24 Punkte);
+                    # bei dichtem Band gilt weiter 4 % der Bandpunkte. Draehte/Riegel liegen waagrecht und bilden keine u-Spitze.
+                    if mz.sum() >= 15:
+                        hu, eu = np.histogram(u[mz], bins=np.arange(u0, u1 + 0.02, 0.02)); su = np.convolve(hu, np.ones(3), "same"); pu, _ = find_peaks(su, height=max(15, 0.04 * mz.sum()), distance=4); pf = []
                         for x in eu[pu] + 0.01:
                             if pf and x - pf[-1][-1] < 0.5: pf[-1].append(float(x))
                             else: pf.append([float(x)])

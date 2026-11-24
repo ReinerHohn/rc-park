@@ -850,6 +850,10 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                             teile.append(WG.huelle([(u_, z_, w_) for u_ in (a_, b_) for z_, w_ in ((St["z_fuss"], wi), (St["z_fuss"] + 0.3, wi), (Ko["z_unten"] + 0.02, wf - 0.3), (Ko["z_unten"] + 0.02, wf - 0.05))]))
                     ann.append("Konsolen als Balken von der Wand bis zur Front" + ("; Streben gerade vom Wandfuss zur Konsole" if St else ""))
                 z_d = (G_ or {}).get("z_dach"); V_ = (G_ or {}).get("vordach"); Pf = KM_.get("pfosten") or []
+                if not Pf and z_d and len((G_ or {}).get("pfosten") or []) >= 2:
+                    # 24.11.2026 (1122w, Nutzer: "Bild-Vorbau hatten wir mal fast perfekt"): ohne Kanten-Pfosten stand das Vordach ohne Stuetze ueber der Galerie (getrennter Koerper,
+                    # offene Galerie fehlte). Ersatz = Pfostenspalten des Ebenen-Sweeps (vorbauten_bauplan.galerie_messen, ebenfalls aus den Fotos), Querschnitt Standard.
+                    Pf = [dict(u=float(u_), breite=None) for u_ in G_["pfosten"]]; ann.append("Pfostenlage aus den Sweep-Pfostenspalten (Kanten ohne Pfosten)")
                 if z_d and z_d > Kb["z_oben"] + 0.5:
                     for p_ in Pf:
                         # 24.11.2026 (Kette 1122u: Abnahme "2 getrennte Koerper" = Pfosten f00 bei u 4,25 neben dem Kasten u -3,81..4,09 - stand frei zwischen Kasten und Raehm):
@@ -859,8 +863,10 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                         teile.append(KK(up - bp / 2, up + bp / 2, Kb["z_oben"] - 0.02, z_d + 0.02, wf - bp, wf))
                     if Pf: ann.append("Pfostenquerschnitt %s" % ", ".join(("%.2f m gemessen" % p_["breite"]) if p_["breite"] else "0,22 m Standard" for p_ in Pf))
                     zt = V_["z_traufe"] if V_ else z_d + 0.3
-                    teile.append(KK(Kb["u0"], Kb["u1"], z_d, zt, wf - 0.25, wf)); teile.append(KK(Kb["u0"], Kb["u0"] + 0.25, z_d, zt, wi, wf)); teile.append(KK(Kb["u1"] - 0.25, Kb["u1"], z_d, zt, wi, wf)); ann.append("Raehm 0,25 m stark (Hoehe aus dem Sweep-Band)")
                     VP_ = VPJ.get((F.get("id"), gi_))
+                    if V_ and not VP_:              # 24.11.2026: ebene Platte steigt zur Wand an - an der Raehmflucht w = wf liegt ihre Unterseite ueber der Traufe; Raehm bis dorthin (+5 cm), sonst schwebt die Platte
+                        wt_ = wf + 0.25; zt = V_["z_traufe"] + (V_["z_anschluss"] - 0.15 - V_["z_traufe"]) * (wt_ - wf) / max(wt_ - wi, 0.1) + 0.05
+                    teile.append(KK(Kb["u0"], Kb["u1"], z_d, zt, wf - 0.25, wf)); teile.append(KK(Kb["u0"], Kb["u0"] + 0.25, z_d, zt, wi, wf)); teile.append(KK(Kb["u1"] - 0.25, Kb["u1"], z_d, zt, wi, wf)); ann.append("Raehm 0,25 m stark (Hoehe aus dem Sweep-Band)")
                     if V_ and VP_:                  # 21.11.2026 (Nutzer: Vordach im Foto geschweiftes Walmdach, Modell ebene Platte): Profil + Walm aus Foto-Silhouetten (tools/vordach_profil.py)
                         teile.append(vordach_walm(WG, VP_["u0"], VP_["u1"], ww, VP_["w_t"], VP_["z_t"], VP_["z_a"], c=VP_["c"], As=VP_["As"], einbinden=einbinden))
                         ann.append(f"Vordach {VP_['familie']} (c {VP_['c']:+.1f}, Walm-Ruecksprung {VP_['As']:.2f} m, Traufe w {VP_['w_t']:.2f} z {VP_['z_t']:.2f}, Anschluss z {VP_['z_a']:.2f}) aus "
