@@ -20,9 +20,14 @@ Verfahren (Umriss-Tangenten, "visual hull" fuer einen Drehkoerper):
  5. Oberkante: Umriss-Stuetze je Hoehe (mittlere Abstimmung am besten r), auch 3 m ueber der Wolke; Ende = letzte Hoehe mit >= 50 % der Median-Stuetze (ANNAHME).
  6. KEGELDACH (23.11.2026, kegeldach()): ueber der Traufe/Oberkante Traufradius und Spitze aus den beiden geraden Umriss-Mantellinien je Foto (exakte Kegelsilhouette,
     Kantenrichtung mit Vorzeichen), Guard: >= 6 Fotos, >= 3 einig, Bestwert nicht am Suchrand -> Block 'dach' (bauteile.kegeldach_teile baut Traufbrett + Kegel).
+ 7. KRANZ (24.11.2026, kranz_messen; Befund Hoehen-Angleich 1122: Silhouetten-Traufe 12,75, Kranz 0,75 m dick, Fotokanten/Wolke 0,75-0,84 m tiefer = Rezept L31):
+    Hoehen des auskragenden Rings an der Traufe aus Quellen OHNE Auskragungs-Falle - Ober-/Unterkante je einzeln: triangulierte Fotokanten (--kanten, Ringspitze), sonst
+    Wolken-Flaechenmitte (--wolke), sonst Silhouette mit L31-Rueckrechnung; Silhouette nur Radius. Traufe = Kranz-Oberkante (Kegeldach-Traufhoehe dann fest).
+    Guard (Dicke 0,1-1,5 m, Oberkante im Fenster) sonst alter Weg; Audit 'umriss.kranz' (Quellen, Spitzen, Wolkenband, Grund/fallback). --ohne-kranz = alter Weg.
 Ausgabe: koerper_auto.json je Haufen 'umriss' (Masse, Stuetze, Fotos, Profil); mit --uebernehmen ersetzt das Fotomass 'kreis'/'profil' (Wolkenwerte bleiben als
 'kreis_wolke'/'profil_wolke'); Bild audit/rund_umriss_<id>.jpg (Fotoausschnitte: gruen Foto-Umriss, rot Wolkenkreis; rechts Profil).
-Aufruf: rund_aus_umriss.py <objekt.json> [--koerper audit/koerper_auto.json] [--stl STL] [--uebernehmen] [--max-fotos 120]
+Aufruf: rund_aus_umriss.py <objekt.json> [--koerper audit/koerper_auto.json] [--stl STL] [--uebernehmen] [--max-fotos 120] [--kanten kanten/sweep.npz] [--wolke npy] [--ohne-kranz]
+Verwandt: tools/hoehen_angleich.py (gleiche Quellen am fertigen Modell), tools/rund_aus_huelle.py, tools/test_rund_kranz.py.
 rc 0 = mindestens ein Rundkoerper vermessen, rc 3 = kein Kandidat, rc 4 = zu wenig Fotos/Stuetze (nichts uebernommen).
 """
 import sys, os, json, argparse, math, numpy as np
@@ -491,17 +496,205 @@ def oberkante(prof):
     return ende
 
 
+# ---- 24.11.2026 KRANZ / TRAUFE aus triangulierten Fotokanten bzw. Wolken-Flaechenmitte (Befund Hoehen-Angleich 1122, modelle/FEATURE_FORMSITZ.md:110) ----------
+# Die waagrechten Tangenten (vermessen) lesen einen AUSKRAGENDEN Ring (Kranz, Traufe) falsch in z (Rezept L31): der vordere Rand liegt um die Tiefe delta vor der Ebene
+# durch die Achse und erscheint um delta x tan(Blickhoehe) hoeher (Kamera darunter), der hintere Rand der Untersicht um ebensoviel tiefer. Die Silhouette sieht darum
+# ueber der wahren Oberkante (und unter der Unterkante) einen "Geister-Kranz" mit r(z) = sqrt(R^2 - (dz / tan)^2) - Schwabentor 1122: Silhouetten-Traufe 12,75, Kranz im
+# Modell 0,75 m dick; Fotokanten-Oberkante 0,84 m, Wolke 0,75 m tiefer, Wolke Kranz ~0,4 m dick. Hier: HOEHEN aus Quellen ohne diese Falle, Silhouette nur fuer den Radius.
+KRANZ_UEBER = 1.08        # Ueberstands-Zone: Profilradius > 108 % des Schafts (gleiche Schwelle wie traufe(): deutlich ueber der Schaftstreuung 2-3 cm)
+KRANZ_SUCHE_UNTEN = 1.5   # m: Suchfenster bis 1,5 m unter die Silhouetten-Zone (die Silhouette liest die Unterkante um tan x Tiefe zu tief, die Oberkante zu hoch;
+KRANZ_SUCHE_OBEN = 0.25   #    die wahre Oberkante liegt darum nicht ueber der Zone, + 0,25 m = halber Profilschritt Spiel)
+KRANZ_DICKE = (0.10, 1.5)  # m: Kranzdicke plausibel 0,1..1,5 m (duenner = eine Kante, dicker = Geschoss, kein Kranz)
+KRANZ_BAND_MIN = 0.10     # m: Ringband der Kranz-Aussenseite beginnt mind. 0,1 m (bzw. KRANZ_BAND_ANTEIL des Ueberstands) ausserhalb des Schafts (Schaftfugen bleiben draussen)
+KRANZ_BAND_ANTEIL = 0.3   # 30 % des Silhouetten-Ueberstands: Kehle/Profil am Kranzfuss zaehlt zum Kranz, Schaftrauschen (Wolke +-5 cm) nicht
+KRANZ_BAND_AUS = 0.30     # m: und endet 0,3 m ausserhalb des Silhouetten-Radius (Kantenlage +-5 cm, Profil der Kranzkante)
+KRANZ_SEKTOREN = 3        # ein Ring ist rund: Spitze nur, wenn >= 3 von 12 Richtungs-Sektoren (30 Grad) beitragen (Wandfuge/Gesims am Nachbarbau = 1 Sektor)
+KRANZ_BIN = 0.05          # m: Hoehenraster Kanten-Histogramm und Wolkenscheiben
+KANT_MIN_N = 20           # Kantenspitze: >= 20 Punkte in +-0,1 m (wie hoehen_angleich KANT_MIN)
+KANT_PROM_K = 2.0         # und >= 2 x Untergrund (Median des Fensters, wie hoehen_angleich KANT_PROM)
+WOLKE_MIN_N = 20          # Wolkenscheibe zaehlt nur mit >= 20 Punkten
+WOLKE_PROM = 2.0          # Wolken-Kranz: Bandanteil der besten Scheibe >= 2 x Median des Fensters
+WOLKE_HALB = 0.5          # Flaechenmitte: Kranz = zusammenhaengende Scheiben mit Bandanteil >= 50 % der besten (Halbwertsbreite)
+KRANZ_UNEINIG = 0.3       # m: Kanten- und Wolken-Oberkante weiter auseinander = 'uneinig' im Audit (Kanten gelten, KERNMETHODE; nicht gemittelt)
+KRANZ_FUGE = 0.02         # m: Uebergang Schaft -> Kranz im Profil (2 cm, nahezu waagrechte Untersicht, nicht entartet)
+
+
+def kranz_zone(prof, r_s, z_traufe, schritt):
+    """Silhouetten-Ueberstandszone um die Traufhoehe: zusammenhaengende Profilhoehen mit r > KRANZ_UEBER x r_s, die z_traufe enthalten -> (z_lo, z_hi, R, Hoehen) | None.
+    Grenzen = halber Profilschritt ausserhalb der aeussersten Zonenhoehe; R = Median der Zonenradien (Silhouette misst den Radius in der Ebene durch die Achse richtig)."""
+    if z_traufe is None or not prof or not r_s: return None
+    zs = [float(p[0]) for p in prof]; i0 = int(np.argmin([abs(z - z_traufe) for z in zs]))
+    if abs(zs[i0] - z_traufe) > 1e-6 or prof[i0][1] <= KRANZ_UEBER * r_s: return None
+    a = b = i0
+    while a > 0 and prof[a - 1][1] > KRANZ_UEBER * r_s: a -= 1
+    while b + 1 < len(prof) and prof[b + 1][1] > KRANZ_UEBER * r_s: b += 1             # nach oben auch Geister-Kranz und Dachfuss (bleibt ueber der gemessenen Oberkante weg)
+    return zs[a] - schritt / 2, zs[b] + schritt / 2, float(np.median([prof[k][1] for k in range(a, b + 1)])), zs[a:b + 1]
+
+
+def _ring(P, x, y, r_in, r_aus, z_lo, z_hi):
+    d = np.hypot(P[:, 0] - x, P[:, 1] - y); m = (d >= r_in) & (d <= r_aus) & (P[:, 2] >= z_lo) & (P[:, 2] <= z_hi)
+    return P[m], d[m], (np.degrees(np.arctan2(P[m, 1] - y, P[m, 0] - x)) % 360 // 30).astype(int)
+
+
+def kanten_spitzen(KP, x, y, r_in, r_aus, z_lo, z_hi):
+    """Waagrechte Ringkanten in den triangulierten Fotokanten (tools/kantenstufe.py -> kanten/sweep.npz): Hoehen-Histogramm der Punkte im Ringband r_in..r_aus.
+    Senkrechte Kanten verteilen sich ueber z, eine waagrechte Kante ist eine Spitze. -> Liste dict(z, n, sektoren, r_median) der gueltigen Spitzen (z fallend)."""
+    Q, d, sek = _ring(np.asarray(KP, float), x, y, r_in, r_aus, z_lo, z_hi)
+    if len(Q) < KANT_MIN_N: return [], dict(n=int(len(Q)))
+    e = np.arange(z_lo, z_hi + KRANZ_BIN, KRANZ_BIN); h, _ = np.histogram(Q[:, 2], bins=e); zc = 0.5 * (e[1:] + e[:-1])
+    hs = np.convolve(np.pad(h.astype(float), 1, mode="edge"), [0.25, 0.5, 0.25], mode="valid"); bg = max(1.0, float(np.median(hs)))
+    out = []
+    for i in range(len(hs)):
+        if hs[i] < KANT_PROM_K * bg or hs[i] < hs[max(0, i - 1)] or hs[i] < hs[min(len(hs) - 1, i + 1)] or (i > 0 and hs[i] == hs[i - 1]): continue
+        nb = np.arange(max(0, i - 2), min(len(hs), i + 3)); zp = float(np.average(zc[nb], weights=np.maximum(hs[nb] - bg, 1e-6)))
+        m = np.abs(Q[:, 2] - zp) <= 2 * KRANZ_BIN; n = int(m.sum())
+        if n < KANT_MIN_N: continue
+        sc = np.bincount(sek[m], minlength=12); ns = int((sc >= max(2, 0.05 * n)).sum())
+        if ns < KRANZ_SEKTOREN: continue
+        if out and abs(out[-1]["z"] - zp) < 3 * KRANZ_BIN:
+            if n <= out[-1]["n"]: continue
+            out.pop()
+        out.append(dict(z=round(zp, 3), n=n, sektoren=ns, r_median=round(float(np.median(d[m])), 3)))
+    return sorted(out, key=lambda s: -s["z"]), dict(n=int(len(Q)), untergrund=round(bg, 1))
+
+
+def wolke_kranz(W, x, y, r_s, R, z_lo, z_hi, z_schaft=None):
+    """Kranz in der dichten Wolke als FLAECHE (nicht Silhouette): je 5-cm-Scheibe Anteil der Punkte im Ringband der Kranz-Aussenseite; Kranz = zusammenhaengende
+    Scheiben um die beste mit Anteil >= WOLKE_HALB x bester (Halbwertsbreite), Ring in >= KRANZ_SEKTOREN Sektoren. Wolke misst runde Teile dicker (Fasen, Rauschen):
+    Band relativ zum WOLKEN-Schaft (25-%-Quantil der Scheiben-Mediane). -> dict(z_unterkante, z_oberkante, ...) | dict(grund)."""
+    W = np.asarray(W, float); d = np.hypot(W[:, 0] - x, W[:, 1] - y); m = (d <= R + 1.0) & (W[:, 2] >= z_lo) & (W[:, 2] <= z_hi); W, d = W[m], d[m]
+    if len(W) < 10 * WOLKE_MIN_N: return dict(grund=f"Wolke im Fenster fast leer ({len(W)} Punkte)")
+    sek = (np.degrees(np.arctan2(W[:, 1] - y, W[:, 0] - x)) % 360 // 30).astype(int); e = np.arange(z_lo, z_hi + KRANZ_BIN, KRANZ_BIN); k = np.clip(np.digitize(W[:, 2], e) - 1, 0, len(e) - 2)
+    med = np.array([np.median(d[k == i]) if (k == i).sum() >= WOLKE_MIN_N else np.nan for i in range(len(e) - 1)])
+    if not np.isfinite(med).any(): return dict(grund="keine Wolkenscheibe mit genug Punkten")
+    ms = med[(e[:-1] < z_schaft)] if z_schaft is not None else med                       # Wolken-Schaft nur UNTER der Silhouetten-Zone (darueber Dach/Nachbarwand)
+    r_sw = float(np.nanpercentile(ms if np.isfinite(ms).any() else med, 25)); dick = float(np.clip(r_sw - r_s, 0.0, 0.3))
+    b_in = r_sw + max(KRANZ_BAND_MIN, KRANZ_BAND_ANTEIL * (R - r_s)); b_aus = R + dick + KRANZ_BAND_AUS
+    fr = np.zeros(len(e) - 1); gut = np.zeros(len(e) - 1, bool)
+    for i in range(len(e) - 1):
+        s = k == i; n = int(s.sum())
+        if n < WOLKE_MIN_N: continue
+        b = s & (d >= b_in) & (d <= b_aus); nb = int(b.sum()); fr[i] = nb / n
+        gut[i] = nb >= WOLKE_MIN_N and int((np.bincount(sek[b], minlength=12) >= max(2, 0.03 * nb)).sum()) >= KRANZ_SEKTOREN
+    nn = np.bincount(k, minlength=len(e) - 1)[:len(e) - 1] >= WOLKE_MIN_N; bg = float(np.median(fr[nn])) if nn.any() else 0.0   # alle Scheiben mit Punkten (auch Anteil 0)
+    if not gut.any(): return dict(grund="kein ringfoermiges Band in der Wolke", band=[round(b_in, 3), round(b_aus, 3)])
+    i = int(np.argmax(np.where(gut, fr, -1))); pk = float(fr[i])
+    erg = dict(band=[round(b_in, 3), round(b_aus, 3)], r_schaft_wolke=round(r_sw, 3), anteil_best=round(pk, 3), anteil_untergrund=round(bg, 3))
+    if pk < WOLKE_PROM * bg: return dict(erg, grund=f"Bandanteil {pk:.2f} < {WOLKE_PROM:g} x Untergrund {bg:.2f} - kein Kranz in der Wolke")
+    a = b_ = i
+    while a > 0 and gut[a - 1] and fr[a - 1] >= WOLKE_HALB * pk: a -= 1
+    while b_ + 1 < len(fr) and gut[b_ + 1] and fr[b_ + 1] >= WOLKE_HALB * pk: b_ += 1
+    return dict(erg, z_unterkante=round(float(e[a]), 3), z_oberkante=round(float(e[b_ + 1]), 3), scheiben=int(b_ - a + 1))
+
+
+def kranz_messen(prof, r_s, x, y, schritt, z_traufe, KP=None, W=None, tan_blick=None, log=print):
+    """KRANZ (auskragender Ring an der Traufe) eines Rundkoerpers: Ober- und Unterkante aus Quellen OHNE Auskragungs-Falle, Radius aus der Silhouette.
+    Reihenfolge je Kante (nicht gemittelt): 1. triangulierte Fotokanten (KERNMETHODE), 2. Wolken-Flaechenmitte (wolke_kranz), 3. Silhouette mit L31-Rueckrechnung
+    (Oberkante = Zonenende - c, c = tan(Blickhoehe) x sqrt(R^2 - (KRANZ_UEBER x r_s)^2): so weit reicht der Geister-Kranz ueber die wahre Kante; hoechstens halber Profilschritt
+    ueber der Hoehe des groessten Radius; Unterkante bleibt Silhouette - ANNAHMEN, im Audit).
+    Guard: Dicke in KRANZ_DICKE, Oberkante im Suchfenster, sonst gueltig=False -> alter Weg (Silhouetten-Traufe, Profil unveraendert), Grund im Audit."""
+    Z = kranz_zone(prof, r_s, z_traufe, schritt)
+    if Z is None: return dict(gueltig=False, grund="keine Ueberstands-Zone an der Traufe (kein Kranz)", fallback="alter Weg")
+    z_lo, z_hi, R, zz = Z; w_lo, w_hi = z_lo - KRANZ_SUCHE_UNTEN, z_hi + KRANZ_SUCHE_OBEN
+    erg = dict(silhouette=dict(z_unten=round(z_lo, 3), z_oben=round(z_hi, 3), r=round(R, 3), hoehen=zz, z_traufe=z_traufe), r=round(R, 3), fenster=[round(w_lo, 3), round(w_hi, 3)],
+               quelle_radius="Silhouette (Umriss-Tangenten in der Ebene durch die Achse)")
+    ob, un = {}, {}
+    if KP is not None and len(KP):
+        sp, info = kanten_spitzen(KP, x, y, r_s + max(KRANZ_BAND_MIN, KRANZ_BAND_ANTEIL * (R - r_s)), R + KRANZ_BAND_AUS, w_lo, w_hi); erg["kanten"] = dict(info, spitzen=sp[:6])
+        if sp:
+            ob["kanten"] = sp[0]["z"]
+            u_ = [s for s in sp[1:] if KRANZ_DICKE[0] <= sp[0]["z"] - s["z"] <= KRANZ_DICKE[1]]
+            if u_: un["kanten"] = max(u_, key=lambda s: s["n"])["z"]
+    else: erg["kanten"] = dict(grund="keine Kantenpunkte (kanten/sweep.npz fehlt)")
+    if W is not None and len(W):
+        wk = wolke_kranz(W, x, y, r_s, R, w_lo, w_hi, z_schaft=z_lo); erg["wolke"] = wk
+        if "z_oberkante" in wk: ob["wolke"] = wk["z_oberkante"]; un["wolke"] = wk["z_unterkante"]
+    else: erg["wolke"] = dict(grund="keine Wolke")
+    if tan_blick is not None and tan_blick > 0:
+        c = float(tan_blick) * math.sqrt(max(R * R - (KRANZ_UEBER * r_s) ** 2, 0.0)); erg["l31"] = dict(tan_blick=round(float(tan_blick), 3), korrektur=round(c, 3))
+        # Oberkante: Zonenende - c, hoechstens halber Schritt ueber der Hoehe des groessten Radius (traufe(); die Zone reicht oft bis in den Dachfuss: 1122 z 12,0..14,0)
+        ob["silhouette_l31"] = round(min(z_hi - c, z_traufe + schritt / 2), 3); un["silhouette_l31"] = round(z_lo, 3)   # Unterkante: Silhouette (am 1122-Befund nicht zu tief)
+    if "kanten" in ob and "wolke" in ob:
+        dd = ob["kanten"] - ob["wolke"]; erg["oberkante_kanten_minus_wolke"] = round(dd, 3); erg["einig"] = abs(dd) <= KRANZ_UNEINIG
+    grund = None; z_o = q_o = z_u = q_u = None
+    for q in ("kanten", "wolke", "silhouette_l31"):
+        if q in ob and w_lo <= ob[q] <= w_hi: z_o, q_o = ob[q], q; break
+    if z_o is None: grund = "keine Oberkante aus Fotokanten/Wolke/Silhouette (L31) im Fenster"
+    else:
+        for q in ("kanten", "wolke", "silhouette_l31"):
+            if q in un and KRANZ_DICKE[0] <= z_o - un[q] <= KRANZ_DICKE[1]: z_u, q_u = un[q], q; break
+        if z_u is None: grund = f"keine Unterkante {KRANZ_DICKE[0]}..{KRANZ_DICKE[1]} m unter der Oberkante {z_o:.2f} ({q_o})"
+    if grund is None and R <= KRANZ_UEBER * r_s: grund = f"Kranzradius {R:.2f} nicht ueber dem Schaft {r_s:.2f}"
+    erg.update(oberkanten={k: round(v, 3) for k, v in ob.items()}, unterkanten={k: round(v, 3) for k, v in un.items()}, gueltig=grund is None, grund=grund)
+    if grund is None:
+        erg.update(z_oberkante=round(z_o, 3), z_unterkante=round(z_u, 3), dicke=round(z_o - z_u, 3), quelle_oberkante=q_o, quelle_unterkante=q_u,
+                   dicke_silhouette=round(z_hi - z_lo, 3), traufe_alt=z_traufe)
+        if "silhouette_l31" in (q_o, q_u): erg["annahmen"] = ["ANNAHME: L31-Rueckrechnung nur an der Oberkante (Geister-Kranz bis tan x sqrt(R^2 - Schwelle^2) darueber), Unterkante = Silhouette, tan = Median der Fotos"]
+    else: erg["fallback"] = "alter Weg: Traufe und Kranz aus der Silhouette (Auskragungs-Falle L31 moeglich)"
+    log(f"  KRANZ: Silhouette z {z_lo:.2f}..{z_hi:.2f} r {R:.2f}; Oberkanten {erg['oberkanten']}, Unterkanten {erg['unterkanten']} -> "
+        + (f"Kranz z {z_u:.2f}..{z_o:.2f} (Dicke {z_o - z_u:.2f}, oben {q_o}, unten {q_u})" if grund is None else "ALTER WEG: " + grund))
+    return erg
+
+
+def kranz_einbauen(prof, K):
+    """Drehprofil mit gemessenem Kranz: die Silhouetten-Zone (Geister-Kranz) und alle Hoehen zwischen Unter- und Oberkante fallen weg; darunter Schaft bis
+    Unterkante - KRANZ_FUGE, dann Kranzradius von der Unter- bis zur Oberkante, bei Oberkante + KRANZ_FUGE der Radius der naechsten Hoehe darueber. Hoehen ueber der
+    Oberkante ausserhalb der Zone bleiben. Ungueltig -> Profil unveraendert."""
+    if not K or not K.get("gueltig"): return prof
+    zo, zu, R = K["z_oberkante"], K["z_unterkante"], K["r"]; zone = set(K["silhouette"]["hoehen"])
+    unten = [list(p) for p in prof if p[0] < zu - KRANZ_FUGE - 1e-6 and p[0] not in zone]; oben = [list(p) for p in prof if p[0] > zo + KRANZ_FUGE and p[0] not in zone]
+    if not unten: return prof
+    rest = list(unten[-1][2:]); r_u = unten[-1][1]
+    deckel = [[round(zo + KRANZ_FUGE, 3), oben[0][1]] + rest] if oben else []           # Kranz-Oberseite waagrecht (sonst lofted der Generator schraeg zur naechsten Hoehe)
+    return unten + [[round(zu - KRANZ_FUGE, 3), r_u] + rest, [round(zu, 3), R] + rest, [round(zo, 3), R] + rest] + deckel + oben
+
+
+def tan_blickhoehe(bilder, x, y, z):
+    """Median |tan(Blickhoehe)| der Fotos zum Punkt (x, y, z) - Mass der Auskragungs-Falle (L31) fuer die Silhouetten-Rueckrechnung."""
+    t = [abs(z - float(B.C[2])) / max(math.hypot(float(B.C[0]) - x, float(B.C[1]) - y), 1.0) for B in bilder]
+    return float(np.median(t)) if t else None
+
+
+def wolke_ausschnitt(pfad, tr, x, y, rad, z_lo, z_hi, block=2_000_000):
+    """Dichte Wolke (npy N x >=3, KAMERARAHMEN) blockweise (mmap, RAM) im Zylinder um die Achse -> Punkte im STL-Rahmen (Kamerarahmen - rahmen_verschiebung tr)."""
+    A = np.load(pfad, mmap_mode="r"); tr = np.asarray(tr, float); out = []
+    for i in range(0, len(A), block):
+        B = np.asarray(A[i:i + block, :3], np.float64) - tr; m = (np.abs(B[:, 0] - x) <= rad) & (np.abs(B[:, 1] - y) <= rad) & (B[:, 2] >= z_lo) & (B[:, 2] <= z_hi)
+        if m.any(): out.append(B[m].astype(np.float32))
+    return np.vstack(out) if out else np.zeros((0, 3), np.float32)
+
+
 def main(argv=None):
     import cv2, flaeche_ortho as FO
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--koerper"); ap.add_argument("--stl"); ap.add_argument("--uebernehmen", action="store_true")
     ap.add_argument("--max-fotos", type=int, default=120); ap.add_argument("--schritt", type=float, default=0.5); ap.add_argument("--ueber", type=float, default=3.0)
     ap.add_argument("--max-r-px", type=float, default=MAX_R_PX); ap.add_argument("--nur-messen", action="store_true", help="koerper_auto.json nicht schreiben (Vergleichslaeufe)")
+    ap.add_argument("--kanten", help="triangulierte Fotokanten der Kantenstufe (kanten/sweep.npz, STL-Rahmen); Standard <DATEN>/<objekt>/kanten/sweep.npz")
+    ap.add_argument("--wolke", help="dichte Wolke (npy, Kamerarahmen); Standard konvergenz_wolke.wolke_pfad"); ap.add_argument("--ohne-kranz", action="store_true", help="alter Weg (Traufe aus der Silhouette)")
     a = ap.parse_args(argv)
     od = os.path.dirname(os.path.abspath(a.objekt)); A = os.path.join(od, "audit"); kp = a.koerper or os.path.join(A, "koerper_auto.json"); KA = lade(kp)
     if not KA: print("keine", kp); return 3
     rund = [h for h in KA.get("haufen", []) if h.get("form") == "rund" and h.get("kreis") and h.get("angenommen") is not False]
     if not rund: print("kein Rundkandidat in", kp); return 3
     obj, cams = FO.kameras_laden(a.objekt)
+    # 24.11.2026 Kranz/Traufe: zweite und dritte Hoehenquelle ohne Auskragungs-Falle (kranz_messen); fehlen beide, rechnet die Silhouette nach L31 zurueck
+    KP = wp = None; tr = np.zeros(3)
+    if not a.ohne_kranz:
+        kpf = a.kanten
+        if not kpf:
+            try: import pfade; kpf = os.path.join(pfade.DATEN, os.path.basename(od), "kanten", "sweep.npz")
+            except Exception: kpf = None
+        if kpf and os.path.exists(kpf):
+            try: KP = np.load(kpf)["P"].astype(np.float32); print(f"Kranz: {len(KP)} Fotokanten-Punkte aus {kpf} (STL-Rahmen, ANNAHME wie hoehen_angleich)")
+            except Exception as e: print("Kranz: Kantenpunkte nicht lesbar:", e)
+        else: print(f"Kranz: keine Fotokanten ({kpf})")
+        wp = a.wolke
+        if not wp:
+            try: import konvergenz_wolke as KW; wp = KW.wolke_pfad(obj, od)
+            except Exception: wp = None
+        if not (wp and os.path.exists(wp)): print(f"Kranz: keine dichte Wolke ({wp})"); wp = None
+        trs = [c.get("rahmen_verschiebung") for c, _ in cams.values() if c.get("rahmen_verschiebung") is not None]
+        if trs: tr = np.median(np.asarray(trs, float), axis=0)                       # Kamerarahmen = STL + rahmen_verschiebung (flaeche_ortho.projektion)
     stlp = a.stl or os.path.join(FO.ROOT, obj["stl"]) if obj.get("stl") else a.stl; inter = None
     if stlp and os.path.exists(stlp):
         import trimesh; m = trimesh.load(stlp); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); inter = m.ray; normalen = np.asarray(m.face_normals)  # Embree, falls vorhanden (21.11.2026: ray_triangle in numpy auf 2,4 Mio. Dreiecken = 11 GB, Lauf beendet)
@@ -549,6 +742,18 @@ def main(argv=None):
         if weg: U["profil_suchrand"] = weg; print(f"  Profil: {len(weg)} Hoehen am Suchrand verworfen (z {weg}) - Radius der Hoehe darunter")
         U["oberkante"] = oberkante([p for p in U["profil"] if p[0] >= za]); U["traufe"] = traufe([p for p in U["profil"] if p[0] >= za], a.schritt); U["start_wolke"] = dict(x=x0, y=y0, r=r0)
         sch = [p[1] for p in U["profil"][:max(2, len(U["profil"]) // 2)]]; U["r_schaft"] = round(float(np.median(sch)), 3) if sch else U["r"]
+        kranz_gut = False
+        if not a.ohne_kranz and U["traufe"] is not None:                          # 24.11.2026: Kranz-Hoehen aus Fotokanten/Wolke, Silhouette nur Radius (kranz_messen)
+            Zk = kranz_zone(U["profil"], U["r_schaft"], U["traufe"], a.schritt); Wk = None
+            if Zk and wp:
+                try: Wk = wolke_ausschnitt(wp, tr, U["x"], U["y"], Zk[2] + 1.5, Zk[0] - KRANZ_SUCHE_UNTEN - 0.5, Zk[1] + KRANZ_SUCHE_OBEN + 0.5)
+                except Exception as e: print("  Kranz: Wolke nicht lesbar:", e)
+            tb = tan_blickhoehe(stufe[1], U["x"], U["y"], 0.5 * (Zk[0] + Zk[1])) if Zk else None
+            K_ = kranz_messen(U["profil"], U["r_schaft"], U["x"], U["y"], a.schritt, U["traufe"], KP=KP, W=Wk, tan_blick=tb); U["kranz"] = K_
+            if K_.get("gueltig"):
+                U["traufe_silhouette"] = U["traufe"]; U["profil_silhouette"] = U["profil"]; U["profil"] = kranz_einbauen(U["profil"], K_); U["traufe"] = K_["z_oberkante"]; kranz_gut = True
+                U["annahmen_kranz"] = [f"Traufe = Kranz-Oberkante {K_['z_oberkante']} ({K_['quelle_oberkante']}), Kranz-Unterkante {K_['z_unterkante']} ({K_['quelle_unterkante']}); Radius {K_['r']} aus der Silhouette"] + K_.get("annahmen", [])
+        elif a.ohne_kranz: U["kranz"] = dict(gueltig=False, grund="--ohne-kranz", fallback="alter Weg")
         U["quelle"] = "tools/rund_aus_umriss.py: Umriss-Tangenten in kalibrierten Fotos (messprotokoll/K-*.json), Abstimmung je Foto/Seite/Hoehe normiert"
         U["annahmen"] = ["ANNAHME: Traufe = groesster Radius > 108 % des Schafts in der oberen Haelfte (Dachueberstand), sonst Beginn der Verjuengung < 85 %", "Spitze ueber dem Ende der Umriss-Stuetze FEHLT (nicht gemessen, nicht erfunden)", f"ANNAHME: Oberkante = Ende der Umriss-Stuetze (< {STUETZE_ENDE:.0%} des Medians)", "ANNAHME: Querschnitt kreisrund, Achse lotrecht"]
         gut = U["fotos"] >= MIN_FOTOS and min(U["fotos_links"], U["fotos_rechts"]) >= MIN_SEITEN_FOTOS
@@ -565,6 +770,7 @@ def main(argv=None):
                         X = np.array([[*(0.5 * (F_[s, 0] + [U["x"], U["y"]])), z_t + 0.5 * U["r_schaft"]]])
                         vk[(bi, s)] = bool(verdeckt_strahlen(inter, normalen, B.C, X, eigen)[0])
             r_tr = next((p[1] for p in U["profil"] if abs(p[0] - z_t) < 1e-6), None) if U["traufe"] is not None else None   # Traufradius aus dem Drehprofil (nur bei erkannter Traufe)
+            if kranz_gut: r_tr = None    # 24.11.2026: Traufe = gemessene Kranz-Oberkante (keine Auskragungs-Falle) -> Traufhoehe FEST, Dach-Traufradius frei (Kranz != Dachrand)
             U["dach"] = kegeldach(stufe[1], U["x"], U["y"], z_t, U["r_schaft"], verdeckt=lambda bi, s: vk.get((bi, s), False), r_traufe=r_tr)
             try: dach_bild(stufe[1], U["x"], U["y"], U["dach"], os.path.join(A, f"rund_dach_{H.get('id', 'r')}.jpg"), verdeckt=lambda bi, s: vk.get((bi, s), False))
             except Exception as e: print("  Dachbild fehlgeschlagen:", e)
