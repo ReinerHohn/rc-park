@@ -15,7 +15,11 @@ VERFAHREN (nur CPU, Sekunden):
   1. LOT VON B aus seinen EIGENEN Waenden (seiten_vereinen.lot_aus_waenden, dichte Wolke) gegen das Wand-Lot von A -> Kippung um die Mitte der B-Wolke. Unabhaengig vom GPS.
   2. WANDPUNKTE beider Teile: ebene, senkrechte Flaechenstuecke (Normale waagerecht) ueber Strassenhoehe (Z_MIN_M), im Grundriss um die B-Waende.
   3. GRUNDRISS-SUCHE im GPS-Korridor (seiten_querspur_binden.korridor, gleiche Grenzen wie die Querspur): Drehung um das Lot x Verschiebung, Wertung = mittlere Naehe der
-     B-Wandpunkte zu den A-Waenden (Abstandsfeld, Kreuzkorrelation per FFT). Dann Feinausgleich Punkt-zu-Linie (Drehung + Verschiebung, Massstab bleibt GPS).
+     B-Wandpunkte zu den A-Waenden (Abstandsfeld, Kreuzkorrelation per FFT). Dann Feinausgleich Punkt-zu-Linie (Drehung + Verschiebung, Massstab bleibt der Start).
+  0. MASSSTAB-BELEG JE TEIL (24.11.2026, tools/massstab_teile.py, main/massstab_beleg): das Nah-GPS EINER Sitzung schrumpft den Massstab (17.11. 0,875 Nachlauf,
+     22.11. x0,867, 24.11. Teil 0 8,73 statt 10,14 m/Einheit). Je Teil Nachlauf-Test + Fern-GPS + Turmhoehe/DOM1 + Kamerahoehe/DGM1, Einigkeitsregel ohne Mittel.
+     Start = belegtes Verhaeltnis B->A, wenn das GPS-Verhaeltnis ausserhalb seines Bands liegt; MASSSTAB-TOR: Endlage im Band, sonst abgelehnt; Meter von A = Beleg,
+     wenn das Nah-GPS von A widerlegt ist. 1122z (Kopie, CPU): GPS 0,907, belegt 0,785 [0,758, 0,813], Waende 0,800 - einig.
   4. HOEHE (24.11., 1122z: Teil 1 am GPS-Fusspunkt 6,4 m zu tief): aus der 3D-UEBERLAPPUNG - je gemeinsam belegter Grundriss-Saeule das hochpassgefilterte
      Hoehenprofil (Fenster, Gesimse, Traufe, Helm) von A und B kreuzkorreliert (z_saeulen); STRASSENBODEN von A gegen B in gemeinsamen Zellen als unabhaengige
      Gegenprobe (boden_versatz; uneinig > HOEHE_EINIG_M -> abgelehnt); Struktur nicht eindeutig -> Boden; beides fehlt -> GPS-Fusspunkt + Meldung (kein Raten).
@@ -395,10 +399,22 @@ def seitenbild(pfad, PA, PB, titel):
 
 
 # ---------- Kern
-def binden(DA, DB, G, lot0, ref_b, bild=None):
+def binden(DA, DB, G, lot0, ref_b, bild=None, beleg=None):
     """DA/DB dichte Wolken (je eigenes Modellsystem), G = seiten_querspur_binden.gps_unsicherheit(...), lot0 = Start-Lot von A, ref_b = Bezugspunkte in B (Kamerazentren).
+    beleg (optional, main/massstab_beleg): dict(verhaeltnis = massstab_teile.verhaeltnis(...) oder None, rot = [Meldungen uneiniger Teile]).
     -> Ergebnis-dict (ok, urteil, zu_wenig, B_nach_A bei ok, pruefung, korridor)."""
     mj = G["m_je_einheit"]; Mg = G["M"]; pr = {}; erg = dict(art="waende", B_nach_A_gps=Mg.tolist(), pruefung=pr)
+    # MASSSTAB-BELEG (24.11.2026, tools/massstab_teile.py): das GPS-Verhaeltnis B/A (Nah-GPS je Teil) trug bisher den Start-Massstab und - ohne Wand-Beleg - auch die
+    # Endlage (1122y: 0,907; belegt 0,785 [0,758, 0,813] aus Fern-GPS von A und Turmhoehe/DGM von B). Liegt es ausserhalb des belegten Bands, startet die Bindung mit
+    # dem belegten Verhaeltnis (Skalierung um die Mitte der B-Wolke); die Endlage muss im Band liegen (MASSSTAB-TOR), sonst abgelehnt.
+    mb = None; v = (beleg or {}).get("verhaeltnis")
+    if v:
+        r_gps = float(zerlege(Mg)[0]); an = not (v["lo"] <= r_gps <= v["hi"]); mb = dict(v, gps_verhaeltnis=round(r_gps, 5), angewandt=bool(an))
+        if an:
+            f = v["wert"] / r_gps; p = np.median(anwenden(Mg, DB), 0); S = np.eye(4); S[:3, :3] *= f; S[:3, 3] = p - f * p; Mg = S @ Mg
+            mb["grund"] = (f"GPS-Verhaeltnis B->A {r_gps:.4f} ausserhalb des belegten Bands [{v['lo']:.4f}, {v['hi']:.4f}] -> Start mit {v['wert']:.4f} "
+                           f"(A: {v['quelle_a']}, B: {v['quelle_b']})")
+        pr["massstab_beleg"] = mb
     ua, na = lot_aus_waenden(DA, np.asarray(lot0, float)); Bg = anwenden(Mg, DB); ub, nb = lot_aus_waenden(Bg, ua)
     kipp = float(np.degrees(np.arccos(np.clip(ua @ ub, -1, 1)))); pr.update(lot_normalen_a=int(na), lot_normalen_b=int(nb), kippung_gps_grad=round(kipp, 2))
     if nb < MIN_KIPP_NORMALEN or na < MIN_KIPP_NORMALEN:
@@ -437,6 +453,8 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     mg = []
     if hb < HEBEL_MIN_M: mg.append(f"Hebel {hb:.1f} m < {HEBEL_MIN_M} m ({len(zg)} Wandzuege)")
     if not (np.isfinite(mm) and mm > 0): mg.append(f"Aehnlichkeit entartet (Massstab {mm})"); mm = 1.0
+    elif mb is not None and mb["angewandt"] and mb["lo"] <= mb["wert"] * mm <= mb["hi"] and sd_m < np.log(mb["hi"] / mb["lo"]) / 2:
+        pass                                                                           # Start = unabhaengiger Beleg: die Waende sind die ENGERE, mit ihm einige Quelle -> gilt (kein 3-Sigma-Abstand noetig; 1122z: 0,800 in [0,758, 0,813])
     elif abs(np.log(mm)) < MASS_SIGNIFIKANZ * sd_m: mg.append(f"Abweichung {100 * (mm - 1):+.1f} % unter {MASS_SIGNIFIKANZ:.0f} Streuungen ({100 * sd_m:.1f} %)")
     if abs(mm - 1) > MASS_MAX_REL: mg.append(f"Abweichung {100 * (mm - 1):+.1f} % ueber {100 * MASS_MAX_REL:.0f} %")
     if trm.mean() <= tr.mean(): mg.append(f"nicht mehr Treffer ({100 * tr.mean():.0f} -> {100 * trm.mean():.0f} %)")
@@ -524,10 +542,16 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     pr["doppelwand"] = dict(grenze_punkte=dg, starr=[x for x in dop0 if x["n"] >= dg][:5], nachher=grob[:5], nachher_klein=[x for x in dop if x["n"] < dg][:3])
     if grob: gr.append(f"Doppelwand: {len(grob)} B-Wandblatt/-blaetter parallel neben einer A-Wand (groesstes {grob[0]['n']} Punkte, {grob[0]['versatz_m']:.1f} m daneben, "
                        f"{grob[0]['abstand_anker_m']:.0f} m vom Anker; Grenze {dg} Punkte)")
+    if mb is not None:                                                                  # MASSSTAB-TOR: Endlage gegen das unabhaengig belegte Verhaeltnis (kein Mittel)
+        r_end = float(zerlege(M)[0]); mb.update(ende_verhaeltnis=round(r_end, 5), ende_im_band=bool(mb["lo"] <= r_end <= mb["hi"]))
+        if not mb["ende_im_band"]: gr.append(f"MASSSTAB-TOR rot: B->A {r_end:.4f} ausserhalb des belegten Bands [{mb['lo']:.4f}, {mb['hi']:.4f}] (A: {mb['quelle_a']}, B: {mb['quelle_b']}; Waende {ms:.3f} x Start)")
+    for x in (beleg or {}).get("rot") or []: gr.append(x)
     if bild: kontrollbild(bild, A2, B2, Q, wa, wb, tr, 0.0, pr, gr)
     if gr: erg.update(ok=False, urteil="ABGELEHNT: " + "; ".join(gr) + " - GPS-Lage bleibt"); return erg
     erg.update(ok=True, B_nach_A=M.tolist(), urteil=f"ueber gemeinsame Waende gebunden: Kippung {kipp:.1f} Grad (Wand-Lot), Drehung {g:+.2f} Grad, Verschiebung {np.hypot(*sv):.2f} m, "
-               "Massstab " + (f"aus den Waenden {ms:.3f} x GPS (Hebel {hb:.1f} m)" if ms != 1.0 else "nach GPS") + f", {hb_['meldung']}; Wandabstand {d_vor:.2f} -> {d_nach:.2f} m, Treffer {100 * tr.mean():.0f} %; gegen GPS {k['dreh_lot_grad']:+.1f} Grad, "
+               "Massstab " + (f"aus den Waenden {ms:.3f} x " + ("Beleg" if mb and mb["angewandt"] else "GPS") + f" (Hebel {hb:.1f} m)" if ms != 1.0 else
+                              ("nach Beleg " + mb["quelle_a"] + "/" + mb["quelle_b"] if mb and mb["angewandt"] else "nach GPS"))
+               + (f", Massstab-Tor B->A {mb['ende_verhaeltnis']:.4f} in [{mb['lo']:.4f}, {mb['hi']:.4f}]" if mb else "") + f", {hb_['meldung']}; Wandabstand {d_vor:.2f} -> {d_nach:.2f} m, Treffer {100 * tr.mean():.0f} %; gegen GPS {k['dreh_lot_grad']:+.1f} Grad, "
                f"Lage der B-Kameras {k['lage_m']:.1f} m (Grenze {k['lage_grenze_m']} m)")
     return erg
 
@@ -658,12 +682,45 @@ def kontrollbild(pfad, A2, B2, Q, wa, wb, tr, dz, pr, gr):
     cv2.imwrite(pfad, im)
 
 
+def massstab_beleg(a, vj, DA, DB, G):
+    """MASSSTAB JE TEIL UNABHAENGIG (tools/massstab_teile.py): Nachlauf-/Schrumpftest, Nah-/Fern-GPS, Turmhoehe gegen DOM1/LoD2, Kamerahoehen gegen DGM1 - je Teil,
+    Einigkeitsregel ohne Mittel. Braucht --modell-a/-b, --bilder und vereinen.json mit ursprung_wgs84; LoD2/DOM1 ueber --objekt bzw. RCPARK_SEITEN_OBJEKT (sonst ohne Turmprobe).
+    Wirkung (RCPARK_WAENDE_MASSSTAB_BELEG=0 -> nur Bericht): (1) widerlegt der Beleg von A den Nah-GPS-Meter von A (rahmen_a.massstab ausserhalb des Bands),
+    gilt der belegte Wert als G['m_je_einheit'] (Meter-Grenzen, DGM-Lot-Tor; 1122: 8,94 -> 10,14, die Endlage-Steigung 0,87 'Teil gebogen' war dieser Meterfehler);
+    (2) das belegte Verhaeltnis B->A geht als Start + MASSSTAB-TOR an binden(); (3) 'uneinig' in einem Teil = Tor rot (Ablehnung + Bericht).
+    -> (beleg fuer binden oder None, Bericht fuer pruefung.massstab_teile)."""
+    if not (a.modell_a and a.modell_b and a.bilder and os.path.isdir(a.bilder) and vj.get("ursprung_wgs84")):
+        return None, dict(gerechnet=False, grund="Modelle/Fotos/Ursprung fehlen - Massstab nur GPS (alt)")
+    try:
+        import massstab_teile as MT
+        oj = a.objekt or os.environ.get("RCPARK_SEITEN_OBJEKT"); ref = None
+        if oj and os.path.isfile(oj):
+            try: ref = MT.turm_referenz(json.load(open(oj)))
+            except Exception as ex: ref = None; print(f"Turm-Referenz nicht lesbar ({type(ex).__name__}: {ex})")
+        ra, rb = (vj.get("rahmen_a") or {}).get("massstab"), (vj.get("rahmen_b") or {}).get("massstab")
+        TA = MT.teil_aus_modell(a.modell_a, a.bilder, vj["ursprung_wgs84"], P=DA, mj=ra, ref=ref); TB = MT.teil_aus_modell(a.modell_b, a.bilder, vj["ursprung_wgs84"], P=DB, mj=rb, ref=ref)
+    except Exception as ex: return None, dict(gerechnet=False, grund=f"Massstab je Teil nicht moeglich ({type(ex).__name__}: {ex}) - Massstab nur GPS (alt)")
+    kurz = lambda T_: dict(ergebnis=T_["ergebnis"], nachlauf={k: (T_.get("nachlauf") or {}).get(k) for k in ("urteil", "s_fit", "kurz", "lang", "kurve", "nachlauf", "schrumpftest_bestanden")},
+                           gps=T_.get("gps"), gebaeude=T_.get("gebaeude"), n_geotags=T_.get("n_geotags"))
+    v = MT.verhaeltnis(TA, TB); rot = [f"Teil {n}: {T_['ergebnis']['meldung']}" for n, T_ in (("A", TA), ("B", TB)) if T_["ergebnis"].get("urteil") == "uneinig"]
+    mt = dict(gerechnet=True, referenz=ref, a=kurz(TA), b=kurz(TB), verhaeltnis_b_nach_a=v, gps_verhaeltnis_b_nach_a=(rb / ra if ra and rb else None), rot=rot)
+    for n, T_ in (("A", TA), ("B", TB)): print(f"MASSSTAB TEIL {n}: {T_['ergebnis']['meldung']} | Nachlauf: {(T_.get('nachlauf') or {}).get('urteil')}")
+    if v: print(f"MASSSTAB B->A belegt {v['wert']:.4f} [{v['lo']:.4f}, {v['hi']:.4f}] gegen GPS-Verhaeltnis {mt['gps_verhaeltnis_b_nach_a']}")
+    if os.environ.get("RCPARK_WAENDE_MASSSTAB_BELEG", "1") == "0": mt["nur_bericht"] = True; return None, mt
+    ea = TA["ergebnis"]
+    if isinstance(G, dict) and ea.get("massstab") and ra and not (ea["lo"] <= ra <= ea["hi"]):
+        mt["m_je_einheit_a"] = dict(gps=ra, beleg=ea["massstab"], quelle=ea["quelle"]); G["m_je_einheit"] = float(ea["massstab"])
+        print(f"MASSSTAB TEIL A: Nah-GPS {ra:.4f} m je Einheit ausserhalb des Belegs [{ea['lo']:.4f}, {ea['hi']:.4f}] -> Meter von A nach {ea['quelle']} {ea['massstab']:.4f}")
+    return dict(verhaeltnis=v, rot=rot), mt
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0]); ap.add_argument("dicht_a"); ap.add_argument("dicht_b"); ap.add_argument("--gps", required=True); ap.add_argument("--aus", required=True)
-    ap.add_argument("--modell-a"); ap.add_argument("--modell-b"); ap.add_argument("--bilder"); a = ap.parse_args(argv)
+    ap.add_argument("--modell-a"); ap.add_argument("--modell-b"); ap.add_argument("--bilder"); ap.add_argument("--objekt", help="objekt.json (LoD2/DOM1 fuer die Turmprobe; Standard RCPARK_SEITEN_OBJEKT)")
+    a = ap.parse_args(argv)
     os.makedirs(a.aus, exist_ok=True); wj = os.path.join(a.aus, "waende.json")
     def ende(erg, rc):
-        erg.update(dicht_a=os.path.abspath(a.dicht_a), dicht_b=os.path.abspath(a.dicht_b), gps=os.path.abspath(a.gps)); json.dump(erg, open(wj, "w"), indent=1, ensure_ascii=False)
+        erg.update(dicht_a=os.path.abspath(a.dicht_a), dicht_b=os.path.abspath(a.dicht_b), gps=os.path.abspath(a.gps)); json.dump(erg, open(wj, "w"), indent=1, ensure_ascii=False, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o))
         print(json.dumps(erg.get("pruefung"), ensure_ascii=False)[:1500]); print(("WAENDE GEBUNDEN: " if erg.get("ok") else "WAENDE NICHT UEBERNOMMEN: ") + erg["urteil"]); return rc
     try:
         vj = json.load(open(a.gps)); G = gps_unsicherheit(vj); p_ = vj.get("pruefung") or {}
@@ -683,7 +740,9 @@ def main(argv=None):
     if lot0 is None:                                                                   # Rueckfall: Lot = Hauptachse kleinster Streuung der A-Wolke waere unsicher -> Wand-Lot ab z-Achse von A
         lot0 = np.array([0, 0, 1.0])
     if ref_b is None: ref_b = DB[::max(1, len(DB) // 2000)]
-    erg = binden(DA, DB, G, lot0, ref_b, bild=os.path.join(a.aus, "waende.jpg")); erg["bild"] = os.path.join(a.aus, "waende.jpg")
+    bel, mt = massstab_beleg(a, vj, DA, DB, G)
+    erg = binden(DA, DB, G, lot0, ref_b, bild=os.path.join(a.aus, "waende.jpg"), beleg=bel); erg["bild"] = os.path.join(a.aus, "waende.jpg")
+    erg["pruefung"]["massstab_teile"] = mt
     def ablehnen(grund, art):
         erg.update(ok=False, urteil="ABGELEHNT: " + grund + " - GPS-Lage bleibt"); erg.pop("B_nach_A", None)
         try:                                                                           # Kontrollbild entstand vor dieser Probe ("GEBUNDEN") -> Ablehnung nachtragen
@@ -705,8 +764,8 @@ def main(argv=None):
             try: gp = gps_probe(a.bilder, a.modell_a, a.modell_b, np.asarray(erg["B_nach_A"]), np.asarray(erg["B_nach_A_gps"]),
                                       mitte_b=(erg["pruefung"].get("massstab") or {}).get("mitte_b"))
             except Exception as ex: print(f"GPS-Probe nicht moeglich ({type(ex).__name__}: {ex})")
-        _ms = erg["pruefung"].get("massstab") or {}
-        erg["pruefung"]["gps_probe"] = gp; gpr = gps_urteil(gp, mass_sd=(max(G.get("mass_sd") or 0.0, G.get("mass_sd_ehrlich") or 0.0) if isinstance(G, dict) and _ms.get("uebernommen") else None))
+        _ms = erg["pruefung"].get("massstab") or {}; _mb = erg["pruefung"].get("massstab_beleg") or {}
+        erg["pruefung"]["gps_probe"] = gp; gpr = gps_urteil(gp, mass_sd=(max(G.get("mass_sd") or 0.0, G.get("mass_sd_ehrlich") or 0.0) if isinstance(G, dict) and (_ms.get("uebernommen") or _mb.get("angewandt")) else None))
         if gpr: ablehnen(gpr, "Geotags")
         else:
             erg["urteil"] += f"; Geotags von B Median {gp['gps']['median_m']} -> {gp['neu']['median_m']} m"

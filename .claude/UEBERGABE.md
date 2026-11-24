@@ -20,6 +20,14 @@ Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbegin
 - Agenten (Worktrees .claude/worktrees/agent-*): Höhen waagerechter Bauteile angleichen (Höhensitz) · Ost-Grobform 3,6 m klären. Ergebnisse → Merge-Probe 31.
 - Merge-Probe 31 (/media/oem/scan/rc-park_tmp/merge_probe31): Höhensitz `tools/hoehensitz.py` + konvergenz-Einbau. Erst nach 1122zc-Ende in main.
 
+## Nachtrag 24.11. 21:40
+- Nutzer „Alles ja": Register-IDs eindeutig (49, Suffix b/c, tools/register_ids_eindeutig.py), 3 Archivdateien eingecheckt, alte Worktrees 11/14/28/29/flaechen-wt entfernt (Patches /media/oem/rcdaten/rc-park_archiv/worktree_patches_2026-11-24/) - alles in Probe 31.
+- claude-mds e1c78ab gepusht (Wissenswerkzeuge); Schnelltest-Gleichstand Kopie=Skill in Probe 31.
+- Hoehen-Angleich gemergt in Probe 31 (aendert am Schwabentor nichts: ueber 36,5 m keine Fotokanten).
+- Nutzer: „Beweise … generalisiert auch bei zukuenftigen" -> Agenten: versiegelter Pruefsatz (/media/oem/rcdaten/rc-park_archiv/pruefsatz_versiegelt/, Suche-Agent darf ihn NIE sehen), Suche verallgemeinern (Bedeutungssuche, Worktree), verlorene Gewinner (Bericht /media/oem/scan/rc-park_tmp/verlorene_gewinner_2026-11-24.md), Kantenstufe ueber Traufe + traufe/umgang, Kegeldach-Traufe aus Kanten. Ost-Grobform-Agent laeuft weiter.
+- VORSICHT Merge Probe 31 -> main: die 3 Archivdateien liegen in main noch untracked (identisch) -> vor Merge beiseite legen.
+- Offen eigene Idee: Erstversuch-Quote je neuem echten Verlustfall in wissen_wiederfinden.json mitzaehlen (laufender Beweis fuer Zukunft).
+
 ## Nächste Schritte
 1. Nach JOB_ENDE 1122zc: auswerten wie oben, dem Nutzer Bilder + Zahlen je Seite (einfach erklärt).
 2. Agentenzweige in Probe 31 mergen; `bash tools/ketten_probelauf.sh --rev merge-probe-31` als Job (JOB_RAM_MB=7000 JOB_GPU_MB=3000), dann Merge main + `CUDA_VISIBLE_DEVICES= bash tools/schnelltest.sh` = 0, push.
