@@ -4,7 +4,9 @@
 Verwandt: tools/test_wissensbaum_luecken.py (Lueckenpruefung + Wortsuche)."""
 import io
 import subprocess
+import os
 import sys
+os.environ.setdefault("WISSEN_BEDEUTUNG", "aus")  # synthetische Wortsuche-Tests: ohne Embedding-Unterprozess (24.11.2026)
 import tempfile
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -112,6 +114,24 @@ def main():
     for a, b in (("wissen_suchen.py", "wissen_suchen.py"), ("werkzeug_aehnlich.py", "werkzeug_aehnlich.py"), ("wissen_wiederfinden.py", "wiederfinden.py")):
         if (v / b).exists():
             assert (hier / a).read_bytes() == (v / b).read_bytes(), f"tools/{a} weicht vom Vorschlag {v / b} ab - beide gleich halten (cp)"
+    # ---- 24.11.2026 Vokabelluecke: Alltagsfragen (doc2query), Kompositazerlegung, Rangfusion, weicher Rueckfall ohne Embedding
+    with tempfile.TemporaryDirectory() as t2:
+        w2 = Path(t2)
+        schreibe(w2 / "PROJEKT.md", "# Projekt\n")
+        zeile = "- 07.11. · fTetWild auf mvs_fix → ✗ · 1506 Komponenten, offener Boden"
+        schreibe(w2 / "Doku" / "projekt" / "netz.md", "# Netz\n## Versucht\n" + zeile + "\n- 08.11. · anderes Thema Dachziegel\n")
+        schreibe(w2 / "Doku" / "projekt" / ".fragen" / "Doku__projekt__netz.md.jsonl",
+                 '{"hash": "%s", "fragen": ["Die Huelle hat Loecher, wie wird sie dicht?"]}\n' % ws.zeilen_hash(zeile))
+        t = ws.suchen(w2, ["Huelle", "Loecher"], [], None, False)
+        assert t["Wissensbaum"] and "netz.md:3:" in t["Wissensbaum"][0][1], t          # Treffer nur ueber die Frage, gezeigt: Originalzeile
+        assert "fTetWild" in t["Wissensbaum"][0][1]
+        assert ws.teilwoerter("Gewoelberippen-Buendel", {"gewoelbe", "rippen", "buendel"})[:1] == ["gewoelberippen"]
+        assert "speicher" in ws.teilwoerter("Arbeitsspeicher", {"arbeit", "speicher"})
+        assert ws.bedeutung_verfuegbar({"bedeutung": {"python": "/gibt/es/nicht"}})[0] is None          # kein Absturz, nur Wortsuche
+        f = ws.fusionieren({"Wissensbaum": [(5.0, "a.md:1: x"), (4.0, "a.md:2: y")], "Werkzeuge (Kopf)": []},
+                           [{"name": "a.md", "nr": 2, "gruppe": "Wissensbaum", "wert": 0.9, "text": "y"},
+                            {"name": "b.md", "nr": 7, "gruppe": "Wissensbaum", "wert": 0.8, "text": "z"}])
+        assert [s for _, s in f["Wissensbaum"]][:1] == ["a.md:2: y"] and any(s.startswith("b.md:7:") for _, s in f["Wissensbaum"]), f
     print("OK test_wissen_ablage")
 
 

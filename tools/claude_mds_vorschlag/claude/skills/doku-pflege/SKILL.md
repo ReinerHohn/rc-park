@@ -91,8 +91,19 @@ war nicht eingecheckt oder stand nur im Memory-Archiv.
   - Je echter Verlustfall: Suchwörter, wie ein Agent fragt (nicht die Quellwörter), und eine Regex auf die erwartete Fundstelle.
   - rc 1, wenn weniger als `mindest_recall` der Fälle in den Top 5 stehen. Gehört in den Schnelltest des Projekts.
   - Ein Kontrollsatz (`"kontrolle"`) wird nie zum Abstimmen benutzt. Er zeigt, ob eine Verbesserung verallgemeinert.
+  - Neue echte Fehlsuchen kommen als Satz `"neu_<datum>"` mit `"erster_versuch": false` dazu. Gemessen werden sie zuerst ohne Abstimmung.
+    Die Kennzahl ERSTVERSUCH-QUOTE ist der Anteil der echten Suchen, die beim ersten Anlauf trafen.
+- **Alltagsfragen je Zeile (doc2query, gegen die Vokabellücke):** Wissenszeilen sind Fachkurzschrift, Fragen kommen in Alltagssprache.
+  Je Baumzeile und je Register-/Archivkopf schreibt ein Sprachmodell 3 Fragen, die diese Zeile beantwortet.
+  Sie liegen in `<fragen_ordner>/<pfad mit / → __>.jsonl` und sind per Zeilen-Hash an die Zeile gebunden. Suchen zeigt die Originalzeile.
+  - Ablauf: `wissen_fragen.py --offen [--koepfe --glob …] --aus DIR` liefert Blöcke, Agenten schreiben die Antworten, `--einpflegen` übernimmt sie.
+  - Eine neue Baumzeile bekommt ihre Fragen beim Eintragen. `--pruefen` zählt die Zeilen ohne Fragen (Warnung).
+- **Bedeutungssuche (optional):** `wissen_bedeutung.py` bettet Zeilen und Fragen ein (Satz-Embedding, z. B. intfloat/multilingual-e5-small, MIT).
+  Es läuft nur auf der CPU und legt einen Index je Datei-mtime an. `wissen_suchen.py` verbindet die Bedeutungssuche per Rangfusion (RRF) mit der Wortsuche.
+  Eingeschaltet wird sie über `"wissen": {"bedeutung": {"python": <venv mit torch+transformers>, "modell": <ordner>, "index": <ordner>}}`.
+  Fehlt etwas davon, bleibt es bei der Wortsuche. `--bedeutung aus` oder `WISSEN_BEDEUTUNG=aus` schaltet sie ab.
 - Konfig-Schlüssel `"wissen"`: `baum`, `register`, `logbuch`, `archiv`, `werkzeuge` (Globs), `meta_werkzeuge`, `synonyme`, `faelle`,
-  `luecken`, `memory`. Was fehlt, nimmt den Standard (PROJEKT.md + Doku/projekt, Doku/*.md, Doku/archiv, tools/ + scripts/).
+  `luecken`, `memory`, `fragen_ordner`, `bedeutung`. Was fehlt, nimmt den Standard (PROJEKT.md + Doku/projekt, Doku/*.md, Doku/archiv, tools/ + scripts/).
 
 ## 5. Worktrees & Branches  (nur Gemergtes, nie erzwingen)
 1. Worktrees mit laufenden Prozessen auslassen (`for p in /proc/[0-9]*; do readlink $p/cwd; done | grep <worktree-ordner>`).

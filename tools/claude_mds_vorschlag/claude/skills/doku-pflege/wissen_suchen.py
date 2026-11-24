@@ -207,13 +207,16 @@ def wortvorschlaege(wurzel, begriffe, gruppen, aehnlich, wa, n=8):
 GRUPPEN_FAKTOR = {"Wissensbaum": 1.15, "Register/Methoden": 1.1, "Werkzeuge (Kopf)": 1.1, "Archiv": 0.95,
                   "Logbuecher": 0.9, "Memory": 0.9, "git log": 0.8, "Aehnliche Werkzeuge (Wortschatz)": 0.7}
 SYNONYM_GEWICHT = 0.75
-META_WERKZEUGE = {"wissen_suchen.py", "werkzeug_aehnlich.py", "wissensbaum_luecken.py", "wissen_ablage_pruefen.py", "wissen_wiederfinden.py",
+META_WERKZEUGE = {"wissen_suchen.py", "wissen_bedeutung.py", "wissen_fragen.py", "werkzeug_aehnlich.py", "wissensbaum_luecken.py", "wissen_ablage_pruefen.py", "wissen_wiederfinden.py",
                   "test_wissensbaum_luecken.py", "test_wissen_ablage.py"}
 
 
 STOPPWOERTER = set("""der die das den dem des ein eine einen einem einer und oder aber mit ohne von vom zu zum zur im in an am auf aus bei
 fuer für ist sind wird werden wurde war hat haben nach vor ueber über unter wie was wer ob als auch noch nur nicht kein keine es er sie wir
-man sich so dann wenn weil dass statt beim bis gegen durch um mal schon jetzt hier dort sehr mehr""".split())
+man sich so dann wenn weil dass statt beim bis gegen durch um mal schon jetzt hier dort sehr mehr
+ich du mich mir mein meine meinen meinem unser unsere uns ihr euch kann koennen kannst muss musst soll sollte will wollen warum wieso
+weshalb welche welcher welches wo wann woran gibt geht immer einfach ganz eigentlich bitte etwa dabei denn doch nun also da dem diese
+dieser dieses jemand etwas irgendwie""".split())  # 25.11.: Alltagsfragen in ganzen Saetzen
 
 
 def begriffe_teilen(begriffe, gruppen):
@@ -221,7 +224,8 @@ def begriffe_teilen(begriffe, gruppen):
     "dichte Wolke", "weniger Fotos") bleiben zusammen, Fuellwoerter fallen weg (24.11.2026: "wie hoch ist das Martinstor" -
     Fuellwoerter senkten die Abdeckung jeder echten Fundstelle)."""
     ganz = {falte(w) for g in gruppen for w in g}
-    woerter = [x for b in begriffe for x in b.split() if x]
+    # Satzzeichen ab (25.11.2026: ganze Fragesaetze - "schief," und "Senkrechte?" trafen sonst nur mit Komma/Fragezeichen)
+    woerter = [y for b in begriffe for x in b.split() for y in [x.strip(PUNKT)] if y]
     aus, i = [], 0
     while i < len(woerter):
         for n in (3, 2):
@@ -236,6 +240,7 @@ def begriffe_teilen(begriffe, gruppen):
     return aus or woerter
 
 
+PUNKT = ".,;:!?()[]{}\"'„“”‚‘’«»…"
 ENDUNGEN = ("ern", "en", "er", "es", "e", "n", "s")
 
 
@@ -259,6 +264,66 @@ def stamm_muster(wort):
     return re.compile(r)
 
 
+FRAGEN = True         # Alltagsfragen je Zeile mitsuchen (doc2query, 24.11.2026)
+
+
+def zeilen_hash(z):
+    import hashlib
+    return hashlib.sha1(z.strip().encode("utf-8")).hexdigest()[:12]
+
+
+def alltagsfragen(wurzel, rel, kfg=None):
+    """{zeilen_hash: [fragen]} aus <fragen_ordner>/<rel mit / -> __>.jsonl (Konfig 'fragen_ordner', Standard Doku/projekt/.fragen);
+    geschrieben von tools/wissen_fragen.py. Fehlt die Datei: leer."""
+    k = kfg or konfig(wurzel)
+    q = Path(wurzel) / k.get("fragen_ordner", "Doku/projekt/.fragen") / (str(rel).replace("/", "__") + ".jsonl")
+    aus = {}
+    try:
+        for z in q.read_text(encoding="utf-8").splitlines():
+            if z.strip():
+                d = json.loads(z)
+                aus[d["hash"]] = d.get("fragen", [])
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    return aus
+
+
+TEILWORT = True       # Kompositazerlegung (allgemein statt je Fall gelernter Synonyme, 24.11.2026)
+TEIL_GEWICHT = 0.6
+
+
+def wortschatz_aus(zeilen, mindest=2):
+    """Woerter (>= 3 Zeichen, gefaltet), die im durchsuchten Wissen mindestens `mindest`-mal vorkommen."""
+    z = {}
+    for x in zeilen:
+        for wort in re.findall(r"[a-z]{3,}", x[4]):
+            z[wort] = z.get(wort, 0) + 1
+    return {w for w, n in z.items() if n >= mindest}
+
+
+def teilwoerter(begriff, wortschatz):
+    """Kompositum -> Teile, die es im Wissen gibt ("Gewoelberippen-Buendel" -> gewoelbe, rippen, buendel; "Arbeitsspeicher" ->
+    arbeit, speicher). Bindestrich trennt immer; sonst die Zerlegung mit dem laengsten bekannten Grundwort (>= 4 Zeichen) und
+    bekanntem Bestimmungswort (>= 3, Fugen-s/-n/-en erlaubt). Ohne Wortschatz: nur Bindestrich."""
+    f = falte(begriff)
+    teile = [x for x in re.split(r"[-_/]", f) if len(x) >= 4] if re.search(r"[-_/]", f) else []
+    for wort in (teile or [f]):
+        if len(wort) < 9 or not wortschatz:
+            continue
+        for i in range(3, len(wort) - 3):
+            kopf, grund = wort[:i], wort[i:]
+            if grund in wortschatz and any(
+                    k in wortschatz and len(k) >= 3 for k in (kopf, kopf[:-1] if kopf.endswith(("s", "n")) else kopf,
+                                                              kopf[:-2] if kopf.endswith("en") else kopf)):
+                teile += [kopf.rstrip("s") if kopf.rstrip("s") in wortschatz else kopf, grund]
+                break
+    aus = []
+    for x in teile:
+        if x != f and x not in aus and x not in STOPPWOERTER:
+            aus.append(x)
+    return aus
+
+
 def suchen(wurzel, begriffe, gruppen, memory=None, mit_git=True, und=False, kfg=None):
     """{gruppe: [(relevanz, "datei:zeile: text")]} nach Relevanz (24.11.2026, vorher nur ODER + Trefferzahl: "Formmass Flaeche" gab
     164 Baumtreffer, oben bahn-anlage.md "Druckflaeche"). Relevanz je Zeile = Summe je Begriff des besten Wortes (IDF ueber alle
@@ -266,15 +331,6 @@ def suchen(wurzel, begriffe, gruppen, memory=None, mit_git=True, und=False, kfg=
     lange Tabellenzeilen leicht abgewertet."""
     import math
     w = Path(wurzel)
-    terme = []
-    for t in begriffe:
-        ws_ = [(x, muster([x]), x == t) for x in erweitern(t, gruppen)]
-        sm = stamm_muster(t)
-        if sm is not None:
-            ws_[0] = (t, sm, True)
-        terme.append((t, ws_))
-    alle_woerter = [x for _, ws_ in terme for x, _, _ in ws_]
-    rx_alle = re.compile("|".join(rx.pattern for _, ws_ in terme for _, rx, _ in ws_)) if alle_woerter else re.compile("(?!)")
     zeilen = []                                   # (gruppe, name, nr, text, faltung)
 
     for g, dateien in quellen(w, memory, kfg).items():
@@ -283,9 +339,12 @@ def suchen(wurzel, begriffe, gruppen, memory=None, mit_git=True, und=False, kfg=
                 name = "memory/" + p.name if g == "Memory" else str(p.relative_to(w))
             except ValueError:
                 name = str(p)
+            fr = alltagsfragen(w, name, kfg) if FRAGEN and g != "Memory" else {}
             try:
                 for nr, z in enumerate(p.read_text(encoding="utf-8", errors="replace").split("\n"), 1):
-                    zeilen.append((g, name, nr, z, falte(z)))
+                    zf = fr.get(zeilen_hash(z)) if fr else None
+                    # Alltagsfragen zur Zeile (doc2query, tools/wissen_fragen.py) zaehlen beim Treffen mit, gezeigt wird die Zeile
+                    zeilen.append((g, name, nr, z, falte(z + " ¦ " + " ".join(zf)) if zf else falte(z)))
             except OSError:
                 pass
     werkzeugnamen = []
@@ -295,6 +354,21 @@ def suchen(wurzel, begriffe, gruppen, memory=None, mit_git=True, und=False, kfg=
         for nr, z in werkzeug_kopf(p):
             zeilen.append(("Werkzeuge (Kopf)", rel, nr, z, falte(z)))
         werkzeugnamen.append(p)
+    terme = []
+    wortschatz = wortschatz_aus(zeilen) if TEILWORT else set()
+    for t in begriffe:
+        ws_ = [(x, muster([x]), 1.0 if x == t else SYNONYM_GEWICHT) for x in erweitern(t, gruppen)]
+        sm = stamm_muster(t)
+        if sm is not None:
+            ws_[0] = (t, sm, 1.0)
+        schon = {falte(x) for x, _, _ in ws_}
+        for teil in teilwoerter(t, wortschatz):
+            if teil not in schon:
+                schon.add(teil)
+                ws_.append((teil, stamm_muster(teil) or muster([teil]), TEIL_GEWICHT))
+        terme.append((t, ws_))
+    alle_woerter = [x for _, ws_ in terme for x, _, _ in ws_]
+    rx_alle = re.compile("|".join(rx.pattern for _, ws_ in terme for _, rx, _ in ws_)) if alle_woerter else re.compile("(?!)")
     if mit_git:
         cmd = ["git", "-C", str(w), "log", "--all", "-i", "--format=%h %as %s", "-n", "300"]
         for x in sorted(set(alle_woerter)):
@@ -316,11 +390,11 @@ def suchen(wurzel, begriffe, gruppen, memory=None, mit_git=True, und=False, kfg=
         summe, getroffen, name_bonus = 0.0, 0, 0.0
         for _, ws_ in terme:
             best = 0.0
-            for x, rx, orig in ws_:
+            for x, rx, gew in ws_:
                 if rx.search(f):
-                    best = max(best, idf[x] * (1.0 if orig else SYNONYM_GEWICHT))
+                    best = max(best, idf[x] * gew)
                 if stamm and rx.search(stamm):
-                    name_bonus = max(name_bonus, 0.5 * idf[x] * (1.0 if orig else SYNONYM_GEWICHT))
+                    name_bonus = max(name_bonus, 0.5 * idf[x] * gew)
             if best > 0:
                 summe += best
                 getroffen += 1
@@ -365,6 +439,89 @@ def rangliste(treffer, k=10, je_datei=2):
     return aus
 
 
+RRF_K = 20            # Rangfusion 1/(k+Rang); abgestimmt NUR auf tools/wissen_dev.json (25.11.: k<=20 -> 4/20, k=60 g=1 -> 3/20)
+BED_GEWICHT = 1.5
+BED_TOP = 300
+
+
+def bedeutung_verfuegbar(kfg):
+    """(python, grund): Bedeutungssuche nur, wenn die Konfig 'wissen.bedeutung' einen vorhandenen Python + Modellordner nennt."""
+    import os
+    if os.environ.get("WISSEN_BEDEUTUNG", "").lower() in ("0", "aus", "nein", "off"):
+        return None, "WISSEN_BEDEUTUNG=aus"
+    b = kfg.get("bedeutung") or {}
+    py = b.get("python")
+    if not py or not Path(py).exists():
+        return None, "kein Python mit torch/transformers in .claude/doku-pflege.json 'wissen.bedeutung.python'"
+    if b.get("modell") and not Path(b["modell"]).exists():
+        return None, f"Modell fehlt: {b['modell']}"
+    if not (Path(__file__).resolve().parent / "wissen_bedeutung.py").exists():
+        return None, "wissen_bedeutung.py fehlt neben wissen_suchen.py"
+    return py, ""
+
+
+def bedeutung_treffer(wurzel, text, kfg, memory=None, top=BED_TOP):
+    """Bedeutungs-Rangliste [{name, nr, gruppe, wert, text}] aus wissen_bedeutung.py (Unterprozess, nur CPU, nice 19), oder
+    (None, grund) - nie ein Absturz: fehlt Paket/Modell/Index, bleibt es bei der Wortsuche."""
+    import os
+    py, grund = bedeutung_verfuegbar(kfg)
+    if py is None:
+        return None, grund
+    cmd = [py, "-I", str(Path(__file__).resolve().parent / "wissen_bedeutung.py"), "--wurzel", str(wurzel), "--anfrage", text,
+           "--top", str(top)] + (["--memory", str(memory)] if memory and Path(memory).is_dir() else [])
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES="", OMP_NUM_THREADS="4", TOKENIZERS_PARALLELISM="false")
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=240, env=env)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return None, f"Unterprozess: {type(e).__name__}"
+    if r.returncode == 3:
+        return None, f"Index zu alt - einmal bauen: {py} -I {cmd[2]} --bauen"
+    if r.returncode != 0:
+        return None, (r.stderr.strip().split("\n") or ["?"])[-1][:200]
+    try:
+        return json.loads(r.stdout), ""
+    except ValueError:
+        return None, "Ausgabe kein JSON"
+
+
+def fusionieren(treffer, bed, k=RRF_K, gewicht=BED_GEWICHT):
+    """Rangfusion (RRF) von Wortsuche und Bedeutungssuche: Wert = 1000 x (1/(k+Rang_Wort) + gewicht/(k+Rang_Bedeutung)).
+    Werkzeugkoepfe zaehlen je Datei (die Bedeutung bettet den ganzen Kopf als eine Einheit ein). Nur-Bedeutungs-Treffer kommen dazu."""
+    def schluessel(g, name, nr):
+        return name if g == "Werkzeuge (Kopf)" else f"{name}:{nr}"
+    wort = sorted(((r, g, s) for g, ts in treffer.items() if g != "Aehnliche Werkzeuge (Wortschatz)" for r, s in ts),
+                  key=lambda t: -t[0])
+    rang_w = {}
+    for i, (r, g, s) in enumerate(wort, 1):
+        teil = s.split(":")
+        rang_w.setdefault(schluessel(g, teil[0], teil[1] if len(teil) > 1 else ""), i)
+    rang_b, text_b = {}, {}
+    for i, x in enumerate(bed, 1):
+        key = schluessel(x["gruppe"], x["name"], x["nr"])
+        if key not in rang_b:
+            rang_b[key] = len(rang_b) + 1
+            text_b[key] = (x["gruppe"], x["name"], x["nr"], x["text"])
+
+    def wert(key):
+        v = 1.0 / (k + rang_w[key]) if key in rang_w else 0.0
+        if key in rang_b:
+            v += gewicht / (k + rang_b[key])
+        return round(1000 * v, 3)
+
+    neu = {g: [] for g in treffer}
+    for r, g, s in wort:
+        teil = s.split(":")
+        neu[g].append((wert(schluessel(g, teil[0], teil[1] if len(teil) > 1 else "")), s))
+    for key, (g, name, nr, roh) in text_b.items():
+        if key not in rang_w and g in neu:
+            t = roh.strip()
+            neu[g].append((wert(key), f"{name}:{nr}: {t[:220] + ('…' if len(t) > 220 else '')}"))
+    neu["Aehnliche Werkzeuge (Wortschatz)"] = treffer.get("Aehnliche Werkzeuge (Wortschatz)", [])
+    for g in neu:
+        neu[g].sort(key=lambda t: -t[0])
+    return neu
+
+
 def standard_memory(wurzel):
     s = str(Path(wurzel).resolve())
     if "/.claude/worktrees/" in s:
@@ -398,6 +555,8 @@ def main(argv=None):
     ap.add_argument("--und", action="store_true", help="nur Zeilen mit allen Begriffen")
     ap.add_argument("--max", type=int, default=5, help="Treffer je Gruppe (0 = alle)")
     ap.add_argument("--top", type=int, default=10, help="Laenge der Gesamt-Rangliste (0 = aus)")
+    ap.add_argument("--bedeutung", choices=["an", "aus"], default="an",
+                    help="Bedeutungssuche (Satz-Embedding, wissen_bedeutung.py) per Rangfusion dazu; an = wenn verfuegbar")
     a = ap.parse_args(argv)
     w = Path(a.wurzel) if a.wurzel else standard_wurzel()
     kfg = konfig(w)
@@ -412,7 +571,21 @@ def main(argv=None):
         e = erweitern(b, gruppen)
         if len(e) > 1:
             print(f"Suche '{b}' + Synonyme: {', '.join(e[1:])}")
+    # Bedeutungssuche im Hintergrund, waehrend die Wortsuche laeuft (Unterprozess: Laden von torch/Modell ~ so lang wie die Wortsuche)
+    bed_erg = {}
+    faden = None
+    if a.bedeutung == "an" and not a.und:
+        import threading
+        faden = threading.Thread(target=lambda: bed_erg.update(r=bedeutung_treffer(w, " ".join(a.begriffe), kfg, mem)), daemon=True)
+        faden.start()
     t = suchen(w, begriffe, gruppen, mem, not a.ohne_git, a.und, kfg)
+    if faden is not None:
+        faden.join()
+        bed, grund = bed_erg.get("r", (None, "Faden ohne Ergebnis"))
+        if bed:
+            t = fusionieren(t, bed)
+        elif kfg.get("bedeutung"):
+            print(f"HINWEIS: nur Wortsuche (Bedeutungssuche aus: {grund})")
     aehnlich, wa = ([], None) if a.ohne_aehnlich else aehnliche_werkzeuge(w, begriffe, gruppen, kfg=kfg)
     namen_kopf = {x.split(":")[0] for _, x in t["Werkzeuge (Kopf)"]}
     rel = {p.name: str(p.relative_to(w)) for p in werkzeug_dateien(w, kfg)}

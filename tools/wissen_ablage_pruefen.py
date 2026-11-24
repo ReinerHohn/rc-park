@@ -167,6 +167,16 @@ def main(argv=None):
             print(f"    {f}")
         if wid_fehl:
             rc = 1
+    # 5 Alltagsfragen (doc2query, 24.11.2026): neue Baumzeile bekommt beim Eintragen ihre Fragen (tools/wissen_fragen.py) - nur WARNUNG
+    try:
+        import wissen_fragen as wf
+        kfg = wf.ws.konfig(w)
+        off = wf.offene(w, kfg["baum"], kfg)
+        if wf.ordner(w, kfg).is_dir() or off:
+            print(f"5 alltagsfragen: {len(off)} Baumzeile(n) ohne Alltagsfragen" + (" - WARNUNG (python3 -I tools/wissen_fragen.py --offen ..."
+                                                                                     " Fragen schreiben, --einpflegen)" if off else ""))
+    except (ImportError, OSError, KeyError) as ex:
+        print(f"5 alltagsfragen: nicht geprueft ({type(ex).__name__})")
     if a.json:
         Path(a.json).write_text(json.dumps({"ungetrackt": fremd, "tote_verweise": tote, "doppelte_ids": dopp,
                                             "neu_doppelt": neu_dopp, "widersprueche_fehler": wid_fehl}, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -4,7 +4,9 @@ Aufruf: python3 -I test_wissen.py  (rc 0 = OK). Kein Netz, kein Schreiben ausser
 import io
 import json
 import subprocess
+import os
 import sys
+os.environ.setdefault("WISSEN_BEDEUTUNG", "aus")  # synthetische Wortsuche-Tests: ohne Embedding-Unterprozess (24.11.2026)
 import tempfile
 from contextlib import redirect_stdout
 from pathlib import Path
