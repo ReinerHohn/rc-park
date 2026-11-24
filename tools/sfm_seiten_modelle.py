@@ -60,7 +60,7 @@ GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
 # gebunden: Vereinen (Klappung, Foto-GPS), Zusammenlegen, Blick-/GPS-Seiten-Tor, Einsetzen. Die Werkzeuge der Nachstufe (samt ihrer Hilfsmodule, tools/code_stand.py) ergeben
 # 'nachstufe_code' in seiten_modelle.json; tools/pipeline_objekt.py rechnet iphone_sfm.py erneut (nur die Nachstufe), wenn er nicht mehr zum Code passt.
 NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_eck_koppeln.py", "sim3_robust.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py", "seiten_querspur_binden.py",
-             "seiten_lod2_je_teil.py", "seiten_lage_beleg.py", "seiten_waende_binden.py")
+             "seiten_lod2_je_teil.py", "seiten_lage_beleg.py", "seiten_waende_binden.py", "teil_gelaende_tor.py")
 # 22.11.2026 TEILE UEBER QUERSPUREN BINDEN nach dem GPS-Vereinen (tools/seiten_querspur_binden.py, querspur_stufe; Nulllauf 1122f: GPS-Lage von Teil 1 nur +-3,6 Grad/+-12 %,
 # Ostwand 1-2,5 m ausserhalb LoD2, Westwand doppelt). Querpaare der Ursprungs-DB -> 3D-3D -> RANSAC-Sim3 NUR im GPS-Korridor (GPS = Veto, nicht gemittelt). NUR auf dem GPS-Weg:
 # auf dem Klappungs-Weg (Martinstor) SIND die Querpaare die Gegenseiten-Verwechslung und es gibt kein unabhaengiges Veto. Nach einer Bindung wird der GPS-Ausgleich AUSGELASSEN:
@@ -89,6 +89,10 @@ ECK_KOPPELN = os.environ.get("RCPARK_ECK_KOPPELN", "1") != "0"
 # Lot von B aus seinen Waenden, Grundriss-Suche der B-Waende auf den A-Waenden im (ehrlichen) GPS-Korridor, Proben: eindeutig, zwei Hoehenbaender, Geotags von B, Turmspitze.
 # Weg 'gps+waende' gilt als belegt (seiten_lage_beleg). Abschalten: RCPARK_WAENDE=0.
 WAENDE = os.environ.get("RCPARK_WAENDE", "1") != "0"
+# 24.11.2026 TOR 'TEIL UNTER GELAENDE' FUER JEDEN BINDUNGSWEG (tools/teil_gelaende_tor.py, gelaende_stufe; 1122z: Ost-Teil 6,4 m im Boden, nur der Nutzer sah es im Viewer).
+# Vor dem Zusammenlegen jedes Teils B (Klappung, Eckmodell, GPS, Querspur, Waende, LoD2 je Teil): > 5 % der B-Punkte in Strassenzellen von A > 1 m unter dem Boden von A
+# -> Teil WEGGELASSEN (Meldung mit Bodenversatz). Nicht pruefbar (kein GPS-Massstab, keine gemeinsame Strasse) -> nur Meldung. RCPARK_GELAENDE_TOR=hinweis = nur melden, =aus = nicht pruefen.
+GELAENDE_TOR = os.environ.get("RCPARK_GELAENDE_TOR", "an")
 # 22.11.2026 REGEL "TEIL NUR BEI BELEGTER LAGE EINSETZEN" (tools/seiten_lage_beleg.py; schwabentor-1122: Teil 1 nur ueber GPS gelegt, 3-4 m versetzt -> Grundriss-Tor A 17,6 %,
 # Wanddicke 'doppelwand'). Ein Teil auf dem GPS-Weg wird nur eingesetzt, wenn eine eigene Probe seine Lage belegt (Querspur, LoD2 je Teil, oder GPS ehrlich belegt UND
 # Wanddicke der GPS-Lage widerspruchsfrei); sonst WEGGELASSEN und als FOTOLUECKE gemeldet (ber['fotoluecken']). Abschalten: RCPARK_TEIL_NUR_BELEGT=0 (steht im Code-Stand).
@@ -471,6 +475,13 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
                 if e["weg"] == "gps" and (vgd.get("pruefung") or {}).get("mass_sd_rel", 0) > 0.05:
                     M_.append(f"ACHTUNG Teil {B['teil']}: Massstab gegen Teil A nur auf +-{100 * vgd['pruefung']['mass_sd_rel']:.0f} % belegt (Foto-GPS) - Masse dieser Seite nicht ohne Gegenprobe (LoD2-Grundriss, foto_mass) verwenden")
         if rc == 0 and "B_nach_A" in v:
+            if GELAENDE_TOR != "aus" and fa and fb:                                    # 24.11.2026: Unter-Gelaende-Tor fuer JEDEN Bindungsweg (vorher nur gps+waende; 1122z Ost-Teil 6,4 m im Boden)
+                gt = gelaende_stufe(vo + "_gelaende", A, B, fa, fb, v["B_nach_A"], e.get("weg"), os.path.join(vo + "_gps", "vereinen.json"))
+                e["gelaende_tor"] = {k: gt.get(k) for k in ("rc", "ok", "meldung", "anteil_b", "anteil_a", "zellen", "boden_versatz_m", "ordner") if k in gt}; sag("SEITENMODELLE: " + str(gt.get("meldung")))
+                if gt.get("rc") == 3 and GELAENDE_TOR != "hinweis":
+                    M_.append(f"Teil {B['teil']} WEGGELASSEN (Weg {e.get('weg')}): {gt.get('meldung')}"); ber["nicht_vereint"].append(B["teil"]); continue
+                if gt.get("rc") == 3: M_.append(f"ACHTUNG Teil {B['teil']}: {gt.get('meldung')} - trotzdem eingesetzt (RCPARK_GELAENDE_TOR=hinweis)")
+                elif gt.get("rc") != 0: M_.append(f"Teil {B['teil']}: {gt.get('meldung')}")
             kand = os.path.join(vz, f"versuch_{B['teil']}"); tj = os.path.join(vo, "seiten_blick.json")
             try:
                 me = modelle_zusammen([(A["modell"], None)] + [(x["modell"], m) for x, m in ang] + [(B["modell"], v["B_nach_A"])], kand, herkunft=dict(teil_a=A["teil"], teile=[x["teil"] for x, _ in ang] + [B["teil"]]), belegt=db_kameras(db_ursprung, ber.get("db_mapper")))
@@ -594,6 +605,26 @@ def waende_stufe(wo, A, B, fa, fb, vgj, fotos):
     except Exception as ex: d = dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, rc {rc}, {wo}/log.txt)")
     d.update(rc=rc, ordner=wo)
     if rc != 0: d["ok"] = False
+    return d
+
+
+def gelaende_stufe(go, A, B, fa, fb, M, weg, gj):
+    """TOR 'TEIL UNTER GELAENDE' (tools/teil_gelaende_tor.py) fuer das gebundene Teil B, gleich welcher Weg B_nach_A lieferte. Zwischenstand an Eingaben (Modell A, dichte
+    Wolken, Matrix, GPS-Ergebnis fuer den Massstab) + Code-Stand gebunden. -> gelaende.json als dict mit 'rc' und 'ordner' (rc 3 = abgelehnt, 2 = nicht pruefbar)."""
+    os.makedirs(go, exist_ok=True); mj = os.path.join(go, "matrix.json"); gjo = os.path.join(go, "gelaende.json"); sf = os.path.join(go, "stand.json")
+    Ms = json.dumps(np.asarray(M, float).round(9).tolist())
+    st = _stand(os.path.join(A["modell"], "images.bin"), fa, fb, *([gj] if os.path.isfile(gj) else [])) + [Ms, str(weg), code_stand("teil_gelaende_tor.py", wurzel=T)]
+    try: alt = json.load(open(sf)) if os.path.isfile(gjo) else None
+    except Exception: alt = None
+    if alt and alt.get("stand") == st: rc = alt["rc"]
+    else:
+        json.dump(dict(B_nach_A=json.loads(Ms), weg=weg), open(mj, "w"))
+        rc = LAUF([PYC, "-I", os.path.join(T, "teil_gelaende_tor.py"), fa, fb, "--matrix", mj, "--aus", gjo, "--modell-a", A["modell"], "--teil", str(B["teil"]), "--weg", str(weg)]
+                  + (["--gps", gj] if os.path.isfile(gj) else []), os.path.join(go, "log.txt"))
+        json.dump(dict(stand=st, rc=rc), open(sf, "w"))
+    try: d = json.load(open(gjo))
+    except Exception as ex: d = dict(ok=None, meldung=f"GELAENDE-TOR Teil {B['teil']}: kein Ergebnis ({type(ex).__name__}, rc {rc}, {go}/log.txt)")
+    d.update(rc=rc, ordner=go)
     return d
 
 

@@ -4,6 +4,7 @@ import sys, os, tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pfade import temp_ordner                                         # 22.11.2026: Temp nicht auf Root, beim Ende aufgeraeumt (auch nach assert)
 import gesamtkette as GK
+os.environ["RCPARK_PLATZ_TOR"] = "test_ersetzt"                       # 24.11.2026: nicht am echten Plattenplatz haengen (tools/test_platz_tor_ersetzt.py prueft das Tor)
 f = 0
 def ok(b, t):
     global f
