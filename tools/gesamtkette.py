@@ -129,11 +129,19 @@ def lauf(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
     return rc_, out_
 
 
+def platz_tor_rc():
+    """rc von tools/platz_pruefen.py (Platztor vor jeder Stufe). 24.11.2026: Tests der Kette (test_kette_stabil, Heredoc 'Kette lauf()/Kameraregeln', test_speicher_wiederholung)
+    scheiterten mit 'PLATZ ZU KNAPP', nur weil die ECHTE Root-Platte voll war (und platz_pruefen startete dabei sogar das Aufraeumen). Tests setzen RCPARK_PLATZ_TOR=test_ersetzt
+    -> rc 0 ohne Plattenblick. Nur der Test des Platztors selbst (tools/test_platz_tor_ersetzt.py) laesst es weg. Nie in Kettenlaeufen setzen."""
+    if os.environ.get("RCPARK_PLATZ_TOR") == "test_ersetzt": return 0
+    return subprocess.run(["python3", os.path.join(ROOT, "tools", "platz_pruefen.py")], capture_output=True).returncode
+
+
 def _lauf_einmal(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
     """Eine Stufe starten. 16.11.2026 (Stabilisierung): Ausgabe laeuft ZEILENWEISE ins Log (vorher erst am Stufenende - eine 30-Minuten-Stufe war blind, ein Haenger nicht zu erkennen);
     Zeitlimit je Stufe (Standard RCPARK_STUFE_MAX_S = 3 h, die Prozessgruppe wird beendet) - ein Haenger auf einem Kern hielt am 16.11. die Kette stundenlang an."""
     import threading, signal
-    if subprocess.run(["python3", os.path.join(ROOT, "tools", "platz_pruefen.py")], capture_output=True).returncode != 0:      # Platztor VOR jeder Stufe (16.11.2026: Systemplatte lief mitten im Lauf unter 5 GB, die Stufe danach scheiterte halb)
+    if platz_tor_rc() != 0:      # Platztor VOR jeder Stufe (16.11.2026: Systemplatte lief mitten im Lauf unter 5 GB, die Stufe danach scheiterte halb)
         e = dict(stufe=name, rc=3, ok=False, sekunden=0, fehler="PLATZ ZU KNAPP vor Stufenstart (tools/platz_pruefen.py) - Kette haelt an"); B["schritte"].append(e); __import__("json_sicher").schreiben(B["_pfad"], B); print("    FEHLER: " + e["fehler"], flush=True)
         if _ABSCHLUSS[0]: _ABSCHLUSS[0](3)                                                            # 17.11.2026: auch dieser Abbruch schreibt 'lauf_ergebnis' (sonst steht im Bericht das Ergebnis des VORIGEN Laufs)
         raise SystemExit(3)
@@ -306,6 +314,7 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
 
 
 def main():
+    if os.environ.pop("RCPARK_PLATZ_TOR", None) is not None: print("ACHTUNG: RCPARK_PLATZ_TOR (nur fuer Tests) war gesetzt - im Kettenlauf entfernt, das Platztor gilt", flush=True)
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
     ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
     ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true"); ap.add_argument("--ohne-netz", action="store_true", help="Stufe commons: nur die Commons-Kategorie, keine weiteren Netzquellen (tools/netz_fotos_holen.py)")
@@ -493,7 +502,7 @@ def main():
             erg["lage_proben"], _lpt = _LPR.tor_rc(json.load(open(AU)).get("transformation") if os.path.exists(AU) else None)
             if _lpt: notiz(B, f"tor_lage_proben{tag}", erg["lage_proben"] != 3, hinweis=_lpt)
         except Exception as e_: erg["lage_proben"] = None; print("Lageproben nicht lesbar:", e_, flush=True)
-        if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT)], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende
+        if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT), "--fusion", os.path.join(P, "dicht", "stereo", "fusion.cfg")], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende; 24.11.: Urteil ueber die Bilder der FUSION (sonst dauernd rot nach dem Neufusionieren)
         if os.path.isdir(sp):                                              # 20.11.2026 (Martinstor FlexGlue-Nacht): Hinweis-Tore Seitenverkleben - Modell aus punktlos getrennten Stuecken? Kameras gegen Foto-GPS auf der falschen Turmseite?
             erg["zerfall"] = lauf(B, f"tor_zerfall{tag}", [PYC, "-I", "tools/modell_zerlegen.py", sp, "--min-bilder", "10"], log, ok=(0, 3))[0]
             if erg["zerfall"] == 3 and os.path.isfile(os.path.join(sp, "vereint.json")):   # 21.11.2026: vereinte Seitenmodelle haben ABSICHTLICH keine gemeinsamen Punkte - ihre Lage zueinander kommt aus seiten_vereinen und wird vom Seiten-Blick-Tor geprueft

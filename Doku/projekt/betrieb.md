@@ -72,6 +72,9 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 
 **Platz**
 - 21.11. · Platz-Tor 5 GB brach Neubauten still ab (45 min verloren) → ✔ Mindestplatz 15 GB, Tor raeumt auf statt abzubrechen, Abbruch nur < 5 GB (7baf8d6a3); Absturzabbilder 4,1 GB in /var/lib/systemd/coredump
+- 24.11. · Kettentests (test_kette_stabil, Heredoc lauf()/Kameraregeln, test_speicher_wiederholung) rot mit 'PLATZ ZU KNAPP', weil die echte Root-Platte voll war (platz_pruefen startete dabei sogar das Aufraeumen) → ✔ gesamtkette.platz_tor_rc, Tests setzen RCPARK_PLATZ_TOR=test_ersetzt, main() entfernt es; Tor selbst geprueft in tools/test_platz_tor_ersetzt.py
+**Tore**
+- 24.11. · tor_kamera_gelaende 1122 seit 23.11. dauernd rc 3 (nur Bericht) → Ursache benannt: zaehlte SfM-Kameras statt Fusionsbilder; 1122z 28 tief, 25 davon NIE in der dichten Wolke (Commons/Archiv bis 40 km tief), 3 eigene (Teil 1, -1,5..-1,6 m) nahm das Neufusionieren heraus → danach 0, Tor trotzdem rot. Ost-Versatz NICHT Ursache (Gruppen commons_orig2 12 + netz_commons_geo 7 in Teil 0) → ✔ `--fusion`: rc 3 nur solange eine tiefe Kamera in fusion.cfg steht (Grenzen unveraendert) [tools/test_kamera_gelaende.py]
 
 ## Offen
 - (20.11.) Versteckte Bremsen gesucht: COLMAP/Ceres ohne AVX2/FMA gebaut (Testbau `colmap_opt_bau` läuft), 91 % der Abgleich-Paare vergeblich, Mapper-Kaskade bis 5 Läufe bei Datenmangel, LightGlue fp16 in 2 Werkzeugen aus (−34 % gemessen) – Rangliste und Messwerte [modelle/PERFORMANCE_BREMSEN_2026-11-20.md]

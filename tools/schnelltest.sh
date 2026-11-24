@@ -298,7 +298,7 @@ fi
 v=$(grep -l '"vertrauen": true' modelle/schwab_v3/messprotokoll/K-dl_*.json 2>/dev/null | wc -l); e=$(ls modelle/schwab_v3/messprotokoll/K-eigen__*.json | wc -l); [ "$e" -ge 150 ] && [ "$v" -ge 100 ] && ok "Kameras: $e eigene, $v gepruefte Fremdkameras" || rot "Kameras: $e eigene, $v gepruefte Fremdkameras (erwartet >= 150 / >= 100)"
 u=$($P -I tools/kamera_plausibel.py | tail -1 | cut -d" " -f1); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"
 python3 -I - "$S" <<'PY' > /dev/null 2>&1 && ok "Kette: Stufe mit Zeitlimit, Absturz = Fehler; Kameraregeln (Tiefe, Verzeichnung)" || rot "Kette lauf()/Kameraregeln"
-import sys, os; sys.path.insert(0, "tools"); import gesamtkette as G, kamera_plausibel as KP
+import sys, os; sys.path.insert(0, "tools"); import gesamtkette as G, kamera_plausibel as KP; os.environ["RCPARK_PLATZ_TOR"] = "test_ersetzt"
 os.makedirs(sys.argv[1], exist_ok=True); B = dict(schritte=[], _pfad=sys.argv[1] + "/b.json"); L = sys.argv[1] + "/l.log"
 assert G.lauf(B, "gut", ["bash", "-c", "echo a"], L)[0] == 0 and B["schritte"][-1]["ok"]
 assert G.lauf(B, "haenger", ["bash", "-c", "sleep 60"], L, timeout=1)[0] == 124 and not B["schritte"][-1]["ok"]
@@ -505,6 +505,9 @@ k=$(python3 -I tools/test_undefinierte_namen.py 2>&1); [ $? = 0 ] && ok "Keine n
 k=$(/media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_handy_masken_gross.py 2>&1); [ $? = 0 ] && ok "handy_masken: grosse Bilder ohne Logits in voller Groesse (Nulllauf 1122: 27-MPx-Bild -> OOM -> SfM-Abbruch)" || { rot "handy_masken gross: $(echo "$k" | tail -2 | cut -c1-200)"; }
 k=$($P -W ignore -I tools/test_wandlage_fotokanten.py 2>&1); [ $? = 0 ] && ok "Koerperwand auf die Fotokanten-Ebene (1122x f00 0,32 m zu weit aussen): belegt + Wolke gleiche Seite -> verschoben, schwach belegt / Wolken-Veto -> nicht; Ecken ohne Rippe, Fenster ab der gesetzten Wand" || { rot "wandlage_fotokanten: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
 k=$($P -W ignore -I tools/test_fusion_vorab.py 2>&1); [ $? = 0 ] && ok "EINE Fusion je Kettenlauf (fusion_vorab: Ausschlusslisten vorab auf dem duennen Netz; Ersatzfusion zaehlt alt 2 / neu 1, Rueckfall bei Abweichung bzw. ohne Neufusion mit Logzeile; Regel = alte Ausloese-Regel; 1122z 445 s doppelt)" || { rot "fusion_vorab: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
+k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_teil_gelaende_tor.py 2>&1); [ $? = 0 ] && ok "Unter-Gelaende-Tor fuer JEDEN Bindungsweg (teil_gelaende_tor vor modelle_zusammen; 6,4 m tiefes Teil je Weg abgelehnt, Logzeile je Teil) - 1122z Ost-Teil" || rot "teil_gelaende_tor: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
+k=$(python3 -I tools/test_kamera_gelaende.py 2>&1); [ $? = 0 ] && ok "Kamera-Gelaende-Tor urteilt ueber die Bilder der Fusion (nach dem Neufusionieren gruen, Ausloeser unveraendert) - 1122z dauernd rot" || rot "kamera_gelaende: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
+k=$(python3 -I tools/test_platz_tor_ersetzt.py 2>&1); [ $? = 0 ] && ok "Platztor der Kette: ohne Ersatz haelt die Stufe an, Tests ersetzen es (RCPARK_PLATZ_TOR=test_ersetzt), main() entfernt den Ersatz" || rot "platz_tor: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
 #<<< PRUEFUNGEN
 fi
 rm -rf $S
