@@ -20,6 +20,9 @@ Grundlage: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` (lesen). Nichts am Modell von Hand
    Auftrag: EIN Befund mit Bildpfad/Log/Zahlen; Ursache mit Belegen; generisch als Kettenstufe/Werkzeug + Test + Zeile in
    `tools/schnelltest.sh`; `test_undefinierte_namen` vor Commit; keine Handstand-Werte; Objektordner auf main nicht aendern;
    KEINE Rechenlaeufe waehrend der Kette; nur committen im eigenen Zweig, nicht mergen; Bericht Fehlerliste zuerst, Realitaets-%.
+   Agenten fahren NIE den vollen Schnelltest (24.11.: vier parallele Laeufe, Last 137, alle 1 h im selben Selbsttest blockiert) - nur
+   betroffene Einzeltests + `test_undefinierte_namen` + `bash -n tools/schnelltest.sh`, `OMP_NUM_THREADS=4`; voller Schnelltest EINMAL in der
+   Merge-Probe. Ab 4 Agenten: Arbeitsbaum per `git worktree add` auf /media/oem/scan/rc-park_tmp (Root-Platz, je Baum 650 MB).
    Baut ein Befund auf einem ungemergten Zweig auf: "ZUERST `git merge --no-ff <zweig>`".
 4. **Merge-Probe** waehrend die Kette laeuft: `git worktree add -b merge-probe-<x> /media/oem/scan/rc-park_tmp/merge_probe<n> main`,
    Agentenzweige dort mergen, Konflikte loesen (schnelltest.sh: beide Zeilen), Einzeltests der Agenten. NICHT in main mergen,
