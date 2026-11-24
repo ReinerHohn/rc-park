@@ -14,6 +14,8 @@ Ablauf:
      diese Bilder kommen zu den Kandidaten.
      --holen: das Skript sofort ausfuehren (GPU; nur ueber tools/job_start.sh starten, wenn es lange laeuft).
   4. Bericht <audit>/seiten_luecken.json. Exit-Code 3, solange eine Wand ungesehen ist.
+  24.11.2026: auch TEILWEISE ungesehene Waende (>= TEIL_MIN_ANTEIL der Wand UND >= TEIL_MIN_M2 ohne Bilddaten, Bericht 'teilweise', 'zone_ohne_daten')
+  loesen das Nachholen aus - je Kandidat nur EINMAL (versucht_kandidaten.json), danach nur Fotoauftrag.
 Letzte Skriptschritte: tools/kameras_nachtragen.py (K-Dateien im Modellrahmen), kamera_verfeinern.py je neuer Kamera, tools/kameras_nachtragen_tor.py (Gueltigkeits-Tor:
 unplausible/nicht am Modell belegte neue Kameras gesperrt; audit/kameras_nachtragen_tor.json je Wand: belegte neue Kameras mit Sicht). Die Kette (tools/gesamtkette.py, Stufe seiten)
 wiederholt damit EINMAL Wandbild/Bau/Tore im selben Lauf, wenn die Abdeckung einer ungesehenen Wand messbar steigt (tools/seiten_wiederholung.py). Danach je ungesehener Wand: registrierte Neuzugaenge -> fassade_ortho/fassade_fein neu; bleibt ein Foto unregistriert, das die Wand zeigt (Kontaktbogen
@@ -21,7 +23,7 @@ wiederholt damit EINMAL Wandbild/Bau/Tore im selben Lauf, wenn die Abdeckung ein
 Grenze: Schritt 1 braucht einen fassade_ortho-Lauf; ob ein Kandidat die Wand wirklich zeigt, entscheidet erst die Registrierung bzw. der Blick auf den Kontaktbogen.
 Umgebung: cv2 -> /media/oem/scan/venv-seg/bin/python -I tools/seiten_luecken.py ... (oder `tools/py tools/seiten_luecken.py ...`); SEITEN_NEU=1 erzwingt
 erneutes Nachholen derselben Kandidaten. Exit: 0 = alle Waende gesehen, 2 = Einrichtungsfehler (Fassadenbild fehlt, keine Wand >= --min_m2, kein Foto),
-3 = Wand ungesehen (Auftrag), 5 = Nachhol-Skript abgebrochen.
+3 = Wand ungesehen oder teilweise ungesehen ueber der Schwelle (Auftrag), 5 = Nachhol-Skript abgebrochen.
 SCHNELL SCHEITERN (22.11.2026, schwabentor-1120 1122c/1122d: zweimal 44 min bis zum selben RigId-Absturz in zusatzfotos_lightglue einlesen):
   - Vorpruefung im Skript ganz vorn und nach 'merkmale': tools/colmap_rig_abgleich.py probe (Lade-Check von triangulate_points auf Mini-DB, Sekunden);
   - Zwischenstaende je Teilschritt (<daten>/seiten_nachholen/stand/<schritt>.ok, Schluesselkette, schritt_helfer) - ein Fehler im letzten Schritt verwirft die GPU-Paare nicht;
@@ -125,9 +127,8 @@ def roh_neu_zeile(Z):
             f"echo \"roh/: $ALT Verknuepfungen frueherer Laeufe entfernt (davon $TOT tot), Neuaufbau aus den Kandidaten dieses Laufs\"")
 
 
-def wand_abdeckung(fassaden_dir, F, i, im=None, maske=None):
-    """Anteil der Wandzellen (polys_uz im Raster) mit Bilddaten in ortho_<id>.png - EIN Mass fuer 'gesehen' (seiten_luecken und tools/seiten_wiederholung.py).
-    None = Bild fehlt oder passt nicht zum Raster."""
+def wand_daten(fassaden_dir, F, i, im=None, maske=None):
+    """(daten, maske): Zellen mit Bilddaten in ortho_<id>.png und Wandzellen (polys_uz im Raster); None = Bild fehlt oder passt nicht zum Raster."""
     R = F["raster"]
     if maske is None:
         maske = np.zeros((R["nz"], R["nu"]), np.uint8)
@@ -136,7 +137,102 @@ def wand_abdeckung(fassaden_dir, F, i, im=None, maske=None):
     if im is None or im.shape[:2] != maske.shape: return None
     daten = im.max(2) > 8; un_ = cv2.imread(os.path.join(fassaden_dir, f"uneinig_f{i:02d}.png"), 0) if os.environ.get("LUECKEN_MIT_UNEINIG") == "1" else None
     if un_ is not None and un_.shape == daten.shape: daten &= cv2.blur(un_.astype(np.float32), (9, 9)) <= 28      # widerspruechliche Zonen zaehlen nicht als gesehen (16.11.2026)
+    return daten, maske
+
+
+def wand_abdeckung(fassaden_dir, F, i, im=None, maske=None):
+    """Anteil der Wandzellen (polys_uz im Raster) mit Bilddaten in ortho_<id>.png - EIN Mass fuer 'gesehen' (seiten_luecken und tools/seiten_wiederholung.py).
+    None = Bild fehlt oder passt nicht zum Raster."""
+    dm = wand_daten(fassaden_dir, F, i, im, maske)
+    if dm is None: return None
+    daten, maske = dm
     return float((daten & (maske > 0)).sum() / max(maske.sum(), 1))
+
+
+# 24.11.2026 TEILWEISE UNGESEHEN (Kette schwabentor-null-1122x, Ostwand f02: 44 % gesehen, 239 m2 ohne Bilddaten): das Nachholen lief nur fuer
+# GANZ ungesehene Waende (< --schwelle 0,2), die Stufe meldete 'keine Wand ganz ungesehen; ABER ...' mit rc 0 und die Kette tat nichts. Jetzt loest eine Wand mit
+# BEIDEN Bedingungen ebenfalls das Nachholen aus (gleiche Wege wie 'ungesehen'):
+#   Gezaehlt wird nur FOTOGRAFIERBARE Flaeche: Zellen an einem angebauten Nachbarhaus (nachbar_verdeckt, LoD2) sind nie zu sehen - 1122x f02: von 239 m2 ohne Bilddaten
+#   lagen ~190 m2 hinter dem Nachbarhaus (z 0-17,7 m), fotografierbar fehlen ~57 m2 (23 % der freien Wand) darueber.
+#   - ohne Bilddaten >= TEIL_MIN_ANTEIL (0,10) der fotografierbaren Wand: das 20-fache des Rand-/Rasterrests gesehener Waende (0-0,5 %, 1122x f00/f01/f03) und das Doppelte
+#     des Gewinn-Tors MIN_GEWINN 0,05 (tools/seiten_wiederholung.py); verstreutes Rauschen an grossen Waenden loest nicht aus;
+#   - UND >= TEIL_MIN_M2 (50 m2) absolut: ~7 x 7 m = ein Fassadenfeld ueber zwei Geschosse (H0 1:87: ~66 cm2 Modellflaeche) und an Waenden bis 1000 m2 >= MIN_GEWINN
+#     (Gewinn bleibt messbar); kleine Waende (ab --min_m2 40) loesen damit nur als GANZ ungesehen aus. Darunter bleibt es bei der Meldung (ab 30 m2, foto_auftrag.py).
+# KOSTEN: Nachholen ~48 min + Teillauf ~1,7 h (1122w). Darum gilt fuer teilweise ungesehene Waende zusaetzlich die KANDIDATEN-Liste versucht_kandidaten.json: Kandidaten (unabhaengig von
+# den Zielwaenden - das Skript registriert ohnehin alle) werden nur EINMAL nachgeholt, auch ueber neu gerechnete SfM-Modelle hinweg; brachte das keine
+# belegte Kamera fuer die Zone, bleibt nur der Fotoauftrag (kein zweiter Versuch, bis neue Fotos/Downloads den Kandidatenbestand aendern).
+TEIL_MIN_ANTEIL = float(os.environ.get("RCPARK_TEIL_MIN_ANTEIL", "0.10"))
+TEIL_MIN_M2 = float(os.environ.get("RCPARK_TEIL_MIN_M2", "50"))
+
+
+def teilweise_ungesehen(w, min_anteil=None, min_m2=None):
+    """Wand-Eintrag des Berichts -> True, wenn sie NICHT ganz ungesehen ist, aber ihre FOTOGRAFIERBARE Flaeche ohne Bilddaten beide Schwellen erreicht.
+    Fotografierbar = nicht an einem angebauten Nachbarhaus (nachbar_verdeckt): 'ohne_daten_frei_m2' gegen 'flaeche_m2' - 'verdeckt_nachbar_m2'; fehlen die Felder
+    (kein LoD2), zaehlt die ganze Flaeche ohne Bilddaten (ohne_daten_m2, abdeckung)."""
+    min_anteil = TEIL_MIN_ANTEIL if min_anteil is None else min_anteil; min_m2 = TEIL_MIN_M2 if min_m2 is None else min_m2
+    if w.get("ungesehen"): return False
+    if w.get("ohne_daten_frei_m2") is not None:
+        frei_m2 = float(w["ohne_daten_frei_m2"]); basis = float(w.get("flaeche_m2") or 0) - float(w.get("verdeckt_nachbar_m2") or 0)
+        return frei_m2 >= min_m2 and basis > 0 and frei_m2 / basis >= min_anteil
+    return float(w.get("ohne_daten_m2") or 0) >= min_m2 and 1.0 - float(w.get("abdeckung") or 0) >= min_anteil
+
+
+NACHBAR_VOR_M = 1.0      # ANNAHME: Pruefpunkt 1 m vor der Wand - groesser als der Lagefehler Modell/LoD2 (~0,5 m), kleiner als jede Haustiefe
+
+
+def nachbar_verdeckt(nb_netz, F, maske, schritt=5, vor_m=NACHBAR_VOR_M):
+    """Wandzellen, vor denen ein ANGEBAUTES Nachbarhaus steht (nie fotografierbar - kein Ziel fuer Nachholen/Fotoauftrag): Punkt <vor_m> vor der Zelle (Normale nach aussen)
+    liegt in einem LoD2-Nachbargebaeude = ueber UND unter ihm Flaechen dieses Netzes (Dach/Boden). Raster <schritt> Zellen (Sekunden), auf volle Aufloesung gedehnt.
+    24.11.2026 (1122x f02: 239 m2 ohne Bilddaten, davon ~190 m2 z 0-17,7 m hinter dem Nachbarhaus; fotografierbar fehlen ~57 m2 darueber). -> bool-Feld wie maske."""
+    from trimesh.ray.ray_triangle import RayMeshIntersector
+    R = F["raster"]; vs = np.arange(0, R["nz"], schritt); us = np.arange(0, R["nu"], schritt); V, U = np.meshgrid(vs, us, indexing="ij")
+    u = R["u0"] + (U + 0.5) * R["zelle"]; z = R["z1"] - (V + 0.5) * R["zelle"]
+    xy = np.asarray(F["o"], float)[None] + u.reshape(-1, 1) * np.asarray(F["d"], float)[None] + vor_m * np.asarray(F["n"], float)[None]; P = np.c_[xy, z.reshape(-1)]
+    ri = RayMeshIntersector(nb_netz); hoch = np.tile([0, 0, 1.0], (len(P), 1))
+    grob = (ri.intersects_any(P, hoch) & ri.intersects_any(P, -hoch)).reshape(V.shape)
+    zi = np.minimum(np.arange(R["nz"]) // schritt, len(vs) - 1); si = np.minimum(np.arange(R["nu"]) // schritt, len(us) - 1)
+    return grob[zi][:, si] & (maske > 0)
+
+
+def zone_ohne_daten(daten, maske, R, min_zeile=0.5):
+    """Hoehenzone der groessten Luecke: zusammenhaengende Rasterzeilen, in denen >= <min_zeile> der Wandzellen keine Bilddaten haben; die mit der meisten Fehlflaeche.
+    -> dict(z_von, z_bis, m2) in Wandkoordinaten (Zeile 0 = z1 oben) oder None. Ziel fuer Fotoauftrag/Bericht (die Kandidaten selbst sind vor der Registrierung ohne Pose)."""
+    m = maske > 0; fehl = m & ~daten; n_m = m.sum(1); n_f = fehl.sum(1)
+    leer = (n_m > 0) & (n_f >= min_zeile * np.maximum(n_m, 1)); best = None; r = 0
+    while r < len(leer):
+        if not leer[r]: r += 1; continue
+        r1 = r
+        while r1 + 1 < len(leer) and leer[r1 + 1]: r1 += 1
+        s = int(n_f[r:r1 + 1].sum())
+        if best is None or s > best[2]: best = (r, r1, s)
+        r = r1 + 1
+    if best is None: return None
+    z = R["zelle"]; return dict(z_von=round(R["z1"] - (best[1] + 1) * z, 2), z_bis=round(R["z1"] - best[0] * z, 2), m2=round(best[2] * z * z, 1))
+
+
+def kand_namen(kand):
+    """Kandidaten als 'name:groesse' (eine geaenderte Datei gleichen Namens gilt als neu)."""
+    return sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)
+
+
+def kandidaten_versucht(Z, kand):
+    """Liste versucht_kandidaten.json in <Z>: sind ALLE Kandidaten schon in einem frueheren erfolgreichen Nachholen gewesen (Vereinigung aller Versuche)?
+    -> (ja, text). Fuer TEILWEISE ungesehene Waende: kein zweiter Versuch ohne neues Foto (das Skript registriert ohnehin alle Kandidaten, unabhaengig von den
+    Zielwaenden). ANNAHME: dieselben Fotos gegen ein neu gerechnetes SfM bringen keine neue Sicht auf die Zone - neue Fotos/Downloads oeffnen den Weg wieder."""
+    try: V = json.load(open(os.path.join(Z, "versucht_kandidaten.json"))).get("versuche") or []
+    except (OSError, ValueError): return False, "noch kein Versuch"
+    alle = set(); [alle.update(v.get("kandidaten") or []) for v in V]; neu = [k for k in kand_namen(kand) if k not in alle]
+    if neu: return False, f"{len(neu)} neue Kandidaten (z. B. {neu[0].rsplit(':', 1)[0]})"
+    return True, f"alle {len(kand)} Kandidaten schon nachgeholt ({len(V)} Versuch(e), zuletzt {V[-1].get('zeit')} fuer {V[-1].get('waende')})"
+
+
+def kandidaten_merken(Z, kand, waende, hoechstens=20):
+    """Erfolgreiches Nachholen in versucht_kandidaten.json eintragen (die juengsten <hoechstens> Versuche bleiben)."""
+    p = os.path.join(Z, "versucht_kandidaten.json")
+    try: V = json.load(open(p)).get("versuche") or []
+    except (OSError, ValueError): V = []
+    V = (V + [dict(zeit=time.strftime("%Y-%m-%d %H:%M"), waende=list(waende), kandidaten=kand_namen(kand))])[-hoechstens:]
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); __import__("json_sicher").schreiben(p, dict(versuche=V))
 
 
 def kamera_verfeinern_zeile(VS, T, objekt, fassaden_json, audit, Z):
@@ -222,7 +318,15 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassaden"); ap.add_argument("--sparse", required=True); ap.add_argument("--ref-db", required=True); ap.add_argument("--schwelle", type=float, default=0.2)
     ap.add_argument("--min_m2", type=float, default=40.0); ap.add_argument("--holen", action="store_true"); ap.add_argument("--download", action="store_true"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); audit = os.path.join(root, obj.get("audit", os.path.join(od, "audit"))); os.makedirs(audit, exist_ok=True)
-    FJ = json.load(open(os.path.join(a.fassaden, "fassaden.json"))); waende = []
+    FJ = json.load(open(os.path.join(a.fassaden, "fassaden.json"))); waende = []; nb_ = {}
+    def nachbarn():                                                     # LoD2-Nachbarn im Modellrahmen, erst bei Bedarf (eine Wand mit grosser Luecke) und einmal
+        if "netz" not in nb_:
+            nb_["netz"] = None
+            if obj.get("lod2", {}).get("gml") and obj.get("rahmen"):
+                try: import fassade_ortho as FO_; nb_["netz"] = FO_.nachbarn_netz(obj)[0]
+                except Exception as e_: print(f"WARNUNG: LoD2-Nachbarn nicht geladen ({type(e_).__name__}: {str(e_)[:120]}) - Flaeche am Nachbarhaus zaehlt als 'ohne Bilddaten'")
+            else: print("HINWEIS: objekt.json ohne lod2.gml/rahmen - Flaeche an angebauten Nachbarn nicht abziehbar, zaehlt als 'ohne Bilddaten'")
+        return nb_["netz"]
     for i, F in enumerate(FJ["fassaden"]):
         if F.get("flaeche_m2", 0) < a.min_m2: continue
         p = os.path.join(a.fassaden, f"ortho_{F.get('id', 'f%02d' % i)}.png"); R = F["raster"]; maske = np.zeros((R["nz"], R["nu"]), np.uint8)      # Kennung aus fassaden.json (bei --nur ist die Kennung nicht die Listenposition)
@@ -230,16 +334,22 @@ def main():
         if im_ is None or im_.shape[:2] != maske.shape:                # 17.11.2026: ein fehlendes/unlesbares oder nicht zu fassaden.json passendes Bild zaehlte als "Wand ungesehen" und loeste Download + 30 min Nachregistrieren aus
             print(f"FEHLER: Fassadenbild {p} " + ("fehlt/unlesbar" if im_ is None else f"hat {im_.shape[1]}x{im_.shape[0]} px, fassaden.json sagt {R['nu']}x{R['nz']}") + " - Ausgabe von fassade_ortho unvollstaendig oder aus zwei Laeufen gemischt; KEINE Luecken-Aussage"); return 2
         for poly in F["polys_uz"]: cv2.fillPoly(maske, [np.array([[(u - R["u0"]) / R["zelle"], (R["z1"] - z) / R["zelle"]] for u, z in poly], np.int32)], 1)
-        ant = wand_abdeckung(a.fassaden, F, i, im_, maske)
-        waende.append(dict(nr=i, id=F.get("id", "f%02d" % i), normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle, ohne_daten_m2=round(float(F["flaeche_m2"]) * (1 - ant), 1)))
-        print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else (f"   <-- TEILWEISE: {F['flaeche_m2'] * (1 - ant):.0f} m2 ohne Bilddaten" if F["flaeche_m2"] * (1 - ant) >= 30 else "")))
+        ant = wand_abdeckung(a.fassaden, F, i, im_, maske); daten_, _ = wand_daten(a.fassaden, F, i, im_, maske)
+        w_ = dict(nr=i, id=F.get("id", "f%02d" % i), normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle, ohne_daten_m2=round(float(F["flaeche_m2"]) * (1 - ant), 1))
+        if w_["ohne_daten_m2"] >= min(TEIL_MIN_M2, 30) and not w_["ungesehen"] and nachbarn() is not None:      # 24.11.2026: Flaeche am angebauten Nachbarhaus ist nie fotografierbar
+            try:
+                ver_ = nachbar_verdeckt(nachbarn(), F, maske); nm_ = max(int((maske > 0).sum()), 1); fl_ = float(F["flaeche_m2"])
+                w_["verdeckt_nachbar_m2"] = round(fl_ * float(ver_.sum()) / nm_, 1); w_["ohne_daten_frei_m2"] = round(fl_ * float(((maske > 0) & ~daten_ & ~ver_).sum()) / nm_, 1); daten_ = daten_ | ver_
+            except Exception as e_: print(f"WARNUNG: Nachbar-Verdeckung f{i:02d} nicht bestimmt ({type(e_).__name__}: {str(e_)[:120]}) - ganze Luecke zaehlt")
+        w_["teilweise"] = teilweise_ungesehen(w_); w_["zone_ohne_daten"] = zone_ohne_daten(daten_, maske, R) if w_["ohne_daten_m2"] >= 30 else None; waende.append(w_); zo_ = w_["zone_ohne_daten"]
+        print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else (f"   <-- TEILWEISE{' (NACHHOLEN)' if w_['teilweise'] else ''}: {F['flaeche_m2'] * (1 - ant):.0f} m2 ohne Bilddaten" + (f" (davon {w_['verdeckt_nachbar_m2']:.0f} m2 am angebauten Nachbarhaus, fotografierbar fehlen {w_['ohne_daten_frei_m2']:.0f} m2)" if w_.get("ohne_daten_frei_m2") is not None else "") + (f", groesste Zone z {zo_['z_von']:.1f}-{zo_['z_bis']:.1f} m ({zo_['m2']:.0f} m2)" if zo_ else "") if F["flaeche_m2"] * (1 - ant) >= 30 else "")))
     reg = set(os.path.splitext(os.path.basename(n))[0] for n in registrierte(a.sparse)); fd = os.path.join(root, obj["fotos_dir"]); alle = sorted(f for f in glob.glob(os.path.join(fd, "*")) if f.lower().endswith((".jpg", ".jpeg", ".png")))
     if not waende: print(f"FEHLER: KEINE Wand geprueft (keine Fassade >= {a.min_m2:g} m2 unter {len(FJ['fassaden'])} in fassaden.json) - das ist KEIN 'alle Waende gesehen'; --min_m2 senken oder fassade_ortho pruefen"); return 2      # 17.11.2026: lief mit rc 0 und 'alle Waende gesehen' durch
     alle, tot = nur_vorhandene(alle)      # 23.11.2026: tote Verknuepfung im Fotoordner waere ein Kandidat ohne Datei (Nachholen stuerzte in vorbereiten/md5 ab)
     if tot: print(f"WARNUNG: {len(tot)} tote Verknuepfung(en) im Fotoordner {fd} - KEINE Kandidaten (z. B. {os.path.basename(tot[0])} -> {os.readlink(tot[0]) if os.path.islink(tot[0]) else '?'})")
     if not alle: print(f"FEHLER: kein Foto in fotos_dir {fd} - Einrichtungsfehler, keine Luecken-Aussage"); return 2
     kand = [f for f in alle if os.path.splitext(os.path.basename(f))[0] not in reg]; print(f"Fotobestand {len(alle)}, im SfM registriert {len(alle) - len(kand)}, NICHT registriert {len(kand)}")
-    ung = [w for w in waende if w["ungesehen"]]; daten = os.path.join(os.environ.get("SEITEN_LUECKEN_DATEN", "/media/oem/scan/rc-park_daten"), os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
+    ung = [w for w in waende if w["ungesehen"]]; teil = [w for w in waende if w.get("teilweise")]; ziel = ung + teil; daten = os.path.join(os.environ.get("SEITEN_LUECKEN_DATEN", "/media/oem/scan/rc-park_daten"), os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
     zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh {Z}/stand", f"rm -f {Z}/stand/aktuell",
               f"{VC} {T}/colmap_rig_abgleich.py probe --db {a.ref_db} --sparse {a.sparse}   # 22.11.2026 SCHNELL SCHEITERN: Lade-Check von triangulate_points (Kamera/Rig Modell vs. DB) in Sekunden statt nach 44 min", roh_neu_zeile(Z)] + schritt_helfer(Z, T)
     if a.download and obj.get("koordinate_utm"):
@@ -273,21 +383,26 @@ def main():
     zeilen.append(f"rm -rf {Z}/lg {Z}/db.db {Z}/db.db-shm {Z}/db.db-wal {Z}/stand   # 17.11.2026: Zwischenstaende nach dem letzten Schritt wegraeumen (am Kettenturm 3,2 GB; der naechste Lauf loescht und rechnet sie ohnehin neu) - die Datenplatte fiel dadurch unter die 5-GB-Grenze")
     sk = os.path.join(audit, "seiten_luecken_holen.sh"); open(sk, "w").write("\n".join(zeilen) + "\n"); os.chmod(sk, 0o755)
     for alt in glob.glob(os.path.join(audit, "seiten_luecken_kandidaten_*.jpg")): os.remove(alt)      # Folgeseiten eines frueheren Laufs
-    if ung and kand: kontaktboegen(kand, os.path.join(audit, "seiten_luecken_kandidaten.jpg"))
-    sys.path.insert(0, T); __import__("json_sicher").schreiben(os.path.join(audit, "seiten_luecken.json"), dict(waende=waende, ungesehen=[w["nr"] for w in ung], fotobestand=len(alle), nicht_registriert=[os.path.basename(f) for f in kand], skript=sk, zielordner=Z))
-    if not ung:
-        teil = [w for w in waende if w["ohne_daten_m2"] >= 30]      # 16.11.2026: "alle Waende gesehen" stand neben einem Fotoauftrag ueber 240 m2 - die Wandschwelle (20 %) sieht grosse Loecher in einer sonst gesehenen Wand nicht
-        print("keine Wand ganz ungesehen" + ("; ABER " + ", ".join(f"f{w['nr']:02d} {w['ohne_daten_m2']:.0f} m2" for w in teil) + " ohne Bilddaten (Ziele: tools/foto_auftrag.py)" if teil else " - alle Waende gesehen")); return 0
-    print(f"UNGESEHEN: {', '.join('f%02d' % w['nr'] for w in ung)} -> {len(kand)} nicht registrierte Fotos als Kandidaten; Skript {sk}" + ("" if a.holen else "  (mit --holen ausfuehren; --download holt zusaetzlich Commons-Fotos)"))
+    if ziel and kand: kontaktboegen(kand, os.path.join(audit, "seiten_luecken_kandidaten.jpg"))
+    sys.path.insert(0, T); __import__("json_sicher").schreiben(os.path.join(audit, "seiten_luecken.json"), dict(waende=waende, ungesehen=[w["nr"] for w in ung], teilweise=[w["nr"] for w in teil], teil_schwellen=dict(anteil=TEIL_MIN_ANTEIL, m2=TEIL_MIN_M2), fotobestand=len(alle), nicht_registriert=[os.path.basename(f) for f in kand], skript=sk, zielordner=Z))
+    if not ziel:
+        klein = [w for w in waende if w["ohne_daten_m2"] >= 30]      # 16.11.2026: "alle Waende gesehen" stand neben einem Fotoauftrag ueber 240 m2 - die Wandschwelle (20 %) sieht grosse Loecher in einer sonst gesehenen Wand nicht
+        print("keine Wand ganz ungesehen" + ("; ABER " + ", ".join(f"f{w['nr']:02d} {w['ohne_daten_m2']:.0f} m2" + (f" (fotografierbar {w['ohne_daten_frei_m2']:.0f} m2)" if w.get("ohne_daten_frei_m2") is not None else "") for w in klein) + f" ohne Bilddaten - unter der Nachhol-Schwelle (>= {TEIL_MIN_ANTEIL:.0%} der fotografierbaren Wand UND >= {TEIL_MIN_M2:g} m2), nur Fotoauftrag (Ziele: tools/foto_auftrag.py)" if klein else " - alle Waende gesehen")); return 0
+    if teil: print("TEILWEISE UNGESEHEN (loest Nachholen aus): " + ", ".join(f"f{w['nr']:02d} {w.get('ohne_daten_frei_m2', w['ohne_daten_m2']):.0f} m2 fotografierbar ohne Bilddaten" + (f" (Zone z {w['zone_ohne_daten']['z_von']:.1f}-{w['zone_ohne_daten']['z_bis']:.1f} m)" if w.get("zone_ohne_daten") else "") for w in teil), flush=True)
+    print(f"{'UNGESEHEN' if ung else 'NACHHOLEN FUER TEILWEISE UNGESEHENE'}: {', '.join('f%02d' % w['nr'] for w in ziel)} -> {len(kand)} nicht registrierte Fotos als Kandidaten; Skript {sk}" + ("" if a.holen else "  (mit --holen ausfuehren; --download holt zusaetzlich Commons-Fotos)"))
     if a.holen:
         ok_b, grund_b = belegbar(a.objekt)      # 24.11.2026 FRUEH-ABBRUCH: ohne Modell/Referenzkameras endet das Nachholen sicher mit '0 belegt' - nicht erst nach ~60 min
         if not ok_b and os.environ.get("SEITEN_NEU") != "1":
             print(f"FEHLER: Nachholen UEBERSPRUNGEN (Frueh-Abbruch, keine Fehlschlag-Marke - laeuft von selbst, sobald die Eingabe stimmt): {grund_b}; erzwingen: SEITEN_NEU=1"); return 5
         # 16.11.2026 (Stabilisierung): jeder Kettenlauf wiederholte ~30 min Nachregistrieren derselben Kandidaten mit demselben Ergebnis
-        schl = hashlib.sha1(("|".join(sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)) + "|" + ",".join(str(w["nr"]) for w in ung) + "|" + open(sk).read()).encode()).hexdigest()[:16]
+        schl = hashlib.sha1(("|".join(sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)) + "|" + ",".join(str(w["nr"]) for w in ziel) + "|" + open(sk).read()).encode()).hexdigest()[:16]
         marke = os.path.join(Z, "versucht_" + schl + ".txt"); fmarke = os.path.join(Z, "fehlschlag_" + schl + ".json"); cs = code_stand(*NACHHOL_WERKZEUGE)
         if os.path.exists(marke) and os.environ.get("SEITEN_NEU") != "1":
             print(f"Nachholen UEBERSPRUNGEN: dieselben {len(kand)} Kandidaten fuer dieselben Waende wurden schon versucht ({open(marke).read().strip()}); neu erzwingen: SEITEN_NEU=1"); return 3
+        kv_, kv_text = kandidaten_versucht(Z, kand)
+        if not ung and kv_ and os.environ.get("SEITEN_NEU") != "1":      # 24.11.2026: nur TEILWEISE ungesehen -> dieselben Kandidaten nie ein zweites Mal (Kosten ~48 min + Teillauf)
+            print(f"Nachholen UEBERSPRUNGEN (teilweise ungesehen): {kv_text} - kein zweiter Versuch ohne neues Foto; "
+                  f"bleibt die Zone leer: FOTOAUFTRAG (tools/foto_auftrag.py, audit/foto_auftrag.png). Neu erzwingen: SEITEN_NEU=1"); return 3
         # 22.11.2026 FEHLSCHLAG-MARKE: 1122c und 1122d stuerzten an derselben Stelle ab (RigId, 44 min) - die Erfolgsmarke fehlte, also rechnete jeder Lauf alles neu.
         # Gleiche Eingaben + gleicher CODE-STAND der Nachhol-Werkzeuge -> derselbe Fehler, sofort rc 5 (in 1 s). Nach einer Codeaenderung laeuft es wieder (Zwischenstaende je Schritt bleiben).
         try: F = json.load(open(fmarke)) if os.path.exists(fmarke) else None
@@ -309,6 +424,7 @@ def main():
                   + (", SPEICHERMANGEL im Schritt - Marke sperrt NICHT, Wiederholung rechnet neu)" if art == "speicher" else ")")); return 5      # 17.11.2026: endete mit rc 3 wie 'Wand ungesehen, Nachholen gelaufen' - die Kette wertete das abgebrochene Skript als in Ordnung
         else:
             os.makedirs(Z, exist_ok=True); open(marke, "w").write(time.strftime("%Y-%m-%d %H:%M") + f", {len(kand)} Kandidaten")
+            kandidaten_merken(Z, kand, [w["id"] for w in ziel])      # Kandidaten-Liste (teilweise ungesehene Waende versuchen dieselben Kandidaten nicht erneut)
             if os.path.exists(fmarke): os.remove(fmarke)
     return 3
 
