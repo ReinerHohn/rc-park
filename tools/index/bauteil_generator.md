@@ -1,4 +1,4 @@
-# Werkzeuge: bauteil_generator (64)
+# Werkzeuge: bauteil_generator (65)
 - `tools/_test_baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baum_erzeugen.py` [-] baum_erzeugen.py - Wissensbaum fuer KI-Suche (Nutzer 20.11.2026: "Informationen baumartig, damit der Kontext nicht vollballert"). Erzeugt (nie von Hand pflegen, nach neuen Dateien 
@@ -21,6 +21,7 @@
 - `tools/formen_zusammen.py` [-] Formsegmente (helm_fit/gauben_fit/baluster_fit-Ausgaben) an ein Kantengitter anhaengen: formen_zusammen.py GITTER.json OUT.json FORM1.json [FORM2.json ...] Jede Formdatei traegt 's
 - `tools/formfamilie_pruefen.py` [seg] formfamilie_pruefen.py - FORMFAMILIEN-SICHTPRUEFUNG JE BAUTEIL (Spec modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md, Nutzerauftrag 11.11.).
 - `tools/formfund_pruefen.py` [seg] formfund_pruefen.py - FORMFUND-PRUEFER (Spec modelle/archiv/SPEC_FORMFUND_TOR.md, Nutzerentscheid 11.11.).
+- `tools/formsitz.py` [seg] formsitz.py <objekt.json> [--fotosatz F] [--wolke P] [--stl P] [--json J] [--bild PNG] [--probe] [--rot] [--je-seite K] [--n-wolke N] [--n-modell N] TRENNSCHARFES FORMMASS je Seite
 - `tools/freiraum_oeffnungen.py` [-] freiraum_oeffnungen.py - aus den Freiraum-Tiefenkarten (freiraum_fassaden.py) allgemeine Bauanweisungen machen, OHNE Bauteilregel: 1. Jedes erkannte Fassadenelement (fassade_parsin
 - `tools/gauben_check.py` [-] gauben_check.py — prüft die GAUBEN-REGELMÄSSIGKEIT (gleiche x-Abstände) Modell vs. Foto.
 - `tools/gauben_crop.py` [seg] gauben_crop.py - Ausschnitt mit Pixelgitter (Originalpixel) um einen Modellpunkt, zum Ablesen von Bildpunkten (Messprotokoll foto_mass). gauben_crop.py KAM.json BILDDIR FOTO.jpg X 

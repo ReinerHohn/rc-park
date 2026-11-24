@@ -1,4 +1,4 @@
-# Werkzeuge: test (203)
+# Werkzeuge: test (215)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -18,8 +18,10 @@
 - `tools/test_dach_veto_traufe.py` [-] test_dach_veto_traufe.py - DOM1-Veto darf den DACHUEBERSTAND nicht abschneiden (tools/dach_profil_wolke.dom1_veto + dom1_kachel.dom1_bilinear(klippe), 21.11.2026). Anlass Schwabent
 - `tools/test_dachflaeche_aus_umriss.py` [-] Test dachflaeche_aus_umriss.py + bauteile.flaeche_aus_foto (synthetisch, Sekunden): Profil-Familie aus gerenderten Silhouetten zurueckgewinnen, Formfamilie nur aus >= 3 einigen Fot
 - `tools/test_dachflaeche_dom1_veto.py` [-] Test DOM1-Veto der Foto-Dachflaeche (23.11.2026, Schwabentor-1122p HOEHEN-TOR +1,73 m / k 0,958): dachflaeche_aus_umriss.laser_isolinien / ringe_dom1_veto / veto_block + bauteile.f
+- `tools/test_dicht_alt_auto.py` [-] Test pipeline_objekt.dicht_alt_behandeln (24.11.2026: 1122za brach nach 2 min ab - SfM-Netz neu geschrieben, dichte Wolke alt -> rc 3 mit Handanweisung). --bis kameras: Hinweis, rc
 - `tools/test_dicht_cache.py` [col] test_dicht_cache.py - Gegenproben fuer dicht_handy_cache.py, OHNE GPU/PatchMatch. (1) synthetisch: Schluessel aendern sich bei jeder relevanten Eingabeaenderung und nur dann; Treff
 - `tools/test_durchfahrt_wandbild.py` [gen] test_durchfahrt_wandbild.py - Tordurchfahrt, deren Sweep-Form verworfen wurde, kommt ueber die Fotokanten doch ins Modell (23.11.2026). Ohne Dateien, < 30 s.
+- `tools/test_ebenen_kam_ergaenzen.py` [-] test_ebenen_kam_ergaenzen.py - fester synthetischer Test (24.11.2026, Befund 1122z f02/Ost: 1316 Fotokantenpunkte, 49 frontale SfM-Kameras nicht in kam_wahl) fuer tools/ebenen_baup
 - `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
 - `tools/test_eck_reproj.py` [col] Test seiten_eck_koppeln REPROJ (23.11.2026): Kopplungsweg pycolmap.align_reconstructions_via_reprojections, dieselben Tore wie der Punkt-Weg. (1) Synthetisch (pycolmap.synthesize_d
 - `tools/test_eck_teilkameras.py` [-] Test seiten_eck_koppeln, Stand 23.11.2026 (Befund 1122t: Teil 1 'Massstab nicht belegt', Haelften 2,3 %): (1) KAMERA-PROBE: flache Wand + gespiegelter Teil - die Punkte allein best
@@ -34,6 +36,8 @@
 - `tools/test_flat_plates.py` [gen] test_flat_plates.py — Regression: die FLÄCHEN-Platten sind WIRKLICH EBEN (plan-gefittet) und damit laser-cutbar + in die Rippen integrierbar, und ihre Kontur folgt der Bruchkante (
 - `tools/test_formfamilie_nutzerfunde.py` [-] test_formfamilie_nutzerfunde.py - Beweistest fuer tools/formfamilie_pruefen.py (Regel 3e, Spec modelle/archiv/SPEC_FORMFAMILIE_SICHTPRUEFUNG.md).
 - `tools/test_formfund_tor.py` [gen] test_formfund_tor.py - BEWEIS des Formfund-Pruefers (Spec modelle/archiv/SPEC_FORMFUND_TOR.md): positive Faelle muessen bestehen, negative durchfallen.
+- `tools/test_formsitz.py` [seg] test_formsitz.py - synthetische Pruefung von tools/formsitz.py (trennscharfes Formmass, 24.11.2026) und seines Einbaus in tools/konvergenz.py.
+- `tools/test_formsitz_durchblick.py` [-] test_formsitz_durchblick.py - synthetische Pruefung des Durchblick-Schutzes in tools/formsitz.py (tiefe_vorn / durchblick_fuellen, 24.11.2026).
 - `tools/test_foto_auftrag_skizze.py` [-] Fester Test (synthetisch, ~5 s) fuer tools/foto_auftrag_skizze.py - Fotoauftrag frueh und als Bild (22.11.2026, schwabentor-1122: Suedseite nicht angebunden). 1 Rechteck frei Ziel 
 - `tools/test_foto_diff.py` [seg] test_foto_diff.py - BEWEIS (bekannte Wahrheit) fuer foto_diff.py, generisch fuer jedes Objekt mit K-Kamera (2026-11-04). Das "Foto" ist ein Render des Modells mit derselben Kamera 
 - `tools/test_foto_diff_batch.py` [-] Test foto_diff_batch.py (Register BS8): Ergebnisgleichheit zum Original-foto_diff (je Foto eigener Prozess). /media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_foto_diff_b
@@ -60,6 +64,8 @@
 - `tools/test_handy_masken_gross.py` [seg] test_handy_masken_gross.py - 22.11.2026 Nulllauf schwabentor-1122: grosse Bilder (27 MPx) liessen handy_masken bei jeder Breite CUDA-OOM laufen, weil 150 Klassen-Logits auf VOLLE B
 - `tools/test_handy_masken_v2.py` [-] Test handy_masken_v2 (ohne GPU): Statue haengt an Fassade -> frei; Person am Boden -> maskiert; Box ohne Boden -> frei; Fleck im Pflaster -> verworfen; Fahrzeug immer.
 - `tools/test_haufen_klaeren.py` [-] test_haufen_klaeren.py - synthetisch: Grundriss-Tor klaert Strassenhaufen automatisch (tools/haufen_klaeren.py, 22.11.2026).
+- `tools/test_hoehen_angleich.py` [gen] test_hoehen_angleich.py - synthetische Pruefung von tools/hoehen_angleich.py (Hoehen-Angleich waagerechter Bauteile, 24.11.2026) und bauteile.hoehen_aus_json.
+- `tools/test_hoehensitz.py` [seg] test_hoehensitz.py - synthetische Pruefung von tools/hoehensitz.py (hoehensensitives Formmass, 24.11.2026) und seines Einbaus in tools/konvergenz.py.
 - `tools/test_html_zielgroesse.py` [-] test_html_zielgroesse.py - fester Test (23.11.2026, Kettenlauf 1122p: html-Stufe schrieb 20 MB, Artifact-Grenze 16 MB) fuer modell_3d_html.zielgroesse: (1) Seite ueber der Zielgroe
 - `tools/test_kamera_ausgleich.py` [seg] test_kamera_ausgleich.py - BS3d synthetischer Beweis: Kameras absichtlich verschieben (Kamerazentrum 3/5/10 cm, Rotation 0,3/0,5/1 Grad), pruefen ob der Ausgleich (kamera_ausgleich
 - `tools/test_kamera_gelaende.py` [-] Test tools/kamera_gelaende.py (24.11.2026, dauernd rot): Urteil ueber die Bilder der FUSION. 1. ohne --fusion: Gruppe unter Gelaende -> rc 3 (alter Stand); 2. mit Fusion, die eine 
@@ -79,6 +85,7 @@
 - `tools/test_kette_stabil.py` [seg] test_kette_stabil.py - feste, schnelle Tests gegen STILLE Fehler der Gesamtkette (17.11.2026; Aufruf aus tools/schnelltest.sh, ~15 s, nur Kleinstdateien). Zweite Durchsicht 17.11.2
 - `tools/test_kette_tempo.py` [gen] test_kette_tempo.py - Tempo-Umbau der Kette (21.11.2026) ohne Rechenlast pruefen: 1. fassaden_kette._waende_parallel: Ausgabe in Wandreihenfolge (wie seriell), GPU-Teil (_gpu_run) 
 - `tools/test_kette_vordach_laterne.py` [gen] test_kette_vordach_laterne.py - KETTENFALL Vordach + Laterne mit den echten JSON-Staenden des Kettenlaufs 1122c (22.11.2026). Sekunden, < 300 MB.
+- `tools/test_ketten_probelauf.py` [-] Test des Ketten-Probelaufs (tools/ketten_probe.py + tools/ketten_probelauf.sh, 24.11.2026; Anlass Kettenlauf 1122za: Abbruch nach 2 min, weil die dichte Wolke "aelter als das SfM-N
 - `tools/test_koerper_schleife.py` [gen] test_koerper_schleife.py - fester Test ohne GPU fuer tools/wolke_rest.py (Grobformen, Nachbar-Abtrennung), bauteile.wolkenrest_koerper und tools/koerper_schleife.py (21.11.2026).
 - `tools/test_konsens_urteil.py` [-] Test der Konsens-Annahme (global_mapper_konsens.urteil, 19.11.2026): gutes Modell traegt; duennes Rueckgrat / wenig Bilder / kein Clip -> Gruende + Ursache + Abhilfe.
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
@@ -95,6 +102,7 @@
 - `tools/test_laterne_drehprofil.py` [-] test_laterne_drehprofil.py - Haube der Laterne als DREHKOERPER aus Silhouetten (tools/laterne_aus_fotos.py: Sehstrahl-Huelle, Registrierung, Querschnitt), 23.11.2026.
 - `tools/test_laufzeit_bericht.py` [-] Test laufzeit_bericht.py: Familien, Doppel-Fusion (Kettenlog + Unterlog), Wiederholung teurer Bauten, Vorlauf aus derselben Datei, Job-Log-Format.
 - `tools/test_leistung_messen.py` [-] test_leistung_messen.py - Kurztest fuer tools/leistung_messen.py (22.11.2026): synthetische numpy-Schleife (~1 s, ~120 MB, 1-2 Threads), Sweep mit Platzhalter, Auswertung 'kleinste
+- `tools/test_linien_bauteile.py` [-] test_linien_bauteile.py - fester synthetischer Test fuer tools/linien_bauteile.py + bauteile.linien_aus_json (24.11.2026), < 30 s, nur CPU. Verwandt: tools/test_sohlbank.py (gleich
 - `tools/test_loch_gewaende.py` [seg] test_loch_gewaende.py - fester synthetischer Test fuer den Befund 'Oeffnungen und Fenster' aus Kettenlauf 1122o (23.11.2026), < 20 s, nur CPU.
 - `tools/test_lokales_fototor.py` [gen] Synthetischer Beweis des lokalen Foto-Tors (modelle/archiv/SPEC_LOKALES_FOTOTOR.md, Punkte 1-3), am echten Modell (Teile-Ordner eines Kreislaufs): 1. erfundenes Detail (Kasten 0,4 
 - `tools/test_lot_wandneigung.py` [-] Test Lot-Runde 22.11.2026: lot_wandneigung (Kippung vs. Anzug, Urteile), kipp_rotvec (echte Kippung im Kasten), lage_bestanden mit Lot, Pruefstand-Vergleich mit Mondkamera.
@@ -129,6 +137,7 @@
 - `tools/test_rund_aus_umriss.py` [seg] test_rund_aus_umriss.py - fester synthetischer Test fuer tools/rund_aus_umriss.py (21.11.2026). Zylinder r 1,50 m (Mitte 0,3 / -0,2) mit Steinfugen-Textur vor gestreiftem Hintergru
 - `tools/test_rund_eigenverdeckung.py` [seg] test_rund_eigenverdeckung.py - Verdeckungspruefung in tools/rund_aus_umriss.py ignoriert das VORMODELL des gemessenen Rundkoerpers (23.11.2026). Befund Kettenlauf 1122p (Schwabento
 - `tools/test_rund_huelle.py` [gen] test_rund_huelle.py - Rundkoerper mit Dach aus EINSEITIGEN Silhouetten (tools/rund_aus_huelle.py, tools/drehkoerper_aus_fotos.py), 23.11.2026.
+- `tools/test_rund_putz_glatt.py` [gen] test_rund_putz_glatt.py - glatter Putz-Schaft am Rundkoerper (rund_aus_umriss.profil_bereinigen + bauteile.drehkoerper_aus_wolkenrest), 24.11.2026. Anlass: Kettenlauf 1122zb Schwab
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
 - `tools/test_seiten_bruecke_kette.py` [-] test_seiten_bruecke_kette.py - Befund Kette 1122q (23.11.2026): Suedseite (Teil 1) nicht gebaut, Fernfotos abgeschnitten. Ursache 1: die Kette rief tools/seiten_erkennen.py nie mit
@@ -194,11 +203,14 @@
 - `tools/test_wandbezug_bauteile.py` [gen] test_wandbezug_bauteile.py - fester synthetischer Test (24.11.2026, Risiken a/b aus tools/wandlage_fotokanten.py): alle Bauteile, die an einer Fassade haengen oder in sie schneiden
 - `tools/test_wandbild_einigkeit.py` [seg] test_wandbild_einigkeit.py - Befund 23.11.2026 (Lauf 1122t): Sued-Wand f01 Abdeckung 0,037 -> 0,998 per Nachholen = 'GEWINN', Wandbild aber verschmiert (Kameras ungenau). Prueft mi
 - `tools/test_wandlage_fotokanten.py` [-] test_wandlage_fotokanten.py - fester synthetischer Test (24.11.2026, Befund 1122x f00: Koerperwand 0,32 m VOR der Fotokanten-Ebene) fuer tools/wandlage_fotokanten.py und die Verbra
+- `tools/test_wissen_ablage.py` [-] Synthetischer Test fuer tools/werkzeug_aehnlich.py, tools/wissen_ablage_pruefen.py und die Wortschatz-Gruppe in tools/wissen_suchen.py (Anlass 24.11.2026: formsitz neu erdacht nebe
+- `tools/test_wissensbaum_luecken.py` [-] Synthetischer Test fuer tools/wissensbaum_luecken.py und tools/wissen_suchen.py (Anlass 24.11.: Register BM/BN fehlten im Baum).
 - `tools/test_wolke_carving.py` [gen] test_wolke_carving.py - Beweise fuer tools/wolke_carving.py (Koerper NUR aus der Wolke). unabhaengig : synthetische Wolke (Halle hinter 4 Arkaden) -> Koerper; jeder Zugriff auf *.s
 - `tools/test_wolke_filter_varianten.py` [-] Synthetik-Test fuer wolke_kennzahlen.py + wolke_filter_varianten.f3_filter (Schwellen werden HIER festgelegt, nicht am Kaufhaus). Szene: Wand (x=0, 12 m breit, 8 m hoch) mit 3 cm G
 - `tools/test_wolke_gruppen.py` [-] Test wolke_gruppen_pruefen (19.11.2026): Hoehenkarte aus LoD2-Punkten, Gruppe mit Punkten hoch ueber der Strasse wird auffaellig, gute Gruppe nicht, unbewertbare Punkte zaehlen nic
 - `tools/test_wolke_solid.py` [gen] test_wolke_solid.py - Beweise T1-T4' der Spec S3b (vorab festgelegt, modelle/archiv/SPEC_S3b_WOLKE_ZUERST.md + Nutzerentscheid 5.11. 20:10/20:15).
 - `tools/test_wolke_umgebung.py` [gen] test_wolke_umgebung.py - BEWEIS (bekannte Wahrheit) fuer wolke_umgebung.py. Synthetisch: Haus 12x8x8 + Erker (giebel) an +y, Wolke mit bekanntem Rauschen sigma=0.03 m. R gemessenes
 - `tools/test_wolke_verdeckung.py` [-] Synthetischer Beweis fuer wolke_verdeckung.py (L-KR26): Teil (Wand in 10 m) hinter einer Wolken-'Decke' (6 m), die nicht im Modell ist. Aufruf: /media/oem/scan/venv-seg/bin/python 
+- `tools/test_zonen_verworfen.py` [-] Test: verworfene Erkennungen sind keine Bauteil-Zonen (befundliste.bauteil_zonen -> neben_details, befundliste).
 - `tools/test_zusatzfotos_kameras.py` [-] Test zusatzfotos_registrieren.kamera_gruppen: Gruppen aus Format UND Zoomklasse, f/k1/cy aus Parameter-JSON (f in Bildpixeln = f_orig*skala), Hauptpunkt auf das UNGECROPPTE Origina
 - `tools/test_zusatzfotos_lightglue.py` [-] Test zusatzfotos_lightglue.py: Stufen/Argumente vorhanden, Modul ohne torch/pycolmap importierbar, GPU-Werkzeugliste enthaelt es; bei vorhandenem Ergebnis (kaufhaus_handy/lg) Plaus
