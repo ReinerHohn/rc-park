@@ -196,7 +196,7 @@ def main():
     a = ap.parse_args(); C = kameras(a.objekt); Ls = np.arange(a.l_min, a.l_max + 1e-9, a.l_schritt)
     FA = {F["id"]: F for F in json.load(open(os.path.join(a.fein, "fassaden.json")))["fassaden"]}
     EL = json.load(open(os.path.join(a.grob or a.fein, "elemente.json")))["fassaden"]; GR = {F["id"]: F for F in json.load(open(os.path.join(a.grob, "fassaden.json")))["fassaden"]} if a.grob else {}
-    aus = {}; bilder = []; FEIN = {}
+    aus = {}; bilder = []; FEIN = {}; unentschieden = []
     for fid, F in FA.items():
         if (a.nur and fid not in a.nur.split(",")) or fid not in EL: continue
         fein = cv2.imread(os.path.join(a.fein, f"ortho_{fid}_fein.png")); grob = cv2.imread(os.path.join(a.grob, f"ortho_{fid}.png")) if a.grob else None
@@ -218,8 +218,12 @@ def main():
                     if bu: e.update(umriss=bu[0], stege=[], bogen=bu[1], quelle=f"Zone OWLv2 ({kl}); offen/Tiefe aus Ebenen-Sweep-Karte {os.path.basename(npz_)} (Median {tk[0]:.2f} m hinter der Wand, {tk[1] * 100:.0f} % der Zellen > {a.bogen_tief} m); Umriss aus Bildkanten (Pfeilerflanken + Kreis-RANSAC durch {bu[1]['bogenpunkte']} Bogenkantenpunkte, {bu[1]['auf_kreis'] * 100:.0f} % auf dem Kreis)")
                     else: e.update(hinweis="offen (Tiefe), aber Bogenlinie in den Bildkanten nicht gefunden - kein Umriss, nicht gebaut")
                     oe.append(e); print(f"{fid} bogen   u {u0:6.2f}..{u1:6.2f} z {z0:4.2f}..{z1:4.2f}: OFFEN, {tk[0]:.2f} m tief ({tk[1] * 100:.0f} % tief, {tk[2]} Zellen)" + (f", Flanken {bu[1]['flanke_links']:.2f}..{bu[1]['flanke_rechts']:.2f}, Kaempfer {bu[1]['kaempfer']}, Scheitel {bu[1]['scheitel']:.2f}, {bu[1]['auf_kreis'] * 100:.0f} % auf Kreis" if bu else " - KEIN Umriss aus Kanten")); continue
+                if kl == "bogen" and not tk:      # 24.11.2026 AUDIT STILLE ERFOLGE: fehlende Karte (oder zu wenige sichere Zellen) ist KEIN Urteil 'geschlossen'
+                    gr_ = (f"keine Tiefenkarte {os.path.basename(npz_)}" if npz_ else "keine Tiefenkarte (--tiefe_ordner fehlt)") if not (npz_ and os.path.exists(npz_)) else f"Tiefenkarte {os.path.basename(npz_)} mit zu wenigen sicheren Zellen"
+                    e.update(tiefe=None, flach=None, unentschieden=True, grund=gr_, hinweis=f"Bogen NICHT ENTSCHIEDEN ({gr_}) - weder Durchgang noch Blendbogen belegt; nicht gebaut, Stufe rc 3"); oe.append(e); unentschieden.append(f"{fid} u {u0:.2f}..{u1:.2f}")
+                    print(f"{fid} bogen   u {u0:6.2f}..{u1:6.2f} z {z0:4.2f}..{z1:4.2f}: NICHT ENTSCHIEDEN ({gr_})"); continue
                 if kl == "bogen":
-                    e.update(tiefe=None if not tk else round(tk[0], 2), flach=True, hinweis="Bogen nicht offen (Tiefenkarte) oder keine Karte - Blendbogen/Nische, nicht gebaut"); oe.append(e)
+                    e.update(tiefe=None if not tk else round(tk[0], 2), flach=True, hinweis="Bogen nicht offen (Tiefenkarte) - Blendbogen/Nische, nicht gebaut"); oe.append(e)
                     print(f"{fid} bogen   u {u0:6.2f}..{u1:6.2f} z {z0:4.2f}..{z1:4.2f}: nicht offen ({'keine Tiefenkarte' if not tk else f'{tk[0]:.2f} m, {tk[1] * 100:.0f} % tief'})"); continue
             ts = tiefe_sweep(F, os.path.join(a.fein, f"ortho_{fid}_einzeln"), C, (u0, u1, z0, z1), Ls)
             if ts is None: e.update(tiefe=None, hinweis="Tiefe nicht messbar (zu wenige/zu aehnliche Fotos)"); oe.append(e); continue
@@ -255,7 +259,10 @@ def main():
     if tafeln:
         Wm = max(t.shape[1] for t in tafeln); cv2.imwrite(a.aus[:-5] + ".jpg", np.vstack([np.pad(t, ((0, 6), (0, Wm - t.shape[1]), (0, 0)), constant_values=255) for t in tafeln]))
     print("->", a.aus)
+    if unentschieden:      # 24.11.2026: vorher 'nicht offen (keine Tiefenkarte)' mit rc 0 - eine fehlende Eingabe entschied still 'geschlossen'
+        print(f"UNENTSCHIEDEN: {len(unentschieden)} Bogen ohne Tiefenurteil ({'; '.join(unentschieden)}) - Tiefenkarten (fassade_tiefe / innenwaende_finden) pruefen"); return 3
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
