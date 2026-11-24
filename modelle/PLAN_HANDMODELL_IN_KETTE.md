@@ -61,6 +61,32 @@ Bruchstelle -> ein Agent (Stufe + Test mit roter Probe, Bild an Kopie) -> Merge-
 Alle Bauteile der Checkliste PASST (oder im Bild mindestens gleich gut), Bestand-Tor gruen, Nutzer bestaetigt am Bild;
 zweites Objekt durch dieselbe Kette ohne Sonderweg mit Fortschritt.
 
+## 8. TIEFENPRUEFUNG 24.11. 23:30 (Nutzer: "tief ueberpruefen, ob wir konvergieren, ob wir gelernt haben")
+**Gemessen (tools/hand_vergleich.py, gleiche Referenz, drei Kettenstaende):**
+- Kette 1120 (22.11.): 11 von 11 PASST · Hoehen im Median +0,04 m.
+- Kette 1122, Stand 24.11. 06:18: 4 von 11 · Hoehen im Median +0,56 m zu hoch (Galerie 0 statt 3 Pfosten, Nische 0,6 statt 1,95 m, Umgang 2 statt 4 Pfosten).
+- Kette 1122, Stand 24.11. abends (zb/zc gemischt): 5 von 11 · Hoehen +0,28 m (Spanne -1,0..+1,4), Fenster 1 statt 2, Form gerade statt rund.
+- Galerie-Ebene f00_vb0, Kantenpunkte an der Front: 40 902 (1120) -> 11 573 (06:18) -> 2 430 (abends), Ausladung 1,29 -> 1,24 -> 0,46 m.
+**Urteil: bisher KEINE Konvergenz.** Der Neustart 1120 -> 1122 fiel von 11 auf 4 von 11 und blieb dort ueber 21 Laeufe (22.-24.11.).
+**Warum niemand es sah (Lehre NICHT gelernt):** `referenz_hand.json` fehlte in schwabentor-1122 -> gesamtkette.py:899 ueberspringt den
+Handvergleich STILL; `audit/konvergenz.jsonl` hat 1 Zeile mit F1 None/n 0; "ERGEBNIS DES LAUFS: 141 Stufen, 3 nicht in Ordnung" bei Treppenkloetzen.
+Genau das stand am 21.11. im Kopf von hand_vergleich.py ("Kette meldete alle Stufen in Ordnung bei einem Quader"). Ein Messgeraet, das still
+ausfaellt, ist dasselbe Muster wie ein Bauteil, das still gestrichen wird.
+**Korrektur eigener Aussagen:** 11/11 reicht nicht (Nutzer 22.11. "noch nicht gut" bei 11/11) - die Zahl ist notwendig, nicht hinreichend.
+Die 12-14 % Massstabsluecke wirkt im Endmodell NICHT (Massstabsterm 0,1-0,4 %); wirksam ist ein gemeinsamer HOEHENVERSATZ von rund +0,4..0,6 m.
+
+### Arbeitsplan (abarbeiten, Stand je Punkt fortschreiben)
+- P1 Messgeraet an: referenz_hand.json in 1122 (erledigt 24.11.), Grundlinie 5/11. Kette: Handvergleich nie still ueberspringen
+  ("HANDSTAND NICHT GEMESSEN" = Stufe nicht in Ordnung), "x von N" + Bestand in die ERGEBNIS-Zeile, je Lauf eine Zeile in audit/verlauf_bauteile.jsonl.
+- P2 Hoehenversatz +0,4..0,6 m: EINE Ursache fuer 5 von 6 FALSCH am 06:18-Stand (Bodenbezug/z-Null des 1122-Rahmens gegen 1120). Zuerst klaeren.
+- P3 Eingangs-Tor: Kantenpunkte/Kameras je Bauteilzone gegen Bestwert; Abfall > Haelfte = rot (Galerie fiel 41 000 -> 2 400 unbemerkt).
+- P4 Aufgeben-Stellen: typisiert bauen, Masse aus Fotos (Galerie, Vordach, Nische/Sohlbank, Gesims, Uhr Sued, Umgang-Pfosten je Wand).
+- P5 Formpruefung zum Zahlenvergleich: Foto-F1 je Bauteilzone (Bestand-Tor) + Detailbild; PASST nur mit beidem.
+- P6 Zusammenfuehren -> Probelauf -> Schnelltest 0 -> Kette -> x von N + Bild Kette|Ziel|Bestand. 
+- P7 Abbruchregel: zwei Laeufe ohne Anstieg von x ODER Bestand-Tor rot = Methode wechseln, dem Nutzer melden. Ziel 1: >= 9/11 + Bild wie 1120; Ziel 2: Bild wie schwab_v3.
+- P8 Offen (kein Agent, Plattenplatz): konvergenz.jsonl F1 je Seite leer (n 0) reparieren; Tor-Scheitel/-Breite; Dachknick; Gegenprobe zweites Objekt.
+
 ## Stand (fortschreiben, neueste oben)
+- 24.11. 23:30 · Tiefenpruefung: 11/11 (1120) -> 4/11 -> 5/11 (1122); P1 Grundlinie erledigt, P2-P5 bei Agenten.
 - 24.11. 22:45 · Plan angelegt. In Arbeit: Galerie-Treppen + Bestand-Tor, Uhr, Vordach/Galerie-Pfosten, Weg-Analyse (WEG_HAND_ZU_KETTE.md),
   Kegeldach, Kanten ueber Traufe, Massstab. Checkliste: noch nicht gemessen.
