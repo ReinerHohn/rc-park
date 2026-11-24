@@ -24,7 +24,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   seiten     tools/seiten_luecken.py --holen (Fotos fuer ungesehene Waende nachregistrieren, Tor tools/kameras_nachtragen_tor.py); sehen BELEGTE neue Kameras eine ungesehene Wand
              und steigt deren Abdeckung messbar: EIN Teillauf ab fenster bis seiten im selben Lauf (tools/seiten_wiederholung.py, 23.11.2026)
-  draehte    tools/wolke_draehte.py: Draehte/Oberleitung + Fahnen (Draht als schmales Blatt) aus einer KOPIE der Wolke -> <daten>/wolke_anzeige/ (nur Anzeige;
+  draehte    tools/wolke_draehte.py: Draehte/Oberleitung + Fahnen (Draht als schmales Blatt) + Freiraum (SfM-Strahlen durch Gewirr vor der Wand) aus einer KOPIE der Wolke -> <daten>/wolke_anzeige/ (nur Anzeige;
              Original + Wolke-Tore unveraendert), Bericht audit/wolke_draehte.json + audit/wolke_draehte.jpg (24.11.2026, Nutzerbefund 1122 Nordseite)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html (Wolke = gefilterte Kopie, wenn neuer als das Original)
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
@@ -879,9 +879,12 @@ def main():
         notiz(B, "sackgassen", not sg_, offen=sg_, hinweis="Kettenergebnisse ohne Verbraucher im Generator; bekannte, noch nicht verbaute Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md")
     W_ANZ = os.path.join(D, "wolke_anzeige", os.path.basename(W))                         # 24.11.2026: Anzeige-Kopie ohne Draehte/Fahnen (tools/wolke_draehte.py)
     if dran("draehte") and os.path.exists(W):
-        t_dr = time.time(); wf_ = W.replace("punkte_modell_", "punkte_farben_"); os.makedirs(os.path.join(Z, "audit"), exist_ok=True)
+        t_dr = time.time(); wf_ = W.replace("punkte_modell_", "punkte_farben_"); os.makedirs(os.path.join(Z, "audit"), exist_ok=True); os.makedirs(os.path.dirname(W_ANZ), exist_ok=True)
+        sp_ = os.path.join(P, "sfm", "sparse", "0"); si_ = os.path.join(os.path.dirname(W_ANZ), "sicht.npz")      # Freiraum-Test: SfM-Beobachtungen durchleuchten Fahnen vor der Wand
+        if os.path.exists(si_): os.remove(si_)
+        if os.path.isdir(sp_) and os.path.exists(AU): lauf(B, "draehte_sicht", [PYC, "-I", "tools/wolke_draehte.py", si_, "--sicht_export", sp_, AU], log, ok=(0, 5))   # 5 = anderes SfM-Modell
         lauf(B, "draehte", [PY, "-I", "tools/wolke_draehte.py", W, "--aus", os.path.dirname(W_ANZ), "--bericht", os.path.join(Z, "audit", "wolke_draehte.json"),
-                            "--bild", os.path.join(Z, "audit", "wolke_draehte.jpg")] + (["--farben", wf_] if os.path.exists(wf_) else []), log)
+                            "--bild", os.path.join(Z, "audit", "wolke_draehte.jpg")] + (["--farben", wf_] if os.path.exists(wf_) else []) + (["--sicht", si_] if os.path.exists(si_) else []), log)
         beleg(B, "draehte", [os.path.join(Z, "audit", "wolke_draehte.json"), W_ANZ], t_dr, folge="html zeigt die ungefilterte Wolke (Draehte/Oberleitung sichtbar)")
     if not (os.path.exists(W_ANZ) and os.path.exists(W) and os.path.getmtime(W_ANZ) >= os.path.getmtime(W)): W_ANZ = W   # Kopie fehlt/veraltet -> Original zeigen
     if dran("html"):
