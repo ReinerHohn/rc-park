@@ -51,10 +51,41 @@ def masken_fehlend(img, roh):
     return F
 
 
+def masken_speicher():
+    """Ordner des Masken-Zwischenspeichers ueber Laeufe hinweg (None = aus). RCPARK_MASKEN_CACHE=0 schaltet ab, sonst Pfad oder <RCPARK_CACHE>/masken."""
+    v = os.environ.get("RCPARK_MASKEN_CACHE", "")
+    if v == "0": return None
+    return v or os.path.join(os.environ.get("RCPARK_CACHE", "/media/oem/scan/rc-park_daten/_cache"), "masken")
+
+
+def _inhalt_sha1(p, block=1 << 22):
+    import hashlib
+    h = hashlib.sha1()
+    with open(p, "rb") as f:
+        for b in iter(lambda: f.read(block), b""): h.update(b)
+    return h.hexdigest()
+
+
 def masken_rechnen(img, w, lauf=subprocess.run):
-    """Schritt 1. -> dict(ordner, bilder, neu, ohne_maske). Rechnet nur die fehlenden Masken (Verknuepfungsordner <w>/masken_eingang), alle anderen bleiben.
-    RCPARK_MASKEN_BATCH (Standard 2: 21.11.2026 Batch 4 = OOM-Rueckfaelle auf der 8-GB-Karte, Batch 2 Spitze 6,9 GiB, 2042 Bilder 13 min)."""
-    roh = os.path.join(w, "masken"); alle = bilder(img); fehlt = masken_fehlend(img, roh); neu = 0
+    """Schritt 1. -> dict(ordner, bilder, neu, ohne_maske, zwischenspeicher). Rechnet nur die fehlenden Masken (Verknuepfungsordner <w>/masken_eingang), alle anderen bleiben.
+    RCPARK_MASKEN_BATCH (Standard 2: 21.11.2026 Batch 4 = OOM-Rueckfaelle auf der 8-GB-Karte, Batch 2 Spitze 6,9 GiB, 2042 Bilder 13 min).
+    ZWISCHENSPEICHER UEBER LAEUFE (24.11.2026, Kette schwabentor-null-1122u: neuer Fotosatz -> '--neu sfm' legt sfm/ samt masken/ beiseite -> ALLE 1147 Masken neu, ~12 min,
+    obwohl fast alle Bilder unveraendert waren): Schluessel = SHA1 des Bildinhalts + CODE-STAND von handy_masken.py (tools/code_stand.py) + Batch. Treffer werden kopiert
+    (gleiche Datei wie damals gerechnet), nur der Rest geht an handy_masken; neu gerechnete Masken kommen danach in den Speicher. RCPARK_MASKEN_CACHE=0 = alter Ablauf."""
+    roh = os.path.join(w, "masken"); alle = bilder(img); fehlt = masken_fehlend(img, roh); neu = 0; zs = dict(treffer=0, abgelegt=0)
+    C = masken_speicher() if fehlt else None; hs = {}
+    if C:
+        import shutil, code_stand
+        C = os.path.join(C, code_stand.code_stand("handy_masken.py") + "_b" + os.environ.get("RCPARK_MASKEN_BATCH", "2")); M = masken_index(roh)
+        for f in fehlt:
+            try: hs[f] = _inhalt_sha1(os.path.join(img, f))
+            except OSError: continue
+            q = os.path.join(C, hs[f][:2], hs[f] + ".png")
+            if os.path.isfile(q):
+                st = os.path.splitext(f)[0]; z = M.get(st) or os.path.join(roh, os.path.basename(os.path.normpath(img)), st + ".png")      # veraltete Maske desselben Namens ueberschreiben (masken_index kennt je Name nur einen Pfad)
+                os.makedirs(os.path.dirname(z), exist_ok=True); shutil.copyfile(q, z); zs["treffer"] += 1
+        if zs["treffer"]:
+            fehlt = masken_fehlend(img, roh); print(f"SEITEN 1/3 Masken: {zs['treffer']} aus dem Zwischenspeicher {C} (gleicher Bildinhalt, gleicher CODE-STAND)", flush=True)
     if fehlt:
         quelle = img
         if len(fehlt) < len(alle):                                     # nur den Rest rechnen: Verknuepfungen der fehlenden Bilder in einen eigenen Eingangsordner
@@ -66,10 +97,19 @@ def masken_rechnen(img, w, lauf=subprocess.run):
         r = lauf([PY_SEG, "-W", "ignore", "-I", os.path.join(T, "handy_masken.py"), quelle, "--ausgabe", roh, "--batch", os.environ.get("RCPARK_MASKEN_BATCH", "2")], check=False)
         if r.returncode != 0: raise SystemExit(f"SEITEN-VORSTUFE: Masken gescheitert (rc {r.returncode}, tools/handy_masken.py) - Mapper NICHT gestartet (ohne Masken verklebt eine Person im Vordergrund die Seiten). Bewusst ohne Vorstufe: RCPARK_SEITEN=0")
         neu = len(fehlt) - len(masken_fehlend(img, roh))
+        if C:
+            M = masken_index(roh); ohne_ = set(masken_fehlend(img, roh))
+            for f in fehlt:
+                m = M.get(os.path.splitext(f)[0])
+                if f in ohne_ or f not in hs or m is None: continue
+                q = os.path.join(C, hs[f][:2], hs[f] + ".png")
+                try:
+                    if not os.path.isfile(q): os.makedirs(os.path.dirname(q), exist_ok=True); tmp = q + f".tmp{os.getpid()}"; shutil.copyfile(m, tmp); os.replace(tmp, q); zs["abgelegt"] += 1
+                except OSError as e_: print(f"HINWEIS Masken-Zwischenspeicher nicht geschrieben ({e_})", flush=True); break
     ohne = masken_fehlend(img, roh)
     if ohne: print(f"ACHTUNG Masken: {len(ohne)} Bilder weiterhin OHNE Maske (nicht lesbar oder unbekannte Endung), z. B. {', '.join(ohne[:3])} - sie gehen unmaskiert in die Merkmalssuche", flush=True)
-    else: print(f"SEITEN 1/3 Masken: alle {len(alle)} Bilder mit aktueller Maske ({neu} neu gerechnet, {len(alle) - neu} wiederverwendet)", flush=True)
-    return dict(ordner=roh, bilder=len(alle), neu=neu, ohne_maske=len(ohne))
+    else: print(f"SEITEN 1/3 Masken: alle {len(alle)} Bilder mit aktueller Maske ({neu} neu gerechnet, {len(alle) - neu} wiederverwendet, davon {zs['treffer']} aus dem Zwischenspeicher)", flush=True)
+    return dict(ordner=roh, bilder=len(alle), neu=neu, ohne_maske=len(ohne), zwischenspeicher=zs)
 
 
 def masken_colmap(img, roh, ziel):

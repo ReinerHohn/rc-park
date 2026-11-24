@@ -61,7 +61,10 @@ try:
     root = os.path.join(d, "r"); od = os.path.join(root, "modelle", "xtest"); fd = os.path.join(root, "fotos"); fo = os.path.join(root, "fassade")
     for p in (od, fd, fo): os.makedirs(p)
     os.symlink(T, os.path.join(root, "tools"))      # seiten_luecken nimmt die Werkzeuge aus <wurzel>/tools
-    json.dump(dict(fotos_dir="fotos", name="Test"), open(os.path.join(od, "objekt.json"), "w"))
+    json.dump(dict(fotos_dir="fotos", name="Test", stl="modelle/xtest/m.stl"), open(os.path.join(od, "objekt.json"), "w"))
+    import struct      # 24.11.2026: Frueh-Abbruch seiten_luecken.belegbar braucht ein STL mit Dreiecken + eine Referenzkamera (sonst rc 5 VOR dieser Vorpruefung)
+    open(os.path.join(od, "m.stl"), "wb").write(b"\0" * 80 + struct.pack("<I", 1) + struct.pack("<12fH", 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0))
+    os.makedirs(os.path.join(od, "messprotokoll")); json.dump(dict(kamera=dict(rvec=[0, 0, 0], t=[0, 0, 5])), open(os.path.join(od, "messprotokoll", "K-ref.json"), "w"))
     json.dump(dict(fassaden=[dict(id="f00", flaeche_m2=80.0, n=[1.0, 0.0], o=[0.0, 0.0], raster=dict(nu=40, nz=30, u0=0.0, z1=3.0, zelle=0.1), polys_uz=[[[0, 0], [4, 0], [4, 3], [0, 3]]], fotos={})]),
               open(os.path.join(fo, "fassaden.json"), "w")); cv2.imwrite(os.path.join(fo, "ortho_f00.png"), np.zeros((30, 40, 3), np.uint8))      # Wand ohne Bilddaten = ungesehen
     for n in [os.path.splitext(i.name)[0] for i in rec.images.values()] + ["neu_a", "neu_b"]: cv2.imwrite(os.path.join(fd, n + ".jpg"), np.full((32, 32, 3), 99, np.uint8))

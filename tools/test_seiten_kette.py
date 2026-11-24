@@ -144,8 +144,9 @@ for n in ("eigen__a.jpg", "netz__b.jpeg", "netz__c.JPG", "clipA__vf_001.jpg", "c
 rufe = []
 def lauf_masken(cmd, check=False):
     rufe.append(cmd); q = cmd[cmd.index("--ausgabe") - 1]; z = os.path.join(cmd[cmd.index("--ausgabe") + 1], os.path.basename(q)); os.makedirs(z, exist_ok=True)
-    for f in os.listdir(q): open(os.path.join(z, os.path.splitext(f)[0] + ".png"), "w").write("m")
+    for f in os.listdir(q): open(os.path.join(z, os.path.splitext(f)[0] + ".png"), "w").write("m" + open(os.path.join(q, f)).read())      # Maske = Funktion des Bildinhalts
     return N(returncode=0)
+os.environ["RCPARK_MASKEN_CACHE"] = "0"                               # Teil 5 prueft die Wiederverwendung im Arbeitsordner; der Zwischenspeicher ueber Laeufe folgt in 5b
 with contextlib.redirect_stdout(io.StringIO()):
     r1 = SV.masken_rechnen(img, w, lauf=lauf_masken); r2 = SV.masken_rechnen(img, w, lauf=lauf_masken)
     assert (r1["neu"], r1["ohne_maske"], r2["neu"], len(rufe)) == (6, 0, 0, 1) and rufe[0][5] == img and rufe[0][-2:] == ["--batch", "2"], (r1, r2, rufe)
@@ -163,6 +164,24 @@ with contextlib.redirect_stdout(io.StringIO()):
     try: SV.masken_rechnen(img, w, lauf=lauf_fehler); raise AssertionError("gescheiterte Masken muessen abbrechen")
     except SystemExit as e_: assert "Masken gescheitert" in str(e_)
     os.remove(os.path.join(img, "eigen__neu2.jpg"))
+
+# ---------- 5b Masken-Zwischenspeicher ueber Laeufe (24.11.2026, 1122u: '--neu sfm' nach neuem Fotosatz rechnete alle 1147 Masken neu, ~12 min)
+img5 = os.path.join(S, "fotos5"); os.makedirs(img5); zc = os.path.join(S, "masken_cache"); os.environ["RCPARK_MASKEN_CACHE"] = zc; rufe.clear()
+for i, n in enumerate(("eigen__a.jpg", "netz__b.jpg", "clipA__vf_001.jpg")): open(os.path.join(img5, n), "w").write(f"inhalt{i}")
+with contextlib.redirect_stdout(io.StringIO()):
+    w1 = os.path.join(S, "lauf1"); r1 = SV.masken_rechnen(img5, w1, lauf=lauf_masken)
+    assert (r1["neu"], r1["zwischenspeicher"], len(rufe)) == (3, dict(treffer=0, abgelegt=3), 1), (r1, rufe)
+    open(os.path.join(img5, "eigen__neu.jpg"), "w").write("inhalt_neu")                     # neuer Fotosatz: 3 alte + 1 neues Bild, neuer Arbeitsordner (wie '--neu sfm')
+    w2 = os.path.join(S, "lauf2"); r2 = SV.masken_rechnen(img5, w2, lauf=lauf_masken)
+    assert r2["zwischenspeicher"] == dict(treffer=3, abgelegt=1) and r2["neu"] == 1 and r2["ohne_maske"] == 0 and len(rufe) == 2 and os.listdir(rufe[1][5]) == ["eigen__neu.jpg"], (r2, rufe)
+    M1, M2 = SV.masken_index(r1["ordner"]), SV.masken_index(r2["ordner"])
+    assert all(open(M1[k]).read() == open(M2[k]).read() for k in M1), "Masken aus dem Zwischenspeicher = die damals gerechneten (bytegleich)"
+    open(os.path.join(img5, "netz__b.jpg"), "w").write("inhalt_geaendert")                  # gleicher Name, anderer Inhalt -> KEIN Treffer
+    w3 = os.path.join(S, "lauf3"); r3 = SV.masken_rechnen(img5, w3, lauf=lauf_masken)
+    assert r3["zwischenspeicher"]["treffer"] == 3 and len(rufe) == 3 and os.listdir(rufe[2][5]) == ["netz__b.jpg"] and open(SV.masken_index(r3["ordner"])["netz__b"]).read() == "minhalt_geaendert", (r3, rufe)
+    os.environ["RCPARK_MASKEN_CACHE"] = "0"; r4 = SV.masken_rechnen(img5, os.path.join(S, "lauf4"), lauf=lauf_masken)
+    assert r4["zwischenspeicher"]["treffer"] == 0 and r4["neu"] == 4 and len(rufe) == 4, "RCPARK_MASKEN_CACHE=0 = alter Ablauf"
+print("ok 5b Masken-Zwischenspeicher: neuer Arbeitsordner holt 3 von 4 Masken bytegleich aus dem Speicher, nur das neue/geaenderte Bild geht an handy_masken; =0 schaltet ab")
 
 dbq = os.path.join(w, "db.db"); c = mini_db(dbq, [("eigen__a.jpg", 1), ("clipA__vf_001.jpg", 2), ("clipA__vf_002.jpg", 3), ("clipA__vf_003.jpg", 4)], {1: (4000, 3000, 8.7e6, 1), 2: (1920, 1080, 2304.0, 0), 3: (1920, 1080, 2304.0, 0), 4: (1920, 1080, 2304.0, 0)}); c.commit(); c.close()
 def seiten_json(verwechselt):
