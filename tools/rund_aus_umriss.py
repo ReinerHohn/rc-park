@@ -39,6 +39,37 @@ STUETZE_ENDE = 0.5     # Oberkante: Stuetze faellt unter 50 % des Medians (ANNAH
 SUCHE_MITTE = 0.6      # m: Wolkenmitte ist auf Dezimeter genau (Kreisausgleich Rest ~5 cm), 0,6 m laesst ihr deutlich Spielraum
 FAECHER_GRAD = 15      # Richtungsfaecher fuer die Gewichtung der Beruehrlinien (24 Faecher rundum; feiner = zu wenige Beobachtungen je Faecher)
 SUCHE_R = (0.5, 1.4)   # x Startradius: Wolke misst eher zu dick (Fasen, Rauschen), daher nach unten weiter offen
+SUCHRAND_FANG = 0.045  # m: Profil-Feinsuche +-0,04 m (Schritt 5 mm) um den besten 2-cm-Rasterwert -> ein Radius so nahe am Suchrand hatte kein Maximum IM Bereich
+
+
+def am_suchrand(r, r0):
+    """True, wenn ein Profilradius r am Rand des Suchbereichs SUCHE_R x Startradius r0 liegt: die Guete stieg bis zum Rand, der Umriss lag nicht im Bereich -> kein Messwert.
+    24.11.2026 (Kettenlauf 1122zb, Schwabentor-Treppenturm): z 11,25/11,75 r 0,835/0,855 bei Untergrenze 0,875 (0,5 x Wolke 1,75) -> 0,7 m tiefe Kerbe im glatten Putz-Schaft."""
+    return r <= SUCHE_R[0] * r0 + SUCHRAND_FANG or r >= SUCHE_R[1] * r0 - SUCHRAND_FANG
+
+
+def profil_bereinigen(P, r0):
+    """Drehprofil P = [[z, r, ...], ...] (z steigend) ohne Suchrand-Werte. -> (P_neu, weg = z der verworfenen Hoehen).
+    Regeln (24.11.2026, Befund 1122zb f04: glatter weisser Putz im Foto, im Modell Kerbe z 10,5-12,2 m): (1) Hoehen am Suchrand (am_suchrand) sind keine Messung und fallen weg.
+    (2) Die gemessenen Nachbarn einer Luecke bekommen den Median aus 3 der verbleibenden Hoehen (ein Uebergangswert, dessen Scheibe halb in der Luecke liegt - 10,75: 1,215 zwischen
+    1,595 und 2,255 - faellt so weg). (3) Die Luecke traegt den Radius der naechsten gemessenen Hoehe DARUNTER (Schaft laeuft weiter, bis eine Messung etwas anderes zeigt;
+    keine Interpolation ueber ungemessene Hoehen); liegt sie ganz unten, den der naechsten darueber. Ohne Suchrand-Werte bleibt P unveraendert (idempotent)."""
+    P = [list(p) for p in P]
+    if not r0 or not P: return P, []
+    rand = [am_suchrand(float(p[1]), float(r0)) for p in P]
+    if not any(rand): return P, []
+    ki = [i for i, w in enumerate(rand) if not w]
+    if not ki: return P, [p[0] for p in P]
+    rk = [float(P[i][1]) for i in ki]; neu = list(rk)
+    for j, i in enumerate(ki):
+        an_luecke = (j > 0 and ki[j - 1] != i - 1) or (j + 1 < len(ki) and ki[j + 1] != i + 1) or (j == 0 and i > 0) or (j == len(ki) - 1 and i < len(P) - 1)
+        if an_luecke: neu[j] = float(np.median(rk[max(0, j - 1):j + 2]))
+    for j, i in enumerate(ki): P[i][1] = round(neu[j], 3)
+    for i, w in enumerate(rand):
+        if not w: continue
+        unter = [k for k in ki if k < i]; ueber = [k for k in ki if k > i]
+        P[i][1] = P[unter[-1]][1] if unter else P[ueber[0]][1]
+    return P, [P[i][0] for i, w in enumerate(rand) if w]
 
 
 EIGEN_BAND = 0.25      # m: Flaeche des VORMODELLS desselben Rundkoerpers liegt +-25 cm um dessen gebauten Radius (Fasen, Segmentierung 48-Eck, Profilrundung 5 mm)
@@ -514,7 +545,8 @@ def main(argv=None):
         nv = sum(verd.values()); print(f"  {len(bilder)} Fotos geladen; {nv} von {len(verd)} Umrissbeobachtungen verdeckt (Modell davor)")
         U = vermessen(list(stufe), (x0, y0, r0), zs, verdeckt=lambda bi, s, z: verd.get((bi, s, z), False))
         if not U: print("  keine Beobachtung"); continue
-        U["profil_roh"] = U["profil"]; U["profil"] = glaetten(U["profil"])
+        U["profil_roh"] = U["profil"]; P_, weg = profil_bereinigen(U["profil"], r0); U["profil"] = glaetten(P_)   # 24.11.2026: Suchrand-Werte sind keine Messung (profil_bereinigen)
+        if weg: U["profil_suchrand"] = weg; print(f"  Profil: {len(weg)} Hoehen am Suchrand verworfen (z {weg}) - Radius der Hoehe darunter")
         U["oberkante"] = oberkante([p for p in U["profil"] if p[0] >= za]); U["traufe"] = traufe([p for p in U["profil"] if p[0] >= za], a.schritt); U["start_wolke"] = dict(x=x0, y=y0, r=r0)
         sch = [p[1] for p in U["profil"][:max(2, len(U["profil"]) // 2)]]; U["r_schaft"] = round(float(np.median(sch)), 3) if sch else U["r"]
         U["quelle"] = "tools/rund_aus_umriss.py: Umriss-Tangenten in kalibrierten Fotos (messprotokoll/K-*.json), Abstimmung je Foto/Seite/Hoehe normiert"

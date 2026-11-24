@@ -16,7 +16,7 @@ Gemeinsame Ursache: der Erkennerkasten umfasst Loch UND Gewaende; die Kette hatt
 Methode (KERNMETHODE, WANDBILD = BAUPLAN; Erkennen = nur Zone): je Eintrag der Fensterliste OHNE Nische (Paare aus nischen_fenster bleiben unberuehrt) und je
 geschlossener Tuer aus oeffnungen_aussen.json (klasse 'tuer', flach, keine gebaute Oeffnung an der Stelle):
   1. Loch = groesste dunkle Komponente nahe der Zonenmitte (Schliessen 4 cm gegen Gitterstaebe), Kasten = 2-/98-%-Werte ihrer Zellen.
-     Gueltig nur: >= 0,1 m in beiden Richtungen, >= 40 % Fuellung des Kastens, Mitte in der Zone, Loch deutlich dunkler (L <= --dunkel x Wand-L).
+     Gueltig nur: lange Seite >= 0,1 m, schmale Seite >= max(Druckmindestmass, 3 Zellen) (Schlitze, 24.11.2026), >= 40 % Fuellung des Kastens, Mitte in der Zone, Loch deutlich dunkler (L <= --dunkel x Wand-L).
      Beruehrt das Loch den Rand der belegten Zellen (Wandbild angeschnitten), gilt fuer diese Seite der kleinste Erkennerkasten, der das Loch enthaelt (sonst bleibt
      die Seite mit 'angeschnitten' im Eintrag).
   2. Gewaende = Nicht-Wand-Zellen, die das Loch beruehren (Komponente am um 10 cm gewachsenen Loch), ohne Loch; Umriss (2 cm vereinfacht) in u/z.
@@ -25,6 +25,8 @@ geschlossener Tuer aus oeffnungen_aussen.json (klasse 'tuer', flach, keine gebau
      ANNAHME Druckmindestmass (MINMM x SCALE) - im Eintrag vermerkt.
   3. Form: Eintrag ohne Bogen -> Bogen aus der Oberkante des Lochs (bogen_aus_loch: Stich/Rund), wenn messbar. Der Eintrag behaelt seine Bogenform nur, wenn das Loch dieselbe Groesse hat (Breite und Hoehe je +-25 %); sonst war die Form die des Gewaendes -> Rechteck
      (form_quelle nennt den Grund). Tiefe: Sweep im Loch gegen den Wandring (nischen_fenster.tiefe_einzeln); sonst bleibt eine gemessene Tiefe, sonst ANNAHME.
+  ERKENNERKASTEN-PRUEFUNG (24.11.2026, 1122zb f04): Tuerzonen sind Erkennerkaesten - erst erkennerkasten_pruefen.pruefen (Loch fuellt die Box / Rahmen mit
+  Loch / Tiefensprung, dazu Boden oder Schwelle); sonst 'Erkennerkasten verworfen' im Bericht. Eine Tuer, deren Loch schon Eintrag ist (IoU >= 0,5): 'Doppelung'.
   GUARD + FALLBACK: kein gueltiges Loch -> Eintrag unveraendert (Grund im Bericht). Ein Loch, das > 90 % der Zone fuellt, aendert nichts (Zone war schon das Loch).
 Ausgabe: fenster_auto.json neu (Eingang als fenster_auto_vor_loch.json daneben); Eintraege bekommen 'loch' (Mass + Quelle) und ggf. 'gewaende'
   {umriss [[u, z]..], hoehe, hoehe_quelle}; Tueren kommen als Eintrag mit art 'tuer' dazu. Bericht loch_gewaende.json, Bild loch_gewaende_<fid>.jpg (ANSEHEN:
@@ -155,7 +157,7 @@ def loch_messen(bgr, R, zone, kleine_kaesten=(), dunkel=0.6, min_m=0.1, fuell_mi
     mu, mz = (u0 + u1) / 2, (z0 + z1) / 2; best = None
     for q in range(1, n):
         m = lab_k == q; fl = float(m.sum()) * c * c
-        if fl < (min_m * min_m) * 0.5: continue
+        if fl < (schmal_minimum(c, min_m) * min_m) * 0.5: continue
         cu, cz = float(U[m].mean()), float(Z[m].mean())
         if not (u0 <= cu <= u1 and z0 <= cz <= z1): continue
         wert = fl / (1.0 + np.hypot((cu - mu) / bu, (cz - mz) / bz))
@@ -166,7 +168,12 @@ def loch_messen(bgr, R, zone, kleine_kaesten=(), dunkel=0.6, min_m=0.1, fuell_mi
     lu0 -= c / 2; lu1 += c / 2; lz0 -= c / 2; lz1 += c / 2
     Lloch = float(np.median(Lf[m])); fuell = float(m.sum()) * c * c / max((lu1 - lu0) * (lz1 - lz0), 1e-9)
     if Lloch > dunkel * Lw: return dict(fehler=f"Loch nicht dunkel genug (L {Lloch:.0f} gegen Wand {Lw:.0f})")
-    if lu1 - lu0 < min_m or lz1 - lz0 < min_m: return dict(fehler=f"Loch zu klein ({lu1 - lu0:.2f} x {lz1 - lz0:.2f} m)")
+    # 24.11.2026 (Kettenlauf 1122zb, neben_detail fenster_f03_3): Lichtschlitz 0,09 x 0,73 m im gestuften Sandsteingewaende fiel hier mit 'Loch zu klein' weg
+    # (min_m 0,1 in BEIDEN Richtungen) -> der Eintrag blieb der Erkennerkasten des GEWAENDES (1,33 x 1,66 m) und wurde ein Rundbogenfenster. Schlitze sind schmal:
+    # die SCHMALE Seite braucht nur das Druckmindestmass und 3 Zellen (messbar), die LANGE Seite weiter min_m.
+    schmal_min = schmal_minimum(c, min_m)
+    if min(lu1 - lu0, lz1 - lz0) < schmal_min or max(lu1 - lu0, lz1 - lz0) < min_m:
+        return dict(fehler=f"Loch zu klein ({lu1 - lu0:.2f} x {lz1 - lz0:.2f} m; schmale Seite >= {schmal_min:.2f}, lange >= {min_m:.2f} m)")
     if fuell < fuell_min: return dict(fehler=f"Loch fuellt seinen Kasten nur zu {fuell * 100:.0f} % (kein Rechteck/Bogen, eher Schatten/Fleck)")
     # angeschnitten: Lochrand neben Zellen ohne Foto -> Seite aus dem kleinsten Erkennerkasten, der das Loch enthaelt
     leer = cv2.dilate((~bel).astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool) & m
@@ -249,6 +256,11 @@ def druck_min():
     return float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
 
 
+def schmal_minimum(c, min_m=0.1):
+    """Mindestbreite der SCHMALEN Lochseite: Druckmindestmass (MINMM x SCALE), mindestens 3 Zellen des Wandbilds, hoechstens min_m (24.11.2026, Schlitz f03_3)."""
+    return min(min_m, max(druck_min(), 3.0 * float(c)))
+
+
 def eintrag_anpassen(e, erg, npz, fenster_tiefe=0.12):
     """Fensterlisten-Eintrag e mit dem Messergebnis erg (loch_messen) anpassen. Liefert Urteilstext."""
     L = erg["loch"]; bu, bz = e["u1"] - e["u0"], e["z1"] - e["z0"]; lb, lh = L["u1"] - L["u0"], L["z1"] - L["z0"]
@@ -299,6 +311,12 @@ def eintrag_anpassen(e, erg, npz, fenster_tiefe=0.12):
                              quelle="loch_gewaende: Nicht-Wand-Farbe am Loch im feinen Wandbild (Lab-Abstand zum Wandring > 3 x Median-Abstand im Ring, mind. 10)")
         tx += f", Gewaende {G['flaeche_m2']:.2f} m2 ({len(G['umriss'])} Ecken)"
     return tx
+
+
+def _iou(a, b):
+    """Ueberdeckung (IoU) zweier Kaesten dict(u0, u1, z0, z1)."""
+    iu = max(0.0, min(a["u1"], b["u1"]) - max(a["u0"], b["u0"])); iz = max(0.0, min(a["z1"], b["z1"]) - max(a["z0"], b["z0"])); s = iu * iz
+    return s / max((a["u1"] - a["u0"]) * (a["z1"] - a["z0"]) + (b["u1"] - b["u0"]) * (b["z1"] - b["z0"]) - s, 1e-9)
 
 
 def tueren(oeff, oeff_auto, fenster):
@@ -354,8 +372,10 @@ def main(argv=None):
     ap.add_argument("--oeffnungen", help="audit/oeffnungen_aussen.json (geschlossene Tueren)"); ap.add_argument("--oeffnungen_auto", help="audit/oeffnungen_auto.json (gebaute Oeffnungen)")
     ap.add_argument("--nur", nargs="*"); ap.add_argument("--aus"); ap.add_argument("--dunkel", type=float, default=0.6, help="Loch-Helligkeit hoechstens so viel x Wand-L")
     ap.add_argument("--fenster_tiefe", type=float, default=0.12, help="ANNAHME wie nischen_fenster/bauteile.fenster_aus_json")
+    ap.add_argument("--ohne_kastenpruefung", action="store_true", help="Tuerzonen (Erkennerkaesten) ungeprueft messen (Stand vor 24.11.2026, nur Vergleich)")
     a = ap.parse_args(argv)
     import cv2
+    import erkennerkasten_pruefen as EK
     aus = a.aus or os.path.dirname(os.path.abspath(a.fenster)); os.makedirs(aus, exist_ok=True)
     J = json.load(open(a.fenster)); FF = {F["id"]: F for F in json.load(open(os.path.join(a.fein, "fassaden.json")))["fassaden"]}
     try: E = json.load(open(os.path.join(a.ordner, "elemente.json")))["fassaden"]
@@ -372,15 +392,25 @@ def main(argv=None):
         rs = FF[fid]["raster"]; R = Raster(rs["u0"], rs["z1"], rs["zelle"], *bgr.shape[:2])
         nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
         kl = [(e["u0"], e["u1"], e["z0"], e["z1"]) for e in (E.get(fid) or {}).get("elemente", []) if e.get("klasse") in ("fenster", "tuer", "bogen")]
-        br = []; neu_tueren = []
+        br = []; neu_tueren = []; rgb_ = None
         for e in list(F["fenster"]) + T.get(fid, []):
             r = dict(zone=[round(e[k], 3) for k in ("u0", "u1", "z0", "z1")], art=e.get("art", "fenster"))
             if e.get("nische"): r["urteil"] = "uebersprungen: Fenster in Nische (nischen_fenster, zwei Ebenen)"; br.append(r); continue
             if e.get("loch"): r["urteil"] = "uebersprungen: schon vermessen (zweiter Lauf auf derselben Liste)"; br.append(r); continue
+            if e.get("art") == "tuer" and not a.ohne_kastenpruefung:
+                # 24.11.2026 (1122zb f04): Tuerzone = Erkennerkasten -> erst pruefen, ob das Wandbild/die Tiefe dort eine Tuer belegt (Loch/Rahmen/Tiefe + Boden/Schwelle);
+                # zwei falsche Tuerkaesten auf weissem Putz gaben sonst eine ZWEITE Tuer (Loch = echte Tuer darunter) und je Zone einen Schlitz.
+                if rgb_ is None: rgb_ = np.ascontiguousarray(bgr[..., ::-1]); bel_ = rgb_.astype(np.int32).sum(2) > 0
+                pk = EK.pruefen(rgb_, bel_, R.u0, R.z1, R.c, r["zone"], "tuer", npz, FF[fid])
+                if not pk["gilt"]: r["urteil"] = "Erkennerkasten verworfen: " + pk["grund"]; r["erkennerkasten"] = pk["werte"]; br.append(r); continue
             erg = loch_messen(bgr, R, r["zone"], kl, dunkel=a.dunkel)
             if "fehler" in erg:
                 r["urteil"] = "unveraendert: " + erg["fehler"]; br.append(r); continue
             erg.pop("_masken", None)
+            if e.get("art") == "tuer":
+                # Doppelung: das Loch dieser Tuer ist schon ein Eintrag (Fensterliste oder fruehere Tuer) -> nicht noch einmal
+                Lq = erg["loch"]; da = next((q for q in list(F["fenster"]) + neu_tueren if _iou(Lq, q.get("loch") or q) >= 0.5), None)
+                if da is not None: r["urteil"] = f"Doppelung: Loch {Lq['u1'] - Lq['u0']:.2f} x {Lq['z1'] - Lq['z0']:.2f} m ist schon Eintrag u {da['u0']:.2f}..{da['u1']:.2f} z {da['z0']:.2f}..{da['z1']:.2f}"; br.append(r); continue
             r["urteil"] = eintrag_anpassen(e, erg, npz, a.fenster_tiefe); r["loch"] = e.get("loch"); r["gewaende"] = e.get("gewaende"); n_ok += 1; br.append(r)
             if e.get("art") == "tuer": neu_tueren.append(e)
         F["fenster"] = F["fenster"] + neu_tueren

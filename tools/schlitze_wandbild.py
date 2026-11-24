@@ -21,10 +21,15 @@ METHODE (je Fassade):
                     - ein Loch ist aus jedem Blick dunkel, ein dunkler Stein/Schatten nur bei passendem Licht (Schwabentor West: Schlitz 15 von 16, Luke 4 von 6,
                     dunkle Eckquader 4-12 von 14-30 = hoechstens 43 %); sonst verworfen (Grund im Bericht).
                     Masse = Median der Einzelfoto-Kanten (Streuung im Eintrag), Lage im Mosaikrahmen (Fotos aufs Mosaik ausgerichtet).
+                    UNSCHAERFE-TOR (24.11.2026, 1122zb fenster_f04 am Sockel): nur Fotos, die die Stelle scharf zeigen (Laplace-Varianz >= SCHAERFE_MIN x 80-%-Wert
+                    der sehenden Fotos), stimmen mit; verwaschene Videobilder verschmelzen Schatten zwischen Steinen zu einem 'Loch' (--schaerfe 0 = aus).
+                    NUR BEI SCHWACHEM KONTRAST (Loch-L > KONTRAST_STARK x Ring-L, 24.11.2026 abends): Unschaerfe senkt Kontrast, ein Schlitz in hellem Putz (L/Ring 0,2-0,3)
+                    entsteht nicht aus Schattenfugen; dort zaehlen auch unscharfe (entfernte) Fotos - sonst fielen die f00-Schlitze z 34 (8 von 14 scharfen) weg.
   Tiefe: Ebenen-Sweep im Loch gegen den Wandring (loch_gewaende.sweep_werte, Plausibilitaet dort), sonst ANNAHME wie nischen_fenster (0,12 m; Bau >= Druckmindestmass).
 Ausgabe: Eintraege in der Fensterliste (fenster_auto.json; Eingang als fenster_auto_vor_schlitze.json daneben) mit 'loch' (loch_gewaende misst sie nicht nochmal),
   bogen gerade, form_quelle 'n von m Einzelfotos', quelle, aufloesung_m; Bericht schlitze_wandbild.json, Bild schlitze_<fid>.jpg (ANSEHEN: gruen = gebaut, rot = verworfen
-  mit Grund, grau = bekannte Kaesten). Gebaut von bauteile.fenster_aus_json (Loch-Umriss mit Laibungstiefe).
+  mit Grund, grau = bekannte Kaesten, orange = verworfene Erkennerkaesten). ERKENNERKASTEN-PRUEFUNG (24.11.2026, 1122zb f04): 'tuer'-Kaesten sperren nur,
+  wenn erkennerkasten_pruefen.pruefen eine Oeffnung belegt (dunkel/Rahmen/Tiefe + Boden/Schwelle); sonst Grund in 'erkennerkaesten_verworfen'. Gebaut von bauteile.fenster_aus_json (Loch-Umriss mit Laibungstiefe).
 Aufruf:  schlitze_wandbild.py <fenster_auto.json> <fassade-ordner (grob, elemente.json, tiefe_fNN.npz)> <fassade_fein-ordner> [--nur f03] [--aus ordner]
 rc 0 = mindestens eine Oeffnung eingetragen, 3 = nichts gefunden/geaendert.
 """
@@ -33,6 +38,7 @@ import numpy as np
 
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
 import ortsteine as O
+import erkennerkasten_pruefen as EK
 
 DUNKEL = 0.6          # Loch-Helligkeit hoechstens so viel x Hintergrund (wie loch_gewaende --dunkel)
 HINTERGRUND_M = 1.0   # Fenster fuer die oertliche Hintergrundhelligkeit (m)
@@ -40,6 +46,12 @@ MAX_FLAECHE = 1.0     # Kastenflaeche (m2): groessere Oeffnungen liefert der Erk
 FUELL_MIN = 0.5       # Anteil dunkler Zellen im Kasten (Rechteck/Schlitz statt Schattenfleck/Fuge)
 TOL_FORM = 0.35       # Breite/Hoehe je Einzelfoto gegen das Mosaik
 MEHRHEIT = 0.6        # Anteil der sehenden Fotos, die das Loch bestaetigen muessen (Loch dunkel aus jedem Blick; Stein/Schatten lichtabhaengig)
+SCHAERFE_MIN = 0.4     # Unschaerfe-Tor: Foto stimmt nur mit, wenn seine Laplace-Varianz an der Stelle >= so viel x Bezug (ANNAHME; 1122zb Sockel f04: 5 von 7 Videobildern + 3 Fotos 10-40 %; Urteil 'verworfen' gleich fuer 0,15..0,4, echte Schlitze f03 bleiben 5/5, 14/15, 13/17)
+KONTRAST_STARK = 0.35   # Unschaerfe-Tor nur bei SCHWACHEM Kontrast (Loch-L > so viel x Ring-L im Mosaik): Unschaerfe mittelt Loch und Umgebung, sie SENKT den Kontrast -
+                        # ein Loch, das im Mosaik >= ~3x dunkler ist als sein Ring (Schlitz in hellem Putz), kann sie nicht aus Schattenfugen erzeugen; dort sind unscharfe
+                        # (meist nur entfernte, niedrig aufgeloeste) Fotos gueltige Belege. Schwach (dunkel in dunkel, Sockelschatten zwischen Bossen 0,48) -> Tor an.
+                        # ANNAHME 0,35 = Mitte zwischen Schlitz in Putz (1122zb f00 z 34: 0,22/0,26) und DUNKEL-Grenze 0,6. 24.11.2026 abends (Regression merge-probe-30)
+SCHAERFE_Q = 80        # Bezug = 80-%-Wert der sehenden Fotos (robust gegen ein einzelnes ueberscharfes/verrauschtes Foto)
 RING_STEIN_MAX = 0.4   # Ring 0,1-0,3 m um den Kandidaten hoechstens so viel Steinfarbe: im Quader-/Eckquaderwerk sind dunkle Steine und Schattenfugen nicht vom Loch zu trennen
 
 
@@ -175,12 +187,45 @@ def kanten_im_foto(rgb, i0, i1, j0, j1, R, k, dunkel=DUNKEL, ring=(0.15, 0.45)):
     return _kasten(best[1], i0, j0, R["u0"], R["z1"], c)
 
 
-def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM):
-    """Mehrfoto-Kanten: je Einzelfoto (im Mosaikrahmen, ortsteine.einzeln_vereinen) Kanten der dunklen Komponente. Liefert (anzahl, gesehen, kanten-Median, streuung, je_foto)."""
+def schaerfe(rgb, maske=None):
+    """Oertliche Bildschaerfe eines Ausschnitts: Varianz des Laplace-Bilds der Helligkeit L auf belegten Zellen (2 Zellen vom Rand weg). None = zu wenig Zellen."""
+    from scipy import ndimage as ndi
+    L = _L(rgb); bel = (np.asarray(rgb).astype(np.int32).sum(2) > 30) if maske is None else maske
+    er = ndi.binary_erosion(bel, np.ones((5, 5), bool))
+    if er.sum() < 20: return None
+    return float(ndi.laplace(L)[er].var())
+
+
+def scharfe_auswahl(werte, anteil=SCHAERFE_MIN, q=SCHAERFE_Q):
+    """UNSCHAERFE-TOR fuer Formbelege (24.11.2026): werte = Schaerfe je Foto (None = unbekannt -> zaehlt). Bezug = q-%-Wert der bekannten Werte (die scharfen
+    Fotos dieser Stelle), unscharf = unter anteil x Bezug. Liefert (Liste True = scharf, Bezug)."""
+    v = [x for x in werte if x is not None]
+    if len(v) < 2: return [True] * len(werte), None
+    ref = float(np.percentile(v, q))
+    return [x is None or ref <= 0 or x >= anteil * ref for x in werte], ref
+
+
+def tor_schaerfe(k, schaerfe_min=SCHAERFE_MIN, kontrast_stark=KONTRAST_STARK):
+    """(schaerfe_min fuer bestaetigen, Text): Unschaerfe-Tor nur, wenn der Kandidat im Mosaik SCHWACHEN Kontrast hat (L > kontrast_stark x Ring-L).
+    Unschaerfe mittelt Loch und Umgebung und senkt den Kontrast - sie macht aus Schattenfugen zwischen dunklen Steinen ein 'Loch' (Sockel f04, 0,48), aber
+    kein Loch, das ~3x dunkler ist als heller Putz ringsum (Schlitze f00 z 34, 0,22/0,26). Ring-L unbekannt -> Tor an."""
+    if schaerfe_min <= 0: return 0.0, "aus (--schaerfe 0)"
+    rl = k.get("ring_L"); kontrast = k["L"] / rl if rl and np.isfinite(rl) and rl > 0 else 1.0
+    if kontrast > kontrast_stark: return schaerfe_min, f"an (Kontrast Loch/Ring {kontrast:.2f} > {kontrast_stark})"
+    return 0.0, f"aus (Kontrast Loch/Ring {kontrast:.2f} <= {kontrast_stark}: Unschaerfe erzeugt kein so dunkles Loch, unscharfe Fotos zaehlen)"
+
+
+def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM, schaerfe_min=SCHAERFE_MIN):
+    """Mehrfoto-Kanten: je Einzelfoto (im Mosaikrahmen, ortsteine.einzeln_vereinen) Kanten der dunklen Komponente. Liefert (anzahl, gesehen, kanten-Median, streuung, je_foto).
+    UNSCHAERFE-TOR (24.11.2026, Befund 1122zb fenster_f04: 'Fenster' 0,39 x 0,26 m am Sockel zwischen Bossenquadern, 11 von 18 Fotos - davon 7 von 8 Videobildern,
+    aber nur 5 von 10 scharfen Fotos; das Detailbild zeigte ein verwaschenes Videobild): ein Foto, das die Stelle deutlich unschaerfer zeigt als die scharfen
+    (Laplace-Varianz < schaerfe_min x q-%-Wert der sehenden Fotos), stimmt NICHT mit - weder als Beleg noch als 'gesehen'. Bewegungs-/Fokusunschaerfe verschmilzt
+    Schatten zwischen Steinen zu einem dunklen 'Loch'. schaerfe_min=0 schaltet das Tor ab."""
     c = R["c"]; ru = max(0.5, 0.5 * (k["u1"] - k["u0"])); rz = max(0.5, 0.5 * (k["z1"] - k["z0"])); H, W = R["form"]
     i0 = max(0, int((R["z1"] - k["z1"] - rz) / c)); i1 = min(H, int((R["z1"] - k["z0"] + rz) / c) + 1)
     j0 = max(0, int((k["u0"] - ru - R["u0"]) / c)); j1 = min(W, int((k["u1"] + ru - R["u0"]) / c) + 1)
     b, h = k["u1"] - k["u0"], k["z1"] - k["z0"]; ja, je = [], {}; gesehen = 0
+    roh = []
     for e in fotos:
         a = e["rgb"] if not (e.get("dy") or e.get("dx")) else O.verschieben(e["rgb"], e["dy"], e["dx"])
         fm = e.get("fein_maske"); ci, cj = (i0 + i1) // 2, (j0 + j1) // 2
@@ -188,6 +233,10 @@ def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM):
         r = kanten_im_foto(a, i0, i1, j0, j1, R, k)
         nm = os.path.splitext(os.path.basename(e["datei"]))[0]
         if r is None: continue
+        roh.append((nm, r, au, schaerfe(a[i0:i1, j0:j1]) if schaerfe_min > 0 else None))
+    scharf, ref = scharfe_auswahl([x[3] for x in roh], schaerfe_min) if schaerfe_min > 0 else ([True] * len(roh), None)
+    for (nm, r, au, s_), sch in zip(roh, scharf):
+        if not sch: je[nm] = f"unscharf (Schaerfe {s_ / ref * 100:.0f} % der scharfen Fotos) - stimmt nicht mit"; continue
         gesehen += 1
         if r == "dunkel_fehlt": je[nm] = "sieht die Zone, kein dunkles Loch"; continue
         tb, th = max(tol * b, 2 * au), max(tol * h, 2 * au); bb, hh = r[1] - r[0], r[3] - r[2]
@@ -201,7 +250,7 @@ def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM):
 def eintrag(k, n, gesehen, kanten, streuung, npz, fenster_tiefe=0.12):
     u0, u1, z0, z1 = kanten
     e = dict(u0=u0, u1=u1, z0=z0, z1=z1, teiler=[], kaempfer=None, scheiben=1, stimmen_min=int(n), sprossen=[], bogen=dict(form="gerade", kaempfer=z1, scheitel=z1),
-             klein=True, aufloesung_m=k["aufloesung_m"], form_quelle=f"{n} von {gesehen} Einzelfotos (Mehrfoto-Kanten, Streuung u0/u1/z0/z1 {streuung} m)",
+             klein=True, aufloesung_m=k["aufloesung_m"], form_quelle=f"{n} von {gesehen} Einzelfotos (Mehrfoto-Kanten, Streuung u0/u1/z0/z1 {streuung} m)" + (f"; {k['fotos_unscharf']} unscharfe Fotos zaehlen nicht" if k.get("fotos_unscharf") else ""),
              quelle="schlitze_wandbild: dunkle kleine Komponente im Wandbild (fein, sonst grob) ohne Erkennerkasten, Kanten = Median der Einzelfoto-Kanten",
              loch=dict(u0=u0, u1=u1, z0=z0, z1=z1, L=k["L"], wand_L=k["hintergrund_L"], fuellung=k["fuellung"], quelle="schlitze_wandbild: Mehrfoto-Kanten der dunklen Komponente"))
     t = None
@@ -214,8 +263,10 @@ def eintrag(k, n, gesehen, kanten, streuung, npz, fenster_tiefe=0.12):
     return e
 
 
-def bekannte_kaesten(F, E, fid):
-    """Schon erfasste Oeffnungen: Fensterliste (Eintrag, Zone vorher, Nische) + Erkennerkaesten tuer/bogen/uhr (Bau ueber andere Stufen)."""
+def bekannte_kaesten(F, E, fid, pruef=None, verworfen=None):
+    """Schon erfasste Oeffnungen: Fensterliste (Eintrag, Zone vorher, Nische) + Erkennerkaesten tuer/bogen/uhr (Bau ueber andere Stufen).
+    pruef(x) -> dict(gilt, grund) (erkennerkasten_pruefen.pruefen): 'tuer'-Kaesten ohne Oeffnungsbeleg im Wandbild sperren nichts (24.11.2026, 1122zb f04:
+    zwei falsche Tuerkaesten 1,6 x 5,9 m auf weissem Putz sperrten drei echte Schlitze); sie landen mit Grund in 'verworfen' (Liste) und im Bericht."""
     out = []
     for e in (F or {}).get("fenster", []):
         out.append((e["u0"], e["u1"], e["z0"], e["z1"]))
@@ -225,7 +276,13 @@ def bekannte_kaesten(F, E, fid):
         N = e.get("nische")
         if isinstance(N, dict) and all(x in N for x in ("u0", "u1", "z0", "z1")): out.append((N["u0"], N["u1"], N["z0"], N["z1"]))
     for x in ((E or {}).get(fid) or {}).get("elemente", []):
-        if x.get("klasse") in ("tuer", "bogen", "uhr") and x.get("stimmen", 3) >= 3: out.append((x["u0"], x["u1"], x["z0"], x["z1"]))
+        if x.get("klasse") in ("tuer", "bogen", "uhr") and x.get("stimmen", 3) >= 3:
+            if pruef is not None and x.get("klasse") == "tuer":
+                r = pruef(x)
+                if not r.get("gilt", True):
+                    if verworfen is not None: verworfen.append(dict(klasse=x["klasse"], kasten=[round(x[k], 3) for k in ("u0", "u1", "z0", "z1")], stimmen=x.get("stimmen"), grund=r.get("grund")))
+                    continue
+            out.append((x["u0"], x["u1"], x["z0"], x["z1"]))
     return out
 
 
@@ -242,11 +299,13 @@ def fotos_laden(fein, grob, fid, R, max_versatz=1.5, min_einig=0.8):
         [dict(e, fein_maske=O.verschieben(e["rgb"], e["dy"], e["dx"]).astype(np.int32).sum(2) > 30) for e in gut]
 
 
-def kontrollbild(rgb, R, neu, weg, bekannt, pfad, max_px=1400):
+def kontrollbild(rgb, R, neu, weg, bekannt, pfad, max_px=1400, kasten_weg=()):
     from PIL import Image, ImageDraw
     im = Image.fromarray(rgb); d = ImageDraw.Draw(im); c = R["c"]
     P = lambda u, z: ((u - R["u0"]) / c, (R["z1"] - z) / c)
     for x in bekannt: d.rectangle([P(x[0], x[3]), P(x[1], x[2])], outline=(150, 150, 150), width=2)
+    for x in kasten_weg:                                                  # verworfene Erkennerkaesten (orange): Flaeche freigegeben
+        k = x["kasten"]; d.rectangle([P(k[0], k[3]), P(k[1], k[2])], outline=(255, 150, 0), width=2); d.text(P(k[0], k[3]), "Erkennerkasten verworfen", fill=(255, 150, 0))
     for x in weg:
         if x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt")): continue      # Massenfunde (Fugen, Schatten) nicht zeichnen
         d.rectangle([P(x["u0"] - 0.05, x["z1"] + 0.05), P(x["u1"] + 0.05, x["z0"] - 0.05)], outline=(255, 0, 0), width=2)
@@ -264,6 +323,9 @@ def main(argv=None):
     ap.add_argument("--min_fotos", type=int, default=3, help="Formfamilie: so viele Einzelfotos muessen die Form bestaetigen")
     ap.add_argument("--mehrheit", type=float, default=MEHRHEIT, help="Anteil der sehenden Fotos, die bestaetigen muessen")
     ap.add_argument("--fenster_tiefe", type=float, default=0.12, help="ANNAHME wie nischen_fenster/loch_gewaende")
+    ap.add_argument("--schaerfe", type=float, default=SCHAERFE_MIN, help="Unschaerfe-Tor: Foto stimmt nur ab so viel x Bezugsschaerfe mit (0 = aus)")
+    ap.add_argument("--kontrast_stark", type=float, default=KONTRAST_STARK, help="Unschaerfe-Tor nur, wenn Loch-L > so viel x Ring-L (schwacher Kontrast); 0 = Tor immer (Stand merge-probe-30)")
+    ap.add_argument("--ohne_kastenpruefung", action="store_true", help="Erkennerkaesten ungeprueft als bekannt nehmen (Stand vor 24.11.2026, nur Vergleich)")
     a = ap.parse_args(argv)
     aus = a.aus or os.path.dirname(os.path.abspath(a.fenster)); os.makedirs(aus, exist_ok=True)
     J = json.load(open(a.fenster)) if os.path.exists(a.fenster) else {}
@@ -277,15 +339,19 @@ def main(argv=None):
         ab = arbeitsbild(a.fein, a.ordner, fid)
         if ab is None: bericht[fid] = dict(grund="kein feines Wandbild"); continue
         rgb, bel, aufl, R = ab
-        bek = bekannte_kaesten(J.get(fid), E, fid)
+        nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
+        ek_weg = []     # 24.11.2026: Erkennerkaesten erst pruefen (erkennerkasten_pruefen), falsche geben ihre Flaeche frei
+        pruef = None if a.ohne_kastenpruefung else (lambda x: EK.pruefen(rgb, bel, R["u0"], R["z1"], R["c"], (x["u0"], x["u1"], x["z0"], x["z1"]), x["klasse"], npz, R["F"]))
+        bek = bekannte_kaesten(J.get(fid), E, fid, pruef, ek_weg)
+        for x in ek_weg: print(f"{fid} Erkennerkasten {x['klasse']} u {x['kasten'][0]:.2f}-{x['kasten'][1]:.2f} z {x['kasten'][2]:.2f}-{x['kasten'][3]:.2f} VERWORFEN (gibt Flaeche frei): {x['grund'][:160]}")
         kand, weg = kandidaten(rgb, bel, aufl, R, bek)
         neu = []
         if kand:
             fotos = fotos_laden(a.fein, a.ordner, fid, R)
-            nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
             for k in kand:
-                n, ges, kanten, st, je = bestaetigen(k, fotos, R, a.min_fotos)
-                k.update(fotos_bestaetigt=n, fotos_gesehen=ges, je_foto=je)
+                tor, k["unschaerfe_tor"] = tor_schaerfe(k, a.schaerfe, a.kontrast_stark)   # Unschaerfe-Tor nur fuer schwachen Kontrast (siehe KONTRAST_STARK)
+                n, ges, kanten, st, je = bestaetigen(k, fotos, R, a.min_fotos, schaerfe_min=tor)
+                k.update(fotos_bestaetigt=n, fotos_gesehen=ges, je_foto=je, fotos_unscharf=sum(1 for v in je.values() if v.startswith("unscharf")))
                 if n < a.min_fotos: k["grund"] = f"Formfamilie nur in {n} von {ges} Einzelfotos bestaetigt (< {a.min_fotos})"; weg.append(k); continue
                 if n < a.mehrheit * ges: k["grund"] = f"nur {n} von {ges} sehenden Fotos zeigen das Loch (< {a.mehrheit * 100:.0f} %: lichtabhaengig dunkel = Stein/Schatten)"; weg.append(k); continue
                 e = eintrag(k, n, ges, kanten, st, npz, a.fenster_tiefe); neu.append(e)
@@ -294,8 +360,8 @@ def main(argv=None):
                 J[fid].setdefault("fenster", []).extend(neu); n_neu += len(neu)
         bericht[fid] = dict(arbeitsbild=R["info"], neu=[{x: e[x] for x in ("u0", "u1", "z0", "z1", "stimmen_min", "form_quelle", "tiefe", "tiefe_quelle", "aufloesung_m")} for e in neu],
                             verworfen=[x for x in weg if not x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt"))],
-                            verworfen_masse=len([x for x in weg if x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt"))]))
-        if neu or kand: kontrollbild(rgb, R, neu, weg, bek, os.path.join(aus, f"schlitze_{fid}.jpg"))
+                            verworfen_masse=len([x for x in weg if x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt"))]), erkennerkaesten_verworfen=ek_weg)
+        if neu or kand: kontrollbild(rgb, R, neu, weg, bek, os.path.join(aus, f"schlitze_{fid}.jpg"), kasten_weg=ek_weg)
         for e in neu: print(f"{fid} NEU {e['u1'] - e['u0']:.2f} x {e['z1'] - e['z0']:.2f} m bei u {e['u0']:.2f} z {e['z0']:.2f}-{e['z1']:.2f}: {e['form_quelle']}; Tiefe {e['tiefe']} ({e['tiefe_quelle'][:30]})")
         for x in bericht[fid]["verworfen"]: print(f"{fid} verworfen u {x['u0']:.2f}-{x['u1']:.2f} z {x['z0']:.2f}-{x['z1']:.2f}: {x['grund']}")
     json.dump(bericht, open(os.path.join(aus, "schlitze_wandbild.json"), "w"), indent=1, ensure_ascii=False)
