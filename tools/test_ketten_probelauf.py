@@ -42,7 +42,7 @@ R = KP.auswerten(bericht(bel, {}), ENDE, bekannt=["fenster_beleg"]); pruef(R["ur
 pruef(R["stufen"] == 4 and all(n != "alt_rot" for n, _ in R["daten"] + R["ablauf"]), "nur der letzte Lauf (ab LAUF_START) zaehlt")
 
 # 2 Marken
-S = tempfile.mkdtemp(prefix="kprobe_test_"); D = os.path.join(S, "daten"); Z = os.path.join(S, "modell")
+import pfade; S = pfade.temp_ordner(prefix="kprobe_test_"); D = os.path.join(S, "daten"); Z = os.path.join(S, "modell")
 def js(p, o): os.makedirs(os.path.dirname(p), exist_ok=True); json.dump(o, open(p, "w"))
 js(os.path.join(D, "pipe", "sfm", "seiten_modelle.json"), dict(ergebnis=dict(art="vereint"), nachstufe_code="fdf6375caffd+belegt0"))
 js(os.path.join(D, "pipe", "sfm", "seiten_modelle", "vereinen_0_1", "stand.json"), dict(stand=[["/a/images.bin", 1, 2], "abcdef012345"]))
