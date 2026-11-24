@@ -14,6 +14,10 @@ Grundlage: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` (lesen). Nichts am Modell von Hand
    `audit/neben_details.json`). Ein festes Nebenbild (Steilblick, Gegenlicht) taeuscht ("Vordach flach, Laterne fehlt" 22.11. war falsch).
    Fehlt die Detailansicht: `tools/py tools/neben_details.py modelle/<ziel>/objekt.json` (CPU, ~5 min, < 1 GB bei 1,4 Mio. Dreiecken). SCHWACH im Bild = verdeckt/kein Fotobeleg, nicht bewerten.
 3. **Je Befund ein Agent** (hoechstens 2-3 gleichzeitig): `isolation: "worktree"`, `model: "opus"`, `run_in_background: true`.
+   PFLICHT VOR DEM AUFTRAG (24.11.: Bildauswahl, Flaechenmass, Brennweite doppelt gebaut): `python3 -I tools/wissen_suchen.py <Befund in
+   eigenen Worten>` + `python3 -I tools/werkzeug_aehnlich.py "<Befund>"`; die TOP-5-Zeilen (Vorlaeufer, ✗-Versuche) WOERTLICH in den Auftrag
+   unter "Vorarbeit". Neues Werkzeug braucht die Kopfzeile `Verwandt/Vorlaeufer: ...` (Schnelltest prueft). Fehlsuche -> Synonym in
+   `tools/wissen_synonyme.json` + Fall in `tools/wissen_wiederfinden.json`.
    Auftrag: EIN Befund mit Bildpfad/Log/Zahlen; Ursache mit Belegen; generisch als Kettenstufe/Werkzeug + Test + Zeile in
    `tools/schnelltest.sh`; `test_undefinierte_namen` vor Commit; keine Handstand-Werte; Objektordner auf main nicht aendern;
    KEINE Rechenlaeufe waehrend der Kette; nur committen im eigenen Zweig, nicht mergen; Bericht Fehlerliste zuerst, Realitaets-%.

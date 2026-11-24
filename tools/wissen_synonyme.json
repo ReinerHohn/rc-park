@@ -1,11 +1,15 @@
 {
- "_hinweis": "Synonymgruppen fuer tools/wissen_suchen.py. Ein Suchbegriff, der zu einem Gruppenwort passt, sucht die ganze Gruppe. Gross/klein und ae/ä egal; Woerter <= 4 Zeichen nur als ganzes Wort. Neue Gruppe = neue Liste.",
+ "_hinweis": "Synonymgruppen fuer tools/wissen_suchen.py. Ein Suchbegriff, der zu einem Gruppenwort passt, sucht die ganze Gruppe. Gross/klein und ae/ä egal; Woerter <= 4 Zeichen nur als ganzes Wort. Neue Gruppe = neue Liste. Steht das Wort in einer Gruppe GENAU, gelten nur diese Gruppen (sonst Teilwort). Fehlsuche (wissen_suchen-HINWEIS mit Wortvorschlaegen) -> das Wort, das dann traf, hier eintragen.",
  "gruppen": [
   ["Erkennerkasten", "Erkennerkaesten", "Erkennerbox", "OWLv2", "fassade_parsing", "elemente.json", "erkennerkasten_pruefen", "falscher Kasten"],
-  ["Fotoauswahl", "Bildauswahl", "Bildwahl", "Fotowahl", "Teilmenge", "Bildwert", "Sweet Spot", "Sweetspot", "Wichtigkeit", "Fotozahl", "foto_wichtigkeit", "bildwert", "dicht_bildwahl"],
+  ["Fotoauswahl", "Bildauswahl", "Bildwahl", "Fotowahl", "Teilmenge", "Bildwert", "Sweet Spot", "Sweetspot", "Wichtigkeit", "Fotozahl", "foto_wichtigkeit", "bildwert", "dicht_bildwahl", "weniger Fotos", "weniger Bilder", "weniger Bildern"],
+  ["duenner", "dünner", "duenn", "Punktdichte", "verliert Dichte", "Schichten"],
+  ["gekippt", "schief", "verkippt", "Kippung", "kippelt", "Wandneigung", "Neigung"],
+  ["unter Gelaende", "unter Gelände", "im Boden", "Gelaende", "Gelände", "DGM1", "DGM", "Gelaendehoehe"],
+  ["zusammenfuegen", "zusammenfügen", "vereinen", "vereint", "seiten_vereinen", "Seiten vereinen"],
   ["Wolke", "Punktwolke", "dichte Wolke", "PatchMatch", "Fusion", "MVS", "Tiefenkarte"],
   ["Ausrichtung", "Lage", "GPS", "Georeferenz", "LoD2", "LOD2", "Lot", "Massstab", "Maßstab", "DOM1", "Laser", "sfm_ausrichten"],
-  ["Seitenverwechslung", "Seitenverklebung", "Symmetrie", "symmetrisch", "Seiten vereinen", "Seitenerkennung", "verklebt", "Seitenfolge"],
+  ["Seitenverwechslung", "Seitenverklebung", "Symmetrie", "symmetrisch", "Seiten vereinen", "Seitenerkennung", "verklebt", "Seitenfolge", "vertauscht", "verwechselt", "Seiten vertauscht"],
   ["Kante", "Kanten", "Drahtgitter", "Linien-Feature", "Linienfeature", "Kanten-Sweep", "Epipolar", "Rippe"],
   ["Fenster", "Oeffnung", "Öffnung", "Loch", "Löcher", "Laibung", "Leibung", "Rueckwand", "Rückwand", "aushoehlen"],
   ["Relief", "Bruchstein", "Putz", "Fuge", "Fugen", "Quader"],
@@ -26,10 +30,17 @@
   ["Helm", "Turmhelm", "Spitze", "Nadel"],
   ["Tuermchen", "Türmchen", "Ecktuermchen", "Ecktürmchen"],
   ["Maske", "Masken", "Vordergrund", "Segmentierung", "SegFormer", "Himmelsmaske"],
-  ["Draht", "Drähte", "Oberleitung", "Fahne"],
+  ["Draht", "Drähte", "Oberleitung", "Fahne", "Drahtmaske", "Drahtmasken", "Spanndraht", "Spanndraehte", "wolke_draehte"],
   ["Kette", "Gesamtkette", "Nullstart", "Kettenlauf", "gesamtkette"],
   ["Agent", "Agenten", "Worktree", "Kreis", "Runde"],
   ["Generator", "Bauteil", "Bauteile", "bauteile"],
-  ["Netz", "Poisson", "wasserdicht", "pymeshfix", "Mesh"]
+  ["Netz", "Poisson", "wasserdicht", "pymeshfix", "Mesh"],
+  ["Formsitz", "Formmass", "Formmaß", "Flaechenmass", "Flächenmaß", "flaechen_mass", "Formvergleich", "Oberkontur", "Tiefen-IoU", "trennscharf"],
+  ["Brennweite", "EXIF", "exif_brennweite", "brennweite_waehlen", "Pixel-Brennweite", "Brennweiten-Schaerfe"],
+  ["Haufen", "Strassenhaufen", "Wolkenhaufen", "Grundriss-Tor", "haufen_am_foto", "haufen_klaeren", "haufen_herkunft", "Geisterwolke", "Geisterblatt"],
+  ["Oeffnungen", "Öffnungen", "Schlitz", "Schlitze", "Luke", "Nische", "Nischen", "Gewaende", "Gewände", "Tordurchfahrt", "Bogenoeffnung", "oeffnungen_wandbild", "oeffnungen_bogen", "oeffnungen_aus_kanten"],
+  ["Widerspruch", "Widersprueche", "widerlegt", "Rueckfall", "WIDERSPRUECHE"],
+  ["Turmhoehe", "Turmhöhe", "Gesamthoehe", "Firsthoehe", "Dachfirst", "Spitzenhoehe", "Turmspitze"],
+  ["Doppelgaenger", "doppelt gebaut", "Vorlaeufer", "Vorläufer", "Verwandt", "werkzeug_aehnlich", "Wiederentdeckung"]
  ]
 }
