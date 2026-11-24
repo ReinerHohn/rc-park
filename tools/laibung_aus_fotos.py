@@ -39,14 +39,19 @@ def bereich(q, k_sign, zk):
     return ua, ue, za, ze
 
 
-def bereich_nische(qn, k_sign, zk, rand=0.02, weg=0.05):
+def bereich_nische(qn, k_sign, zk, k=None, rand=0.02, weg=0.10, t_max=0.6):
     """24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2): Suchfeld fuer die HINTERKANTE der Nischenlaibung (Nischengrund trifft Laibung) auf der abgewandten Seite: zwischen
     der Fensteroeffnung (qn['_innen'] = (u0, u1) + weg, deren Kanten sind staerker) und der Nischenvorderkante (- rand: die feste Vorderkante wandert nicht und
-    gaebe T = 0). Hoehe wie bereich(). qn = Nischen-dict (u0, u1, z0, z1, bogen)."""
+    gaebe T = 0). Hoehe wie bereich(). qn = Nischen-dict (u0, u1, z0, z1, bogen).
+    Mit k (Blickschraege dieses Fotos): nur der Streifen, in dem die Hinterkante bei T <= t_max liegen kann (Vorderkante - |k| t_max) - Kopie 1122 f00: sonst
+    gewannen die Gewaendekanten der Fensteroeffnung (T -1,06 m)."""
     za, ze = qn["z0"] + 0.3, zk - 0.1
     if ze - za < 0.2: return None
     iu0, iu1 = qn.get("_innen", (qn["u0"], qn["u0"]))
     ua, ue = (max(iu1 + weg, qn["u0"]), qn["u1"] - rand) if k_sign > 0 else (qn["u0"] + rand, min(iu0 - weg, qn["u1"]))
+    if k is not None:
+        sp = abs(k) * t_max + 0.03
+        ua, ue = (max(ua, qn["u1"] - sp), ue) if k_sign > 0 else (ua, min(ue, qn["u0"] + sp))
     return (ua, ue, za, ze) if ue - ua >= 0.06 else None
 
 
@@ -172,7 +177,7 @@ def fenster_messen(bilder, kam, rel, rast, q, a, felder=None, bereich_fn=None, b
         sg, k = sk
         if name in felder:
             A_, ua_, s_ref = felder[name]; r = kante_im_feld(A_, ua_, rast[2], sg, beide=beide); r = None if r is None else (r[0], s_ref, r[2]); qu = "foto"
-        else: r = kante_messen(g, rel, rast, q, sg, zk, bereich_fn, beide); qu = "ortho"
+        else: r = kante_messen(g, rel, rast, q, sg, zk, (lambda q_, s_, z_, k=k: bereich_fn(q_, s_, z_, k)) if bereich_fn else None, beide); qu = "ortho"
         if r is None: continue
         P.append(dict(foto=name, seite="rechts" if sg > 0 else "links", k=round(k, 4), u_obs=round(r[0], 3), s=round(r[1], 3), staerke=round(r[2], 2), quelle=qu))
     if not P: return dict(fehler="kein Foto zeigt eine Laibung", punkte=[])
@@ -280,7 +285,7 @@ def main():
                 for qi, qn in enumerate(QN):
                     if qn is None: continue
                     sk = seite_k(qn, *kam[name]); zk = (qn.get("bogen") or {}).get("kaempfer") or qn["z1"]
-                    b = bereich_nische(qn, sk[0], zk) if sk else None
+                    b = bereich_nische(qn, sk[0], zk, sk[1]) if sk else None
                     if b is None or verdeckt(g, rast, qn, b): continue
                     if im is None: im = cv2.imread(pf, cv2.IMREAD_GRAYSCALE)
                     if im is None: break

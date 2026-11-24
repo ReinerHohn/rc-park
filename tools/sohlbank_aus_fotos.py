@@ -205,7 +205,7 @@ def annahme_bank(P, kam, zone, A, gi, a, e):
     """24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2; Nutzer 'Alle Masse muessen aus Fotos kommen', Plan 'belegte Form nie verwerfen'): das dunkle Band ist in >= min_fotos
     Fotos da (Form belegt), nur die AUSKRAGUNG laesst sich aus der Blickschraege nicht bestimmen (Steigung negativ/unsicher). Dann ANNAHME aus denselben Fotos:
     Auskragung = dunkle STIRNHOEHE (Achsabschnitt der Bandhoehe bei kappa 0 = Frontalsicht; ANNAHME Profil etwa so tief wie hoch), nur <= gesehene
-    Bandhoehe; Lage/Hoehe/Laenge wie gemessen (abschluss: Enden frei in >= 3 Fotos, sonst keine Bank - Schattenkante ist keine Leiste). Nie eine feste Zahl."""
+    Bandhoehe, Band ueber die ganze Zonenbreite und <= 0,15 m unter ihr; Lage/Hoehe/Laenge wie gemessen (abschluss: Enden frei in >= 3 Fotos, sonst keine Bank - Schattenkante ist keine Leiste). Nie eine feste Zahl."""
     ab = ((A.get("auskragung_bandhoehe") or {}).get("achsabschnitt") or [])
     hs = ab[gi] if gi < len(ab) else None; Hm = float(np.median([p["H"] for p in P]))
     # Gegenprobe 24.11. (Kopie 1122, f04 Tuer: Achsabschnitt 0,41 bei Bandhoehe ~0,2): die Stirn ist in Frontalsicht nie hoeher als das gesehene Band
@@ -221,6 +221,9 @@ def annahme_bank(P, kam, zone, A, gi, a, e):
     r = abschluss(P, kam, zone, dict(d=d), a)
     if "fehler" in r: return dict(e, fehler=e.get("fehler", "") + "; keine ANNAHME: " + r["fehler"], punkte=P)     # Enden muessen aus >= 3 Fotos kommen (echte Leiste, kein Schatten)
     r["z0"] = round(z_b, 3); r["z1"] = round(z_b + hs, 3)                     # Hoehe = Stirn (Frontalsicht), passend zur ANNAHME
+    # Kopie 1122 (f01 Schlitz: 10-cm-"Bank" 0,32 m unter der Oeffnung): eine Sohlbank traegt die GANZE Oeffnung und liegt direkt darunter
+    if r["u0"] > zone[0] + 0.02 or r["u1"] < zone[1] - 0.02 or zone[2] - (z_b + hs) > 0.15:
+        return dict(e, fehler=e.get("fehler", "") + f"; keine ANNAHME: Band u {r['u0']:.2f}..{r['u1']:.2f} z bis {z_b + hs:.2f} traegt die Zone u {zone[0]:.2f}..{zone[1]:.2f} ab z {zone[2]:.2f} nicht", punkte=P)
     laenge_q = f"Fotoenden {r.get('laenge_fotos')}"
     e = {k: v for k, v in e.items() if k != "fehler"}
     return dict(e, **r, auskragung=round(d, 3), auskragung_streuung=None, auskragung_aus=["ANNAHME"], fotos=len(P),
