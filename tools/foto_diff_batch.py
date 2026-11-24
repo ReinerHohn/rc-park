@@ -6,7 +6,7 @@ Aenderungen gegenueber 'foto_diff.py je Foto als eigener Prozess' (foto_diff.py 
   - Importe/Netz/Oberflaechen-Stichprobe EINMAL je Prozess (foto_diff._NETZ), optional zusaetzlich auf Platte (--punkte-cache = FD_PUNKTE_DIR, bitgleich, Saat 0) -> naechster Prozess spart 4-5 s.
   - Punktmodus: torch wird NICHT importiert (render_kern._T = False; entspricht CUDA_VISIBLE_DEVICES='' ohne den 8-s-Import).
   - Fotos laufen in --threads Faeden (Punktmodus: CPU-Schritte ueberlappen; Raster: GPU-Raster des einen Fotos laeuft waehrend CPU-Schritte (Kosten, Distanzen) des anderen).
-  - Raster: VRAM-Deckel per torch.cuda.set_per_process_memory_fraction aus JOB_GPU_MB (Standard 1500 MiB).
+  - Raster: VRAM-Deckel per torch.cuda.set_per_process_memory_fraction aus JOB_GPU_MB, sonst Job-Buchung RCPARK_GPU_MB - 300 (vram_deckel_mb; ohne beides 1500 MiB).
   - Kameravarianten: --k-ordner NAME=DIR: DIR/messprotokoll/K-<nr>.json ersetzt die K-Datei (sonst Original); Ausgabe je Variante in eigenem Ordner.
 Ausgabe: <aus>/<name>/<nr>/foto_diff_<nr>.json (+ jpg) - dieselben Felder wie foto_diff (kosten_lr, versatz, modellkanten_px ...) wie modell_wettbewerb p2/<kandidat>/<nr>.
 Zusammenfassung: <aus>/batch_ergebnis.json (name|nr -> kosten_lr, modellkanten_px, sek)."""
@@ -23,6 +23,17 @@ def _mit_wiederholung(fn, argv_, modus, n=3, pause=8.0):
             import torch, gc; gc.collect(); torch.cuda.empty_cache(); time.sleep(pause)
 
 
+def vram_deckel_mb(env):
+    """VRAM-Deckel des Rastermodus in MiB: JOB_GPU_MB (ausdruecklich), sonst die Job-Buchung RCPARK_GPU_MB (tools/job_start.sh) minus ~300 MiB Treiber-Grundlast
+    (wie fassade_ortho.gpu_budget_mb), mindestens 1000; ohne beides 1500 (Wert bis 24.11.).
+    24.11.2026 (Kette 1122zb, Stufe konvergenz): Kette gebucht mit RCPARK_GPU_MB=6000, JOB_GPU_MB nicht gesetzt -> Deckel 1500 MiB; alle 20 Fotos des
+    Fotosatzes 'CUDA out of memory' bei 6 GiB freier Karte (je 3 Versuche mit 8 s Pause), grobes F1 'kein Beleg (Datendecke -> Fotoauftrag)' auf allen Seiten."""
+    j = env.get("JOB_GPU_MB")
+    if j: return float(j)
+    b = int(float(env.get("RCPARK_GPU_MB") or 0))
+    return float(max(1000, b - 300)) if b > 0 else 1500.0
+
+
 def lauf(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--aus", required=True)
     ap.add_argument("--stl", action="append", required=True, help="NAME=pfad.stl (mehrfach)"); ap.add_argument("--fotos", required=True)
@@ -37,7 +48,7 @@ def lauf(argv=None):
     import render_kern as RK
     if a.modus == "punkt": RK._T = False                                                       # kein torch-Import im Punktmodus (gleiches Verhalten wie ohne CUDA)
     else:
-        import torch; mb = float(os.environ.get("JOB_GPU_MB", "1500")); tot = torch.cuda.get_device_properties(0).total_memory / 2**20
+        import torch; mb = vram_deckel_mb(os.environ); tot = torch.cuda.get_device_properties(0).total_memory / 2**20
         torch.cuda.set_per_process_memory_fraction(min(1.0, mb / tot))
     import fehlteile_finden as FF, foto_diff as FD
     tl = threading.local(); orig_k = FF.k_datei; kdirs = dict(k.split("=", 1) for k in a.k_ordner)
@@ -79,8 +90,11 @@ def lauf(argv=None):
     [t.start() for t in ths]; [t.join() for t in ths]
     gesamt = round(time.time() - t0, 2); os.makedirs(a.aus, exist_ok=True)
     json.dump(dict(gesamt_sek=gesamt, n=len(aufg), modus=a.modus, threads=a.threads, ergebnisse=erg), open(os.path.join(a.aus, "batch_ergebnis.json"), "w"), indent=1)
-    print(f"foto_diff_batch: {len(aufg)} Aufgaben in {gesamt} s ({gesamt / len(aufg):.2f} s je Foto)"); return erg
+    print(f"foto_diff_batch: {len(aufg)} Aufgaben in {gesamt} s ({gesamt / len(aufg):.2f} s je Foto)")
+    fe = [k for k, v in erg.items() if "fehler" in v]
+    if fe: print(f"FEHLER foto_diff_batch: {len(fe)} von {len(aufg)} Aufgaben ohne Ergebnis (z. B. {fe[0]}: {erg[fe[0]]['fehler'][:90]})" + (f" - VRAM-Deckel {mb:.0f} MiB (JOB_GPU_MB/RCPARK_GPU_MB)" if a.modus == "raster" else ""))
+    return erg
 
 
 if __name__ == "__main__":
-    lauf()
+    e_ = lauf(); sys.exit(2 if e_ and all("fehler" in v for v in e_.values()) else 0)      # 24.11.2026: alle Aufgaben gescheitert (1122zb: 20/20 OOM) lief mit rc 0

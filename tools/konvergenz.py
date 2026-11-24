@@ -71,6 +71,23 @@ COS_MIN = math.cos(math.radians(40)); ABD_MIN = 0.5; K_STD = 5; SCHWELLE = 0.02
 FEIN_TOL_M = 0.03; FEIN_ZIEL_M = 0.05; FEIN_MIN_PX = 150
 PLATEAU = "PLATEAU (Methode erschoepft)"; STEIGT = "steigt"; FAELLT = "faellt (Rueckschritt)"; KURZ = "Reihe zu kurz"
 KEIN = "kein Beleg (Datendecke -> Fotoauftrag)"
+# 24.11.2026 (Kette 1122zb): alle Seiten 'kein Beleg (Datendecke -> Fotoauftrag)', Ursache waren Werkzeugfehler (foto_diff_batch 20/20 CUDA-OOM am eigenen
+# 1500-MiB-Deckel, teil_fotoform FileNotFoundError durch Pfad statt Objektname) - kein Datenbefund. Scheitert die MESSUNG, heisst der Status so:
+MESSFEHLER = "Messfehler (Werkzeug, kein Datenbefund) -> Werkzeug beheben, kein Fotoauftrag"
+
+
+def messfehler_grob(quelle):
+    """Fotos, deren grobe Messung (foto_diff_batch, <quelle>/batch_ergebnis.json) mit Fehler endete -> {nr: fehlertext}."""
+    try: E = json.load(open(os.path.join(quelle, "batch_ergebnis.json"))).get("ergebnisse") or {}
+    except (OSError, ValueError): return {}
+    return {k.split("|", 1)[-1]: v["fehler"] for k, v in E.items() if isinstance(v, dict) and v.get("fehler")}
+
+
+def status_messfehler(status, fotos, fehl_grob, fein_fehlgeschlagen, rund=False):
+    """KEIN -> MESSFEHLER, wenn kein Wert entstand, WEIL die Messung scheiterte: grob alle Fotos der Seite mit Werkzeugfehler (rund: feine Messung gescheitert)."""
+    if status != KEIN: return status
+    if rund: return MESSFEHLER if fein_fehlgeschlagen else status
+    return MESSFEHLER if fotos and all(nr in fehl_grob for nr in fotos) else status
 
 
 # ---------------------------------------------------------------- Geometrie
@@ -485,6 +502,8 @@ def main(argv=None):
             r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "foto_diff_batch.py"), a.objekt, "--aus", quelle, "--stl", f"m={stl}",
                                 "--fotos", ",".join(satz), "--modus", "raster", "--threads", "2"], cwd=root, capture_output=True, text=True)
             if r.returncode: print(f"HINWEIS: foto_diff_batch rc {r.returncode}: {(r.stderr or r.stdout)[-300:]}")
+    fehl_grob = messfehler_grob(quelle)
+    if fehl_grob: print(f"FEHLER: grobe Messung (foto_diff_batch) {len(fehl_grob)} von {len(satz)} Fotos ohne Ergebnis, z. B. {next(iter(fehl_grob))}: {next(iter(fehl_grob.values()))[:100]} - Werkzeugfehler, kein Datenbefund")
     diffs, alt = {}, []
     for nr in satz:
         d, p = diff_lesen(quelle, nr)
@@ -493,7 +512,7 @@ def main(argv=None):
         if p and os.path.exists(kp) and os.path.getmtime(kp) > os.path.getmtime(p) + 1: alt.append(nr)
     if alt: print(f"HINWEIS: {len(alt)} foto_diff aelter als ihre K-Datei (Kamera seither neu): {alt[:6]} - Werte gehoeren zu einem frueheren Stand")
     # --- fein messen / lesen
-    tf = None
+    tf = None; fein_fehl = False
     if bt and a.fein_json and os.path.exists(a.fein_json): tf = json.load(open(a.fein_json))
     elif bt and not a.lesen and os.path.exists(stl) and not a.ohne_fein:
         from pfade import temp_ordner
@@ -502,8 +521,8 @@ def main(argv=None):
         if nt and fot:
             r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "teil_fotoform.py"), a.objekt, "--teile_dir", td, "--fotos", ",".join(fot),
                                 "--wolke_verdeckung", "aus", "--fein", "an", "--aus", tfp], cwd=root, capture_output=True, text=True)
-            if r.returncode: print(f"HINWEIS: teil_fotoform rc {r.returncode}: {(r.stderr or r.stdout)[-300:]}")
-            if os.path.exists(tfp): tf = json.load(open(tfp))
+            if r.returncode: print(f"FEHLER: teil_fotoform rc {r.returncode} (feine Messung gescheitert - Werkzeugfehler, kein Datenbefund): {(r.stderr or r.stdout)[-300:]}"); fein_fehl = True
+            if os.path.exists(tfp) and not r.returncode: tf = json.load(open(tfp))
     fein = fein_lesen(tf, bt) if bt else {}
     # --- Wolke gegen Modell (Verlust der Modellierung) messen / lesen
     wolke = None; wj = os.path.join(a.lesen or quelle, "konvergenz_wolke.json")
@@ -591,6 +610,8 @@ def main(argv=None):
             sth = streuung(zeilen_neu, g, "hoehensitz"); sh_eff = max(a.schwelle, 2 * sth) if sth is not None else a.schwelle
             sh = status_reihe(reihe(zeilen_neu, g, "hoehensitz"), sh_eff) if e["hoehensitz_trennt"] else TRENNT_NICHT
             e.update(status_hoehe=sh, schwelle_hoehe=round(sh_eff, 4), status=status_mit_hoehe(e["status"], sh))
+        e["status"] = status_messfehler(e["status"], S["seiten"].get(g, {}).get("fotos", []), fehl_grob, fein_fehl, rund=(g == "rund"))
+        if e["status"] == MESSFEHLER: e["messfehler"] = dict(grob=sorted(nr for nr in S["seiten"].get(g, {}).get("fotos", []) if nr in fehl_grob), fein=fein_fehl)
         if e["status"] in (PLATEAU, KEIN, TRENNT_NICHT) or e["status"].startswith("faellt"):
             e["restfehler"] = restfehler(diffs, S["seiten"].get(g, {}).get("fotos", []), bt, g, fein)
     if not a.trocken:
