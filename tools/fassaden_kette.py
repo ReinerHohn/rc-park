@@ -190,16 +190,24 @@ def relief_bereinigen(f_in, f_out, ersetzt=(), band=0.05, lang=1.5, dick=0.45, e
     return dict(brei_weg=round(float((weg & ~ers).sum() / max(m.sum(), 1)), 3), ersetzt=round(float((ers & m).sum() / max(m.sum(), 1)), 3), linienhaft_behalten=n_lin)
 
 
-def relief_roh(r0, r2, px, putz_band=0.05):
+def relief_roh(r0, r2, px, putz_band=0.05, steinzone=None):
     """Wand OHNE Quaderwerk: Netz-Relief unveraendert als <wand>_voll.npz. Kleine Loecher glatt, Oeffnungen (Loch mit Netz dahinter: Arkade, Tor) auf das tiefste Niveau (Ruecksprung statt Wandflaeche),
     'vorstand' = das ganze Relief so weit vor die Wandebene, dass sein tiefster Ruecksprung 1 cm davor liegt (hoechstens Klemme + 1 cm = 11 cm = 1,3 mm bei 1:87), OHNE den Ebenentrend des Netzes.
     GRUND (kaufhaus_gk 17.11.2026, Bild Modell neben Foto): die Netzflaeche lag im Mittel 1,5 cm HINTER der LoD2-Ebene - alles unter der Ebene verschwand im Grundkoerper, von Fenstern/Arkaden blieben nur
     ein paar Grate. Mit Trend waeren es 25-81 cm Vorstand geworden (LoD2-Ebene der Seitenstreifen 23-34 cm neben dem Netz, Neigung bis 10 cm/m) - die LAGE bleibt deshalb die des Grundkoerpers (LoD2),
-    das Netz liefert nur die Form. Der Vorstand ist Darstellung, kein Mass (ANNAHME)."""
+    das Netz liefert nur die Form. Der Vorstand ist Darstellung, kein Mass (ANNAHME).
+    steinzone = (zu, zo) m (steinzone_wandbild, 24.11.2026): Quaderzone einer sonst putzigen Wand - dort KEIN putz_eben (Buckel < 5 cm sind dort Stein, kein Rauschen;
+    vorher war das Scan-Band der Sued-/Nordwand flach -> Mono-Relief fand keine Korrelation, rc 4), Maske 'putz' = Wand ausserhalb der Zone (Mono/Steine rechnen nur in der Zone)."""
     import cv2
     Zr = dict(np.load(r0)); H_, W_ = Zr["rel"].shape; wand = Zr["wand"] if "wand" in Zr else np.ones((H_, W_), bool); zu = (Zr["rel"] == 0.0) & ~Zr["oeffnung"] & wand
     Zr["rel"], gef = loecher_glatt(Zr["rel"], zu, 1.5, px); da = wand & (Zr["rel"] != 0.0); eben = 0.0
-    if putz_band: Zr["rel"], eben = putz_eben(Zr["rel"], da & ~Zr["oeffnung"], px, band=putz_band); Zr["rel"][~da] = 0.0      # 17.11.2026 glatter Putz statt Netzrauschen (putz_eben)
+    zone = np.zeros((H_, W_), bool)
+    if steinzone:
+        zz_ = float(Zr["z0"]) + (H_ - 1 - np.arange(H_) + 0.5) * px; zone[(zz_ >= steinzone[0]) & (zz_ <= steinzone[1])] = True
+        Zr["putz"] = wand & ~zone & ~Zr["oeffnung"]; Zr["steinzone"] = np.array(steinzone, float)
+    if putz_band:                                                         # 17.11.2026 glatter Putz statt Netzrauschen (putz_eben); Steinzone bleibt roh
+        if (da & ~Zr["oeffnung"] & ~zone).any(): Zr["rel"], eben = putz_eben(Zr["rel"], da & ~Zr["oeffnung"] & ~zone, px, band=putz_band)
+        Zr["rel"][~da] = 0.0
     tief = float(Zr["rel"][da].min()) if da.any() else 0.0; vor = round(0.01 - tief, 3)
     loch = (Zr["rel"] == 0.0) & wand & ~Zr["oeffnung"]; neu = np.where(wand, Zr["rel"] + vor, 0.0); neu[Zr["oeffnung"] & wand] = 0.01      # Oeffnung = tiefster Ruecksprung; grosse Loecher = mittlere Wandflaeche; ausserhalb der Wand nichts
     Zr["rel"] = neu.astype(np.float32); Zr["loch"] = loch; Zr["generiert_anteil"] = 0.0; np.savez_compressed(r2, **Zr)
@@ -332,6 +340,24 @@ def steinzone_oben(rel, putz, px, anteil=0.3, sockel=1.5, max_z=12.0):
     return round(min(oben * px, max_z), 2)
 
 
+def steinzone_wandbild(Z, objekt_json, min_hoehe=2.0):
+    """QUADER-ENTSCHEIDUNG JE ZONE (24.11.2026): Hoehenband (zu, zo) m der Quaderzone von unten aus dem WANDBILD oder None.
+    Stein = putz_wandbild.glatt_karte 'quader' (Mehrfoto-Feinstruktur der entzerrten Einzelfotos) im Reliefraster, Zone = quader_raster.steinzone_band
+    (>= 30 % Steinzeilen an der Wand ohne Oeffnungen, Luecken < 1,5 m ueberbrueckt, Putzzeilen >= 30 % beenden sie). Anlass Schwabentor 1122u: Sued w06/w07 und Nord w02 unten Buckelquader bis zur
+    Putzkante, darueber Putz mit Wandgemaelde - das Quader-Tor (steine_aus_foto, ganze Wand) sagte 'kein Fugenraster' -> ganze Wand glatt, Mono rc 4."""
+    ffn = fein_ordner(objekt_json)
+    if not ffn: return None
+    sys.path.insert(0, HIER); from putz_wandbild import putz_auf_relief; from quader_raster import steinzone_band
+    q = putz_auf_relief(Z, ffn, art="quader")
+    if q is None: return None
+    H_, W_ = np.asarray(Z["rel"]).shape; wz = np.ones((H_, W_), bool)
+    if "wand" in Z and np.asarray(Z["wand"]).shape == (H_, W_): wz &= np.asarray(Z["wand"], bool)
+    if "oeffnung" in Z and np.asarray(Z["oeffnung"]).shape == (H_, W_): wz &= ~np.asarray(Z["oeffnung"], bool)
+    pz = putz_auf_relief(Z, ffn)                                           # glatter Putz laut Wandbild beendet die Zone (Wandgemaelde liest sich teils 'rau')
+    b = steinzone_band(np.asarray(q, bool), wz, float(Z["px"]), float(Z["z0"]), putz=pz)
+    return b if b and b[1] - b[0] >= min_hoehe else None
+
+
 def wandende_ist_ecke(waende, w, ende, abstand=0.8, parallel=0.95):
     """Gebaeudeecke = Wandende ('a'/'b'), an dem KEINE gleichgerichtete Nachbarwand weiterlaeuft (Ende an Anfang innerhalb 'abstand' m, |cos| >= parallel).
     Wandabschnitte derselben Flucht (eine Fassade in mehrere LoD2-Stuecke zerlegt) sind so keine Ecke (21.11.2026, Eckquader-Erkennung)."""
@@ -347,7 +373,7 @@ def wandende_ist_ecke(waende, w, ende, abstand=0.8, parallel=0.95):
 _CODEFEHLER = []   # Programmierfehler in abgefangenen Teilschritten -> Stufe rot (wie Teilwerkzeug-Absturz)
 
 
-def quadern(f, objekt_json, Z_basis, art, ecken=(False, False)):
+def quadern(f, objekt_json, Z_basis, art, ecken=(False, False), zone=None):
     """Quaderraster aus dem Wandbild auf ein gebautes Relief (tools/quader_raster.py, 21.11.2026): je Stein ebene Stirnflaeche (Median der Tiefe), druckbare Rillen.
     art: 'fein' (mono/misch, Steinzone unten), 'foto' (Fotorelief: nur wo es Stein ist), 'wand' (Wand ohne Quader-Tor: nur Steinzone von unten).
     Liefert (pfad, info) - pfad = f, wenn nichts zu tun ist (kein Wandbild, kein Raster) oder OHNE_QUADER_RASTER=1."""
@@ -358,7 +384,7 @@ def quadern(f, objekt_json, Z_basis, art, ecken=(False, False)):
     od = os.path.dirname(os.path.abspath(objekt_json)); Zf = np.load(f)
     kw = dict(vorn_quelle=dict(Z_basis) if Z_basis is not None and "vorn" in Z_basis.files else None, frei=uhren_frei(od, Zf))
     if art == "foto": kw["nur_in"] = np.asarray(Zf["rel"]) > (float(Zf["putz_niveau_m"]) if "putz_niveau_m" in Zf.files else 0.0) + 0.01
-    if art == "wand": kw["zone_unten"] = True
+    if art == "wand": kw["zone_unten"] = tuple(zone) if zone else True       # zone = (zu, zo) aus dem Quader-Tor je Zone (fassaden_kette.json 'steinzone'), sonst Zaehlung der Steine
     if any(ecken): kw["rand_ecke"] = tuple(ecken)                         # Eckquader am Gebaeudeende: Bloecke mit gemessener Hoehe/Laenge
     oa_ = os.path.join(od, "audit", "oeffnungen_auto.json")                # 21.11.2026 spaet: Boegen (Form/Lage aus Wandbild-Kanten) -> Keilsteine mit radialen Fugen
     if os.path.exists(oa_) and os.environ.get("OHNE_KEILSTEINE") != "1":
@@ -466,7 +492,7 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
         # Beulen bis 1 mm H0. Jetzt je Stein ebene Stirnflaeche + druckbare Rillen; Wand ohne Quader-Tor (w02: unten Quader, oben Putz) nur in der Steinzone von unten.
         qbel = []
         if w.get("quader") is False and not w.get("nur_foto"):
-            f, qi_ = quadern(f, objekt_json, Z, "wand"); qbel.append(("Wand", qi_))
+            f, qi_ = quadern(f, objekt_json, Z, "wand", zone=w.get("steinzone")); qbel.append(("Wand", qi_))
         if hat_foto:
             WLq_ = json.load(open(B))["waende"]; ff, qi_ = quadern(ff, objekt_json, Z, "foto", (wandende_ist_ecke(WLq_, w, "a"), wandende_ist_ecke(WLq_, w, "b"))); qbel.append(("Fotorelief", qi_))
         if mono_: fmo, qi_ = quadern(fmo, objekt_json, Z, "fein"); qbel.append(("Feinrelief mono", qi_))
@@ -624,6 +650,17 @@ def main():
             if wf is not None: wand_eintragen(r0)
         Z = np.load(r0); w["loch"] = round(float(Z["lochanteil"]), 3); w["oeffnung"] = round(float(Z["oeffnung"].mean()), 3)
         quelle = r0
+        def fein_zone(z1f):                                           # lokale Feinrechnung der Steinzone z 0..z1f (GPU); Quaderwand UND Steinzone einer Putzwand (24.11.2026)
+            w["steinzone_z1"] = z1f
+            if z1f >= 2.0:
+                feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = _gpu_run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
+                                                                                                           "--aussen", *map(str, w["aussen"]), "--feld", *feld, "--max_size", a.fein_max_size] + (["--massstab", *a.massstab] if a.massstab else []), capture_output=True, text=True)
+                print("   ", (rf_.stdout.strip().splitlines() or [rf_.stderr.strip()[-200:]])[-1][:200], flush=True); absturz_merken(rf_, [os.path.join(HIER, "tiefe_lokal.py")]); rfe = os.path.join(rd, w["name"] + "_fein.npz")
+                if rf_.returncode == 2:                                   # Guard: Buendel und Bildordner passen nicht (z. B. entzerrtes Buendel + Originalfotos) -> Feinrechnung fuer ALLE Waende aus, laut
+                    FEIN_AUS[0] = (rf_.stdout.strip().splitlines() or ["?"])[-1][:400]; w["fein_aus"] = FEIN_AUS[0]; print("    FEIN UEBERSPRUNGEN (alle Waende):", FEIN_AUS[0], flush=True)
+                elif rf_.returncode == 3: w["fein_aus"] = (rf_.stdout.strip().splitlines() or ["?"])[-1][:300]; print("    FEIN OHNE ABDECKUNG:", w["fein_aus"], flush=True)
+                if rf_.returncode == 0 and os.path.exists(rfe) and lauf([os.path.join(HIER, "relief_mischen.py"), rfe, r2, os.path.join(rd, w["name"] + "_misch.npz")]) == 0:
+                    w["fein_feld"] = [0.0, round(L, 2), 0.0, round(z1f - 0.1, 2)]; w["fein_anteil"] = round(float(np.load(os.path.join(rd, w["name"] + "_misch.npz"))["fein"].mean()), 3)
         # 17.11.2026 QUADER-TOR VOR Putzglaetten und Steine-Generieren: beide Stufen setzen einen Putzbau mit Werkstein voraus (Schwabentor). Am Kaufhaus (roter Putz) erklaerte relief_putz 90 % der Wand zu "Stein"
         # und steine_generieren ueberschrieb Fenster und Figuren des echten Netz-Reliefs mit erfundenen Kissen (30 % der Flaeche). Probe: steine_aus_foto.py auf der ganzen Wand (bestes Foto, Verdeckung gegen
         # Modell + LoD2-Nachbarn); rc 5 = das Foto zeigt KEIN Fugenraster -> Netz-Relief bleibt roh (nur kleine Loecher glatt gefuellt), keine Fotosteine. rc 0 = Quaderwerk -> Ablauf wie bisher.
@@ -632,13 +669,24 @@ def main():
         if a.fotosteine and os.path.exists(stl_):
             rc_t = lauf([os.path.join(HIER, "steine_aus_foto.py"), r0, rpr, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", verd, "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", "0.03", "--nah", "0", "--streng"] + (["--massstab", *a.massstab] if a.massstab else []))
             w["quader"] = True if rc_t == 0 else (False if rc_t == 5 else None)
+            # 24.11.2026 QUADER-TOR JE ZONE: 'kein Fugenraster' auf der ganzen Wand heisst nicht 'nirgends Stein' (Schwabentor Sued/Nord: unten Quader bis zur Putzkante,
+            # oben Putz mit Wandgemaelde). Steinzone aus dem Wandbild (steinzone_wandbild), dort das Tor noch einmal - Fugenraster in der Zone -> Zone = Stein, Rest = Putz.
+            if rc_t == 5 and not leer and os.environ.get("OHNE_STEINZONE") != "1":
+                sz_ = steinzone_wandbild(Z, a.objekt)
+                if sz_:
+                    rc_z = lauf([os.path.join(HIER, "steine_aus_foto.py"), r0, rpr, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", verd, "--feld", "0.1", str(round(L - 0.1, 2)), str(sz_[0]), str(sz_[1]), "--px", "0.03", "--nah", "0", "--streng"] + (["--massstab", *a.massstab] if a.massstab else []))
+                    w["steinzone_tor"] = dict(zone=list(sz_), rc=rc_z)
+                    if rc_z == 0: w["steinzone"] = list(sz_); print(f"    Quader-Tor je Zone: Steinzone z {sz_[0]:.1f}..{sz_[1]:.1f} m hat Fugenraster (Wandbild + Foto) - dort Stein, darueber Putz", flush=True)
+                    else: print(f"    Quader-Tor je Zone: Wandbild-Steinzone z {sz_[0]:.1f}..{sz_[1]:.1f} m, Foto ohne Fugenraster (rc {rc_z}) - ganze Wand Putz", flush=True)
             for q_ in (rpr, rpr[:-4] + ".jpg"):
                 if os.path.exists(q_) and rc_t != 0: os.remove(q_)
         if w.get("quader") is False:
             if leer: w["aus"] = "kein Netz in der Wand und kein Quaderwerk im Foto (Quader-Tor) - nichts zu tun"; print("    AUS:", w["aus"], flush=True); return
-            w.update(relief_roh(r0, r2, a.px)); print(f"    kein Quaderwerk im Foto: Netz-Relief roh, kleine Loecher glatt gefuellt ({w['gefuellt'] * 100:.1f} % der Flaeche), Oeffnungen als Ruecksprung, Relief {w['vorstand'] * 100:.0f} cm vor die Wandebene, keine generierten Steine", flush=True)
+            w.update(relief_roh(r0, r2, a.px, steinzone=w.get("steinzone"))); print(f"    kein Quaderwerk im Foto" + (f" ausser der Steinzone z {w['steinzone'][0]:.1f}..{w['steinzone'][1]:.1f} m (dort Netz-Relief roh, ohne Putzglaettung)" if w.get("steinzone") else "") + f": Netz-Relief roh, kleine Loecher glatt gefuellt ({w['gefuellt'] * 100:.1f} % der Flaeche), Oeffnungen als Ruecksprung, Relief {w['vorstand'] * 100:.0f} cm vor die Wandebene, keine generierten Steine", flush=True)
             for q_ in (r1, r1[:-4] + ".jpg", os.path.join(rd, w["name"] + "_foto.npz"), os.path.join(rd, w["name"] + "_foto.jpg")):      # Reste eines frueheren Laufs (Putzmaske/Fotosteine) gelten nicht mehr
                 if os.path.exists(q_): os.remove(q_)
+            if w.get("steinzone") and a.fein and not FEIN_AUS[0]: fein_zone(round(min(w["steinzone"][1], 12.0), 2))      # Steinzone: lokale Feinrechnung wie an Quaderwaenden (hoechstens 12 m wie steinzone_oben)
+            elif w.get("steinzone") and FEIN_AUS[0]: w["fein_aus"] = FEIN_AUS[0]
             return
         if fotos and lauf([os.path.join(HIER, "relief_putz.py"), r0, r1, a.objekt, *fotos, "--feld", "0", str(L), "0", str(w["z1"])] + (["--massstab", *a.massstab] if a.massstab else [])) == 0:
             quelle = r1; w["putz"] = round(float(np.load(r1)["putz"].mean()), 3)
@@ -659,17 +707,7 @@ def main():
         if a.fein and not leer and FEIN_AUS[0]:                           # 21.11.2026: Guard von tiefe_lokal (Buendel/Bilder unpassend) gilt fuer alle Waende - nicht je Wand 10 min neu versuchen
             w["fein_aus"] = FEIN_AUS[0]
         if a.fein and not leer and not FEIN_AUS[0]:                       # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
-            Zv = np.load(r2); z1f = steinzone_oben(Zv["rel"], Zv["putz"] if "putz" in Zv.files else None, a.px)
-            w["steinzone_z1"] = z1f
-            if z1f >= 2.0:
-                feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = _gpu_run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
-                                                                                                           "--aussen", *map(str, w["aussen"]), "--feld", *feld, "--max_size", a.fein_max_size] + (["--massstab", *a.massstab] if a.massstab else []), capture_output=True, text=True)
-                print("   ", (rf_.stdout.strip().splitlines() or [rf_.stderr.strip()[-200:]])[-1][:200], flush=True); absturz_merken(rf_, [os.path.join(HIER, "tiefe_lokal.py")]); rfe = os.path.join(rd, w["name"] + "_fein.npz")
-                if rf_.returncode == 2:                                   # Guard: Buendel und Bildordner passen nicht (z. B. entzerrtes Buendel + Originalfotos) -> Feinrechnung fuer ALLE Waende aus, laut
-                    FEIN_AUS[0] = (rf_.stdout.strip().splitlines() or ["?"])[-1][:400]; w["fein_aus"] = FEIN_AUS[0]; print("    FEIN UEBERSPRUNGEN (alle Waende):", FEIN_AUS[0], flush=True)
-                elif rf_.returncode == 3: w["fein_aus"] = (rf_.stdout.strip().splitlines() or ["?"])[-1][:300]; print("    FEIN OHNE ABDECKUNG:", w["fein_aus"], flush=True)
-                if rf_.returncode == 0 and os.path.exists(rfe) and lauf([os.path.join(HIER, "relief_mischen.py"), rfe, r2, os.path.join(rd, w["name"] + "_misch.npz")]) == 0:
-                    w["fein_feld"] = [0.0, round(L, 2), 0.0, round(z1f - 0.1, 2)]; w["fein_anteil"] = round(float(np.load(os.path.join(rd, w["name"] + "_misch.npz"))["fein"].mean()), 3)
+            Zv = np.load(r2); fein_zone(steinzone_oben(Zv["rel"], Zv["putz"] if "putz" in Zv.files else None, a.px))
     _waende_parallel(W, _wand, a.objekt if not a.wand else None)
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(dict(netz=a.netz, waende=W), open(os.path.join(od, "audit", "fassaden_kette.json"), "w"), indent=1, ensure_ascii=False)
     print("->", os.path.join(od, "audit", "fassaden_kette.json"), "| ANSEHEN: relief/<wand>_voll.jpg")

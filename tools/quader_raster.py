@@ -296,6 +296,25 @@ def keilsteine(antwort, lab, c, uu, zz, bogen, vz=1.0, frei=None, gueltig=None, 
                            ruecken_je_stein=[round(x, 3) for x in Rk], bogenbreite_je_stein_m=[round(float(x), 3) for x in breite], form=bogen["form"])
 
 
+def steinzone_band(stein, wz, px, z0, anteil=0.3, lauf_m=0.5, luecke_m=1.5, min_wand_m=0.3, putz=None, putz_stop=0.3):
+    """Hoehenband (zu, zo) m der Steinzone von unten oder None. stein/wz = bool-Raster (Zeile 0 = oben): Stein bzw. zaehlende Wand (ohne Oeffnungen).
+    Zeilen mit >= anteil Stein an der Wand; Zeilen mit < min_wand_m Wand neben der Oeffnung sind neutral (zaehlen als Stein, keine Luecke).
+    Die Zone beginnt beim untersten Steinblock (>= lauf_m zusammenhaengend), Luecken < luecke_m werden ueberbrueckt - ausser Putzzeilen (putz = bool-Raster
+    glatter Putz laut Wandbild, >= putz_stop der Wand): dort endet die Zone hart (Sued w06: ueber der Putzkante 8,7 m liest das Wandbild das Wandgemaelde
+    stellenweise als 'rau' (0,4) - ohne Putzstopp lief die Zone bis 12 m ins Gemaelde).
+    24.11.2026: aus quader_auf_relief(zone_unten) herausgeloest - dieselbe Regel entscheidet in fassaden_kette.steinzone_wandbild das Quader-Tor JE ZONE
+    (Schwabentor Sued: unten Buckelquader, oben Putz mit Wandgemaelde -> ganze Wand galt als 'kein Quaderwerk')."""
+    stein = np.asarray(stein, bool); wz = np.asarray(wz, bool); H = stein.shape[0]
+    nw_ = wz.sum(1); fr_ = np.where(nw_ * px >= min_wand_m, (stein & wz).sum(1) / np.maximum(nw_, 1), 1.0); k_ = H; luecke = 0
+    lauf_ = max(2, int(round(lauf_m / px)))
+    while k_ > 0 and not (k_ - lauf_ >= 0 and (fr_[k_ - lauf_:k_] >= anteil).all()): k_ -= 1
+    if k_ == 0: return None                                               # kein Steinblock
+    zu_ = z0 + (H - k_) * px                                              # Unterkante des untersten Steinblocks
+    pz_ = np.zeros(H, bool) if putz is None else (np.where(nw_ * px >= min_wand_m, (np.asarray(putz, bool) & wz).sum(1) / np.maximum(nw_, 1), 0.0) >= putz_stop)
+    while k_ > 0 and not pz_[k_ - 1] and (fr_[k_ - 1] >= anteil or luecke * px < luecke_m): luecke = 0 if fr_[k_ - 1] >= anteil else luecke + 1; k_ -= 1
+    k_ += luecke; return (round(float(zu_), 2), round(float(z0 + (H - k_) * px), 2))
+
+
 def _fassade(Z, ffn, parallel=0.95, abstand=1.0):
     try: FF = json.load(open(os.path.join(ffn, "fassaden.json")))["fassaden"]
     except Exception: return None
@@ -388,14 +407,11 @@ def quader_auf_relief(Z, ffn, min_fotos=2, massstab=None, min_mm=None, rand_ecke
             if "oeffnung" in Z and np.asarray(Z["oeffnung"]).shape == (H, W): wz_ &= ~np.asarray(Z["oeffnung"], bool)
             if "wand" in Z and np.asarray(Z["wand"]).shape == (H, W): wz_ &= np.asarray(Z["wand"], bool)
             # Die Zone beginnt beim UNTERSTEN Steinblock (w02: unter 6,5 m nur Torbogen/Leibung, Netz-Gewoelbe statt Oeffnungsmaske) - darunter liegende Zeilen ohne Stein zaehlen nicht als Luecke.
-            nw_ = wz_.sum(1); fr_ = np.where(nw_ * px >= 0.3, ((lab > 0) & wz_).sum(1) / np.maximum(nw_, 1), 1.0); k_ = H; luecke = 0
-            lauf_ = max(2, int(round(0.5 / px)))                         # Steinblock = >= 0,5 m zusammenhaengend (einzelne Zeilen in der Leibung zaehlen nicht)
-            while k_ > 0 and not (k_ - lauf_ >= 0 and (fr_[k_ - lauf_:k_] >= 0.3).all()): k_ -= 1
-            zu_ = z0 + (H - k_) * px                                     # Unterkante des untersten Steinblocks
-            while k_ > 0 and (fr_[k_ - 1] >= 0.3 or luecke * px < 1.5): luecke = 0 if fr_[k_ - 1] >= 0.3 else luecke + 1; k_ -= 1
-            k_ += luecke; zgr = z0 + (H - k_) * px                       # Oberkante der Steinzone
-            info_zone = (round(zu_, 2), round(zgr, 2))
-            cz = np.asarray(ndi.mean(np.broadcast_to(zz[:, None], (H, W)).astype(np.float64), lab, ids)); bleib &= (cz <= zgr) & (cz >= zu_)
+            # zone_unten = (zu, zo): Zone vom Aufrufer (fassaden_kette 'steinzone' aus dem Wandbild + Quader-Tor je Zone, 24.11.2026) - die Zaehlung der segmentierten
+            # Steine riss an der Torbogenleibung ab (Sued w06: Zone 0..2,2 m, Steine 6-8 m ueber dem Bogen verworfen)
+            info_zone = (float(zone_unten[0]), float(zone_unten[1])) if isinstance(zone_unten, (tuple, list)) else steinzone_band(lab > 0, wz_, px, z0)
+            cz = np.asarray(ndi.mean(np.broadcast_to(zz[:, None], (H, W)).astype(np.float64), lab, ids))
+            bleib &= ((cz <= info_zone[1]) & (cz >= info_zone[0])) if info_zone else False
         if len(keil) and len(ids): bleib |= np.isin(ids, keil) & (np.nan_to_num(np.asarray(ndi.mean(np.asarray(nur_in, bool).astype(np.float64), lab, ids))) >= 0.5 if nur_in is not None else True)   # Keilsteine: eigenes Tor (Bogenruecken + radiale Fugen), nicht die Steinzone
         raus = ids[~bleib]; weg_zone = int(len(raus))
         if weg_zone: lab[np.isin(lab, raus)] = 0

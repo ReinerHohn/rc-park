@@ -640,6 +640,7 @@ def main():
         for w_ in FK.get("waende", []):                                   # TOR: Korrelation je Foto mit dem Scan-Bandpass >= 0,2 (schwaechere Fotos verwirft das Werkzeug; keins uebrig = rc 4 = Wand ohne Mono-Relief)
             rq_ = [os.path.join(Z, "relief", w_["name"] + e_ + ".npz") for e_ in ("_misch", "_voll")]; rq_ = [q_ for q_ in rq_ if os.path.exists(q_)]
             L_, z1m = float(w_.get("laenge", 0.0)), round(min(float(w_.get("z1", 0.0)), 10.0), 2)
+            if w_.get("quader") is False and w_.get("steinzone"): z1m = round(min(z1m, float(w_["steinzone"][1])), 2)      # 24.11.2026 Quader-Tor je Zone: Putzwand mit Steinzone unten -> Mono nur in der Steinzone (Putz/Wandgemaelde korrelieren nicht mit dem Scan)
             if w_.get("aus") or w_.get("nur_foto") or not rq_ or not os.path.exists(stl_m) or L_ < 2.0 or z1m < 2.0: continue
             mo = os.path.join(Z, "relief", w_["name"] + "_mono.npz")
             for e_ in (".npz", ".jpg", ".json"):
