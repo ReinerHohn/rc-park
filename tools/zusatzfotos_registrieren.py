@@ -367,7 +367,8 @@ def registrieren(a):
                    kameras_json=a.kameras, zoom_json=a.zoom, kamera_gruppen=({g: dict(n=len(e["namen"]), f_px=e["params"][0], cx=e["params"][1], cy=e["params"][2], k1=e["params"][3], f_orig=e["f_orig"]) for g, e in GK.items()} if GK else None),
                    max_fehler_pnp_px=a.max_fehler, min_inlier=a.min_inlier, bilder=ergeb)
     json.dump(bericht, open(os.path.join(a.aus, "registrierung.json"), "w"), indent=1)
-    print(f"registriert {len(neu)}/{len(names)}, Reproj mittel {bericht['reproj_mittel_px']:.2f} px, median {bericht['reproj_median_px']:.2f} px")
+    _f = lambda v: f"{v:.2f}" if v is not None else "-"   # 24.11.2026 Probelauf: 0 registriert -> None -> TypeError (seiten_luecken stuerzte ab)
+    print(f"registriert {len(neu)}/{len(names)}, Reproj mittel {_f(bericht['reproj_mittel_px'])} px, median {_f(bericht['reproj_median_px'])} px")
 
 
 def luecken(a):

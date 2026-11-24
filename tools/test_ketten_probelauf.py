@@ -41,6 +41,7 @@ R = KP.auswerten(bericht(bel, {}), ENDE); pruef(R["urteil"] == 1 and R["erster_f
 B_t = bericht(gut); B_t["teillauf_ergebnis"] = dict(zeit="2026-11-24 15:40:00", rc=0, abbruch="")
 R = KP.auswerten(B_t, ["GESAMTKETTE_TEILLAUF_ENDE /x/gesamtkette_bericht.json"]); pruef(R["urteil"] == 0, "Teillauf (--bis anlegen) mit GESAMTKETTE_TEILLAUF_ENDE = OK, kein Absturz (Grundstand 24.11.)")
 R = KP.auswerten(B_t); pruef(R["urteil"] == 0, "Teillauf ohne Log: teillauf_ergebnis zaehlt als Ende")
+R = KP.auswerten(bericht([dict(stufe="abnahme_x", ok=False, fehler="  -> 0 veraltete Auto-Beobachtung(en) dieses Fotos ersetzt | ABNAHME rc=3")], dict(rc=4)), ENDE); pruef(R["urteil"] == 0 and not R["ablauf"], "Abnahme rot mit Text veraltete Auto-Beobachtung = Daten, kein Ablauffehler (Grundstand 24.11.)")
 R = KP.auswerten(bericht(bel, {}), ENDE, bekannt=["fenster_beleg"]); pruef(R["urteil"] == 0, "dieselbe Stufe im Grundstand schon rot (--bekannt) = nur Hinweis")
 pruef(R["stufen"] == 4 and all(n != "alt_rot" for n, _ in R["daten"] + R["ablauf"]), "nur der letzte Lauf (ab LAUF_START) zaehlt")
 
