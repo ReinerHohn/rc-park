@@ -1,0 +1,19 @@
+Vorschlag fuer ~/git/claude-mds (24.11.2026, aus rc-park, Agent "Wissen besser archivieren")
+
+Dateien (1:1 nach ~/git/claude-mds/ kopieren, Pfade gleich):
+  claude/skills/doku-pflege/wissen_suchen.py      Suche mit Rangfolge (TOP 10), Synonyme je Projekt, Stamm/Teilwort, Werkzeug-Aehnlichkeit
+  claude/skills/doku-pflege/werkzeug_aehnlich.py  Doppelgaenger-Werkzeuge per Wortschatz (von wissen_suchen importiert)
+  claude/skills/doku-pflege/luecken.py            Vollstaendigkeit des Baums, Quellen per Konfig .claude/doku-pflege.json "wissen.luecken"
+  claude/skills/doku-pflege/wiederfinden.py       Nachweis Recall@5 auf echten Verlustfaellen
+  claude/skills/doku-pflege/test_wissen.py        synthetischer Test (python3 -I test_wissen.py -> "OK test_wissen")
+  claude/skills/doku-pflege/SKILL.md              = aktuelle SKILL.md + neuer Abschnitt "4b. Wissen finden" (sonst unveraendert)
+
+Kein Projektpfad im Code; Quellen aus .claude/doku-pflege.json "wissen" (check.py liest dieselbe Datei, unbekannte Schluessel stoeren nicht).
+Gemessen in rc-park (Memory aus, git log aus):
+  Recall@5 Verlustfaelle  vorher 6/12 (alte Suche + alte Synonyme) -> 7/12 (nur neue Rangfolge) -> 12/12 (Rangfolge + 11 neue / 3 erweiterte Synonymgruppen)
+  Kontrollsatz (nie abgestimmt): vorher 4/8, nachher 4/8 - die Verbesserung verallgemeinert NOCH NICHT; der Gewinn kommt aus den
+  gelernten Synonymen der Verlustfaelle. Das ist der Mechanismus (Fehlsuche -> Synonym), aber kein Beweis fuer neue Faelle.
+  luecken.py mit rc-park-Konfig: 1028 von 1069 Eintraegen wie tools/wissensbaum_luecken.py; 41 Abweichungen = rc-park-Sonderregeln
+  (NICHTS_GEBRACHT-Tabellenzeilen/Datumskoepfe, Uhrzeit-Verweise) -> rc-park behaelt wissensbaum_luecken.py als Projektadapter.
+Nach Uebernahme in rc-park: tools/wissen_suchen.py, werkzeug_aehnlich.py, wissen_wiederfinden.py sind identische Projektkopien -> durch
+  Dreizeiler ersetzen, der ~/.claude/skills/doku-pflege/<x>.py mit gleichen Argumenten aufruft (Fallback: Kopie, falls Skill fehlt).
