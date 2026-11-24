@@ -53,6 +53,7 @@ Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-
 - 7.11./11.11. · LLM-Bildprüfer → ⚠ begrenzt · sieht Formfamilie, nicht 0,5-1° Kamera; Eichsatz = Nullkontrolle [NICHTS_GEBRACHT BU-LLM; REZEPT L56]
 - 9.11. · synthetischer Rundlauf als Kantenmetrik → ✗ verworfen · Metrik trennt die Verfahren nicht [archiv/LOGBUCH_2026-11-09]
 - 24.11. · Realitäts-% nach Augenmaß → ↺ `konvergenz.py` · fester Fotosatz je Seite, F1 grob+fein gepaart, PLATEAU = Methode wechseln; Probe 1122: nur 3/20 Satzfotos gemessen, 10/14 Torfotos Eckblicke [test_konvergenz]
+- 24.11. · Verlust dichte Wolke → Modell je Seite → ↺ `konvergenz_wolke.py` (Stufe in `konvergenz.py`) · gleiche Fotos + foto_diff-Kantenlogik für die Wolke (Splat, Bereich/dmed/Verdecker vom Modell, Nullprobe 1,3/2,1 m verschoben); Probe 1122 (CPU, 1,5 M Pkt.): roh Wolke 0,48–0,71 gegen Modell 0,31–0,56, über Zufall aber beide nur 0,00–0,16 → Nord/Süd/Ost „nicht trennbar“, West „gleich“. Das grobe F1 misst hier v. a. Kantendichte (Quaderfugen, Wolkenrauschen) [test_konvergenz_wolke]
 
 **Messen und Zählen am Foto**
 - 10.11. · Triangulation mit 7-9° Schnittwinkel → ✗ · ±0,25-0,33 m; dritte Kamera mit ≥ 20° [NICHTS_GEBRACHT 11.11.; REZEPT L32]
