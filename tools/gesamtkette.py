@@ -24,7 +24,9 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   seiten     tools/seiten_luecken.py --holen (Fotos fuer ungesehene Waende nachregistrieren, Tor tools/kameras_nachtragen_tor.py); sehen BELEGTE neue Kameras eine ungesehene Wand
              und steigt deren Abdeckung messbar: EIN Teillauf ab fenster bis seiten im selben Lauf (tools/seiten_wiederholung.py, 23.11.2026)
-  html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
+  draehte    tools/wolke_draehte.py: Draehte/Oberleitung + Fahnen (Draht als schmales Blatt) + Freiraum (SfM-Strahlen durch Gewirr vor der Wand) aus einer KOPIE der Wolke -> <daten>/wolke_anzeige/ (nur Anzeige;
+             Original + Wolke-Tore unveraendert), Bericht audit/wolke_draehte.json + audit/wolke_draehte.jpg (24.11.2026, Nutzerbefund 1122 Nordseite)
+  html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html (Wolke = gefilterte Kopie, wenn neuer als das Original)
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
   (immer am Ende) tools/befundliste.py -> audit/befunde.json + audit/befunde/bNN.jpg: sichtbare Fehler je Ort/Art/Beleg/Werkzeug fuer die Agenten-Schleife
 Umgebung: venv-seg (s.o.) oder `tools/py tools/gesamtkette.py ...`; Teilschritte mit pycolmap ruft die Kette selbst mit venv-colmap.
@@ -36,7 +38,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = "/media/oem/scan/venv-seg/bin/python"; PYC = "/media/oem/scan/venv-colmap/bin/python"
-STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "bauplan", "seiten", "html", "vergleich", "druck"]
+STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "bauplan", "seiten", "draehte", "html", "vergleich", "druck"]
 UEBERNEHMEN = ["name", "ort", "lod2", "rahmen", "rahmen_wand", "koordinate_utm", "hoehe_m", "fotos_dir", "seiten_konvention", "bildquellen"]
 
 
@@ -878,9 +880,19 @@ def main():
             t_hv = time.time(); lauf(B, "hand_vergleich", ["python3", "tools/hand_vergleich.py", ZR], log)
             beleg(B, "hand_vergleich", [os.path.join(Z, "audit", "hand_vergleich.json")], t_hv, altstand_beiseite=True, folge="Altstand beiseite - befundliste/Agenten-Schleife vergleichen NICHT mit dem Handstand-Vergleich eines frueheren Laufs")   # 24.11.2026 AUDIT      # 21.11.2026: Kettenergebnis gegen den frueheren Handstand (audit/hand_vergleich.json)
         notiz(B, "sackgassen", not sg_, offen=sg_, hinweis="Kettenergebnisse ohne Verbraucher im Generator; bekannte, noch nicht verbaute Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md")
+    W_ANZ = os.path.join(D, "wolke_anzeige", os.path.basename(W))                         # 24.11.2026: Anzeige-Kopie ohne Draehte/Fahnen (tools/wolke_draehte.py)
+    if dran("draehte") and os.path.exists(W):
+        t_dr = time.time(); wf_ = W.replace("punkte_modell_", "punkte_farben_"); os.makedirs(os.path.join(Z, "audit"), exist_ok=True); os.makedirs(os.path.dirname(W_ANZ), exist_ok=True)
+        sp_ = os.path.join(P, "sfm", "sparse", "0"); si_ = os.path.join(os.path.dirname(W_ANZ), "sicht.npz")      # Freiraum-Test: SfM-Beobachtungen durchleuchten Fahnen vor der Wand
+        if os.path.exists(si_): os.remove(si_)
+        if os.path.isdir(sp_) and os.path.exists(AU): lauf(B, "draehte_sicht", [PYC, "-I", "tools/wolke_draehte.py", si_, "--sicht_export", sp_, AU], log, ok=(0, 5))   # 5 = anderes SfM-Modell
+        lauf(B, "draehte", [PY, "-I", "tools/wolke_draehte.py", W, "--aus", os.path.dirname(W_ANZ), "--bericht", os.path.join(Z, "audit", "wolke_draehte.json"),
+                            "--bild", os.path.join(Z, "audit", "wolke_draehte.jpg")] + (["--farben", wf_] if os.path.exists(wf_) else []) + (["--sicht", si_] if os.path.exists(si_) else []), log)
+        beleg(B, "draehte", [os.path.join(Z, "audit", "wolke_draehte.json"), W_ANZ], t_dr, folge="html zeigt die ungefilterte Wolke (Draehte/Oberleitung sichtbar)")
+    if not (os.path.exists(W_ANZ) and os.path.exists(W) and os.path.getmtime(W_ANZ) >= os.path.getmtime(W)): W_ANZ = W   # Kopie fehlt/veraltet -> Original zeigen
     if dran("html"):
         args = [PY, "-I", "tools/modell_3d_html.py", ZR, os.path.join(D, f"{a.ziel}_3d.html")]
-        if os.path.exists(W): args += ["--wolke", W] + (["--farben", W.replace("punkte_modell_", "punkte_farben_")] if os.path.exists(W.replace("punkte_modell_", "punkte_farben_")) else [])
+        if os.path.exists(W_ANZ): args += ["--wolke", W_ANZ] + (["--farben", W_ANZ.replace("punkte_modell_", "punkte_farben_")] if os.path.exists(W_ANZ.replace("punkte_modell_", "punkte_farben_")) else [])
         lauf(B, "html", args, log)
     if dran("vergleich") and a.referenz_wolke and os.path.exists(W):       # 15.11.: in venv-seg (torch/gpu_knn); die Kette selbst laeuft mit System-Python
         code = ("import sys, json, numpy as np; sys.path.insert(0, 'tools'); from gpu_knn import min_abstand; rng = np.random.default_rng(0); "
