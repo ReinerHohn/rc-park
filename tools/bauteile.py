@@ -1035,7 +1035,7 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                             teile.append(WG.huelle([(u_, z_, w_) for u_ in (a_, b_) for z_, w_ in ((St["z_fuss"], wi), (St["z_fuss"] + 0.3, wi), (Ko["z_unten"] + 0.02, wf - 0.3), (Ko["z_unten"] + 0.02, wf - 0.05))]))
                     ann.append("Konsolen als Balken von der Wand bis zur Front" + ("; Streben gerade vom Wandfuss zur Konsole" if St else ""))
                 z_d = (G_ or {}).get("z_dach"); V_ = (G_ or {}).get("vordach"); Pf = KM_.get("pfosten") or []
-                if 0 < len(Pf) < 2 and z_d and len((G_ or {}).get("pfosten") or []) >= 2:
+                if 0 < len(Pf) < 2 and z_d and len((G_ or {}).get("pfosten") or []) >= 2 and os.environ.get("OHNE_SWEEP_PFOSTEN_ERGAENZEN") != "1":   # ein Schalter fuer beide Ergaenzungen (Merge 24.11.)
                     # 24.11.2026 (1122zc, duenne Kanten: nur 1 Pfosten aus einer Knagge) - Vordach auf einem Pfosten; Sweep-Pfostenspalten ergaenzen, die nicht schon belegt sind
                     Pf = sorted(list(Pf) + [dict(u=float(u_), breite=None) for u_ in G_["pfosten"] if all(abs(float(u_) - float(p_["u"])) >= 0.6 for p_ in Pf)], key=lambda p_: float(p_["u"]))
                     ann.append("Pfosten aus Kanten ergaenzt um Sweep-Pfostenspalten (nur %d aus Kanten)" % 1)

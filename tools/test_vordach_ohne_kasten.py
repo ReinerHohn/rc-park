@@ -69,11 +69,14 @@ z0, z1, r_ = 9.0, 20.6, 0.2; nz = int(round((z1 - z0) / r_)); nu = int(round((4.
 Wg = [[(1.2 if (z1 - (i + 1) * r_) >= 15.4 or (z1 - (i + 1) * r_) < 12.5 else 0.3) for _ in range(nu)] for i in range(nz)]   # Vordach als Hoehenfeld-Kasten 1,2 m + Galerie
 FH = dict(F0, gruppen=[dict(u0=-3.9, u1=-3.9 + nu * r_, z0=z0, z1=z1, raster=r_, w=Wg, koerper=g0["koerper"], galerie=GAL)])
 zt, za, wt = float(VP["z_t"]), float(VP["z_a"]), float(VP["w_t"]); zq = zt + 0.25 * (za - zt); w_lin = wt - 0.25 * (wt - ww)
-k, bv = bauen(FH); w_q, _, _ = front(k, zq); w_hi, _, _ = front(k, za - 0.3)
+k_s, _ = bauen(FH); w_s, _, _ = front(k_s, zq)        # Merge 24.11.: Standardweg baut das Hoehenfeld nie mehr als Gestalt (bauteile.vorbau_kasten_ersatz) - auch dort geschweift
+pruef(w_s is not None and w_s < w_lin - 0.2, f"Standardweg (Ersatz-Kasten, kein Hoehenfeld): Front bei z {zq:.2f}: w {w_s} geschweift")
+HF = {"MIT_HOEHENFELD": "1"}                           # der Hoehenfeld-Zweig selbst lebt nur noch als Vergleich/rote Probe
+k, bv = bauen(FH, env=HF); w_q, _, _ = front(k, zq); w_hi, _, _ = front(k, za - 0.3)
 pruef(w_q is not None and w_q < w_lin - 0.2, f"Front bei z {zq:.2f}: w {w_q} < gerade {w_lin:.2f} - 0,2 (geschweift)")
 pruef(w_hi is not None and w_hi < ww + 1.2 - 0.2, f"nahe Anschluss z {za - 0.3:.2f}: w {w_hi} - kein Hoehenfeld-Kasten (ww + 1,2) mehr")
 pruef(any("Vordach" in b.get("element", "") and "geschweift" in b.get("element", "") for b in bv), "Beleg 'Vordach ... geschweift'")
-k_r, _ = bauen(FH, env={"OHNE_VORDACH_PROFIL": "1"}); w_r, _, _ = front(k_r, zq)
+k_r, _ = bauen(FH, env=dict(HF, OHNE_VORDACH_PROFIL="1")); w_r, _, _ = front(k_r, zq)
 pruef(not (w_r is not None and w_r < w_lin - 0.2), f"ROT-Probe OHNE_VORDACH_PROFIL=1: w {w_r} (Hoehenfeld-Stufe, nicht geschweift)")
 
 # --- C: Pfosten ergaenzen ---
