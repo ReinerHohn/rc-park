@@ -7,7 +7,8 @@ Kameras 1,6 m hoch in 8..80 m Abstand (Hoehenwinkel ~19..74 Grad), Bilder per St
   T2 Stirn so dunkel wie die Untersicht -> Unterkante NICHT erfunden (None), Seite trotzdem gueltig, Bau mit Druckmindestmass
   T3 alle Kameras gleicher Hoehenwinkel -> ungueltig (keine Triangulation); T4 5 Fotos -> ungueltig (Formfamilie)
   T5 Generator: Koerper steht in Stirnhoehe bis zur gemessenen Aussenkante, ungemessene Seite bleibt bei der Wolkenscheibe, Belege nennen beides
-  T6 hand_vergleich wertet zeltdach_ueberstand "aus Fotos" (Quelle foto), ohne gueltigen Block weiter "wolke"."""
+  T6 hand_vergleich wertet zeltdach_ueberstand "aus Fotos" (Quelle foto), ohne gueltigen Block weiter "wolke".
+  T8 (24.11.2026) Stirn-Unterkante aus den 3D-Kanten der Kantenstufe (Traufzone): gefunden, ersetzt die ANNAHME; Guards Formfamilie/Linie/Rauschen/ohne Datei."""
 import os, sys, json, math, tempfile, subprocess, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cv2, flaeche_ortho as FO, traufe_aus_fotos as T
@@ -114,6 +115,27 @@ with tempfile.TemporaryDirectory() as td:
     b_lauf = k7.slice((Z_W + 30.3) / 2).bounds(); b_stirn = k7.slice((30.3 + E7["z_oben"]) / 2).bounds()
     pruef(b_lauf[3] <= H + 0.02 and abs(b_stirn[3] - (H + E7["a_aussen"])) <= 0.03, f"T7 Generator: im Umgang kein Kasten (y {b_lauf[3]:.2f}), darueber Stirn bis y {b_stirn[3]:.2f}")
     pruef(any("Laufgang bleibt offen" in x.get("hinweis", "") for x in bel7), "T7 Beleg nennt den Umgang")
+
+# ---- T8 Stirn-Unterkante aus den 3D-Kanten der Kantenstufe (24.11.2026, Befund 1122 Nord: ANNAHME 'Untersicht in Raehmhoehe' statt Messung) -------------------
+def linie(z, refs, n_=240, x0=-0.6 * H, x1=0.6 * H, rng=np.random.default_rng(3)):
+    x = rng.uniform(x0, x1, n_); return np.c_[x, np.full(n_, H + A_O) + rng.normal(0, 0.03, n_), np.full(n_, z) + rng.normal(0, 0.012, n_)], np.resize(np.asarray(list(refs)), n_)
+rng8 = np.random.default_rng(8)
+Pu, Ru = linie(Z_U, range(5)); Po, Ro = linie(Z_O, range(5)); Pn = np.c_[rng8.uniform(-3, 3, 150), H + A_O + rng8.uniform(-0.2, 0.2, 150), rng8.uniform(Z_W, Z_O, 150)]
+P8 = np.vstack([Pu, Po, Pn]); R8 = np.concatenate([Ru, Ro, rng8.integers(0, 9, 150)])
+E8 = dict(E2); z8, b8 = T.stirn_aus_kanten(P8, R8, D, "+n", E8)
+pruef(z8 is not None and abs(z8 - Z_U) <= 0.05, f"T8 Stirn-Unterkante aus Kantenpunkten z {z8} (Soll {Z_U} +- 0,05; {b8})")
+E8b = T.umgang_anpassen(T.stirn_einsetzen(E8, z8, b8), dict(gefunden=True, z0=Z_W - 0.2, z1=30.3))
+pruef(E8b.get("z_unten") is not None and abs(E8b["z_unten"] - Z_U) <= 0.05 and E8b.get("stirn_gemessen") is True, f"T8 eingesetzt: z_unten {E8b.get('z_unten')}, Stirn {E8b.get('stirn_m')} m")
+pruef("ANNAHME" not in str(E8b.get("unterkante_quelle")) and "Fotokanten" in str(E8b.get("unterkante_quelle")),
+      f"T8 rote Probe: mit Umgang KEINE ANNAHME mehr (alter Weg: umgang_anpassen setzt 'Untersicht in Raehmhoehe') - Quelle {E8b.get('unterkante_quelle')}")
+pruef(T.stirn_einsetzen(dict(E), Z_U + 0.2, b8).get("z_unten") == E.get("z_unten"), "T8 gemessene 2D-Unterkante wird nicht ueberschrieben")
+z_, b_ = T.stirn_aus_kanten(P8, np.concatenate([np.resize([0, 1], len(Pu)), Ro, rng8.integers(0, 9, 150)]), D, "+n", E8)
+pruef(z_ is None and "Referenzfotos" in b_.get("grund", ""), f"T8 Guard Formfamilie: Unterkante aus nur 2 Fotos verworfen ({b_.get('grund')})")
+Pk, Rk = linie(Z_U, range(5), x0=0.0, x1=0.4); z_, b_ = T.stirn_aus_kanten(np.vstack([Pk, Po, Pn]), np.concatenate([Rk, Ro, rng8.integers(0, 9, 150)]), D, "+n", E8)
+pruef(z_ is None and "Linie" in b_.get("grund", ""), f"T8 Guard Linie: Haufen an einer Stelle verworfen ({b_.get('grund')})")
+z_, b_ = T.stirn_aus_kanten(np.vstack([Po, Pn]), np.concatenate([Ro, rng8.integers(0, 9, 150)]), D, "+n", E8)
+pruef(z_ is None, f"T8 Guard nur Rauschen + Oberkante: keine Unterkante erfunden ({b_.get('grund')})")
+pruef(T.stirn_aus_kanten(None, None, D, "+n", E8)[0] is None, "T8 ohne sweep.npz: Fallback (None)")
 
 print(f"{'FEHLER: ' + str(len(fehler)) if fehler else 'alle Tests bestanden'}")
 sys.exit(1 if fehler else 0)

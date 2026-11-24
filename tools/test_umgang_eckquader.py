@@ -4,6 +4,8 @@
       (breite dunkle Eckflaeche zaehlt nicht), Konsens ueber Fotos (Kabel in einem Foto faellt heraus), Ecken aus Wandfluchten;
   (2) bauteile.umgang_aus_json: baut nur bei gefunden=true, Ruecksprung wirklich im Koerper, Pfosten stehen;
   (3) bauteile.eckquader_aus_relief + fassaden_kette.wandende_ist_ecke: verzahnte Steine am Eckende erkannt, Steinwand ohne Putz und Wandmitte nicht.
+  (4) 24.11.2026: Entzerrung auf der GESETZTEN Wandlage (rote Probe LoD2-Ebene: Unterkante um Versatz x tan(Blickhoehe) falsch), wandlage() Fallback 0,
+      oberkante_belegt(): Fotokanten-Linie auf der gesetzten Wand hebt den LoD2-Deckel auf, Rauschen/keine Datei/falsche Ebene nicht.
 Werte sind Testgeometrie, kein Objektmass. < 5 s."""
 import os, sys, json, tempfile
 import numpy as np
@@ -67,5 +69,35 @@ kw = M.cube((10, 10, 30)).translate((-10, -5, 0)) - M.cube((1, 1, 1)).translate(
 fl = FK.koerper_flaeche(kw, [0.15, 0], [0, 1], [1, 0], [(0, 10), (1, 20), (-1, 5)])
 if fl is None or abs(fl + 0.15) > 0.02: fehler.append(f"koerper_flaeche {fl} statt -0,15")
 
+
+# --- (4) 24.11.2026 GESETZTE WANDLAGE (Befund Hoehen-Angleich 1122: entzerrt auf der LoD2-Ebene, Wand 0,29-0,36 m dahinter) + LoD2-Deckel nur ohne Fotokanten-Beleg
+import cv2
+F4 = dict(id="f00", o=[0.0, 0.0], d=[1.0, 0.0], n=[0.0, -1.0], u=[-4.0, 4.0], z=[0.0, 36.97]); WV = -0.4                 # Wand liegt 0,4 m HINTER der LoD2-Ebene
+C4 = np.array([0.3, -15.0, 1.6]); fw = np.array([0.0, 15.0, 32.4]); fw /= np.linalg.norm(fw); rx = np.cross(fw, [0, 0, 1.0]); rx /= np.linalg.norm(rx); ry = np.cross(fw, rx)
+R4 = np.array([rx, ry, fw]); K4 = dict(rvec=cv2.Rodrigues(R4)[0].ravel().tolist(), t=(-R4 @ C4).tolist(), f_px=900.0, cx=400.0, cy=500.0, k1=0.0)
+uu4, vv4 = np.meshgrid(np.arange(800) + 0.5, np.arange(1000) + 0.5); r4 = np.stack([(uu4 - 400) / 900, (vv4 - 500) / 900, np.ones_like(uu4)], -1) @ R4
+lam = (-WV - C4[1]) / r4[..., 1]; zw = C4[2] + lam * r4[..., 2]                                                              # Schnitt mit der wahren Wand y = 0,4
+img = np.where(zw < 35.0, 0.8, np.where(zw < 36.6, 0.3, 0.1)) * 255; img = cv2.cvtColor(np.clip(img, 0, 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)
+def zone4(wv):
+    zt = 36.97; dz_ = U.band_verschiebung(wv, C4, np.array(F4["o"]) + wv * np.array(F4["n"]), np.array(F4["n"]), zt, 5.0)
+    b4, ok4, _, zz4 = U.band_entzerren(F4, K4, img, zt - 5.0 + dz_, zt + 0.6 + dz_, wv)
+    return U.zone_aus_band(cv2.cvtColor(b4, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255.0, ok4, zz4)
+z_alt, z_neu = zone4(0.0), zone4(WV); print(f"  (4) Umgang-Unterkante LoD2-Ebene {z_alt and round(z_alt[0], 2)}, gesetzte Wand {z_neu and round(z_neu[0], 2)} (Soll 35,0)")
+if z_neu is None or abs(z_neu[0] - 35.0) > 0.06: fehler.append(f"(4) gesetzte Wandlage: Umgang-Unterkante {z_neu and round(z_neu[0], 2)} statt 35,0 +- 0,06")
+if z_alt is None or abs(z_alt[0] - 35.0) < 0.2: fehler.append(f"(4) rote Probe: LoD2-Ebene muesste die Unterkante > 0,2 m falsch setzen (Versatz x tan Blickhoehe), ist {z_alt and round(z_alt[0], 2)}")
+with tempfile.TemporaryDirectory() as td4:
+    kj = os.path.join(td4, "schleife_korrekturen.json")
+    if U.wandlage(F4, kj, (32.0, 37.6)) != 0.0: fehler.append("(4) ohne schleife_korrekturen.json: Wandlage muss 0 (LoD2, Fallback) sein")
+    json.dump(dict(korrekturen=[dict(id="wl_f00", art="wandversatz", o=[0.0, 0.0], n=[0.0, -1.0], w_soll=WV, angenommen=True)]), open(kj, "w"))
+    if abs(U.wandlage(F4, kj, (32.0, 37.6)) - WV) > 1e-9: fehler.append(f"(4) Wandlage aus schleife_korrekturen.json {U.wandlage(F4, kj, (32.0, 37.6))} statt {WV}")
+rng4 = np.random.default_rng(4); n4 = 300
+lin = np.c_[rng4.uniform(-3, 3, n4), np.full(n4, -WV) + rng4.normal(0, 0.03, n4), np.full(n4, 37.3) + rng4.normal(0, 0.02, n4)]; ref4 = np.resize(np.arange(5), n4)
+rausch = np.c_[rng4.uniform(-3, 3, 200), np.full(200, -WV) + rng4.normal(0, 0.05, 200), rng4.uniform(36.5, 38.0, 200)]
+b_ja, _ = U.oberkante_belegt(np.vstack([lin, rausch]), np.r_[ref4, rng4.integers(0, 9, 200)], [F4], {"f00": WV}, 37.3)
+b_nein, _ = U.oberkante_belegt(rausch, rng4.integers(0, 9, 200), [F4], {"f00": WV}, 37.3)
+b_lod2, _ = U.oberkante_belegt(np.vstack([lin, rausch]), np.r_[ref4, rng4.integers(0, 9, 200)], [F4], {"f00": 0.0}, 37.3)   # Linie liegt 0,4 m hinter der LoD2-Ebene
+if not b_ja: fehler.append("(4) Fotokanten-Linie in z1 auf der gesetzten Wand nicht als Beleg erkannt (Deckel bliebe)")
+if b_nein or U.oberkante_belegt(None, None, [F4], {}, 37.3)[0]: fehler.append("(4) Rauschen/keine Kanten duerfen den LoD2-Deckel nicht aufheben")
+if b_lod2: fehler.append("(4) Kante 0,4 m hinter der gepruefen Ebene darf nicht belegen (Toleranz 0,15 m)")
 if fehler: print("FEHLER umgang/eckquader:", "; ".join(fehler)); sys.exit(1)
-print("OK umgang/eckquader: Zone + 4 Pfosten (Kabel/Eckflaeche ignoriert), Bau mit Ruecksprung, Eckquader nur an der Ecke mit Putz daneben")
+print("OK umgang/eckquader: Zone + 4 Pfosten (Kabel/Eckflaeche ignoriert), Bau mit Ruecksprung, Eckquader nur an der Ecke mit Putz daneben; Umgang auf gesetzter Wandlage, LoD2-Deckel nur ohne Fotokanten-Beleg")

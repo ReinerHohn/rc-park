@@ -3,6 +3,8 @@
 #   mit 1/max(|cos|, 0.5) auf den Strahl umgerechnet; ausserhalb +-band Schritt --schritt_vorn, Standard 0,02) -> Vorbauten/Vordach/Traufe bis V vor der Flaeche;
 #   --huelle: Strahlen, die die Flaeche verfehlen, suchen die ersten V+band m in der um V vergroesserten Huellbox (Traufe/Vordach vor dem Himmel);
 #   --geraet cpu (Waechter-Test ohne GPU). Ohne --vorn/--huelle: alter Weg bitgleich (ebenen_bauplan).
+# 24.11.2026 TRAUFZONE: --ziel_flaeche STL [--ziel_skala k] = Blickziel (--ziel_auto) aus dieser Flaeche statt aus --flaeche (kantenstufe.py: zweiter Lauf um die
+#   Traufschuerze ueber der Wandoberkante, Referenzen/Nachbarn wie im ersten Lauf). Ohne die Option bitgleich.
 # Variante von kanten_tiefe_sweep.py (12.11.): --ref_namen, --dziel (Tiefenband um Ziel), --flaeche STL --band m (Sweep je Pixel nur +-band um die Modellflaeche = keine Mehrdeutigkeit durch parallele Rippenkanten), --ziel, --nbdist, --eind. Ausgabe wie Original; Weiterverarbeitung: kanten_features.py --farbe stabil --sweep
 """Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen;
 je Tiefe zaehlen, in wie vielen Nachbarfotos an der Projektion wieder eine stabile Kante steht; Peak = 3D-Kantenpunkt. Keine Linienpaare, keine Wolke noetig.
@@ -35,9 +37,12 @@ VORN = opt("--vorn", 0.0); NBREL = opt("--nb_rel", 0.0);HUELLE = "--huelle" in s
 ZAUTO = "--ziel_auto" in sys.argv; MM = None   # 15.11.: allgemein (Gesamtkette): Flaechen-Massstab per --flaeche_skala (Standard 0,087 = Kaufhaus), Blickziel je Referenz aus der Flaeche
 if "--flaeche" in sys.argv:
     import trimesh; mm = trimesh.load(opt('--flaeche', '', str)); mm.apply_scale(opt('--flaeche_skala', 0.087)); bxs = np.array([float(v_) for v_ in opt('--box3', '14,3,6,27,12,8.4', str).split(',')]); ct = mm.triangles_center; mm = trimesh.Trimesh(mm.vertices, mm.faces[np.all((ct >= bxs[:3]) & (ct <= bxs[3:]), axis=1)], process=False); MM = mm
+MZ = None                                                                       # 24.11.2026 Traufzone (kantenstufe): Blickziel/Nachbarwahl aus einer ANDEREN Flaeche (Messkoerper),
+if "--ziel_flaeche" in sys.argv:                                               # gesucht wird um --flaeche (Traufschuerze) - sonst fielen Referenzen weg, deren Bild die schmale Schuerze kaum trifft
+    import trimesh; MZ = trimesh.load(opt('--ziel_flaeche', '', str)); MZ.apply_scale(opt('--ziel_skala', 0.087))
 def blickziel(a, n=24):                                                         # Median der Treffer eines n x n-Strahlengitters mit der Modellflaeche (None = Foto sieht das Modell kaum)
     Hh, Ww = HW[a]; g = torch.stack(torch.meshgrid(torch.linspace(0, Ww - 1, n, device=dev), torch.linspace(0, Hh - 1, n, device=dev), indexing="xy"), -1).reshape(-1, 2)
-    rr = strahl(a, g[:, 0], g[:, 1]).cpu().numpy(); loc, _, _ = MM.ray.intersects_location(np.repeat(Cn[a][None], len(rr), 0), rr, multiple_hits=False)
+    rr = strahl(a, g[:, 0], g[:, 1]).cpu().numpy(); loc, _, _ = (MZ if MZ is not None else MM).ray.intersects_location(np.repeat(Cn[a][None], len(rr), 0), rr, multiple_hits=False)
     return np.median(loc, 0) if len(loc) >= 0.05 * n * n else None
 for a in refs:
     bz, bmax = BZ, BMAX
@@ -93,4 +98,5 @@ for a in refs:
         im = cv2.cvtColor(V[a].cpu().numpy(), cv2.COLOR_GRAY2BGR); yy = ys.cpu().numpy(); xx = xs.cpu().numpy(); okn = ok.cpu().numpy(); im[yy[~okn], xx[~okn]] = (0, 0, 255); im[yy[okn], xx[okn]] = (0, 255, 0); cv2.imwrite(DIAG.replace(".png", "_%s.png" % os.path.splitext(fs[a])[0]), im)
     r = strahl(a, u[ok], v[ok]); P3 = C[a][None] + r * bd[ok][:, None]; out.append((P3.cpu().numpy(), best[ok].cpu().numpy(), np.full(int(ok.sum()), a)))
     print("Ref %s: Pixel %d, eindeutiger Peak %d (%.0fs)" % (fs[a], len(xs), int(ok.sum()), time.time() - t0), flush=True)
+if not out: out = [(np.zeros((0, 3), np.float32), np.zeros(0, np.float32), np.zeros(0, int))]   # 24.11.2026: keine Referenz mit Nachbarn -> leere Datei statt Absturz
 P = np.vstack([o[0] for o in out]); S = np.concatenate([o[1] for o in out]); A = np.concatenate([o[2] for o in out]); np.savez(sys.argv[3], P=P, s=S, ref=A, fotos=np.array(fs)); print("fertig", len(P), "Punkte" + (f" (Suchraum {VORN:.2f} m vor bis {opt('--band', 0.25):.2f} m hinter der Flaeche, {NHUELLE[0]} Strahlen ueber die Huelle)" if VORN > 0 else ""))
