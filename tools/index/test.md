@@ -1,4 +1,4 @@
-# Werkzeuge: test (191)
+# Werkzeuge: test (192)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -135,6 +135,7 @@
 - `tools/test_seiten_nachholen_quellen.py` [seg] test_seiten_nachholen_quellen.py - Befunde Kettenlauf schwabentor-1122p (23.11.2026), Sekunden, keine echten Daten, kein Netz: (1) seiten_luecken: Kandidaten nur aus vorhandenen Da
 - `tools/test_seiten_nachholen_speicher.py` [col] test_seiten_nachholen_speicher.py - Nachbau des Fehlschlags der Kettenstufe seiten_luecken (23.11.2026, Kette schwabentor-null-1122n/o): SiftGPU 'out of memory' (fremde GPU-Jobs) -
 - `tools/test_seiten_querspur_binden.py` [-] Fester Test (synthetisch, Sekunden, ohne GPU/pycolmap) fuer tools/seiten_querspur_binden.py (22.11.2026, Nulllauf schwabentor-1122f: per GPS vereinte Teile 1-3 m versetzt). Synthet
+- `tools/test_seiten_teilweise.py` [seg] test_seiten_teilweise.py - TEILWEISE UNGESEHENE WAND loest das Nachholen aus (24.11.2026, Kette schwabentor-null-1122x: Ostwand f02 44 % gesehen, 239 m2 ohne Bilddaten oberhalb des
 - `tools/test_seiten_vereinen.py` [-] Fester Test fuer seiten_vereinen.py (Anlass Martinstor 19.11.2026: Achse 2 m zur Kameraseite verschoben, Kameralot 2,3 Grad verkippt). Synthetischer Turm 10 x 10 m, 40 m Wand, Walm
 - `tools/test_seiten_vereinen_robust.py` [-] Fester Test: BELASTUNGSPROBE fuer seiten_vereinen.vereinen OHNE echte Daten (Vorbild tools/versuche/vereinen_robust_1121.py, dort an den Martinstor-Wolken: 8 verfaelschte Laeufe en
 - `tools/test_seiten_wiederholung.py` [seg] test_seiten_wiederholung.py - Kettenluecke 23.11.2026 (Lauf 1122q, schwabentor-1122): seiten_luecken holte Fotos fuer die ungesehenen Waende f01/f02 nach (327 Kameras, 'gegenprobe'

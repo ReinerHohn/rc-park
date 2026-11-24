@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (128)
+# Werkzeuge: sonstige (130)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -15,6 +15,8 @@
 - `tools/db_masken_filter.py` [seg] db_masken_filter.py <db.db> <masken-ordner> --aus <kopie.db> [--min 15]
 - `tools/dom_full_prep.py` [-] dom_full_prep.py — baut dom025_full.npy EXAKT auf dem Raster von dgm025_full.npy (4000x4000, 0.25 m), aus den georeferenzierten DOM1-Kacheln (bilinear resampled). Damit kann terrai
 - `tools/doppelschicht.py` [-] doppelschicht.py - Doppelschicht-Detektor (Plan 2.4): enthaelt eine Wandflaeche der Punktwolke ZWEI Ebenen (Doppeldach = Clip-Versatz/Doming) statt einer?
+- `tools/drahtmaske.py` [seg] drahtmaske.py - DETEKTOR fuer Oberleitungen/Spanndraehte in EINEM Foto (nur cv2 + numpy, CPU, ~1 s je 12-MP-Foto). Rueckgabe: Maske 255 = Draht.
+- `tools/drahtmasken.py` [seg] drahtmasken.py - Draht-Masken je Foto (Detektor tools/drahtmaske.py) mit Zwischenspeicher, fuer alle Verbraucher der Kette.
 - `tools/edge_diag.py` [seg] edge_diag.py — DIAGNOSE (Draufsicht): der EINSCHNITT als EINE Platte mit GERADEN Kanten. Signal ist NICHT Canny/Hough (Rauschen auf Natur), sondern die Grenze flach<->steil: - flac
 - `tools/exif_brennweite.py` [-] exif_brennweite.py - GENERISCH: Brennweite eines Fotos in Pixeln aus EXIF (Prior fuer den Buendelausgleich, Kaufhaus 2026-11-04).
 - `tools/fehlerkarte.py` [seg] fehlerkarte.py - Fehlerkarte je Flaeche (Wand, Vorbau, Dach) fuer die Konvergenzschleife (SPEC_S3_KONVERGENZ Abschnitt 1, nur MESSUNG, 2026-11-05).
@@ -95,7 +97,7 @@
 - `tools/speicher_muster.py` [-] speicher_muster.py - EIN Muster fuer "Stufe scheiterte am Speicher (RAM oder GPU-VRAM)" fuer Kette (gesamtkette.lauf) und Stufen mit Fehlschlag-Marke (seiten_luecken).
 - `tools/spitze_aus_umriss.py` [seg] spitze_aus_umriss.py - TURMSPITZE / LATERNE / DACHREITER aus den FOTO-SILHOUETTEN gegen den Himmel (21.11.2026).
 - `tools/spitze_hoehe.py` [seg] spitze_hoehe.py - Hoehe von Helm-/Nadelspitzen AUTOMATISCH aus der Himmelssilhouette aller kalibrierten Fotos (2026-11-05).
-- `tools/stabil_alle.py` [seg] Stabilitaetskarten fuer alle kalibrierten Fotos (GPU, sequentiell) -> OUTDIR/<foto>.png (uint8 = Laufanteil*255, Breite 1500). Aufruf: stabil_alle.py KAM.json BILDER OUTDIR
+- `tools/stabil_alle.py` [seg] Stabilitaetskarten fuer alle kalibrierten Fotos (GPU, sequentiell) -> OUTDIR/<foto>.png (uint8 = Laufanteil*255, Breite 1500). Aufruf: stabil_alle.py KAM.json BILDER OUTDIR 24.11.2
 - `tools/stadtmesh_laden.py` [gen] stadtmesh_laden.py - Stadtmesh Freiburg 2025 (Quellentyp 19, STADT_MESH) fuer ein Objekt laden (Auftrag G4).
 - `tools/stoermaske_auffrischen.sh` [sh] Nebenzahl prozent_foto_maskiert zum main-STL: Stoermasken (tools/foto_stoermaske.py, Cache rc-park_tmp/stoermaske) + Formliste mit --stoermaske an, in eigenem Worktree wie fotoform
 - `tools/struktur_abgleich.py` [seg] struktur_abgleich.py — HARTER 3D-STRUKTUR-Abgleich (nicht Farbe!). Vergleicht die FORM des Modells gegen die LASER-Grundwahrheit (hofgut_struktur.obj aus nDOM): dominiert das Dach 
