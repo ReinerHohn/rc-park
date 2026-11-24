@@ -982,6 +982,11 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                     # 24.11.2026 (1122w, Nutzer: "Bild-Vorbau hatten wir mal fast perfekt"): ohne Kanten-Pfosten stand das Vordach ohne Stuetze ueber der Galerie (getrennter Koerper,
                     # offene Galerie fehlte). Ersatz = Pfostenspalten des Ebenen-Sweeps (vorbauten_bauplan.galerie_messen, ebenfalls aus den Fotos), Querschnitt Standard.
                     Pf = [dict(u=float(u_), breite=None) for u_ in G_["pfosten"]]; ann.append("Pfostenlage aus den Sweep-Pfostenspalten (Kanten ohne Pfosten)")
+                elif Pf and z_d and os.environ.get("OHNE_SWEEP_PFOSTEN_ERGAENZEN") != "1":
+                    # 24.11.2026 (Nutzer: Handstand schwab_v3 besser; Foto 113029 Galerie mit Pfosten an BEIDEN Enden, Kette 1122zc nur 1 Pfosten aus einer Knagge):
+                    # Kanten-Pfosten und Sweep-Pfostenspalten sind beide Fotomessungen - Sweep-Pfosten ohne Kanten-Pfosten in 0,6 m werden ergaenzt (nicht ersetzt).
+                    neu_ = [float(u_) for u_ in (G_ or {}).get("pfosten") or [] if not any(abs(float(u_) - float(p_["u"])) < 0.6 for p_ in Pf)]
+                    if neu_: Pf = sorted(Pf + [dict(u=u_, breite=None) for u_ in neu_], key=lambda p_: p_["u"]); ann.append("Sweep-Pfosten ergaenzt bei u %s" % ", ".join("%.2f" % u_ for u_ in neu_))
                 if z_d and z_d > Kb["z_oben"] + 0.5:
                     for p_ in Pf:
                         # 24.11.2026 (Kette 1122u: Abnahme "2 getrennte Koerper" = Pfosten f00 bei u 4,25 neben dem Kasten u -3,81..4,09 - stand frei zwischen Kasten und Raehm):
@@ -1021,8 +1026,21 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                                    streben_quelle=G_.get("streben_quelle"), hinweis="ANNAHME: Querschnitte (Pfosten/Riegel 0,22 m), Knaggen, Bodenplatte 0,35 m (Bauteil-Standard); " + ((V_ or {}).get("annahme") or "")))
                 continue
             W_ = np.round(np.array(g["w"], float) / stufe) * stufe; r_ = float(g["raster"]); nk = 0
+            # 24.11.2026 (Nutzer: Handstand schwab_v3 war besser - Vordach dort GENEIGT, Kette 1122w-zc baute das Vordach als Hoehenfeld-Stufen/flachen Kasten):
+            # hat die Gruppe ein Foto-Profil (tools/vordach_profil.py, jetzt auch ohne Kanten-Kasten gemessen), ersetzt das geneigte Walm-Vordach die Hoehenfeld-Zellen
+            # oberhalb seiner Unterkante (z_t - Dachhaut); darunter (Galerie, Raehm) bleibt das gemessene Hoehenfeld. Ohne Profil: unveraendert (Guard).
+            VPh_ = VPJ.get((F.get("id"), gi_)); z_vd = None
+            if VPh_ and (G_ or {}).get("vordach") and VPh_["z_a"] > VPh_["z_t"] + 0.3 and VPh_["w_t"] > ww + 0.2:
+                z_vd = float(VPh_["z_t"]) - 0.15
+                teile.append(vordach_walm(Wand(o, o + d, aussen=o + n), VPh_["u0"], VPh_["u1"], ww, VPh_["w_t"], VPh_["z_t"], VPh_["z_a"], c=VPh_["c"], As=VPh_["As"], einbinden=einbinden + max(0.0, ww - wv_)))
+                belege.append(dict(seite="wand", element=f"Vordach {F.get('id', '')} {VPh_['familie']} (c {VPh_['c']:+.1f}, Walm {VPh_['As']:.2f} m, Traufe w {VPh_['w_t']:.2f} z {VPh_['z_t']:.2f}, Anschluss z {VPh_['z_a']:.2f})",
+                                   quelle=f"tools/vordach_profil.py: {len(VPh_.get('fotos', []))} Foto-Silhouetten; Grenzen {VPh_.get('kasten_quelle', 'kanten_mass.kasten')}",
+                                   hinweis="ANNAHME: " + (VPh_.get("annahme") or "") + "; Hoehenfeld-Zellen ueber z %.2f durch das Walm-Vordach ersetzt" % z_vd))
             for r in range(W_.shape[0]):
                 za, zb = g["z1"] - (r + 1) * r_, g["z1"] - r * r_; s = 0
+                if z_vd is not None:
+                    if za >= z_vd: continue
+                    zb = min(zb, z_vd + 0.02)
                 while s < W_.shape[1]:
                     e = s
                     while e + 1 < W_.shape[1] and W_[r, e + 1] == W_[r, s]: e += 1
