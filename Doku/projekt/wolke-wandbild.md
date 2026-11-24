@@ -67,6 +67,7 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - 17.11. · Feinpunkt-Anker skaliert Mono neu → ✗ nur Gegenprobe · Regressionsdämpfung, F1 sinkt [NICHTS_GEBRACHT 17.11.]
 - 17.11. · Schattierungsmaß `schatten_tor` (Lambert) → ✗ verworfen · trennt Brei nicht (6/9); Albedo dominiert [ebd.]
 - 17.11. · `relief_bereinigen` (Klumpen → Wandniveau, gerade Gesimse bleiben) → ✓ Methode [PIPELINE_FASSADEN Runde 3]
+- 24.11. · Ortsteine/Eckverzahnung aus Wandbild-Farbe (`tools/ortsteine.py`, in `fassaden_kette.anbauen`) → ✓ Methode · Schwabentor 8 Kantenzonen (f00/f01/f03), Kanten im Modell gezahnt; Einzelbilder `ortho_*_einzeln` NICHT ausgerichtet (bis 5 m versetzt, Gegenseite) → Klassen aus dem Mosaik, Einzelbilder nur Bestätigung; LoD2-Kante 0,3–0,5 m neben Fotokante; Vorsprung meist unter Sweep-Auflösung → ANNAHME Druckmaß 3,5 cm [PIPELINE_FASSADEN Nachtrag 24.11.]
 
 **Fenster, Öffnungen, Rückwand, Vorbauten**
 - 15.11. · OWLv2-Parsing mit Abstimmung + `fenster_aus_parsing` → ✓ Methode · 6 von 6 Fenstern, 1-4 cm gegen Handmaß [PIPELINE_FASSADEN Stufe fenster]

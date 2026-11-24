@@ -481,6 +481,9 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
         elif tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle=("Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt" if w.get("quader") is False else "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert"),
                            generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + (f"; ANNAHME: Relief {w.get('vorstand', 0) * 100:.0f} cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung" + (f"; ANNAHME: {w['putz_eben'] * 100:.0f} % der Wand naeher als {w.get('putz_band', 0.05) * 100:.0f} cm am Wandniveau = glatter Putz (Netzrauschen weg)" if w.get("putz_eben") else "") if w.get("quader") is False else "; generierte Steine = ANNAHME")))
+    if os.environ.get("OHNE_ORTSTEINE") != "1":                         # 24.11.2026 (Befund 1122u/v: Turmkanten glatt, Foto zeigt verzahnte Sandstein-Eckquader): Ortsteine aus dem Wandbild, vor die gebaute Flaeche
+        from ortsteine import ortsteine_anbauen
+        koerper, bel_o = ortsteine_anbauen(koerper, objekt_json); belege += bel_o
     return koerper, belege
 
 
