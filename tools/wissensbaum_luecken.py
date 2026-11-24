@@ -182,10 +182,22 @@ def quelle_logbuch(p):
     return aus
 
 
+def _ungetrackt(d):
+    """24.11.2026: fremde, nicht eingecheckte Dateien (anderer Rechner/Werkzeug, noch nicht committet) sind keine Quelle - sonst blockiert
+    eine lokale Arbeitsdatei den Schnelltest/Merge. Ohne git: leere Menge (alles zaehlt)."""
+    try:
+        import subprocess as _sp
+        r = _sp.run(["git", "-C", str(d), "ls-files", "--others", "--exclude-standard", "."], capture_output=True, text=True, timeout=30)
+        return {Path(d, x).name for x in r.stdout.split()} if r.returncode == 0 else set()
+    except Exception:
+        return set()
+
+
 def quelle_archiv(d):
     aus = []
+    fremd = _ungetrackt(d)
     for p in sorted(Path(d).glob("*.md")):
-        if p.name == "INDEX.md":
+        if p.name == "INDEX.md" or p.name in fremd:
             continue
         z = lies(p)
         titel = next((x.lstrip("# ").strip() for x in z if x.startswith("#")), p.stem)
