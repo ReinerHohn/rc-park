@@ -29,6 +29,7 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - 15.11. · fein + grob mischen ohne Entstören → ⚠ Falle · schwarze Sprenkel; Ausreißer > 2,5 cm raus, 3-Zellen-Übergang, Raster 2 cm [PIPELINE_FASSADEN Z.86]
 - 20.11. · PatchMatch-Korrektur PR 5041 → ✗ kein messbarer Unterschied
 - 20.11. · Depth Anything 3 als Fülltiefe → ✗ kein klarer Gewinn gegen Ebenenfüllung
+- 24.11. · Draht-Masken je Foto (`tools/drahtmaske.py` + `drahtmasken.py`: Black-Hat dünn, Hough + Kurvenfolge, nur Linien mit ≥ 8 % Strecke beidseitig vor Himmel) in Fusion (mask_path), fassade_ortho und stabil_alle → ⏸ Code fertig, Wolkenwirkung am Kettenlauf offen · 40 Testfotos: 14 mit Draht, 0 sichtbare Fehlmasken nach 3 Nachbesserungen (Pflaster/Mörtel/Sandstein als „Himmel“); Drähte NUR vor Wand werden nicht erkannt [Zweig worktree-agent-a62da684d0af546e8]
 
 **Wandbild / Fassadenbild**
 - 15.11. · 1-cm-Ortho zellweise aus allen Fotos mischen → ↺ Bezugsfoto + SIFT-Homographie, Median ab 3 Fotos · Fotos 0,1-1 m versetzt, Geister [PIPELINE_FASSADEN Z.53]

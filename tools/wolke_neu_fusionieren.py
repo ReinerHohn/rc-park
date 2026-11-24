@@ -96,11 +96,40 @@ def ply_punkte(p):
     return 0
 
 
+def _draht_stand(D):
+    """Detektorstand der Drahtmaske, mit der jetzt fusioniert wuerde (None = ohne: OHNE_DRAHTMASKE=1 oder keine entzerrten Bilder)."""
+    if os.environ.get("OHNE_DRAHTMASKE", "0") == "1" or not os.path.isdir(os.path.join(D, "images")): return None
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import code_stand
+    return code_stand.code_stand("drahtmaske.py")
+
+
+def draht_veraltet(f, D):
+    """24.11.2026: fused.ply entstand mit anderem Drahtmasken-Stand (oder ohne) als jetzt -> neu fusionieren (Marke <fused.ply>.drahtmaske.json, wie pipeline_objekt.py)."""
+    try: alt = json.load(open(f + ".drahtmaske.json")).get("detektor")
+    except Exception: alt = None
+    neu = _draht_stand(D)
+    if alt != neu: print(f"Drahtmaske: Wolke mit Stand {alt}, jetzt {neu} -> neu fusionieren", flush=True)
+    return alt != neu
+
+
+def draht_marke(f, D):
+    s = _draht_stand(D)
+    if s is None:                                                          # ohne Maske: keine Marke (fehlende Marke = 'ohne Drahtmaske')
+        if os.path.exists(f + ".drahtmaske.json"): os.remove(f + ".drahtmaske.json")
+        return
+    json.dump(dict(detektor=s, masken=os.path.join(D, "drahtmasken") if s else None), open(f + ".drahtmaske.json", "w"))
+
+
 def fusionieren(ziel, D, stufe):
     """COLMAP-Fusion (CPU, Minuten) mit der fusion.cfg des Arbeitsordners D nach `ziel` (+ ziel.vis)."""
     import pycolmap
     fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 1600
     if stufe == "schnell": fo.min_num_pixels = 3   # 19.11.2026 gemessen, siehe pipeline_objekt.py
+    # 24.11.2026 Drahtmasken wie in pipeline_objekt.py (Oberleitung nicht fusionieren); OHNE_DRAHTMASKE=1 = Stand vorher
+    if os.environ.get("OHNE_DRAHTMASKE", "0") != "1" and os.path.isdir(os.path.join(D, "images")):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import drahtmasken as DMK; dmk = os.path.join(D, "drahtmasken")
+        if not DMK.colmap_masken_aktuell(dmk): DMK.masken_ordner(os.path.join(D, "images"), dmk, colmap=True, rand_px=2)
+        fo.mask_path = dmk
     # 19.11.2026 (Durchsicht Punkt 38): wie in pipeline_objekt.py - passt die Fusion nicht in 60 % des freien RAM, Teilfusion; sonst OOM-Kill und die Kette lief auf der
     # UNGEFILTERTEN Wolke weiter (alle Dichtlaeufe > ~200 Bilder brauchten die Teilfusion).
     try: frei = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576
@@ -109,7 +138,7 @@ def fusionieren(ziel, D, stufe):
     print(f"Fusion: {nf} Bilder, Bedarf ~{bedarf:.1f} GB, frei {frei:.1f} GB" + (" -> TEILFUSION" if bedarf > 0.6 * frei else ""), flush=True)
     if bedarf > 0.6 * frei:
         import subprocess
-        rc = subprocess.call([sys.executable, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "teilfusion.py"), D, ziel, "--max_image_size", str(fo.max_image_size), "--min_num_pixels", str(fo.min_num_pixels), "--input_type", "geometric" if stufe == "fein" else "photometric"])
+        rc = subprocess.call([sys.executable, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "teilfusion.py"), D, ziel, "--max_image_size", str(fo.max_image_size), "--min_num_pixels", str(fo.min_num_pixels)] + (["--mask_path", fo.mask_path] if fo.mask_path else []) + ["--input_type", "geometric" if stufe == "fein" else "photometric"])
         if rc: raise RuntimeError(f"Teilfusion rc {rc}")
         return
     pycolmap.stereo_fusion(ziel, D, options=fo, input_type="geometric" if stufe == "fein" else "photometric", output_type="ply")
@@ -138,7 +167,7 @@ def main():
     laeuft = cfg + ".laeuft"; f = os.path.join(D, "fused.ply"); fn = os.path.join(D, "fused_neu.ply")
     merken = lambda: text_atomar(aj, json.dumps(dict(gem, hinweis="tools/wolke_neu_fusionieren.py: gemerkte Ausschluesse (Haufenquellen lassen sich an der bereinigten Wolke nicht neu feststellen). Datei loeschen = Bilder kommen beim naechsten Lauf zurueck."), indent=1, ensure_ascii=False))
     if os.path.exists(laeuft): print(f"ACHTUNG: {laeuft} liegt noch da - ein frueherer Lauf wurde hart beendet; es wird in jedem Fall neu fusioniert")
-    elif bleibt == aktiv and ply_punkte(f) > 0:
+    elif bleibt == aktiv and ply_punkte(f) > 0 and not draht_veraltet(f, D):
         if gem_neu and os.path.isdir(os.path.dirname(aj)): merken()
         return 2
     if len(bleibt) < 2: print(f"FEHLER: nach dem Ausschluss blieben {len(bleibt)} Bilder - nichts geaendert (Listen pruefen: audit/kamera_plausibel.json, kette_insel.json, {aj})"); return 4
@@ -157,6 +186,7 @@ def main():
     if os.path.exists(f) and not os.path.exists(os.path.join(D, "fused_alle.ply")): shutil.move(f, os.path.join(D, "fused_alle.ply"))
     os.replace(fn, f)
     if os.path.exists(fn + ".vis"): os.replace(fn + ".vis", f + ".vis")
+    draht_marke(f, D)
     T = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{name}.json")))["transformation"]; s = T["s"]; R = Rot.from_rotvec(T["rvec"]).as_matrix(); t = np.array(T["t"])
     V = ply_lesen(f); X = np.c_[V["x"], V["y"], V["z"]].astype(float); Pm = ((X - t) / s) @ R
     npy_atomar(os.path.join(od, "sfm", f"punkte_modell_{name}.npy"), Pm.astype(np.float32)); npy_atomar(os.path.join(od, "sfm", f"punkte_farben_{name}.npy"), np.c_[V["red"], V["green"], V["blue"]].astype(np.uint8))

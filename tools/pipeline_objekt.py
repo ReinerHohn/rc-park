@@ -128,6 +128,26 @@ def beiseite(pfade, marke):
     return weg
 
 
+def drahtmaske_neu_fusionieren(fused):
+    """24.11.2026 CACHE-FOLGE der Drahtmasken: eine fused.ply OHNE (oder mit aelterem) Drahtmasken-Detektor wird beiseitegelegt (fused_ohne_drahtmaske.ply), damit die
+    Fusion mit Maske neu laeuft - NUR wenn alle Tiefenkarten und die entzerrten Bilder noch da sind (dann rechnet dicht_kette.py nur die Fusion, CPU Minuten, kein PatchMatch).
+    OHNE_DRAHTMASKE=1 = nie. Rueckgabe True, wenn beiseitegelegt."""
+    if os.environ.get("OHNE_DRAHTMASKE", "0") == "1" or ply_punkte(fused) == 0: return False
+    d = os.path.dirname(fused); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import code_stand
+    try: alt = json.load(open(fused + ".drahtmaske.json")).get("detektor")
+    except Exception: alt = None
+    if alt == code_stand.code_stand("drahtmaske.py"): return False
+    try: n_cfg = len([l for l in open(os.path.join(d, "stereo", "fusion.cfg")) if l.strip()])
+    except OSError: n_cfg = 0
+    n_k = len(glob.glob(os.path.join(d, "stereo", "depth_maps", "*.photometric.bin")))
+    if not n_cfg or n_k < n_cfg or not os.path.isdir(os.path.join(d, "images")):
+        print(f"HINWEIS Drahtmaske: {fused} ohne aktuelle Drahtmaske, aber Tiefenkarten ({n_k}/{n_cfg}) oder entzerrte Bilder fehlen - Wolke bleibt (neu: --neu dicht)", flush=True); return False
+    for e in ("", ".vis"):
+        if os.path.exists(fused + e): os.replace(fused + e, os.path.join(d, "fused_ohne_drahtmaske.ply" + e))
+    print(f"Drahtmaske: {fused} entstand ohne aktuelle Drahtmaske ({alt}) -> beiseite (fused_ohne_drahtmaske.ply), Fusion laeuft mit Maske neu (Tiefenkarten aus dem Cache)", flush=True)
+    return True
+
+
 def ply_punkte(p):
     """Punktzahl aus dem PLY-Kopf; 0, wenn die Datei fehlt, leer ist oder keinen Kopf hat."""
     try:
@@ -259,6 +279,7 @@ def main():
         # 3 dichte Wolke
     fused = os.path.join(daten, "dicht", "fused.ply")
     seiten_dicht_uebernehmen(daten, sparse_dir)
+    drahtmaske_neu_fusionieren(fused)
     if ply_punkte(fused) == 0:                                            # 17.11.2026: vorher 'Datei > 0 Byte' - eine fused.ply mit 0 Punkten (nur Kopf) galt als fertig
         # Bildwahl fuer Tiefenkarten (Lehre 14.11.: Fernansichten/gleiche Videobilder kosten voll, bringen am Objekt wenig) -> tools/dicht_bildwahl.py
         sparse_wahl = os.path.join(daten, "sfm", "sparse_dicht")
@@ -320,15 +341,30 @@ except Exception: _frei_gb = 8.0
 _nf = len([l for l in open(os.path.join(out, "stereo", "fusion.cfg")) if l.strip()]); _bedarf = _nf * (0.045 if not GROB else 0.012)   # GB (Messung 18.11.: 100 Bilder 1600 px = 4,1 GB)
 # 18.11.2026: use_cache (1 Thread, Nachladen) lief am Kaufhaus 4 h ohne Ende (1,56 TB gelesen) -> passt es nicht in 60 % des freien RAM: TEILFUSION in voller Aufloesung (tools/teilfusion.py), sonst normal mit allen Kernen
 print("Fusion:", _nf, "Bilder, Bedarf ~%.1f GB, frei %.1f GB" % (_bedarf, _frei_gb), "-> TEILFUSION" if _bedarf > 0.6 * _frei_gb else "-> am Stueck", flush=True)
+# 24.11.2026 DRAHTMASKEN (Kette schwabentor 1122x: Oberleitung/Spanndraehte als schraege 'Fahnen' in der Wolke, der Wolken-Nachfilter trennt nah an der Wand nicht):
+# Draehte je ENTZERRTEM Bild erkennen (tools/drahtmaske.py, gleiche Geometrie wie die Tiefenkarten), Fusion nimmt diese Pixel nicht auf (mask_path, 0 = ignorieren).
+# Tiefenkarten bleiben unveraendert (Cache gilt weiter). OHNE_DRAHTMASKE=1 = Stand vorher.
+_dmk = os.path.join(out, "drahtmasken"); _dm_stand = None
+if os.environ.get("OHNE_DRAHTMASKE", "0") != "1":
+    if os.path.isdir(os.path.join(out, "images")):
+        import drahtmasken as _DMK
+        if not _DMK.colmap_masken_aktuell(_dmk): _DMK.masken_ordner(os.path.join(out, "images"), _dmk, colmap=True, rand_px=2)
+        else: print("Drahtmasken aktuell:", _dmk, flush=True)
+        fo.mask_path = _dmk; import code_stand as _CS; _dm_stand = _CS.code_stand("drahtmaske.py")
+    else: print("ACHTUNG Drahtmasken: keine entzerrten Bilder in " + os.path.join(out, "images") + " - Fusion OHNE Drahtmaske", flush=True)
 if STUFE == "schnell": fo.min_num_pixels = 3   # 19.11.2026 gemessen (Martinstor): 8 (Annahme vom 15.11.) warf Putz und Sockel weg; 3 = 5-fache Punktzahl, Anteil falscher Punkte gleich (1,3 %), Wanddicke 4 -> 5 cm
 GB.frei()   # Fusion hat keinen GPU-Code (Minuten auf der CPU)
 if _bedarf > 0.6 * _frei_gb:
     import subprocess as _sp
-    _rc = _sp.call([sys.executable, "-I", os.path.join({os.path.dirname(os.path.abspath(__file__))!r}, "teilfusion.py"), out, os.path.join(out, "fused.ply"), "--max_image_size", str(fo.max_image_size), "--min_num_pixels", str(fo.min_num_pixels), "--input_type", "geometric" if FEIN else "photometric"])
+    _rc = _sp.call([sys.executable, "-I", os.path.join({os.path.dirname(os.path.abspath(__file__))!r}, "teilfusion.py"), out, os.path.join(out, "fused.ply"), "--max_image_size", str(fo.max_image_size), "--min_num_pixels", str(fo.min_num_pixels)] + (["--mask_path", fo.mask_path] if fo.mask_path else []) + ["--input_type", "geometric" if FEIN else "photometric"])
     if _rc: sys.exit(_rc)
 else:
     pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, options=fo, input_type="geometric" if FEIN else "photometric", output_type="ply")
 GB.belegen()
+_mk = os.path.join(out, "fused.ply.drahtmaske.json")                     # Beleg fuer die Wiederverwendung (fehlt = ohne Drahtmaske fusioniert)
+if _dm_stand:
+    import json as _js; _js.dump(dict(detektor=_dm_stand, masken=_dmk), open(_mk, "w"))
+elif os.path.exists(_mk): os.remove(_mk)
 print("FERTIG", flush=True)
 ''')
         rc, out = run([PY_COL, "-I", script], log)
