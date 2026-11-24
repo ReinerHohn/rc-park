@@ -26,9 +26,9 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - 16.11. · `tiefe_lokal` 5-mm-Feld Figur / Südwand mit 3 scharfen Fotos → ✗ verworfen · Fusion liefert ~1 cm Punktabstand; unter ~5 guten Fotos lohnt es nicht [NICHTS_GEBRACHT 16.11.]
 - 16.11. · zwei 4000-px-Läufe parallel auf 8 GB → ✗ · CUDA OOM; je Lauf 4500 MiB, nichts daneben [NICHTS_GEBRACHT 16.11.]
 - 15.11. · fein + grob mischen ohne Entstören → ⚠ Falle · schwarze Sprenkel; Ausreißer > 2,5 cm raus, 3-Zellen-Übergang, Raster 2 cm [PIPELINE_FASSADEN Z.86]
-- 20.11. · PatchMatch-Korrektur PR 5041 → ✗ kein messbarer Unterschied
-- 20.11. · Depth Anything 3 als Fülltiefe → ✗ kein klarer Gewinn gegen Ebenenfüllung
+- 20.11. · PatchMatch-Korrektur PR 5041 → ✗ kein messbarer Unterschied; Depth Anything 3 als Fülltiefe → ✗ kein klarer Gewinn gegen Ebenenfüllung
 - 24.11. · Draht-Masken je Foto (`tools/drahtmaske.py` + `drahtmasken.py`: Black-Hat dünn, Hough + Kurvenfolge, nur Linien mit ≥ 8 % Strecke beidseitig vor Himmel) in Fusion (mask_path), fassade_ortho und stabil_alle → ⏸ Code fertig, Wolkenwirkung am Kettenlauf offen · 40 Testfotos: 14 mit Draht, 0 sichtbare Fehlmasken nach 3 Nachbesserungen (Pflaster/Mörtel/Sandstein als „Himmel“); Drähte NUR vor Wand werden nicht erkannt [Zweig worktree-agent-a62da684d0af546e8]
+- 24.11. · Himmelsmaske in der Fusion gegen das blaue Geisterblatt vor der Nordwand (1122z; `drahtmaske.himmelmaske`: himmel() nur mit Himmelsfarbe, Kern geöffnet 41 px, Wachsen in den Saum bis 2 px an die Silhouette, Kantensperre) → ⚠ wirkt kaum · Hypothese „Himmelspixel“ widerlegt: von 262 k Quellpixeln der 12 k Blattpunkte liegen nur 9 % auf (neuem) Himmel, 41 % ≤ 5 px an der Silhouette (Kantenpixel/Fensterverschleppung), 36 % > 20 px; nur 3 % der Blattpunkte fielen unter 3 Quellen. Blattpunkte zu 96 % aus EINEM Video (LMS3Va6psfY), max. Strahlwinkel Median 48° (echt 71°) → nächster Hebel Fusion-Konsistenz ohne Fast-Duplikat-Videobilder [/media/oem/scan/rc-park_tmp/himmel_maske/, Zweig worktree-agent-aef8811c6e8176fec]
 
 **Wandbild / Fassadenbild**
 - 15.11. · 1-cm-Ortho zellweise aus allen Fotos mischen → ↺ Bezugsfoto + SIFT-Homographie, Median ab 3 Fotos · Fotos 0,1-1 m versetzt, Geister [PIPELINE_FASSADEN Z.53]
