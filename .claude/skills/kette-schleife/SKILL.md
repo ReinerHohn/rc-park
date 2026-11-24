@@ -21,7 +21,10 @@ Grundlage: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` (lesen). Nichts am Modell von Hand
 4. **Merge-Probe** waehrend die Kette laeuft: `git worktree add -b merge-probe-<x> /media/oem/scan/rc-park_tmp/merge_probe<n> main`,
    Agentenzweige dort mergen, Konflikte loesen (schnelltest.sh: beide Zeilen), Einzeltests der Agenten. NICHT in main mergen,
    solange die Kette laeuft (sie liest tools/ aus main).
-5. **Nach Laufende:** Probe in main mergen, `bash tools/schnelltest.sh` = 0 Fehler, sonst zurueck + melden; `tools/baum_erzeugen.py`;
+5. **Nach Laufende:** vor dem Merge in main: `tools/ketten_probelauf.sh --rev merge-probe-<x>` = 0 (als Job: `JOB_RAM_MB=7000 JOB_GPU_MB=3000
+   bash tools/job_start.sh ketten-probe-<x> <log> bash tools/ketten_probelauf.sh --rev merge-probe-<x>`; vorher `--plan`; einmalig `--grundstand`). Er laesst die
+   ganze Kette auf kprobe_kaufhaus (60 Fotos) in einer Kopie laufen: Szenario Cache + Szenario verstellte Code-Staende (Fall 1122za). rc 1 = Ablauffehler
+   (veralteter Stand, Handanweisung, Absturz, *_beleg) -> nicht mergen; rc 2 = kein Urteil (Lage o. ae.) -> melden. Dann Probe in main mergen, `bash tools/schnelltest.sh` = 0 Fehler, sonst zurueck + melden; `tools/baum_erzeugen.py`;
    `git pull --no-rebase --no-edit && git push`; gemergte saubere Worktrees entfernen (nie --force). Naechster Lauf (Schritt 1).
 6. **Abbruch/melden:** zwei Laeufe hintereinander schlechter (Bild oder Zahl), Schnelltest rot, Platz < 15 GB trotz Aufraeumen,
    Loeschen noetig. Kippelt ein Mass von Lauf zu Lauf: zuerst zirkulaere Messung (misst eine Stufe ihr eigenes Vormodell?) suchen.
