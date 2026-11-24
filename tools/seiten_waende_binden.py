@@ -16,8 +16,11 @@ VERFAHREN (nur CPU, Sekunden):
   2. WANDPUNKTE beider Teile: ebene, senkrechte Flaechenstuecke (Normale waagerecht) ueber Strassenhoehe (Z_MIN_M), im Grundriss um die B-Waende.
   3. GRUNDRISS-SUCHE im GPS-Korridor (seiten_querspur_binden.korridor, gleiche Grenzen wie die Querspur): Drehung um das Lot x Verschiebung, Wertung = mittlere Naehe der
      B-Wandpunkte zu den A-Waenden (Abstandsfeld, Kreuzkorrelation per FFT). Dann Feinausgleich Punkt-zu-Linie (Drehung + Verschiebung, Massstab bleibt GPS).
-  4. HOEHE: Hoehenprofil der gemeinsam belegten Wandstuecke (Fenster, Gesimse, Traufe) von A und B kreuzkorreliert -> Versatz in z; nur bei eindeutigem Gipfel, sonst bleibt
-     die GPS-Hoehe (gemeldet).
+  4. HOEHE (24.11., 1122z: Teil 1 am GPS-Fusspunkt 6,4 m zu tief): aus der 3D-UEBERLAPPUNG - je gemeinsam belegter Grundriss-Saeule das hochpassgefilterte
+     Hoehenprofil (Fenster, Gesimse, Traufe, Helm) von A und B kreuzkorreliert (z_saeulen); STRASSENBODEN von A gegen B in gemeinsamen Zellen als unabhaengige
+     Gegenprobe (boden_versatz; uneinig > HOEHE_EINIG_M -> abgelehnt); Struktur nicht eindeutig -> Boden; beides fehlt -> GPS-Fusspunkt + Meldung (kein Raten).
+     Danach Tor UNTER GELAENDE (unter_gelaende): > UNTER_ANTEIL der B-Punkte in Strassenzellen > UNTER_M unter dem Boden von A -> abgelehnt. Seitenbild <aus>/waende_seite.jpg.
+     Das alte globale Profil der ebenen Wandpunkte (z_versatz) war hoehenblind (senkrechte Ebenen) und verwischt (alle Fassaden in einem Histogramm) -> nur Bericht.
   5. MASSSTAB (24.11., 1122y): Aehnlichkeit Punkt-zu-Linie (Fangfenster DOPPEL_MAX_M) - uebernommen nur, wenn die Treffer-Wandzuege ihn belegen (nicht durch einen
      gemeinsamen Punkt, Hebel >= HEBEL_MIN_M), er >= 3 Streuungen vom GPS abweicht, <= 25 % und mehr Treffer bringt; sonst GPS-Massstab.
 TOR (jede Probe einzeln, uebernommen nur wenn ALLE bestehen; sonst bleibt die GPS-Lage):
@@ -35,7 +38,8 @@ TOR (jede Probe einzeln, uebernommen nur wenn ALLE bestehen; sonst bleibt die GP
 1122w (24.11., Zwischendaten nur gelesen, CPU ~2 min): Kippung 10,0 Grad (um den Fusspunkt), Drehung +4,6 Grad, Verschiebung 3,6 m; Wandabstand Median 2,40 -> 0,07 m, Treffer 60 %,
   Geotags von B 5,1 -> 7,8 m (79 % < 12 m), Turmspitze nicht messbar (A-Wolke oben duenn), Hoehe am Fusspunkt nach GPS (Profil nicht eindeutig, nur Bericht). Seitenansicht: Turm, Helm und Uhr
   von A und B decken sich (vorher Helm um Meter versetzt und geneigt).
-Ausgabe <aus>/waende.json (ok, urteil, B_nach_A nur bei ok, B_nach_A_gps, pruefung{...}, korridor), Kontrollbild <aus>/waende.jpg (Grundriss vorher/nachher + Hoehe).
+1122z (24.11., nur gelesen): Struktur +6,55 m (392 Saeulen, zweiter Gipfel 18 %), Boden +6,40 m (35 Zellen, Streuung 0,34 m); unter Gelaende 19,3 % -> 0,1 % (A 0,06 %).
+Ausgabe <aus>/waende.json (ok, urteil, B_nach_A nur bei ok, B_nach_A_gps, pruefung{..., hoehe_3d}, korridor), Kontrollbild <aus>/waende.jpg (Grundriss vorher/nachher) + waende_seite.jpg.
 rc 0 = gebunden, 2 = zu wenig Eingabe/Wandpunkte (nichts getan), 3 = abgelehnt. GRENZEN: Massstab nur mit Wand-Beleg (sonst GPS; 1122y: Waende 0,881 belegt, dann
 lehnt die Geotag-Probe ab: Median 5,1 -> 8,4 m bei Grenze +3 m - der Massstab verschiebt die 24 m entfernten B-Kameras ~3 m); braucht einen Teil A,
 der die von B gesehenen Waende mitsieht (Drohne/Fernbild/Uebereck); bei einem Kastenturm mit vier gleichen Seiten verhindert der GPS-Korridor die 90-Grad-Verwechslung.
@@ -82,6 +86,26 @@ DOPPEL_MAX_M = 3.0        # ... bis 3 m neben einer parallelen A-Wand (unter 0,5
 DOPPEL_LAENGS_M = 1.0     # A-Punkt hoechstens 1 m laengs versetzt (die A-Wand laeuft am B-Blatt entlang)
 DOPPEL_MIN_PUNKTE = 40    # ANNAHME: ein Blatt zaehlt ab 40 Punkten ...
 DOPPEL_ANTEIL = 0.03      # ... und 3 % der B-Wandpunkte (1122y: 199 Punkte = 11 %; Einzelpunkte an Erkern/Simsen bleiben darunter)
+# HOEHE AUS DER 3D-UEBERLAPPUNG + BODEN-GEGENPROBE (24.11.2026, Nutzer 12:50 "Ostteil nach unten in den Boden verrutscht", 12:55 "muss automatisch reinmatchen";
+# Kette 1122z: Teil 1 nach Bindung ~6 m zu tief, Spitze 39 statt 45 m). Ersetzt "Hoehe am GPS-Fusspunkt" (s. hoehe_belegen).
+Z_SAEULE_M = 0.5          # Grundriss-Saeule (gemeinsam von A und B belegt) fuer das Hoehenprofil
+Z_BIN_M = 0.2             # Hoehenraster der Saeulenprofile
+Z_HOCHPASS_M = 3.0        # Profil minus gleitendes Mittel ueber 3 m: Fenster/Gesimse/Traufe bleiben, durchgehende Wand (hoehenblind) faellt weg
+Z_SUCHE_M = 15.0          # ANNAHME: Fusspunkt-Hoehe kann um Stockwerke falsch sein (1122z: 6 m); weiter = Rechenaufwand + Fehlgipfel
+Z_MIN_SAEULEN = 40        # ANNAHME: mindestens 40 gemeinsam belegte Saeulen (1122z: 399)
+Z_MIN_BELEGT = 10         # Saeule zaehlt ab 10 belegten Hoehenbins (2 m) je Teil
+Z_ZWEIT_ANTEIL = 0.6      # ANNAHME: zweitbester Gipfel (>= ABSTAND_ZWEIT_M entfernt) hoechstens 60 % des besten (1122z: 13-29 %; globales Profil alt: nicht eindeutig)
+BODEN_ZELLE_M = 1.0       # Bodenzelle: 3-%-Hoehe je 1-m-Zelle (>= BODEN_MIN_PUNKTE Punkte)
+BODEN_MIN_PUNKTE = 10        # ANNAHME: Strassen dichter Wolken schraeg gesehen, duenn (1122z Teil 1)
+BODEN_BAND_M = 1.5        # ANNAHME: Strassenzelle = Zellboden hoechstens 1,5 m ueber dem 10-%-Wert aller Zellboeden des Teils (Daecher/Mauerkronen fallen weg, Gefaelle bleibt)
+BODEN_DICKE_M = 0.3       # Strassenzelle muss unten waagerecht sein: Punkte im Band +-0,3 m um den Zellboden ...
+BODEN_FLACH_FAKTOR = 1.5  # ANNAHME: ... mindestens 1,5-mal so viele wie im gleich hohen Band darueber (0,3-0,9 m; senkrechte Wand: Verhaeltnis ~1; Strasse: >> 1).
+                          # Test: Wolke ohne Strasse, Wandfuss 3 m hoch, gab sonst 'Boden' +2,1 m statt keinen
+BODEN_MIN_ZELLEN = 15    # ANNAHME: Bodenbeleg ab 15 gemeinsamen Strassenzellen ...
+BODEN_STREU_MAX_M = 1.0   # ... mit robuster Streuung (IQR / 1,35) hoechstens 1 m
+HOEHE_EINIG_M = 1.0       # ANNAHME: Struktur- und Bodenhoehe einig auf 1 m (Bodenzellen: 3-%-Wert, Rauschen/Bordstein ~0,3-0,5 m)
+UNTER_M = 1.0             # Punkt "unter Gelaende": mehr als 1 m unter dem Strassenboden von A in derselben Zelle (Bordstein/Rauschen darunter)
+UNTER_ANTEIL = 0.05       # ANNAHME: hoechstens 5 % der B-Punkte in gemeinsamen Strassenzellen unter Gelaende (Boden = 3-%-Wert -> A selbst ~1 %; 1122z vorher 20 %+)
 
 
 # ---------- Grundlagen
@@ -241,6 +265,127 @@ def z_versatz(ZA, ZB, grenze):
     return float(L[i] * Z_PROFIL_M), bool(ok), float(cc[i])
 
 
+def _zellen(P, zelle):
+    ij = np.floor(P[:, :2] / zelle).astype(np.int64); return ij[:, 0] * 2000003 + ij[:, 1]
+
+
+def z_saeulen(PA, PB, suche=Z_SUCHE_M):
+    """HOEHE AUS DER 3D-UEBERLAPPUNG (lokales A-System, z = Lot, Meter; B schon im Grundriss gebunden). Je gemeinsam belegter Grundriss-Saeule (Z_SAEULE_M) das
+    Belegungsprofil in z (log Anzahl je Z_BIN_M), hochpassgefiltert (Z_HOCHPASS_M) und normiert; Kreuzkorrelation summiert ueber alle Saeulen -> Versatz dz fuer B.
+    URSACHE des alten Fehlschlags (z_versatz, 1122z: 7,6 m, Guete 0,29, nicht eindeutig): es nahm (a) nur Punkte EBENER SENKRECHTER Wandstuecke - die sind gegen eine
+    Hoehenverschiebung blind (Fensterkanten, Simse, Traufe sind gerade nicht eben-senkrecht) - und (b) EIN globales Histogramm aller Waende: Fensterreihen verschiedener
+    Fassaden in verschiedener Hoehe verwischen, die Dichte spiegelt die Sichtbarkeit (A von oben, B frontal) statt der Gestalt. Je Saeule bleibt die Lage der Fenster,
+    Gesimse und Traufe erhalten (1122z: 399 Saeulen, Gipfel 6,6 m, zweiter 13-29 %).
+    Unterhalb Boden + Z_MIN_M + Z_HOCHPASS_M/2 (je Teil, eigener 2-%-Wert) wird das Profil ausgeblendet: der Boden selbst bleibt fuer die unabhaengige Gegenprobe.
+    -> dict(dz_m, eindeutig, guete, zweit_anteil, saeulen, grund)."""
+    aus = dict(dz_m=0.0, eindeutig=False, guete=0.0, zweit_anteil=None, saeulen=0, grund="")
+    if len(PA) < 100 or len(PB) < 100: aus["grund"] = "zu wenig Punkte"; return aus
+    ka, kb = _zellen(PA, Z_SAEULE_M), _zellen(PB, Z_SAEULE_M); gem = np.intersect1d(np.unique(ka), np.unique(kb))
+    ma, mb = np.isin(ka, gem), np.isin(kb, gem); A_, B_ = PA[ma], PB[mb]; ka, kb = ka[ma], kb[mb]
+    if len(gem) < Z_MIN_SAEULEN: aus.update(saeulen=int(len(gem)), grund=f"nur {len(gem)} gemeinsame Saeulen (noetig {Z_MIN_SAEULEN})"); return aus
+    fa, fb = float(np.percentile(A_[:, 2], 2)), float(np.percentile(B_[:, 2], 2))
+    z0 = min(np.percentile(A_[:, 2], 0.5), np.percentile(B_[:, 2], 0.5)) - suche - Z_HOCHPASS_M; z1 = max(np.percentile(A_[:, 2], 99.5), np.percentile(B_[:, 2], 99.5)) + suche + Z_HOCHPASS_M
+    nz = int(np.ceil((z1 - z0) / Z_BIN_M)) + 1
+    def prof(P, k, fuss):
+        iz = np.clip(((P[:, 2] - z0) / Z_BIN_M).astype(int), 0, nz - 1); H = np.zeros((len(gem), nz)); np.add.at(H, (np.searchsorted(gem, k), iz), 1.0)
+        belegt = (H > 0).sum(1); h = np.log1p(H); w = max(3, int(round(Z_HOCHPASS_M / Z_BIN_M)) | 1)
+        from scipy.ndimage import uniform_filter1d
+        h = h - uniform_filter1d(h, w, axis=1, mode="constant"); h[:, : max(0, int((fuss + Z_MIN_M + Z_HOCHPASS_M / 2 - z0) / Z_BIN_M))] = 0.0
+        return h, belegt
+    ha, ba = prof(A_, ka, fa); hb, bb = prof(B_, kb, fb); ok = (ba >= Z_MIN_BELEGT) & (bb >= Z_MIN_BELEGT)
+    na_, nb_ = np.linalg.norm(ha, axis=1), np.linalg.norm(hb, axis=1); ok &= (na_ > 0) & (nb_ > 0); aus["saeulen"] = int(ok.sum())
+    if ok.sum() < Z_MIN_SAEULEN: aus["grund"] = f"nur {int(ok.sum())} Saeulen mit Hoehenstruktur in beiden Teilen (noetig {Z_MIN_SAEULEN})"; return aus
+    ha, hb = ha[ok] / na_[ok, None], hb[ok] / nb_[ok, None]
+    from scipy.signal import fftconvolve
+    k = int(np.ceil(suche / Z_BIN_M)); cc_voll = fftconvolve(ha, hb[:, ::-1], mode="full", axes=1).sum(0) / len(ha)   # cc_voll[nz-1+l] = sum_z ha(z) hb(z-l)
+    L = np.arange(-k, k + 1); cc = cc_voll[nz - 1 + L]; i = int(np.argmax(cc)); weit = np.abs(L - L[i]) * Z_BIN_M >= ABSTAND_ZWEIT_M
+    zw = float(cc[weit].max()) if weit.any() else 0.0; dz = float(L[i] * Z_BIN_M)
+    if 0 < i < len(cc) - 1:                                                             # Parabel durch den Gipfel: Feinlage unter dem Raster
+        a_, b_, c_ = cc[i - 1], cc[i], cc[i + 1]; den = a_ - 2 * b_ + c_
+        if den < 0: dz += float(np.clip(0.5 * (a_ - c_) / den, -0.5, 0.5)) * Z_BIN_M
+    za = zw / cc[i] if cc[i] > 0 else 1.0; rand = abs(L[i]) >= k - 1
+    ein = bool(cc[i] > 0 and za <= Z_ZWEIT_ANTEIL and not rand)
+    aus.update(dz_m=round(dz, 3), eindeutig=ein, guete=round(float(cc[i]), 4), zweit_anteil=round(float(za), 3),
+               grund="" if ein else ("Gipfel am Rand der Suche" if rand else f"zweiter Gipfel {100 * za:.0f} % (Grenze {100 * Z_ZWEIT_ANTEIL:.0f} %)"))
+    return aus
+
+
+def strassen_boden(P):
+    """Strassenzellen eines Teils: {zelle: 3-%-Hoehe} fuer Zellen (BODEN_ZELLE_M) mit >= BODEN_MIN_PUNKTE Punkten, deren Boden hoechstens BODEN_BAND_M ueber dem
+    10-%-Wert aller Zellboeden liegt (Daecher, Mauerkronen, nur von oben gesehene Flaechen fallen weg)."""
+    k = _zellen(P, BODEN_ZELLE_M); o = np.argsort(k, kind="stable"); k, z = k[o], P[o, 2]
+    u, s, n = np.unique(k, return_index=True, return_counts=True); j = n >= BODEN_MIN_PUNKTE
+    if not j.any(): return {}
+    zb, fl = [], []
+    for a, m in zip(s[j], n[j]):
+        zz = z[a:a + m]; q = np.percentile(zz, 3); zb.append(q); unten = np.sum(np.abs(zz - q) <= BODEN_DICKE_M); drueber = np.sum((zz > q + BODEN_DICKE_M) & (zz <= q + 3 * BODEN_DICKE_M))
+        fl.append(unten >= BODEN_FLACH_FAKTOR * max(drueber, 1))
+    zb, fl = np.array(zb), np.array(fl); f = fl                                         # waagerechte Flaeche unten (kein Wandfuss einer Wolke, die die Strasse nicht sieht)
+    if not f.any(): return {}
+    grenze = np.percentile(zb[f], 10) + BODEN_BAND_M
+    return {int(kk): float(v) for kk, v, ff in zip(u[j], zb, f) if ff and v <= grenze}
+
+
+def boden_versatz(PA, PB):
+    """UNABHAENGIGE GEGENPROBE: Strassenboden von A minus Strassenboden von B in gemeinsamen Zellen. -> dict(dz_m, streuung_m, zellen, messbar)."""
+    sa, sb = strassen_boden(PA), strassen_boden(PB); g = [k for k in sb if k in sa]
+    if len(g) < BODEN_MIN_ZELLEN: return dict(dz_m=None, streuung_m=None, zellen=len(g), messbar=False, grund=f"nur {len(g)} gemeinsame Strassenzellen (noetig {BODEN_MIN_ZELLEN})")
+    d = np.array([sa[k] - sb[k] for k in g]); q1, q3 = np.percentile(d, [25, 75]); sd = float((q3 - q1) / 1.349)
+    ok = sd <= BODEN_STREU_MAX_M
+    return dict(dz_m=round(float(np.median(d)), 3), streuung_m=round(sd, 3), zellen=len(g), messbar=bool(ok), grund="" if ok else f"Streuung {sd:.2f} m > {BODEN_STREU_MAX_M} m")
+
+
+def unter_gelaende(PA, PB):
+    """TOR 'TEILWOLKE UNTER GELAENDE' (allgemein, je Seitenteil): Anteil der B-Punkte in gemeinsamen Strassenzellen, die mehr als UNTER_M unter dem Strassenboden von A
+    liegen; zum Vergleich derselbe Anteil von A selbst (Rauschen der dichten Wolke). -> dict(anteil_b, anteil_a, zellen, ok) (ok None = nicht pruefbar)."""
+    sa = strassen_boden(PA)
+    if not sa: return dict(anteil_b=None, anteil_a=None, zellen=0, ok=None)
+    sk = np.array(sorted(sa), np.int64); sv = np.array([sa[int(x)] for x in sk])
+    def anteil(P):
+        k = _zellen(P, BODEN_ZELLE_M); m = np.isin(k, sk)
+        if m.sum() < 100: return None, int(len(np.unique(k[m])))
+        g = sv[np.searchsorted(sk, k[m])]; return float((P[m, 2] < g - UNTER_M).mean()), int(len(np.unique(k[m])))
+    ab, n = anteil(PB); aa, _ = anteil(PA)
+    if ab is None: return dict(anteil_b=None, anteil_a=aa, zellen=n, ok=None)
+    return dict(anteil_b=round(ab, 4), anteil_a=round(aa, 4), zellen=n, ok=bool(ab <= UNTER_ANTEIL))
+
+
+def hoehe_belegen(PA, PB):
+    """HOEHE VON B (lokales A-System, B im Grundriss gebunden): vorrangig aus der 3D-Ueberlappung (z_saeulen), Boden (boden_versatz) als unabhaengige Gegenprobe.
+      Struktur eindeutig + Boden einig (<= HOEHE_EINIG_M) oder nicht messbar -> dz = Struktur (Boden-Fehlen gemeldet);
+      Struktur eindeutig + Boden uneinig -> 'uneinig' (Bindung ablehnen);
+      Struktur nicht eindeutig + Boden messbar -> dz = Boden (gemeldet); beides fehlt -> dz 0, 'nicht belegt' (kein Raten; Unter-Gelaende-Tor entscheidet).
+    -> dict(dz_m, quelle, uneinig, struktur, boden, meldung)."""
+    st = z_saeulen(PA, PB); bo = boden_versatz(PA, PB); aus = dict(struktur=st, boden=bo, uneinig=False)
+    if st["eindeutig"]:
+        if bo["messbar"] and abs(st["dz_m"] - bo["dz_m"]) > HOEHE_EINIG_M:
+            aus.update(dz_m=0.0, quelle="uneinig", uneinig=True, meldung=f"Hoehe uneinig: Struktur {st['dz_m']:+.2f} m, Boden {bo['dz_m']:+.2f} m (Grenze {HOEHE_EINIG_M} m)")
+        else:
+            aus.update(dz_m=st["dz_m"], quelle="struktur", meldung=f"Hoehe aus der 3D-Ueberlappung {st['dz_m']:+.2f} m ({st['saeulen']} Saeulen, zweiter Gipfel {100 * st['zweit_anteil']:.0f} %); "
+                       + (f"Boden einig {bo['dz_m']:+.2f} m ({bo['zellen']} Zellen)" if bo["messbar"] else f"Boden nicht pruefbar ({bo['grund']})"))
+    elif bo["messbar"]:
+        aus.update(dz_m=bo["dz_m"], quelle="boden", meldung=f"Hoehe aus dem Strassenboden {bo['dz_m']:+.2f} m ({bo['zellen']} Zellen, Streuung {bo['streuung_m']:.2f} m); Struktur nicht eindeutig ({st['grund']})")
+    else:
+        aus.update(dz_m=0.0, quelle="nicht belegt", meldung=f"Hoehe NICHT BELEGT (Struktur: {st['grund']}; Boden: {bo['grund']}) - bleibt am GPS-Fusspunkt")
+    return aus
+
+
+def seitenbild(pfad, PA, PB, titel):
+    """Seitenansichten (zwei waagerechte Achsen) A blau, B rot, Hoehenmarken alle 10 m."""
+    import cv2
+    W, H = 700, 700; rng = np.random.default_rng(0); c = np.median(PB[:, :2], 0); zl = float(np.percentile(np.r_[PA[:, 2], PB[:, 2]], 0.5)) - 2
+    zh = float(np.percentile(np.r_[PA[:, 2], PB[:, 2]], 99.9)) + 2; r = max(zh - zl, 20.0) / 2; sk = H / (2 * r); bilder = []
+    for ax in (0, 1):
+        im = np.full((H, W, 3), 255, np.uint8)
+        for P, col in ((PA, (200, 120, 0)), (PB, (0, 0, 220))):
+            P = P[rng.choice(len(P), min(len(P), 300000), replace=False)]; u = (W / 2 + (P[:, ax] - c[ax]) * sk).astype(int); v = (H - (P[:, 2] - zl) * sk).astype(int)
+            ok = (u >= 0) & (u < W) & (v >= 0) & (v < H); im[v[ok], u[ok]] = col
+        for zz in np.arange(np.ceil(zl / 10) * 10, zh, 10):
+            v = int(H - (zz - zl) * sk); cv2.line(im, (0, v), (10, v), (0, 0, 0), 1); cv2.putText(im, f"{zz:.0f}", (12, v + 4), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+        bilder.append(im)
+    im = np.hstack(bilder); cv2.putText(im, titel[:160], (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 1); cv2.imwrite(pfad, im)
+
+
 # ---------- Kern
 def binden(DA, DB, G, lot0, ref_b, bild=None):
     """DA/DB dichte Wolken (je eigenes Modellsystem), G = seiten_querspur_binden.gps_unsicherheit(...), lot0 = Start-Lot von A, ref_b = Bezugspunkte in B (Kamerazentren).
@@ -318,9 +463,19 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     zf = float(np.percentile(lb[:, 2], 2))                                             # Fusspunkt-Hoehe von B: der Massstab aendert sie nicht (dort traegt das GPS)
     P = np.eye(4); P[:2, :2] = ms * r2(g); P[2, 2] = ms; P[:2, 3] = c + sv - ms * r2(g) @ c; P[2, 3] = zf - ms * zf
     M = np.linalg.inv(L) @ P @ L @ Mk @ Mg
-    # HOEHE bleibt am Fusspunkt die der GPS-Lage (s. Kippung). Das Hoehenprofil der gemeinsamen Waende (Fenster, Gesimse, Traufe) ist nur Bericht: 1122w war es nicht
-    # eindeutig (-3,0 m bei Guete 0,26), die Seitenansicht zeigte dagegen Traufe/Helm deckungsgleich.
+    # HOEHE (24.11.2026, Kette 1122z, Nutzer "Ostteil in den Boden verrutscht"): bisher blieb sie am GPS-Fusspunkt (Boden der dichten B-Wolke unter den GPS-Kameras,
+    # seiten_gps_vereinen.rahmen). 1122z gemessen: nur 12 GPS-Kameras von B mit Bodenpunkten im 5-m-Umkreis, deren "Boden" streut p10 -3,6 / p90 +10,1 m (erhoehte
+    # Standorte, Waende/Daecher im Umkreis) -> Teil 1 lag 6,4 m (Strassenboden) zu tief, 19 % seiner Punkte in Strassenzellen > 1 m unter dem Boden von A, Spitze 39 statt 45 m.
+    # Jetzt: Hoehe aus der 3D-Ueberlappung (Saeulenprofile, z_saeulen), Strassenboden von A als unabhaengige Gegenprobe, danach Tor "unter Gelaende".
+    # Das alte globale Wandprofil (z_versatz) bleibt nur Bericht (pruefung.hoehe).
     pr["hoehe"]["nur_bericht"] = True
+    lbn0 = anwenden(L @ M, DB); hb_ = hoehe_belegen(la, lbn0); dz_h = float(hb_["dz_m"])
+    T_ = np.eye(4); T_[2, 3] = dz_h; M = np.linalg.inv(L) @ T_ @ L @ M
+    ug = unter_gelaende(la, lbn0 + [0, 0, dz_h]); ug_vor = unter_gelaende(la, lbn0)
+    pr["hoehe_3d"] = dict(hb_, unter_gelaende=ug, unter_gelaende_fusspunkt=ug_vor)
+    if bild:
+        try: seitenbild(os.path.splitext(bild)[0] + "_seite.jpg", la, lbn0 + [0, 0, dz_h], f"Seitenansicht nach Bindung: {hb_['meldung']}")
+        except Exception as ex: pr["hoehe_3d"]["seitenbild_fehler"] = f"{type(ex).__name__}: {ex}"
     k = korridor(M, G, ua, ref_b)
     # Lage der B-Kameras nur WAAGERECHT gegen das GPS (Handy-GPS traegt keine Hoehe; die Kippung aus den Waenden hebt/senkt ferne Kameras, 1122w: 17,5 m 3D bei 10 Grad)
     dX = anwenden(M, ref_b) - anwenden(Mg, ref_b); dX = dX - np.outer(dX @ ua, ua); k["lage_3d_m"] = k["lage_m"]; k["lage_m"] = round(float(np.median(np.linalg.norm(dX, axis=1))) * mj, 3)
@@ -341,6 +496,9 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
         if not getragen: gr.append("keine Wandrichtung traegt in beiden Hoehenbaendern - keine zweite Probe")
         elif dl > BAND_LAGE_M or dd > BAND_DREH_GRAD: gr.append(f"Hoehenbaender uneinig ({dl:.2f} m / {dd:.2f} Grad, Grenzen {BAND_LAGE_M} m / {BAND_DREH_GRAD} Grad)")
     if d_nach >= d_vor: gr.append(f"Wandabstand nicht kleiner ({d_vor:.2f} -> {d_nach:.2f} m)")
+    if hb_["uneinig"]: gr.append(hb_["meldung"])
+    if ug["ok"] is False: gr.append(f"Teilwolke B unter Gelaende: {100 * ug['anteil_b']:.1f} % der B-Punkte in {ug['zellen']} Strassenzellen > {UNTER_M} m unter dem Boden von A "
+                                    f"(Grenze {100 * UNTER_ANTEIL:.0f} %, A selbst {100 * (ug['anteil_a'] or 0):.1f} %; Hoehe: {hb_['quelle']})")
     # DRITTE PROBE: TURMSPITZE (Helmstange, seiten_vereinen.stange) - in der Bindung NICHT benutzt (nur Waende). Beide Wolken muessen die Spitze bis nahe derselben Hoehe
     # haben (sonst 'nicht messbar', nur Bericht: 1122w endet die A-Wolke oben duenn); dann muss sie waagerecht auf SPITZE_M (bzw. 2 % der Hoehe) uebereinanderliegen.
     lbn = anwenden(L @ M, DB); wm = c + sv; zn = lbn[np.linalg.norm(lbn[:, :2] - wm, axis=1) < 15.0, 2]
@@ -360,7 +518,7 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     if bild: kontrollbild(bild, A2, B2, Q, wa, wb, tr, 0.0, pr, gr)
     if gr: erg.update(ok=False, urteil="ABGELEHNT: " + "; ".join(gr) + " - GPS-Lage bleibt"); return erg
     erg.update(ok=True, B_nach_A=M.tolist(), urteil=f"ueber gemeinsame Waende gebunden: Kippung {kipp:.1f} Grad (Wand-Lot), Drehung {g:+.2f} Grad, Verschiebung {np.hypot(*sv):.2f} m, "
-               "Massstab " + (f"aus den Waenden {ms:.3f} x GPS (Hebel {hb:.1f} m)" if ms != 1.0 else "nach GPS") + f", Hoehe am Fusspunkt nach GPS; Wandabstand {d_vor:.2f} -> {d_nach:.2f} m, Treffer {100 * tr.mean():.0f} %; gegen GPS {k['dreh_lot_grad']:+.1f} Grad, "
+               "Massstab " + (f"aus den Waenden {ms:.3f} x GPS (Hebel {hb:.1f} m)" if ms != 1.0 else "nach GPS") + f", {hb_['meldung']}; Wandabstand {d_vor:.2f} -> {d_nach:.2f} m, Treffer {100 * tr.mean():.0f} %; gegen GPS {k['dreh_lot_grad']:+.1f} Grad, "
                f"Lage der B-Kameras {k['lage_m']:.1f} m (Grenze {k['lage_grenze_m']} m)")
     return erg
 

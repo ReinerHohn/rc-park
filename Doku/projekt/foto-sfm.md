@@ -90,3 +90,4 @@ Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTIN
 - pycolmap aus 4.3-Quellstand bauen + A/B, dann Umstellung entscheiden (Nutzerentscheid 18.11.)
 - GLOMAP mit CPU-SIFT-DB unbrauchbar - Ursache offen (Stand 02.11.)
 - FlexGlue als Standard? (Nutzerentscheid, +2,5 h Laufzeit)
+- 24.11. · Laufzeit-Bericht je Kettenlauf (`tools/laufzeit_bericht.py`, Stufe `laufzeit` vor befundliste → audit/laufzeit.json): Familien, DOPPELARBEIT (Fusion 2x 470+445 s in 1122z), WIEDERHOLUNG (6 volle Bauten 37,7 min in 1122x), GEWACHSEN gegen den Vorlauf aus gesamtkette.log → ✓ Werkzeug + Test; Wirkung erst ab nächstem Lauf
