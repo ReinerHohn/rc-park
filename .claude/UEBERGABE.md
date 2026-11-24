@@ -15,9 +15,9 @@ Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbegin
 - MachineFrameWork nach /media/oem/rcdaten/ausgelagert_root/git/MachineFrameWork (Prüfsumme gleich, Symlink). Rest mit Root-Rechten: ~/git/MachineFrameWork.rest_rootrechte (96 KB, Nutzer kann `sudo rm -rf`).
 
 ## Läuft gerade
-- Kette 1122z (Start 12:12; Drahtmasken + Ost-Teil-Wandbindung mit Maßstab + Ost-Nachholen bei teilweise ungesehener Wand) · Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122z.log · Prüfen: `grep -a "JOB_ENDE\|ERGEBNIS DES LAUFS\|LAGE:" <log>` · ANNAHME Ende 16–17 Uhr.
-- 1122y war 11:02 abgebrochen (Grundriss-Tor: Doppelwand durch Süd-Bindung ohne Maßstab) – behoben, main 0 Fehler.
-- Keine Agenten aktiv.
+- Kette 1122za seit 15:23 (Unit rcpark-kette-schwabentor-null-1122za, Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122za.log) - erste Kette mit allen 16 Fixes vom 24.11. (Merge-Probe 28, siehe Logbuch 15:23). Abnahme AM BILD: Geisterblatt weg? Ost-Teil auf Boden? Wand f00/f01 auf Fotokanten, Tor/Umgang mit? Relief ruhiger? Laufzeit (audit/laufzeit.json).
+- 1122z um 15:23 bei seiten_luecken gestoppt (Nutzerentscheid), STL 15:06 = 3D-HTML V8 (Vergleich vor Fixes).
+- Danach: kurze Modellierungsrunden nur ab bauplan (--ab ...), Zweig worktree-agent-a899cc833e1adbe96 (Ost/f02 Fernkameras) einspielen, trennscharfes Formmass mit Nullprobe bauen, Kippung Teil 1 (Hang-Kameras gestaucht 0,86).
 
 ## Nächste Schritte
 1. Nach 1122y-Ende: `audit/seiten.jpg`, neben_*.jpg, `tools/py tools/modell_neben_foto.py modelle/schwabentor-1122/objekt.json eigen__IMG_20261106_113830 <aus.jpg>` (Süd) und …113231 (Nord), malplan_*.jpg ansehen. Prüfen: Vorbau-Pfosten/Brüstung, Südfenster-Gewände, Bogenfugen, Süd-Uhr, West-Schlitz, Süd-Lage (seiten_modelle meldet waende_stufe?), Laufzeit je Stufe.
