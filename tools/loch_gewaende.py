@@ -20,9 +20,10 @@ geschlossener Tuer aus oeffnungen_aussen.json (klasse 'tuer', flach, keine gebau
      Beruehrt das Loch den Rand der belegten Zellen (Wandbild angeschnitten), gilt fuer diese Seite der kleinste Erkennerkasten, der das Loch enthaelt (sonst bleibt
      die Seite mit 'angeschnitten' im Eintrag).
   2. Gewaende = Nicht-Wand-Zellen, die das Loch beruehren (Komponente am um 10 cm gewachsenen Loch), ohne Loch; Umriss (2 cm vereinfacht) in u/z.
-     Gilt nur mit >= 15 % der Lochflaeche. Relief-Hoehe: Ebenen-Sweep (Gewaendezellen gegen Wandring, nur 0,02-0,30 m vor der Wand plausibel), sonst
+     Gilt nur mit >= 15 % der Lochflaeche. Fuellt das Gewaende den Wandring (wandfarbe: Ring + Band bis RING_WEIT zweifarbig, aussen andere Mehrheit;
+     1122w Sued f01), ist die Wand die Farbe aussen und das Gewaende darf bis zur Lochbreite reichen, dort nur in seiner Farbe am Loch. Relief-Hoehe: Ebenen-Sweep (Gewaendezellen gegen Wandring, nur 0,02-0,30 m vor der Wand plausibel), sonst
      ANNAHME Druckmindestmass (MINMM x SCALE) - im Eintrag vermerkt.
-  3. Form: der Eintrag behaelt seine Bogenform nur, wenn das Loch dieselbe Groesse hat (Breite und Hoehe je +-25 %); sonst war die Form die des Gewaendes -> Rechteck
+  3. Form: Eintrag ohne Bogen -> Bogen aus der Oberkante des Lochs (bogen_aus_loch: Stich/Rund), wenn messbar. Der Eintrag behaelt seine Bogenform nur, wenn das Loch dieselbe Groesse hat (Breite und Hoehe je +-25 %); sonst war die Form die des Gewaendes -> Rechteck
      (form_quelle nennt den Grund). Tiefe: Sweep im Loch gegen den Wandring (nischen_fenster.tiefe_einzeln); sonst bleibt eine gemessene Tiefe, sonst ANNAHME.
   GUARD + FALLBACK: kein gueltiges Loch -> Eintrag unveraendert (Grund im Bericht). Ein Loch, das > 90 % der Zone fuellt, aendert nichts (Zone war schon das Loch).
 Ausgabe: fenster_auto.json neu (Eingang als fenster_auto_vor_loch.json daneben); Eintraege bekommen 'loch' (Mass + Quelle) und ggf. 'gewaende'
@@ -38,7 +39,59 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 RING = (0.15, 0.45)        # Wandring um die Zone (m)
+RING_WEIT = 1.0            # aeusseres Band (RING[1] .. RING_WEIT) fuer die Wandfarbe, wenn ein breites Gewaende den Wandring fuellt (1122w Sued f01)
 RAND = 0.25                # Suchbereich um die Zone (Anteil der Zonengroesse; das Gewaende ragt oft ueber den Erkennerkasten)
+
+
+def wandfarbe(lab, d, bel, trennung=15.0, it=12):
+    """WANDFARBE um eine Zone (24.11.2026, Befund 1122w Sued-Fenster f01: breites Sandstein-Gewaende mit Keilsteinfaecher fuellt den Wandring 0,15-0,45 m -> der
+    Ring-Median WAR der Sandstein, das Gewaende galt als Wand und fehlte im Modell). Liefert (wand_lab, rausch, weit):
+    Standard wie bisher: Median des Wandrings, rausch = 2 x Median-Abstand im Ring. Ist der Ring + das aeussere Band (bis RING_WEIT) ZWEIFARBIG (2-Mittel, Abstand
+    der Mitten >= trennung) und ist die Mehrheitsfarbe des AEUSSEREN Bands nicht die des Rings, dann ist die Wand das Material, das nach aussen weiterlaeuft:
+    wand = Median dieser Klasse, rausch nur aus ihren Zellen, weit = True (das Gewaende reicht ueber den Ring hinaus)."""
+    nah = (d >= RING[0]) & (d <= RING[1]) & bel; fern = (d > RING[1]) & (d <= RING_WEIT) & bel
+    w0 = np.median(lab[nah], axis=0); r0 = 2.0 * float(np.percentile(np.linalg.norm(lab[nah] - w0, axis=1), 50))
+    if fern.sum() < 50: return w0, r0, False
+    alle = nah | fern; X = lab[alle]; Xs = X[:: max(1, len(X) // 20000)]
+    c = np.stack([w0, np.median(lab[fern], axis=0)])
+    if np.linalg.norm(c[0] - c[1]) < 1e-3: c[1] = Xs[np.argmax(np.linalg.norm(Xs - w0, axis=1))]
+    for _ in range(it):                                                    # 2-Mittel (Lab), Start: Ring-Median und Band-Median
+        k = np.linalg.norm(Xs[:, None, :] - c[None], axis=2).argmin(1)
+        if (k == 0).sum() < 10 or (k == 1).sum() < 10: return w0, r0, False
+        c = np.stack([np.median(Xs[k == 0], axis=0), np.median(Xs[k == 1], axis=0)])
+    if np.linalg.norm(c[0] - c[1]) < trennung: return w0, r0, False       # einfarbig: wie bisher
+    kf = np.linalg.norm(lab[fern][:, None, :] - c[None], axis=2).argmin(1); kw = int(np.bincount(kf, minlength=2).argmax())
+    if (kf == kw).mean() < 0.5: return w0, r0, False
+    if np.linalg.norm(w0 - c[kw]) < 0.5 * np.linalg.norm(c[0] - c[1]): return w0, r0, False     # Ring-Median ist schon die Wand (Normalfall)
+    ka = np.linalg.norm(X[:, None, :] - c[None], axis=2).argmin(1); Xw = X[ka == kw]
+    w = np.median(Xw, axis=0); return w, 2.0 * float(np.percentile(np.linalg.norm(Xw - w, axis=1), 50)), True
+
+
+def bogen_aus_loch(m, U, Z, lu0, lu1, lz1, c, rest_max=0.025):
+    """OBERKANTE DES LOCHS -> Bogenform (24.11.2026, 1122w Sued f01: Bogen kam als Stich 9 cm aus dem Erkennerumriss, das Wandbild zeigt den Bogen des Lochs selbst).
+    Je Spalte die oberste Lochzelle; Modelle (Breite b = lu1 - lu0, a = b/2, Scheitel = lz1): gerade (Pfeil 0), Stich (Kreissegment, Pfeil h < a), Rund (h = a).
+    Scheitel = P90 der Mittelspalten. Gewinner = kleinster Median-Rest; gilt nur mit Rest <= rest_max und >= 5 Spalten. None = kein Bogen messbar (Pfeil < max(3 cm, 3 Zellen)) -> Kasten bleibt."""
+    sp = np.nonzero(m.any(0))[0]
+    if len(sp) < 5: return None
+    top = np.array([Z[:, j][m[:, j]].max() for j in sp]) + c / 2; uj = U[0, sp]
+    a = (lu1 - lu0) / 2; mu = (lu0 + lu1) / 2; x = uj - mu; s = (np.abs(x) <= 0.95 * a)
+    if s.sum() < 5 or a < 0.05: return None
+    x, top = x[s], top[s]; best = None
+    mi = np.abs(x) <= 0.2 * a
+    sz = float(np.percentile(top[mi], 90)) if mi.sum() >= 2 else lz1      # Scheitel = Oberkante der Mittelspalten (P98 aller Lochzellen liegt beim Bogen tiefer)
+    rest = {}
+    for h in list(np.arange(0.0, a, max(c, 0.005))) + [a]:
+        if h < 1e-6: pred = np.full_like(x, sz)
+        else:
+            R = (a * a + h * h) / (2 * h); pred = sz - R + np.sqrt(np.maximum(R * R - x * x, 0.0))
+        r = float(np.median(np.abs(top - pred))); rest[h] = r
+        if best is None or r < best[0] - 1e-9: best = (r, h)
+    r, h = best
+    if r > rest_max: return None
+    if h < max(0.03, 3 * c): return None                                   # kein messbarer Bogen: Kasten der Komponente bleibt (gerade)
+    if h >= 0.9 * a or rest[a] <= r + max(c, 0.005):                       # Halbkreis gleich gut (Randspalten steil, Pfeil dort unscharf) -> Formfamilie rund
+        return dict(form="rund", kaempfer=round(float(sz - a), 3), scheitel=round(sz, 3), rest_m=round(rest[a], 3))
+    return dict(form="stich", kaempfer=round(float(sz - h), 3), scheitel=round(sz, 3), rest_m=round(r, 3))
 
 
 def _lab(bgr):
@@ -71,8 +124,8 @@ def loch_messen(bgr, R, zone, kleine_kaesten=(), dunkel=0.6, min_m=0.1, fuell_mi
     'gewaende' {umriss, flaeche_m2} oder 'fehler'."""
     import cv2
     u0, u1, z0, z1 = map(float, zone); bu, bz = u1 - u0, z1 - z0
-    ru, rz = max(RAND * bu, RING[1] + 0.05), max(RAND * bz, RING[1] + 0.05)
-    i0, i1, j0, j1 = R.fenster(u0 - ru, u1 + ru, z0 - rz, z1 + rz)
+    ru, rz = max(RAND * bu, RING[1] + 0.05), max(RAND * bz, RING[1] + 0.05); rw = RING_WEIT + 0.05
+    i0, i1, j0, j1 = R.fenster(u0 - max(ru, rw), u1 + max(ru, rw), z0 - max(rz, rw), z1 + max(rz, rw))
     if i1 - i0 < 5 or j1 - j0 < 5: return dict(fehler="Zone ausserhalb des Wandbilds")
     A = np.asarray(bgr[i0:i1, j0:j1]); bel = A.reshape(-1, 3).sum(1).reshape(A.shape[:2]) > 0
     c = R.c; II, JJ = np.mgrid[i0:i1, j0:j1]; U = R.u0 + JJ * c; Z = R.z1 - II * c
@@ -80,10 +133,11 @@ def loch_messen(bgr, R, zone, kleine_kaesten=(), dunkel=0.6, min_m=0.1, fuell_mi
     inn = (d == 0) & bel; ring = (d >= RING[0]) & (d <= RING[1]) & bel
     if inn.sum() < 50: return dict(fehler="Zone ohne Fotozellen im Wandbild")
     if ring.sum() < 50: return dict(fehler="kein Wandring mit Fotozellen um die Zone")
-    lab = _lab(A); wand = np.median(lab[ring], axis=0); dist = np.linalg.norm(lab - wand, axis=2)
-    rausch = 2.0 * float(np.percentile(dist[ring], 50))       # Median statt P90: im Ring liegen oft Nachbarbauteile (Bossenquader, Schilder) - die Wand ist die Mehrheit
+    lab = _lab(A)
+    # Median statt P90: im Ring liegen oft Nachbarbauteile (Bossenquader, Schilder) - die Wand ist die Mehrheit; fuellt ein breites Gewaende den Ring: wandfarbe()
+    wand, rausch, weit = wandfarbe(lab, d, bel); dist = np.linalg.norm(lab - wand, axis=2)
     schwelle = max(1.5 * rausch, 10.0)      # KEIN Otsu ueber die Zone: der trennt dann Tuerblatt gegen Sandstein statt Nicht-Wand gegen Wand (f04-Portal fiel weg)
-    fremd = (dist > schwelle) & bel & (d <= max(ru, rz))
+    fremd = (dist > schwelle) & bel & (d <= (RING_WEIT if weit else max(ru, rz)))
     Lw = float(wand[0]); Lf = lab[..., 0]
     kand = fremd & (d == 0)
     if kand.sum() < 20: return dict(fehler=f"in der Zone kaum Nicht-Wand-Farbe (Schwelle {schwelle:.1f})", wand_L=round(Lw, 1))
@@ -130,13 +184,28 @@ def loch_messen(bgr, R, zone, kleine_kaesten=(), dunkel=0.6, min_m=0.1, fuell_mi
                 if s_ in an: loch[key] = round(max(loch[key], k_[idx]) if s_ in ("oben", "rechts") else min(loch[key], k_[idx]), 3); ersetzt.append(s_)
             loch["angeschnitten"] = an; loch["ersatz"] = f"Seiten {', '.join(ersetzt)} aus dem kleinsten Erkennerkasten {[round(x, 2) for x in k_[:4]]} (Wandbild dort ohne Fotozellen)"
         else: loch["angeschnitten"] = an
+    if "oben" not in an:                                                  # Oberkante im Bild -> Bogenform aus dem Loch selbst (nicht aus dem Erkennerumriss)
+        bg = bogen_aus_loch(m, U, Z, lu0, lu1, lz1, c)
+        if bg: loch["bogen"] = bg                                         # Scheitel = Bogenoberkante; loch z1 bleibt der 98-%-Wert (Zonenvergleich wie bisher)
     out = dict(loch=loch, schwelle_farbe=round(schwelle, 1), schwelle_L=round(tL, 1))
     # Gewaende: Nicht-Wand-Zellen, die das Loch beruehren
     kw = 2 * int(round(0.10 / c)) + 1; mw = cv2.dilate(m.astype(np.uint8), np.ones((kw, kw), np.uint8)).astype(bool)
     fr = cv2.morphologyEx(fremd.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((k, k), np.uint8))
     n2, l2, _, _ = cv2.connectedComponentsWithStats(fr, 8); ids = set(np.unique(l2[mw & (fr > 0)])) - {0}
     g = np.isin(l2, list(ids)) & ~cv2.dilate(m.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool) if ids else np.zeros_like(m)
-    g &= d <= gewaende_rand                                               # nur Zone + Rand: angrenzende fremde Bauteile (Eckquader des Turms, Schilder) sind kein Gewaende
+    nahe_g = g & (d <= gewaende_rand)
+    if weit and nahe_g.sum() >= 20:
+        # 24.11.2026 (1122w Sued f01): das Gewaende fuellt den Wandring -> es reicht ueber 'gewaende_rand' hinaus (Keilsteinfaecher 0,8 m). Weiter als der Rand nur
+        # bis zur Lochbreite/-hoehe UND nur in der Farbe des Gewaendes am Loch (Median der Gewaendezellen am Rand): Schild/Bruchstein-Eckquader neben einem
+        # Portal (Schwabentor f04) haben eine andere Farbe und bleiben draussen; danach nur, was mit dem Loch zusammenhaengt.
+        out["wand_weit"] = True; weit_rand = min(RING_WEIT, max(gewaende_rand, min(lu1 - lu0, lz1 - lz0)))
+        gc = np.median(lab[nahe_g], axis=0); dg = np.linalg.norm(lab - gc, axis=2); tg = max(12.0, 2.5 * float(np.median(dg[nahe_g])))
+        g2 = (g & (d <= weit_rand) & (dg <= tg)) | nahe_g
+        g2 = cv2.morphologyEx(g2.astype(np.uint8), cv2.MORPH_OPEN, np.ones((2 * int(round(0.03 / c)) + 1,) * 2, np.uint8))
+        n3, l3, _, _ = cv2.connectedComponentsWithStats(g2, 8); ids3 = set(np.unique(l3[mw & (g2 > 0)])) - {0}
+        g = np.isin(l3, list(ids3)) if ids3 else nahe_g
+        out["gewaende_farbe_lab"] = [round(float(x), 1) for x in gc]
+    else: g = nahe_g                                                      # nur Zone + Rand: angrenzende fremde Bauteile (Eckquader des Turms, Schilder) sind kein Gewaende
     ko = 2 * int(round(0.03 / c)) + 1; g = cv2.morphologyEx(g.astype(np.uint8), cv2.MORPH_OPEN, np.ones((ko, ko), np.uint8)).astype(bool)   # Fransen < 3 cm weg (druckbar)
     gfl = float(g.sum()) * c * c
     if gfl >= gewaende_min * float(m.sum()) * c * c:
@@ -186,6 +255,8 @@ def eintrag_anpassen(e, erg, npz, fenster_tiefe=0.12):
     if lb * lh > 0.9 * bu * bz:
         e["loch"] = dict(L, quelle="loch_gewaende: Zone war schon das Loch")
         tx = "Zone = Loch (unveraendert)"
+        if L.get("bogen") and (e.get("bogen") or {}).get("form", "gerade") == "gerade":                # Bogen am Loch gemessen, Eintrag ohne Bogen (s. u.)
+            e.update(u0=L["u0"], u1=L["u1"]); tx = "Zone = Loch (Seiten aus dem Loch)"
     else:
         gleich = abs(lb - bu) <= 0.25 * bu and abs(lh - bz) <= 0.25 * bz
         alt = dict(u0=e["u0"], u1=e["u1"], z0=e["z0"], z1=e["z1"])
@@ -204,6 +275,16 @@ def eintrag_anpassen(e, erg, npz, fenster_tiefe=0.12):
         if not e.get("bogen"): e["bogen"] = dict(form="gerade", kaempfer=e["z1"], scheitel=e["z1"]); e.setdefault("form_quelle", "loch_gewaende: Kasten der dunklen Komponente (Rechteck)")
         e["scheiben"] = 1; e["teiler"] = []; e["sprossen"] = []
         tx = f"LOCH {lb:.2f} x {lh:.2f} m statt Zone {bu:.2f} x {bz:.2f} m"
+    gb = L.get("bogen")
+    if gb and gb.get("scheitel") is not None:
+        # 24.11.2026 (1122w Sued f01): gemessene Oberkante des Lochs schlaegt die geerbte Form (Erkennerumriss / Stichhoehe vom Gewaende)
+        # Nur wenn der Eintrag KEINEN Bogen hat (gerade / verworfen): ein Bogen aus nischen_fenster (Kanten in >= 3 Einzelfotos) bleibt - die Oberkante EINER dunklen
+        # Komponente ist bei Gitter/Schatten im Bogenfeld unsicherer (Schwabentor Nord f00: rund aus den Kanten, Komponente nur Stich 8 cm).
+        b_ = e.get("bogen") or {}
+        if b_.get("form", "gerade") == "gerade" and (b_.get("form"), b_.get("kaempfer")) != (gb["form"], gb["kaempfer"]):
+            e.setdefault("form_vorher", b_); e["z1"] = gb["scheitel"]; e["bogen"] = dict(form=gb["form"], kaempfer=gb["kaempfer"], scheitel=gb["scheitel"])
+            e["form_quelle"] = f"loch_gewaende: Oberkante der dunklen Komponente im Wandbild ({gb['form']}, Pfeil {gb['scheitel'] - gb['kaempfer']:.2f} m, Rest {gb['rest_m']:.3f} m)"
+            tx += f", Bogen {gb['form']} aus dem Loch"
     G = erg.get("gewaende")
     h, t = sweep_werte(npz, (G or {}).get("umriss"), e)
     if t is not None:

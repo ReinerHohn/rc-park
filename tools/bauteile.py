@@ -249,12 +249,12 @@ def _oberflaeche_w(koerper, W, punkte, w_von=3.0, w_bis=-1.5, radius=4.0):
     return out
 
 
-def loch_gewaende_spaet(koerper, datei, einbinden=0.3, min_vor=0.005):
+def loch_gewaende_spaet(koerper, datei, einbinden=0.3, min_vor=0.005, abtrag=0.3):
     """23.11.2026 (1122o, Tuer f04 im Treppenturm, Fenster f03): Loch + Gewaende (tools/loch_gewaende.py) auf der ECHTEN Oberflaeche NACH allen Anbauten nachziehen.
     fenster_aus_json schneidet in die LoD2-Fassadenebene; Rundkoerper/Vorbauten (wolkenrest_koerper, vorbauten_aus_json) kommen erst danach und decken das Loch zu
     (Schwabentor: Turmzylinder 0,98 m VOR der Facette f04 -> Tuer unsichtbar). Je Eintrag mit 'loch': Oberflaeche w_s = Median der Strahltreffer auf einem Ring 0,1 m um
     das Gewaende (bzw. das Loch). Liegt sie > min_vor vor der Ebene (Reliefplatte, Rundkoerper: das Gewaende muss ueber DIESER Flaeche Druckmindestmass zeigen) ODER ist das Loch zu (Treffer im Loch vor -tiefe/2), werden Gewaende-Relief (w_s - einbinden .. w_s + h)
-    und Loch (bis w_s - tiefe) dort neu gebaut. GUARD: < 3 Ringtreffer oder Streuung > 0,5 m (kein ebenes Stueck Oberflaeche) -> nichts. Liefert (koerper, belege)."""
+    und Loch (bis w_s - tiefe) dort neu gebaut. Immer (24.11.2026, 1122w Sued f01 Beulen): Relief VOR dem Gewaende (ab w_s + h, 'abtrag' m) wird im Gewaende-Umriss abgetragen. GUARD: < 3 Ringtreffer oder Streuung > 0,5 m (kein ebenes Stueck Oberflaeche) -> nichts. Liefert (koerper, belege)."""
     import json, os
     if not datei or not os.path.exists(datei): return koerper, []
     DRUCK_MIN = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
@@ -272,11 +272,15 @@ def loch_gewaende_spaet(koerper, datei, einbinden=0.3, min_vor=0.005):
             if len(wr) < 3 or float(np.max(wr) - np.min(wr)) > 0.5: aus.append(f"{fid} u {f['u0']:.2f}: Oberflaeche um das Loch nicht eben/nicht getroffen ({len(wr)} Treffer)"); continue
             ws = float(np.median(wr)); wl = w[-1]
             zu = wl is not None and wl > ws - 0.5 * tf
-            if ws <= min_vor and not zu: continue                              # schon richtig gebaut (fenster_aus_json auf der Ebene)
             h_ = max(float(G.get("hoehe") or 0.0), DRUCK_MIN) if G.get("umriss") else 0.0
             if h_ > 0:
                 s_ = -1.0 if W.spiegel else 1.0; P = [[s_ * u, z] for u, z in um]
                 if sum(P[i][0] * P[(i + 1) % len(P)][1] - P[(i + 1) % len(P)][0] * P[i][1] for i in range(len(P))) < 0: P = P[::-1]
+                # 24.11.2026 (1122w Sued f01: Beulen am Fenster): Netzrelief/Kruemel VOR dem Gewaende abtragen - das Gewaende ist die gemessene Gestalt dort (wie bogen_gewaende_spaet)
+                # nie unter max(w_s, 0) + h: das Gewaende von fenster_aus_json (Ebene 0 .. h) bleibt, auch wenn der Ring auf einer zurueckspringenden Nachbarflaeche liegt
+                koerper = koerper - M.extrude(CrossSection([P]), abtrag).translate((0, 0, max(ws, 0.0) + h_)).transform(W.matrix(0))
+            if ws <= min_vor and not zu: continue                              # schon richtig gebaut (fenster_aus_json auf der Ebene)
+            if h_ > 0:
                 koerper = koerper + M.extrude(CrossSection([P]), h_ + einbinden).translate((0, 0, ws - einbinden)).transform(W.matrix(0))
             b_ = f.get("bogen") or dict(form="gerade", kaempfer=f["z1"], scheitel=f["z1"])
             if ws > min_vor:                                                  # den frueheren Schnitt in der Ebene (jetzt eingeschlossener Hohlraum hinter dem Anbau) erst fuellen
