@@ -52,7 +52,7 @@ if True:
             pruef(n_ok[erwart[0]] == erwart[1] and sum(n_ok.values()) == 3 and (erwart[0] == "fehlend" or not ZR.sift_fehlend(db, sorted(info))),
                   f"{fall}: {n_ok} (Aufrufe {auf})")
         pruef(any(g == "gpu" and m == 1600 for g, m in [(a_[0], a_[2]) for a_ in auf]), "Wiederholung auf der GPU mit max_image_size 1600 (weniger VRAM)")
-        q = open(os.path.join(T, "zusatzfotos_registrieren.py")).read(); i_s = q.find("sift = sift_sicher("); i_f = q.find('if sift["fehlend"]'); i_m = q.find("ver = sift_paare_matchen(db, pf")      # 23.11.2026: Matching in sift_paare_matchen (Schalter RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT)
+        q = open(os.path.join(T, "zusatzfotos_registrieren.py")).read(); i_s = q.find("sift = sift_sicher("); i_f = q.find('if sift["fehlend"]'); i_m = q.find("ver = sift_paare_matchen_gespeichert(db, pf")      # 23.11.2026: Matching in sift_paare_matchen (Schalter RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT)
         pruef(0 < i_s < i_f < i_m, "merkmale: Nachholen und Abbruch bei fehlenden Bildern VOR dem Matching (1122n: 5 min Matching, dann KeyError)")
 
         # (2) Sperre der Fehlschlag-Marke

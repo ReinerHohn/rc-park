@@ -142,8 +142,8 @@ def fern_quelle(C2, G, nah, seed=0):
 def turm_referenz(objekt, dom1=None):
     """Hoehe der Objektspitze ueber dem LoD2-Boden aus amtlichen Daten: DOM1-Maximum im LoD2-Grundriss (+ halber Nadelzuschlag) -> dict(h_m, halb_m, quelle) oder None."""
     try:
-        import lod2_gebaeude as L
-        meta, grund, _ = L.grundflaechen(objekt, objekt["lod2"]["gml"])
+        import lod2_gebaeude as LOD2
+        meta, grund, _ = LOD2.grundflaechen(objekt, objekt["lod2"]["gml"])
     except Exception: return None
     if not meta or not grund: return None
     if dom1 is None:
