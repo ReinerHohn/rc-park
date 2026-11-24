@@ -1,4 +1,4 @@
-# Werkzeuge: fassade_relief (69)
+# Werkzeuge: fassade_relief (70)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
 - `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
@@ -53,6 +53,7 @@
 - `tools/relief_aus_foto.py` [seg] relief_aus_foto.py - Relief auf einer Traegerflaeche aus EINEM Foto per monokularer Tiefe (Depth Anything V2 SMALL, Apache-2.0). Beweistest Option B (11.11.): Hoehenfeld relativ (H
 - `tools/relief_aus_fotos_mono.py` [seg] relief_aus_fotos_mono.py <relief.npz> <objekt.json> <aus.npz> --feld u0 u1 z0 z1 --stl <stl> [--n 5] [--px 0.02] [--trenn 0.25] [--massstab k x y z]
 - `tools/relief_einsatz.py` [seg] relief_einsatz.py - Relief-Einsatz aus dem Scan-Netz fuer eine Generatorwand (Nutzerentscheidung 15.11.2026 nach tools/relief_test.py).
+- `tools/relief_kantenglatt.py` [seg] relief_kantenglatt.py - FEINRAUSCHEN OHNE FOTOKANTE GLAETTEN (Kettenstufe der Fassaden-Kette, 24.11.2026, Befund 1122x f00_wand "erfunden 0,984").
 - `tools/relief_mischen.py` [seg] relief_mischen.py <fein.npz> <grob_voll.npz> <aus.npz> [--px 0.02] - feines Hoehenbild (tools/tiefe_lokal.py) mit dem groben Relief derselben Wand zu EINEM Einsatz mischen.
 - `tools/relief_putz.py` [seg] relief_putz.py <relief.npz> <aus.npz> <objekt.json> FOTO [FOTO ...] [--feld u0 u1 z0 z1] [--massstab k x y z] [--s 0.22] [--v 0.45] - Putzflaechen eines Relief-Einsatzes glaetten.
 - `tools/relief_quader_eben.py` [seg] relief_quader_eben.py <relief.npz> <aus.npz> --feld u0 u1 z0 z1 [--feld ...] - glatt behauene Eckquader: Steinzellen eines Feldes auf EINE Hoehe.

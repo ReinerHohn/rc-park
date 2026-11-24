@@ -220,6 +220,35 @@ def erster_treffer(ray, ursprung, richtung, roh=False):
     return q[ri], ri
 
 
+
+GPU_BLOCK_START = 1500000; GPU_BLOCK_MIN = 4096
+
+
+def gpu_budget_mb(env):
+    """--gpu-mb-Standard (24.11.2026): Job-Buchung RCPARK_GPU_MB (job_start.sh) minus ~300 MiB Treiber-Grundlast, mindestens 1000; ohne Buchung 2600 (Wert bis 24.11.)."""
+    b = int(env.get("RCPARK_GPU_MB") or 0)
+    return float(max(1000, b - 300)) if b > 0 else 2600.0
+
+
+def ist_oom(e_):
+    """CUDA-Speichermangel (torch.OutOfMemoryError oder RuntimeError 'out of memory') - nur der wird per Blockhalbierung abgefangen, andere Fehler nicht."""
+    return type(e_).__name__ == "OutOfMemoryError" or "out of memory" in str(e_).lower()
+
+
+def mit_blockhalbierung(fn, zustand, aufraeumen, block_min=GPU_BLOCK_MIN, melde=print):
+    """fn(block) rechnen; bei Speichermangel aufraeumen(), Block halbieren (zustand["block"], bleibt fuer spaetere Aufrufe klein) und erneut versuchen.
+    Das Ergebnis haengt nicht vom Block ab (alle Formeln je Zelle, Teile in fester Reihenfolge aneinandergehaengt) - Test tools/test_ortho_oom.py.
+    Unter block_min: Fehler weiterreichen (dann Rest auf der CPU). 24.11.2026 (1122x: OOM nach 294 Paaren -> bisher sofort alles Weitere auf der CPU)."""
+    while True:
+        grund = None
+        try: return fn(zustand["block"])
+        except Exception as e_:
+            if not ist_oom(e_) or zustand["block"] // 2 < block_min: raise
+            grund = f"{type(e_).__name__}: {str(e_)[:100]}"
+        aufraeumen(); zustand["block"] //= 2; zustand["halbiert"] = zustand.get("halbiert", 0) + 1                  # ausserhalb des except: Rueckverfolgung (haelt die Tensoren) ist frei
+        melde(f"  GPU-Speicher knapp ({grund}) - Block halbiert auf {zustand['block']} Zellen, weiter auf der GPU", flush=True)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl", help="Stufenmodell (Pflicht ausser --messflaeche eben / --nur-messkoerper)"); ap.add_argument("--aus")
     ap.add_argument("--messflaeche", choices=("modell", "eben"), default="modell", help="eben = modellfreier Messkoerper (LoD2 flach + Wandversatz aus Fotokanten) als Projektionsflaeche und Verdecker - Pflicht fuer Messungen (Kreisfall 22.11.2026)"); ap.add_argument("--nur-messkoerper", help="nur den Messkoerper als STL (mm, Objekt-Massstab) schreiben und enden")
@@ -229,12 +258,14 @@ def main(argv=None):
     ap.add_argument("--mit-selbstbau", action="store_true", help="selbst gebaute Vorbauten (audit/vorbauten_auto.json) als Verdecker/Flaeche behalten (vor dem 21.11.2026; zirkulaer fuer Messungen)")
     ap.add_argument("--max-fotos", type=int, default=40, help="je Fassade nur die besten N Kameras (0 = alle)"); ap.add_argument("--gpu-sicht", action="store_true", help="Sichtbarkeit ueber ein GPU-Tiefenbild je Foto statt CPU-Strahlen. Messung 16.11.2026 (ober_tvdr, 700 Kameras): LANGSAMER (61 s gegen 41 s) und weniger streng - Standard bleibt CPU (embree)"); ap.add_argument("--nur", help="Komma-Liste Flaechen-IDs (f02,e05 ...): nur diese rastern (Tests/Vergleiche; IDs bleiben die des vollen Laufs)")
     ap.add_argument("--ohne-gpu", action="store_true", help="Zellrechnung (Projektion, Blickwinkel, Aufloesung, Bildrand-Maske) auf der CPU statt auf der GPU; die CPU rechnet exakt wie vor dem 17.11.2026 (Vergleichsweg)")
-    ap.add_argument("--gpu-mb", type=float, default=2600.0, help="Obergrenze fuer den GPU-Speicher dieses Laufs in MiB (torch-Zuteilung; dazu kommen ~0,3 GB Grundlast des Treibers). Wird sie oder der freie Kartenspeicher ueberschritten: Meldung, Rest auf der CPU")
+    ap.add_argument("--gpu-mb", type=float, default=None, help="Obergrenze fuer den GPU-Speicher dieses Laufs in MiB (torch-Zuteilung; dazu kommen ~0,3 GB Grundlast des Treibers). Standard: Job-Buchung RCPARK_GPU_MB (tools/job_start.sh) minus 300 MiB Grundlast, mindestens 1000; ohne Buchung 2600. Wird sie ueberschritten: Block halbieren und auf der GPU weiter (24.11.2026), erst unter 4096 Zellen Block Rest auf der CPU")
     ap.add_argument("--gpu-ab", type=int, default=500000, help="GPU erst ab so vielen Rasterzellen (alle Fassaden zusammen; 0 = immer). Darunter kostet der Start von torch/CUDA (~1-2 s) mehr, als die Karte spart (gemessen 17.11.2026 ober_tvdr 5 cm: nur f02 = 42 000 Zellen 1,6 s CPU gegen 2,7 s GPU; alle 13 Fassaden = 1,8 Mio. Zellen 8 s CPU gegen 6 s GPU)")
     ap.add_argument("--px-ziel", type=int, default=256, help="Flaechen unter --klein-m2: Zelle = min(--zelle, kleinere Ausdehnung / px-ziel), damit kleine Flaechen (Vorbauseiten, Erkerstreifen) genug Pixel fuer den Erkenner haben (S4: die feste 5-cm-Zelle gab einem 2-m-Streifen nur 40 px; Aufloesung statt Handschwelle ist die physikalische Grenze)")
     ap.add_argument("--klein-m2", type=float, default=20.0, help="Flaechen kleiner als dies bekommen die feinere Zelle (Begruendung: grosse Fassaden brauchen 5 cm, Speicher/Rechenzeit wachsen mit 1/Zelle^2)")
     ap.add_argument("--zelle-min", type=float, default=0.005, help="feinste Zelle (m): Untergrenze, damit eine sehr schmale Flaeche keine Riesenraster erzeugt; 5 mm ~ Bodenaufloesung der besten Fotos (ANNAHME; 1 cm schloss in T1 0,5-m-Erkerfacetten mit < 96 px aus, die Spec verlangt 256 px je 2 m = 7,8 mm)")
     a = ap.parse_args(argv); t0 = time.time(); ZT = {}; _tz = [t0]
+    if a.gpu_mb is None: a.gpu_mb = gpu_budget_mb(os.environ)
+    os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")                # 24.11.2026: gegen Zerstueckelung (1122x: OOM bei 70 MiB, Reserve 2604 MiB = Grenze); muss vor dem ersten CUDA-Zugriff stehen
     def zeit(name): ZT[name] = round(ZT.get(name, 0.0) + time.time() - _tz[0], 1); _tz[0] = time.time()
     import threading
     def _gpu_vor():                                                                                  # torch + CUDA brauchen ~2 s zum Start: im Hintergrund, waehrend Modell/Raster/Relief auf der CPU laufen
@@ -370,7 +401,8 @@ def main(argv=None):
     # Unterschiede nur in der letzten Stelle (1e-16), wirksam nur genau an einer Schwelle. Gemessen 17.11.2026 mit tools/test_ortho_vergleich.py (ober_tvdr, 1 cm, 13 Fassaden, 111 Bilder mit
     # Einzelbildern/Abdeckung/Relief, 378 Mio. Werte): GPU-Weg und CPU-Weg beide BITGLEICH zur Referenz; 52 s -> 11-15 s (GPU) bzw. 27-29 s (--ohne-gpu). Das ist gemessen, nicht garantiert: nach Aenderungen
     # hier den Vergleich wiederholen (Grenze: groesste Abweichung <= 1 Graustufe, < 0,1 % der Werte). --ohne-gpu = alter Rechenweg. Kleine Aufgaben (< --gpu-ab Zellen, z. B. 5-cm-Laeufe) bleiben auf der CPU.
-    GPU = dict(an=False, grund="--ohne-gpu" if a.ohne_gpu else ("--gpu-sicht" if a.gpu_sicht else (f"kleine Aufgabe ({n_zellen} Zellen < --gpu-ab {a.gpu_ab})" if gpu_klein else "")), zellen=n_zellen, paare=0, cpu_paare=0, cache=0, gpu_s=0.0, strahlen=0)
+    GPU = dict(an=False, grund="--ohne-gpu" if a.ohne_gpu else ("--gpu-sicht" if a.gpu_sicht else (f"kleine Aufgabe ({n_zellen} Zellen < --gpu-ab {a.gpu_ab})" if gpu_klein else "")), zellen=n_zellen, paare=0, cpu_paare=0, cache=0, gpu_s=0.0, strahlen=0, block=GPU_BLOCK_START, halbiert=0)
+    TEST_OOM_AB = int(os.environ.get("RCPARK_TEST_OOM_AB", "0") or 0)                               # nur Test (tools/test_ortho_oom.py): Speichermangel vortaeuschen, solange der Block groesser ist als dies
     if not a.ohne_gpu and not a.gpu_sicht and not gpu_klein:
         try:
             gpu_vor.join(); import torch
@@ -385,16 +417,26 @@ def main(argv=None):
             if not GPU["an"]: return
             GPU["an"] = False; GPU["grund"] = f"{type(e_).__name__}: {str(e_)[:160]}"
             for F_ in fas: F_.pop("_Sg", None)
+            GPU["cache"] = 0
             try: torch.cuda.empty_cache()
             except Exception: pass
         print(f"ACHTUNG GPU-Fehler nach {GPU['paare']} Foto-Fassaden-Paaren ({GPU['grund']}) - Rest der Zellrechnung auf der CPU (langsamer, Ergebnis gleich)", flush=True)
+
+    def gpu_platz():
+        """Bei Speichermangel (unter GPU_SPERRE): zwischengespeicherte Fassaden von der Karte, Cache-Grenze halbieren, Zuteiler leeren."""
+        for F_ in fas: F_.pop("_Sg", None)
+        GPU["cache"] = 0; GPU["cache_anteil"] = GPU.get("cache_anteil", 0.4) / 2
+        torch.cuda.empty_cache()
+
+    def oom_test(B):
+        if TEST_OOM_AB and B > TEST_OOM_AB: raise torch.OutOfMemoryError(f"CUDA out of memory (Test RCPARK_TEST_OOM_AB={TEST_OOM_AB}, Block {B})")
 
     def fass_gpu(F):
         """Zellpunkte + Masken der Fassade auf der Karte (bleiben dort, solange alle zusammen hoechstens 40 % der Grenze belegen; sonst je Aufruf neu hochgeladen). Nur unter GPU_SPERRE rufen."""
         g = F.get("_Sg")
         if g is None:
             g = (torch.from_numpy(F["_S"]).to(DEV), torch.from_numpy(F["_loch"]).to(DEV), torch.from_numpy(np.isfinite(F["_rel"]) | F["_loch"]).to(DEV)); nb_ = g[0].numel() * 8 + 2 * len(g[1])
-            if GPU["cache"] + nb_ <= 0.4 * a.gpu_mb * 2 ** 20: F["_Sg"] = g; GPU["cache"] += nb_
+            if GPU["cache"] + nb_ <= GPU.get("cache_anteil", 0.4) * a.gpu_mb * 2 ** 20: F["_Sg"] = g; GPU["cache"] += nb_
         return g
 
     def zellen_gpu(F, Cw, tr, R, t, f, cx, cy, k1, W, H):
@@ -403,34 +445,46 @@ def main(argv=None):
         T = torch; n = F["n"] + [0.0]; cgr = math.cos(math.radians(a.max_winkel)); Rl = np.asarray(R, float).tolist(); tl = np.asarray(t, float).tolist(); Cl = np.asarray(Cw, float).tolist(); trl = np.asarray(tr, float).tolist(); teile = []
         with GPU_SPERRE:                                                                             # eine Rechnung zur Zeit: die Karte ist geteilt, der Speicher bleibt klein (ein Block von 1,5 Mio. Zellen ~ 0,35 GB)
             if not GPU["an"]: return False
-            tg_ = time.time(); Sg = fass_gpu(F)[0]
-            for s0 in range(0, len(Sg), 1500000):
-                X = Sg[s0:s0 + 1500000]; x0, x1, x2 = X[:, 0], X[:, 1], X[:, 2]
-                v0, v1, v2 = Cl[0] - x0, Cl[1] - x1, Cl[2] - x2; dist = T.sqrt(v0 * v0 + v1 * v1 + v2 * v2); cosw = (v0 * n[0] + v1 * n[1] + v2 * n[2]) / dist
-                q0, q1, q2 = x0 + trl[0], x1 + trl[1], x2 + trl[2]; c_ = [q0 * Rl[k_][0] + q1 * Rl[k_][1] + q2 * Rl[k_][2] + tl[k_] for k_ in range(3)]
-                z = c_[2]; xn = c_[0] / z; yn = c_[1] / z; s_ = 1 + k1 * (xn * xn + yn * yn); pu = f * xn * s_ + cx; pv = f * yn * s_ + cy
-                mpp = dist / (f * T.clamp(cosw, min=1e-3))
-                ok = (cosw > cgr) & (z > 1) & (pu >= 0) & (pu < W - 1) & (pv >= 0) & (pv < H - 1) & (mpp < a.max_mpp); j = T.nonzero(ok)[:, 0]
-                if len(j): teile.append((j + s0, T.stack([v0[j], v1[j], v2[j]], 1), dist[j], cosw[j], mpp[j], T.stack([pu[j], pv[j]], 1)))
-                del X, x0, x1, x2, v0, v1, v2, dist, cosw, q0, q1, q2, c_, z, xn, yn, s_, pu, pv, mpp, ok, j
-            GPU["paare"] += 1
-            if sum(len(q_[0]) for q_ in teile) < 200: return None
-            st = dict(zip(("idx", "v", "dist", "cosw", "mpp", "px"), (T.cat([q_[k_] for q_ in teile]) for k_ in range(6)))); del teile
-            if not (np.isfinite(Cw).all() and bool(T.isfinite(st["dist"]).all()) and float(st["dist"].min()) > 0.5 and float(st["dist"].max()) < 2000): return "standort"
-            st["dirs"] = -st.pop("v") / st["dist"][:, None]; st["dirs32"] = st["dirs"].to(T.float32).cpu().numpy(); GPU["gpu_s"] += time.time() - tg_; GPU["strahlen"] += len(st["dirs32"]); return st
+            tg_ = time.time()
+
+            def rechnen(B):                                                                          # B = Zellen je Block (bei Speichermangel halbiert, Ergebnis gleich: Formeln je Zelle, Teile in Reihenfolge)
+                Sg = fass_gpu(F)[0]; teile = []
+                for s0 in range(0, len(Sg), B):
+                    oom_test(B); X = Sg[s0:s0 + B]; x0, x1, x2 = X[:, 0], X[:, 1], X[:, 2]
+                    v0, v1, v2 = Cl[0] - x0, Cl[1] - x1, Cl[2] - x2; dist = T.sqrt(v0 * v0 + v1 * v1 + v2 * v2); cosw = (v0 * n[0] + v1 * n[1] + v2 * n[2]) / dist
+                    q0, q1, q2 = x0 + trl[0], x1 + trl[1], x2 + trl[2]; c_ = [q0 * Rl[k_][0] + q1 * Rl[k_][1] + q2 * Rl[k_][2] + tl[k_] for k_ in range(3)]
+                    z = c_[2]; xn = c_[0] / z; yn = c_[1] / z; s_ = 1 + k1 * (xn * xn + yn * yn); pu = f * xn * s_ + cx; pv = f * yn * s_ + cy
+                    mpp = dist / (f * T.clamp(cosw, min=1e-3))
+                    ok = (cosw > cgr) & (z > 1) & (pu >= 0) & (pu < W - 1) & (pv >= 0) & (pv < H - 1) & (mpp < a.max_mpp); j = T.nonzero(ok)[:, 0]
+                    if len(j): teile.append((j + s0, T.stack([v0[j], v1[j], v2[j]], 1), dist[j], cosw[j], mpp[j], T.stack([pu[j], pv[j]], 1)))
+                    del X, x0, x1, x2, v0, v1, v2, dist, cosw, q0, q1, q2, c_, z, xn, yn, s_, pu, pv, mpp, ok, j
+                if sum(len(q_[0]) for q_ in teile) < 200: return None
+                st = dict(zip(("idx", "v", "dist", "cosw", "mpp", "px"), (T.cat([q_[k_] for q_ in teile]) for k_ in range(6)))); del teile
+                if not (np.isfinite(Cw).all() and bool(T.isfinite(st["dist"]).all()) and float(st["dist"].min()) > 0.5 and float(st["dist"].max()) < 2000): return "standort"
+                st["dirs"] = -st.pop("v") / st["dist"][:, None]; st["dirs32"] = st["dirs"].to(T.float32).cpu().numpy(); return st
+            st = mit_blockhalbierung(rechnen, GPU, gpu_platz); GPU["paare"] += 1
+            if isinstance(st, dict): GPU["gpu_s"] += time.time() - tg_; GPU["strahlen"] += len(st["dirs32"])
+            return st
 
     def sicht_gpu(F, st, q, Cw):
         """Stufe 2 auf der GPU: aus den Dreiecksnummern des Strahlkerns (q, -1 = kein Treffer) die sichtbaren Zellen. Rueckgabe None (< 200), False (GPU aus) oder (idx, px, mpp, guete) als numpy."""
         T = torch; Cl = np.asarray(Cw, float).tolist()
         with GPU_SPERRE:
             if not GPU["an"]: return False
-            tg_ = time.time(); _, lochg, relokg = fass_gpu(F); qg = T.from_numpy(q).to(DEV).long(); tr_ = qg >= 0; qg = T.clamp(qg, min=0); nn = FNg[qg]; p0 = P0g[qg]; d = st["dirs"]; dist = st["dist"]
-            nen = d[:, 0] * nn[:, 0] + d[:, 1] * nn[:, 1] + d[:, 2] * nn[:, 2]; zae = (p0[:, 0] - Cl[0]) * nn[:, 0] + (p0[:, 1] - Cl[1]) * nn[:, 1] + (p0[:, 2] - Cl[2]) * nn[:, 2]
-            erster = T.where(tr_, zae / T.where(T.abs(nen) < 1e-12, T.full_like(nen, 1e-12), nen), T.full_like(nen, float("inf")))
-            loch = lochg[st["idx"]]; sicht = (T.abs(erster - dist) < a.tol + 0.002 * dist) | (loch & (erster > dist - a.tol)); sicht &= relokg[st["idx"]]
-            j = T.nonzero(sicht)[:, 0]
-            if len(j) < 200: return None
-            mpp = st["mpp"][j]; GPU["gpu_s"] += time.time() - tg_; return st["idx"][j].to(T.int32).cpu().numpy(), st["px"][j].cpu().numpy(), mpp.cpu().numpy(), (st["cosw"][j] / mpp).to(T.float32).cpu().numpy()
+            tg_ = time.time()
+
+            def rechnen(B):                                                                          # in Bloecken ueber die Zellen im Bild (Formeln je Zelle: Ergebnis vom Block unabhaengig)
+                _, lochg, relokg = fass_gpu(F); js = []; m_ = len(st["idx"])
+                for s0 in range(0, m_, B):
+                    oom_test(B); qg = T.from_numpy(q[s0:s0 + B]).to(DEV).long(); tr_ = qg >= 0; qg = T.clamp(qg, min=0); nn = FNg[qg]; p0 = P0g[qg]; d = st["dirs"][s0:s0 + B]; dist = st["dist"][s0:s0 + B]
+                    nen = d[:, 0] * nn[:, 0] + d[:, 1] * nn[:, 1] + d[:, 2] * nn[:, 2]; zae = (p0[:, 0] - Cl[0]) * nn[:, 0] + (p0[:, 1] - Cl[1]) * nn[:, 1] + (p0[:, 2] - Cl[2]) * nn[:, 2]
+                    erster = T.where(tr_, zae / T.where(T.abs(nen) < 1e-12, T.full_like(nen, 1e-12), nen), T.full_like(nen, float("inf")))
+                    ix = st["idx"][s0:s0 + B]; loch = lochg[ix]; sicht = (T.abs(erster - dist) < a.tol + 0.002 * dist) | (loch & (erster > dist - a.tol)); sicht &= relokg[ix]
+                    js.append(T.nonzero(sicht)[:, 0] + s0); del qg, tr_, nn, p0, d, dist, nen, zae, erster, ix, loch, sicht
+                j = T.cat(js) if js else T.zeros(0, dtype=T.long, device=DEV)
+                if len(j) < 200: return None
+                mpp = st["mpp"][j]; return st["idx"][j].to(T.int32).cpu().numpy(), st["px"][j].cpu().numpy(), mpp.cpu().numpy(), (st["cosw"][j] / mpp).to(T.float32).cpu().numpy()
+            erg_ = mit_blockhalbierung(rechnen, GPU, gpu_platz); GPU["gpu_s"] += time.time() - tg_; return erg_
 
     def paar_cpu(F, nr, tief, Cw, tr, R, t, f, cx, cy, k1, W, H):
         """Rechenweg bis 17.11.2026 (numpy ueber alle Zellen, Formeln unveraendert). Rueckgabe None oder (idx, px, mpp, guete) wie sicht_gpu."""
@@ -568,11 +622,11 @@ def main(argv=None):
     with ThreadPoolExecutor(max(1, min(len(fas), _neben))) as ex: bericht = list(ex.map(verschmelzen, enumerate(fas)))      # 17.11.2026 (2): bis zu 3 Fassaden nebeneinander (mehr = Arbeitsspeicher: je Fassade alle Proben aller Fotos)
     zeit("verschmelzen_schreiben"); GPU["weg"] = ("GPU" if GPU["an"] else "CPU") if not GPU["cpu_paare"] or not GPU["paare"] else "GPU, dann CPU"
     if GPU["paare"]: GPU["gpu_mb_spitze"] = round(torch.cuda.max_memory_reserved() / 2 ** 20)
-    print(f"Zellrechnung: {GPU['weg']} ({GPU['paare']} Foto-Fassaden-Paare GPU, {GPU['cpu_paare']} CPU" + (f", {GPU['strahlen'] / 1e6:.0f} Mio. Sichtstrahlen, GPU-Rechenzeit {GPU['gpu_s']:.1f} s, GPU-Speicher Spitze {GPU['gpu_mb_spitze']} MiB" if GPU["paare"] else "") + (f"; Grund CPU: {GPU['grund']}" if GPU["grund"] else "") + ")", flush=True)
+    print(f"Zellrechnung: {GPU['weg']} ({GPU['paare']} Foto-Fassaden-Paare GPU, {GPU['cpu_paare']} CPU" + (f", {GPU['strahlen'] / 1e6:.0f} Mio. Sichtstrahlen, GPU-Rechenzeit {GPU['gpu_s']:.1f} s, GPU-Speicher Spitze {GPU['gpu_mb_spitze']} MiB" if GPU["paare"] else "") + (f", Block {GPU['halbiert']}x halbiert auf {GPU['block']} Zellen" if GPU["halbiert"] else "") + (f"; Grund CPU: {GPU['grund']}" if GPU["grund"] else "") + ")", flush=True)
     print("Zeiten (s): " + ", ".join(f"{k_} {v_}" for k_, v_ in ZT.items()), flush=True)
     json.dump(dict(objekt=a.objekt, stl=None if EBEN else os.path.abspath(a.stl), zelle_m=a.zelle, tol_m=a.tol, max_mpp=a.max_mpp, fotos=fotos, fassaden=fas,
                    beste_k=a.beste, nachbarn_lod2=n_nb, verdecker_selbstbau=VSB, messflaeche=a.messflaeche if not EBEN else "eben",
-                   quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + " + ("modellfreier Messkoerper (LoD2 flach + Wandversatz aus Fotokanten, unabhaengig vom vorigen Lauf)" if EBEN else "Sichtbarkeit gegen Stufenmodell") + " + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1), zeiten_s=ZT, zellrechnung={k_: (round(v_, 1) if isinstance(v_, float) else v_) for k_, v_ in GPU.items() if k_ not in ("an", "cache")}),
+                   quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + " + ("modellfreier Messkoerper (LoD2 flach + Wandversatz aus Fotokanten, unabhaengig vom vorigen Lauf)" if EBEN else "Sichtbarkeit gegen Stufenmodell") + " + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1), zeiten_s=ZT, zellrechnung={k_: (round(v_, 1) if isinstance(v_, float) else v_) for k_, v_ in GPU.items() if k_ not in ("an", "cache", "cache_anteil")}),
               open(os.path.join(a.aus, "fassaden.json"), "w"), indent=1)
     print(f"{len(fas)} Fassaden, {len(fotos)} Fotos, {time.time() - t0:.0f} s"); print("\n".join(bericht))
 
