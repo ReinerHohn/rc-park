@@ -25,7 +25,7 @@ Werkzeuge: `tools/wissen_suchen.py` (Suche mit Rangfolge) · `tools/werkzeug_aeh
 
 ## Offen
 - Kontrollsatz-Recall (4/8) heben, ohne an ihm abzustimmen: Relevanz je Eintrag (Abschnitt) statt je Zeile; Logbuch-Absaetze als Einheit
-- Nicht eingecheckte Archivdateien im Haupt-Checkout (SPEC_FLAECHENMASS, STAND_2026-11-10_NACHMITTAG, STAND_2026-11-12_VORMITTAG_lang) und QUALITAETSSTUFEN.md (Verweis aus `tools/qualitaetsstufen.py`, Datei fehlt im Repo): Nutzer entscheidet
+- ERLEDIGT 24.11. (Nutzer „ja"): eingecheckt - Archivdateien SPEC_FLAECHENMASS, STAND_2026-11-10_NACHMITTAG, STAND_2026-11-12_VORMITTAG_lang ; QUALITAETSSTUFEN.md gab es nie - Verweis in `tools/qualitaetsstufen.py` zeigt jetzt auf pipeline/methodik.md
 - 33 doppelt vergebene Register-IDs (49 Doppelungen, REZEPT 42) umbenennen. Das geht nur mit Nachziehen der Baumverweise und braucht den Nutzer
 - Weitere Familien mit Doppelgaenger-Verdacht pruefen: Oeffnungen (oeffnungen_bogen/-wandbild/-aus_kanten, nischen_fenster, schlitze_wandbild), Haufen (haufen_am_foto/-herkunft/-klaeren), `brennweite_waehlen` gegen `exif_brennweite`
 - Generische Fassung nach `~/git/claude-mds` (Skill doku-pflege) uebernehmen. Danach werden die rc-park-Kopien zu Aufrufen
