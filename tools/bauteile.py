@@ -556,7 +556,19 @@ def drehkoerper_aus_wolkenrest(koerper, datei, nseg=48):
     for H in json.load(open(datei)).get("haufen", []):
         P = H.get("profil") or []
         if H.get("form") != "rund" or len(P) < 4 or H.get("angenommen") is False: continue
-        x, y = H["kreis"]["x"], H["kreis"]["y"]; dz = P[1][0] - P[0][0]
+        x, y = H["kreis"]["x"], H["kreis"]["y"]; dz = P[1][0] - P[0][0]; weg = []
+        # 24.11.2026 GLATTER PUTZ-SCHAFT (Befund 1122zb f04, Treppenturm: Foto glatter weisser Putz bis zum Gesims, Modell 0,7-m-Kerbe z 10,5-12,2 und 48-Eck mit 0,2-m-Facetten):
+        # (a) Profilhoehen am Suchrand der Umrissmessung sind kein Messwert (rund_aus_umriss.profil_bereinigen; Daten vor diesem Fix tragen sie noch);
+        # (b) Facette <= Druckmindestmass (MINMM x SCALE, 0,07 m in H0): Segmentzahl aus dem groessten Radius statt fest 48 - glatter Putz ist rund, nicht 7,5-Grad-Knicke.
+        r0_ = (H.get("umriss") or {}).get("start_wolke", {}).get("r") or (H.get("kreis_wolke") or {}).get("r")
+        if H.get("mass_quelle") == "foto_umriss" and r0_:
+            from rund_aus_umriss import profil_bereinigen
+            P, weg = profil_bereinigen(P, r0_)
+        dmin_ = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
+        r_max_ = max([p[1] for p in P] + [float((H.get("dach") or {}).get("r_traufe") or 0.0)])
+        nseg = max(int(nseg), int(np.ceil(2 * np.pi * r_max_ / max(dmin_, 1e-3))))
+        if weg: belege.append(dict(seite="wand", element=f"Rundkoerper {H.get('id', '')}: {len(weg)} Profilhoehen am Suchrand verworfen (z {weg})", quelle="rund_aus_umriss.profil_bereinigen",
+                                   hinweis="Radius am Rand des Suchbereichs = kein Umriss gefunden; Hoehe traegt den Radius der gemessenen Hoehe darunter"))
         kd, bel_k = kegeldach_teile(H.get("dach"), x, y, P, nseg)                   # 23.11.2026: Kegeldach aus den Foto-Umrissen (rund_aus_umriss.kegeldach), sonst flach wie bisher
         if kd: P = [p for p in P if p[0] < kd[0] - 1e-6]
         teile = [M.cylinder(P[0][0] + 0.01, P[0][1], P[0][1], nseg).translate((x, y, 0.0))]
