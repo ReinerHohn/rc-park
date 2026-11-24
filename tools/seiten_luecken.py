@@ -142,11 +142,49 @@ def wand_abdeckung(fassaden_dir, F, i, im=None, maske=None):
 def kamera_verfeinern_zeile(VS, T, objekt, fassaden_json, audit, Z):
     """Bash-Zeile: ALLE neuen Kameras (audit/kameras_nachtragen.json 'neu', in dieser Reihenfolge) in EINEM Prozess am Modell nachziehen (kamera_verfeinern.py --liste).
     23.11.2026 (Kette 1122q): bisher je Kamera ein eigener Prozess - 327 x (Importe, STL 958k Dreiecke laden, ALIKED/LightGlue laden, Referenz-Merkmale und
-    -Tiefenbilder neu) = 75 min von 165 min der Stufe. Der Stapel liest die K-Dateien je Foto frisch und schluesselt Tiefenbilder nach Kamera - Ergebnis wie die
+    -Tiefenbilder neu) = 75 min von 165 min der Stufe. 24.11.2026: nur rc 0/3 gelten (stapelweise Fehler je Foto faengt kamera_verfeinern selbst ab), ein Absturz beim Laden
+    (1122u: leeres STL) bricht das Skript ab statt 'alles unbelegt' + Erfolgsmarke 'versucht' (die den naechsten Lauf ueberspringen liess). Der Stapel liest die K-Dateien je Foto frisch und schluesselt Tiefenbilder nach Kamera - Ergebnis wie die
     Einzelfolge (tools/test_kamera_verfeinern_stapel.py). rc 3 (Kamera bleibt unsicher) und Fehler brechen das Skript nicht ab (wie vorher '|| true' je Foto)."""
     L = f"{Z}/kamera_verfeinern_liste.txt"
     return (f"python3 -c \"import json; print('\\n'.join(e['foto'] for e in json.load(open('{audit}/kameras_nachtragen.json'))['neu']), end='')\" > {L} || : ; "
-            f"if [ -s {L} ]; then {VS} -W ignore {T}/kamera_verfeinern.py {objekt} {fassaden_json} - --liste {L} --schreiben || true; fi   # neue Kameras am Modell nachziehen (rc 3 = bleibt unsicher)")
+            f"if [ -s {L} ]; then {VS} -W ignore {T}/kamera_verfeinern.py {objekt} {fassaden_json} - --liste {L} --schreiben || [ $? = 3 ]; fi   # neue Kameras am Modell nachziehen (rc 3 = keine bestimmt, kein Abbruch; Absturz = Abbruch, 24.11.2026 1122u: '|| true' schluckte KeyError 'world' -> Erfolgsmarke trotz 0 belegt)")
+
+
+def stl_dreiecke(p):
+    """Zahl der Dreiecke einer STL-Datei (binaer oder ASCII), ohne trimesh (venv-colmap hat es nicht). None = keine lesbare STL."""
+    try:
+        n_b = os.path.getsize(p)
+        with open(p, "rb") as f: kopf = f.read(84)
+        if len(kopf) == 84 and n_b == 84 + 50 * struct.unpack("<I", kopf[80:84])[0]: return struct.unpack("<I", kopf[80:84])[0]
+        if kopf[:5].lower() == b"solid":
+            n = 0
+            with open(p, "rb") as f:
+                for z in f: n += z.lstrip().lower().startswith(b"facet")
+            return n
+    except OSError: pass
+    return None
+
+
+def belegbar(objekt_json, min_ref=1):
+    """FRUEH-ABBRUCH (24.11.2026, Kette schwabentor-null-1122u: seiten_luecken 3737 s, Ende '264 nachgetragen, 0 BELEGT, 264 gesperrt'):
+    'belegt' heisst am MODELL nachgezogen (tools/kamera_verfeinern.py). Das braucht (1) das Modell-STL aus objekt.json 'stl' mit Dreiecken und (2) mindestens <min_ref>
+    Referenzkamera(s) (K-Datei mit 'kamera' im gueltigen Rahmen, tools/kamera_rahmen.py - dieselbe Regel wie kamera_verfeinern). 1122u: STL leer (Rueckwand-Fehler) ->
+    kamera_verfeinern stuerzte gleich beim Laden ab (KeyError 'world'), '|| true' schluckte es, nach ~60 min Merkmale/LightGlue/Registrieren wurde jede Kamera 'unbelegt'.
+    Rueckgabe (ok, grund). Prueft in Sekunden, BEVOR Download und Nachregistrieren laufen."""
+    od = os.path.dirname(os.path.abspath(objekt_json)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(objekt_json))
+    if not obj.get("stl"): return False, "objekt.json nennt kein Modell-STL ('stl') - kamera_verfeinern kann keine Kamera am Modell belegen"
+    p = obj["stl"] if os.path.isabs(obj["stl"]) else os.path.join(root, obj["stl"])
+    if not os.path.isfile(p): return False, f"Modell-STL {p} fehlt - kamera_verfeinern kann keine Kamera am Modell belegen"
+    n = stl_dreiecke(p) if p.lower().endswith(".stl") else (1 if os.path.getsize(p) > 0 else 0)
+    if not n: return False, f"Modell-STL {p} ist " + ("unlesbar" if n is None else "LEER (0 Dreiecke)") + " - kamera_verfeinern stuerzt beim Laden ab, jede neue Kamera bliebe 'unbelegt'"
+    mp = os.path.join(od, "messprotokoll"); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import kamera_rahmen as KR; ST = KR.aktuell(mp); m = 0
+    for kp in glob.glob(os.path.join(mp, "K-*.json")):
+        try: k = json.load(open(kp)).get("kamera")
+        except (OSError, ValueError, AttributeError): continue
+        if isinstance(k, dict) and "rvec" in k and not KR.veraltet(k, mp, kp, ST):
+            m += 1
+            if m >= min_ref: return True, f"Modell-STL {n} Dreiecke, >= {m} Referenzkamera(s)"
+    return False, f"nur {m} Referenzkamera(s) im gueltigen Rahmen unter {mp} (noetig {min_ref}) - kamera_verfeinern haette nichts, woran es neue Kameras belegt"
 
 
 def registrierte(sparse):
@@ -223,6 +261,9 @@ def main():
         print("keine Wand ganz ungesehen" + ("; ABER " + ", ".join(f"f{w['nr']:02d} {w['ohne_daten_m2']:.0f} m2" for w in teil) + " ohne Bilddaten (Ziele: tools/foto_auftrag.py)" if teil else " - alle Waende gesehen")); return 0
     print(f"UNGESEHEN: {', '.join('f%02d' % w['nr'] for w in ung)} -> {len(kand)} nicht registrierte Fotos als Kandidaten; Skript {sk}" + ("" if a.holen else "  (mit --holen ausfuehren; --download holt zusaetzlich Commons-Fotos)"))
     if a.holen:
+        ok_b, grund_b = belegbar(a.objekt)      # 24.11.2026 FRUEH-ABBRUCH: ohne Modell/Referenzkameras endet das Nachholen sicher mit '0 belegt' - nicht erst nach ~60 min
+        if not ok_b and os.environ.get("SEITEN_NEU") != "1":
+            print(f"FEHLER: Nachholen UEBERSPRUNGEN (Frueh-Abbruch, keine Fehlschlag-Marke - laeuft von selbst, sobald die Eingabe stimmt): {grund_b}; erzwingen: SEITEN_NEU=1"); return 5
         # 16.11.2026 (Stabilisierung): jeder Kettenlauf wiederholte ~30 min Nachregistrieren derselben Kandidaten mit demselben Ergebnis
         schl = hashlib.sha1(("|".join(sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)) + "|" + ",".join(str(w["nr"]) for w in ung) + "|" + open(sk).read()).encode()).hexdigest()[:16]
         marke = os.path.join(Z, "versucht_" + schl + ".txt"); fmarke = os.path.join(Z, "fehlschlag_" + schl + ".json"); cs = code_stand(*NACHHOL_WERKZEUGE)
