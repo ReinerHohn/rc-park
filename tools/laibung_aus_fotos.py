@@ -20,7 +20,8 @@ Aufruf: laibung_aus_fotos.py <fenster_auto.json> <fassade_fein-ordner> <objekt.j
 rc 0 = mindestens ein Fenster gemessen, 3 = keins (nichts geaendert).
 NACHTRAG 24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2, Nutzer "Alle Masse muessen aus Fotos kommen"): auch die NISCHENTIEFE (Eintraege mit 'nische') wird so gemessen
  (nische_messen: Suchfeld zwischen Oeffnung und Nischenkante, bereich_nische; beide Hell/Dunkel-Richtungen, Putz gegen Putz) - zuerst, weil die Fenstertiefe
- ab dem Nischengrund zaehlt. Ersetzt nur eine ANNAHME-Tiefe (nischen_fenster), eine Sweep-Messung bleibt (Fotowert steht in nische.laibung). Test: test_nische_annahme.py.
+ ab dem Nischengrund zaehlt. T der Nische gilt ab der WAND (T ab Ebene + Relief s im Ring um die Nische; trennt sich die Hinterkante nicht
+ von der Vorderkante, < 3 cm: kein Mass, Kopie 1122 f00). Ersetzt nur eine ANNAHME-Tiefe (nischen_fenster), eine Sweep-Messung bleibt (Fotowert steht in nische.laibung). Test: test_nische_annahme.py.
 """
 import sys, os, json, glob, argparse, numpy as np
 
@@ -297,6 +298,11 @@ def main():
             if QN[qi] is None: continue
             en = nische_messen(bilder, kam, rel, rast, QN[qi], a, felder_n[qi]); en["kasten"] = [QN[qi]["u0"], QN[qi]["u1"], QN[qi]["z0"], QN[qi]["z1"]]; en["art"] = "nische"
             L.append(en); tafel.append((f"{fid} NISCHE u {QN[qi]['u0']:+.2f}..{QN[qi]['u1']:+.2f}", en)); N = q["nische"]
+            if "fehler" not in en:                                           # T gilt ab w = 0 (Fassadenebene); die Wand liegt bei s_wand (Relief im Ring um die Nische)
+                s_w = ring_s(rel, rast, {k_: v_ for k_, v_ in QN[qi].items() if k_ != "_innen"}); en["s_wand"] = s_w; en["tiefe_ab_ebene"] = en["tiefe_ab_wand"]
+                en["tiefe_ab_wand"] = round(en["tiefe_ab_ebene"] + s_w, 3)
+                # Kopie 1122 f00 (24.11.): Kante wanderte nicht (u_obs fest) -> T = -s_wand = Vorderkante, keine Nischentiefe
+                if en["tiefe_ab_wand"] < 0.03: en["fehler"] = f"Hinterkante nicht von der Vorderkante getrennt (T {en['tiefe_ab_ebene']} ab Ebene, Wand {s_w:+.3f} -> {en['tiefe_ab_wand']:+.3f} m)"
             if "fehler" in en: print(f"{fid} u {q['u0']:+.2f}: Nischenlaibung nicht gemessen - {en['fehler']} (bleibt {N.get('tiefe')} m, {str(N.get('tiefe_quelle'))[:60]})"); continue
             N["laibung"] = {k: en[k] for k in ("seite", "tiefe_ab_wand", "fotos", "k_spanne", "streuung", "rest_m")}
             if "ANNAHME" in str(N.get("tiefe_quelle", "")):
