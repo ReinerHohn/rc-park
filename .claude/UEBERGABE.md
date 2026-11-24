@@ -11,11 +11,11 @@ Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbegin
 - 1122w (01:45–06:48, 5 h): Süd-Quader, Steinzone, Eckquader, Südfenster; Fehlerliste im Logbuch. 3D-Artifact V6 https://claude.ai/artifact/ScV8KGvyjJrxxHCAzCM6pi
 - Merge-Probe 25 (Schnelltest 0): tiefe_lokal-Hash, Krümel-Kantenbeleg, Bogen-Gewände, Ortsteine Mehrfoto.
 - 1122x (07:28–10:13, 2 h 45, kein Kamera-Nachholen nötig): Gewände sichtbar, Krümel weg; Süd-Uhr fehlte. ANNAHME Süd ~50 %, Nord ~55 %. Bilder: scratchpad q/x_eigen__IMG_20261106_113830.jpg, x_…113231.jpg
-- Merge-Probe 26 → main a9b1baefe (Schnelltest 0, 568 s), 10 Zweige: Südfenster-Gewände, Nachhol-Zwischenspeicher, West-Schlitze (schlitze_wandbild.py) + grobes Wandbild für Ortsteine, Malplan (tools/malplan.py, Weißabgleich), Vorbau Nord (3 Pfosten, offene Brüstung, 6 Konsolen), Süd-Teil über Wände gebunden (tools/seiten_waende_binden.py; war 10° gekippt), wolke_draehte.py (Anzeige, ~45 %), gemessene Bogenfugen, Uhr aus Einzelfotos, Bau parallel (421→274 s, STL bitgleich).
+- Merge-Probe 26 → main a9b1baefe (Schnelltest 0, 568 s), 10 Zweige: Südfenster-Gewände, Nachhol-Zwischenspeicher, West-Schlitze (schlitze_wandbild.py) + grobes Wandbild für Ortsteine, Malplan (tools/malplan.py, Weißabgleich), Vorbau Nord (3 Pfosten, offene Brüstung, 6 Konsolen), Ost-Teil (Teil 1, laut seiten_konvention Ostseite – vorher fälschlich „Süd-Teil“) über Wände gebunden (tools/seiten_waende_binden.py; war 10° gekippt), wolke_draehte.py (Anzeige, ~45 %), gemessene Bogenfugen, Uhr aus Einzelfotos, Bau parallel (421→274 s, STL bitgleich).
 - MachineFrameWork nach /media/oem/rcdaten/ausgelagert_root/git/MachineFrameWork (Prüfsumme gleich, Symlink). Rest mit Root-Rechten: ~/git/MachineFrameWork.rest_rootrechte (96 KB, Nutzer kann `sudo rm -rf`).
 
 ## Läuft gerade
-- Kette 1122z (Start 12:12; Drahtmasken + Süd-Wandbindung mit Maßstab + Ost-Nachholen bei teilweise ungesehener Wand) · Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122z.log · Prüfen: `grep -a "JOB_ENDE\|ERGEBNIS DES LAUFS\|LAGE:" <log>` · ANNAHME Ende 16–17 Uhr.
+- Kette 1122z (Start 12:12; Drahtmasken + Ost-Teil-Wandbindung mit Maßstab + Ost-Nachholen bei teilweise ungesehener Wand) · Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122z.log · Prüfen: `grep -a "JOB_ENDE\|ERGEBNIS DES LAUFS\|LAGE:" <log>` · ANNAHME Ende 16–17 Uhr.
 - 1122y war 11:02 abgebrochen (Grundriss-Tor: Doppelwand durch Süd-Bindung ohne Maßstab) – behoben, main 0 Fehler.
 - Keine Agenten aktiv.
 
@@ -37,7 +37,7 @@ Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbegin
 - Agenten-Worktrees bleiben nach Hand-back gesperrt: sauber+gemergt → `git worktree unlock`, dann `remove` (ohne --force). Im Logbuch.
 - Malplan-Agent benannte Seiten erst falsch (eigene Kompassrechnung) – Seitennamen immer aus objekt.json seiten_konvention.
 - Süd-Uhr hing verdeckt vom Teillauf ab (Mosaik-Naht) – Urteile nie von Mosaik-Zufall abhängig machen (jetzt Einzelfoto-Beleg).
-- GPS-Lage des Süd-Teils war 10° gekippt bei gemeldeten ±1,4° – GPS-Lot aus wenigen Fotos ist kein Beleg (lage-seiten.md Versucht).
+- GPS-Lage des Ost-Teils (Teil 1) war 10° gekippt bei gemeldeten ±1,4° – GPS-Lot aus wenigen Fotos ist kein Beleg (lage-seiten.md Versucht).
 - `rm -rf` beim Auslagern scheiterte an root-eigenen Dateien → vorher `find ! -user $USER` prüfen.
 - Schnelltest-Doku-Budget (≤ 110 Zeilen je Ast) beim Mergen vieler Versucht-Zeilen beachten.
 
