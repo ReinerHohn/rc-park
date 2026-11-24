@@ -31,7 +31,7 @@ if "--ref_prefix" in sys.argv: pool = np.array([i for i in pool if fs[i].startsw
 if "--ref_namen" in sys.argv: refs = np.array([fs.index(n) for n in opt("--ref_namen", "", str).split(",")])   # gezielte Referenzfotos (Diagnose)
 DIAG = opt("--diag", "", str); ds = torch.linspace(DMIN, DMAX, int((DMAX - DMIN) / opt('--schritt', 0.01)), device=dev); out = []
 ZENTRUM = np.median(np.load(opt("--box", "", str))[:, :3], 0) if "--box" in sys.argv else None   # Szenenmitte fuer relative Basis
-VORN = opt("--vorn", 0.0); HUELLE = "--huelle" in sys.argv; NHUELLE = [0]; SK = None
+VORN = opt("--vorn", 0.0); NBREL = opt("--nb_rel", 0.0);HUELLE = "--huelle" in sys.argv; NHUELLE = [0]; SK = None
 ZAUTO = "--ziel_auto" in sys.argv; MM = None   # 15.11.: allgemein (Gesamtkette): Flaechen-Massstab per --flaeche_skala (Standard 0,087 = Kaufhaus), Blickziel je Referenz aus der Flaeche
 if "--flaeche" in sys.argv:
     import trimesh; mm = trimesh.load(opt('--flaeche', '', str)); mm.apply_scale(opt('--flaeche_skala', 0.087)); bxs = np.array([float(v_) for v_ in opt('--box3', '14,3,6,27,12,8.4', str).split(',')]); ct = mm.triangles_center; mm = trimesh.Trimesh(mm.vertices, mm.faces[np.all((ct >= bxs[:3]) & (ct <= bxs[3:]), axis=1)], process=False); MM = mm
@@ -49,7 +49,10 @@ for a in refs:
     if ZENTRUM is not None and float(np.linalg.norm(Cn[a] - ZENTRUM)) > opt("--dmax_ref", 1e9): continue        # ferne Referenzfotos liefern nur Rauschen (Test 6254: 10 % < 10 cm)
     ZP = blickziel(a) if ZAUTO else np.array([float(v) for v in opt('--ziel', '20,7,7', str).split(',')])
     if ZP is None: continue
-    cand = [(-abs(np.linalg.norm(Cn[b] - Cn[a])), b) for b in range(J) if b != a and 1.0 < np.linalg.norm(Cn[b] - Cn[a]) < bmax and float(Dn[b] @ ((ZP - Cn[b]) / np.linalg.norm(ZP - Cn[b]))) > 0.8 and np.linalg.norm(ZP - Cn[b]) < opt('--nbdist', 30.0)]; cand.sort(); nb = [b for _, b in cand[::max(1, len(cand) // NB)][:NB]]
+    nbd = opt('--nbdist', 30.0)
+    if NBREL > 0:                                                                # 24.11.2026 (1122z f02/Ost): FERNE Referenz (Strassenflucht 70-100 m) fand mit festem --nbdist 80 / --basis_max 25
+        dzp = float(np.linalg.norm(ZP - Cn[a])); nbd = max(nbd, NBREL * dzp); bmax = max(bmax, 0.3 * dzp)   # keinen Nachbarn (0 Kandidaten); jetzt mit dem Abstand der Referenz skaliert, nahe Refs unveraendert
+    cand = [(-abs(np.linalg.norm(Cn[b] - Cn[a])), b) for b in range(J) if b != a and 1.0 < np.linalg.norm(Cn[b] - Cn[a]) < bmax and float(Dn[b] @ ((ZP - Cn[b]) / np.linalg.norm(ZP - Cn[b]))) > 0.8 and np.linalg.norm(ZP - Cn[b]) < nbd]; cand.sort(); nb = [b for _, b in cand[::max(1, len(cand) // NB)][:NB]]
     if len(nb) < 5: continue
     ys, xs = torch.nonzero(V[a] >= 255 * VMIN, as_tuple=True)
     fw = [float(v) for v in opt('--fenster', '0,0,99999,99999', str).split(',')]; kf = (xs.float() / SJ[a] >= fw[0]) & (xs.float() / SJ[a] < fw[2]) & (ys.float() / SJ[a] >= fw[1]) & (ys.float() / SJ[a] < fw[3]); ys, xs = ys[kf], xs[kf]

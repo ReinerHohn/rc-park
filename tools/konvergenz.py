@@ -42,6 +42,12 @@ keine Zeitreihe, Laeufe nicht vergleichbar (Lehre NICHTS_GEBRACHT 10.11. Kreis a
    Verdecker vom Modell -> f1_wolke, f1_modell_gleich, verlust = f1_wolke - f1_modell_gleich (Median je Foto), status_wolke "Modellierung verliert" /
    "Daten fehlen" / "Modell besser als Wolke" / "gleich" (Schwellen ANNAHME mit Begruendung dort). --ohne-wolke schaltet ab; --lesen liest
    DIR/konvergenz_wolke.json, sonst <quelle>/konvergenz_wolke.json.
+6. FORMSITZ (Nachtrag 24.11. abends, tools/formsitz.py; MESSFEHLER: das grobe F1 lag am Schwabentor je Seite nur 0,00-0,16 ueber Zufall = blind fuer den
+   Formsitz): Tiefen-IoU Modell gegen dichte Wolke aus denselben Kameras (|dz| < 25 cm), Zufall = Modell 1,3/2,1 m verschoben, Trennschaerfe = Wolkenhaelfte
+   gegen Wolkenhaelfte minus deren Zufall (was ein perfektes Modell hier ueber Zufall laege). Felder formsitz, formsitz_null, formsitz_trennschaerfe,
+   formsitz_relativ, formsitz_trennt, med_dz, a10, a25, kontur. ER ERSETZT DAS GROBE F1 IM URTEIL: status = steigt/PLATEAU/faellt aus der formsitz-Reihe
+   (+ fein wie bisher), aber NUR wenn formsitz_trennt; sonst "nicht trennbar (Zufallsniveau)" (kein PLATEAU). Ohne Formsitz (keine Wolke, --ohne-formsitz)
+   bleibt das alte Urteil aus dem groben F1 mit HINWEIS (Rueckfall, nicht trennscharf). --lesen liest DIR/formsitz.json.
 Ausgabe: Zeile in audit/konvergenz.jsonl (lauf, zeit, git, stl_sha, je Seite F1 grob/fein + n + Status + Restfehler), Text, audit/konvergenz.png (F1 je
 Seite ueber die Laeufe, grob und fein). --lesen DIR: foto_diff_<foto>.json aus DIR statt neu rechnen (Probe/Test); --fein-json: teil_fotoform-Bericht lesen.
 --aus DIR: Fotosatz/Reihe/Bild dorthin statt audit/ (Probe ohne Objektordner). --trocken: keine Zeile anhaengen.
@@ -317,7 +323,16 @@ def status_seite(sg, sf):
     return KURZ
 
 
-EINZEL = {"f1": "fotos", "f1_fein": "bauteile_fein"}
+EINZEL = {"f1": "fotos", "f1_fein": "bauteile_fein", "formsitz": "fotos_formsitz"}
+TRENNT_NICHT = "nicht trennbar (Zufallsniveau)"
+
+
+def status_mit_formsitz(sform, sf, trennt):
+    """Seitenstatus, wenn ein FORMSITZ vorliegt (tools/formsitz.py, Nachtrag 24.11.): er ersetzt das grobe F1 als Formmass, weil das grobe F1 nur 0,00-0,16
+    ueber Zufall lag. Trennt der Formsitz auf dieser Seite nicht (Trennschaerfe < TRENN_MIN), gibt es KEIN PLATEAU/steigt-Urteil aus der Form; nur ein
+    belegtes feines steigt/faellt bleibt."""
+    if not trennt: return sf if sf in (STEIGT, FAELLT) else TRENNT_NICHT
+    return status_seite(sform, sf)
 
 
 def reihe(zeilen, gruppe, feld):
@@ -364,8 +379,8 @@ def kurve(zeilen, gruppen, pfad):
     import cv2
     n = len(gruppen); sp = 2 if n > 1 else 1; zl = (n + sp - 1) // sp; FW, FH, M = 520, 320, 48
     img = np.full((zl * FH + 40, sp * FW, 3), (251, 252, 252), np.uint8)
-    farbe = {"f1": (214, 120, 42), "f1_fein": (52, 104, 235), "f1_wolke": (96, 160, 34)}   # BGR von #2a78d6 / #eb6834 / #22a060 (Wolke)
-    cv2.putText(img, "F1 je Seite (blau grob, orange fein je Bauteil, gruen dichte Wolke); Strich = Bruch", (10, 26), 0, 0.5, (40, 40, 40), 1, cv2.LINE_AA)
+    farbe = {"f1": (214, 120, 42), "f1_fein": (52, 104, 235), "f1_wolke": (96, 160, 34), "formsitz": (150, 50, 140)}   # BGR von #2a78d6 / #eb6834 / #22a060 / #8c3296
+    cv2.putText(img, "je Seite: blau F1 grob, orange F1 fein, gruen Wolke, violett FORMSITZ (Urteil); Strich = Bruch", (10, 26), 0, 0.5, (40, 40, 40), 1, cv2.LINE_AA)
     for i, (g, name) in enumerate(gruppen):
         x0, y0 = (i % sp) * FW + M, 40 + (i // sp) * FH + 30; w, h = FW - M - 20, FH - 100
         cv2.putText(img, name, (x0, y0 - 10), 0, 0.6, (11, 11, 11), 1, cv2.LINE_AA)
@@ -410,6 +425,7 @@ def main(argv=None):
     ap.add_argument("--aus"); ap.add_argument("--k", type=int, default=K_STD); ap.add_argument("--schwelle", type=float, default=SCHWELLE)
     ap.add_argument("--trocken", action="store_true"); ap.add_argument("--ohne-fein", action="store_true")
     ap.add_argument("--ohne-wolke", action="store_true"); ap.add_argument("--wolke", help="dichte Wolke (npy, Kamerarahmen) statt der Standardwolke")
+    ap.add_argument("--ohne-formsitz", action="store_true")
     a = ap.parse_args(argv)
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt))
     root = os.path.dirname(os.path.dirname(od)); fotos_dir = os.path.join(root, obj.get("fotos_dir", ""))
@@ -485,6 +501,18 @@ def main(argv=None):
     if not a.ohne_wolke and os.path.exists(wj):
         try: wolke = json.load(open(wj))
         except Exception as ex: print(f"HINWEIS: {wj} unlesbar ({ex})")
+    # --- Formsitz (Tiefen-IoU Modell gegen dichte Wolke, Nullprobe + Trennschaerfe; tools/formsitz.py, CPU)
+    form = None; fj = os.path.join(a.lesen or quelle, "formsitz.json")
+    if not a.ohne_formsitz and not a.lesen and satz and os.path.exists(stl):
+        try:
+            r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "formsitz.py"), a.objekt, "--fotosatz", sp, "--json", fj, "--bild", os.path.join(aus, "formsitz.jpg")]
+                               + (["--wolke", a.wolke] if a.wolke else []), cwd=root, capture_output=True, text=True, timeout=1200, env=dict(os.environ, CUDA_VISIBLE_DEVICES=""))
+            if r.returncode: print(f"HINWEIS: formsitz rc {r.returncode}: {(r.stdout + r.stderr)[-300:]}")
+        except subprocess.TimeoutExpired: print("HINWEIS: formsitz nach 1200 s abgebrochen - Status ohne Formsitz (Rueckfall grobes F1, nicht trennscharf)")
+    if not a.ohne_formsitz and os.path.exists(fj):
+        try: form = json.load(open(fj))
+        except Exception as ex: print(f"HINWEIS: {fj} unlesbar ({ex})")
+    if form is None and not a.ohne_formsitz: print("HINWEIS: kein Formsitz - Status aus grobem F1 (Nullprobe 24.11.: nur 0,00-0,16 ueber Zufall, PLATEAU-Urteil ungeprueft)")
     # --- Zeile
     jp = os.path.join(aus, "konvergenz.jsonl"); zeilen = []
     if os.path.exists(jp):
@@ -507,6 +535,12 @@ def main(argv=None):
             e.update(f1_wolke=we.get("f1_wolke"), f1_modell_gleich=we.get("f1_modell_gleich"), verlust=we.get("verlust"), abdeckung_wolke=we.get("abdeckung"),
                      guete_wolke=we.get("guete_wolke"), guete_modell=we.get("guete_modell"), verlust_zufall=we.get("verlust_zufall"),
                      n_wolke=we.get("n"), status_wolke=we.get("status"), fotos_wolke={nr: q.get("w") for nr, q in (we.get("fotos") or {}).items()})
+        fe = ((form or {}).get("seiten") or {}).get(g)
+        if fe and fe.get("n"):
+            e.update(formsitz=fe.get("formsitz"), formsitz_null=fe.get("formsitz_null"), formsitz_guete=fe.get("guete"), formsitz_relativ=fe.get("relativ"),
+                     formsitz_trennschaerfe=fe.get("trennschaerfe"), formsitz_decke=fe.get("decke"), formsitz_trennt=bool(fe.get("trennt")), n_formsitz=fe.get("n"),
+                     med_dz=fe.get("med_dz"), a10=fe.get("a10"), a25=fe.get("a25"), kontur=fe.get("kontur"), kontur_null=fe.get("kontur_null"),
+                     fotos_formsitz=fe.get("fotos") or {})
         Z["seiten"][g] = e
     allf = [v for e in Z["seiten"].values() for v in e["fotos"].values()]; allb = [v[0] for v in fein.values()]
     Z["gesamt"] = dict(f1=median_oder_none(allf)[0], n=median_oder_none(allf)[1], f1_fein=median_oder_none(allb)[0], n_fein=median_oder_none(allb)[1])
@@ -518,7 +552,11 @@ def main(argv=None):
         sf = status_reihe(reihe(zeilen_neu, g, "f1_fein"), sf_eff)
         e.update(status_grob=sg, status_fein=sf, status=status_seite(sg, sf) if g != "rund" else sf, schwelle=round(s_eff, 4), schwelle_fein=round(sf_eff, 4),
                  streuung_gleicher_stand=round(st_, 4) if st_ is not None else None, streuung_fein_gleicher_stand=round(stf_, 4) if stf_ is not None else None)
-        if e["status"] in (PLATEAU, KEIN) or e["status"].startswith("faellt"):
+        if e.get("formsitz") is not None and g != "rund":                                   # Formsitz ersetzt das grobe F1 im Urteil (nur wenn er trennt)
+            sto = streuung(zeilen_neu, g, "formsitz"); so_eff = max(a.schwelle, 2 * sto) if sto is not None else a.schwelle
+            sform = status_reihe(reihe(zeilen_neu, g, "formsitz"), so_eff) if e["formsitz_trennt"] else TRENNT_NICHT
+            e.update(status_formsitz=sform, schwelle_formsitz=round(so_eff, 4), status=status_mit_formsitz(sform, sf, e["formsitz_trennt"]))
+        if e["status"] in (PLATEAU, KEIN, TRENNT_NICHT) or e["status"].startswith("faellt"):
             e["restfehler"] = restfehler(diffs, S["seiten"].get(g, {}).get("fotos", []), bt, g, fein)
     if not a.trocken:
         with open(jp, "a") as fh: fh.write(json.dumps(Z, ensure_ascii=False) + "\n")
@@ -531,6 +569,9 @@ def main(argv=None):
         fg = f"grob F1 {e['f1']:.3f} (n {e['n']}" + (f", Fotos streuen +-{e['spreizung_fotos']:.2f}" if e["spreizung_fotos"] else "") + ")" if e["f1"] is not None else "grob: kein Beleg"
         ff = f"fein F1 {e['f1_fein']:.3f} (n {e['n_fein']})" if e["f1_fein"] is not None else "fein: kein Beleg"
         print(f"  {name}: {fg}; {ff} -> {e['status']}" + (" [BRUCH]" if e["bruch"] else ""))
+        if e.get("formsitz") is not None:
+            print(f"      Formsitz {e['formsitz']:.3f} (Zufall {e['formsitz_null']}, Trennschaerfe {e['formsitz_trennschaerfe']}, relativ {e['formsitz_relativ']}) med|dz| {e['med_dz']} m"
+                  f" a25 {e['a25']} kontur {e['kontur']} -> {e['status_formsitz']}")
         if e.get("status_wolke"): print(f"      Wolke F1 {e['f1_wolke']} / Modell (Punktfassung) {e['f1_modell_gleich']} -> verlust {e['verlust']} (ueber Zufall {e.get('verlust_zufall')}), Abdeckung {e['abdeckung_wolke']} (n {e['n_wolke']}): {e['status_wolke']}")
         for q in (e.get("restfehler") or {}).get("grob", [])[:3]: print(f"      Rest grob: {q['art']} {q['ort']} {q['laenge']} m Kante")
         for q in (e.get("restfehler") or {}).get("fein", [])[:3]: print(f"      Rest fein: {q['bauteil']} F1 {q['f1_fein']}")

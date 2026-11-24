@@ -33,6 +33,11 @@ TOR (jede Probe einzeln, uebernommen nur wenn ALLE bestehen; sonst bleibt die GP
     Nachbarwand, 22 m vom Anker -> 9-m-Blatt im Grundriss-Tor, Kette abgebrochen; Massstab 0,881 x GPS (Hebel 9,4 m) deckte beide, Treffer 60 -> 74 %);
   - TURMSPITZE (in der Bindung nicht benutzt): sehen beide Wolken eine schlanke Spitze in gleicher Hoehe, liegt sie waagerecht uebereinander (sonst 'nicht messbar', Bericht);
   - GEOTAGS VON B (main, --bilder): B-Kameras nach der Bindung ueber den A-Rahmen in ENU - Median hoechstens GPS_MEHR_M schlechter als die GPS-Lage, >= 70 % unter 12 m.
+  - LOT-TORE (main, kamera_lot_probe; 24.11. 1122zb): (a) Fluchtpunkt-Lot der B-Fotos nach der Bindung <= LOT_VP_GRAD neben dem Lot von A; (b) Kamerahoehe gegen DGM1
+    (kamerahoehe_pruefen) NUR mit der Kippung (GPS-Massstab) - treibt sie die Steigung aus dem Band, ist das Wand-Lot nicht belegt. Endlage ausserhalb, Kippung innerhalb
+    = Wand-Massstab passt zum Turm, nicht zum Kameraring -> Bindung bleibt, Fernkameras mit Rest > 4 m 'Lage unbrauchbar' (pruefung.lot_tore). 1122zb gemessen: Wand-Lot
+    von B = Fluchtpunkt-Lot (1,9 Grad, 12 Bilder) = Bild-x-Lot der 15 Hangkameras (3,5 Grad); FALSCH war das GPS-Lot von B (Bild-x-Achsen, 48 Strassenkameras mit engem
+    Blickfaecher: Singulaerwerte 0,32/0,07 -> 10 Grad daneben). DGM-Steigung GPS-Lage 1,27 -> Kippung 0,99 -> Endlage 0,87 (Wand-Massstab 0,882; Kamera-GPS sagt ~1,0).
   Der Korridor nutzt die EHRLICHE GPS-Unsicherheit (Bootstrap + Sitzungsfehler); die Lage der B-Kameras zaehlt nur waagerecht; die Kippung um die Mitte der B-Kameras
   (dort traegt das GPS die Hoehe).
 1122w (24.11., Zwischendaten nur gelesen, CPU ~2 min): Kippung 10,0 Grad (um den Fusspunkt), Drehung +4,6 Grad, Verschiebung 3,6 m; Wandabstand Median 2,40 -> 0,07 m, Treffer 60 %,
@@ -106,6 +111,9 @@ BODEN_STREU_MAX_M = 1.0   # ... mit robuster Streuung (IQR / 1,35) hoechstens 1 
 HOEHE_EINIG_M = 1.0       # ANNAHME: Struktur- und Bodenhoehe einig auf 1 m (Bodenzellen: 3-%-Wert, Rauschen/Bordstein ~0,3-0,5 m)
 UNTER_M = 1.0             # Punkt "unter Gelaende": mehr als 1 m unter dem Strassenboden von A in derselben Zelle (Bordstein/Rauschen darunter)
 UNTER_ANTEIL = 0.05       # ANNAHME: hoechstens 5 % der B-Punkte in gemeinsamen Strassenzellen unter Gelaende (Boden = 3-%-Wert -> A selbst ~1 %; 1122z vorher 20 %+)
+# LOT-TORE NACH DER KIPPUNG (24.11.2026, Kette 1122zb Teil 1 = Ost: Kippung 10 Grad aus 3431 B-Wandnormalen - richtig oder falsch? s. kamera_lot_probe):
+LOT_VP_GRAD = 4.0         # ANNAHME: Lot aus den Fluchtpunkten der Senkrechten in den B-Fotos (schwerkraft_je_bild.lot_welt) nach der Bindung hoechstens 4 Grad neben dem Lot von A.
+                          # Gemessen 1122zb: Teil 0 Fluchtpunkt/Wand 0,3 Grad, Teil 1 Fluchtpunkt/Wand 1,9 Grad (12 Bilder, Streuung 0,8 Grad); der abzufangende Fehler ist 10 Grad.
 
 
 # ---------- Grundlagen
@@ -400,6 +408,7 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     # waagerecht und 11,6 m nach oben (Fern-/Schlossbergkameras weit weg und hoch) - falsch; um die Wolkenmitte deckten sich Traufe, Uhr und Helm beider Teile.
     pv = np.median(Bg, 0); pv = pv - (pv @ ua - np.percentile(Bg @ ua, 2)) * ua; Rk = drehung(np.cross(ub, ua), kipp) if kipp > 1e-6 else np.eye(3)
     Mk = np.eye(4); Mk[:3, :3] = Rk; Mk[:3, 3] = pv - Rk @ pv
+    erg["B_nach_A_kipp"] = (Mk @ Mg).tolist(); pr["lot_a"] = [float(x) for x in ua]             # fuer die Lot-Tore in main (kamera_lot_probe): nur Kippung, GPS-Massstab
     E = basis(ua); L = np.eye(4); L[:3, :3] = mj * E                                   # lokales metrisches System von A (z = Lot)
     la = anwenden(L, DA); lb = anwenden(L @ Mk @ Mg, DB); boden = float(np.percentile(la[:, 2], 2))
     wa, nwa = wandpunkte(la[la[:, 2] > boden + Z_MIN_M]); wb, nwb = wandpunkte(lb[lb[:, 2] > boden + Z_MIN_M])
@@ -523,6 +532,80 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     return erg
 
 
+def _winkel(a, b):
+    a, b = np.asarray(a, float), np.asarray(b, float); return float(np.degrees(np.arccos(np.clip(abs(a @ b) / (np.linalg.norm(a) * np.linalg.norm(b)), 0, 1))))
+
+
+def kamerahoehe_pruefen(C_b, he, M_gps, M_kipp, M_ende, ua, mj):
+    """TOR KAMERAHOEHE GEGEN DGM1 (tools/kamerahoehe_dgm.vergleich) fuer die Bindung, getrennt nach KIPPUNG und MASSSTAB.
+    C_b: B-Kamerazentren (B-Modell) mit Geotag, he: erwartete Hoehe DGM1(GPS) + Hand (m, Versatz frei), ua: Lot von A (A-Modell), mj: Meter je A-Einheit.
+    Verglichen: GPS-Lage (M_gps), NUR die Kippung aus den Waenden mit GPS-Massstab (M_kipp), Endlage (M_ende, mit Massstab aus den Waenden).
+    Die Steigung Modell/DGM vermischt Kippung und Massstab, wenn die erhoehten Kameras alle auf EINER Seite stehen (1122zb: Schlossberg 60-85 m weg; freier Lot-Fit
+    Bootstrap +-5,9 Grad) - darum wird die Kippung allein mit dem GPS-Massstab geprueft:
+      - Kippung abgelehnt, wenn die Kamerahoehen damit ausserhalb des erlaubten Bands (STEIG_MIN..STEIG_MAX) liegen UND die GPS-Lage darin liegt oder naeher an 1 ist
+        (Wand-Lot falsch; 1122zb echt: GPS-Lage 1,27 -> Kippung 0,99 bestaetigt, Kippung andersherum 1,55 -> abgelehnt);
+      - Endlage ausserhalb, Kippung allein innerhalb: der Wand-Massstab passt zum Turm, nicht zum Kameraring (Teil gebogen / Kamera-Massstab anders) -> Bindung bleibt
+        (sie kommt nur aus dem Turmbereich), die Kameras mit Rest > REST_MAX_M werden als 'Lage unbrauchbar' gemeldet;
+      - Rest je Kamera (Endlage, Steigung 1, Versatz aus den Strassenkameras) > REST_MAX_M -> 'Lage unbrauchbar' (immer gemeldet, kein Ablehnungsgrund).
+    -> dict(gps, kipp, ende (je kamerahoehe_dgm.vergleich), ok (None = nicht messbar), gruende, hinweise, lage_unbrauchbar (Indizes), rest_m)."""
+    import kamerahoehe_dgm as KD
+    C_b = np.asarray(C_b, float); he = np.asarray(he, float); ua = np.asarray(ua, float) / np.linalg.norm(ua)
+    h = lambda M: (anwenden(np.asarray(M, float), C_b) @ ua) * mj
+    e = {n: KD.vergleich(h(M), he) for n, M in (("gps", M_gps), ("kipp", M_kipp), ("ende", M_ende))}
+    rein = lambda s: s is not None and KD.STEIG_MIN <= s <= KD.STEIG_MAX
+    sg, sk, se = (e[n].get("steigung") for n in ("gps", "kipp", "ende")); gr, hw = [], []
+    aus = dict(gps=e["gps"], kipp=e["kipp"], ende=e["ende"], gruende=gr, hinweise=hw, lage_unbrauchbar=[], rest_m=[])
+    if e["kipp"]["ok"] is None: aus["ok"] = None; hw.append(e["kipp"]["urteil"]); return aus
+    hm = h(M_ende); g = np.isfinite(hm) & np.isfinite(he); st = g & (he <= KD.ERHOEHT_M); ref = st if st.sum() >= 3 else g
+    r = hm - he - (float(np.median((hm - he)[ref])) if ref.any() else 0.0); aus["rest_m"] = [round(float(x), 2) for x in r]
+    aus["lage_unbrauchbar"] = [int(i) for i in np.flatnonzero(g & (np.abs(r) > KD.REST_MAX_M))]
+    if sk is None: hw.append("Steigung nicht messbar (ebenes Umfeld) - Kippung nur ueber den Rest geprueft")
+    elif not rein(sk) and (rein(sg) or sg is None or abs(np.log(sk)) > abs(np.log(sg))):        # Kippung treibt aus dem Band oder weiter hinaus als die GPS-Lage
+        gr.append(f"Kippung aus den Waenden {'staucht' if sk < 1 else 'streckt'} die Kamerahoehen: Steigung Modell/DGM {sg:.2f} (GPS-Lage) -> {sk:.2f} (nur Kippung), "
+                  f"erlaubt {KD.STEIG_MIN}-{KD.STEIG_MAX} - Wand-Lot nicht belegt")
+    elif not rein(sk): hw.append(f"Kamerahoehen weder in GPS-Lage ({sg}) noch gekippt ({sk:.2f}) stimmig - DGM-Probe entscheidet die Kippung nicht")
+    else: hw.append(f"Kippung bestaetigt: Steigung Modell/DGM {sg if sg is None else round(sg, 2)} (GPS-Lage) -> {sk:.2f} (nur Kippung)")
+    if not gr and rein(sk) and se is not None and not rein(se):
+        hw.append(f"Massstab aus den Waenden passt nicht zum Kameraring (Steigung Endlage {se:.2f}): Bindung gilt fuer den Turmbereich, {len(aus['lage_unbrauchbar'])} Kameras 'Lage unbrauchbar'")
+    if e["kipp"]["ok"] is False and not gr and rein(sk) and e["kipp"]["rest_m"] > KD.REST_MAX_M: hw.append(e["kipp"]["urteil"])
+    aus["ok"] = not gr; return aus
+
+
+def lot_vp_pruefen(vp_oben_b, M_gps, M_ende, ua):
+    """TOR FLUCHTPUNKT-LOT: Lot der B-Fotos aus den Fluchtpunkten senkrechter Kanten (B-Modell; unabhaengig von dichter Wolke und Waenden) nach der Bindung gegen das
+    Lot von A. -> dict(gps_grad, ende_grad, ok (None ohne Fluchtpunkt-Lot), grund)."""
+    if vp_oben_b is None: return dict(gps_grad=None, ende_grad=None, ok=None, grund="Fluchtpunkt-Lot von B nicht messbar (< 8 Bilder mit klarer Senkrechte)")
+    v = np.asarray(vp_oben_b, float); wg = _winkel(np.asarray(M_gps, float)[:3, :3] @ v, ua); we = _winkel(np.asarray(M_ende, float)[:3, :3] @ v, ua)
+    ok = we <= LOT_VP_GRAD
+    return dict(gps_grad=round(wg, 2), ende_grad=round(we, 2), ok=bool(ok),
+                grund="" if ok else f"Fluchtpunkt-Lot von B nach der Bindung {we:.1f} Grad neben dem Lot von A (Grenze {LOT_VP_GRAD} Grad; GPS-Lage {wg:.1f}) - Wand-Lot falsch")
+
+
+def kamera_lot_probe(bilder, modell_b, ursprung, erg, mj):
+    """Beide Lot-Tore am echten Teil B (pycolmap, Fotos, DGM1). Wird nach binden() gerufen (nur bei ok). -> dict(kamerahoehe, fluchtpunkt, ok, grund, lage_unbrauchbar_namen)."""
+    import pycolmap
+    from schwerkraft_je_bild import lot_welt
+    from seiten_gps_vereinen import gps_roh
+    import kamerahoehe_dgm as KD
+    ua = np.asarray(erg["pruefung"]["lot_a"], float); Mg, Mk, M = (np.asarray(erg[k], float) for k in ("B_nach_A_gps", "B_nach_A_kipp", "B_nach_A"))
+    r = pycolmap.Reconstruction(modell_b); ims = [im for im in r.images.values() if im.has_pose]; namen = [im.name for im in ims]
+    C = np.array([im.projection_center() for im in ims]); aus = {}
+    try:
+        roh = gps_roh(bilder, namen); k = [i for i, n in enumerate(namen) if n in roh]
+        if ursprung is None or len(k) < KD.MIN_KAMERAS: aus["kamerahoehe"] = dict(ok=None, hinweise=[f"{len(k)} B-Kameras mit Geotag / Ursprung {ursprung} - nicht messbar"])
+        else:
+            he, _ = KD.erwartete_hoehen([roh[namen[i]] for i in k], ursprung); kh = kamerahoehe_pruefen(C[k], he, Mg, Mk, M, ua, mj)
+            kh["lage_unbrauchbar_namen"] = [namen[k[j]] for j in kh["lage_unbrauchbar"]]; aus["kamerahoehe"] = kh
+    except Exception as ex: aus["kamerahoehe"] = dict(ok=None, hinweise=[f"DGM-Probe nicht moeglich ({type(ex).__name__}: {ex})"])
+    try:
+        ks = [dict(name=im.name, R=im.cam_from_world().rotation.matrix(), f=r.cameras[im.camera_id].mean_focal_length(), cx=r.cameras[im.camera_id].principal_point_x,
+                   cy=r.cameras[im.camera_id].principal_point_y, breite=r.cameras[im.camera_id].width, hoehe=r.cameras[im.camera_id].height) for im in ims]
+        vp = lot_welt(ks, bilder, n_max=200); aus["fluchtpunkt"] = dict(lot_vp_pruefen(vp["oben"] if vp else None, Mg, M, ua), bilder=(vp or {}).get("getragen"))
+    except Exception as ex: aus["fluchtpunkt"] = dict(ok=None, grund=f"Fluchtpunkt-Lot nicht moeglich ({type(ex).__name__}: {ex})")
+    gr = list(aus["kamerahoehe"].get("gruende") or []) + ([aus["fluchtpunkt"]["grund"]] if aus["fluchtpunkt"].get("ok") is False else [])
+    aus.update(ok=not gr, grund="; ".join(gr)); return aus
+
+
 def gps_probe(bilder, modell_a, modell_b, M_neu, M_gps, mitte_b=None):
     """GEOTAGS VON B als Gegenprobe: A-Rahmen Modell -> ENU (seiten_gps_vereinen.rahmen, A hat Hunderte Geotags), B-Kameras ueber M_neu bzw. M_gps in A und weiter nach
     ENU; waagerechter Abstand zu den eigenen Geotags von B (Median, und Anteil < GRENZE_M). -> dict oder None (zu wenig GPS)."""
@@ -601,6 +684,21 @@ def main(argv=None):
         lot0 = np.array([0, 0, 1.0])
     if ref_b is None: ref_b = DB[::max(1, len(DB) // 2000)]
     erg = binden(DA, DB, G, lot0, ref_b, bild=os.path.join(a.aus, "waende.jpg")); erg["bild"] = os.path.join(a.aus, "waende.jpg")
+    def ablehnen(grund, art):
+        erg.update(ok=False, urteil="ABGELEHNT: " + grund + " - GPS-Lage bleibt"); erg.pop("B_nach_A", None)
+        try:                                                                           # Kontrollbild entstand vor dieser Probe ("GEBUNDEN") -> Ablehnung nachtragen
+            import cv2
+            im = cv2.imread(erg["bild"]); cv2.rectangle(im, (0, 30), (690, 50), (255, 255, 255), -1)
+            cv2.putText(im, (f"ABGELEHNT ({art}): " + grund)[:110], (8, 45), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 160), 1); cv2.imwrite(erg["bild"], im)
+        except Exception: pass
+    # LOT-TORE NACH DER KIPPUNG (24.11.2026, 1122zb): Kamerahoehen gegen DGM1 (Kippung allein / Endlage) + Fluchtpunkt-Lot der B-Fotos. Schalter RCPARK_WAENDE_LOT_TOR=0 = nur Bericht.
+    if erg.get("ok") and a.bilder and a.modell_b and os.path.isdir(a.bilder):
+        try: kl = kamera_lot_probe(a.bilder, a.modell_b, vj.get("ursprung_wgs84"), erg, G["m_je_einheit"])
+        except Exception as ex: kl = dict(ok=None, grund=f"Lot-Probe nicht moeglich ({type(ex).__name__}: {ex})")
+        erg["pruefung"]["lot_tore"] = kl; kh = kl.get("kamerahoehe") or {}; fp = kl.get("fluchtpunkt") or {}
+        print(f"LOT-TORE: Kamerahoehe {kh.get('ok')} ({'; '.join(kh.get('gruende') or kh.get('hinweise') or [])[:300]}), Fluchtpunkt-Lot {fp.get('ok')} "
+              f"(GPS-Lage {fp.get('gps_grad')} -> {fp.get('ende_grad')} Grad, {fp.get('bilder')} Bilder){'; Lage unbrauchbar: ' + str(len(kh['lage_unbrauchbar_namen'])) + ' Kameras' if kh.get('lage_unbrauchbar_namen') else ''}")
+        if kl.get("ok") is False and os.environ.get("RCPARK_WAENDE_LOT_TOR", "1") != "0": ablehnen(kl["grund"], "Lot")
     if erg.get("ok"):
         gp = None
         if a.bilder and a.modell_a and a.modell_b and os.path.isdir(a.bilder):
@@ -609,14 +707,16 @@ def main(argv=None):
             except Exception as ex: print(f"GPS-Probe nicht moeglich ({type(ex).__name__}: {ex})")
         _ms = erg["pruefung"].get("massstab") or {}
         erg["pruefung"]["gps_probe"] = gp; gpr = gps_urteil(gp, mass_sd=(max(G.get("mass_sd") or 0.0, G.get("mass_sd_ehrlich") or 0.0) if isinstance(G, dict) and _ms.get("uebernommen") else None))
-        if gpr:
-            erg.update(ok=False, urteil="ABGELEHNT: " + gpr + " - GPS-Lage bleibt"); erg.pop("B_nach_A", None)
-            try:                                                                       # Kontrollbild entstand vor der Geotag-Probe ("GEBUNDEN") -> Ablehnung nachtragen
-                import cv2
-                im = cv2.imread(erg["bild"]); cv2.rectangle(im, (0, 30), (690, 50), (255, 255, 255), -1)
-                cv2.putText(im, ("ABGELEHNT (Geotags): " + gpr)[:110], (8, 45), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 160), 1); cv2.imwrite(erg["bild"], im)
-            except Exception: pass
-        else: erg["urteil"] += f"; Geotags von B Median {gp['gps']['median_m']} -> {gp['neu']['median_m']} m"
+        if gpr: ablehnen(gpr, "Geotags")
+        else:
+            erg["urteil"] += f"; Geotags von B Median {gp['gps']['median_m']} -> {gp['neu']['median_m']} m"
+            kh = ((erg["pruefung"].get("lot_tore") or {}).get("kamerahoehe") or {}); fp = ((erg["pruefung"].get("lot_tore") or {}).get("fluchtpunkt") or {})
+            if fp.get("ok"): erg["urteil"] += f"; Fluchtpunkt-Lot {fp['gps_grad']} -> {fp['ende_grad']} Grad"
+            if kh.get("ok") is not None:
+                erg["urteil"] += f"; Kamerahoehe/DGM Steigung {kh['gps'].get('steigung')} -> {kh['kipp'].get('steigung')} (Kippung) -> {kh['ende'].get('steigung')} (Endlage)"
+                if kh.get("lage_unbrauchbar_namen"):
+                    from kamerahoehe_dgm import REST_MAX_M
+                    erg["urteil"] += f", {len(kh['lage_unbrauchbar_namen'])} Kameras Lage unbrauchbar (Rest > {REST_MAX_M:.0f} m)"
     return ende(erg, 0 if erg["ok"] else (2 if erg.get("zu_wenig") else 3))
 
 

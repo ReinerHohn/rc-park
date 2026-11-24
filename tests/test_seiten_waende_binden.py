@@ -161,6 +161,36 @@ e = WB.binden(DA, DB, G_von(Mg7), lot_a, ref_b); T_ = np.vstack([turm_b_sued, tu
 pruef(e.get("ok") is True and fehler_m(np.asarray(e["B_nach_A"]), T_, "senkrecht") < 0.5, f"binden: GPS-Fusspunkt 5,5 m zu tief (vorher {fehler_m(Mg7, T_, 'senkrecht'):.1f} m) -> senkrecht "
       f"{fehler_m(np.asarray(e['B_nach_A']), T_, 'senkrecht') if e.get('ok') else None} m ({(e['pruefung'].get('hoehe_3d') or {}).get('meldung', e.get('urteil', ''))[:140]})")
 
+print("8 LOT-TORE (1122zb Teil 1 Ost: Kippung 10 Grad aus 3431 B-Wandnormalen; Hangkameras 60-85 m weg, DGM 20-35 m hoeher)")
+rng8 = np.random.default_rng(8); welt_b = np.vstack([turm_b_sued, turm_b_ost, mauer, boden_b])
+k_str = np.c_[rng8.uniform(-15, 15, 30), rng8.uniform(-40, -18, 30), np.zeros(30)]                      # Strasse, DGM 0
+dg = rng8.uniform(20, 35, 15); k_hang = np.c_[rng8.uniform(-25, 25, 15), -60 - (dg - 20), dg]            # Schlossberg-Hang: weiter weg = hoeher
+kw = np.vstack([k_str, k_hang]); he8 = kw[:, 2] + 1.6 + rng8.normal(0, 0.5, len(kw)); kw = kw + [0, 0, 1.6]   # Handhoehe; DGM/GPS-Rauschen 0,5 m
+C8 = WB.anwenden(MB, kw); M10 = gps_lage(kipp=10.0, dreh=0.0, schieb=(0, 0)); M_m75 = gps_lage(kipp=0.0, dreh=0.0, schieb=(0, 0), mass=0.75)
+k = WB.kamerahoehe_pruefen(C8, he8, M10, M_wahr, M_wahr, lot_a, MJ)
+pruef(k["ok"] is True and not k["lage_unbrauchbar"] and any("bestaetigt" in x for x in k["hinweise"]),
+      f"richtiges Wand-Lot (GPS-Lage 10 Grad gekippt): Steigung GPS {k['gps']['steigung']} -> Kippung {k['kipp']['steigung']} -> bestaetigt ({k['hinweise']})")
+k = WB.kamerahoehe_pruefen(C8, he8, M_wahr, M10, M10, lot_a, MJ)
+pruef(k["ok"] is False and "Wand-Lot nicht belegt" in " ".join(k["gruende"]), f"falsches Wand-Lot (GPS-Lage richtig, Kippung 10 Grad): abgelehnt ({k['gruende'][:1]})")
+M10b = gps_lage(kipp=-14.0, dreh=0.0, schieb=(0, 0)); k = WB.kamerahoehe_pruefen(C8, he8, gps_lage(kipp=-4.0, dreh=0.0, schieb=(0, 0)), M10b, M10b, lot_a, MJ)
+pruef(k["ok"] is False, f"GPS-Lage 4 Grad gekippt ({k['gps']['steigung']}), Kippung treibt aus dem Band ({k['kipp']['steigung']}) -> abgelehnt")
+k = WB.kamerahoehe_pruefen(C8, he8, M10, M_wahr, M_m75, lot_a, MJ); n_h = set(range(30, 45))
+pruef(k["ok"] is True and any("Kameraring" in x for x in k["hinweise"]) and set(k["lage_unbrauchbar"]) <= n_h and len(k["lage_unbrauchbar"]) >= 10,
+      f"Massstab der Endlage 0,75 (Teil gebogen): Bindung bleibt, {len(k['lage_unbrauchbar'])} Hangkameras 'Lage unbrauchbar', keine Strassenkamera ({k['ende']['steigung']})")
+k = WB.kamerahoehe_pruefen(C8[:30], he8[:30] * 0 + 1.6 + rng8.normal(0, 0.3, 30), M10, M_wahr, M_wahr, lot_a, MJ)
+pruef(k["ok"] is not False and k["kipp"]["steigung"] is None, f"ebenes Umfeld: Steigung nicht messbar, keine Ablehnung ({k['hinweise'][:1]})")
+vp_b = MB[:3, :3] @ [0, 0, 1.0]; vp_b = vp_b / np.linalg.norm(vp_b)
+v = WB.lot_vp_pruefen(vp_b, M10, M_wahr, lot_a); pruef(v["ok"] is True and v["ende_grad"] < 0.2 and abs(v["gps_grad"] - 10) < 0.3, f"Fluchtpunkt-Lot: GPS-Lage {v['gps_grad']} -> {v['ende_grad']} Grad -> bestanden")
+v = WB.lot_vp_pruefen(vp_b, M_wahr, M10, lot_a); pruef(v["ok"] is False and "Wand-Lot falsch" in v["grund"], f"Fluchtpunkt-Lot gegen falsche Kippung: {v['ende_grad']} Grad -> abgelehnt")
+pruef(WB.lot_vp_pruefen(None, M10, M_wahr, lot_a)["ok"] is None, "ohne Fluchtpunkt-Lot: nicht messbar (kein Ablehnungsgrund)")
+e = WB.binden(DA, DB, G_von(gps_lage(kipp=7.0)), lot_a, ref_b)
+pruef(e.get("ok") is True and "B_nach_A_kipp" in e and len(e["pruefung"].get("lot_a", [])) == 3
+      and WB._winkel(np.asarray(e["B_nach_A_kipp"])[:3, :3] @ vp_b, e["pruefung"]["lot_a"]) < 0.5,
+      "binden() legt Kippungs-Matrix (nur Kippung, GPS-Massstab) und Lot von A fuer die Lot-Tore ab; Kippung richtet das wahre B-Lot auf A (< 0,5 Grad)")
+src_w = open(os.path.join(TOOLS, "seiten_waende_binden.py")).read()
+pruef("kamera_lot_probe(a.bilder" in src_w and "RCPARK_WAENDE_LOT_TOR" in src_w and src_w.index("kamera_lot_probe(a.bilder") < src_w.index("gp = gps_probe("),
+      "main: Lot-Tore nach binden(), vor der Geotag-Probe, Schalter RCPARK_WAENDE_LOT_TOR")
+
 print("5 VERDRAHTUNG")
 src = open(os.path.join(TOOLS, "sfm_seiten_modelle.py")).read()
 pruef("waende_stufe(" in src and 'RCPARK_WAENDE' in src and '"seiten_waende_binden.py"' in src and '"gps+waende"' in src, "sfm_seiten_modelle: Stufe, Schalter, Code-Stand, Weg")
