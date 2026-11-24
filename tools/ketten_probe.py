@@ -28,7 +28,7 @@ HEX = re.compile(r"^[0-9a-f]{12}(?=$|[+_])")
 NULL = "000000000000"
 ALT = re.compile(r"\.alt_|\.veraltet_|beiseite")
 # ABLAUF: Folgestufe nimmt einen alten Stand, verlangt Handarbeit oder stuerzt ab
-ABLAUF = re.compile(r"aelter als|veraltet|--neu \w|RCPARK_PIPE_NEU|von Hand|Handanweisung|nicht neu geschrieben|NICHT neu|Traceback|abgestuerzt|"
+ABLAUF = re.compile(r"aelter als|veraltet(?!e Auto-Beobachtung)|--neu \w|RCPARK_PIPE_NEU|von Hand|Handanweisung|nicht neu geschrieben|NICHT neu|Traceback|abgestuerzt|"
                     r"(Error|Exception)\b|nicht lesbar|zuerst Stufe", re.I)
 # DATEN: Abbruch mit Urteil ueber das Objekt (Lage, Seitenverklebung, zu wenig Bilder) - sagt nichts ueber den Ablauf
 DATEN = re.compile(r"keine Lage besteht|SEITEN-BLICK-TOR durchgefallen|LAGE FRUEH|keine Bilder in fotos_dir|registriert[^|]*< ?50|DATENMANGEL|Platz", re.I)
