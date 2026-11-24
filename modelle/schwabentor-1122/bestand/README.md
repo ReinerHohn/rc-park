@@ -4,3 +4,4 @@ Jeder neue Kettenlauf wird ZUERST gegen diese Bilder gehalten (CLAUDE.md, Skill 
 - `*__1120_2026-11-22.jpg`: Kette 1120 (22.11.) - Vordach, Galerie, Fenster.
 Rueckschritt 24.11. 20:43 (Kette 1122zc): Galerie als Treppenkloetze aus dem Hoehenfeld (Sackgasse 21.11., Doku/projekt/bauteile-kreis/generator.md:75).
 Neues Bestbild nur ablegen, wenn ALLE Bauteile mindestens so gut aussehen (Bild schlaegt Zahl); alte Bilder nie loeschen.
+- `ZIEL_handstand_schwab_v3__*.jpg`: HANDSTAND (Handmodell schwab_v3, Foto-Triangulation) = ZIEL, das die Kette AUTOMATISCH erreichen muss (keine Handwerte uebernehmen): Uhr mit roemischen Ziffern, Rundbogenfenster mit Laibung, geneigtes Vordach, Galerie mit Pfosten, Eckquader, Traufkasten.
