@@ -10,7 +10,8 @@ verdeckt dort jede Kamera, der Laufgang unter der Traufe kommt im Wandbild nie v
      DURCHBLICK-Probe: zwischen z0 und z1 muss das Bild dunkler sein als die Wand darunter (Schatten der zurueckgesetzten Wand) UND senkrechte Kanten (Pfosten) tragen,
      sonst kein Umgang (Fries/Gesims ohne Ruecksprung).
   3. PFOSTEN ZAEHLEN am entzerrten Band (wie foto_zaehlung, aber automatisch): Spaltenprofil des waagrechten Gradienten in der Zone, Paare (Pfostenkante links/rechts) mit
-     Breite 0,1-0,6 m; Zahl je Foto, Ergebnis = Mehrheit ueber >= 2 Fotos je Wand, Wandergebnis = Mehrheit ueber die Waende (Formfamilie aus >= 3 Fotos insgesamt).
+     Breite 0,1-0,6 m; Zahl je Foto, Ergebnis = Mehrheit ueber >= 2 Fotos je Wand. 24.11.2026: JE WAND gebaut (pfosten_kanten, Zaehlen nur am Foto); die Mehrheit
+     ueber die Waende nur fuer Waende ohne eigene Zaehlung (ANNAHME im JSON).
 24.11.2026 (Befund Hoehen-Angleich 1122): Entzerrung auf der GESETZTEN Wandlage (audit/schleife_korrekturen.json 'wandversatz', wie der Generator; ohne Eintrag
 LoD2-Ebene wie bisher) statt immer auf der LoD2-Ebene (Wand 0,29-0,36 m dahinter -> Zeilen um Versatz x tan(Blickhoehe) zu tief). Der Deckel der Oberkante auf die
 LoD2-Wandoberkante faellt nur, wenn triangulierte Fotokanten (Kantenstufe sweep.npz mit Traufzone) die Kante z1 auf der gesetzten Wand belegen (oberkante_belegt).
@@ -153,10 +154,27 @@ def pfosten_konsens(listen, toleranz=0.25, anteil=0.5):
     return [round(float(np.mean([u for u, _ in h])), 2) for h in hauf if len({i for _, i in h}) >= max(2, anteil * n)]
 
 
+def waende_umlauf(W):
+    """Hauptwaende nach Winkel um den Schwerpunkt sortiert (Reihenfolge der Ecken/Kanten im Umlauf)."""
+    mitte = np.mean([np.array(F["o"], float) for F in W], axis=0)
+    return sorted(W, key=lambda F: np.arctan2(F["o"][1] - mitte[1], F["o"][0] - mitte[0]))
+
+
+def pfosten_kanten(W, je_wand_zahl, fallback):
+    """PFOSTENZAHL JE KANTE des Umlaufs (24.11.2026, Weg-Analyse WEG_HAND_ZU_KETTE: Mehrheit ueber alle Waende gab 2 je Seite, obwohl f00 allein 4 zaehlt -
+    Zaehlen nur am Foto). Kante k (Ecke k -> Ecke k+1, ecken_aus_waenden) liegt auf der Wand waende_umlauf(W)[k+1]; sie bekommt die Zahl aus DEREN Fotos
+    (pfosten_konsens), nur ohne eigene Zaehlung die Mehrheit 'fallback' (als ANNAHME genannt). Liefert (liste, annahmen)."""
+    U = waende_umlauf(W); n = len(U); out = []; ann = []
+    for k in range(n):
+        F = U[(k + 1) % n]; z = je_wand_zahl.get(F["id"])
+        if z is None: out.append(int(fallback)); ann.append(f"ANNAHME: Wand {F['id']} ohne eigene Pfostenzaehlung -> Mehrheit der Waende ({int(fallback)})")
+        else: out.append(int(z))
+    return out, ann
+
+
 def ecken_aus_waenden(W):
     """Schnittpunkte aufeinanderfolgender Wandfluchten (nach Winkel um den Schwerpunkt sortiert) = Umgangs-Ecken im Umlauf."""
-    mitte = np.mean([np.array(F["o"], float) for F in W], axis=0)
-    W = sorted(W, key=lambda F: np.arctan2(F["o"][1] - mitte[1], F["o"][0] - mitte[0])); E = []
+    W = waende_umlauf(W); E = []
     for A, B in zip(W, W[1:] + W[:1]):
         pa, da = np.array(A["o"], float), np.array(A["d"], float); pb, db = np.array(B["o"], float), np.array(B["d"], float)
         M_ = np.array([da, -db]).T
@@ -242,9 +260,10 @@ def main():
         p, np_ = mehrheit(je_wand)
         E = ecken_aus_waenden(W)
         if p is not None and p >= 2 and E and z1 - z0 >= 0.6:
-            erg.update(gefunden=True, z0=round(z0, 2), z1=round(z1, 2), pfosten_je_seite=p, pfosten_waende=np_, ecken=[[round(x, 3) for x in e] for e in E], fotos_gut=len(gut),
+            pk, ann_k = pfosten_kanten(W, {w["id"]: w["pfosten"] for w in erg["waende"] if w.get("pfosten") is not None and w["pfosten"] >= 2}, p)
+            erg.update(gefunden=True, z0=round(z0, 2), z1=round(z1, 2), pfosten_je_seite=p, pfosten_waende=np_, pfosten_kanten=pk, ecken=[[round(x, 3) for x in e] for e in E], fotos_gut=len(gut),
                        annahmen=["Ruecksprungtiefe 0,9 m (kein Foto misst sie; bauteile.umgang Standard)", "Querschnitte Pfosten 0,24 m, Schwelle/Raehm 0,25 m",
-                                 "Wand ohne Konsens-Zaehlung baut dieselbe Pfostenzahl (Mehrheit der Waende)"])
+                                 "Pfostenzahl je Kante aus den Fotos DIESER Wand (pfosten_kanten); pfosten_je_seite = Mehrheit nur Anzeige/Fallback"] + ann_k)
         else: erg["grund"] = f"Pfostenzahl ohne Mehrheit (je Wand {je_wand}) oder keine Ecken/Zone zu schmal"
     else: erg["grund"] = f"nur {len(gut)} Fotos mit Durchblick-Probe (Zone dunkler als Wand + Kante an der Schwelle), mindestens 3 noetig"
     json.dump(erg, open(aus, "w"), indent=1, ensure_ascii=False)

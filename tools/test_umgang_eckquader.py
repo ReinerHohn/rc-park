@@ -6,6 +6,7 @@
   (3) bauteile.eckquader_aus_relief + fassaden_kette.wandende_ist_ecke: verzahnte Steine am Eckende erkannt, Steinwand ohne Putz und Wandmitte nicht.
   (4) 24.11.2026: Entzerrung auf der GESETZTEN Wandlage (rote Probe LoD2-Ebene: Unterkante um Versatz x tan(Blickhoehe) falsch), wandlage() Fallback 0,
       oberkante_belegt(): Fotokanten-Linie auf der gesetzten Wand hebt den LoD2-Deckel auf, Rauschen/keine Datei/falsche Ebene nicht.
+  (5) Pfostenzahl je Wand/Kante aus deren Fotos (rote Probe: Mehrheit 2 statt f00 = 4), Mehrheit nur als ANNAHME, Generator baut die Liste.
 Werte sind Testgeometrie, kein Objektmass. < 5 s."""
 import os, sys, json, tempfile
 import numpy as np
@@ -99,5 +100,25 @@ b_lod2, _ = U.oberkante_belegt(np.vstack([lin, rausch]), np.r_[ref4, rng4.intege
 if not b_ja: fehler.append("(4) Fotokanten-Linie in z1 auf der gesetzten Wand nicht als Beleg erkannt (Deckel bliebe)")
 if b_nein or U.oberkante_belegt(None, None, [F4], {}, 37.3)[0]: fehler.append("(4) Rauschen/keine Kanten duerfen den LoD2-Deckel nicht aufheben")
 if b_lod2: fehler.append("(4) Kante 0,4 m hinter der gepruefen Ebene darf nicht belegen (Toleranz 0,15 m)")
+
+# --- (5) 24.11.2026 PFOSTENZAHL JE WAND (Weg-Analyse WEG_HAND_ZU_KETTE: Mehrheit ueber alle Waende gab 2 je Seite, obwohl f00 allein 4 zaehlt)
+W5 = [dict(id="f00", o=[5.0, 0.0], d=[0.0, 1.0], n=[1.0, 0.0]), dict(id="f01", o=[0.0, 5.0], d=[-1.0, 0.0], n=[0.0, 1.0]),
+      dict(id="f02", o=[-5.0, 0.0], d=[0.0, -1.0], n=[-1.0, 0.0]), dict(id="f03", o=[0.0, -5.0], d=[1.0, 0.0], n=[0.0, -1.0])]
+E5 = U.ecken_aus_waenden(W5); U5 = U.waende_umlauf(W5)
+pk5, ann5 = U.pfosten_kanten(W5, {"f00": 4, "f01": 2, "f02": 2}, 2)                # f03 ohne eigene Zaehlung -> Mehrheit (ANNAHME)
+kante_f00 = [k for k in range(4) if U5[(k + 1) % 4]["id"] == "f00"][0]; a5, b5 = np.array(E5[kante_f00]), np.array(E5[(kante_f00 + 1) % 4])
+if not (abs(a5[0] - 5) < 1e-6 and abs(b5[0] - 5) < 1e-6): fehler.append(f"(5) Kante {kante_f00} liegt nicht auf f00 (x=5): {a5} {b5}")
+if pk5[kante_f00] != 4: fehler.append(f"(5) rote Probe: Kante auf f00 muss die EIGENE Zaehlung 4 bauen, nicht die Mehrheit 2 ({pk5})")
+if sorted(pk5) != [2, 2, 2, 4] or not any("f03" in a and "ANNAHME" in a for a in ann5): fehler.append(f"(5) Wand ohne Zaehlung: Mehrheit nur als ANNAHME ({pk5}, {ann5})")
+k2 = B.umgang(M.cube((10, 10, 12)).translate((-5, -5, 0)), [tuple(e) for e in E5], 9.0, 10.6, pfosten=2)
+kl = B.umgang(M.cube((10, 10, 12)).translate((-5, -5, 0)), [tuple(e) for e in E5], 9.0, 10.6, pfosten=pk5)
+dv = kl.volume() - k2.volume(); erw = 2 * 0.24 * (0.3 + 0.08 - 0.01) * (10.6 - 9.0 - 2 * 0.25 + 0.04)          # zwei zusaetzliche Pfosten auf f00
+if abs(dv - erw) > 0.15 * erw: fehler.append(f"(5) Generator: Liste je Kante baut {dv:.3f} m3 mehr als 2 je Seite (Soll 2 Pfosten = {erw:.3f})")
+with tempfile.TemporaryDirectory() as td5:
+    jp = os.path.join(td5, "umgang_auto.json")
+    json.dump(dict(gefunden=True, z0=9.0, z1=10.6, pfosten_je_seite=2, pfosten_kanten=pk5, ecken=[list(e) for e in E5], waende=[]), open(jp, "w"))
+    kj, bj = B.umgang_aus_json(M.cube((10, 10, 12)).translate((-5, -5, 0)), jp)
+    if abs(kj.volume() - B.umgang(M.cube((10, 10, 12)).translate((-5, -5, 0)), [tuple(e) for e in E5], 9.0, 10.6, pfosten=pk5, riegel=min(0.25, 0.2 * 1.6)).volume()) > 1e-6:
+        fehler.append("(5) umgang_aus_json nutzt pfosten_kanten nicht")
 if fehler: print("FEHLER umgang/eckquader:", "; ".join(fehler)); sys.exit(1)
-print("OK umgang/eckquader: Zone + 4 Pfosten (Kabel/Eckflaeche ignoriert), Bau mit Ruecksprung, Eckquader nur an der Ecke mit Putz daneben; Umgang auf gesetzter Wandlage, LoD2-Deckel nur ohne Fotokanten-Beleg")
+print("OK umgang/eckquader: Zone + 4 Pfosten (Kabel/Eckflaeche ignoriert), Bau mit Ruecksprung, Eckquader nur an der Ecke mit Putz daneben; Umgang auf gesetzter Wandlage, LoD2-Deckel nur ohne Fotokanten-Beleg; Pfostenzahl je Wand")
