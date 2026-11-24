@@ -177,10 +177,40 @@ def sift_paare_matchen(db, paare_txt, pycolmap=None, saat=False):
     return ver
 
 
+def merkmale_schluessel(a, V, names, paare_txt, pycolmap, aufgeschoben):
+    """ZWISCHENSPEICHER-Schluessel der Stufe merkmale (24.11.2026, Kette 1122w: SIFT + Abgleich 388 Bilder 18 min, db.db am Skriptende geloescht -> jeder Lauf neu).
+    Alles, was in db.db/merkmale.json eingeht: INHALT der Referenz-DB und jedes vorbereiteten Bildes (bilder/<name>) samt Bildgroesse, Paarliste (paare.txt),
+    Brennweiten-Annahme f_px, SIFT-Einstellung (tools/sift_einstellung.py: Beschreibung + RCPARK_SIFT_ALT/RCPARK_SIFT_MAX + Quelltext), Schalter SIFT nur gewaehlt,
+    pycolmap-Version, Quelltext der beteiligten Funktionen (merkmale, sift_sicher, sift_fehlend, sift_paare_matchen) und colmap_db_schema.py."""
+    import inspect
+    from lg_zwischenspeicher import inhalt_hash
+    T_ = os.path.dirname(os.path.abspath(__file__)); import sift_einstellung as SE
+    bilder = [(n, inhalt_hash(os.path.join(a.aus, "bilder", n)), V["bilder"][n]["bild"]) for n in names]
+    quell = [inspect.getsource(f) for f in (merkmale, sift_sicher, sift_fehlend, sift_paare_matchen)] + [inhalt_hash(os.path.join(T_, d)) for d in ("sift_einstellung.py", "colmap_db_schema.py")]
+    import nachhol_zwischenspeicher as NZ
+    return NZ.text_hash("merkmale-1", inhalt_hash(a.ref_db), bilder, inhalt_hash(paare_txt), float(a.f_px), SE.beschreibung(SE.optionen(pycolmap, geraet="auto")),
+                        {k: os.environ.get(k) for k in ("RCPARK_SIFT_ALT", "RCPARK_SIFT_MAX")}, bool(aufgeschoben), getattr(pycolmap, "__version__", "?"), quell)
+
+
 def merkmale(a):
     import pycolmap
     pycolmap.set_random_seed(0)
     V = json.load(open(os.path.join(a.aus, "vorbereitet.json"))); names = sorted(V["bilder"]); db = os.path.join(a.aus, "db.db")
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    # 24.11.2026: Paarliste VOR der Merkmalssuche (haengt nur an den Namen und am Referenzmodell) - sie geht in den Schluessel des Zwischenspeichers ein
+    ref = pycolmap.Reconstruction(a.sparse); reg = sorted(i.name for i in ref.images.values() if i.has_pose)
+    mod_ = {str(c.model).split(".")[-1] for c in ref.cameras.values()}
+    if mod_ <= {"PINHOLE"} and "dicht" in a.sparse:      # 18.11.2026 (Kaufhaus gk2i): Kette gab das ENTZERRTE Modell dicht/sparse - Keypoints der Datenbank gehoeren zu den Originalbildern; Absturz erst nach 90 min in triangulate_points (kPinhole vs kSimpleRadial)
+        print(f"FEHLER: {a.sparse} ist ein entzerrtes Modell (nur PINHOLE) - passt nicht zur Merkmalsdatenbank der Originalbilder; das SfM-Modell (sfm/sparse/0) angeben", flush=True); sys.exit(2)
+    paare = [(n, r) for n in names for r in reg] + list(itertools.combinations(names, 2))
+    pf = os.path.join(a.aus, "paare.txt"); open(pf, "w").write("\n".join(f"{x} {y}" for x, y in paare) + "\n")
+    aufgeschoben = sift_nur_gewaehlt(); mj = os.path.join(a.aus, "merkmale.json")
+    import nachhol_zwischenspeicher as NZ
+    schl = merkmale_schluessel(a, V, names, pf, pycolmap, aufgeschoben) if NZ.an() and os.environ.get("RCPARK_NACHHOL_CACHE_NEU") != "1" else None
+    if schl and NZ.holen("merkmale", schl, {"db.db": db, "merkmale.json": mj}):
+        for x_ in ("-wal", "-shm"):
+            if os.path.exists(db + x_): os.remove(db + x_)
+        print(f"merkmale: {len(names)} neu - SIFT + Abgleich aus dem Zwischenspeicher (Schluessel {schl[:16]}; neu erzwingen: RCPARK_NACHHOL_CACHE_NEU=1)", flush=True); return
     if not os.path.exists(db):
         src = sqlite3.connect(f"file:{a.ref_db}?mode=ro", uri=True); dst = sqlite3.connect(db); src.backup(dst); dst.close(); src.close()      # Kopie, Referenz bleibt unberuehrt
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from colmap_db_schema import kameras_alt      # 18.11.2026: Datenbank vom neuen globalen Mapper (Spalte 'source') -> pycolmap 4.2.1 oeffnet sie sonst nicht
@@ -189,13 +219,6 @@ def merkmale(a):
     if sift["fehlend"]:      # VOR dem Matching (23.11.2026: vorher 5 min Matching, dann KeyError)
         raise SystemExit(f"FEHLER: {len(sift['fehlend'])} Bilder ohne Merkmale auch nach GPU-Wiederholung und CPU-SIFT (kein Speicherproblem - Bilddatei pruefen): {sift['fehlend'][:5]}")
     con = sqlite3.connect(db); ids = {n: i for i, n in con.execute("select image_id,name from images")}; con.close()
-    ref = pycolmap.Reconstruction(a.sparse); reg = sorted(i.name for i in ref.images.values() if i.has_pose)
-    mod_ = {str(c.model).split(".")[-1] for c in ref.cameras.values()}
-    if mod_ <= {"PINHOLE"} and "dicht" in a.sparse:      # 18.11.2026 (Kaufhaus gk2i): Kette gab das ENTZERRTE Modell dicht/sparse - Keypoints der Datenbank gehoeren zu den Originalbildern; Absturz erst nach 90 min in triangulate_points (kPinhole vs kSimpleRadial)
-        print(f"FEHLER: {a.sparse} ist ein entzerrtes Modell (nur PINHOLE) - passt nicht zur Merkmalsdatenbank der Originalbilder; das SfM-Modell (sfm/sparse/0) angeben", flush=True); sys.exit(2)
-    paare = [(n, r) for n in names for r in reg] + list(itertools.combinations(names, 2))
-    pf = os.path.join(a.aus, "paare.txt"); open(pf, "w").write("\n".join(f"{x} {y}" for x, y in paare) + "\n")
-    aufgeschoben = sift_nur_gewaehlt()
     if aufgeschoben:      # 23.11.2026 (Kette 1122q: 19,8 min fuer 438.900 Paare): Matching erst in zusatzfotos_lightglue.py einlesen, nur auf lg/sift_paare.txt
         print(f"RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT=1: SIFT-Matching der {len(paare)} Kandidatenpaare AUFGESCHOBEN - nur die LightGlue-Auswahl (mit Marge) wird in der Stufe einlesen gematcht", flush=True)
         ver = None
@@ -204,8 +227,12 @@ def merkmale(a):
     leer = [n for n, k in nk.items() if not k]
     if leer: raise SystemExit(f"FEHLER: {len(leer)} Bilder ohne Schluesselpunkte (SiftGPU scheitert bei VRAM-Mangel STILL mit rc 0): {leer[:5]} - VRAM pruefen (nvidia-smi), RCPARK_SIFT_MAX=1600")
     json.dump(dict(paare=0 if aufgeschoben else len(paare), kandidatenpaare=len(paare), sift_matching="aufgeschoben" if aufgeschoben else "alle", neu=len(names), referenz=len(reg), schluesselpunkte_mittel=float(np.mean(list(nk.values()))), verifizierte_paare_gesamt=ver, f_prior_px=f0,
-                   sift_nachgeholt=dict(gpu_klein=len(sift["gpu_klein"]), cpu=len(sift["cpu"]))), open(os.path.join(a.aus, "merkmale.json"), "w"), indent=1)
+                   sift_nachgeholt=dict(gpu_klein=len(sift["gpu_klein"]), cpu=len(sift["cpu"]))), open(mj, "w"), indent=1)
     print(f"merkmale: {len(names)} neu, {0 if aufgeschoben else len(paare)} Paare gematcht, mittl. Schluesselpunkte {np.mean(list(nk.values())):.0f}")
+    if schl is None and NZ.an(): schl = merkmale_schluessel(a, V, names, pf, pycolmap, aufgeschoben)      # RCPARK_NACHHOL_CACHE_NEU=1: neu gerechnet, Ergebnis trotzdem ablegen
+    if schl and not (sift["gpu_klein"] or sift["cpu"]):      # Notweg (VRAM-Mangel: GPU klein/CPU) nicht festschreiben - der naechste Lauf rechnet regulaer
+        con = sqlite3.connect(db); con.execute("PRAGMA wal_checkpoint(TRUNCATE)"); con.close()
+        NZ.ablegen("merkmale", schl, {"db.db": db, "merkmale.json": mj}, extra=dict(bilder=len(names), paare=len(paare)))
 
 
 def korrespondenzen(db, ref, name2id, n_id, mind=15):

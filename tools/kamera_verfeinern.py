@@ -19,6 +19,9 @@ K-Dateien werden je Foto frisch gelesen (ein im Stapel geschriebenes Foto ist fu
 Tiefenbild-Zwischenspeicher je (Foto, rvec, t, f_px, cx, cy) - ein frueher nachgezogenes Referenzfoto bekommt ein NEUES Tiefenbild (der alte Schluessel nur nach Name
 haette das veraltete benutzt); Speicher begrenzt (LRU: RCPARK_KV_TIEFE_MB Tiefenbilder im RAM, Standard 768; RCPARK_KV_MERKMALE Merkmalssaetze auf der GPU, Standard 96).
 Test: tools/test_kamera_verfeinern_stapel.py (Stapel == Einzelaufrufe, bitgleiche K-Dateien).
+ZWISCHENSPEICHER (24.11.2026, Kette 1122w: 267 Kameras ~17 min): Ergebnis je Kamera nach Eingabe-Hash (eins_mit_speicher, tools/nachhol_zwischenspeicher.py;
+RCPARK_NACHHOL_CACHE=0 aus, RCPARK_NACHHOL_CACHE_NEU=1 neu rechnen) + Foto-Index statt glob je Referenz. NICHT parallel ueber Kameras: der Stapel ist
+reihenfolgeabhaengig (ein nachgezogenes Foto ist Referenz der folgenden) - parallel waere ein anderes Ergebnis. Test: tests/test_nachhol_zwischenspeicher.py.
 """
 import sys, os, json, glob, argparse, numpy as np, cv2, torch, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -57,6 +60,47 @@ def exif_f_px(pfad_, W, H):
     except Exception: return None
 
 
+class foto_index:
+    """Ersatz fuer glob.glob(<fd>/<n>.*)[0] (24.11.2026: je Foto des Stapels ~860 glob-Aufrufe ueber 1147 Dateien = 0,9 s, 267 Kameras ~4 min nur Verzeichnislesen).
+    Gleiche Reihenfolge wie glob (os.scandir-Folge von glob(<fd>/*)), erster Treffer je Stamm; Index neu, sobald sich das Verzeichnis aendert (mtime).
+    Namen mit glob-Sonderzeichen oder fuehrendem Punkt (versteckte Dateien) gehen unveraendert ueber glob."""
+    def __init__(self, fd): self.fd = fd; self.mt = None; self.idx = {}; self.sig = None
+    def _neu(self):
+        try: mt = os.stat(self.fd).st_mtime_ns
+        except OSError: mt = -1
+        if mt == self.mt: return
+        self.mt = mt; self.idx = {}; self.sig = None
+        for p in glob.glob(os.path.join(glob.escape(self.fd), "*")):
+            b = os.path.basename(p)
+            for i, c in enumerate(b):
+                if c == ".": self.idx.setdefault(b[:i], p)
+    def pfad(self, n):
+        if glob.has_magic(n) or glob.has_magic(self.fd) or n.startswith("."): g = glob.glob(os.path.join(self.fd, n + ".*")); return g[0] if g else None
+        self._neu(); return self.idx.get(n)
+    def signatur(self):
+        """Fotobestand als (Name, Groesse, mtime_ns) - Teil des Zwischenspeicher-Schluessels (ANNAHME: ein Foto wird nie mit gleicher Groesse UND mtime ersetzt)."""
+        self._neu()
+        if self.sig is None:
+            out = []
+            for p in sorted(glob.glob(os.path.join(glob.escape(self.fd), "*"))):
+                try: st_ = os.stat(p); out.append((os.path.basename(p), st_.st_size, st_.st_mtime_ns))
+                except OSError: out.append((os.path.basename(p), None, None))
+            import hashlib; self.sig = hashlib.sha1(json.dumps(out).encode()).hexdigest()
+        return self.sig
+
+
+def kv_basis(a, obj, root, ST):
+    """Basis-Schluessel des Ergebnis-Zwischenspeichers (einmal je Prozess): Quelltext samt Hilfsmodulen (code_stand), Bibliotheken, Geraet, INHALT der STL-Dateien
+    und der fassaden.json, Massstab, alle Schalter ausser Foto/Liste, Kamera-Rahmen."""
+    import scipy
+    from code_stand import code_stand
+    from lg_zwischenspeicher import inhalt_hash, modellstand
+    import nachhol_zwischenspeicher as NZ
+    stl = [os.path.join(root, obj["stl"])] + (a.stl.split(",") if a.stl else [])
+    return NZ.text_hash("kv-1", code_stand("kamera_verfeinern.py"), modellstand(), GERAET, cv2.__version__, np.__version__, scipy.__version__, trimesh.__version__,
+                        [inhalt_hash(q_) for q_ in stl], obj.get("stl_massstab", 87), inhalt_hash(a.fassaden), {k: v for k, v in sorted(vars(a).items()) if k not in ("foto", "liste")}, ST)
+
+
 def main(argv=None):
     from lightglue import LightGlue, ALIKED
     from lightglue.utils import load_image, rbd
@@ -64,11 +108,19 @@ def main(argv=None):
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll")
     ms = [trimesh.load(q_) for q_ in ([os.path.join(root, obj["stl"])] + (a.stl.split(",") if a.stl else []))]; mm = trimesh.util.concatenate(ms) if len(ms) > 1 else ms[0]; mm.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0)
     import kamera_rahmen as KR; ST = KR.aktuell(mp)
-    def kam(n):                                                           # 23.11.2026: Kameras im alten Rahmen (kamera_rahmen.py) weder als Start noch als Referenz
+    KT = {}                                                               # 24.11.2026 Merker je K-Datei: stat -> gueltige Kamera als JSON-Text (Stapel las je Foto alle ~860 K-Dateien neu)
+    def kam_text(n):
         p = os.path.join(mp, "K-" + n + ".json")
-        if not os.path.exists(p): return None
-        k = json.load(open(p)).get("kamera"); return k if isinstance(k, dict) and "rvec" in k and not KR.veraltet(k, mp, p, ST) else None
-    def pfad(n): g = glob.glob(os.path.join(fd, n + ".*")); return g[0] if g else None
+        try: st_ = os.stat(p)
+        except OSError: return None
+        sig = (st_.st_mtime_ns, st_.st_size, st_.st_ino)
+        if KT.get(p, (None,))[0] != sig:
+            k = json.load(open(p)).get("kamera"); KT[p] = (sig, json.dumps(k) if isinstance(k, dict) and "rvec" in k and not KR.veraltet(k, mp, p, ST) else None)
+        return KT[p][1]
+    def kam(n):                                                           # 23.11.2026: Kameras im alten Rahmen (kamera_rahmen.py) weder als Start noch als Referenz
+        t_ = kam_text(n); return None if t_ is None else json.loads(t_)   # frische Kopie je Aufruf (wie json.load der Datei)
+    FX = foto_index(fd)
+    def pfad(n): return FX.pfad(n)
     dev = GERAET; ex = ALIKED(max_num_keypoints=4096).eval().to(dev); mt = LightGlue(features="aliked").eval().to(dev)
     MK = LRU(int(os.environ.get("RCPARK_KV_MERKMALE", "96")))                                                         # Merkmale der Referenzen (GPU, ~2 MB je Satz)
     TK = LRU(float(os.environ.get("RCPARK_KV_TIEFE_MB", "768")) * 2 ** 20, lambda v: v[0].nbytes + v[1].nbytes)      # Tiefenbild + Dreiecksnummer je (Referenz, Kamera), RAM
@@ -144,19 +196,48 @@ def main(argv=None):
         if tragend < 2: print("nur eine Wand mit >= 15 Inliern - Kamera bleibt unsicher, nicht geschrieben"); return 3
         if not np.isfinite(C).all() or dist > 600 or p[6] > 10 * max(W, H) or p[6] < 0.4 * max(W, H): print(f"{a.foto}: Loesung unplausibel (Abstand {dist:.0f} m, f {p[6]:.0f} px bei {max(W, H)} px Bildbreite) - entartete Tele-Loesung, nicht geschrieben"); return 3      # 16.11.2026: PnP mit freier Brennweite lief bei fast ebenen Punkten ins Unendliche (Kamera 350 000 km entfernt, trotzdem 2 Flaechen >= 15 Inlier)
         if a.schreiben:
-            kp = os.path.join(mp, "K-" + a.foto + ".json"); d = json.load(open(kp)) if os.path.exists(kp) else dict(foto=a.foto, seite="unbekannt", punkte={}, linien={})
-            if d.get("kamera") and not KR.veraltet(d["kamera"], mp, kp, ST): d["kamera_vorher"] = d["kamera"]
-            elif d.get("kamera"): d.pop("kamera_vorher", None)
-            d["kamera"] = dict(rahmen=(ST or {}).get("id"), rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), standort_xyz=[round(float(x), 3) for x in C], quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", tiefenspanne=round(tiefe_rel, 3), vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
-            __import__("json_sicher").schreiben(kp, d); print("geschrieben:", kp)
+            k_schreiben(dict(rahmen=(ST or {}).get("id"), rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), standort_xyz=[round(float(x), 3) for x in C], quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", tiefenspanne=round(tiefe_rel, 3), vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand))
         return 0
+    geschrieben = []
+    def k_schreiben(kamera):
+        kp = os.path.join(mp, "K-" + a.foto + ".json"); d = json.load(open(kp)) if os.path.exists(kp) else dict(foto=a.foto, seite="unbekannt", punkte={}, linien={})
+        if d.get("kamera") and not KR.veraltet(d["kamera"], mp, kp, ST): d["kamera_vorher"] = d["kamera"]
+        elif d.get("kamera"): d.pop("kamera_vorher", None)
+        d["kamera"] = kamera; __import__("json_sicher").schreiben(kp, d); print("geschrieben:", kp); geschrieben.append(kamera)
+    import nachhol_zwischenspeicher as NZ
+    basis = kv_basis(a, obj, root, ST) if NZ.an() and os.environ.get("RCPARK_NACHHOL_CACHE_NEU") != "1" else None; n_hol = 0
+    def eins_mit_speicher():
+        """ERGEBNIS-ZWISCHENSPEICHER je Kamera (24.11.2026): Schluessel = Basis (Quelltext, Bibliotheken, STL-/fassaden.json-Inhalt, Schalter, Rahmen) + Foto +
+        ZUSTAND aller K-Dateien (gueltige Kamera je Datei, wie kam() sie liest - also auch die im Stapel vorher geschriebenen) + Fotobestand (Name, Groesse, mtime).
+        Gleicher Schluessel -> gespeicherte Ausgabe/rc/Kamera, das Schreiben laeuft wie gerechnet (k_schreiben). Ausnahmen (rc 9) werden nie gespeichert."""
+        nonlocal n_hol
+        if basis is None: return eins()
+        zust = [(os.path.basename(p_)[2:-5], kam_text(os.path.basename(p_)[2:-5])) for p_ in sorted(glob.glob(os.path.join(mp, "K-*.json")))]
+        schl = NZ.text_hash(basis, a.foto, zust, FX.signatur())
+        alt_ = NZ.json_holen("kamera_verfeinern", schl)
+        if alt_ is not None:
+            sys.stdout.write(alt_["ausgabe"]); n_hol += 1
+            if alt_.get("kamera") is not None: k_schreiben(alt_["kamera"])
+            return alt_["rc"]
+        import io, contextlib
+        class Tee(io.TextIOBase):
+            def __init__(s_, ziel): s_.ziel = ziel; s_.puffer = []
+            def write(s_, x): s_.ziel.write(x); s_.puffer.append(x); return len(x)
+            def flush(s_): s_.ziel.flush()
+        tee = Tee(sys.stdout); del geschrieben[:]
+        with contextlib.redirect_stdout(tee): rc_ = eins()
+        txt = "".join(tee.puffer); kamera_ = geschrieben[-1] if geschrieben else None
+        if kamera_ is not None: txt = txt.replace("geschrieben: " + os.path.join(mp, "K-" + a.foto + ".json") + "\n", "")      # k_schreiben meldet es beim Holen selbst
+        NZ.json_ablegen("kamera_verfeinern", schl, dict(rc=rc_, ausgabe=txt, kamera=kamera_, foto=a.foto))
+        return rc_
     for f_ in fotos:
         a.foto = f_
-        try: rcs.append(eins())
+        try: rcs.append(eins_mit_speicher())
         except Exception as e_:
             print(f"{f_}: Fehler {str(e_)[:120]}"); rcs.append(9)
             if dev == "cuda": torch.cuda.empty_cache()      # Stapel: ein GPU-Speicherfehler bei einem Foto soll die folgenden nicht mitreissen (Einzelaufruf: neuer Prozess)
         if len(fotos) > 1: print(f"FOTO {len(rcs)}/{len(fotos)} {f_}: rc {rcs[-1]}", flush=True)
+    if n_hol: print(f"ZWISCHENSPEICHER kamera_verfeinern: {n_hol} von {len(rcs)} Kameras mit gleichen Eingaben uebernommen (neu erzwingen: RCPARK_NACHHOL_CACHE_NEU=1)")
     print(f"FERTIG: {sum(1 for r_ in rcs if r_ == 0)} von {len(rcs)} Kameras bestimmt"); return 0 if any(r_ == 0 for r_ in rcs) else 3
 
 

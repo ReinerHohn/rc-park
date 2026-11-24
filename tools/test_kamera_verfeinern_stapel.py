@@ -13,6 +13,7 @@ Prueft:
   (4) seiten_luecken.kamera_verfeinern_zeile: eine Liste in Reihenfolge von kameras_nachtragen.json 'neu', EIN Aufruf mit --liste, leere Liste -> kein Aufruf.
 Aufruf: tools/py tools/test_kamera_verfeinern_stapel.py   Exit 0 = alles bestanden."""
 import os, sys, json, types, shutil, subprocess
+os.environ.setdefault("RCPARK_NACHHOL_CACHE", "0")      # 24.11.2026: Ergebnis-Zwischenspeicher aus - dieser Test vergleicht echte Rechnungen (eigener Test: tests/test_nachhol_zwischenspeicher.py)
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T)
 import numpy as np, cv2, torch, trimesh
 from pfade import temp_ordner
