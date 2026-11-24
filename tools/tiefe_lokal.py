@@ -10,7 +10,9 @@ Auf EINER Stelle sind dagegen wenige nahe Fotos in VOLLER Aufloesung bezahlbar:
   4. Punkte in den Modellrahmen (SFM-AUSRICHTUNG), auf das Feld +-Band beschneiden, je Zelle Median des Abstands vor der Wandebene -> Hoehenbild im
      Format von relief_einsatz.py (rel, a, t, n, u0, z0, px, ...) = direkt als Relief-Einsatz baubar; dazu <name>.jpg (Schattierung) und Punktdichte.
 --massstab: das Hoehenbild soll im ROHRAHMEN liegen (Schwabentor Nord): Punkte X_roh = M + (X - M) / k vor dem Rastern.
-Arbeitsordner: <rc-park_daten>/<objekt>/tiefe_lokal/<name> (Datenplatte, waehrend des Laufs 2-4 GB, danach nur fused.ply). Start als Job: JOB_GPU_MB=6500 tools/job_start.sh ...
+Arbeitsordner: <rc-park_daten>/<objekt>/tiefe_lokal/<name> (Datenplatte, waehrend des Laufs 2-4 GB, danach nur fused.ply).
+ZWISCHENSTAND (24.11.2026): fused_schluessel.txt neben fused.ply = Hash der Eingaben (fused_schluessel); gleicher Hash -> PatchMatch/Fusion uebersprungen, nur Rasterung
+(Teillauf seiten_wiederholung, Kettenlaeufe mit SfM aus dem Cache). RCPARK_TIEFE_LOKAL_NEU=1 erzwingt Neurechnen. Start als Job: JOB_GPU_MB=6500 tools/job_start.sh ...
 VRAM: 3200 px ~2,2 GB, 4000 px ~3 GB je Lauf - zwei 4000-px-Laeufe PLUS ein weiterer GPU-Nutzer (OWLv2, Kontrollbild) liefen in 'CUDA out of memory'; Budget 4500 MiB je 4000-px-Lauf ansetzen.
 """
 import sys, os, json, argparse, time, shutil, numpy as np, cv2
@@ -77,6 +79,74 @@ def bilder_anpassen(rec, bilder):
     return sum(1 for im in rec.images.values() if im.has_pose)
 
 
+def stereo_fotos(od, kand, mitte, k, im_buendel=None):
+    """Fotowahl FUER STEREO (erster Lauf 15.11.: die 12 besten Fotos standen fast am selben Fleck -> Schnittwinkel < 3 Grad, der Geometriefilter warf 70-85 % der Tiefen weg):
+    gierig nach Guete (kand = fotos_fuer_wand(..., k=60)[1]), jedes neue Foto braucht zu einem gewaehlten 4-35 Grad Blickwinkel-Unterschied und zu keinem < 1,5 Grad (Doppel).
+    im_buendel (Menge der Bildnamen ohne Endung im Buendel, None = alle): 24.11.2026 (Kette 1122w) - K-Dateien ohne Bild im Buendel (nachgeholte Kameras aus seiten_luecken,
+    kameras_nachtragen) belegten vorher Plaetze der k und fielen erst NACH der Wahl heraus (weniger Stereo-Bilder; im Teillauf seiten_wiederholung eine andere Wahl als im
+    Hauptlauf -> PatchMatch neu). PatchMatch rechnet nur mit Bildern des Buendels, also werden nur diese gewaehlt. Rueckgabe (gew [(guete, name)], ueber [(name, grund)], ohne_buendel [name])."""
+    from kamera_standort import kamera_standort_grund
+    gew = []; ri = []; ueber = []; ohne_b = []
+    for sc, _, f in kand:
+        if im_buendel is not None and f not in im_buendel: ohne_b.append(f); continue
+        # 23.11.2026 (Kette 1122r: KeyError 'standort_xyz' an 5 Waenden -> fassaden_kette rc 3, kein Relief): kameras_nachtragen/kamera_verfeinern schreiben 'standort',
+        # andere nur die Pose -> Standort ueber kamera_standort (standort_xyz > standort > -R^T t); ohne beides Foto mit Grund ueberspringen, nie abstuerzen
+        try: S_, grund_ = kamera_standort_grund(json.load(open(os.path.join(od, "messprotokoll", "K-" + f + ".json"))).get("kamera"))
+        except (OSError, ValueError) as e_: S_, grund_ = None, f"K-Datei unlesbar ({type(e_).__name__})"
+        if S_ is None or np.linalg.norm(S_ - mitte) < 1e-6: ueber.append((f, grund_ or "Standort in der Feldmitte")); continue
+        v = S_ - mitte; v /= np.linalg.norm(v)
+        w_ = [np.degrees(np.arccos(np.clip(v @ r_, -1, 1))) for r_ in ri]
+        if not ri or (min(w_) >= 1.5 and any(4.0 <= x <= 35.0 for x in w_)): gew.append((sc, f)); ri.append(v)
+        if len(gew) >= k: break
+    return gew, ueber, ohne_b
+
+
+SCHLUESSEL_DATEI = "fused_schluessel.txt"
+
+
+def stereo_rechnen(W, sp, bilder, max_size, fused, t0, schl):
+    """Teurer Teil (GPU, ~9 min je Wand): Entzerren -> PatchMatch geometrisch -> Fusion nach <fused>. Danach Schluessel der Eingaben in <W>/fused_schluessel.txt
+    (erst NACH erfolgreicher Fusion; vorher Altstand weg - ein Abbruch hinterlaesst nie ein fused.ply mit fremdem Schluessel). Der Quelltext DIESER Funktion
+    geht in den Schluessel ein (fused_schluessel): wer hier Optionen aendert, rechnet automatisch neu. cache_size aendert nur den Speicher, nicht das Ergebnis."""
+    import pycolmap
+    for p_ in (fused, fused + ".vis", os.path.join(W, SCHLUESSEL_DATEI)):
+        if os.path.exists(p_): os.remove(p_)
+    for d_ in ("images", "stereo", "sparse"): shutil.rmtree(os.path.join(W, d_), ignore_errors=True)
+    uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = max_size; pycolmap.undistort_images(W, sp, bilder, output_type="COLMAP", undistort_options=uo); print(f"entzerrt, {time.time() - t0:.0f} s", flush=True)
+    cache_gb = cache_groesse(); print(f"Cache PatchMatch/Fusion {cache_gb:.1f} GB (RAM verfuegbar {ram_frei_gb():.1f} GB)", flush=True)
+    po = pycolmap.PatchMatchOptions(); po.max_image_size = max_size; po.geom_consistency = True; po.gpu_index = "0"; po.cache_size = cache_gb; po.filter_min_triangulation_angle = 1.5; po.geom_consistency_max_cost = 2.0
+    pycolmap.patch_match_stereo(W, options=po); print(f"PatchMatch fertig, {time.time() - t0:.0f} s", flush=True)
+    fo = pycolmap.StereoFusionOptions(); fo.max_image_size = max_size; fo.cache_size = cache_gb; fo.min_num_pixels = 2; fo.max_reproj_error = 3.0; fo.max_depth_error = 0.03; fo.max_normal_error = 25; pycolmap.stereo_fusion(fused, W, options=fo, input_type="geometric", output_type="ply"); print(f"Fusion fertig, {time.time() - t0:.0f} s", flush=True)
+    if os.path.exists(fused): open(os.path.join(W, SCHLUESSEL_DATEI), "w").write(schl + "\n")
+
+
+def fused_schluessel(sp, bilder, max_size):
+    """ZWISCHENSTAND DER FEINRECHNUNG (24.11.2026, Kette schwabentor-null-1122w: Teillauf seiten_wiederholung 6141 s, davon fassaden_kette 3285 s - 5 x tiefe_lokal
+    435-585 s seriell, RAM-Grenze -, obwohl die nachgeholten Kameras nur K-Dateien sind und NICHT im Buendel stehen: PatchMatch rechnete dasselbe Teilnetz noch einmal).
+    Schluessel = sha1 ueber alles, was Entzerren/PatchMatch/Fusion lesen: das geschriebene Teilnetz <sp> (cameras/images/points3D/frames/rigs - Posen, Kameras nach
+    bilder_anpassen, Tiefenbereich aus den Punkten), INHALT jedes Bildes mit Pose (aus <bilder>), max_size, pycolmap-Version und Quelltext von stereo_rechnen.
+    Gleicher Schluessel = gleiche Eingaben -> fused.ply des frueheren Laufs gilt (die Rasterung danach ist deterministisch). Ohne Zeitstempel (Inhalt, nicht mtime)."""
+    import hashlib, inspect, pycolmap
+    h = hashlib.sha1(); h.update(f"max_size={int(max_size)}|pycolmap={getattr(pycolmap, '__version__', '?')}|".encode()); h.update(inspect.getsource(stereo_rechnen).encode())
+    for d_ in sorted(os.listdir(sp)):
+        h.update(d_.encode()); h.update(open(os.path.join(sp, d_), "rb").read())
+    rec = pycolmap.Reconstruction(sp)
+    for nm in sorted(im.name for im in rec.images.values() if im.has_pose):
+        p_ = os.path.join(bilder, nm); h.update(nm.encode())
+        if not os.path.isfile(p_): h.update(b"FEHLT"); continue
+        with open(p_, "rb") as f:
+            for blk in iter(lambda: f.read(1 << 20), b""): h.update(blk)
+    return h.hexdigest()[:16]
+
+
+def zwischenstand_passt(W, schl):
+    """fused.ply in <W> gehoert zu Schluessel <schl>? RCPARK_TIEFE_LOKAL_NEU=1 erzwingt Neurechnen."""
+    if os.environ.get("RCPARK_TIEFE_LOKAL_NEU") == "1": return False
+    try: alt = open(os.path.join(W, SCHLUESSEL_DATEI)).read().strip()
+    except OSError: return False
+    return alt == schl and os.path.isfile(os.path.join(W, "fused.ply")) and os.path.getsize(os.path.join(W, "fused.ply")) > 0
+
+
 def main():
     import pycolmap, resource
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))                     # 15.11.2026: zwei Abstuerze (CUDA out of memory) schrieben je 590 MB Speicherabbild nach /var/lib/systemd/coredump = Root-Platte
@@ -96,21 +166,13 @@ def main():
     if not a.nur_raster or not os.path.exists(fused):
         # Fotowahl FUER STEREO (erster Lauf 15.11.: die 12 besten Fotos standen fast am selben Fleck -> Schnittwinkel < 3 Grad, der Geometriefilter warf 70-85 % der Tiefen weg):
         # gierig nach Guete, aber jedes neue Foto muss zu einem gewaehlten 4-35 Grad Blickwinkel-Unterschied haben und zu keinem < 1,5 Grad (Doppel).
-        _, kand = fotos_fuer_wand(od, Am, Bm, n, z0 * zf, z1 * zf, k=60); mitte = np.r_[0.5 * (Am + Bm), 0.5 * (z0 + z1) * zf]; gew = []; ri = []; ueber = []
-        from kamera_standort import kamera_standort_grund
-        for sc, _, f in kand:
-            # 23.11.2026 (Kette 1122r: KeyError 'standort_xyz' an 5 Waenden -> fassaden_kette rc 3, kein Relief): kameras_nachtragen/kamera_verfeinern schreiben 'standort',
-            # andere nur die Pose -> Standort ueber kamera_standort (standort_xyz > standort > -R^T t); ohne beides Foto mit Grund ueberspringen, nie abstuerzen
-            try: S_, grund_ = kamera_standort_grund(json.load(open(os.path.join(od, "messprotokoll", "K-" + f + ".json"))).get("kamera"))
-            except (OSError, ValueError) as e_: S_, grund_ = None, f"K-Datei unlesbar ({type(e_).__name__})"
-            if S_ is None or np.linalg.norm(S_ - mitte) < 1e-6: ueber.append((f, grund_ or "Standort in der Feldmitte")); continue
-            v = S_ - mitte; v /= np.linalg.norm(v)
-            w_ = [np.degrees(np.arccos(np.clip(v @ r_, -1, 1))) for r_ in ri]
-            if not ri or (min(w_) >= 1.5 and any(4.0 <= x <= 35.0 for x in w_)): gew.append((sc, f)); ri.append(v)
-            if len(gew) >= a.k: break
+        _, kand = fotos_fuer_wand(od, Am, Bm, n, z0 * zf, z1 * zf, k=60); mitte = np.r_[0.5 * (Am + Bm), 0.5 * (z0 + z1) * zf]
+        rec = pycolmap.Reconstruction(a.sparse); namen = {os.path.splitext(im.name)[0]: im.name for im in rec.images.values() if im.has_pose}
+        gew, ueber, ohne_b = stereo_fotos(od, kand, mitte, a.k, set(namen))
+        if ohne_b: print(f"NICHT IM BUENDEL {len(ohne_b)} Kandidat(en) (K-Datei ohne Bild im Buendel, z. B. nachgeholte Kameras) - nicht gewaehlt:", ", ".join(f[-24:] for f in ohne_b[:5]), flush=True)
         if ueber: print(f"UEBERSPRUNGEN {len(ueber)} Foto(s) ohne Standort:", "; ".join(f"{f[-24:]}: {g}" for f, g in ueber[:5]), flush=True)
         fotos = [f for _, f in gew]; print("Fotos:", [(f[-12:], round(sc)) for sc, f in gew], flush=True)
-        rec = pycolmap.Reconstruction(a.sparse); namen = {os.path.splitext(im.name)[0]: im.name for im in rec.images.values()}; nimm = {namen[f] for f in fotos if f in namen}
+        nimm = {namen[f] for f in fotos if f in namen}
         if len(nimm) < 4: print(f"ABBRUCH: nur {len(nimm)} der gewaehlten Fotos im Netz"); return 1
         for im in list(rec.images.values()):
             if im.name not in nimm: rec.deregister_frame(im.frame_id)
@@ -121,12 +183,9 @@ def main():
         if not ok_: print("ABBRUCH (Guard):", msg_, flush=True); return 2
         if bilder_anpassen(rec, a.bilder) < 4: print("ABBRUCH: weniger als 4 Fotos passen zu ihrer Kamera (Bildgroesse)"); return 1
         sp = os.path.join(W, "sparse_teil"); shutil.rmtree(sp, ignore_errors=True); os.makedirs(sp); rec.write(sp)
-        for d_ in ("images", "stereo", "sparse"): shutil.rmtree(os.path.join(W, d_), ignore_errors=True)
-        uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size; pycolmap.undistort_images(W, sp, a.bilder, output_type="COLMAP", undistort_options=uo); print(f"entzerrt {len(nimm)} Bilder, {time.time() - t0:.0f} s", flush=True)
-        cache_gb = cache_groesse(); print(f"Cache PatchMatch/Fusion {cache_gb:.1f} GB (RAM verfuegbar {ram_frei_gb():.1f} GB)", flush=True)
-        po = pycolmap.PatchMatchOptions(); po.max_image_size = a.max_size; po.geom_consistency = True; po.gpu_index = "0"; po.cache_size = cache_gb; po.filter_min_triangulation_angle = 1.5; po.geom_consistency_max_cost = 2.0
-        pycolmap.patch_match_stereo(W, options=po); print(f"PatchMatch fertig, {time.time() - t0:.0f} s", flush=True)
-        fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.max_size; fo.cache_size = cache_gb; fo.min_num_pixels = 2; fo.max_reproj_error = 3.0; fo.max_depth_error = 0.03; fo.max_normal_error = 25; pycolmap.stereo_fusion(fused, W, options=fo, input_type="geometric", output_type="ply"); print(f"Fusion fertig, {time.time() - t0:.0f} s", flush=True)
+        schl = fused_schluessel(sp, a.bilder, a.max_size)
+        if zwischenstand_passt(W, schl): print(f"Zwischenstand uebernommen: fused.ply mit gleichen Eingaben (Teilnetz, {len(nimm)} Bilder, max_size {a.max_size}, Stereo-Code) - Schluessel {schl}; RCPARK_TIEFE_LOKAL_NEU=1 rechnet neu", flush=True)
+        else: stereo_rechnen(W, sp, a.bilder, a.max_size, fused, t0, schl)
     for d_ in ("stereo", "images", "sparse"): shutil.rmtree(os.path.join(W, d_), ignore_errors=True)   # Zwischendaten weg (2-4 GB je Feld; 15.11. liefen so 13 GB auf der Datenplatte voll) - fused.ply und sparse_teil bleiben
     V = ply_lesen(fused); X = ((np.c_[V["x"], V["y"], V["z"]].astype(np.float64) - tt) / s) @ R
     if a.massstab: k_, M3 = a.massstab[0], np.array(a.massstab[1:]); X = M3 + (X - M3) / k_
