@@ -949,6 +949,17 @@ def main():
             notiz(B, "konvergenz_ergebnis", True, lauf=lid_, seiten={e_["name"]: f"grob {e_.get('f1')} fein {e_.get('f1_fein')} -> {e_.get('status')}" for e_ in kv_["seiten"].values()},
                   hinweis="ANSEHEN: audit/konvergenz.png; PLATEAU = Methode erschoepft -> restfehler in audit/konvergenz.jsonl zeigt, wo neu ansetzen")
         except Exception as e: notiz(B, "konvergenz_ergebnis", True, hinweis=f"Konvergenzmessung ohne Ergebnis (kein Kettenfehler): {type(e).__name__} {e}"[:240])
+    # 24.11.2026 LAUFZEIT-BERICHT (modelle/ERKENNTNISSE.md 24.11.: Doppel-Fusion 470 + 450 s, 6 volle Bauten 38 min blieben unbemerkt): Laufzeit je Stufenfamilie
+    # aus gesamtkette.log ab diesem Lauf, Vorlauf = frueherer Abschnitt derselben Datei, Fusionen der SfM-Stufe aus pipe/pipeline.log -> audit/laufzeit.json. Bericht, kein Tor.
+    if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
+        try:
+            _lz = [PY, "-I", "tools/laufzeit_bericht.py", log, "--aus", os.path.join(Z, "audit", "laufzeit.json"), "--ab-zeile", str(log_ab)]
+            if os.environ.get("RCPARK_JOB"): _lz += ["--unterlog", os.path.join(D, "pipe", "pipeline.log"), "--job", os.environ["RCPARK_JOB"]]
+            lauf(B, "laufzeit", _lz, log, ok=(0,), timeout=300)
+            _lzj = json.load(open(os.path.join(Z, "audit", "laufzeit.json")))
+            notiz(B, "laufzeit_ergebnis", True, summe_min=_lzj.get("summe_min"), hinweise=(_lzj.get("hinweise") or [])[:8],
+                  hinweis="DOPPELARBEIT/WIEDERHOLUNG/GEWACHSEN = Beschleunigungs-Befund fuer die Agenten-Schleife")
+        except Exception as e: notiz(B, "laufzeit_ergebnis", True, hinweis=f"Laufzeit-Bericht ohne Ergebnis (kein Kettenfehler): {type(e).__name__} {e}"[:240])
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
     if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
