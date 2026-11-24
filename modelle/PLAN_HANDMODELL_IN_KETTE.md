@@ -78,7 +78,12 @@ Die 12-14 % Massstabsluecke wirkt im Endmodell NICHT (Massstabsterm 0,1-0,4 %); 
 ### Arbeitsplan (abarbeiten, Stand je Punkt fortschreiben)
 - P1 Messgeraet an: referenz_hand.json in 1122 (erledigt 24.11.), Grundlinie 5/11. Kette: Handvergleich nie still ueberspringen
   ("HANDSTAND NICHT GEMESSEN" = Stufe nicht in Ordnung), "x von N" + Bestand in die ERGEBNIS-Zeile, je Lauf eine Zeile in audit/verlauf_bauteile.jsonl.
-- P2 Hoehenversatz +0,4..0,6 m: EINE Ursache fuer 5 von 6 FALSCH am 06:18-Stand (Bodenbezug/z-Null des 1122-Rahmens gegen 1120). Zuerst klaeren.
+- P2 ERGEBNIS 24.11. 23:50 (Massstab-Agent, Zweig in Probe 31): z-Null beider Ketten aus demselben Feinfit (LoD2 + DGM1); Strassenboden der Wolke
+  1122 minus 1120 = +0,48 m (179 Zellen); gegen DGM1 liegt 1122 bei -0,1..-0,2 m, 1120 bei -0,4 m -> 1122 ist NAEHER am Gelaende, 1120 und
+  vermutlich die Hand liegen 0,3-0,4 m zu tief (ANNAHME DGM1 +-0,2 m). Der Versatz ist also KEIN Kettenfehler. hand_vergleich urteilt jetzt
+  zusaetzlich bezugsbereinigt: 1120 11/11 · 1122 06:18 6/11 · abends 5/11. Rueckschritt bleibt echt (Galerie, Tor, Rundbogenfenster, Umgang,
+  Treppenturm-Traufe). Massstab: 12-14-%-Luecke sass im Nah-GPS von Teil 0, im Endmodell schon geschlossen; neue Regel Gebaeudemass vor GPS.
+- P2 (alt) Hoehenversatz +0,4..0,6 m: EINE Ursache fuer 5 von 6 FALSCH am 06:18-Stand (Bodenbezug/z-Null des 1122-Rahmens gegen 1120). Zuerst klaeren.
 - P3 Eingangs-Tor: Kantenpunkte/Kameras je Bauteilzone gegen Bestwert; Abfall > Haelfte = rot (Galerie fiel 41 000 -> 2 400 unbemerkt).
 - P4 Aufgeben-Stellen: typisiert bauen, Masse aus Fotos (Galerie, Vordach, Nische/Sohlbank, Gesims, Uhr Sued, Umgang-Pfosten je Wand).
 - P5 Formpruefung zum Zahlenvergleich: Foto-F1 je Bauteilzone (Bestand-Tor) + Detailbild; PASST nur mit beidem.
