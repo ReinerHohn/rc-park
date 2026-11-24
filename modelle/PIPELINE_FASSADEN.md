@@ -595,3 +595,12 @@ Beweis 20.11. ~00:20: Kantenstufe neu gerechnet (Band um das neue Modell) in `ka
 Anteil dieser Punkte, die ≤ 15 cm an der Modellfläche liegen: vorher 22 % (vor der Wand 0 %), nachher 95 % (vor der Wand 97 %). Gesamt-F1 0,213 → 0,228. Die Abnahme hat alle Prüfungen bestanden.
 Einschränkung: Die Sweep-Punkte suchen im Band um das neue Modell; die Tiefe der Punkte (Median 1,11 m) stimmt aber unabhängig mit dem Sweep (+1,15 m) überein. Fehler: Das Dach ist treppig (0,2-m-Raster statt einer Ebene), Konsolen und Streben fehlen, die Unterseite ist geschlossen.
 Weitere Lücken (Handarbeit nicht in der Kette, 15 Fälle): `modelle/KETTE_LUECKEN_2026-11-20.md`.
+
+## Nachtrag 24.11.2026: Ortsteine / Eckverzahnung aus dem Wandbild (`tools/ortsteine.py`)
+Befund 1122u/v: Turmkanten im Modell glatt, Foto zeigt verzahnte Sandstein-Eckquader. Neu, generisch, Aufruf am Ende von `fassaden_kette.anbauen` (OHNE_ORTSTEINE=1 = alter Stand):
+Stein (rot/braun) / Putz (unbunt + hell, Schwellen je Bild: Otsu) im feinen Mosaik `fassade_fein/ortho_<fid>_fein.png`; Fotokante nahe der LoD2-Kante suchen (Schwabentor 0,3-0,5 m daneben);
+Zone = Wandinneres Putz UND ab der Kante Steinstreifen (volles Quaderwerk zaehlt nicht); Breite je Zeile bis zum ersten Putzlauf; Lagen aus Breitenspruengen + Lagerfugen (Fugen-Periodik);
+Formfamilie je Zone von >= 3 Einzelfotos bestaetigt (sonst nicht gebaut); Vorsprung aus `fassade/tiefe_<fid>.npz` (Stein gegen Putz, Guard 1-30 cm), sonst ANNAHME Druckmass 0,5 x MINMM;
+Bau vor die echte Koerperflaeche (Strahltreffer), um die Ecke gefuehrt, Lagerfuge (MINMM) nur zwischen gleich langen Lagen. Probe: `tools/ortsteine.py <objekt.json> --aus x.json`; Test `tools/test_ortsteine.py` (Schnelltest).
+LEHRE: `ortho_<fid>_einzeln` sind NICHT gegeneinander ausgerichtet (f00: Vordach je Foto bis 5 m versetzt, ein Foto der Suedseite) - Zellen-Mehrheit darueber verschmiert; nur das Mosaik (fein.json bezug/ausgerichtet) taugt fuer Lagen.
+OFFEN: Uhrzone (z > 28 m) ohne Mosaikdaten -> dort keine Ortsteine; f00 links ohne Zahnung erkannt (2,08/2,02 m); Vorsprung meist unter Sweep-Aufloesung (5 cm).
