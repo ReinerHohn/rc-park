@@ -1,5 +1,5 @@
 # ⚙️ Betrieb: GPU, Jobs, Platten, Umgebungen, COLMAP-Bau, Git  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/INDEX.md` · CLAUDE.md Abschnitt Technik
+Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/INDEX.md` · CLAUDE.md Abschnitt Technik · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [platten-git](betrieb/platten-git.md) · [rechner-jobs](betrieb/rechner-jobs.md)
 
 ## Gilt
 - Lange Jobs nur `tools/job_start.sh` (systemd --user) mit `JOB_GPU_MB`/`JOB_RAM_MB`-Buchung, nie `run_in_background` [CLAUDE.md, Memory lange-jobs-systemd]

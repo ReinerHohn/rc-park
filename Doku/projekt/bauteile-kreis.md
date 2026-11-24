@@ -1,5 +1,5 @@
 # 🏗️ Bauteile, Generator, Kreis & Abnahme  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` · `modelle/REGELN_AUSFUEHRLICH.md` · Skills `bauteil-runde`, `abnahme`
+Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` · `modelle/REGELN_AUSFUEHRLICH.md` · Skills `bauteil-runde`, `abnahme` · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [abnahme](bauteile-kreis/abnahme.md) · [formfamilien](bauteile-kreis/formfamilien.md) · [generator](bauteile-kreis/generator.md) · [kreis](bauteile-kreis/kreis.md)
 
 ## Gilt
 - Masse sind Daten (`objekt.json` + `masstabelle.json` = einzige Wahrheit), kein Messcode je Objekt; neue Messart = generischer Messer in `pruefstand.py` [METHODE_MASSTABELLE §1]
@@ -17,6 +17,7 @@ Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` 
 
 ## Versucht
 **Generator & Bauteil-Bibliothek**
+- 24.11. · Rundkörper-Putz glatt (1122zb Treppenturm: Kerbe 0,7 m z 10,5–12,2, 48-Eck 0,2-m-Facetten; Foto glatter weißer Putz) → ✓ Code, Kettenlauf offen · Ursache: Umriss-Profilradien am Suchrand (0,835/0,855 ≤ 0,5×1,75 + Feinsuche) als Messung gebaut, Median-3 hilft bei 2 Höhen nicht. `rund_aus_umriss.profil_bereinigen` (Suchrand weg, Lückennachbar Median, Lücke = Radius darunter; auch im Generator für alte Daten) + Segmentzahl aus Druckmaß. Turm einzeln: Wolke < 25 cm 23 % → 67 %, Knicke > 5° 42 % → 0 %. Rest: 0,5-m-Aufweitung 11,75→12,25 + Traufbrett r 2,0 breiter als Foto [tools/test_rund_putz_glatt.py]
 - 23.11. · Aufsätze/Dachformen der Kette (1122o: Treppentürmchen nackter Zylinder ohne Kegeldach, offene Laterne fehlt) → ✓ Code, Probe offen · Ursachen: (1) `drehkoerper_aus_wolkenrest` schloss Rundkörper flach ab, kein Dachmaß vorgesehen → neu `rund_aus_umriss.kegeldach` (exakte Kegel-Mantellinien je Foto, Kante mit Vorzeichen, Guard ≥ 6 Fotos/≥ 3 einig/nicht am Suchrand) + `bauteile.kegeldach_teile` (Traufbrett und Spitzenradius = Druckmaß); (2) `spitze_aus_umriss` verlangte den ganzen Suchbereich (Wolkenende + 6 m) im Bild → 129 Fotos verworfen, 16 aus 1 Richtung → Spitze ungültig → `laterne_aus_fotos` lief nie; jetzt nur der sichtbare Teil der Achse. Test `tools/test_kegeldach_rund.py` (Rot-Probe flacher Zylinder) [Agent 23.11.]. PROBE auf Kopie des Stands 1122p (`/media/oem/rcdaten/tmp/laterne_agent/`): Spitze 23 Fotos/4 Sektoren gültig (Streuung 0,4 m; Pfostenlücke offener Laterne jetzt verworfen); Kegel vom Guard abgelehnt (2 Fotos einig), weil schon der Zylinder falsch sitzt (Umrisslinien auf Turmwand/Bogen, r 2,09 statt ~1,56) → nächster Befund `rund_aus_umriss`-Achse; Laterne weiter geschlossen (Fallback-Drehringe): `laterne_aus_fotos` Pfostenzahl unentschieden (nur az −14..+2°, Pfostenband 30–45 % sitzt am Dachfirst) → nächster Befund
 - 01.11. · Bauteile aus Martinstor-Generator in `bauteile.py` verschieben → ✓ Methode · per Zeilenbereich kopieren, nie neu schreiben/Regex; STL-md5 als Beweis [Register Z]
 - 01.11. · getrennte Zufallsgeneratoren für Bibliothek und Generator → ⚠ Falle · ändert Mauerwerk still; gemeinsamen `rng` übergeben, Bit-Vergleich fängt es [Register Z]
@@ -91,6 +92,7 @@ Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` 
 - 16.11. · `pruefstand.z_am_punkt` per Schnitt je z-Stufe → ↺ senkrechte Strahlen · Turm 153 → 35 s, Werte identisch [AUFGABENLISTE 1c]
 - 16.11. · `schnelltest.sh` (29 s, feste Erwartungen) → ✓ gilt · nach jeder Werkzeugänderung [AUFGABENLISTE 5]
 - 16.11. · Umriss-Tor (Dachlinie gegen Himmelskante) → ✓ als Hinweis · sieht nur Kanten gegen Himmel [AUFGABENLISTE 2]
+- 24.11. · „Uhr auf dem Goldnimbus / Zackenrechteck“ (1122zb neben_detail uhr_f01_2/_3) → ✓ Ursache Zonenliste, nicht Bau · `befundliste.bauteil_zonen` las `uhren_auto.json:verworfen` (Nimbus 12er 1,01, Innenkreis 0,43) als Bauteile; jetzt verworfene Einträge/Listen raus [test_zonen_verworfen]
 
 ## Offen
 - Freistehendes (Säulen, Brüstung, Erkerkörper, Konsolrippen) nur Katalog – Form aus Fotokanten mehrerer Ansichten fehlt (L3) [ZIEL_PIPELINE_H0]
