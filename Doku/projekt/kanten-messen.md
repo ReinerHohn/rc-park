@@ -53,6 +53,7 @@ Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-
 - 7.11./11.11. · LLM-Bildprüfer → ⚠ begrenzt · sieht Formfamilie, nicht 0,5-1° Kamera; Eichsatz = Nullkontrolle [NICHTS_GEBRACHT BU-LLM; REZEPT L56]
 - 9.11. · synthetischer Rundlauf als Kantenmetrik → ✗ verworfen · Metrik trennt die Verfahren nicht [archiv/LOGBUCH_2026-11-09]
 - 24.11. · Realitäts-% nach Augenmaß → ↺ `konvergenz.py` · fester Fotosatz je Seite, F1 grob+fein gepaart, PLATEAU = Methode wechseln; Probe 1122: nur 3/20 Satzfotos gemessen, 10/14 Torfotos Eckblicke [test_konvergenz]
+- 24.11. · Koerperwand auf LoD2-Ebene statt Fotokanten-Ebene → ↺ `wandlage_fotokanten.py` (Stufe bauplan_wandlage) · 1122x: f00 0,32 / f01 0,27 m zu weit aussen (Wolke bestaetigt), f02 schwach belegt, f03 Wolken-Veto; Guard Kanten+Wolke, Wand am Grundkoerper bis an die Ecken, Fenster folgen; Abnahme 1122za offen [test_wandlage_fotokanten]
 
 **Messen und Zählen am Foto**
 - 10.11. · Triangulation mit 7-9° Schnittwinkel → ✗ · ±0,25-0,33 m; dritte Kamera mit ≥ 20° [NICHTS_GEBRACHT 11.11.; REZEPT L32]
