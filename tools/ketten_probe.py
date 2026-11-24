@@ -128,7 +128,8 @@ def auswerten(B, log_zeilen=None, bekannt=()):
     E = B.get("lauf_ergebnis") or {}; e_frisch = bool(E) and str(E.get("zeit", "")) >= t_start
     if not e_frisch:
         E = B.get("teillauf_ergebnis") or {}; e_frisch = bool(E) and str(E.get("zeit", "")) >= t_start
-    ende = e_frisch if log_zeilen is None else any(("GESAMTKETTE_ENDE" in z or "GESAMTKETTE_TEILLAUF_ENDE" in z) for z in log_zeilen)
+    # Endmarke steht nur auf stdout (kette_*.log), nicht in gesamtkette.log -> frisches Ergebnis im Bericht genuegt (Grundstand 24.11. scheiterte 2x)
+    ende = e_frisch or (log_zeilen is not None and any(("GESAMTKETTE_ENDE" in z or "GESAMTKETTE_TEILLAUF_ENDE" in z) for z in log_zeilen))
     tb = sum("Traceback (most recent call last)" in z for z in (log_zeilen or []))
     rot = [e for e in L if e.get("ok") is False]; abbruch = str(E.get("abbruch") or "") if e_frisch else ""
     ablauf, daten = [], []
