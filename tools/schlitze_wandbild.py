@@ -26,7 +26,8 @@ METHODE (je Fassade):
   Tiefe: Ebenen-Sweep im Loch gegen den Wandring (loch_gewaende.sweep_werte, Plausibilitaet dort), sonst ANNAHME wie nischen_fenster (0,12 m; Bau >= Druckmindestmass).
 Ausgabe: Eintraege in der Fensterliste (fenster_auto.json; Eingang als fenster_auto_vor_schlitze.json daneben) mit 'loch' (loch_gewaende misst sie nicht nochmal),
   bogen gerade, form_quelle 'n von m Einzelfotos', quelle, aufloesung_m; Bericht schlitze_wandbild.json, Bild schlitze_<fid>.jpg (ANSEHEN: gruen = gebaut, rot = verworfen
-  mit Grund, grau = bekannte Kaesten). Gebaut von bauteile.fenster_aus_json (Loch-Umriss mit Laibungstiefe).
+  mit Grund, grau = bekannte Kaesten, orange = verworfene Erkennerkaesten). ERKENNERKASTEN-PRUEFUNG (24.11.2026, 1122zb f04): 'tuer'-Kaesten sperren nur,
+  wenn erkennerkasten_pruefen.pruefen eine Oeffnung belegt (dunkel/Rahmen/Tiefe + Boden/Schwelle); sonst Grund in 'erkennerkaesten_verworfen'. Gebaut von bauteile.fenster_aus_json (Loch-Umriss mit Laibungstiefe).
 Aufruf:  schlitze_wandbild.py <fenster_auto.json> <fassade-ordner (grob, elemente.json, tiefe_fNN.npz)> <fassade_fein-ordner> [--nur f03] [--aus ordner]
 rc 0 = mindestens eine Oeffnung eingetragen, 3 = nichts gefunden/geaendert.
 """
@@ -35,6 +36,7 @@ import numpy as np
 
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
 import ortsteine as O
+import erkennerkasten_pruefen as EK
 
 DUNKEL = 0.6          # Loch-Helligkeit hoechstens so viel x Hintergrund (wie loch_gewaende --dunkel)
 HINTERGRUND_M = 1.0   # Fenster fuer die oertliche Hintergrundhelligkeit (m)
@@ -245,8 +247,10 @@ def eintrag(k, n, gesehen, kanten, streuung, npz, fenster_tiefe=0.12):
     return e
 
 
-def bekannte_kaesten(F, E, fid):
-    """Schon erfasste Oeffnungen: Fensterliste (Eintrag, Zone vorher, Nische) + Erkennerkaesten tuer/bogen/uhr (Bau ueber andere Stufen)."""
+def bekannte_kaesten(F, E, fid, pruef=None, verworfen=None):
+    """Schon erfasste Oeffnungen: Fensterliste (Eintrag, Zone vorher, Nische) + Erkennerkaesten tuer/bogen/uhr (Bau ueber andere Stufen).
+    pruef(x) -> dict(gilt, grund) (erkennerkasten_pruefen.pruefen): 'tuer'-Kaesten ohne Oeffnungsbeleg im Wandbild sperren nichts (24.11.2026, 1122zb f04:
+    zwei falsche Tuerkaesten 1,6 x 5,9 m auf weissem Putz sperrten drei echte Schlitze); sie landen mit Grund in 'verworfen' (Liste) und im Bericht."""
     out = []
     for e in (F or {}).get("fenster", []):
         out.append((e["u0"], e["u1"], e["z0"], e["z1"]))
@@ -256,7 +260,13 @@ def bekannte_kaesten(F, E, fid):
         N = e.get("nische")
         if isinstance(N, dict) and all(x in N for x in ("u0", "u1", "z0", "z1")): out.append((N["u0"], N["u1"], N["z0"], N["z1"]))
     for x in ((E or {}).get(fid) or {}).get("elemente", []):
-        if x.get("klasse") in ("tuer", "bogen", "uhr") and x.get("stimmen", 3) >= 3: out.append((x["u0"], x["u1"], x["z0"], x["z1"]))
+        if x.get("klasse") in ("tuer", "bogen", "uhr") and x.get("stimmen", 3) >= 3:
+            if pruef is not None and x.get("klasse") == "tuer":
+                r = pruef(x)
+                if not r.get("gilt", True):
+                    if verworfen is not None: verworfen.append(dict(klasse=x["klasse"], kasten=[round(x[k], 3) for k in ("u0", "u1", "z0", "z1")], stimmen=x.get("stimmen"), grund=r.get("grund")))
+                    continue
+            out.append((x["u0"], x["u1"], x["z0"], x["z1"]))
     return out
 
 
@@ -273,11 +283,13 @@ def fotos_laden(fein, grob, fid, R, max_versatz=1.5, min_einig=0.8):
         [dict(e, fein_maske=O.verschieben(e["rgb"], e["dy"], e["dx"]).astype(np.int32).sum(2) > 30) for e in gut]
 
 
-def kontrollbild(rgb, R, neu, weg, bekannt, pfad, max_px=1400):
+def kontrollbild(rgb, R, neu, weg, bekannt, pfad, max_px=1400, kasten_weg=()):
     from PIL import Image, ImageDraw
     im = Image.fromarray(rgb); d = ImageDraw.Draw(im); c = R["c"]
     P = lambda u, z: ((u - R["u0"]) / c, (R["z1"] - z) / c)
     for x in bekannt: d.rectangle([P(x[0], x[3]), P(x[1], x[2])], outline=(150, 150, 150), width=2)
+    for x in kasten_weg:                                                  # verworfene Erkennerkaesten (orange): Flaeche freigegeben
+        k = x["kasten"]; d.rectangle([P(k[0], k[3]), P(k[1], k[2])], outline=(255, 150, 0), width=2); d.text(P(k[0], k[3]), "Erkennerkasten verworfen", fill=(255, 150, 0))
     for x in weg:
         if x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt")): continue      # Massenfunde (Fugen, Schatten) nicht zeichnen
         d.rectangle([P(x["u0"] - 0.05, x["z1"] + 0.05), P(x["u1"] + 0.05, x["z0"] - 0.05)], outline=(255, 0, 0), width=2)
@@ -296,6 +308,7 @@ def main(argv=None):
     ap.add_argument("--mehrheit", type=float, default=MEHRHEIT, help="Anteil der sehenden Fotos, die bestaetigen muessen")
     ap.add_argument("--fenster_tiefe", type=float, default=0.12, help="ANNAHME wie nischen_fenster/loch_gewaende")
     ap.add_argument("--schaerfe", type=float, default=SCHAERFE_MIN, help="Unschaerfe-Tor: Foto stimmt nur ab so viel x Bezugsschaerfe mit (0 = aus)")
+    ap.add_argument("--ohne_kastenpruefung", action="store_true", help="Erkennerkaesten ungeprueft als bekannt nehmen (Stand vor 24.11.2026, nur Vergleich)")
     a = ap.parse_args(argv)
     aus = a.aus or os.path.dirname(os.path.abspath(a.fenster)); os.makedirs(aus, exist_ok=True)
     J = json.load(open(a.fenster)) if os.path.exists(a.fenster) else {}
@@ -309,12 +322,15 @@ def main(argv=None):
         ab = arbeitsbild(a.fein, a.ordner, fid)
         if ab is None: bericht[fid] = dict(grund="kein feines Wandbild"); continue
         rgb, bel, aufl, R = ab
-        bek = bekannte_kaesten(J.get(fid), E, fid)
+        nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
+        ek_weg = []     # 24.11.2026: Erkennerkaesten erst pruefen (erkennerkasten_pruefen), falsche geben ihre Flaeche frei
+        pruef = None if a.ohne_kastenpruefung else (lambda x: EK.pruefen(rgb, bel, R["u0"], R["z1"], R["c"], (x["u0"], x["u1"], x["z0"], x["z1"]), x["klasse"], npz, R["F"]))
+        bek = bekannte_kaesten(J.get(fid), E, fid, pruef, ek_weg)
+        for x in ek_weg: print(f"{fid} Erkennerkasten {x['klasse']} u {x['kasten'][0]:.2f}-{x['kasten'][1]:.2f} z {x['kasten'][2]:.2f}-{x['kasten'][3]:.2f} VERWORFEN (gibt Flaeche frei): {x['grund'][:160]}")
         kand, weg = kandidaten(rgb, bel, aufl, R, bek)
         neu = []
         if kand:
             fotos = fotos_laden(a.fein, a.ordner, fid, R)
-            nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
             for k in kand:
                 n, ges, kanten, st, je = bestaetigen(k, fotos, R, a.min_fotos, schaerfe_min=a.schaerfe)
                 k.update(fotos_bestaetigt=n, fotos_gesehen=ges, je_foto=je, fotos_unscharf=sum(1 for v in je.values() if v.startswith("unscharf")))
@@ -326,8 +342,8 @@ def main(argv=None):
                 J[fid].setdefault("fenster", []).extend(neu); n_neu += len(neu)
         bericht[fid] = dict(arbeitsbild=R["info"], neu=[{x: e[x] for x in ("u0", "u1", "z0", "z1", "stimmen_min", "form_quelle", "tiefe", "tiefe_quelle", "aufloesung_m")} for e in neu],
                             verworfen=[x for x in weg if not x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt"))],
-                            verworfen_masse=len([x for x in weg if x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt"))]))
-        if neu or kand: kontrollbild(rgb, R, neu, weg, bek, os.path.join(aus, f"schlitze_{fid}.jpg"))
+                            verworfen_masse=len([x for x in weg if x.get("grund", "").startswith(("zu schmal", "zu gross", "fuellt"))]), erkennerkaesten_verworfen=ek_weg)
+        if neu or kand: kontrollbild(rgb, R, neu, weg, bek, os.path.join(aus, f"schlitze_{fid}.jpg"), kasten_weg=ek_weg)
         for e in neu: print(f"{fid} NEU {e['u1'] - e['u0']:.2f} x {e['z1'] - e['z0']:.2f} m bei u {e['u0']:.2f} z {e['z0']:.2f}-{e['z1']:.2f}: {e['form_quelle']}; Tiefe {e['tiefe']} ({e['tiefe_quelle'][:30]})")
         for x in bericht[fid]["verworfen"]: print(f"{fid} verworfen u {x['u0']:.2f}-{x['u1']:.2f} z {x['z0']:.2f}-{x['z1']:.2f}: {x['grund']}")
     json.dump(bericht, open(os.path.join(aus, "schlitze_wandbild.json"), "w"), indent=1, ensure_ascii=False)
