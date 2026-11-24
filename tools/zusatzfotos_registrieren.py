@@ -136,11 +136,13 @@ def sift_sicher(pycolmap, db, bilddir, bilder, names, f0, extrahieren=None, wart
         for n in nn: gr[tuple(bilder[n]["bild"])].append(n)         # Hoch-/Querformat = verschiedene Bildgroesse -> je Gruppe EINE Kamera (gleiche f, k1)
         for (W, H), g in gr.items():
             ro = pycolmap.ImageReaderOptions(); ro.camera_model = "SIMPLE_RADIAL"; ro.camera_params = f"{f0},{W / 2},{H / 2},0"
-            eo = pycolmap.FeatureExtractionOptions(); eo.use_gpu = geraet != "cpu"
+            eo = SE.optionen(pycolmap, geraet=geraet)               # 24.11.2026 zentral: volle Aufloesung + first_octave 0 (RCPARK_SIFT_ALT=1 alt, RCPARK_SIFT_MAX Obergrenze)
             if max_px: eo.max_image_size = int(max_px)
             ex(db, bilddir, image_names=g, camera_mode=pycolmap.CameraMode.SINGLE, reader_options=ro, extraction_options=eo,
                device={"auto": pycolmap.Device.auto, "gpu": pycolmap.Device.cuda, "cpu": pycolmap.Device.cpu}[geraet])
-    runde(names, "auto", os.environ.get("RCPARK_SIFT_MAX"))      # opt-in RCPARK_SIFT_MAX: SiftGPU-VRAM begrenzen (3200 -> bis 7,4 GB, 1600 -> 2,1 GB; GPU_PARALLEL_UNTERSUCHUNG.md)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import sift_einstellung as SE
+    print(f"merkmale: {SE.beschreibung(SE.optionen(pycolmap, geraet='auto'))} - {len(names)} Bilder", flush=True)
+    runde(names, "auto", None)      # Obergrenze RCPARK_SIFT_MAX (opt-in) setzt SE.optionen; Wiederholung unten mit klein_px (weniger VRAM)
     fehl = sift_fehlend(db, names)
     if fehl:
         print(f"WARNUNG: {len(fehl)} von {len(names)} Bildern ohne Merkmale nach SIFT (COLMAP laesst sie bei SiftGPU 'out of memory' still weg): {fehl[:3]} - "
@@ -153,7 +155,7 @@ def sift_sicher(pycolmap, db, bilddir, bilder, names, f0, extrahieren=None, wart
         runde(fehl, "gpu", klein_px); f2 = sift_fehlend(db, fehl); out["gpu_klein"] = [n for n in fehl if n not in f2]; fehl = f2
     if fehl:
         print(f"WARNUNG: GPU-SIFT scheitert weiter an {len(fehl)} Bildern - CPU-SIFT als Rueckfall (langsamer; GPU-Belegung pruefen: nvidia-smi, parallele Jobs)", flush=True)
-        runde(fehl, "cpu", klein_px); f3 = sift_fehlend(db, fehl); out["cpu"] = [n for n in fehl if n not in f3]; fehl = f3
+        runde(fehl, "cpu", None); f3 = sift_fehlend(db, fehl); out["cpu"] = [n for n in fehl if n not in f3]; fehl = f3      # CPU: keine VRAM-Grenze -> zentrale Einstellung (volle Aufloesung)
     out["fehlend"] = fehl
     return out
 

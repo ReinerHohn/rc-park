@@ -30,7 +30,7 @@ assert sm.count('code_stand("seiten_vereinen.py"') == 1 and sm.count('code_stand
 print("ok 2: Nachstufe (Klappung, Foto-GPS, Blick-Tor, GPS-Seiten-Tor) traegt den Code-Stand")
 po, ip = q("pipeline_objekt.py"), q("iphone_sfm.py")
 assert "seiten_nachstufe_veraltet(daten)" in po and 'RCPARK_SFM_NUR_NACHSTUFE="1"' in po, "pipeline_objekt prueft den Code-Stand der Nachstufe nicht"
-assert ip.count("if NUR_NACHSTUFE and not") == 2 and ip.index("if NUR_NACHSTUFE and not _db_ok") < ip.index("pycolmap.extract_features") and ip.index("if NUR_NACHSTUFE and not _sm") < ip.index("_konsens(f\"{w}/sparse_konsens\")"), \
+assert ip.count("if NUR_NACHSTUFE and not") == 2 and ip.index("if NUR_NACHSTUFE and not _db_ok") < ip.index("SE.extrahieren_mit_tor(") and ip.index("if NUR_NACHSTUFE and not _sm") < ip.index("_konsens(f\"{w}/sparse_konsens\")"), \
     "iphone_sfm NUR NACHSTUFE bricht nicht vor Merkmalssuche/Mapper ab"
 assert "code_stand('lod2_gebaeude.py')" in q("sfm_lod2_ausrichten.py"), "LoD2-Cache ohne Code-Stand des Lesers"
 print("ok 3: Verdrahtung pipeline_objekt -> iphone_sfm (nur Nachstufe), Schutz vor teurem Neurechnen, LoD2-Cache mit Code-Stand")

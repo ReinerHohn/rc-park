@@ -64,5 +64,6 @@ pruef('"--tiefe_ordner", os.path.join(bp_, "tiefe")], log)[0] == 0: pass' not in
 pruef(all(f'beleg(B, "{n}"' in src for n in ("fenster", "kanten", "fassaden_kette", "bauplan_oeffnungen_aussen", "bauplan_ebenen")) and "sweep_altstand(B, f\"vorbauten_f" in src and 'KB_frisch(os.path.join(Z, "audit", "befunde.json")' in src,
       "(6) Beleg fuer fenster/kanten/fassaden_kette/oeffnungen_aussen/ebenen, Sweep-Altstand in bauplan+seiten, befunde.json frisch")
 isrc = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "iphone_sfm.py")).read()
-pruef("db_fehlende_bilder(db, _alle)" in isrc and "device=pycolmap.Device.cpu" in isrc, "(6) iphone_sfm prueft nach GPU-SIFT fehlende Bilder und holt sie auf der CPU nach")
+ssrc = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "sift_einstellung.py")).read()      # 24.11.2026: Nachholer zentral in sift_einstellung.extrahieren_mit_tor
+pruef("SE.extrahieren_mit_tor(" in isrc and "db_fehlende_bilder(db, alle)" in ssrc and "device=pycolmap.Device.cpu" in ssrc, "(6) iphone_sfm prueft nach GPU-SIFT fehlende Bilder und holt sie auf der CPU nach (sift_einstellung)")
 print("ERGEBNIS test_kette_beleg:", "alle bestanden" if F == 0 else f"{F} FEHLER"); sys.exit(1 if F else 0)

@@ -179,20 +179,13 @@ KAMERA_MODELL = "SIMPLE_RADIAL"
 GRUPPEN = {}      # {nr: schluessel} aus kamera_gruppen (--kamera-gruppen); leer = je Bild eine Kamera (Standard, bisheriges Verhalten)
 def _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg):
     _ro = pycolmap.ImageReaderOptions(); _ro.camera_model = KAMERA_MODELL                 # SIMPLE_RADIAL (Standard) | RADIAL | OPENCV (--kamera-modell)
-    if NUR_CPU: pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, device=pycolmap.Device.cpu)   # --cpu: GPU frei lassen (Suednetz parallel zum dichten Schritt)
-    else: pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro)
-    # GPU-Rueckfall: scheitert SIFT-GPU (z. B. 'illegal memory access', wenn ein anderer Prozess die GPU belegt), bleiben Bilder ohne Merkmale
-    # -> Datenbank neu und auf der CPU extrahieren/zuordnen (langsamer, gleiches Ergebnis in der Geometrie). Nullstart 3, Register BA.
-    _gpu_ok = True
-    try:
-        if NUR_CPU: raise StopIteration
-        _c = sqlite3.connect(db); _n_img = _c.execute("select count(*) from images").fetchone()[0]; _n_kp = _c.execute("select count(*) from keypoints where rows > 0").fetchone()[0]; _c.close()
-        _gpu_ok = _n_img > 0 and _n_kp >= 0.8 * _n_img
-    except StopIteration: _gpu_ok = False
-    except Exception: _gpu_ok = False
-    if not _gpu_ok and not NUR_CPU:
-        print(f"   SIFT-GPU: nur {_n_kp if '_n_kp' in dir() else '?'} von {_n_img if '_n_img' in dir() else '?'} Bildern mit Merkmalen - Rueckfall auf CPU")
-        os.remove(db); pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, device=pycolmap.Device.cpu)
+    # 24.11.2026: SIFT zentral (tools/sift_einstellung.py: volle Aufloesung + first_octave 0; RCPARK_SIFT_ALT=1 = alt: pycolmap-Standard 3200/-1).
+    # Ersetzt den alten GPU-Rueckfall (DB neu + alles auf der CPU, wenn < 80 % Merkmale hatten): jetzt werden genau die fehlenden Bilder auf der CPU nachgeholt,
+    # Restfehler -> 'STUFE ROT SIFT-TOR' + <db>.sift_tor.json (nie still; SiftGPU verwirft Bilder bei VRAM-Mangel mit rc 0).
+    import sift_einstellung as SE
+    _tor = SE.extrahieren_mit_tor(pycolmap, db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, geraet="cpu" if NUR_CPU else "auto",
+                                  tor_json=db + ".sift_tor.json", stufe="sfm_netz merkmale")
+    _gpu_ok = not NUR_CPU and len(_tor["nachgeholt_cpu"]) + len(_tor["fehlend"]) < 0.2 * max(1, _tor["bilder"])     # wie frueher: GPU verlor >= 20 % -> Matching auf der CPU
     con = sqlite3.connect(db); cur = con.cursor()
     for img_id, name, cam_id in cur.execute("select image_id, name, camera_id from images").fetchall():
         if name not in prior and name + ":pp" not in prior: continue
