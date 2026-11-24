@@ -180,14 +180,36 @@ class Wand:
         a = self.a + d * self.n; return Wand(a, a + self.laenge * self.t, aussen=a + self.n)
 
 
+def wandversatz_fassade(korrekturen_json, o, n, winkel=5.0, abstand=0.3):
+    """Gesetzte Wandlage (m, + = aussen) der Fassade mit Bezugspunkt o / Normale n aus audit/schleife_korrekturen.json (Eintraege art 'wandversatz', angenommen != false:
+    tools/wandlage_fotokanten.py, tools/ebenen_schleife.py), zugeordnet ueber Normale (< winkel Grad) und Ebenenabstand (< abstand m) wie fassade_ortho.wandversatz.
+    Mehrere Eintraege: der tiefste (wie korrekturen_aus_json: die Wand steht dort, wo die tiefste Korrektur sie hinsetzt). Ohne Eintrag 0."""
+    import json, os
+    if not korrekturen_json or not os.path.exists(korrekturen_json): return 0.0
+    try: KK = json.load(open(korrekturen_json)).get("korrekturen", [])
+    except Exception: return 0.0
+    n = np.asarray(n, float)[:2]; o = np.asarray(o, float)[:2]; ws = []
+    for K in KK:
+        if K.get("art") != "wandversatz" or K.get("angenommen") is False or "w_soll" not in K: continue
+        try: nk = np.asarray(K["n"], float)[:2]; ok_ = np.asarray(K["o"], float)[:2]
+        except Exception: continue
+        if nk @ n > np.cos(np.radians(winkel)) and abs((ok_ - o) @ n) < abstand: ws.append(float(K["w_soll"]) + float((ok_ - o) @ n))
+    return min(ws) if ws else 0.0
+
+
 def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     """Automatisch erkannte Fenster (tools/fenster_aus_parsing.py: je Fassade o, d, n und Rechtecke mit Pfosten/Kaempfer) in den Koerper schneiden.
-    Fenster, vor denen im Modell schon etwas steht (Sonde 3-8 cm vor der Flaeche zu > 20 % gefuellt), werden ausgelassen. Liefert (koerper, belege)."""
+    Fenster, vor denen im Modell schon etwas steht (Sonde 3-8 cm vor der Flaeche zu > 20 % gefuellt), werden ausgelassen. Liefert (koerper, belege).
+    24.11.2026: Bezugsebene = GESETZTE Wandlage (wandversatz_fassade: Koerperwand auf die Fotokanten-Ebene zurueckgesetzt, tools/wandlage_fotokanten.py), sonst schnitte
+    eine 0,12-m-Laibung 0,32 m vor der Wand ins Leere (Schwabentor f00) und die Sonde laege in der Wand."""
     import json, os
     if not os.path.exists(datei): return koerper, []
     belege = []; DRUCK_MIN = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0     # 0,8 mm bei 1:87 = 0,07 m
+    kp_ = os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json")
     for fid, F in json.load(open(datei)).items():
-        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0; ann = []; formen = {}
+        o = np.array(F["o"], float); wv_ = wandversatz_fassade(kp_, o, F["n"]); o = o + wv_ * np.array(F["n"], float)[:len(o)]
+        W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0; ann = []; formen = {}
+        if wv_: belege.append(dict(seite="wand", element=f"Fenster Fassade {fid}: Bezugsebene {wv_:+.2f} m (gesetzte Wandlage)", quelle="bauteile.wandversatz_fassade (audit/schleife_korrekturen.json)"))
         for f in F["fenster"]:
             if f.get("stimmen_min", 0) < min(min_stimmen, 2): continue          # Stimmen prueft schon fenster_aus_parsing.py (anteilig); hier nur noch Einzelstimmen aussieben
             N = f.get("nische"); A_ = N or f

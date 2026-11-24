@@ -2,7 +2,7 @@
 # schnelltest.sh - fester Kurztest nach JEDER Werkzeugaenderung (Aufgabenliste 5, 16.11.2026). Ziel < 2 min, wenig Speicher.
 # Anlass: am 16.11. brach ich mit Aenderungen mehrfach anderes (Kamera ueberschrieben, eigene Kameras ausgeschlossen, halbe Codezeile auskommentiert, Einrueckung).
 # Prueft feste ERWARTUNGEN an bekannten Daten (ober_tvdr, klein). Schlaegt etwas an: erst klaeren, ob die Aenderung das wollte - dann die Erwartung hier mit Grund anpassen.
-cd "$(dirname "$0")/.."; P=/media/oem/scan/venv-seg/bin/python; G=~/.venvs/rcpark/bin/python; F=0; T0=$(date +%s)
+_ST_SELF=$(readlink -f "${BASH_SOURCE[0]}"); cd "$(dirname "$0")/.."; P=/media/oem/scan/venv-seg/bin/python; G=~/.venvs/rcpark/bin/python; F=0; T0=$(date +%s)
 # 22.11.2026: Dauer je Pruefung (Zeit seit der vorigen Ergebniszeile) -> am Ende die 5 langsamsten; UEBERSPRUNGEN zaehlt mit (nie still gruen)
 U=0; TL=${EPOCHREALTIME/,/.}; DAUER=""
 _dt(){ local t=${EPOCHREALTIME/,/.}; DAUER+="$(awk -v a="$TL" -v b="$t" 'BEGIN{printf "%.1f", b-a}') ${1:0:90}"$'\n'; TL=$t; }
@@ -16,8 +16,231 @@ eingabe(){ if [ -e "$1" ]; then echo "$1"; elif [ -n "$HAUPT" ] && [ -e "$HAUPT/
 # 22.11.2026 (Root 48 GB lief zweimal voll, /tmp/test_vordach_* je 23 MB nach jedem Lauf): Temp des ganzen Schnelltests in EINEN eigenen Ordner auf der Datenplatte
 # (gleiche Reihenfolge wie tools/pfade.temp_wurzel: $TMPDIR -> /media/oem/rcdaten/tmp -> /media/oem/scan/rc-park_tmp -> /tmp); am Ende: Reste = Fehlerzeile, Ordner weg.
 for TW in "${TMPDIR:-}" /media/oem/rcdaten/tmp /media/oem/scan/rc-park_tmp /tmp; do [ -n "$TW" ] && [ -d "$TW" ] && [ -w "$TW" ] && break; done
-ST_TMP=$(mktemp -d -p "$TW" schnelltest_XXXXXX); export TMPDIR=$ST_TMP; trap 'rm -rf "$ST_TMP"' EXIT
+ST_TMP=$(mktemp -d -p "$TW" schnelltest_XXXXXX); export TMPDIR=$ST_TMP; trap 'kill $(jobs -p) 2>/dev/null; rm -rf "$ST_TMP"' EXIT
 TMP_VOR=$(ls -d /tmp/test_* 2>/dev/null | sort)
+# 24.11.2026 PARALLEL (Nutzer "Mach alles, damit es schneller wird": ~160 Pruefungen nacheinander = 11-14 min): der Bereich zwischen den Markern
+# "#>>> PRUEFUNGEN" und "#<<< PRUEFUNGEN" wird in vollstaendige Anweisungen geteilt (eine Zeile, ein if..fi-Block oder ein Heredoc-Aufruf = eine Pruefung)
+# und auf SCHNELLTEST_JOBS Arbeiter verteilt (Vorgabe aus freiem RAM/Kernen, 2..6; SCHNELLTEST_JOBS=1 = alter serieller Lauf, Zeilen unveraendert).
+# Ausgabe in ORIGINALREIHENFOLGE, Zaehler/Zusammenfassung wie bisher. Seriell an ihrer Stelle (vorher Warten auf alle) laufen Anweisungen, die den
+# Shell-Zustand aendern (cd/export/exit/trap/read/eval ...); reine Variablen-Zuweisungen fuer spaetere Zeilen (S=...; O=...) laufen sofort in der Hauptshell.
+# GPU-Pruefungen (Zeile/Testdatei/direkte tools-Importe nutzen torch.cuda/"cuda"/cupy/pycolmap-SIFT/--gpu/gpu_slot; CUDA_VISIBLE_DEVICES= davor = CPU)
+# laufen nie gleichzeitig; Pruefungen mit gleichem $VAR/name-Pfad nacheinander; neue Pruefung startet nur bei >= SCHNELLTEST_FREI_MB (1500) freiem RAM.
+# Langsame zuerst (gelernte Dauer in ~/.cache/rcpark/schnelltest_dauer.txt). Aufteilung ansehen: SCHNELLTEST_PLAN=1 bash tools/schnelltest.sh
+# NEUE PRUEFUNG HINZUFUEGEN (wie bisher): eine Zeile VOR "#<<< PRUEFUNGEN" nach dem Muster
+#   k=$($P -W ignore -I tools/test_x.py 2>&1); [ $? = 0 ] && ok "Was geprueft wird" || { rot "Was"; echo "$k" | grep FEHLER; }
+# Regeln: eigene Temp-Dateien nur unter $S/<eigener-name> oder mktemp; keine Shell-Variablen fuer spaetere Zeilen setzen (sonst laeuft sie seriell);
+# GPU-Nutzung im Test sichtbar lassen (cuda/--gpu) oder CPU erzwingen mit CUDA_VISIBLE_DEVICES= ; Ergebnis nur ueber ok/rot/ueb melden.
+_st_parallel(){
+  local D; D=$(mktemp -d -p "$ST_TMP" .steuer_XXXXXX) || return 1
+  python3 -I - "$_ST_SELF" "$D" > "$D/teilen.log" 2>&1 <<'PYTEILEN' || { echo "  (Parallel-Aufteilung gescheitert: $(tail -1 "$D/teilen.log") -> seriell)"; rm -rf "$D"; return 1; }
+import sys, os, re, hashlib, subprocess
+quelle, ziel = sys.argv[1], sys.argv[2]
+zeilen = open(quelle, encoding="utf-8").read().split("\n")
+mk = [i for i, z in enumerate(zeilen) if z.strip() in ("#>>> " + "PRUEFUNGEN", "#<<< " + "PRUEFUNGEN")]
+if len(mk) != 2:
+    sys.exit("Marker fehlen")
+a, e = mk
+HD = re.compile(r"(?<![<])<<(-?)\s*(['\"]?)([A-Za-z_]\w*)\2")
+stuecke, akt, shell, hd, roh_hd = [], [], [], [], []      # hd: offene Heredoc-Enden; roh_hd: Koerper ungequoteter Heredocs ($VAR wird ersetzt)
+for z in zeilen[a + 1:e]:
+    akt.append(z)
+    if hd:
+        ende, strip, quot = hd[0]
+        if (z.lstrip("\t") if strip else z) == ende:
+            hd.pop(0)
+        elif not quot:
+            roh_hd.append(z)
+        if hd:
+            continue
+    else:
+        shell.append(z)
+        hd = [(m.group(3), m.group(1) == "-", bool(m.group(2))) for m in HD.finditer(z)]
+        if hd:
+            continue
+    if z.endswith("\\") or subprocess.run(["bash", "-n"], input="\n".join(akt) + "\n", text=True, capture_output=True).returncode:
+        continue
+    if any(s.strip() and not s.strip().startswith("#") for s in shell):
+        stuecke.append(("\n".join(akt), "\n".join(shell + roh_hd)))
+    akt, shell, roh_hd = [], [], []
+if any(s.strip() and not s.strip().startswith("#") for s in shell):
+    sys.exit("Bereich endet mitten in einer Anweisung")
+STAND = {"export", "declare", "typeset", "local", "readonly", "read", "readarray", "mapfile", "unset", "cd", "pushd", "popd", "exit", "return", "trap",
+         "source", ".", "eval", "shopt", "alias", "unalias", "ulimit", "umask", "exec", "wait", "jobs", "disown", "fg", "bg", "let", "getopts"}
+KW = {"then", "else", "elif", "do", "if", "while", "until", "!", "{", "(", "time"}
+ZUW = re.compile(r"([A-Za-z_]\w*)(\[[^\]]*\])?\+?=")
+
+
+def analyse(sh):
+    """Shell-Text (ohne Heredoc-Koerper) -> gesetzte Namen {name: pos}, benutzte {name: pos}, Zustand geaendert?, meldet ok/rot/ueb?"""
+    setzt, nutzt, stand, meldet = {}, {}, False, False
+    for m in re.finditer(r"\$\{?([A-Za-z_]\w*)", sh):
+        nutzt.setdefault(m.group(1), m.start())
+    i, n, tiefe, start = 0, len(sh), 0, True
+    while i < n:
+        c = sh[i]
+        if c == "\\":
+            i += 2; continue
+        if c == "'":
+            j = sh.find("'", i + 1); i = (j if j >= 0 else n) + 1; start = False; continue
+        if c == "#" and (i == 0 or sh[i - 1] in " \t\n;"):
+            j = sh.find("\n", i); i = j if j >= 0 else n; continue
+        if sh.startswith("$(", i):
+            tiefe += 1; i += 2; continue
+        if c == ")" and tiefe:
+            tiefe -= 1; i += 1; continue
+        if c in "\n;&|{(":
+            start = True; i += 1; continue
+        if c in " \t":
+            i += 1; continue
+        if c == '"':
+            j = i + 1
+            while j < n and sh[j] != '"':
+                j += 2 if sh[j] == "\\" else 1
+            i = j + 1; start = False; continue
+        w = re.match(r"[^\s;&|()<>\"']+", sh[i:]); wort = w.group(0) if w else c
+        if start and tiefe == 0:
+            if wort in KW:
+                i += len(wort); continue
+            ma = ZUW.match(sh, i)
+            if ma:      # Zuweisung (bleibt in der Shell) oder Umgebungs-Praefix eines Befehls (nicht)?
+                namen, j = [], i
+                while ma:
+                    namen.append((ma.group(1), j)); j = ma.end(); t = 0
+                    while j < n and (t or sh[j] not in " \t\n;&|)"):
+                        if sh.startswith("$(", j):
+                            t += 1; j += 2; continue
+                        if sh[j] == ")" and t:
+                            t -= 1
+                        elif sh[j] == "'":
+                            j = sh.find("'", j + 1) if sh.find("'", j + 1) >= 0 else n
+                        elif sh[j] == '"':
+                            j += 1
+                            while j < n and sh[j] != '"':
+                                if sh.startswith("$(", j):
+                                    t += 1
+                                elif sh[j] == ")" and t:
+                                    t -= 1
+                                j += 2 if sh[j] == "\\" else 1
+                        elif sh[j] == "\\":
+                            j += 1
+                        j += 1
+                    while j < n and sh[j] in " \t":
+                        j += 1
+                    ma = ZUW.match(sh, j)
+                if j >= n or sh[j] in "\n;&|)}":
+                    for nm, p in namen:
+                        setzt.setdefault(nm, p)
+                start = False; i = max(j, i + 1); continue
+            mf = re.match(r"for\s+([A-Za-z_]\w*)", sh[i:]) if wort == "for" else None
+            if mf:
+                setzt.setdefault(mf.group(1), i)
+            if wort in STAND or (wort == "set" and not re.match(r"set\s+--", sh[i:])) or re.match(r"printf\s+-v", sh[i:]):
+                stand = True
+            meldet |= wort in ("ok", "rot", "ueb")
+            start = False
+        i += len(wort)
+    return setzt, nutzt, stand, meldet
+
+
+ana = [analyse(sh) for _, sh in stuecke]
+_, nutzt_schwanz, _, _ = analyse("\n".join(zeilen[e + 1:]))
+GPU = re.compile(r"torch\.cuda|\.cuda\(|['\"]cuda|cuda:|cupy|pycolmap\.(match|extract)|use_gpu|SiftGPU|--gpu|gpu_slot\.belegen")
+
+
+def lies(p):
+    return open(p, encoding="utf-8", errors="replace").read() if os.path.isfile(p) else ""
+
+
+def gpu(text):
+    if re.search(r"CUDA_VISIBLE_DEVICES=(\"\"|''|\s)", text):
+        return False         # Zeile schaltet die Karte ausdruecklich ab
+    t = [text]
+    for p in set(re.findall(r"\b((?:tools|tests)/[\w/]+\.py)", text)):
+        q = lies(p); t.append(q)
+        for imp in re.findall(r"^\s*(?:from\s+(\w+)\s+import|import\s+([\w ,.]+))", q, re.M):
+            for mod in ([imp[0]] if imp[0] else [x.split()[0] for x in imp[1].split(",") if x.split()]):
+                t.append(lies(f"tools/{mod}.py"))
+    return any(GPU.search(x) for x in t)
+
+
+os.makedirs(ziel, exist_ok=True)
+pfad_von, letzte_barriere = {}, 0
+with open(os.path.join(ziel, "liste"), "w") as L:
+    for k, ((roh, sh), (setzt, nutzt, stand, meldet)) in enumerate(zip(stuecke, ana)):
+        spaeter = sorted(v for v in setzt if v in nutzt_schwanz or any(v in n2 and (v not in s2 or n2[v] < s2[v]) for s2, n2, _, _ in ana[k + 1:]))
+        if stand or re.search(r"\$!|\bwait\b", sh):
+            art, grund = "seriell", "Shell-Zustand"
+        elif spaeter and not meldet and not any(v in ana[j][1] for v in setzt for j in range(letzte_barriere, k)):
+            art, grund = "def", "setzt_" + ",".join(spaeter)     # reine Zuweisung fuer spaetere Zeilen: sofort in der Hauptshell
+        elif spaeter:
+            art, grund = "seriell", "setzt_" + ",".join(spaeter)
+        else:
+            art, grund = "job", "-"
+        if art == "seriell":
+            letzte_barriere = k
+        deps = set()
+        for m in set(re.findall(r"\$\{?(\w+)\}?/([\w.\-]+)", sh)):
+            if m in pfad_von:
+                deps.add(pfad_von[m])
+            pfad_von[m] = k
+        open(os.path.join(ziel, f"{k:04d}.sh"), "w").write(roh + "\n")
+        L.write(f"{k} {art} {int(art == 'job' and gpu(roh))} {','.join(map(str, sorted(deps))) or '-'} {hashlib.md5(roh.encode()).hexdigest()[:16]} {grund}\n")
+PYTEILEN
+  local -a ART GPUJ DEP KEY GR T_A T_E; local -A DL PIDI FERTIG; local i a g d k gr j n=0 next=0 laufend=0 gpu_pid="" Q=() fp mf z1 frei
+  while read -r i a g d k gr; do ART[i]=$a; GPUJ[i]=$g; DEP[i]=$d; KEY[i]=$k; GR[i]=$gr; n=$((i + 1)); done < "$D/liste"
+  local cache=${XDG_CACHE_HOME:-$HOME/.cache}/rcpark/schnelltest_dauer.txt; [ -f "$cache" ] && while read -r k a; do DL[$k]=$a; done < "$cache"
+  local ns=0 ng=0; for ((i = 0; i < n; i++)); do [ "${ART[i]}" = job ] || ns=$((ns + 1)); [ "${GPUJ[i]}" = 1 ] && ng=$((ng + 1)); done
+  echo "  (parallel: $_ST_N Arbeiter, $n Pruefungen, davon $ng GPU nacheinander, $ns seriell in der Hauptshell; SCHNELLTEST_JOBS=1 = seriell)"
+  if [ -n "${SCHNELLTEST_PLAN:-}" ]; then while read -r i a g d k gr; do echo "  PLAN $i $a gpu=$g nach=$d ${DL[$k]:-?}s $gr :: $(head -c 90 "$D/$(printf %04d "$i").sh" | tr '\n' ' ')"; done < "$D/liste"; rm -rf "$D"; return 0; fi
+  _st_frei(){ local nm wert rest; while read -r nm wert rest; do [ "$nm" = MemAvailable: ] && { echo $((wert / 1024)); return; }; done < /proc/meminfo; echo 99999; }
+  _st_aus(){   # fertige Pruefungen in Originalreihenfolge ausgeben und ihre Zaehler uebernehmen
+    while [ "$next" -lt "$n" ] && [ -n "${FERTIG[$next]:-}" ]; do
+      cat "$D/$next.out"
+      if [ "${ART[next]}" = job ]; then
+        if [ -f "$D/$next.meta" ]; then { read -r z1; F=$((F + ${z1% *})); U=$((U + ${z1#* })); DAUER+=$(cat); } < "$D/$next.meta"; [ -n "$DAUER" ] && DAUER+=$'\n'
+        else TL=${EPOCHREALTIME/,/.}; rot "Pruefung ohne Ergebnis abgebrochen (Teil $next: $(head -c 80 "$D/$(printf %04d "$next").sh" | tr '\n' ' '))"; fi
+      fi
+      next=$((next + 1))
+    done; }
+  _st_pool(){  # Q abarbeiten: Langsame zuerst, GPU einzeln, Abhaengigkeiten, RAM-Tor
+    mapfile -t Q < <(for i in "${Q[@]}"; do echo "${DL[${KEY[i]}]:-5} $i"; done | sort -s -k1,1rn | cut -d' ' -f2)
+    while [ ${#Q[@]} -gt 0 ] || [ "$laufend" -gt 0 ]; do
+      local los=-1 qi
+      if [ "$laufend" -lt "$_ST_N" ] && { [ "$laufend" = 0 ] || [ "$(_st_frei)" -ge "${SCHNELLTEST_FREI_MB:-1500}" ]; }; then
+        for qi in "${!Q[@]}"; do j=${Q[qi]}
+          [ "${GPUJ[j]}" = 1 ] && [ -n "$gpu_pid" ] && continue
+          for d in ${DEP[j]//,/ }; do [ "$d" = - ] || [ -n "${FERTIG[$d]:-}" ] || continue 2; done
+          los=$qi; break
+        done
+      fi
+      if [ "$los" -ge 0 ]; then
+        j=${Q[los]}; unset "Q[$los]"; Q=("${Q[@]}"); T_A[j]=${EPOCHREALTIME/,/.}
+        ( F=0; U=0; DAUER=""; TL=${EPOCHREALTIME/,/.}; eval "$(< "$D/$(printf %04d "$j").sh")"; printf '%s %s\n%s' "$F" "$U" "${DAUER%$'\n'}" > "$D/$j.meta" ) > "$D/$j.out" 2>&1 < /dev/null &
+        PIDI[$!]=$j; laufend=$((laufend + 1)); [ "${GPUJ[j]}" = 1 ] && gpu_pid=$!
+        continue
+      fi
+      fp=""; wait -n -p fp; [ -n "$fp" ] && [ -n "${PIDI[$fp]:-}" ] || continue
+      j=${PIDI[$fp]}; unset "PIDI[$fp]"; FERTIG[$j]=1; T_E[j]=${EPOCHREALTIME/,/.}; laufend=$((laufend - 1)); [ "$fp" = "$gpu_pid" ] && gpu_pid=""
+      _st_aus
+    done; }
+  for ((i = 0; i < n; i++)); do
+    case "${ART[i]}" in
+      job) Q+=("$i");;
+      def) TL=${EPOCHREALTIME/,/.}; { eval "$(< "$D/$(printf %04d "$i").sh")"; } > "$D/$i.out" 2>&1 < /dev/null; FERTIG[$i]=1;;
+      *) _st_pool; TL=${EPOCHREALTIME/,/.}; { eval "$(< "$D/$(printf %04d "$i").sh")"; } > "$D/$i.out" 2>&1 < /dev/null; FERTIG[$i]=1; _st_aus;;
+    esac
+  done
+  _st_pool; _st_aus
+  mkdir -p "$(dirname "$cache")" && { for k in "${!DL[@]}"; do echo "$k ${DL[$k]}"; done
+    for ((i = 0; i < n; i++)); do [ -n "${T_E[i]:-}" ] && echo "${KEY[i]} $(awk -v a="${T_A[i]}" -v b="${T_E[i]}" 'BEGIN{printf "%.0f", b-a}')"; done; } | awk '{d[$1]=$2} END{for (k in d) print k, d[k]}' > "$cache.$$" && mv "$cache.$$" "$cache"
+  rm -rf "$D"; TL=${EPOCHREALTIME/,/.}; return 0
+}
+_ST_N=${SCHNELLTEST_JOBS:-}
+if [ -z "$_ST_N" ]; then _ST_N=$(( ($(awk '/MemAvailable/{print int($2/1024)}' /proc/meminfo) - 1500) / 800 )); _c=$(( $(nproc) / 2 )); [ "$_ST_N" -gt "$_c" ] && _ST_N=$_c; [ "$_ST_N" -gt 6 ] && _ST_N=6; [ "$_ST_N" -lt 2 ] && _ST_N=2; fi
+if [ "$_ST_N" -gt 1 ] && _st_parallel; then _ST_SERIELL=0; else _ST_SERIELL=1; fi
+[ -n "${SCHNELLTEST_PLAN:-}" ] && exit 0
+if [ "$_ST_SERIELL" = 1 ]; then      # serieller Lauf (SCHNELLTEST_JOBS=1 oder Aufteilung gescheitert): Zeilen laufen hier direkt wie frueher
+#>>> PRUEFUNGEN
 for f in tools/*.py; do python3 -m py_compile "$f" 2>/dev/null || rot "Syntax $f"; done; ok "Syntax aller tools/*.py"; for f in tools/*.sh; do bash -n "$f" || rot "Syntax $f"; done
 $G - <<'PY' && ok "bauteile: Boegen, Fenster, Galerie, Umgang wasserdicht" || rot "bauteile"
 import sys; sys.path.insert(0, "tools"); import numpy as np
@@ -48,20 +271,24 @@ r3 = rel.copy(); r3[z < 8.0] = 0.0; assert steinzone_oben(r3, putz, px) == 1.5  
 assert steinzone_oben(rel, None, px) == 12.0 and steinzone_oben(np.zeros((10, 5)), None, px) == 0.5
 PY
 S=$(mktemp -d); O=ober_tvdr;FO=/media/oem/scan/rc-park_daten/$O/fassade; STL_O=$(eingabe modelle/stl/${O}_1-87.stl); FD_O=$(eingabe "$(python3 -c "import json; print(json.load(open('modelle/$O/objekt.json'))['fotos_dir'])")")
-if [ ! -f $FO/elemente.json ]; then ueb "Fenster/Fassadenbild ober_tvdr (4 Pruefungen): $FO/elemente.json fehlt (Datenplatte?)"
+if [ ! -f $FO/elemente.json ]; then ueb "Fenster/Fassadenbild ober_tvdr (5 Pruefungen): $FO/elemente.json fehlt (Datenplatte?)"
 else
   fp=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1)      # 22.11.2026: einmal rechnen, f01 und f02 aus derselben Ausgabe (lief vorher zweimal gleich)
   n=$(echo "$fp" | grep "^f02" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${n:-0}" -ge 6 ] && [ "${n:-0}" -le 8 ] && ok "Fenster ober_tvdr f02: $n (erwartet 6-8)" || rot "Fenster ober_tvdr f02: $n statt 6-8"
   m=$(echo "$fp" | grep "^f01" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${m:-9}" -le 2 ] && ok "gemischte Fassade f01: $m Fenster (erwartet <= 2; seit MAD-Mass und Kamerabereinigung ist die rechte Haelfte sauber)" || rot "gemischte Fassade f01 liefert $m Fenster (erwartet <= 2)"
-  if [ -z "$STL_O" ] || [ -z "$FD_O" ]; then ueb "Fassadenbild f02 + GPU/CPU-Vergleich (2 Pruefungen): ${STL_O:-modelle/stl/${O}_1-87.stl fehlt} ${FD_O:-Fotoordner (fotos_dir) fehlt}"; else
+  if [ -z "$STL_O" ] || [ -z "$FD_O" ]; then ueb "Fassadenbild f02 + GPU/CPU-Vergleich + OOM-Probe (3 Pruefungen): ${STL_O:-modelle/stl/${O}_1-87.stl fehlt} ${FD_O:-Fotoordner (fotos_dir) fehlt}"; else
   k=$($P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/o --nur f02 --min-flaeche 40 2>&1 | grep "f02:" | sed 's/.*, *\([0-9]*\) Fotos, Abdeckung \([0-9]*\)%.*/\1 \2/'); set -- $k; [ "${1:-0}" -ge 4 ] && [ "${2:-0}" -ge 75 ] && ok "Fassadenbild f02: $1 Fotos, $2 % (erwartet >= 4 Fotos, >= 75 %)" || rot "Fassadenbild f02: '$k' (eigene Kameras ausgeschlossen? Loecher schwarz?)"
   # 17.11.2026: Zellrechnung auf der GPU (ab --gpu-ab Zellen) muss dieselben Bilder liefern wie der CPU-Weg (hier erzwungen mit --gpu-ab 0; faellt die Karte aus, meldet das Werkzeug es und rechnet auf der CPU)
   $P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/og --nur f02 --min-flaeche 40 --gpu-ab 0 > $S/og.txt 2>&1; v=$($P -I tools/test_ortho_vergleich.py $S/o $S/og --alle --max-stufe 0 | tail -1)
   case "$v" in *"-> GLEICH") ok "Fassadenbild GPU-Weg = CPU-Weg ($(grep -o 'Zellrechnung: [A-Z, a-z]*' $S/og.txt | head -1); ${v#VERGLEICH })";; *) rot "Fassadenbild GPU-Weg weicht vom CPU-Weg ab: $v";; esac
+  # 24.11.2026 (Befund 1122x: OOM nach 294 Paaren -> Rest CPU): erzwungener Speichermangel (RCPARK_TEST_OOM_AB) -> Block halbieren, weiter auf der GPU, Bilder bitgleich zum normalen GPU-Weg
+  RCPARK_TEST_OOM_AB=20000 $P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/oo --nur f02 --min-flaeche 40 --gpu-ab 0 > $S/oo.txt 2>&1; v=$($P -I tools/test_ortho_vergleich.py $S/og $S/oo --alle --max-stufe 0 | tail -1)
+  if grep -q "Zellrechnung: GPU (.*halbiert" $S/oo.txt && [[ "$v" == *"-> GLEICH" ]]; then ok "Fassadenbild GPU-Speichermangel: Block halbiert, weiter auf der GPU, bitgleich (${v#VERGLEICH })"; elif grep -q "Zellrechnung: CPU" $S/og.txt; then ueb "GPU-Speichermangel-Probe: keine Karte (normaler Lauf schon CPU)"; else rot "GPU-Speichermangel: $(grep -o 'Zellrechnung: [^;]*' $S/oo.txt | head -1 | cut -c1-120) / $v"; fi
   fi
 fi
 k=$($P -I tools/test_kette_stabil.py 2>&1); [ $? = 0 ] && ok "Kette gegen stille Fehler: $(echo "$k" | grep -c '^    ok') Tests (veraltete Ausgaben, leere Ergebnisse, Platte/Verknuepfung, Abbruch-Bericht)" || { rot "Kette gegen stille Fehler"; echo "$k" | grep FEHLER; }
 k=$($P -I tools/test_kette_tempo.py 2>&1); [ $? = 0 ] && ok "Kette Tempo: $(echo "$k" | grep -c '^    ok') Tests (Waende parallel in Wandreihenfolge, GPU-Plaetze, Zwischenbau ohne Abnahme + Abnahme auf dem Endstand)" || { rot "Kette Tempo"; echo "$k" | grep FEHLER; }
+k=$($P -W ignore -I tests/test_fassaden_parallel.py 2>&1); [ $? = 0 ] && ok "Fassaden-Waende parallel bitgleich: $(echo "$k" | grep -c '^    ok') Tests (RAM-Plan Feinplatz 5300 + Wand 2600 MiB, VRAM-Konto = GPU-Buchung, steine_aus_foto neben tiefe_lokal, sha1 seriell = parallel)" || rot "fassaden_parallel: $(echo "$k" | grep FEHLER | head -2 | cut -c1-300)"
 k=$($P -I tools/test_tiefe_lokal_paar.py 2>&1); [ $? = 0 ] && ok "Feinrechnung Paar-Guard: $(echo "$k" | grep -c '^    ok') Tests (entzerrtes Buendel + Originalfotos = rot, fein_paar nimmt sparse_dicht + Originalfotos, Cache aus RAM, rc 2 schaltet Feinrechnung ab)" || { rot "Feinrechnung Paar-Guard"; echo "$k" | grep FEHLER; }
 k=$($P -I tools/test_relief_trend.py 2>&1); [ $? = 0 ] && ok "Relief-Trend: $(echo "$k" | grep -c '^    ok') Tests (Ebene nur aus der Wandflaeche, Sockel kippt sie nicht; fein->grob Versatz+Neigung mit Guard; Gesims/Sockel bleiben)" || { rot "Relief-Trend"; echo "$k" | grep FEHLER; }
 if [ -z "$STL_O" ]; then ueb "Pruefstand ober_tvdr: modelle/stl/${O}_1-87.stl fehlt (auch im Hauptordner)"; else      # 22.11.2026: auf einer Kopie (schreibt pruefbericht.json/MASSNACHWEIS.md)
@@ -71,7 +298,7 @@ fi
 v=$(grep -l '"vertrauen": true' modelle/schwab_v3/messprotokoll/K-dl_*.json 2>/dev/null | wc -l); e=$(ls modelle/schwab_v3/messprotokoll/K-eigen__*.json | wc -l); [ "$e" -ge 150 ] && [ "$v" -ge 100 ] && ok "Kameras: $e eigene, $v gepruefte Fremdkameras" || rot "Kameras: $e eigene, $v gepruefte Fremdkameras (erwartet >= 150 / >= 100)"
 u=$($P -I tools/kamera_plausibel.py | tail -1 | cut -d" " -f1); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"
 python3 -I - "$S" <<'PY' > /dev/null 2>&1 && ok "Kette: Stufe mit Zeitlimit, Absturz = Fehler; Kameraregeln (Tiefe, Verzeichnung)" || rot "Kette lauf()/Kameraregeln"
-import sys, os; sys.path.insert(0, "tools"); import gesamtkette as G, kamera_plausibel as KP
+import sys, os; sys.path.insert(0, "tools"); import gesamtkette as G, kamera_plausibel as KP; os.environ["RCPARK_PLATZ_TOR"] = "test_ersetzt"
 os.makedirs(sys.argv[1], exist_ok=True); B = dict(schritte=[], _pfad=sys.argv[1] + "/b.json"); L = sys.argv[1] + "/l.log"
 assert G.lauf(B, "gut", ["bash", "-c", "echo a"], L)[0] == 0 and B["schritte"][-1]["ok"]
 assert G.lauf(B, "haenger", ["bash", "-c", "sleep 60"], L, timeout=1)[0] == 124 and not B["schritte"][-1]["ok"]
@@ -135,6 +362,7 @@ r = O.bogen_umriss(im, F, (2.0, 6.0, 0.0, 4.5)); assert r is not None, "kein Umr
 b = r[1]; assert abs(b["flanke_links"] - 2.5) < 0.05 and abs(b["flanke_rechts"] - 5.5) < 0.05 and abs(b["scheitel"] - 4.0) < 0.05, b
 Z = O.zonen([dict(klasse="bogen", u0=2.0, u1=6.0, z0=0.0, z1=4.5)]); assert Z == [("bogen", 2.0, 6.0, 0.0, 4.5)], Z
 PY
+k=$($P -I tools/test_ortho_oom.py 2>&1); [ $? = 0 ] && ok "GPU-Speichermangel-Logik fassade_ortho (Block halbieren statt CPU, andere Fehler weiter, Budget aus RCPARK_GPU_MB)" || { rot "test_ortho_oom"; echo "$k" | grep FEHL | head -4; }
 k=$($P -I tools/test_flaeche_ortho.py 2>&1); [ $? = 0 ] && ok "Wandbild fuer Rundungen/Erker (flaeche_ortho: Zylinder, Kegel, n-Eck-Erker synthetisch, Gegenprobe falscher Radius/Achse)" || { rot "flaeche_ortho synthetisch"; echo "$k" | tail -6; }
 k=$(python3 tools/importe_pruefen.py 2>&1); [ $? = 0 ] && ok "Importe: kein Generator/Werkzeug importiert etwas, das es nicht mehr gibt (Anlass bauteile.py 15.11.)" || { rot "Importe fehlen: $(echo "$k" | head -3 | tr '\n' ' ' | cut -c1-200)"; }
 k=$($P -I tools/test_stabil_schnitt.py 2>&1); [ $? = 0 ] && ok "Konsens-Schnitt zweier Mapper-Laeufe (sfm_stabil_schnitt: kollineare Strassenkameras, 30 % verschoben erkannt)" || { rot "stabil_schnitt: $(echo "$k" | tail -2)"; }
@@ -171,7 +399,7 @@ k=$(TMPDIR=${TMPDIR:-/media/oem/rcdaten/tmp} /media/oem/scan/venv-colmap/bin/pyt
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_bruecke_nachmatchen.py 2>&1); [ $? = 0 ] && ok "Bruecke nachmatchen (SIFT-Indizes unveraendert, ALIKED angehaengt)" || { rot "bruecke_nachmatchen: $(echo "$k" | grep -i fehl | head -3)"; }
 k=$(TMPDIR=${TMPDIR:-/media/oem/rcdaten/tmp} $P -I tools/test_fotos_sammeln_fremd.py 2>&1); [ $? = 0 ] && ok "Fotos sammeln: Fremdbilder im eigenen Ordner -> echte Quelle + Vorpruefung" || { rot "fotos_sammeln_fremd: $(echo "$k" | grep FEHL | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_lod2_je_teil.py 2>&1); [ $? = 0 ] && ok "LoD2 je Teil + Bild-x-Lot (Turmfotos: Bild-oben-Lot 19 Grad schief; Nord/West/Turm -> wahre Lage, eine Wand/Rand -> kein Urteil; Regeln a/b/c)" || { rot "seiten_lod2_je_teil: $(echo "$k" | grep -E "FEHLER|Error|assert" | head -3)"; }
-k=$(/media/oem/scan/venv-colmap/bin/python -I tests/test_seiten_waende_binden.py 2>&1); [ $? = 0 ] && ok "Gegenseite ueber gemeinsame Waende binden (1122w Teil 1: GPS-Lage 7 Grad gekippt/4 Grad/2 m -> waagerecht < 5 cm; eine Wand / 12 m daneben abgelehnt; Geotag-Probe; 1122y: GPS-Massstab 10 % daneben -> Massstab aus den Waenden, ohne Beleg Doppelwand -> abgelehnt; Verdrahtung)" || { rot "seiten_waende_binden: $(echo "$k" | grep -E "FEHLER|Error|assert" | head -3)"; }
+k=$(/media/oem/scan/venv-colmap/bin/python -I tests/test_seiten_waende_binden.py 2>&1); [ $? = 0 ] && ok "Gegenseite ueber gemeinsame Waende binden (1122w Teil 1: GPS-Lage 7 Grad gekippt/4 Grad/2 m -> waagerecht < 5 cm; eine Wand / 12 m daneben abgelehnt; Geotag-Probe; 1122y: GPS-Massstab 10 % daneben -> Massstab aus den Waenden, ohne Beleg Doppelwand -> abgelehnt; 1122z: Hoehe aus Saeulenprofilen + Boden-Gegenprobe, B 5,5 m zu tief -> korrigiert, uneinig -> abgelehnt, ohne Beleg kein Raten, Tor unter Gelaende; Verdrahtung)" || { rot "seiten_waende_binden: $(echo "$k" | grep -E "FEHLER|Error|assert" | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_seiten_lage_beleg.py 2>&1); [ $? = 0 ] && ok "Teil nur bei belegter Lage einsetzen (schwabentor-1122 Teil 1 nur GPS, 3-4 m versetzt -> weglassen + Fotoluecke; Querspur/LoD2/GPS ehrlich+Wanddicke -> einsetzen; Fotoauftrag, Folgestufen)" || { rot "seiten_lage_beleg: $(echo "$k" | grep -E "Error|assert" | head -3)"; }
 k=$(TMPDIR=/media/oem/rcdaten/tmp /media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_foto_auftrag_skizze.py 2>&1); [ $? = 0 ] && ok "Fotoauftrag frueh als Skizze (schwabentor-1122 Suedseite: Uebereck an beiden Suedecken, Frontalreihe, Fernstandorte, nichts in Nachbarhaeusern; Wand nur ueber Nachbardach -> Hochblick + Pflicht-Eckfotos beide Enden; Foto-GPS -> Standpunkt; Kettenaufruf)" || { rot "foto_auftrag_skizze: $(echo "$k" | grep -E "Error|assert" | head -3)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_gps_anker.py 2>&1); [ $? = 0 ] && ok "GPS-Anker der LoD2-Ausrichtung: Kasten um den GPS-Fit besteht das GPS-Veto, Martinstor ohne Anker (Nulllauf schwabentor-1122d: -22 Grad x0,83)" || { rot "gps_anker: $(echo "$k" | grep FEHLER | head -3)"; }
@@ -232,10 +460,12 @@ k=$($P -W ignore -I tools/test_vordergrund_quader.py 2>&1); [ $? = 0 ] && ok "Vo
 k=$($P -W ignore -I tools/test_umgang_eckquader.py 2>&1); [ $? = 0 ] && ok "Umgang unter der Traufe (Zone aus Zeilenkanten, Pfosten-Konsens ueber Fotos, Bau mit Ruecksprung) + Eckquader im Fotorelief nur an Gebaeudeecken" || { rot "umgang/eckquader: $(echo "$k" | tail -2)"; }
 k=$($P -W ignore -I tools/test_relief_auf_koerper.py 2>&1); [ $? = 0 ] && ok "Mono-/Misch-/Netzrelief der Quaderwaende auf der gemessenen Koerperflaeche (Steine vor der Wand, nicht 0,3 m dahinter versenkt; 1122u Sued w05)" || { rot "relief_auf_koerper: $(echo "$k" | tail -2)"; }
 k=$($P -W ignore -I tools/test_steinzone_je_zone.py 2>&1); [ $? = 0 ] && ok "Quader-Tor je Zone: Steinzone unten (Wandbild) behaelt Steinrelief, Putz darueber glatt, Rot-Probe alter Stand (1122u Sued w06/w07, Nord w02)" || { rot "steinzone_je_zone: $(echo "$k" | tail -2)"; }
+k=$($P -W ignore -I tests/test_relief_kantenglatt.py 2>&1); [ $? = 0 ] && ok "Feinrauschen ohne Fotokante geglaettet (relief_kantenglatt: Knickkanten wie trimesh, Rauschkanten < 40 %, Recall sinkt nicht, belegtes Gesims + Quaderraster bleiben; 1122x f00 erfunden 0,98)" || { rot "relief_kantenglatt: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$($P -W ignore -I tests/test_kruemel_kantenbeleg.py 2>&1); [ $? = 0 ] && ok "Kruemel ohne Fotokante weg (Blob/Gemaelde/verdeckt flach samt Rand, Koerper mit Kanten + Gesims + Bogen bleiben, Steine unberuehrt; 1122w Nord-Knochen, Sued-Brunnen)" || { rot "kruemel_kantenbeleg: $(echo "$k" | tail -1 | cut -c1-300)"; }
 k=$(OMP_NUM_THREADS=2 $P -W ignore -I tests/test_wolke_draehte.py 2>&1); [ $? = 0 ] && ok "Draht-/Fahnenfilter der Anzeige-Wolke (wolke_draehte: freier Draht + schraege Fahne weg; Wand, Gesims, angebundenes Vordach, Dach, lotrechte Wetterstange bleiben; Stufe draehte vor html; Nutzerbefund 1122 Nordseite 24.11.)" || { rot "wolke_draehte: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
 k=$($P -W ignore -I tests/test_bau_parallel.py 2>&1); [ $? = 0 ] && ok "Bau parallel ohne Ergebnisaenderung (unique_zeilen = np.unique, Relief-/Ortsteinschritte in Kindprozessen in Reihenfolge, STL neu = alt bitgleich, Strahlsonden-Zwischenspeicher; RCPARK_BAU_SERIELL=1 alter Weg)" || { rot "bau_parallel: $(echo "$k" | grep FEHLER | head -2 | cut -c1-300)"; }
-k=$($P -W ignore -I tests/test_drahtmaske.py 2>&1); [ $? = 0 ] && ok "Drahtmaske je Foto (24.11., 1122x Oberleitungs-Fahnen): 2 Draehte ueber Himmel+Wand maskiert, Rot-Probe Fugen/Gesims/Fenster/Dachkante/Fallrohr frei, COLMAP-Fusionsmaske, OHNE_DRAHTMASKE=1" || { rot "drahtmaske: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
+k=$($P -W ignore -I tests/test_drahtmaske.py 2>&1); [ $? = 0 ] && ok "Drahtmaske je Foto (24.11., 1122x Oberleitungs-Fahnen): 2 Draehte ueber Himmel+Wand maskiert, Rot-Probe Fugen/Gesims/Fenster/Dachkante/Fallrohr frei, COLMAP-Fusionsmaske, OHNE_DRAHTMASKE=1; Himmelsmaske Fusion (24.11. blaues Geisterblatt 1122z: Saum an der Silhouette), Rot-Probe Dachkante/Turmspitze/Laterne/Gesims frei" || { rot "drahtmaske: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
+k=$($P -W ignore -I tests/test_quellfilter.py 2>&1); [ $? = 0 ] && ok "Freiraum-Nachfilter dichte Wolke (24.11., Geisterblatt 1122z): Geisterblatt nur in 3 von 40 Karten weg, Rot-Probe Wand/Erker bleiben, wenige Kameras -> greift nicht, vis-Kuerzung, Marke" || { rot "quellfilter: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$($P -W ignore -I tools/test_vorbau_pfosten.py 2>&1); [ $? = 0 ] && ok "Vorbau-Pfosten neben dem Kastenende an den Kasten gerueckt (1 Koerper statt freistehendem Pfosten; 1122u)" || { rot "vorbau_pfosten: $(echo "$k" | tail -2)"; }
 k=$($G -W ignore -I tools/test_quader_raster.py 2>&1); [ $? = 0 ] && ok "Quaderraster aus dem Wandbild (Mehrfoto-Lagen/Fugen, Stein eben = Median der Tiefe, Rillen >= 0,8 mm H0, Eckquader lang/kurz gemessen, Steinzone von unten) - Nutzer 21.11. 'geschmolzen'" || { rot "quader_raster: $(echo "$k" | grep FEHLER | head -2)"; }
 k=$($G -W ignore -I tools/test_keilsteine.py 2>&1); [ $? = 0 ] && ok "Keilsteine um Boegen (Ring aus der Kohaerenz radialer Fugen in s-Profilen, Gewaende ohne Fugen davor; Fugen radial geprueft; ausserhalb unveraendert; alte Steine in der Oeffnung weg; Putzbogen und Quader bis an den Bogen: keine) - Schwabentor Torbogen" || { rot "keilsteine: $(echo "$k" | grep FEHLER | head -2 | cut -c1-300)"; }
@@ -260,6 +490,8 @@ k=$($P -W ignore -I tools/test_speicher_wiederholung.py 2>&1); [ $? = 0 ] && ok 
 k=$($P -W ignore -I tools/test_grundriss_geklaert.py 2>&1); [ $? = 0 ] && ok "Grundriss-Tor: am Foto geklaerter Strassenhaufen gilt nur bis 2x seiner Punktzahl (1122: 7,9x grosser Haufen der falschen Lage an derselben Stelle) - 22.11." || { rot "grundriss_geklaert: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$($P -W ignore -I tools/test_haufen_klaeren.py 2>&1); [ $? = 0 ] && ok "Grundriss-Tor klaert Strassenhaufen automatisch: Doppelwand rot, Mast/Leitung/Erker/Faecher geklaert, ohne Eichung nicht geklaert (haufen_klaeren.py) - 22.11." || { rot "haufen_klaeren: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$($P -W ignore -I tools/test_befundliste.py 2>&1); [ $? = 0 ] && ok "Befundliste (Sichtbefunde aus neben_*.jpg + Toren + Log: fehlt/flach oben, Kastenvordach = Form falsch, Beulen = zu grob, falsche Kamera = Beleg ungueltig, Wand ohne Fotos = KEINE FOTOS, Codefehler als Ursache) - Agenten-Schleife 22.11." || { rot "befundliste: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
+k=$($P -W ignore -I tools/test_konvergenz.py 2>&1); [ $? = 0 ] && ok "Konvergenz (fester Fotosatz je Seite aus seiten_konvention, F1 grob/fein, gepaarter Gewinn, steigt/PLATEAU mit Restfehler-Ort/kein Beleg statt 0, Ersetzen = Bruch) - Nutzer 24.11." || { rot "konvergenz: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
+k=$(python3 -I tools/test_laufzeit_bericht.py 2>&1); [ $? = 0 ] && ok "Laufzeit-Bericht (24.11.: Doppel-Fusion 470 + 450 s und 6 volle Bauten blieben unbemerkt): Familien, Doppelarbeit, Vorlauf aus gesamtkette.log, Job-Log-Format" || rot "Laufzeit-Bericht: $(echo "$k" | grep FEHLER | head -2)"
 k=$($P -W ignore -I tools/test_neben_details.py 2>&1); [ $? = 0 ] && ok "Detailansicht je Bauteil (neben_details: Kamera mit Bauteil gross/mittig/senkrecht gewinnt, Profil von der Seite, Verdecker senkt Sicht, Bauteile aus audit-JSON) - 22.11. Fehlbefund Vordach/Laterne am Steilblick; 23.11. Uhr-Keile 1122q: Wand-Faecher mit Mitte im Kasten sind nicht Bauteil, Uhr nur innerhalb ihrer Kreis-Kontur" || { rot "neben_details"; echo "$k" | tail -5; }
 k=$($P -W ignore -I tools/test_leistung_messen.py 2>&1); [ $? = 0 ] && ok "Leistungsmessung (leistung_messen: Wallzeit/CPU/Spitzen-RAM/RAPL/GPU neben einem Befehl, Thread-Sweep mit Platzhalter, kleinste Einstellung innerhalb 5 %, Engpass-Regeln, perf oder sauber uebersprungen) - 22.11." || { rot "leistung_messen: $(echo "$k" | grep FEHLER | head -3)"; }
 k=$(python3 -I tools/test_verlustbilanz.py 2>&1); [ $? = 0 ] && ok "Verlustbilanz je Stufe (rein/raus/verloren+Grund; Clip ohne Bilder und ohne Fehlerzeile = WARNUNG, benannte Verluste nicht; Grenze je Stufe, alter Stand markiert) - Nulllauf 1122: hBlkpdGf6LY still verloren" || { rot "verlustbilanz: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
@@ -271,6 +503,13 @@ k=$(python3 -I tools/test_standort_und_svd.py 2>&1); [ $? = 0 ] && ok "Kamerasta
 k=$($P -W ignore -I tools/test_kamera_rahmen.py 2>&1); [ $? = 0 ] && ok "K-Kameras tragen ihren Rahmen: abgeleitete (nachgetragen/verfeinert) im alten Rahmen -> Buendelkamera, gleiches SfM umgerechnet, sonst .veraltet; Handkalibrierung bleibt; Leser filtern (1122s: 231 Kameras aus 1122q, 48 m / 600 px daneben)" || { rot "kamera_rahmen: $(echo "$k" | grep -v "^ok" | tail -3 | tr '\n' ' ' | cut -c1-300)"; }
 k=$(python3 -I tools/test_undefinierte_namen.py 2>&1); [ $? = 0 ] && ok "Keine neuen undefinierten Namen in tools/*.py (pyflakes; 1121t: q95 im Kommentar -> NameError nach 20 min)" || { rot "undefinierte Namen: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$(/media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_handy_masken_gross.py 2>&1); [ $? = 0 ] && ok "handy_masken: grosse Bilder ohne Logits in voller Groesse (Nulllauf 1122: 27-MPx-Bild -> OOM -> SfM-Abbruch)" || { rot "handy_masken gross: $(echo "$k" | tail -2 | cut -c1-200)"; }
+k=$($P -W ignore -I tools/test_wandlage_fotokanten.py 2>&1); [ $? = 0 ] && ok "Koerperwand auf die Fotokanten-Ebene (1122x f00 0,32 m zu weit aussen): belegt + Wolke gleiche Seite -> verschoben, schwach belegt / Wolken-Veto -> nicht; Ecken ohne Rippe, Fenster ab der gesetzten Wand" || { rot "wandlage_fotokanten: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
+k=$($P -W ignore -I tools/test_fusion_vorab.py 2>&1); [ $? = 0 ] && ok "EINE Fusion je Kettenlauf (fusion_vorab: Ausschlusslisten vorab auf dem duennen Netz; Ersatzfusion zaehlt alt 2 / neu 1, Rueckfall bei Abweichung bzw. ohne Neufusion mit Logzeile; Regel = alte Ausloese-Regel; 1122z 445 s doppelt)" || { rot "fusion_vorab: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
+k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_teil_gelaende_tor.py 2>&1); [ $? = 0 ] && ok "Unter-Gelaende-Tor fuer JEDEN Bindungsweg (teil_gelaende_tor vor modelle_zusammen; 6,4 m tiefes Teil je Weg abgelehnt, Logzeile je Teil) - 1122z Ost-Teil" || rot "teil_gelaende_tor: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
+k=$(python3 -I tools/test_kamera_gelaende.py 2>&1); [ $? = 0 ] && ok "Kamera-Gelaende-Tor urteilt ueber die Bilder der Fusion (nach dem Neufusionieren gruen, Ausloeser unveraendert) - 1122z dauernd rot" || rot "kamera_gelaende: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
+k=$(python3 -I tools/test_platz_tor_ersetzt.py 2>&1); [ $? = 0 ] && ok "Platztor der Kette: ohne Ersatz haelt die Stufe an, Tests ersetzen es (RCPARK_PLATZ_TOR=test_ersetzt), main() entfernt den Ersatz" || rot "platz_tor: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
+#<<< PRUEFUNGEN
+fi
 rm -rf $S
 # 22.11.2026: Tests raeumen selbst auf (tools/pfade.temp_ordner, TemporaryDirectory, finally) - Reste im eigenen Temp-Ordner oder neue /tmp/test_* = Fehler
 rest=$(find "$ST_TMP" -mindepth 1 -maxdepth 1 -type d ! -name 'torchinductor_*' ! -name '__pycache__' -printf '%f ' 2>/dev/null | cut -c1-300)

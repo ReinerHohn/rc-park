@@ -319,6 +319,32 @@ def kantenbeleg(f, objekt_json, art="Relief"):
                     hinweis=f"ANNAHME: Abweichung >= 5 cm ohne gleichsinnige Kantentiefe = Netz-/Mono-Kruemel (Gemaelde, Brunnen davor); schmaler als {dm * 100:.0f} cm nicht druckbar; Bild relief/{os.path.basename(fo)[:-4]}.jpg")
 
 
+def kantenglatt(f, objekt_json, art="Relief"):
+    """Kettenstufe 'Feinrauschen ohne Fotokante glaetten' (24.11.2026, Befund 1122x f00_wand erfunden 0,984): Struktur feiner als 0,8 mm H0 nur mit triangulierter
+    Fotokante in tol oder Quaderraster-Beleg (tools/relief_kantenglatt.py). Laeuft auch auf Quaderwaenden (_voll ueber der Feinzone), die kantenbeleg nicht sieht.
+    Rueckgabe (Pfad, Beleg-dict oder None); ohne Kantenstufe/bei sinkendem Fotokanten-Recall unveraendert. OHNE_KANTENGLATT=1 = alter Stand."""
+    if os.environ.get("OHNE_KANTENGLATT") == "1" or not f or not os.path.exists(f): return f, None
+    from putz_wandbild import kanten_wand
+    from relief_kantenglatt import relief_kantenglatt
+    ffn = fein_ordner(objekt_json); ej = os.path.join(os.path.dirname(ffn), "ebenen", "ebenen.json") if ffn else ""
+    if not ej or not os.path.exists(ej): return f, None
+    K = kanten_wand(ej, np.load(f))
+    if K is None: return f, None
+    dm = 0.0008 * float(json.load(open(objekt_json)).get("stl_massstab", 87)); fo = f[:-4] + "_kg.npz"
+    try: inf = relief_kantenglatt(f, fo, K, dm)
+    except Exception as e:
+        print(f"    kantenglatt {os.path.basename(f)}: FEHLER {type(e).__name__}: {str(e)[:160]} - Relief unveraendert", flush=True)
+        if isinstance(e, (NameError, TypeError, AttributeError, IndexError, KeyError, ValueError)): _CODEFEHLER.append(f"kantenglatt {os.path.basename(f)}: {type(e).__name__}: {str(e)[:120]}")
+        return f, None
+    v, n_ = inf.get("vorher") or {}, inf.get("nachher") or {}
+    if inf.get("unveraendert"):
+        print(f"    kantenglatt {os.path.basename(f)}: unveraendert ({inf.get('grund')})", flush=True); return f, None
+    print(f"    kantenglatt {os.path.basename(f)}: Modellkanten {v.get('modellkanten')} -> {n_.get('modellkanten')}, erfunden {v.get('erfunden')} -> {n_.get('erfunden')}, Recall {v.get('recall')} -> {n_.get('recall')}", flush=True)
+    return fo, dict(seite="wand", element=f"{art} {os.path.basename(f)}: Feinrauschen ohne Fotokante geglaettet ({inf['geaendert_anteil'] * 100:.0f} % der Zellen, Fenster {inf['fenster_m'] * 100:.0f} cm)",
+                    quelle="tools/relief_kantenglatt.py (triangulierte Fotokanten der Wandebene, ebenen.json; Quaderraster bleibt)", vorher=v, nachher=n_,
+                    hinweis=f"ANNAHME: Struktur feiner als {dm * 100:.0f} cm (0,8 mm H0) ohne Fotokante in 0,15 m = Netz-/Mono-Rauschen; Bild relief/{os.path.basename(fo)[:-4]}.jpg")
+
+
 def fein_ordner(objekt_json):
     """Ordner des feinen Wandbilds (Kettenstufe fenster: fassade_ortho --zelle 0.01 --einzeln -> <daten>/fassade_fein). objekt.json 'fassade_fein' (relativ zum Repo oder absolut)
     geht vor, sonst /media/oem/scan/rc-park_daten/<objektordner>/fassade_fein wie tools/gesamtkette.py. '' wenn nicht da."""
@@ -506,6 +532,17 @@ def wand_vorbereiten(w, objekt_json, bereinigen=None):
         elif tf and os.path.exists(fm): fm, b_ = kantenbeleg(fm, objekt_json, "Feinrelief misch")
         else: b_ = None
         if b_: bel_b.append(b_)
+    # 24.11.2026 (Befund 1122x f00_wand: 392 544 Modellkanten gegen 18 975 Fotokanten): Feinrauschen unter dem Druckmass nur mit Fotokante, auf JEDER gebauten Reliefschicht
+    if not w.get("nur_foto"):
+        f, b_ = kantenglatt(f, objekt_json, "Relief")
+        if b_: bel_b.append(b_)
+    if hat_foto:
+        ff, b_ = kantenglatt(ff, objekt_json, "Fotorelief")
+        if b_: bel_b.append(b_)
+    if mono_: fmo, b_ = kantenglatt(fmo, objekt_json, "Feinrelief mono")
+    elif tf and os.path.exists(fm): fm, b_ = kantenglatt(fm, objekt_json, "Feinrelief misch")
+    else: b_ = None
+    if b_: bel_b.append(b_)
     for nm_, qi_ in qbel:
         if qi_: bel_b.append(dict(seite="wand", element=f"Quaderraster {nm_} Fassade {w['name']}: {qi_.get('relief_steine')} Steine eben, Rillen {qi_.get('relief_rille_mm')} mm (Breite, Tiefe H0)",
                                   quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
@@ -605,27 +642,80 @@ class _Weiche:
     def __getattr__(s, k): return getattr(s.echt, k)
 
 
-_GPU_SEM = [None]
+_GPU_SEM = [None]                                                       # Feinplaetze: hoechstens so viele tiefe_lokal gleichzeitig (RAM 5,3 GB je Lauf, parallel_plaetze)
+_VRAM = [None]                                                          # VRAM-Konto aller GPU-Teilwerkzeuge (MiB, _VramKonto)
 FEIN_AUS = [""]                                                         # Meldung des tiefe_lokal-Guards (rc 2) -> keine weitere Wand versucht die Feinrechnung
 
 
 GPU_TEILE = {"steine_aus_foto.py", "tiefe_lokal.py"}      # Teilwerkzeuge mit GPU: steine_aus_foto (render_kern/torch, 0,8-2 GB), tiefe_lokal (PatchMatch ~2,2 GB); 21.11.: 6 steine_aus_foto gleichzeitig = CUDA OOM
+GPU_BEDARF_MB = {"tiefe_lokal.py": 2300, "steine_aus_foto.py": 2000}   # VRAM je Lauf (gemessen: PatchMatch 3200 px ~2,2 GB, steine_aus_foto 0,8-2 GB -> Obergrenze); unbekannt = ein ganzer Platz (2300)
+RAM_WAND_MB, RAM_FEIN_MB = 2600, 5300                                   # RAM-Spitze je Wand: Teilprozesse 2,5 GB (gemessen 21.11.), tiefe_lokal 5,2 GB (gemessen 21.11., 1121p)
+
+
+class _VramKonto:
+    """24.11.2026 (Nutzer: 'Das dauert alles so extrem lang', Kette 1122x: fassaden_kette 3689 s, Waende SERIELL): GPU-Teilwerkzeuge buchen ihren VRAM-Bedarf
+    (GPU_BEDARF_MB) gegen das Konto = GPU-Buchung des Jobs (RCPARK_GPU_MB). Frueher teilten sich tiefe_lokal und steine_aus_foto EINEN Zaehler: lief tiefe_lokal
+    (~10 min) einer Wand, wartete steine_aus_foto der Nachbarwand - die CPU-Arbeit anderer Waende konnte den GPU-Teil nie ueberlappen. Ein Lauf groesser als das Konto
+    bekommt das ganze Konto (laeuft allein, wie seriell). Summe der Bedarfe gleichzeitig nie > Konto."""
+    def __init__(s, mb):
+        import threading
+        s.mb = int(mb); s.belegt = 0; s.spitze = 0; s.cv = threading.Condition()
+    def buchen(s, mb):
+        import contextlib
+        mb = max(1, min(int(mb), s.mb))
+        @contextlib.contextmanager
+        def _k():
+            with s.cv:
+                while s.belegt + mb > s.mb: s.cv.wait()
+                s.belegt += mb; s.spitze = max(s.spitze, s.belegt)
+            try: yield
+            finally:
+                with s.cv: s.belegt -= mb; s.cv.notify_all()
+        return _k()
+
+
+def _werkzeug(cmd):
+    return next((os.path.basename(str(c)) for c in cmd if str(c).endswith(".py")), os.path.basename(str(cmd[0])) if cmd else "")
 
 
 def _gpu_run(cmd, **k):
-    """subprocess.run fuer GPU-Teilwerkzeuge (GPU_TEILE): hoechstens so viele gleichzeitig wie GPU-Plaetze (_waende_parallel) - mit 1 Platz nie mehr VRAM als der serielle Lauf."""
-    s = _GPU_SEM[0]
-    if s is None: return subprocess.run(cmd, **k)
-    with s: return subprocess.run(cmd, **k)
+    """subprocess.run fuer GPU-Teilwerkzeuge (GPU_TEILE). tiefe_lokal: Feinplatz (RAM, _GPU_SEM) UND VRAM-Konto; steine_aus_foto: nur VRAM-Konto.
+    Ohne Konto (serieller Ablauf) direkt. Mit einem Feinplatz und Konto = ein Platz (keine Buchung) nie mehr VRAM als der serielle Lauf."""
+    wz = _werkzeug(cmd); kt = _VRAM[0]; s = _GPU_SEM[0] if wz == "tiefe_lokal.py" else None
+    if kt is None and s is None: return subprocess.run(cmd, **k)
+    import contextlib
+    with (s if s is not None else contextlib.nullcontext()):
+        with (kt.buchen(GPU_BEDARF_MB.get(wz, GPU_BEDARF_MB["tiefe_lokal.py"])) if kt is not None else contextlib.nullcontext()):
+            return subprocess.run(cmd, **k)
 
 
 _WIEDERHOL = __import__("threading").Lock()   # Wiederholungen nach Systemabbruch laufen nacheinander
 
+def vram_konto_mb(g, env=None):
+    """VRAM-Konto (MiB) der GPU-Teilwerkzeuge: Job-Buchung RCPARK_GPU_MB; FASSADEN_GPU_PARALLEL (von Hand) oder keine Buchung -> g ganze Plaetze a 2300 MiB (alter Zaehler)."""
+    env = os.environ if env is None else env
+    b = int(env.get("RCPARK_GPU_MB") or 0)
+    return b if (b > 0 and not env.get("FASSADEN_GPU_PARALLEL")) else g * GPU_BEDARF_MB["tiefe_lokal.py"]
+
+
+def ram_plan(n_max, g, frei_mb, fein):
+    """(Waende, Feinplaetze) fuer frei_mb. 24.11.2026 (Kette 1122x, Buchung 11000 MiB, GPU 6000): alt wurde 5300 MiB JE GPU-Platz (2 Plaetze = 10,6 GB) vorab abgezogen
+    und der Rest durch 2600 geteilt -> 1 Wand, obwohl dann nie zwei Feinrechnungen gleichzeitig liefen. Jetzt Spitze ehrlich: eine Wand in der Feinrechnung
+    (tiefe_lokal) rechnet nichts anderes -> gf * 5300 + (n - gf) * 2600 <= frei, gf = Feinplaetze <= min(n, g). Groesstes n zuerst (PatchMatch nutzt die GPU
+    schon voll, ein zweiter Feinlauf bringt wenig - die CPU-Teile der anderen Waende ueberlappen ihn), dann groesstes gf. Mindestens (1, 1) wie bisher."""
+    if not fein: return max(1, min(n_max, frei_mb // RAM_WAND_MB)), max(1, g)
+    for n in range(n_max, 0, -1):
+        for gf in range(min(n, g), 0, -1):
+            if gf * RAM_FEIN_MB + (n - gf) * RAM_WAND_MB <= frei_mb: return n, gf
+    return 1, 1
+
+
 def parallel_plaetze(n_waende, env=None, fein=None):
-    """(Waende gleichzeitig, GPU-Plaetze). 21.11.2026 (Tempo, Kettenlauf 1121o: fassaden_kette 1356 s, Waende nacheinander, 28 Kerne):
-    CPU: FASSADEN_PARALLEL oder min(Waende, Kerne/4, verfuegbarer RAM / 2,6 GB - gemessen 21.11.: Spitze 2,5 GB Teilprozesse je Wand); 1 = alter serieller Ablauf.
+    """(Waende gleichzeitig, Feinplaetze). 21.11.2026 (Tempo, Kettenlauf 1121o: fassaden_kette 1356 s, Waende nacheinander, 28 Kerne):
+    CPU: FASSADEN_PARALLEL oder min(Waende, Kerne/4, RAM-Plan ram_plan) - verfuegbarer RAM, hoechstens Job-Buchung RCPARK_RAM_MB minus 1,5 GB Kette selbst; 1 = alter serieller Ablauf.
     GPU: FASSADEN_GPU_PARALLEL oder aus der Job-Buchung RCPARK_GPU_MB (tools/job_start.sh): je PatchMatch-Lauf (3200 px) ~2,2 GB -> Buchung // 2300, hoechstens 2, mindestens 1
-    (PatchMatch laeuft mit 100 % GPU - ein zweiter Lauf bringt nur die Ueberlappung von Entzerren/Fusion, kostet aber VRAM)."""
+    (PatchMatch laeuft mit 100 % GPU - ein zweiter Lauf bringt nur die Ueberlappung von Entzerren/Fusion, kostet aber VRAM); mit Feinrechnung zusaetzlich RAM-begrenzt.
+    steine_aus_foto rechnet daneben ueber das VRAM-Konto (vram_konto_mb), nicht ueber diese Plaetze."""
     env = os.environ if env is None else env
     fein = ("--fein" in sys.argv) if fein is None else fein
     g = int(env["FASSADEN_GPU_PARALLEL"]) if env.get("FASSADEN_GPU_PARALLEL") else max(1, min(2, int(env.get("RCPARK_GPU_MB") or 0) // 2300))
@@ -633,10 +723,9 @@ def parallel_plaetze(n_waende, env=None, fein=None):
     else:
         try: frei_mb = int([z.split()[1] for z in open("/proc/meminfo") if z.startswith("MemAvailable")][0]) // 1024
         except Exception: frei_mb = 3000
-        # 21.11.2026 (1121p: w03 Signal 6 nach Kernel-OOM): Feinrechnung tiefe_lokal braucht gemessen 5,2 GB je GPU-Platz -> vorab abziehen; Obergrenze = Job-Buchung (RCPARK_RAM_MB, job_start) minus 1,5 GB Kette selbst
+        # 21.11.2026 (1121p: w03 Signal 6 nach Kernel-OOM): Feinrechnung tiefe_lokal braucht gemessen 5,2 GB je GPU-Platz; Obergrenze = Job-Buchung (RCPARK_RAM_MB, job_start) minus 1,5 GB Kette selbst
         if env.get("RCPARK_RAM_MB"): frei_mb = min(frei_mb, int(env["RCPARK_RAM_MB"]) - 1500)
-        frei_mb -= 5300 * g if fein else 0
-        n = min(n_waende, max(1, (os.cpu_count() or 4) // 4), max(1, frei_mb // 2600))
+        n, g = ram_plan(min(n_waende, max(1, (os.cpu_count() or 4) // 4)), g, frei_mb, fein)
     return max(1, min(n, n_waende)), max(1, g)
 
 
@@ -645,11 +734,12 @@ def _waende_parallel(W, f, objekt=None):
     werden nur gelesen) -> Threads (die Arbeit steckt in den Teilprozessen), Ausgabe in Wandreihenfolge, GPU-Teil begrenzt (_gpu_run)."""
     import threading, traceback
     from concurrent.futures import ThreadPoolExecutor
-    n, g = parallel_plaetze(len(W)); _GPU_SEM[0] = threading.Semaphore(g)
+    n, g = parallel_plaetze(len(W)); _GPU_SEM[0] = threading.Semaphore(g); _VRAM[0] = _VramKonto(vram_konto_mb(g))
     if n <= 1:
+        _VRAM[0] = None                                                   # seriell: nie zwei GPU-Laeufe gleichzeitig, wie bisher
         for w in W: f(w)
         return
-    print(f"Waende parallel: {n} gleichzeitig, GPU-Plaetze {g} (FASSADEN_PARALLEL=1 = seriell)", flush=True)
+    print(f"Waende parallel: {n} gleichzeitig, Feinplaetze {g}, VRAM-Konto {_VRAM[0].mb} MiB (FASSADEN_PARALLEL=1 = seriell)", flush=True)
     if objekt:                                                            # gemeinsame Zwischenspeicher VOR den Threads fuellen (trimesh rechnet Eigenschaften sonst je Thread nach)
         nb = lod2_netze(objekt)[1]
         if nb is not None: nb.face_normals; nb.triangles

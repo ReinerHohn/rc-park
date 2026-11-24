@@ -28,6 +28,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
              Original + Wolke-Tore unveraendert), Bericht audit/wolke_draehte.json + audit/wolke_draehte.jpg (24.11.2026, Nutzerbefund 1122 Nordseite)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html (Wolke = gefilterte Kopie, wenn neuer als das Original)
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
+  (am Ende) tools/konvergenz.py -> audit/konvergenz.jsonl + konvergenz.png: F1 grob/fein je Seite auf FESTEM Fotosatz, Status steigt/PLATEAU/kein Beleg
   (immer am Ende) tools/befundliste.py -> audit/befunde.json + audit/befunde/bNN.jpg: sichtbare Fehler je Ort/Art/Beleg/Werkzeug fuer die Agenten-Schleife
 Umgebung: venv-seg (s.o.) oder `tools/py tools/gesamtkette.py ...`; Teilschritte mit pycolmap ruft die Kette selbst mit venv-colmap.
 Exit: 0 = Kette durchgelaufen, 2 = Datenplatte fehlt / modelle/<ziel>/objekt.json fehlt, 3 = keine Lage besteht alle Tore oder Platz zu knapp,
@@ -128,11 +129,19 @@ def lauf(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
     return rc_, out_
 
 
+def platz_tor_rc():
+    """rc von tools/platz_pruefen.py (Platztor vor jeder Stufe). 24.11.2026: Tests der Kette (test_kette_stabil, Heredoc 'Kette lauf()/Kameraregeln', test_speicher_wiederholung)
+    scheiterten mit 'PLATZ ZU KNAPP', nur weil die ECHTE Root-Platte voll war (und platz_pruefen startete dabei sogar das Aufraeumen). Tests setzen RCPARK_PLATZ_TOR=test_ersetzt
+    -> rc 0 ohne Plattenblick. Nur der Test des Platztors selbst (tools/test_platz_tor_ersetzt.py) laesst es weg. Nie in Kettenlaeufen setzen."""
+    if os.environ.get("RCPARK_PLATZ_TOR") == "test_ersetzt": return 0
+    return subprocess.run(["python3", os.path.join(ROOT, "tools", "platz_pruefen.py")], capture_output=True).returncode
+
+
 def _lauf_einmal(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
     """Eine Stufe starten. 16.11.2026 (Stabilisierung): Ausgabe laeuft ZEILENWEISE ins Log (vorher erst am Stufenende - eine 30-Minuten-Stufe war blind, ein Haenger nicht zu erkennen);
     Zeitlimit je Stufe (Standard RCPARK_STUFE_MAX_S = 3 h, die Prozessgruppe wird beendet) - ein Haenger auf einem Kern hielt am 16.11. die Kette stundenlang an."""
     import threading, signal
-    if subprocess.run(["python3", os.path.join(ROOT, "tools", "platz_pruefen.py")], capture_output=True).returncode != 0:      # Platztor VOR jeder Stufe (16.11.2026: Systemplatte lief mitten im Lauf unter 5 GB, die Stufe danach scheiterte halb)
+    if platz_tor_rc() != 0:      # Platztor VOR jeder Stufe (16.11.2026: Systemplatte lief mitten im Lauf unter 5 GB, die Stufe danach scheiterte halb)
         e = dict(stufe=name, rc=3, ok=False, sekunden=0, fehler="PLATZ ZU KNAPP vor Stufenstart (tools/platz_pruefen.py) - Kette haelt an"); B["schritte"].append(e); __import__("json_sicher").schreiben(B["_pfad"], B); print("    FEHLER: " + e["fehler"], flush=True)
         if _ABSCHLUSS[0]: _ABSCHLUSS[0](3)                                                            # 17.11.2026: auch dieser Abbruch schreibt 'lauf_ergebnis' (sonst steht im Bericht das Ergebnis des VORIGEN Laufs)
         raise SystemExit(3)
@@ -305,6 +314,7 @@ def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
 
 
 def main():
+    if os.environ.pop("RCPARK_PLATZ_TOR", None) is not None: print("ACHTUNG: RCPARK_PLATZ_TOR (nur fuer Tests) war gesetzt - im Kettenlauf entfernt, das Platztor gilt", flush=True)
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
     ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
     ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true"); ap.add_argument("--ohne-netz", action="store_true", help="Stufe commons: nur die Commons-Kategorie, keine weiteren Netzquellen (tools/netz_fotos_holen.py)")
@@ -492,7 +502,7 @@ def main():
             erg["lage_proben"], _lpt = _LPR.tor_rc(json.load(open(AU)).get("transformation") if os.path.exists(AU) else None)
             if _lpt: notiz(B, f"tor_lage_proben{tag}", erg["lage_proben"] != 3, hinweis=_lpt)
         except Exception as e_: erg["lage_proben"] = None; print("Lageproben nicht lesbar:", e_, flush=True)
-        if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT)], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende
+        if os.path.exists(AU): erg["kamera_gelaende"] = lauf(B, f"tor_kamera_gelaende{tag}", ["python3", "-I", "tools/kamera_gelaende.py", ZR, os.path.relpath(AU, ROOT), "--fusion", os.path.join(P, "dicht", "stereo", "fusion.cfg")], log, ok=(0, 3))[0]   # Hinweis-Tor (15.11.): Bildgruppen unter Gelaende = Geisterwaende; 24.11.: Urteil ueber die Bilder der FUSION (sonst dauernd rot nach dem Neufusionieren)
         if os.path.isdir(sp):                                              # 20.11.2026 (Martinstor FlexGlue-Nacht): Hinweis-Tore Seitenverkleben - Modell aus punktlos getrennten Stuecken? Kameras gegen Foto-GPS auf der falschen Turmseite?
             erg["zerfall"] = lauf(B, f"tor_zerfall{tag}", [PYC, "-I", "tools/modell_zerlegen.py", sp, "--min-bilder", "10"], log, ok=(0, 3))[0]
             if erg["zerfall"] == 3 and os.path.isfile(os.path.join(sp, "vereint.json")):   # 21.11.2026: vereinte Seitenmodelle haben ABSICHTLICH keine gemeinsamen Punkte - ihre Lage zueinander kommt aus seiten_vereinen und wird vom Seiten-Blick-Tor geprueft
@@ -549,12 +559,17 @@ def main():
         def _gruppen_aus():                                                # Liste des Wolken-Gruppen-Tors nicht leer (leer = Ausrichtung selbst verdaechtig, dann nichts ausschliessen)
             try: return bool(json.load(open(os.path.join(Z, "audit", "wolke_gruppen.json"))).get("ausschliessen"))
             except Exception: return False
-        if ((not bestanden(erg) or erg.get("insel") == 3) and (erg.get("kamera_gelaende") == 3 or erg.get("insel") == 3) and erg.get("gps") in (0, None)) or (erg.get("gruppen") == 3 and _gruppen_aus()):   # 15.11.: Geisterwand aus Kameras unter Gelaende -> ohne sie neu fusionieren (Minuten), Tore wiederholen; 19.11.: auch wenn das Gruppen-Tor Bilder nennt (unabhaengig vom GPS-Tor, das am Martinstor blind ist)
+        _FVB = __import__("fusion_vorab")                                 # 24.11.2026: Ausloese-Regel als Funktion (dieselbe sagt in der Vorstufe die Neufusion voraus -> nur EINE Fusion je Lauf)
+        if _FVB.noetig(erg, bestanden, _gruppen_aus):   # 15.11.: Geisterwand aus Kameras unter Gelaende -> ohne sie neu fusionieren (Minuten), Tore wiederholen; 19.11.: auch wenn das Gruppen-Tor Bilder nennt (unabhaengig vom GPS-Tor, das am Martinstor blind ist)
             rc_f, _ = lauf(B, "neu_fusionieren", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe], log, ok=(0, 2), platz=[P])
             if rc_f == 0: erg = tore("_ohne_tiefe_kameras")
             if rc_f in (0, 2) and not bestanden(erg) and erg.get("grundriss") == 3:        # Haufen aus EINER Bildquelle (Geisterwand, Kameras nicht unter Gelaende) -> diese Bilder auch weg
                 rc_h, _ = lauf(B, "neu_fusionieren_haufen", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe, "--haufen"], log, ok=(0, 2))
                 if rc_h == 0: erg = tore("_ohne_haufenquelle")
+        elif _FVB.offen(P):                                                # 24.11.2026 RUECKFALL Vorab-Ausschluss: erste Fusion war gekuerzt, die Regel feuert nach der dichten Wolke aber NICHT -> Fusion mit der fusion.cfg von vorher
+            rc_z, _ = lauf(B, "vorab_zurueck", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe, "--vorab-zurueck"], log, ok=(0, 2), platz=[P])
+            notiz(B, "fusion_vorab_rueckfall", rc_z in (0, 2), hinweis="Vorab-Ausschluss vor der ersten Fusion war nicht noetig (Tore nach der dichten Wolke loesen keine Neufusion aus) - zweite Fusion mit allen Bildern wie vor dem 24.11. (tools/fusion_vorab.py)")
+            if rc_z == 0: erg = tore("_vorab_zurueck")
         kaputt = lambda e: e.get("gps") in (1, 4) or e.get("grundriss") in (1, 4)          # rc 1/4 = Werkzeug abgestuerzt/nicht geprueft (15.11.: CUDA out of memory) - kein Lage-Urteil
         if kaputt(erg): B["lage"] = dict(tore=erg, bestanden=False, fehler="tor_abgestuerzt"); return abschluss(4, f"Tor-Werkzeug abgestuerzt/nicht geprueft {erg} (Log ansehen, z. B. GPU-Speicher) - KEIN Lage-Urteil")
         k = 0
@@ -749,6 +764,10 @@ def main():
                 if os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")):
                     erg_["vorbau_beleg_rc"] = lauf(B, "bauplan_vorbau_beleg", [PY, "-W", "ignore", "-I", "tools/vorbau_fototor.py", "--beleg", os.path.join(Z, "audit", "vorbauten_auto.json"), fo, os.path.join(eb_, "ebenen.json")], log, ok=(0, 2, 3))[0]
             beleg(B, "bauplan_ebenen", [os.path.join(eb_, "ebenen.json")], t_eb, altstand_beiseite=True, folge="Altstand beiseite - Oeffnungen aus Kanten und Abweichung je Ebene rechnen NICHT mit den Ebenen eines frueheren Laufs")   # 23.11.2026 AUDIT
+            # 24.11.2026 (Befund 1122x f00: Koerperwand 0,32-0,40 m VOR Fotokanten und Wolke, weil der Koerper auf der LoD2-Ebene stand): KOERPERWAND AUF DIE FOTOKANTEN-EBENE
+            # (tools/wandlage_fotokanten.py, Guard: Fotokanten belastbar + Wolke gleiche Seite) -> 'wandversatz' in audit/schleife_korrekturen.json -> Generator setzt die Wand
+            # am Grundkoerper zurueck (bauteile.korrekturen_aus_json), Relief/Fenster/Uhr folgen. Kettenlog: je Fassade eine Zeile 'WANDLAGE fNN: alt w, neu w, Beleg, uebernommen'.
+            erg_["wandlage_rc"] = lauf(B, "bauplan_wandlage", [PY, "-W", "ignore", "-I", "tools/wandlage_fotokanten.py", ZR, eb_, "--fassade", fo] + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3))[0]
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
             # 24.11.2026 (1122w West: Schlitz und Luke ueber 28 m fehlten - OWLv2 ohne Kasten, feines Wandbild dort leer wegen --max-mpp 0,02): kleine dunkle Oeffnungen
@@ -935,6 +954,30 @@ def main():
             notiz(B, "malplan_ergebnis", rc_mp == 0, waende=len(mp_.get("waende") or []), zonen={w_["wand"]: [f"{z_['material']} {z_['hex']} {round(100 * z_['anteil'])}%" for z_ in w_["zonen"]] for w_ in mp_.get("waende") or []},
                   gebaeude={m_: f"{g_['hex']} -> {g_['mischung']['text']}" for m_, g_ in (mp_.get("gebaeude") or {}).items()}, hinweis="ANSEHEN: audit/malplan_<wand>.jpg; Anleitung audit/malplan.md (Material = Farbregel-ANNAHME)")
         except Exception as e: notiz(B, "malplan_ergebnis", False, fehler=f"audit/malplan.json nicht lesbar (rc {rc_mp}): {type(e).__name__} {e}"[:240])
+    # 24.11.2026 KONVERGENZ (Nutzer: "Augenmass ist doof"): FESTER Fotosatz je Seite (audit/konvergenz_fotosatz.json, einmal gewaehlt) + feste Bauteil-Kameras
+    # aus neben_details -> grobes F1 (foto_diff_batch auf das End-STL, Ausgabe <daten>/konvergenz/<lauf>) und feines F1 je Bauteil (teil_fotoform f1_fein) ->
+    # Zeile audit/konvergenz.jsonl + audit/konvergenz.png; Status je Seite steigt / PLATEAU (Methode erschoepft, mit Restfehler-Ort) / kein Beleg. Bericht, kein Tor.
+    if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
+        try:
+            t_kv = time.time(); lid_ = os.environ.get("RCPARK_JOB") or time.strftime("lauf_%Y%m%d_%H%M")
+            rc_kv, _ = lauf(B, "konvergenz", [PY, "-W", "ignore", "-I", "tools/konvergenz.py", ZR, "--lauf", lid_, "--daten", D], log, ok=(0, 3), timeout=3600)
+            zl_ = open(os.path.join(Z, "audit", "konvergenz.jsonl")).read().splitlines()[-1] if KB_frisch(os.path.join(Z, "audit", "konvergenz.jsonl"), t_kv) else None
+            if zl_ is None: raise FileNotFoundError("audit/konvergenz.jsonl nicht in diesem Lauf geschrieben")
+            kv_ = json.loads(zl_)
+            notiz(B, "konvergenz_ergebnis", True, lauf=lid_, seiten={e_["name"]: f"grob {e_.get('f1')} fein {e_.get('f1_fein')} -> {e_.get('status')}" for e_ in kv_["seiten"].values()},
+                  hinweis="ANSEHEN: audit/konvergenz.png; PLATEAU = Methode erschoepft -> restfehler in audit/konvergenz.jsonl zeigt, wo neu ansetzen")
+        except Exception as e: notiz(B, "konvergenz_ergebnis", True, hinweis=f"Konvergenzmessung ohne Ergebnis (kein Kettenfehler): {type(e).__name__} {e}"[:240])
+    # 24.11.2026 LAUFZEIT-BERICHT (modelle/ERKENNTNISSE.md 24.11.: Doppel-Fusion 470 + 450 s, 6 volle Bauten 38 min blieben unbemerkt): Laufzeit je Stufenfamilie
+    # aus gesamtkette.log ab diesem Lauf, Vorlauf = frueherer Abschnitt derselben Datei, Fusionen der SfM-Stufe aus pipe/pipeline.log -> audit/laufzeit.json. Bericht, kein Tor.
+    if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
+        try:
+            _lz = [PY, "-I", "tools/laufzeit_bericht.py", log, "--aus", os.path.join(Z, "audit", "laufzeit.json"), "--ab-zeile", str(log_ab)]
+            if os.environ.get("RCPARK_JOB"): _lz += ["--unterlog", os.path.join(D, "pipe", "pipeline.log"), "--job", os.environ["RCPARK_JOB"]]
+            lauf(B, "laufzeit", _lz, log, ok=(0,), timeout=300)
+            _lzj = json.load(open(os.path.join(Z, "audit", "laufzeit.json")))
+            notiz(B, "laufzeit_ergebnis", True, summe_min=_lzj.get("summe_min"), hinweise=(_lzj.get("hinweise") or [])[:8],
+                  hinweis="DOPPELARBEIT/WIEDERHOLUNG/GEWACHSEN = Beschleunigungs-Befund fuer die Agenten-Schleife")
+        except Exception as e: notiz(B, "laufzeit_ergebnis", True, hinweis=f"Laufzeit-Bericht ohne Ergebnis (kein Kettenfehler): {type(e).__name__} {e}"[:240])
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
     if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
