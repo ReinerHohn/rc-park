@@ -256,6 +256,9 @@ def _sonne_dreh(s, grad):
     c, s_ = np.cos(np.radians(grad)), np.sin(np.radians(grad)); return np.array([c * s[0] - s_ * s[1], s_ * s[0] + c * s[1], s[2]])
 
 
+_PUNKTE = None  # konvergenz_wolke (24.11.2026): None = altes Verhalten. dict(P, N) ersetzt im Punktmodus die Netzabtastung (dichte Wolke als Punkte, Splat = derselbe
+                #   9x9-Minimum-Fuellschritt wie beim Netz-Punktrender); dict(bezug=dict(sil_f, dmed, occ)) aus dem Modelllauf DESSELBEN Fotos -> gleicher
+                #   Bewertungsbereich, gleiche Glaettung/Fotokanten, gleiche Verdecker; dict(merken=True) legt nach dem Lauf "bezug" hier ab.
 _RUECK = None   # Schnellweg fuer teil_fotoform (Nutzer 10.11. abends "massiv beschleunigen"): dict -> Raster + Kostenkarte im Speicher zurueck statt
                 # zweitem Raster/npz; "nur_kosten" -> nach der Kostenkarte aufhoeren (Bericht/Bilder ungenutzt). None = altes Verhalten (alle anderen Aufrufer).
 def _netz_raster(pfad, obj, kk):
@@ -472,9 +475,14 @@ def main(argv=None):
         if _RUECK is not None: _RUECK["depth"] = depth.copy(); _RUECK["pos"] = pos.clone()
         Nf_ = torch.as_tensor(np.asarray(m.face_normals), dtype=torch.float32, device="cuda"); nrm = torch.zeros((H, W, 3), device="cuda"); ok_ = fid_ >= 0; nrm[ok_] = Nf_[fid_[ok_]]; del fid_, ok_
     else:
-        m, P_, N_ = (_netz_gpu if gpu else _netz)(a.stl or os.path.join(root, obj["stl"]), obj, kk)
+        if _PUNKTE is not None and _PUNKTE.get("P") is not None: m, P_, N_ = None, _PUNKTE["P"], _PUNKTE["N"]   # Wolke statt Netz (nur Punktmodus, CPU)
+        else: m, P_, N_ = (_netz_gpu if gpu else _netz)(a.stl or os.path.join(root, obj["stl"]), obj, kk)
         depth, nrm, pos = (_render_gpu if gpu else _render)(P_, N_, R, t, f, W, H, cx0, cy0)
     sil, sil_f, dfill, dmed = _tiefe_vorbereiten(depth, gpu)
+    _bz = (_PUNKTE or {}).get("bezug")
+    if _bz is not None:                                                                            # Wolke gegen Modell: Bereich (Modellsilhouette) und dmed vom Modell -> dieselben Fotokanten
+        _PUNKTE["sil_eigen"] = sil_f.copy()                                                        # eigene Abdeckung (Wolke) vor dem Ersetzen -> Abdeckungsanteil im Aufrufer
+        sil_f = np.asarray(_bz["sil_f"]).astype(sil_f.dtype); dmed = float(_bz["dmed"])
     dmed_aktuell = dmed
     if _RUECK is not None and _RUECK.get("dmed_fix"): dmed = float(_RUECK["dmed_fix"])                 # foto_tor_bezug (17.11.): dmed (-> Glaettung, Fotokanten, Kappe) aus dem BEZUGSSTAND, sonst aendert ein anderes Modell die Fotokanten
     if _RUECK is not None and _RUECK.get("sigma_fest"):                                           # Metrik v3 (11.11.): dmed (damit sigma, Kappe, Randabstand) je Foto aus dem FESTEN Referenz-STL, nicht aus dem aktuellen Gesamtmodell
@@ -490,6 +498,9 @@ def main(argv=None):
     if a.kanten == "netz": mk = netzkanten(m, R, t, f, cx0, cy0, W, H)
     sigma = max(1.0, a.glaettung * ppm); r_ = min(1.0, a.glaett_px / sigma)
     if a.kanten == "normalen": mk = (normalenkanten_gpu if gpu else normalenkanten)(nrm, depth, r_, W, H, pos=pos, C=-np.asarray(R).T @ np.asarray(t, float), dsauber=dfill, glatt=a.modell_glatt, sprung_m=a.sprung_m) & (sil_f > 0)
+    if _PUNKTE is not None and _PUNKTE.get("min_kante_m") and mk is not None:                     # konvergenz_wolke: kurze Kantenstuecke (Wolke: Rauschen der Normalen) weg, fuer Modell UND Wolke gleich
+        n_cc, lab_cc, st_cc, _ = cv2.connectedComponentsWithStats(mk.astype(np.uint8), connectivity=8)
+        lang_cc = st_cc[:, cv2.CC_STAT_AREA] / max(ppm, 1e-6) >= float(_PUNKTE["min_kante_m"]); lang_cc[0] = False; mk = mk & lang_cc[lab_cc]
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     if r_ < 1.0:                                                                                   # Arbeitsaufloesung: Glaettung = --glaett-px (vorher 0,18 m x 155 px/m = 28 px -> Canny fand fast nichts, Kaufhaus 004: 100 % 'falsch')
         gs = cv2.GaussianBlur(cv2.resize(gray, None, fx=r_, fy=r_, interpolation=cv2.INTER_AREA), (0, 0), max(1.0, sigma * r_))
@@ -528,6 +539,8 @@ def main(argv=None):
             if o_ is not None: occ, occ_q = o_ & (sil_f > 0), q_; break
             gruende.append(q_)
         else: occ_q = "keine passende Tiefenkarte: " + ("; ".join(gruende) if gruende else "kein sfm/dicht_*")
+    if _bz is not None and _bz.get("occ") is not None: occ = np.asarray(_bz["occ"], bool); occ_q = "aus dem Modelllauf (konvergenz_wolke)"
+    if _PUNKTE is not None and _PUNKTE.get("merken"): _PUNKTE["bezug"] = dict(sil_f=sil_f.copy(), dmed=float(dmed), occ=occ.copy())
     if _RUECK is not None and _RUECK.get("nur_masken"):                                          # foto_tor_bezug (17.11.): Rohmasken zurueck (Modellkanten mit Umriss, Fotokanten, Silhouette, Verdecker, Normalen), Rest ungenutzt
         rand_ = (sil_f > 0) & ~(cv2.erode(sil_f, np.ones((3, 3), np.uint8)) > 0)
         nrm_ = nrm.cpu().numpy() if hasattr(nrm, "cpu") else np.asarray(nrm); pos_ = pos.cpu().numpy() if hasattr(pos, "cpu") else np.asarray(pos)
@@ -606,6 +619,17 @@ def main(argv=None):
     mk_alle = mk; mk = mk & ~fein
     falsch = mk & (dF > a.tol); fehlt = fk_i & (dM > a.tol)
     falsch &= ~occ; fehlt &= ~occ                                                                    # verdeckt: weder Bestaetigung noch Widerspruch
+    if _PUNKTE is not None and _PUNKTE.get("nullprobe_m"):                                        # konvergenz_wolke: ZUFALLSNIVEAU derselben Kantenkarte (dichte Kanten finden in dichter Textur
+        f1n_ = []                                                                                   # immer eine Fotokante): Karte um 1,3/2,1 m in 4 Richtungen verschoben, Median-F1 -> F1 ueber Zufall
+        for sm_ in _PUNKTE["nullprobe_m"]:
+            s_ = max(1, int(round(float(sm_) * ppm)))
+            for dx_, dy_ in ((s_, 0), (-s_, 0), (0, s_), (0, -s_)):
+                mks_ = _verschieben(mk, dx_, dy_) & inner & ~occ
+                if not mks_.any() or not fk_i.any(): continue
+                dMs_ = cv2.distanceTransform((~(mks_ | ~inner)).astype(np.uint8), cv2.DIST_L2, 5) * mpp
+                p_n = 1.0 - float((mks_ & (dF > a.tol)).sum()) / float(mks_.sum()); r_n = 1.0 - float((fk_i & (dMs_ > a.tol)).sum()) / float(fk_i.sum())
+                f1n_.append(2 * p_n * r_n / (p_n + r_n) if p_n + r_n > 0 else 0.0)
+        _PUNKTE["f1_null"] = float(np.median(f1n_)) if f1n_ else None
     vs = (_versatz_gpu if gpu else versatz_schaetzen)(mk, fk, inner, ppm, float(np.median(mpp[mk])) if mk.any() else 1.0 / ppm, kappe_m=a.tol)
     if os.environ.get("FD_DEBUG"): print("DEBUG ppm", round(ppm,1), "sigma", round(sigma,1), "r_", round(r_,3), "fk", int(fk.sum()), "fk_i", int(fk_i.sum()), "mk", int(mk.sum()), "dF@mk median m", float(np.median(dF[mk])) if mk.any() else None, "mpp median", float(np.median(mpp[mk])) if mk.any() else None, "dfill med", dmed, "f", f)
     def cluster(mask, art):

@@ -964,8 +964,11 @@ def main():
             zl_ = open(os.path.join(Z, "audit", "konvergenz.jsonl")).read().splitlines()[-1] if KB_frisch(os.path.join(Z, "audit", "konvergenz.jsonl"), t_kv) else None
             if zl_ is None: raise FileNotFoundError("audit/konvergenz.jsonl nicht in diesem Lauf geschrieben")
             kv_ = json.loads(zl_)
-            notiz(B, "konvergenz_ergebnis", True, lauf=lid_, seiten={e_["name"]: f"grob {e_.get('f1')} fein {e_.get('f1_fein')} -> {e_.get('status')}" for e_ in kv_["seiten"].values()},
-                  hinweis="ANSEHEN: audit/konvergenz.png; PLATEAU = Methode erschoepft -> restfehler in audit/konvergenz.jsonl zeigt, wo neu ansetzen")
+            notiz(B, "konvergenz_ergebnis", True, lauf=lid_, seiten={e_["name"]: f"grob {e_.get('f1')} fein {e_.get('f1_fein')} -> {e_.get('status')}"
+                                                                     + (f"; Wolke {e_.get('f1_wolke')} vs Modell {e_.get('f1_modell_gleich')} verlust {e_.get('verlust')} -> {e_['status_wolke']}" if e_.get("status_wolke") else "")
+                                                                     for e_ in kv_["seiten"].values()},
+                  hinweis="ANSEHEN: audit/konvergenz.png; PLATEAU = Methode erschoepft -> restfehler in audit/konvergenz.jsonl zeigt, wo neu ansetzen; "
+                          "status_wolke: 'Modellierung verliert' = Wolke traegt mehr als das Modell (Modellstufe verbessern), 'Daten fehlen' = Fotos/SfM nachholen")
         except Exception as e: notiz(B, "konvergenz_ergebnis", True, hinweis=f"Konvergenzmessung ohne Ergebnis (kein Kettenfehler): {type(e).__name__} {e}"[:240])
     # 24.11.2026 LAUFZEIT-BERICHT (modelle/ERKENNTNISSE.md 24.11.: Doppel-Fusion 470 + 450 s, 6 volle Bauten 38 min blieben unbemerkt): Laufzeit je Stufenfamilie
     # aus gesamtkette.log ab diesem Lauf, Vorlauf = frueherer Abschnitt derselben Datei, Fusionen der SfM-Stufe aus pipe/pipeline.log -> audit/laufzeit.json. Bericht, kein Tor.

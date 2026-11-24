@@ -37,6 +37,11 @@ keine Zeitreihe, Laeufe nicht vergleichbar (Lehre NICHTS_GEBRACHT 10.11. Kreis a
    Lauf-zu-Lauf-Streuung kommt aus den neu geschaetzten Kameras. Gibt es in der Reihe zwei Laeufe mit gleichem STL-Hash (= gleicher Stand), wird ihre
    Differenz als gemessene Streuung genommen: Schwelle = max(2 pp, 2 x Streuung). Zusaetzlich je Seite die Standardabweichung der F1 ueber die
    Fotos (spreizung_fotos: Lage der Fotos zueinander, KEIN Rauschen - der Gewinn wird deshalb GEPAART je Foto gerechnet, siehe gewinn()).
+5. VERLUST WOLKE -> MODELL je Seite (Nachtrag 24.11., tools/konvergenz_wolke.py): dieselben Fotos, dieselbe foto_diff-Kantenlogik fuer die DICHTE WOLKE der
+   Kette (Punkte + PCA-Normalen, Splat/Tiefentest des Punktrenders) und gepaart fuer das Modell in derselben Punktfassung; Bewertungsbereich, dmed und
+   Verdecker vom Modell -> f1_wolke, f1_modell_gleich, verlust = f1_wolke - f1_modell_gleich (Median je Foto), status_wolke "Modellierung verliert" /
+   "Daten fehlen" / "Modell besser als Wolke" / "gleich" (Schwellen ANNAHME mit Begruendung dort). --ohne-wolke schaltet ab; --lesen liest
+   DIR/konvergenz_wolke.json, sonst <quelle>/konvergenz_wolke.json.
 Ausgabe: Zeile in audit/konvergenz.jsonl (lauf, zeit, git, stl_sha, je Seite F1 grob/fein + n + Status + Restfehler), Text, audit/konvergenz.png (F1 je
 Seite ueber die Laeufe, grob und fein). --lesen DIR: foto_diff_<foto>.json aus DIR statt neu rechnen (Probe/Test); --fein-json: teil_fotoform-Bericht lesen.
 --aus DIR: Fotosatz/Reihe/Bild dorthin statt audit/ (Probe ohne Objektordner). --trocken: keine Zeile anhaengen.
@@ -357,12 +362,12 @@ def restfehler(diffs, fotos, bt, gruppe, fein, n=5):
 def kurve(zeilen, gruppen, pfad):
     """Kleine Vielfache: je Seite ein Feld, F1 grob (blau) und fein (orange) ueber die Laeufe; Bruch = senkrechte Strichlinie."""
     import cv2
-    n = len(gruppen); sp = 2 if n > 1 else 1; zl = (n + sp - 1) // sp; FW, FH, M = 520, 300, 48
+    n = len(gruppen); sp = 2 if n > 1 else 1; zl = (n + sp - 1) // sp; FW, FH, M = 520, 320, 48
     img = np.full((zl * FH + 40, sp * FW, 3), (251, 252, 252), np.uint8)
-    farbe = {"f1": (214, 120, 42), "f1_fein": (52, 104, 235)}   # BGR von #2a78d6 / #eb6834
-    cv2.putText(img, "F1 je Seite ueber die Laeufe (blau grob foto_diff, orange fein je Bauteil); Strich = Bruch", (10, 26), 0, 0.5, (40, 40, 40), 1, cv2.LINE_AA)
+    farbe = {"f1": (214, 120, 42), "f1_fein": (52, 104, 235), "f1_wolke": (96, 160, 34)}   # BGR von #2a78d6 / #eb6834 / #22a060 (Wolke)
+    cv2.putText(img, "F1 je Seite (blau grob, orange fein je Bauteil, gruen dichte Wolke); Strich = Bruch", (10, 26), 0, 0.5, (40, 40, 40), 1, cv2.LINE_AA)
     for i, (g, name) in enumerate(gruppen):
-        x0, y0 = (i % sp) * FW + M, 40 + (i // sp) * FH + 30; w, h = FW - M - 20, FH - 80
+        x0, y0 = (i % sp) * FW + M, 40 + (i // sp) * FH + 30; w, h = FW - M - 20, FH - 100
         cv2.putText(img, name, (x0, y0 - 10), 0, 0.6, (11, 11, 11), 1, cv2.LINE_AA)
         for yv in (0.0, 0.25, 0.5, 0.75, 1.0):
             yy = int(y0 + h - yv * h); cv2.line(img, (x0, yy), (x0 + w, yy), (225, 225, 225), 1)
@@ -383,6 +388,8 @@ def kurve(zeilen, gruppen, pfad):
             for j, z in enumerate(zeilen): cv2.putText(img, str(z.get("lauf", j))[-10:], (xs[j] - 34, y0 + h + 18), 0, 0.35, (82, 81, 78), 1, cv2.LINE_AA)
         st = ((zeilen[-1].get("seiten") or {}).get(g) or {}).get("status", "")
         cv2.putText(img, st[:44], (x0, y0 + h + 40), 0, 0.45, (11, 11, 11), 1, cv2.LINE_AA)
+        ez = (zeilen[-1].get("seiten") or {}).get(g) or {}
+        if ez.get("status_wolke"): cv2.putText(img, f"Wolke: {ez['status_wolke']} (verlust {ez.get('verlust')})"[:56], (x0, y0 + h + 58), 0, 0.42, (34, 110, 30), 1, cv2.LINE_AA)
     cv2.imwrite(pfad, img)
 
 
@@ -402,6 +409,7 @@ def main(argv=None):
     ap.add_argument("--lesen", help="foto_diff_<foto>.json hier lesen statt rechnen"); ap.add_argument("--fein-json", help="teil_fotoform-Bericht lesen statt rechnen")
     ap.add_argument("--aus"); ap.add_argument("--k", type=int, default=K_STD); ap.add_argument("--schwelle", type=float, default=SCHWELLE)
     ap.add_argument("--trocken", action="store_true"); ap.add_argument("--ohne-fein", action="store_true")
+    ap.add_argument("--ohne-wolke", action="store_true"); ap.add_argument("--wolke", help="dichte Wolke (npy, Kamerarahmen) statt der Standardwolke")
     a = ap.parse_args(argv)
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt))
     root = os.path.dirname(os.path.dirname(od)); fotos_dir = os.path.join(root, obj.get("fotos_dir", ""))
@@ -466,13 +474,25 @@ def main(argv=None):
             if r.returncode: print(f"HINWEIS: teil_fotoform rc {r.returncode}: {(r.stderr or r.stdout)[-300:]}")
             if os.path.exists(tfp): tf = json.load(open(tfp))
     fein = fein_lesen(tf, bt) if bt else {}
+    # --- Wolke gegen Modell (Verlust der Modellierung) messen / lesen
+    wolke = None; wj = os.path.join(a.lesen or quelle, "konvergenz_wolke.json")
+    if not a.ohne_wolke and not a.lesen and satz and os.path.exists(stl):
+        try:
+            r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "konvergenz_wolke.py"), a.objekt, "--aus", os.path.join(quelle, "wolke"), "--fotosatz", sp,
+                                "--json", wj] + (["--wolke", a.wolke] if a.wolke else []), cwd=root, capture_output=True, text=True, timeout=2400)
+            if r.returncode: print(f"HINWEIS: konvergenz_wolke rc {r.returncode}: {(r.stdout + r.stderr)[-300:]}")
+        except subprocess.TimeoutExpired: print("HINWEIS: konvergenz_wolke nach 2400 s abgebrochen - kein Wolkenvergleich in diesem Lauf")
+    if not a.ohne_wolke and os.path.exists(wj):
+        try: wolke = json.load(open(wj))
+        except Exception as ex: print(f"HINWEIS: {wj} unlesbar ({ex})")
     # --- Zeile
     jp = os.path.join(aus, "konvergenz.jsonl"); zeilen = []
     if os.path.exists(jp):
         for ln in open(jp):
             try: zeilen.append(json.loads(ln))
             except Exception: pass
-    Z = dict(lauf=a.lauf, zeit=time.strftime("%Y-%m-%d %H:%M:%S"), git=git_hash(), stl_sha=sha(stl), quelle=quelle, seiten={})
+    Z = dict(lauf=a.lauf, zeit=time.strftime("%Y-%m-%d %H:%M:%S"), git=git_hash(), stl_sha=sha(stl), quelle=quelle, seiten={},
+             wolke=(wolke or {}).get("wolke"), wolke_schwellen=(wolke or {}).get("schwellen"))
     gruppen = [(ax, s["name"]) for ax, s in S["seiten"].items()] + ([("rund", "rund")] if any(e["gruppe"] == "rund" for e in bt.values()) else [])
     for g, name in gruppen:
         fo = S["seiten"][g]["fotos"] if g in S["seiten"] else []
@@ -482,6 +502,11 @@ def main(argv=None):
         e = dict(name=name, f1=round(m, 4) if m is not None else None, n=nn, spreizung_fotos=round(se, 4) if se else None, fotos=fv,
                  f1_fein=round(mf, 4) if mf is not None else None, n_fein=nf, bauteile_fein={k: (round(v, 3) if v is not None else None) for k, v in fb.items()},
                  bruch=g in bruch)
+        we = ((wolke or {}).get("seiten") or {}).get(g)
+        if we:
+            e.update(f1_wolke=we.get("f1_wolke"), f1_modell_gleich=we.get("f1_modell_gleich"), verlust=we.get("verlust"), abdeckung_wolke=we.get("abdeckung"),
+                     guete_wolke=we.get("guete_wolke"), guete_modell=we.get("guete_modell"), verlust_zufall=we.get("verlust_zufall"),
+                     n_wolke=we.get("n"), status_wolke=we.get("status"), fotos_wolke={nr: q.get("w") for nr, q in (we.get("fotos") or {}).items()})
         Z["seiten"][g] = e
     allf = [v for e in Z["seiten"].values() for v in e["fotos"].values()]; allb = [v[0] for v in fein.values()]
     Z["gesamt"] = dict(f1=median_oder_none(allf)[0], n=median_oder_none(allf)[1], f1_fein=median_oder_none(allb)[0], n_fein=median_oder_none(allb)[1])
@@ -506,6 +531,7 @@ def main(argv=None):
         fg = f"grob F1 {e['f1']:.3f} (n {e['n']}" + (f", Fotos streuen +-{e['spreizung_fotos']:.2f}" if e["spreizung_fotos"] else "") + ")" if e["f1"] is not None else "grob: kein Beleg"
         ff = f"fein F1 {e['f1_fein']:.3f} (n {e['n_fein']})" if e["f1_fein"] is not None else "fein: kein Beleg"
         print(f"  {name}: {fg}; {ff} -> {e['status']}" + (" [BRUCH]" if e["bruch"] else ""))
+        if e.get("status_wolke"): print(f"      Wolke F1 {e['f1_wolke']} / Modell (Punktfassung) {e['f1_modell_gleich']} -> verlust {e['verlust']} (ueber Zufall {e.get('verlust_zufall')}), Abdeckung {e['abdeckung_wolke']} (n {e['n_wolke']}): {e['status_wolke']}")
         for q in (e.get("restfehler") or {}).get("grob", [])[:3]: print(f"      Rest grob: {q['art']} {q['ort']} {q['laenge']} m Kante")
         for q in (e.get("restfehler") or {}).get("fein", [])[:3]: print(f"      Rest fein: {q['bauteil']} F1 {q['f1_fein']}")
         if (e.get("restfehler") or {}).get("fein_nicht_belastbar"): print(f"      fein nicht belastbar (Kamera zu fern/ungenau -> Nahaufnahme): {e['restfehler']['fein_nicht_belastbar']}")
