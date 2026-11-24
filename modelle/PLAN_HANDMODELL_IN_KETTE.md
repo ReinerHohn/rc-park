@@ -84,7 +84,9 @@ Die 12-14 % Massstabsluecke wirkt im Endmodell NICHT (Massstabsterm 0,1-0,4 %); 
 - P5 Formpruefung zum Zahlenvergleich: Foto-F1 je Bauteilzone (Bestand-Tor) + Detailbild; PASST nur mit beidem.
 - P6 Zusammenfuehren -> Probelauf -> Schnelltest 0 -> Kette -> x von N + Bild Kette|Ziel|Bestand. 
 - P7 Abbruchregel: zwei Laeufe ohne Anstieg von x ODER Bestand-Tor rot = Methode wechseln, dem Nutzer melden. Ziel 1: >= 9/11 + Bild wie 1120; Ziel 2: Bild wie schwab_v3.
-- P8 Offen (kein Agent, Plattenplatz): konvergenz.jsonl F1 je Seite leer (n 0) reparieren; Tor-Scheitel/-Breite; Dachknick; Gegenprobe zweites Objekt.
+- P5b Zweites Messgeraet blind: konvergenz.jsonl F1 je Seite/Bauteil = None fuer ALLE Fotos (1 Zeile nach 21 Laeufen) -> Agent 24.11. 23:10 (Zweig agent-konvergenz-f1, Arbeitsbaum auf /media/oem/scan).
+- P6b Probelauf Probe 31 (Stand b0461e83f) rc 0 um 23:00; Merge nach main WARTET auf Galerie-Reparatur + Bestand-Tor (Regel: kein Merge bei Rueckschritt im Bild).
+- P8 Offen (kein Agent, Plattenplatz): Tor-Scheitel/-Breite; Dachknick; Gegenprobe zweites Objekt.
 
 ## Stand (fortschreiben, neueste oben)
 - 24.11. 23:30 · Tiefenpruefung: 11/11 (1120) -> 4/11 -> 5/11 (1122); P1 Grundlinie erledigt, P2-P5 bei Agenten.
