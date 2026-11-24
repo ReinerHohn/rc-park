@@ -550,12 +550,17 @@ def main():
         def _gruppen_aus():                                                # Liste des Wolken-Gruppen-Tors nicht leer (leer = Ausrichtung selbst verdaechtig, dann nichts ausschliessen)
             try: return bool(json.load(open(os.path.join(Z, "audit", "wolke_gruppen.json"))).get("ausschliessen"))
             except Exception: return False
-        if ((not bestanden(erg) or erg.get("insel") == 3) and (erg.get("kamera_gelaende") == 3 or erg.get("insel") == 3) and erg.get("gps") in (0, None)) or (erg.get("gruppen") == 3 and _gruppen_aus()):   # 15.11.: Geisterwand aus Kameras unter Gelaende -> ohne sie neu fusionieren (Minuten), Tore wiederholen; 19.11.: auch wenn das Gruppen-Tor Bilder nennt (unabhaengig vom GPS-Tor, das am Martinstor blind ist)
+        _FVB = __import__("fusion_vorab")                                 # 24.11.2026: Ausloese-Regel als Funktion (dieselbe sagt in der Vorstufe die Neufusion voraus -> nur EINE Fusion je Lauf)
+        if _FVB.noetig(erg, bestanden, _gruppen_aus):   # 15.11.: Geisterwand aus Kameras unter Gelaende -> ohne sie neu fusionieren (Minuten), Tore wiederholen; 19.11.: auch wenn das Gruppen-Tor Bilder nennt (unabhaengig vom GPS-Tor, das am Martinstor blind ist)
             rc_f, _ = lauf(B, "neu_fusionieren", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe], log, ok=(0, 2), platz=[P])
             if rc_f == 0: erg = tore("_ohne_tiefe_kameras")
             if rc_f in (0, 2) and not bestanden(erg) and erg.get("grundriss") == 3:        # Haufen aus EINER Bildquelle (Geisterwand, Kameras nicht unter Gelaende) -> diese Bilder auch weg
                 rc_h, _ = lauf(B, "neu_fusionieren_haufen", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe, "--haufen"], log, ok=(0, 2))
                 if rc_h == 0: erg = tore("_ohne_haufenquelle")
+        elif _FVB.offen(P):                                                # 24.11.2026 RUECKFALL Vorab-Ausschluss: erste Fusion war gekuerzt, die Regel feuert nach der dichten Wolke aber NICHT -> Fusion mit der fusion.cfg von vorher
+            rc_z, _ = lauf(B, "vorab_zurueck", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe, "--vorab-zurueck"], log, ok=(0, 2), platz=[P])
+            notiz(B, "fusion_vorab_rueckfall", rc_z in (0, 2), hinweis="Vorab-Ausschluss vor der ersten Fusion war nicht noetig (Tore nach der dichten Wolke loesen keine Neufusion aus) - zweite Fusion mit allen Bildern wie vor dem 24.11. (tools/fusion_vorab.py)")
+            if rc_z == 0: erg = tore("_vorab_zurueck")
         kaputt = lambda e: e.get("gps") in (1, 4) or e.get("grundriss") in (1, 4)          # rc 1/4 = Werkzeug abgestuerzt/nicht geprueft (15.11.: CUDA out of memory) - kein Lage-Urteil
         if kaputt(erg): B["lage"] = dict(tore=erg, bestanden=False, fehler="tor_abgestuerzt"); return abschluss(4, f"Tor-Werkzeug abgestuerzt/nicht geprueft {erg} (Log ansehen, z. B. GPU-Speicher) - KEIN Lage-Urteil")
         k = 0

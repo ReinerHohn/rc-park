@@ -502,6 +502,7 @@ k=$(python3 -I tools/test_standort_und_svd.py 2>&1); [ $? = 0 ] && ok "Kamerasta
 k=$($P -W ignore -I tools/test_kamera_rahmen.py 2>&1); [ $? = 0 ] && ok "K-Kameras tragen ihren Rahmen: abgeleitete (nachgetragen/verfeinert) im alten Rahmen -> Buendelkamera, gleiches SfM umgerechnet, sonst .veraltet; Handkalibrierung bleibt; Leser filtern (1122s: 231 Kameras aus 1122q, 48 m / 600 px daneben)" || { rot "kamera_rahmen: $(echo "$k" | grep -v "^ok" | tail -3 | tr '\n' ' ' | cut -c1-300)"; }
 k=$(python3 -I tools/test_undefinierte_namen.py 2>&1); [ $? = 0 ] && ok "Keine neuen undefinierten Namen in tools/*.py (pyflakes; 1121t: q95 im Kommentar -> NameError nach 20 min)" || { rot "undefinierte Namen: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"; }
 k=$(/media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_handy_masken_gross.py 2>&1); [ $? = 0 ] && ok "handy_masken: grosse Bilder ohne Logits in voller Groesse (Nulllauf 1122: 27-MPx-Bild -> OOM -> SfM-Abbruch)" || { rot "handy_masken gross: $(echo "$k" | tail -2 | cut -c1-200)"; }
+k=$($P -W ignore -I tools/test_fusion_vorab.py 2>&1); [ $? = 0 ] && ok "EINE Fusion je Kettenlauf (fusion_vorab: Ausschlusslisten vorab auf dem duennen Netz; Ersatzfusion zaehlt alt 2 / neu 1, Rueckfall bei Abweichung bzw. ohne Neufusion mit Logzeile; Regel = alte Ausloese-Regel; 1122z 445 s doppelt)" || { rot "fusion_vorab: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
 #<<< PRUEFUNGEN
 fi
 rm -rf $S
