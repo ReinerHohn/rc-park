@@ -805,7 +805,11 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                 z_d = (G_ or {}).get("z_dach"); V_ = (G_ or {}).get("vordach"); Pf = KM_.get("pfosten") or []
                 if z_d and z_d > Kb["z_oben"] + 0.5:
                     for p_ in Pf:
-                        bp = p_["breite"] or 0.22; teile.append(KK(p_["u"] - bp / 2, p_["u"] + bp / 2, Kb["z_oben"] - 0.02, z_d + 0.02, wf - bp, wf))
+                        # 24.11.2026 (Kette 1122u: Abnahme "2 getrennte Koerper" = Pfosten f00 bei u 4,25 neben dem Kasten u -3,81..4,09 - stand frei zwischen Kasten und Raehm):
+                        # Pfosten traegt Raehm und steht auf dem Kasten -> Mitte in dessen u-Bereich ziehen (Kanten-Pfostenlage und Kastenende uneinig = Messunschaerfe am Rand)
+                        bp = p_["breite"] or 0.22; up = min(max(float(p_["u"]), Kb["u0"] + bp / 2), Kb["u1"] - bp / 2)
+                        if abs(up - float(p_["u"])) > 1e-6: ann.append("Pfosten u %.2f lag neben dem Kasten (u %.2f..%.2f) -> auf %.2f an dessen Ende gerueckt" % (p_["u"], Kb["u0"], Kb["u1"], up))
+                        teile.append(KK(up - bp / 2, up + bp / 2, Kb["z_oben"] - 0.02, z_d + 0.02, wf - bp, wf))
                     if Pf: ann.append("Pfostenquerschnitt %s" % ", ".join(("%.2f m gemessen" % p_["breite"]) if p_["breite"] else "0,22 m Standard" for p_ in Pf))
                     zt = V_["z_traufe"] if V_ else z_d + 0.3
                     teile.append(KK(Kb["u0"], Kb["u1"], z_d, zt, wf - 0.25, wf)); teile.append(KK(Kb["u0"], Kb["u0"] + 0.25, z_d, zt, wi, wf)); teile.append(KK(Kb["u1"] - 0.25, Kb["u1"], z_d, zt, wi, wf)); ann.append("Raehm 0,25 m stark (Hoehe aus dem Sweep-Band)")
