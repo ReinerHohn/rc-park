@@ -126,6 +126,20 @@ ok("a" not in g and g["b"].startswith(KV.DD) and "12 cm" in g["b"] and g["c"].st
 g = KV.gruende_fein(None, bt, "rc 1: FileNotFoundError", {"a", "b", "d"})
 ok(g["a"].startswith(KV.MF) and "FileNotFoundError" in g["a"] and g["b"].startswith(KV.DD), "teil_fotoform-Fehler -> MESSFEHLER nur bei belastbaren Teilen")
 g = KV.gruende_fein(tf, bt, None, {"b"})
-ok("leer" in g["a"], "Teil im STL leer -> benannt")
+ok(g["a"].startswith("MODELL leer"), "Teil im STL leer -> benannt (MODELL, kein Messfehler)")
+
+print("6. Grob trianguliertes Modell: Bauteil nicht leer (Rueckrechnung 1120/Hand: Uhr/Tor Sued 0 Dreiecke)")
+# ebene Wand x = 5 aus ZWEI grossen Dreiecken (10 x 10 m), Uhr-Kasten u 3..5, z 6..8 an Fassade f00 (o = (5,-4), d = +y, n = +x)
+A_ = np.array([[5, -5, 0], [5, 5, 0], [5, 5, 10]], float); B_ = np.array([[5, -5, 0], [5, 5, 10], [5, -5, 10]], float); Tm = np.array([A_, B_]) / 0.087
+Arr = np.zeros(2, dtype=np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])); Arr["v"] = Tm
+stlp = os.path.join(R0, "wand.stl"); open(stlp, "wb").write(b"\0" * 80 + np.uint32(2).tobytes() + Arr.tobytes())
+import neben_details as ND
+S_ = json.load(open(os.path.join(AU, "konvergenz_fotosatz.json"))); geo = S_["bauteile"]["uhr_f00"]["geo"]
+ok(not ND.auswahl(ND.stl_laden(stlp, 0.087), dict(geo, name="uhr_f00")).any(), "rote Probe: neben_details.auswahl allein findet 0 Dreiecke (alle Ecken weit ausserhalb)")
+td = os.path.join(R0, "teile6"); os.makedirs(td, exist_ok=True)
+n6 = KV.teile_schreiben(stlp, obj, {"uhr_f00": S_["bauteile"]["uhr_f00"]}, td)
+Tt = ND.stl_laden(os.path.join(td, "uhr_f00.stl"), 0.087) if n6 else np.zeros((0, 3, 3))
+fl = float(np.linalg.norm(np.cross(Tt[:, 1] - Tt[:, 0], Tt[:, 2] - Tt[:, 0]), axis=1).sum() / 2) if len(Tt) else 0.0
+ok(n6 == 1 and np.allclose(Tt[..., 0], 5.0, atol=1e-3) and 4.0 <= fl <= 9.0, f"teile_schreiben zerteilt die Wand: Teil mit {len(Tt)} Stuecken, Flaeche {fl:.1f} m2 (Kasten 2 x 2 m + Spielraum), alle auf x = 5")
 print("ALLE OK" if not F else f"FEHLER: {len(F)}: {F}")
 sys.exit(1 if F else 0)

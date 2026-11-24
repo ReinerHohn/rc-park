@@ -268,16 +268,40 @@ def bauteil_kasten(geo, rand=0.5):
     return [P[:, 0].min() - rand, P[:, 1].min() - rand, geo["z0"] - rand], [P[:, 0].max() + rand, P[:, 1].max() + rand, geo["z1"] + rand]
 
 
+def zerteilen(T, kmin, kmax, kante=0.1, stufen=12):
+    """Dreiecke (n,3,3), die den Kasten [kmin, kmax] (Achsenbox) beruehren, durch Kantenmitten-Viertelung bis Kante <= `kante` zerteilen; Stuecke ausserhalb
+    fallen weg. Zweck (24.11.2026, Rueckrechnung 1120/Handmodell): neben_details.auswahl nimmt nur Dreiecke mit ALLEN Ecken im Kasten (Guard gegen Faecher) -
+    grob triangulierte Modelle (ebene Wand aus wenigen grossen Dreiecken) ergaben dann ein LEERES Bauteil (Uhr Sued, Tor Sued, Fenster West: 0 Dreiecke)
+    und kein feines F1, obwohl das Modell dort eine glatte Wand hat (= fehlendes Relief, das das F1 bestrafen soll). Rechnung je Ebene unveraendert."""
+    kmin, kmax = np.asarray(kmin, float), np.asarray(kmax, float)
+    def drin(X): return (X.min(1) <= kmax).all(1) & (X.max(1) >= kmin).all(1)
+    X = T[drin(T)]; fertig = []
+    for _ in range(stufen):
+        if not len(X): break
+        L = np.linalg.norm(X - np.roll(X, 1, axis=1), axis=2).max(1); fertig.append(X[L <= kante]); X = X[L > kante]
+        if not len(X): break
+        a, b, c = X[:, 0], X[:, 1], X[:, 2]; ab, bc, ca = (a + b) / 2, (b + c) / 2, (c + a) / 2
+        X = np.concatenate([np.stack(q, 1) for q in ((a, ab, ca), (ab, b, bc), (ca, bc, c), (ab, bc, ca))]); X = X[drin(X)]
+    fertig.append(X)
+    return np.concatenate(fertig) if fertig else T[:0]
+
+
 def teile_schreiben(stl, obj, bt, td):
-    """Bauteil-STLs (STL-Einheit) aus dem End-STL ausschneiden (neben_details.auswahl auf der eingefrorenen Geometrie)."""
+    """Bauteil-STLs (STL-Einheit) aus dem End-STL ausschneiden (neben_details.auswahl auf der eingefrorenen Geometrie); grosse Dreiecke, die den
+    Bauteilkasten nur durchqueren (Mitte/Ecken ausserhalb), werden vorher zerteilt (zerteilen) - sonst ist das Teil grober Modelle leer."""
     import neben_details as ND
     fk = float(obj.get("stl_massstab", 87)) / 1000.0 if obj.get("stl_einheit_mm", True) else 1.0
     T = ND.stl_laden(stl, fk); n = 0
+    lo_, hi_ = T.min(1), T.max(1); kante_ = np.linalg.norm(T - np.roll(T, 1, axis=1), axis=2).max(1)
     for nm, e in bt.items():
         g = dict(e["geo"]); g.setdefault("name", nm)
         sel = ND.auswahl(T, g)
-        if not sel.any(): continue                                   # teil_fotoform verwirft selbst zu kleine Teile (min_px)
-        V = (T[sel] / fk).astype("<f4"); A = np.zeros(len(V), dtype=np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])); A["v"] = V
+        kmin, kmax = bauteil_kasten(g, rand=0.3)
+        gross = ~sel & (kante_ > 0.1) & (lo_ <= kmax).all(1) & (hi_ >= kmin).all(1)
+        Tz = zerteilen(T[gross], kmin, kmax, kante=0.25) if gross.any() else T[:0]
+        Tt = np.concatenate([T[sel], Tz[ND.auswahl(Tz, g)]]) if len(Tz) else T[sel]
+        if not len(Tt): continue                                   # teil_fotoform verwirft selbst zu kleine Teile (min_px)
+        V = (Tt / fk).astype("<f4"); A = np.zeros(len(V), dtype=np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])); A["v"] = V
         with open(os.path.join(td, nm + ".stl"), "wb") as fh: fh.write(b"\0" * 80 + np.uint32(len(V)).tobytes() + A.tobytes())
         n += 1
     return n
@@ -338,7 +362,7 @@ def gruende_fein(tf, bt, tf_fehler=None, geschnitten=None):
         if not e["kameras"]: out[nm] = f"{DD} keine SfM-Kamera beim Einfrieren"; continue
         if not bel:
             out[nm] = f"{DD} keine belastbare Kamera (beste Aufloesung {min(k['aufloesung_m'] for k in e['kameras']) * 100:.0f} cm > {FEIN_ZIEL_M * 100:.0f} cm -> Nahaufnahme)"; continue
-        if geschnitten is not None and nm not in geschnitten: out[nm] = f"{DD} Bauteil im STL leer (keine Dreiecke im eingefrorenen Kasten)"; continue
+        if geschnitten is not None and nm not in geschnitten: out[nm] = "MODELL leer im eingefrorenen Kasten (keine Flaeche +-w um die Fassadenebene: Wand verschoben oder fehlt)"; continue
         if tf_fehler: out[nm] = f"{MF} teil_fotoform: {str(tf_fehler)[:160]}"; continue
         je = ((tf or {}).get("teile") or {}).get(nm)
         if not je: out[nm] = f"{DD} teil_fotoform: Teil in keinem Foto beurteilbar"; continue
