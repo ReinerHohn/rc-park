@@ -239,8 +239,10 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
                 t0 = float(N["tiefe"]) if N else 0.0; tf = float(f.get("tiefe") or tiefe)
                 # 21.11.2026 spaet (Nutzer: 'zwei flache Rechtecke'): jede Stufe mindestens Druckmindestmass (MINMM im Massstab SCALE, Generatoraufruf), sonst ist
                 # eine gemessene 5-cm-Nische im Druck 0,57 mm = unsichtbar. ANNAHME (Druckbarkeit, CLAUDE.md 'Mindestmass 0,8 mm'), je Fenster im Beleg vermerkt.
-                if N and t0 < DRUCK_MIN: ann.append(f"Nische {fid} u {N['u0']:.2f}: {t0:.2f} -> {DRUCK_MIN:.3f} m"); t0 = DRUCK_MIN
                 if tf < DRUCK_MIN: ann.append(f"Fenster {fid} u {f['u0']:.2f}: {tf:.2f} -> {DRUCK_MIN:.3f} m"); tf = DRUCK_MIN
+                if N:                                                         # 24.11.2026: Mindestmass + nicht tiefer als die massive Wand (nische_tiefe_guard)
+                    t0, tf, v_ = nische_tiefe_guard(koerper, W, N, t0, tf, DRUCK_MIN); ann += [f"{fid}: {x}" for x in v_]
+                    if "ANNAHME" in str(N.get("tiefe_quelle", "")): ann.append(f"Nische {fid} u {N['u0']:.2f}: Tiefe {t0:.3f} m - {str(N['tiefe_quelle'])[:90]}")
                 if "ANNAHME" in str(f.get("tiefe_quelle", "")): ann.append(f"Laibung {fid} u {f['u0']:.2f}: {tf:.2f} m nicht gemessen")
                 if N: koerper = koerper - _umriss_prisma(W, N, N["z0"], -t0, 0.05)
                 z0_ = max(f["z0"], N["z0"]) if N else f["z0"]                  # Fenster unter der Nischensohle wuerde einen geschlossenen Hohlraum hinter der Wand schneiden
@@ -254,6 +256,7 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
         sb_ = [f["sohlbank"] for f in F["fenster"] if f.get("sohlbank") and f.get("stimmen_min", 0) >= min(min_stimmen, 2)]; n_sb = 0
         for S_ in sb_:
             k_neu, v_ = sohlbank(koerper, W, S_, DRUCK_MIN); ann += v_
+            if "ANNAHME" in str(S_.get("auskragung_quelle", "")): ann.append(f"Sohlbank {fid} u {S_['u0']:.2f}: {str(S_['auskragung_quelle'])[:110]}")     # 24.11.2026
             if k_neu is not koerper: koerper = k_neu; n_sb += 1
         if n_sb: belege.append(dict(seite="wand", element=f"{n_sb} Sohlbank/Sohlbaenke Fassade {fid} (aus Fotos gemessen)", quelle="tools/sohlbank_aus_fotos.py: " + "; ".join(str(S_.get("quelle", "")) for S_ in sb_[:2]),
                                     masse=[{k: S_.get(k) for k in ("u0", "u1", "z0", "z1", "auskragung", "auskragung_streuung", "fotos")} for S_ in sb_], hinweis="Rueckseite in der gemessenen Koerperflaeche (bauteile.sohlbank)"))
@@ -445,6 +448,39 @@ def flaeche_w(koerper, W, u, z, w_aussen=1.0, w_innen=-1.0, schritt=0.002, halb=
         if trifft(m_): lo = m_
         else: hi = m_
     return lo
+
+
+def wand_dicke(koerper, W, u, z, w_vorn=0.0, w_max=3.0, schritt=0.01, halb=0.05):
+    """Massive Tiefe des Koerpers hinter der Wandebene W an (u, z): groesstes t (<= w_max), bei dem der Stab w_vorn - t .. w_vorn (2*halb breit/hoch) zu >= 99 % im
+    Koerper liegt (Halbierung). 0, wenn schon vorn kein Koerper ist. Fuer Guards 'Nische/Oeffnung nicht tiefer als die Wand' (24.11.2026)."""
+    def voll(t):
+        s_ = W.kasten(u - halb, u + halb, z - halb, z + halb, w_vorn - t, w_vorn); v = s_.volume()
+        return v > 0 and (koerper ^ s_).volume() >= 0.99 * v
+    if not voll(schritt): return 0.0
+    if voll(w_max): return w_max
+    lo, hi = schritt, w_max
+    while hi - lo > schritt:
+        m_ = 0.5 * (lo + hi)
+        if voll(m_): lo = m_
+        else: hi = m_
+    return lo
+
+
+def nische_tiefe_guard(koerper, W, N, t0, tf, druck_min):
+    """Guard fuer eine Nische mit Fensteroeffnung (tools/nischen_fenster.py, 24.11.2026 Nutzerplan 'belegte Form bauen, Mass als ANNAHME'): Nischentiefe t0 mindestens
+    Druckmindestmass, und Nische + Oeffnung (t0 + tf) nicht tiefer als die massive Wand an der Nischenmitte minus Druckmindestmass (Rueckwand bleibt druckbar).
+    Liefert (t0, tf, vermerke)."""
+    v = []
+    if t0 < druck_min: v.append(f"Nische u {N['u0']:.2f}: {t0:.3f} -> {druck_min:.3f} m (Druckmindestmass)"); t0 = druck_min
+    d_ = wand_dicke(koerper, W, 0.5 * (N["u0"] + N["u1"]), N["z0"] + 0.25 * (N["z1"] - N["z0"]), w_vorn=0.0, w_max=t0 + tf + 2 * druck_min)
+    grenze = d_ - druck_min
+    if t0 + tf > grenze:
+        if grenze > 0.01:                                                    # Rueckwand bleibt: Oeffnung zuerst auf Druckmindestmass, dann die Nische flacher
+            tf_n = min(tf, max(grenze - t0, druck_min)); t0_n = max(0.0, min(t0, grenze - tf_n))
+            v.append(f"Nische u {N['u0']:.2f}: Wand nur {d_:.2f} m massiv -> Nische {t0:.3f}->{t0_n:.3f}, Oeffnung {tf:.3f}->{tf_n:.3f} m"
+                     + (" (Nische unter Druckmindestmass)" if t0_n < druck_min else "")); t0, tf = t0_n, tf_n
+        else: v.append(f"Nische u {N['u0']:.2f}: Wand nur {d_:.2f} m massiv (kein Platz fuer Rueckwand) - Tiefen unveraendert")
+    return t0, tf, v
 
 
 def sohlbank(koerper, W, sb, druck_min=None, einbinden=0.10):

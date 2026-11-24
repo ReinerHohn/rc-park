@@ -27,6 +27,12 @@ NACHTRAG 21.11.2026 spaet (Nutzer "Das ist noch nicht gut", neben_eigen__IMG_202
  5. FORMFAMILIE AUS >= 3 FOTOS: jeder Umriss wird bei fester Lage an den Einzelfoto-Orthos (fassade_fein/ortho_fNN_einzeln/, fassade_ortho --einzeln) geprueft;
     je Foto eine Stimme (einfachste Familie im Gleichstand, nur bei >= --anteil_min Kantenstuetze). Gilt die Familie mit den meisten Stimmen, wenn >= 3; sonst
     bleibt die Wandbild-Form mit 'form_unsicher'. Pruefung des GEBAUTEN: tools/fenster_form_tor.py.
+NACHTRAG 24.11.2026 (modelle/WEG_HAND_ZU_KETTE.md Punkt 2, Nutzerplan "belegte Form typisiert bauen, unsicheres Mass als ANNAHME, nie verwerfen";
+ Nutzer "Alle Masse muessen aus Fotos kommen"): Schwabentor f00 zb - beide Blendnischen (rund, 10/20 und 8/15 Einzelfotos) fielen weg, weil der Wandring
+ auf glattem Putz nur 15-18 % sichere Sweep-Zellen hatte. Jetzt: (a) weiter Wandring 0,1-1,0 m (ohne andere Kaesten) als zweite SWEEP-Messung;
+ (b) Form aus >= 3 Fotos belegt, Tiefe trotzdem unmessbar -> Nische gebaut, Tiefe = Sweep-Mass eines Geschwisters derselben Wand (ANNAHME) oder
+ Platzhalter Druckmindestmass (ANNAHME_PLATZHALTER); laibung_aus_fotos misst danach die Nischenlaibung aus Schraegfotos und ersetzt die ANNAHME.
+ Gemessen flach (Sweep sicher, < --nische_min) bleibt "ohne Nische". Guard Wanddicke/Mindestmass: bauteile.nische_tiefe_guard. Test: tools/test_nische_annahme.py.
 """
 import sys, os, json, argparse, shutil, numpy as np
 
@@ -266,16 +272,26 @@ def plausibel(w, g, ring, vor_max=0.2):
     return w <= modal + vor_max
 
 
-def tiefen(npz, nische, fenster, ring=(0.1, 0.4), min_gut=0.3):
-    """Nischentiefe (Nischenring gegen Wandring) und Fenstertiefe (Fenster gegen Nischengrund) aus dem Sweep (negativ = hinter). Werte None = nicht messbar."""
+def tiefen(npz, nische, fenster, ring=(0.1, 0.4), min_gut=0.3, ring_weit=(0.1, 1.0), fremd=()):
+    """Nischentiefe (Nischenring gegen Wandring) und Fenstertiefe (Fenster gegen Nischengrund) aus dem Sweep (negativ = hinter). Werte None = nicht messbar.
+    24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2, Schwabentor f00 zb: Wandring 0,1-0,4 m nur 15-18 % sichere Zellen auf glattem Putz -> Nische verworfen): ist der nahe
+    Wandring unter min_gut, zaehlt der WEITE Wandring ring_weit (0,1-1,0 m, ohne die Kaesten 'fremd' = andere Fenster/Nischen derselben Wand) - weiter dieselbe
+    Sweep-Messung aus den Fotos, nur mehr Wandflaeche; 'nische_quelle' nennt den Ring."""
     w, g = npz["w"], npz["gut"].astype(bool); R = (float(npz["u0"]), float(npz["z1"]), float(npz["zelle"]), *w.shape)
-    g = g & plausibel(w, g, maske(R, nische, ring[1]) & ~maske(R, nische, ring[0]))
+    g0 = g; g = g & plausibel(w, g, maske(R, nische, ring[1]) & ~maske(R, nische, ring[0]))
     mn = maske(R, nische); mf = maske(R, fenster, wachs=float(npz["zelle"]))
     an = mn & ~mf; wr = maske(R, nische, ring[1]) & ~maske(R, nische, ring[0]); fi = maske(R, fenster)
     q = {k: (float(g[m].mean()) if m.any() else 0.0) for k, m in (("nische", an), ("wand", wr), ("fenster", fi))}
     med = lambda m: float(np.median(w[m & g])) if (m & g).any() else None
     out = dict(sicher=q)
-    if q["nische"] >= min_gut and q["wand"] >= min_gut: out["wand_w"] = med(wr); out["nische_w"] = med(an); out["nische"] = round(out["nische_w"] - out["wand_w"], 3)
+    if q["nische"] >= min_gut and q["wand"] < min_gut and ring_weit:
+        ww = maske(R, nische, ring_weit[1]) & ~maske(R, nische, ring_weit[0])
+        for b in fremd: ww &= ~maske(R, dict(u0=b[0], u1=b[1], z0=b[2], bogen=dict(form="gerade", kaempfer=b[3], scheitel=b[3])), ring[0])
+        gw = g0 & plausibel(w, g0, ww); qw = float(gw[ww].mean()) if ww.any() else 0.0; q["wand_weit"] = qw
+        if qw >= min_gut and (an & gw).any() and (ww & gw).any():
+            g = gw; wr = ww; out["nische_quelle"] = f"Ebenen-Sweep, weiter Wandring {ring_weit[0]}-{ring_weit[1]} m (naher Ring nur {q['wand']:.0%} sichere Zellen)"
+    if q["nische"] >= min_gut and (q["wand"] >= min_gut or "nische_quelle" in out):
+        out["wand_w"] = med(wr); out["nische_w"] = med(an); out["nische"] = round(out["nische_w"] - out["wand_w"], 3)
     else: out["nische"] = None
     if out.get("nische_w") is not None and q["fenster"] >= min_gut:
         d = med(fi) - out["nische_w"]; out["fenster_roh"] = round(d, 3)
@@ -330,14 +346,47 @@ def _eintrag(f, n, t, stimmen, a, quelle, r):
     tx = f"FENSTER {f['u1'] - f['u0']:.2f} m ({f['bogen']['form']}, {f.get('form_quelle') or f.get('form_unsicher') or 'Wandbild'})"
     if n is None: r["urteil"] = tx if r.get("urteil") is None else r["urteil"] + "; " + tx; return e
     if "fehler" in n: r["urteil"] = "Fenster ohne Nische: " + n["fehler"] + "; " + tx
-    elif t.get("nische") is None: r["urteil"] = "Fenster ohne Nische: Nischentiefe nicht messbar (zu wenig sichere Sweep-Zellen); " + tx
-    elif t["nische"] > -a.nische_min: r["urteil"] = f"Fenster ohne Nische: Nischenflaeche nur {t['nische']:+.2f} m gegen die Wand (flach, < {a.nische_min} m); " + tx
+    elif t.get("nische") is None and not form_belegt(n):
+        r["urteil"] = "Fenster ohne Nische: Nischentiefe nicht messbar (zu wenig sichere Sweep-Zellen) und Form nicht aus >= %d Fotos belegt; " % MIN_FOTOS + tx
+    elif t.get("nische") is not None and t["nische"] > -a.nische_min: r["urteil"] = f"Fenster ohne Nische: Nischenflaeche nur {t['nische']:+.2f} m gegen die Wand (flach, < {a.nische_min} m); " + tx
     else:
-        e["nische"] = dict(u0=n["u0"], u1=n["u1"], z0=n["z0"], z1=n["z1"], bogen=n["bogen"], tiefe=round(-t["nische"], 3), tiefe_quelle="Ebenen-Sweep (Nischenring gegen Wandring)",
+        # 24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2, Nutzerplan "belegte Form -> typisiert bauen, unsicheres Mass als ANNAHME, nie verwerfen"): Form aus >= 3 Fotos belegt,
+        # Tiefe im Sweep nicht messbar -> Nische trotzdem bauen. Tiefe: Geschwister derselben Wand mit Sweep-Mass (fassade_auswerten, Nachlauf), sonst Platzhalter
+        # Druckmindestmass; die Fotomessung der Nischenlaibung (tools/laibung_aus_fotos.py, Schraegsicht >= 3 Fotos) ersetzt beides. Nie eine feste Objektzahl.
+        if t.get("nische") is None: tn, tq = druck_min(), ANNAHME_PLATZHALTER
+        else: tn, tq = round(-t["nische"], 3), t.get("nische_quelle") or "Ebenen-Sweep (Nischenring gegen Wandring)"
+        e["nische"] = dict(u0=n["u0"], u1=n["u1"], z0=n["z0"], z1=n["z1"], bogen=n["bogen"], tiefe=tn, tiefe_quelle=tq,
                            form_quelle=n.get("form_quelle") or ("ANNAHME: " + n["form_unsicher"] if n.get("form_unsicher") else "nur fusioniertes Wandbild"))
         if abs(e["z0"] - n["z0"]) < 0.03: e["z0"] = n["z0"]                # gleiche Sohlbank: Fenster sitzt auf dem Nischengrund (Kanten liegen <= 3 cm auseinander)
-        r["urteil"] = f"NISCHE {n['u1'] - n['u0']:.2f} m ({n['bogen']['form']}, {-t['nische']:.2f} tief) + " + tx
+        r["urteil"] = f"NISCHE {n['u1'] - n['u0']:.2f} m ({n['bogen']['form']}, " + (f"{tn:.2f} tief" if "ANNAHME" not in tq else f"Tiefe ANNAHME {tn:.3f}") + ") + " + tx
     return e
+
+
+ANNAHME_PLATZHALTER = "ANNAHME Platzhalter Druckmindestmass (Sweep nicht messbar; Form aus >= 3 Fotos belegt) - laibung_aus_fotos misst die Nischenlaibung aus Schraegfotos"
+
+
+def druck_min():
+    """Druckmindestmass in m (MINMM bei SCALE, wie bauteile.fenster_aus_json): 0,8 mm bei 1:87 = 0,0696 m."""
+    return round(float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0, 4)
+
+
+def form_belegt(n):
+    """Form der Nische aus >= MIN_FOTOS Einzelfotos bestaetigt (form_bestaetigen setzt dann form_quelle, sonst form_unsicher)."""
+    return bool(n.get("form_quelle")) and not n.get("form_unsicher")
+
+
+def geschwister_tiefe(E):
+    """Nachlauf: Nischen mit Platzhalter-Tiefe uebernehmen die Sweep-Tiefe eines GESCHWISTERS derselben Wand (Nische gleich breit/hoch +-25 %, Sohle +-25 % der Hoehe)
+    als ANNAHME - ein Mass aus den Fotos (Sweep) an der Schwester statt eines Platzhalters. In place."""
+    gem = [x["nische"] for x in E if x.get("nische") and "ANNAHME" not in x["nische"]["tiefe_quelle"]]
+    for x in E:
+        N = x.get("nische")
+        if not N or N["tiefe_quelle"] != ANNAHME_PLATZHALTER: continue
+        b, h = N["u1"] - N["u0"], N["z1"] - N["z0"]
+        gs = [G for G in gem if abs((G["u1"] - G["u0"]) - b) <= 0.25 * b and abs((G["z1"] - G["z0"]) - h) <= 0.25 * h and abs(G["z0"] - N["z0"]) <= 0.25 * h]
+        if gs:
+            G = min(gs, key=lambda G: abs(G["z0"] - N["z0"])); N["tiefe"] = G["tiefe"]
+            N["tiefe_quelle"] = f"ANNAHME Geschwister u {G['u0']:+.2f}..{G['u1']:+.2f} ({G['tiefe_quelle']}) - laibung_aus_fotos misst die Nischenlaibung aus Schraegfotos"
 
 
 def tiefe_einzeln(npz, f, ring=(0.1, 0.4), min_gut=0.3):
@@ -357,6 +406,8 @@ def fassade_auswerten(B, kaesten, npz, a, vorbauten=(), bilder=None, liste=()):
     Umriss an den Einzelfotos bestaetigt (form_bestaetigen, >= 3 Fotos). Liefert (eintraege, bericht)."""
     E, br = [], []; kw = dict(kante=a.kante, anteil_min=a.anteil_min); vor = lambda A: any(_ueber(A, (v["u0"], v["u1"], v["z0"], v["z1"])) for v in vorbauten)
     lade = bilder if callable(bilder) else (lambda kasten: list(bilder or ()))     # bilder: Liste [(foto, Bild)] oder Lader(kasten) -> Liste
+    ZA = [Z_[:4] for Z_ in zonen(kaesten)]                                 # 24.11.: Kaesten anderer Fenster/Nischen derselben Wand - nicht im weiten Wandring (tiefen)
+    fremd = lambda n: [z_ for z_ in ZA if not _ueber(z_, (n["u0"], n["u1"], n["z0"], n["z1"]))]
     for A, I in paare(zonen(kaesten), a.flaeche_max_anteil):
         r = dict(zone_aussen=[round(x, 2) for x in A[:4]], zone_innen=[round(x, 2) for x in I[:4]], stimmen=[A[4], I[4]], art="paar")
         if vor(A): r["urteil"] = "uebersprungen: hinter einem Vorbau"; br.append(r); continue
@@ -365,7 +416,7 @@ def fassade_auswerten(B, kaesten, npz, a, vorbauten=(), bilder=None, liste=()):
         bil = lade(A[:4]); form_bestaetigen(f, bil, I[:4], **kw); fi = (f["u0"], f["u1"], f["z0"], f["z1"])
         n = form_aus_kanten(B, A[:4], innen=fi, anteil_min=a.anteil_min, kante=a.kante); r["nische"] = n
         if "fehler" not in n: form_bestaetigen(n, bil, A[:4], innen=fi, **kw)
-        t = tiefen(npz, n, f) if (npz is not None and "fehler" not in n) else dict(nische=None, fenster=None); r["tiefe"] = t
+        t = tiefen(npz, n, f, fremd=fremd(n)) if (npz is not None and "fehler" not in n) else dict(nische=None, fenster=None); r["tiefe"] = t
         E.append(_eintrag(f, n, t, I[4], a, "nischen_fenster: Erkennerzone -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep", r)); br.append(r)
     # 22.11.2026 (Kettenlauf schwabentor 1122c: rundbogenfenster 1 statt 2): die linke Nische hatte nur den Bogenkasten des Erkenners (4/6 Stimmen), das Fenster darin
     # nur 2 von 7 Stimmen -> kein Paar -> kein Fenster. Gegenstueck zur Geschwister-Regel unten: eine Zone OHNE inneren Kasten, so gross wie die Nische eines vermessenen
@@ -387,7 +438,7 @@ def fassade_auswerten(B, kaesten, npz, a, vorbauten=(), bilder=None, liste=()):
         bil = lade(Zb); form_bestaetigen(f, bil, I_, **kw); fi = (f["u0"], f["u1"], f["z0"], f["z1"])
         n = form_aus_kanten(B, Zb, innen=fi, anteil_min=a.anteil_min, kante=a.kante); r["nische"] = n
         if "fehler" not in n: form_bestaetigen(n, bil, Zb, innen=fi, **kw)
-        t = tiefen(npz, n, f) if (npz is not None and "fehler" not in n) else dict(nische=None, fenster=None); r["tiefe"] = t
+        t = tiefen(npz, n, f, fremd=fremd(n)) if (npz is not None and "fehler" not in n) else dict(nische=None, fenster=None); r["tiefe"] = t
         E.append(_eintrag(f, n, t, Z[4], a, "nischen_fenster (Nischenzone, Fenster-Suchzone vom Geschwister): Erkennerzone -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep", r)); br.append(r)
     # 21.11.2026 (Nutzer 'Das ist noch nicht gut', Schwabentor f00 Lauf 1121s): das LINKE Rundbogenfenster hatte keinen Nischenkasten im Erkenner -> kein Paar -> blieb Rechteck.
     for q in liste:
@@ -405,10 +456,11 @@ def fassade_auswerten(B, kaesten, npz, a, vorbauten=(), bilder=None, liste=()):
             n = form_aus_kanten(B, Z_, innen=fi, anteil_min=a.anteil_min, kante=a.kante); r["nische"] = n
         bil = lade(r["zone_aussen"]); form_bestaetigen(f, bil, Q, **kw)
         if n is not None and "fehler" not in n: form_bestaetigen(n, bil, r["zone_aussen"], innen=fi, **kw)
-        if n is not None and "fehler" not in n: t = tiefen(npz, n, f) if npz is not None else dict(nische=None, fenster=None)
+        if n is not None and "fehler" not in n: t = tiefen(npz, n, f, fremd=fremd(n)) if npz is not None else dict(nische=None, fenster=None)
         else: t = tiefe_einzeln(npz, f) if npz is not None else dict(fenster=None); t.setdefault("nische", None)
         r["tiefe"] = t
         E.append(_eintrag(f, n, t, q.get("stimmen_min", 0), a, "nischen_fenster (einzeln" + (", Nischenzone vom Geschwister" if n is not None else "") + "): Listenfenster -> Umriss aus Kanten des 1-cm-Wandbilds -> Tiefe aus dem Ebenen-Sweep", r)); br.append(r)
+    geschwister_tiefe(E)
     return E, br
 
 

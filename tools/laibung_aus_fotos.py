@@ -18,6 +18,9 @@ Ausgabe: fenster_auto.json (je gemessenem Fenster 'laibung' {tiefe_ab_wand, foto
 'tiefe_quelle'), Bericht laibung_aus_fotos.json, Bild laibung_<fid>.jpg (y gegen k je Fenster).
 Aufruf: laibung_aus_fotos.py <fenster_auto.json> <fassade_fein-ordner> <objekt.json> [--nur f00] [--aus ordner]
 rc 0 = mindestens ein Fenster gemessen, 3 = keins (nichts geaendert).
+NACHTRAG 24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2, Nutzer "Alle Masse muessen aus Fotos kommen"): auch die NISCHENTIEFE (Eintraege mit 'nische') wird so gemessen
+ (nische_messen: Suchfeld zwischen Oeffnung und Nischenkante, bereich_nische; beide Hell/Dunkel-Richtungen, Putz gegen Putz) - zuerst, weil die Fenstertiefe
+ ab dem Nischengrund zaehlt. Ersetzt nur eine ANNAHME-Tiefe (nischen_fenster), eine Sweep-Messung bleibt (Fotowert steht in nische.laibung). Test: test_nische_annahme.py.
 """
 import sys, os, json, glob, argparse, numpy as np
 
@@ -36,7 +39,18 @@ def bereich(q, k_sign, zk):
     return ua, ue, za, ze
 
 
-def kante_im_feld(A, ua, c, k_sign, R=None):
+def bereich_nische(qn, k_sign, zk, rand=0.02, weg=0.05):
+    """24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2): Suchfeld fuer die HINTERKANTE der Nischenlaibung (Nischengrund trifft Laibung) auf der abgewandten Seite: zwischen
+    der Fensteroeffnung (qn['_innen'] = (u0, u1) + weg, deren Kanten sind staerker) und der Nischenvorderkante (- rand: die feste Vorderkante wandert nicht und
+    gaebe T = 0). Hoehe wie bereich(). qn = Nischen-dict (u0, u1, z0, z1, bogen)."""
+    za, ze = qn["z0"] + 0.3, zk - 0.1
+    if ze - za < 0.2: return None
+    iu0, iu1 = qn.get("_innen", (qn["u0"], qn["u0"]))
+    ua, ue = (max(iu1 + weg, qn["u0"]), qn["u1"] - rand) if k_sign > 0 else (qn["u0"] + rand, min(iu0 - weg, qn["u1"]))
+    return (ua, ue, za, ze) if ue - ua >= 0.06 else None
+
+
+def kante_im_feld(A, ua, c, k_sign, R=None, beide=False):
     """Staerkster Dunkel->Hell-Sprung nach aussen im Feld A (Zeilen z absteigend, Spalten u ab ua; 0 = kein Foto). R = Relief im selben Feld (mm + 10 m) oder None.
     Liefert (u_obs, Spalte, staerke) oder None. 22.11.2026 (Kettenlauf 1121v): Pixel nahe 'kein Foto' (schwarzer Verdeckungsstreifen hinter der Modell-Laibung)
     und Spalten an Relief-Stufen (Projektionsnaht am schon gebauten Fensterkasten) sind keine Kanten - beide gaben dort den staerksten Sprung (T 4,68 m)."""
@@ -45,6 +59,7 @@ def kante_im_feld(A, ua, c, k_sign, R=None):
     A = A.astype(np.float32); leer = ndi.binary_dilation(A == 0, iterations=5)
     if (~leer).mean() < 0.5: return None
     gr = ndi.gaussian_filter1d(ndi.gaussian_filter(A, 1.5), 1.0, axis=1, order=1) * k_sign     # dunkel -> hell nach aussen
+    if beide: gr = np.abs(gr)                                                # Nischengrund gegen Nischenlaibung: beides Putz, Hell/Dunkel je nach Licht (24.11.)
     gr[leer] = np.nan
     if R is not None and R.shape == A.shape:
         R = R.astype(np.float32); R[R == 0] = np.nan
@@ -60,16 +75,16 @@ def kante_im_feld(A, ua, c, k_sign, R=None):
     j = int(np.nanargmax(p)); return ua + (j + 0.5) * c, j, float(p[j])
 
 
-def kante_messen(g, rel, rast, q, k_sign, zk):
+def kante_messen(g, rel, rast, q, k_sign, zk, bereich_fn=None, beide=False):
     """Ladenkante im Einzelfoto-Ortho g (Graubild, 0 = kein Foto) auf der von der Kamera abgewandten Seite. Liefert (u_obs, s_dort, staerke) oder None.
     NUR Rueckfall: liegt das Ortho auf einem Modell, das den Fensterkasten schon hat, fehlt der Bildstreifen der Modell-Laibung (siehe foto_feld)."""
-    u0, z1, c = rast; b = bereich(q, k_sign, zk)
+    u0, z1, c = rast; b = (bereich_fn or bereich)(q, k_sign, zk)
     if b is None: return None
     ua, ue, za, ze = b
     i0, i1 = int(round((z1 - ze) / c)), int(round((z1 - za) / c)); j0, j1 = int(round((ua - u0) / c)), int(round((ue - u0) / c))
     if i0 < 0 or j0 < 0 or i1 > g.shape[0] or j1 > g.shape[1]: return None
     Rf = rel[i0:i1, j0:j1] if rel is not None and rel.shape[:2] == g.shape[:2] else None
-    r = kante_im_feld(g[i0:i1, j0:j1], ua, c, k_sign, Rf)
+    r = kante_im_feld(g[i0:i1, j0:j1], ua, c, k_sign, Rf, beide)
     if r is None: return None
     u_obs, j, st = r; s = 0.0
     if rel is not None:
@@ -146,7 +161,7 @@ def seite_k(q, Cu, Cw):
     return None                                                              # Kamera vor dem Fenster: beide Laibungen verdeckt/klein
 
 
-def fenster_messen(bilder, kam, rel, rast, q, a, felder=None):
+def fenster_messen(bilder, kam, rel, rast, q, a, felder=None, bereich_fn=None, beide=False):
     """Alle Fotos fuer ein Fenster q -> dict(tiefe_ab_wand, fotos, k_spanne, streuung, punkte) oder dict(fehler).
     felder: {foto: (Feld, ua, s_ref)} aus foto_feld (Vorrang, unabhaengig vom gebauten Modell); sonst Rueckfall Einzelfoto-Ortho."""
     zk = (q.get("bogen") or {}).get("kaempfer") or q["z1"]; P = []; felder = felder or {}
@@ -156,8 +171,8 @@ def fenster_messen(bilder, kam, rel, rast, q, a, felder=None):
         if sk is None: continue
         sg, k = sk
         if name in felder:
-            A_, ua_, s_ref = felder[name]; r = kante_im_feld(A_, ua_, rast[2], sg); r = None if r is None else (r[0], s_ref, r[2]); qu = "foto"
-        else: r = kante_messen(g, rel, rast, q, sg, zk); qu = "ortho"
+            A_, ua_, s_ref = felder[name]; r = kante_im_feld(A_, ua_, rast[2], sg, beide=beide); r = None if r is None else (r[0], s_ref, r[2]); qu = "foto"
+        else: r = kante_messen(g, rel, rast, q, sg, zk, bereich_fn, beide); qu = "ortho"
         if r is None: continue
         P.append(dict(foto=name, seite="rechts" if sg > 0 else "links", k=round(k, 4), u_obs=round(r[0], 3), s=round(r[1], 3), staerke=round(r[2], 2), quelle=qu))
     if not P: return dict(fehler="kein Foto zeigt eine Laibung", punkte=[])
@@ -188,6 +203,15 @@ def fenster_messen(bilder, kam, rel, rast, q, a, felder=None):
     T, sd = best["tiefe_ab_wand"], best["streuung"]
     if not (0.0 < T < 3.0) or sd is None or sd > 0.25 * T: return dict(best, fehler=f"unplausibel: T {T} m, Streuung {sd}", punkte=P)
     return dict(best, punkte=P)
+
+
+def nische_messen(bilder, kam, rel, rast, qn, a, felder=None, t_max=1.0):
+    """24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2, Nutzer 'Alle Masse muessen aus Fotos kommen'): NISCHENTIEFE wie die Fensterlaibung - Hinterkante der Nischenlaibung
+    in Schraegfotos, Y = C_u + kappa C_w = b - kappa T (fenster_messen), nur Suchfeld zwischen Oeffnung und Nischenkante (bereich_nische), beide Hell/Dunkel-
+    Richtungen. Gilt nur mit < t_max m (eine Blendnische ist keine Durchfahrt) und denselben Toren (>= min_fotos, k-Spanne, Streuung <= 25 %)."""
+    e = fenster_messen(bilder, kam, rel, rast, qn, a, felder, bereich_fn=bereich_nische, beide=True)
+    if "fehler" not in e and e["tiefe_ab_wand"] >= t_max: e["fehler"] = f"unplausibel fuer eine Nische: T {e['tiefe_ab_wand']} m >= {t_max} m"
+    return e
 
 
 def bild(pfad, erg):
@@ -237,7 +261,8 @@ def main():
             C = kamera_zentrum(K); kam[name] = (float((C[:2] - o) @ d), float((C[:2] - o) @ n))
             g = cv2.imread(p, cv2.IMREAD_GRAYSCALE)
             if g is not None: bilder.append((name, g)); KK[name] = K
-        felder = [{} for _ in F["fenster"]]
+        felder = [{} for _ in F["fenster"]]; felder_n = [{} for _ in F["fenster"]]
+        QN = [dict(q["nische"], _innen=(q["u0"], q["u1"])) if q.get("nische") else None for q in F["fenster"]]     # 24.11.: Nischenlaibung (bereich_nische)
         if not a.ohne_foto:                                                  # 22.11.2026: Vorrang Foto direkt auf flacher Ebene (unabhaengig vom Fensterkasten des vorigen Baus)
             sref = [ring_s(rel, rast, q) for q in F["fenster"]]
             for name, g in bilder:
@@ -252,8 +277,28 @@ def main():
                     if im is None: break
                     A_ = foto_feld(im, KK[name], (o, d, n), b, rast[2], sref[qi])
                     if A_ is not None and (A_ == 0).mean() <= 0.1: felder[qi][name] = (A_, b[0], sref[qi])
+                for qi, qn in enumerate(QN):
+                    if qn is None: continue
+                    sk = seite_k(qn, *kam[name]); zk = (qn.get("bogen") or {}).get("kaempfer") or qn["z1"]
+                    b = bereich_nische(qn, sk[0], zk) if sk else None
+                    if b is None or verdeckt(g, rast, qn, b): continue
+                    if im is None: im = cv2.imread(pf, cv2.IMREAD_GRAYSCALE)
+                    if im is None: break
+                    A_ = foto_feld(im, KK[name], (o, d, n), b, rast[2], sref[qi])
+                    if A_ is not None and (A_ == 0).mean() <= 0.1: felder_n[qi][name] = (A_, b[0], sref[qi])
                 del im
         L = []; tafel = []
+        for qi, q in enumerate(F["fenster"]):                                 # 24.11.2026: zuerst die NISCHE (ihre Tiefe ist der Bezug der Fensterlaibung)
+            if QN[qi] is None: continue
+            en = nische_messen(bilder, kam, rel, rast, QN[qi], a, felder_n[qi]); en["kasten"] = [QN[qi]["u0"], QN[qi]["u1"], QN[qi]["z0"], QN[qi]["z1"]]; en["art"] = "nische"
+            L.append(en); tafel.append((f"{fid} NISCHE u {QN[qi]['u0']:+.2f}..{QN[qi]['u1']:+.2f}", en)); N = q["nische"]
+            if "fehler" in en: print(f"{fid} u {q['u0']:+.2f}: Nischenlaibung nicht gemessen - {en['fehler']} (bleibt {N.get('tiefe')} m, {str(N.get('tiefe_quelle'))[:60]})"); continue
+            N["laibung"] = {k: en[k] for k in ("seite", "tiefe_ab_wand", "fotos", "k_spanne", "streuung", "rest_m")}
+            if "ANNAHME" in str(N.get("tiefe_quelle", "")):
+                N["tiefe_vorher"] = N.get("tiefe"); N["tiefe"] = en["tiefe_ab_wand"]
+                N["tiefe_quelle"] = f"Fotos: Nischenlaibung in Schraegsicht ({en['fotos']} Fotos, {en['tiefe_ab_wand']:.2f} +- {en['streuung']:.2f} m, tools/laibung_aus_fotos.py)"
+            print(f"{fid} u {q['u0']:+.2f}: NISCHE {en['tiefe_ab_wand']:.2f} m ab Wand (+-{en['streuung']:.2f}, {en['fotos']} Fotos) -> gebaut {N['tiefe']} ({str(N['tiefe_quelle'])[:40]})")
+            n_ok += 1
         for qi, q in enumerate(F["fenster"]):
             e = fenster_messen(bilder, kam, rel, rast, q, a, felder[qi]); e["kasten"] = [q["u0"], q["u1"], q["z0"], q["z1"]]; L.append(e); tafel.append((f"{fid} u {q['u0']:+.2f}..{q['u1']:+.2f}", e))
             if "fehler" in e: print(f"{fid} u {q['u0']:+.2f}: keine Laibung - {e['fehler']}"); continue
