@@ -25,7 +25,12 @@ Danach dieselbe Kette ohne Sonderweg an einem zweiten Objekt (Gegenprobe, dass e
 ## 2b. Kernursache (Weg-Analyse 24.11., `modelle/WEG_HAND_ZU_KETTE.md`)
 Fuer fast jedes Bauteil gibt es einen Erkenner. Ist ein Mass unsicher, STREICHT die Kette das typisierte Bauteil oder faellt auf Hoehenfeld/Kasten
 zurueck; die Hand hat bei derselben Unsicherheit typisiert gebaut und die Luecke als ANNAHME belegt. GRUNDSATZ NEU: Form aus >= 3 Fotos belegt
--> typisiert bauen, unsicheres Mass als ANNAHME (begruendeter Ersatzwert + Bericht), nie verwerfen und nie Hoehenfeld.
+-> typisiert bauen, nie verwerfen und nie Hoehenfeld.
+**ENTSCHIEDEN 24.11. (Nutzer): "Alle Masse muessen aus Fotos kommen."** Bausteine (Galerie aus Boden/Bruestung/Pfosten/Streben, Vordach,
+Nischenfenster, Zifferblatt ...) sind erlaubt, wenn JEDES Mass und jede Stueckzahl aus den Fotos gemessen ist. Fehlt ein Mass: zuerst weitere
+Fotos/Kameras/Ansichten derselben Stelle messen; nur wenn das scheitert, ein AUS DEN FOTOS abgeleiteter Wert (Wandbild-Proportion,
+Schattenbreite, Nachbarmass desselben Bauteils), im Audit als ANNAHME mit Herleitung - nie eine feste Zahl, nie ein Handwert, nie Katalogform.
+Schalter wie MIT_KATALOG_GALERIE entfallen: gemessener Baustein = Standard.
 Wurzeln: `ebenen_bauplan.py:101` (frontale Kameras nur fuer Waende -> Vorbau-Ebene 3354 statt ~50 000 Kantenpunkte -> `ebenen_masse.py:98-109`
 kein Kasten -> `bauteile.py:1023` Hoehenfeld; typisierte Galerie nur mit MIT_KATALOG_GALERIE=1, `bauteile.py:1011`), `nischen_fenster.py:333`
 (Nische trotz Form 16/19 verworfen), keine Gesims-Stufe, `kantenstufe.py:178` fehlende_kanten_haufen liest niemand,
