@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (123)
+# Werkzeuge: sonstige (124)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -78,6 +78,7 @@
 - `tools/selbstbau_verdecker.py` [seg] selbstbau_verdecker.py - Verdecker-Modell fuer MESSUNGEN ohne selbst erzeugte Bauteile (21.11.2026, MESSFEHLER zirkulaere Messung).
 - `tools/shape_extract.py` [-] shape_extract.py — FORM AUTOMATISCH AUS DEM FOTO MESSEN (statt Augenmaß).
 - `tools/sichtrichtung_kohaerenz.py` [-] Sichtrichtungs-Kohaerenz je Wolkenpunkt (allgemein, fuer jedes Objekt mit Dichte-Wolke + vis + Kameras).
+- `tools/sift_einstellung.py` [-] sift_einstellung.py - EINE Stelle fuer die COLMAP-SIFT-Merkmalssuche der Gesamtkette (24.11.2026) + Pflicht-Tor gegen still verworfene Bilder.
 - `tools/sim3_robust.py` [-] sim3_robust.py - EINE gemeinsame robuste Sim3 (Aehnlichkeit X -> Y) mit fester Meter-Schwelle im Zielrahmen (22.11.2026). ANLASS: wand_dicke_tor.teile_laden legte ein Modell per Um
 - `tools/skin_smart_split.py` [gen] skin_smart_split.py — teilt die 3D-Haut KLUG in druckoptimierte Stücke.
 - `tools/snap_in_objekt.py` [-] snap_in_objekt.py - wege3d.json (rippen_pfad_snap.py) -> rippen_pfade.pfade_ohne_spiegel eines erker_polygon (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/snap

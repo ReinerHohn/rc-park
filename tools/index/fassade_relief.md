@@ -1,4 +1,4 @@
-# Werkzeuge: fassade_relief (66)
+# Werkzeuge: fassade_relief (67)
 - `tools/aufwand_log.py` [-] aufwand_log.py - Aufwand eines Rechenjobs MITSCHREIBEN, damit spaeter bewertet werden kann, ob er sich gelohnt hat (Nutzerwunsch 3.11.: Sweetspot fuer 'schnell durch die Stadt, moe
 - `tools/bogen_anpassen.py` [seg] bogen_anpassen.py - Bogenmasse (u0, u1, Kaempfer zk, Scheitel zs) je Bogen an die Fotokanten mehrerer kalibrierter Fotos anpassen (5.11., Nutzer: "die vier Boegen muessen stimmen")
 - `tools/bogen_fit.py` [-] bogen_fit.py - robuster Kreisbogen-Fit je Bogen an die Laibungslinie (bogen_unterkante.py -> unterkante.json), Kontur ZUERST messen, danach benennen. Schritte: obere Huellkurve (Pe
@@ -43,6 +43,7 @@
 - `tools/oeffnungen_bogen.py` [seg] oeffnungen_bogen.py <ortho-ordner> --objekt <objekt.json> [--aus audit/oeffnungen_auto.json] - BOGENOEFFNUNGEN / TORDURCHFAHRTEN automatisch (17.11.2026, Kettenstufe 'fenster').
 - `tools/oeffnungen_wandbild.py` [seg] oeffnungen_wandbild.py - OEFFNUNGEN einer Wand aus ihrem Wandbild: Zone (Erkenner), TIEFE (Parallaxe der Einzelfoto-Orthos), UMRISS (Bildsegmentierung). 18.11.2026 (Agent Rueckwand
 - `tools/ortho_drape.py` [seg] ortho_drape.py — Oberfläche aus Daten: LGL-Orthophoto (DOP20) deckungsgleich zum Gelände-Modell zuschneiden und als MASSSTABSgenauer Druck-Bogen ausgeben. Über die Gips-Haut gelegt
+- `tools/ortsteine.py` [-] ortsteine.py - ORTSTEINE / ECKVERZAHNUNG aus dem Wandbild (GENERISCH, 24.11.2026; Grundsatz WANDBILD = BAUPLAN, keine Musterteile, kein Hardcoding).
 - `tools/putz_wandbild.py` [-] putz_wandbild.py - glatte Putzflaeche aus dem Wandbild (mehrere entzerrte Einzelfotos einig) und Netz-Relief dort glatt (21.11.2026).
 - `tools/quader_raster.py` [-] quader_raster.py - Quaderwerk als BAUPLAN aus dem Wandbild: Lagen + Fugen aus mehreren entzerrten Einzelfotos, je Stein eine ebene Stirnflaeche mit GEMESSENEM Vorsprung (Median der
 - `tools/quader_relief.py` [-] quader_relief.py - Fassade als ADAPTIVER QUADERBAUM aus der Punktwolke (Nutzeridee 6.11.: 'Modell aus Quadern, Diff gegen Wolke, je genauer es passt, desto feiner die Quader'). Rah

@@ -27,7 +27,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/BEWERTUNG_KANTENGITTER_2026-11-09.md` (4 kB) Bewertung Kantengitter Kaufhaus - Stand 9.11.2026 abends
 - `modelle/LOGBUCH_HELM_W_2026-11-10.md` (2 kB) Logbuch Kreis helm_geschweift:w (kaufhaus_grob3, 2026-11-10, Lauf 035748a035747 r1)
 - `modelle/LOGBUCH_RIPPEN_2026-11-13.md` (41 kB) Logbuch Rippen unter dem Erker (13.11.2026) - zum spaeteren Analysieren "wie schneller zum Ziel" -> Inhalt `modelle/inhalt/LOGBUCH_RIPPEN_2026-11-13.md` (46 Abschnitte)
-- `modelle/PIPELINE_FASSADEN.md` (85 kB) Fassaden-Pipeline (Stand 15.11.2026) -> Inhalt `modelle/inhalt/PIPELINE_FASSADEN.md` (45 Abschnitte)
+- `modelle/PIPELINE_FASSADEN.md` (86 kB) Fassaden-Pipeline (Stand 15.11.2026) -> Inhalt `modelle/inhalt/PIPELINE_FASSADEN.md` (46 Abschnitte)
 - `modelle/PIPELINE_HYBRID_WOLKE_KANTEN.md` (4 kB) Pipeline Hybrid: Wolke-Körper + 3D-Kanten + Diff gegen Wolke (3D) und JEDES Foto (Perspektive)
 
 ## Versuche, Sackgassen
@@ -43,12 +43,12 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 ## Logbuecher
 - `modelle/LOGBUCH_GIEBEL_OST_KREIS1_2026-11-10.md` (1 kB) Logbuch Kreis1 Fehlteil fk_+16_+0_+26 (Ost-Staffelgiebel), 2026-11-10
 - `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` (74 kB) Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte -> Inhalt `modelle/inhalt/LOGBUCH_KETTENTEST_2026-11-19.md` (37 Abschnitte)
-- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (199 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (51 Abschnitte)
+- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (201 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (51 Abschnitte)
 
 ## Sonstiges
 - `modelle/ANALYSE_SACKGASSEN_2026-11-21.md` (3 kB) Analyse: Warum 19.-21.11.2026 in Sackgassen (Auftrag Nutzer 21.11. 09:57)
 - `modelle/ANLEITUNG_FOTOS_NUBIA.md` (7 kB) Anleitung Fotos mit dem nubia (Z2462N, "Focus 2 5G") fuer Photogrammetrie
-- `modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md` (5 kB) Audit "stille Erfolge" in tools/gesamtkette.py (23.11.2026)
+- `modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md` (7 kB) Audit "stille Erfolge" in tools/gesamtkette.py (23.11.2026)
 - `modelle/BELEUCHTUNG.md` (3 kB) Beleuchtung — „geile" Monument-Lichttechnik (Miniatur-Wunderland)
 - `modelle/CPU_LEISTUNG.md` (13 kB) CPU/GPU maximal auslasten - Messung, Werkzeuge, Einrichtung (Stand 2026-11-06)
 - `modelle/ERKENNTNISSE.md` (10 kB) Erkenntnis-Register (destilliert; Ablauf: allgemeiner Skill `erkenntnis` (~/git/claude-mds) + `.claude/erkenntnis.md`; Einzelheiten in den Logbuechern
