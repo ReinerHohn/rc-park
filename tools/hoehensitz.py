@@ -257,12 +257,10 @@ def seiten_namen(obj, achsen):
     return {ax: sk.get(ax, ax) for ax in achsen}
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--fotosatz"); ap.add_argument("--wolke"); ap.add_argument("--stl"); ap.add_argument("--json")
-    ap.add_argument("--bild"); ap.add_argument("--probe", action="store_true"); ap.add_argument("--rot", action="store_true")
-    ap.add_argument("--n-wolke", type=int, default=N_WOLKE); ap.add_argument("--n-modell", type=int, default=N_MODELL); a = ap.parse_args(argv)
+def laden(a):
+    """Gemeinsamer Lader (auch tools/hoehen_angleich.py): a mit objekt, fotosatz, wolke, stl, n_wolke, n_modell ->
+    dict(obj, od, root, audit, achsen, namen, sp, stl, PM, PW, info, lo, hi, rahmen) oder str (Fehlermeldung). rahmen = Verschiebung STL-Meter -> Kamerarahmen."""
     import formsitz as FS, konvergenz_wolke as KW
-    t_start = time.time()
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
     audit = os.path.join(root, obj.get("audit") or os.path.relpath(os.path.join(od, "audit"), root))
     if not obj.get("seiten_konvention"): print("HINWEIS: objekt.json ohne seiten_konvention - Seiten heissen nach Achsen (+x/-x/+y/-y)")
@@ -270,19 +268,33 @@ def main(argv=None):
     sk = obj.get("seiten_konvention") or {}
     achsen = [ax for ax in ACHSEN if ax in sk] or [ax for ax in S.get("seiten", {}) if ax in ACHSEN] or list(ACHSEN); namen = seiten_namen(obj, achsen)
     stl = a.stl or os.path.join(root, obj.get("stl") or "-")
-    if not os.path.exists(stl): print(f"FEHLER: STL fehlt ({stl})"); return 1
+    if not os.path.exists(stl): return f"FEHLER: STL fehlt ({stl})"
     wp = KW.wolke_pfad(obj, od, a.wolke)
-    if not wp or not os.path.exists(wp): print(f"FEHLER: keine dichte Wolke ({wp})"); return 1
+    if not wp or not os.path.exists(wp): return f"FEHLER: keine dichte Wolke ({wp})"
     kk = None
     for nr in sorted({nr for s in S["seiten"].values() for nr in s["fotos"]}):
         try: kk = json.load(open(os.path.join(od, "messprotokoll", f"K-{nr}.json"))).get("kamera") or {}; break
         except Exception: pass
-    if kk is None: print("FEHLER: keine K-Datei des Fotosatzes lesbar (Rahmenverschiebung)"); return 1
-    T = FS.modell_kamerarahmen(FS.stl_dreiecke(stl), obj, kk); lo, hi = T.reshape(-1, 3).min(0), T.reshape(-1, 3).max(0)
+    if kk is None: return "FEHLER: keine K-Datei des Fotosatzes lesbar (Rahmenverschiebung)"
+    T0 = FS.stl_dreiecke(stl); T = FS.modell_kamerarahmen(T0, obj, kk)
+    sk_ = np.float32(obj.get("stl_massstab", 87) / 1000.0 if obj.get("stl_einheit_mm", True) else 1.0)
+    rahmen = (T.reshape(-1, 3)[0] - T0.reshape(-1, 3)[0] * sk_).astype(float); del T0
+    lo, hi = T.reshape(-1, 3).min(0), T.reshape(-1, 3).max(0)
     PM, _ = FS.abtasten(T, a.n_modell); del T
     box_lo, box_hi = lo.astype(float) - RAND_M, hi.astype(float) + RAND_M; box_lo[2] = lo[2] + BODEN_M
     PW, info = KW.wolke_laden(wp, (box_lo, box_hi), a.n_wolke, boden_m=0.0)
-    if len(PW) < 1000: print(f"FEHLER: Wolke im Modellbereich fast leer ({info})"); return 1
+    if len(PW) < 1000: return f"FEHLER: Wolke im Modellbereich fast leer ({info})"
+    return dict(obj=obj, od=od, root=root, audit=audit, achsen=achsen, namen=namen, sp=sp, stl=stl, PM=PM, PW=PW, info=info, lo=lo, hi=hi, rahmen=rahmen)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--fotosatz"); ap.add_argument("--wolke"); ap.add_argument("--stl"); ap.add_argument("--json")
+    ap.add_argument("--bild"); ap.add_argument("--probe", action="store_true"); ap.add_argument("--rot", action="store_true")
+    ap.add_argument("--n-wolke", type=int, default=N_WOLKE); ap.add_argument("--n-modell", type=int, default=N_MODELL); a = ap.parse_args(argv)
+    t_start = time.time()
+    L = laden(a)
+    if isinstance(L, str): print(L); return 1
+    audit, achsen, namen, sp, stl, PM, PW, info, lo, hi = (L[k] for k in ("audit", "achsen", "namen", "sp", "stl", "PM", "PW", "info", "lo", "hi"))
     geo = geo_aus(lo, hi); halb = np.random.default_rng(1).random(len(PW)) < 0.5; PA, PB = PW[halb], PW[~halb]
     print(f"HOEHENSITZ: Modell {len(PM)} Punkte, Wolke {info['n_box']} im Bereich -> {len(PW)} genutzt ({time.time() - t_start:.0f} s geladen)", flush=True)
     nullv = null_varianten(); seiten, probe, rot, felder = {}, {}, {}, []

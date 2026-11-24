@@ -369,6 +369,22 @@ def bogen_fugen_rillen(fugen, innen, aussen, breite_min, steg_min=None):
     return cs, [{k: v for k, v in g.items() if k != "_b"} | {"breite_gebaut": round(g["_b"], 3)} for g in sorted(gebaut, key=lambda g: g.get("s", 0))], weg
 
 
+def hoehen_aus_json(koerper, datei):
+    """24.11.2026 (Hoehensitz-Befund 1122: waagerechte Bauteile sitzen kaum ueber Zufall): HOEHEN-ANGLEICH als LETZTER Bauschritt - monotone Hoehenabbildung je Seite
+    aus tools/hoehen_angleich.py (audit/hoehen_angleich.json; nur Korrekturen mit angenommen=true, d. h. Wolken-Linie UND triangulierte Fotokanten einig).
+    Manifold.warp_batch verschiebt nur z (Steigung >= FALT_MIN, keine Faltung -> gueltige Huelle). Liefert (koerper, belege); Beleg-Name 'Hoehenangleich'."""
+    if not os.path.exists(datei): return koerper, []
+    J = json.load(open(datei)); K_ = [q for q in J.get("korrekturen", []) if q.get("angenommen")]
+    if not K_: return koerper, []
+    import hoehen_angleich as HA_
+    neu = koerper.warp_batch(lambda V: HA_.verschoben(V, J))
+    if neu.is_empty() or neu.volume() < 0.5 * koerper.volume():                # Gueltigkeits-Guard: Abbildung darf den Koerper nicht zerstoeren
+        return koerper, [dict(seite="wand", element=f"{HA_.ELEMENT_BELEG} NICHT angewendet (Koerper nach Abbildung ungueltig)", quelle="bauteile.hoehen_aus_json (Guard)")]
+    bel = [dict(seite=q["achse"], element=f"{HA_.ELEMENT_BELEG}: Linie z {q['z']:.2f} t {q['t0']:.1f}..{q['t1']:.1f} um {q['dz']:+.2f} m", quelle="tools/hoehen_angleich.py: " + q.get("grund", ""),
+                bauteile=q.get("bauteile", []), z_vorher=q["z"], dz=q["dz"]) for q in K_]
+    return neu, bel
+
+
 def bogen_gewaende_spaet(koerper, datei, einbinden=0.15, abtrag=0.3, ring=0.15):
     """24.11.2026 (1122w, Schwabentor Nord f00 / Sued f01: Torboegen nur glattes Loch, Foto zeigt Sandstein-Gewaende aus Bogensteinen): GEWAENDE-Band um gebaute
     Tor-/Bogenoeffnungen (audit/oeffnungen_auto.json, Eintrag 'gewaende_band' von tools/bogen_gewaende.py: Aussenkante 'aussen' m vom lichten Umriss, 'vorsprung')
