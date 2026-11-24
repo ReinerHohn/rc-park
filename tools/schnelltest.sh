@@ -510,6 +510,7 @@ k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_teil_gelaende_tor.py 2>
 k=$(python3 -I tools/test_kamera_gelaende.py 2>&1); [ $? = 0 ] && ok "Kamera-Gelaende-Tor urteilt ueber die Bilder der Fusion (nach dem Neufusionieren gruen, Ausloeser unveraendert) - 1122z dauernd rot" || rot "kamera_gelaende: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
 k=$(python3 -I tools/test_platz_tor_ersetzt.py 2>&1); [ $? = 0 ] && ok "Platztor der Kette: ohne Ersatz haelt die Stufe an, Tests ersetzen es (RCPARK_PLATZ_TOR=test_ersetzt), main() entfernt den Ersatz" || rot "platz_tor: $(echo "$k" | grep FEHLER | head -3 | cut -c1-300)"
 k=$($P -W ignore -I tools/test_wandbezug_bauteile.py 2>&1); [ $? = 0 ] && ok "Bauteile an der GESETZTEN Wand (wandversatz): Tor schneidet volle Tiefe, Laubenpfeiler/Umgang/Vorbau schliessen ohne Spalt an, ein Stueck" || { rot "wandbezug_bauteile: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
+k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_kamerahoehe_dgm.py 2>&1); [ $? = 0 ] && ok "Kamerahoehe gegen DGM1 an der GPS-Lage (1122z Ost-Teil: Schlossberg-Kameras echt 20-36 m hoch; Modell/DGM gestaucht/gestreckt -> rot, ebenes Umfeld -> Steigung nicht messbar)" || rot "kamerahoehe_dgm: $(echo "$k" | grep -E "FEHLER|Error|assert" | head -3 | cut -c1-300)"
 #<<< PRUEFUNGEN
 fi
 rm -rf $S
