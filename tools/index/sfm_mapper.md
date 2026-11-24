@@ -1,4 +1,4 @@
-# Werkzeuge: sfm_mapper (62)
+# Werkzeuge: sfm_mapper (63)
 - `tools/ansichten_foto_paare.py` [seg] ansichten_foto_paare.py - FUER JEDES MODELL: Kantenbild des Modells aus den kalibrierten Kameras NEBEN dem Foto, ueber alle Blickrichtungen UND Hoehenwinkel (von oben, eben, von un
 - `tools/bildsuche_paare.py` [seg] bildsuche_paare.py <bilder-ordner> --aus <paare.txt> [--k 40] [--liste namen.txt] [--pruefen-db <db>]
 - `tools/colmap_db_schema.py` [-] colmap_db_schema.py <db.db> - KOPIE einer COLMAP-Datenbank auf das Schema von pycolmap 4.2.1 (venv-colmap) zurueckfuehren. 18.11.2026 (Kaufhaus gk2h, Stufe seiten_luecken: "No regi
@@ -15,7 +15,7 @@
 - `tools/kamera_export.py` [col] kamera_export.py <sparse_modell> <ausgabe.json> - Kameras eines COLMAP-Modells in eine JSON-Datei (ohne pycolmap im Rechenschritt).
 - `tools/kamera_feinlage.py` [seg] kamera_feinlage.py - BS3b/BS3c: Kamera-Feinlage je Foto ueber foto_diff (kosten_lr, kleiner = besser).
 - `tools/kamera_fit.py` [gen] kamera_fit.py — PERSPEKTIVE AUTOMATISCH TREFFEN (Analyse-durch-Synthese).
-- `tools/kamera_gelaende.py` [-] kamera_gelaende.py (bis 16.11.2026 kamera_plausibel.py; der Name traegt jetzt die Grobregel Standort/Brennweite) <objekt.json> <SFM-AUSRICHTUNG.json> [--unter 1.5] [--gruppe 4] - K
+- `tools/kamera_gelaende.py` [-] kamera_gelaende.py (bis 16.11.2026 kamera_plausibel.py; der Name traegt jetzt die Grobregel Standort/Brennweite) <objekt.json> <SFM-AUSRICHTUNG.json> [--unter 1.5] [--gruppe 4] [--
 - `tools/kamera_guete_gegenprobe.py` [seg] kamera_guete_gegenprobe.py - Sichtprobe der Kameraguete: je Foto SfM-Beobachtung (gruen), Projektion der LOO-Punkte mit gespeicherter Pose (blau) und mit LOO-Pose (rot), Gitter-v12
 - `tools/kamera_guete_lot2.py` [seg] kamera_guete_lot2.py - modellUNABHAENGIGE Kameraguete je Foto aus der gemeinsamen SfM (sparse/0 + kam_lot2.json).
 - `tools/kamera_gueterating.py` [-] kamera_gueterating.py - AUTOMATISCH bewerten, ob die Kamera eines Fotos (messprotokoll/K-<foto>.json, 'kamera') fuer Messungen/Textur taugt (Plan M5).
@@ -29,6 +29,7 @@
 - `tools/kamera_standort.py` [-] kamera_standort.py - Kamerastandort aus einer K-Datei (messprotokoll/K-<foto>.json, Block "kamera"), egal welcher Schreiber.
 - `tools/kamera_unabhaengig.py` [col] kamera_unabhaengig.py - UNABHAENGIGE Kameraprobe (Leave-One-Out-Registrierung, Gegenstueck zum zirkulaeren Wolke-ueber-Foto, BS10). Foto aus dem Buendel nehmen (Beobachtungen loesc
 - `tools/kamera_verfeinern.py` [seg] kamera_verfeinern.py <objekt.json> <fassaden.json> <FOTO> [--gegen FOTO,FOTO,...] [--n 6] [--schreiben] - Kamera eines (nach)registrierten Fotos am MODELL nachziehen.
+- `tools/kamerahoehe_dgm.py` [col] kamerahoehe_dgm.py --modell <sparse> --bilder <fotos> --ursprung <lat> <lon> (--m_je_einheit X | --vereinen <vereinen.json> --rahmen rahmen_a) [--lot_modell <sparse>] [--matrix <js
 - `tools/kameras_am_ziel.py` [seg] kameras_am_ziel.py - ALLE kalibrierten Kameras eines Objekts nach Aufloesung am Ziel sortieren (VOR jeder Aufnahmebitte laufen lassen). Aufruf: /media/oem/scan/venv-seg/bin/python 
 - `tools/kameras_aus_buendel.py` [-] kameras_aus_buendel.py - PIPELINE-BRUECKE (2026-11-04): Kameras des Buendelausgleichs (sfm_lod2_buendel.py, an LoD2/DGM1 verankert, ohne Handpicks) als K-<foto>.json 'kamera' schre
 - `tools/kameras_nachtragen.py` [col] kameras_nachtragen.py <objekt.json> <sparse-neu> [--bilder ORDNER] [--ueberschreiben] - nachregistrierte Fotos als Messkameras K-<foto>.json in den MODELLRAHMEN bringen.

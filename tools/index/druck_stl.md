@@ -1,4 +1,4 @@
-# Werkzeuge: druck_stl (37)
+# Werkzeuge: druck_stl (38)
 - `tools/abgeschaltete_teile.py` [-] abgeschaltete_teile.py - listet Schluessel in objekt.json, die ein Teil abgeschaltet/verworfen haben (Muster *_verworfen, deaktiv*, abgeschaltet). Anlass 12.11.: 'stirn_verworfen' 
 - `tools/bambu_slice.py` [-] bambu_slice.py - STL -> .gcode.3mf fuer den Bambu P1S ueber die Kommandozeile von Bambu Studio (Register CB, Lehre 2026-11-03). Loest die Vererbung ('inherits') der System-Profile 
 - `tools/bausatz.sh` [sh] bausatz.sh <objekt> <masken (relief/a_putz.npz,relief/b_putz.npz)> [WAND_MM=2.4] [SPIEL_MM=0.3] [BAUART=tasche|einsatz] [INNEN_MM=1.0] - Bausatz fuer ZWEI Drucker in einem Lauf (17
@@ -27,6 +27,7 @@
 - `tools/stl_html_viewer.py` [-] stl_html_viewer.py — GENERISCH: ein/mehrere STL als selbst-enthaltene three.js-HTML.
 - `tools/teil_abstand.py` [gen] (kein Docstring)
 - `tools/teil_ansichten.py` [seg] teil_ansichten.py - GUTE ANSICHTEN JE BAUTEIL und fehlende Richtungen (Azimut/Hoehe) - Datenluecken-Messung fuer die Online-Foto-Suche.
+- `tools/teil_gelaende_tor.py` [col] teil_gelaende_tor.py <dicht_a.ply> <dicht_b.ply> --matrix <json mit B_nach_A> --aus <ergebnis.json> [--modell-a <A-Modell>] [--gps <vereinen.json des GPS-Wegs>] [--bilder <Fotos>] 
 - `tools/teil_tor.py` [-] teil_tor.py <objekt> <typ>[,<typ>..] --wolke w.npy --fotos kam.json --bilder dir [--eps 0.002] [--trocken] ANNAHME-TOR fuer Teilfits (Nutzer 8.11.: 'bist du sicher, dass wir konver
 - `tools/teil_varianten_tor.py` [gen] teil_varianten_tor.py - BEST-OF-N MIT TEIL-LOKALEM RAUSCHTOR (Option A der Recherche 11.11., Auftrag Hauptsitzung).
 - `tools/teile_abstand.py` [gen] teile_abstand.py - Rangfolge der Bauteile nach Abstand zur Wolke (Sweet Spots zuerst, Nutzerregel): je Bauteil von objekt.json einzeln bauen (NUR_BAUTEIL), dann - Median/P90 Abstan

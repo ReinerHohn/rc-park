@@ -1,4 +1,4 @@
-# Werkzeuge: wolke_dicht (91)
+# Werkzeuge: wolke_dicht (93)
 - `tools/bauteil_element_wolke.py` [gen] bauteil_element_wolke.py - Elemente, die die AUTOMATISCHE Elementschleife (generator_elemente_schleife.py) aus dem Restfeld der Wolke ableitet.
 - `tools/bauteil_rumpf_wolke.py` [-] bauteil_rumpf_wolke.py - Rumpf + Dach AUS DER DICHTEN PUNKTWOLKE (Spec S3b, Nutzerregel 6.11.: Wolke = erste Wahrheit).
 - `tools/bogen_aus_wolke.py` [seg] bogen_aus_wolke.py - Bogenoeffnungen als LOECHER in einer duennen Platte der Wolke um die Fassadenebene messen (3D-Lage, keine Foto-Ebenenannahme). Schritte: Rahmen (Umeyama) -> Ti
@@ -17,6 +17,7 @@
 - `tools/fassade_tiefe.py` [seg] fassade_tiefe.py <objekt.json> <fassaden-ordner> <nr> [--zelle 0.04] [--w -0.8 2.5] [--dw 0.05] [--fotos a,b,...] [--min_m2 0.5] [--min_w 0.25]
 - `tools/fenster_tiefe_tor.py` [-] fenster_tiefe_tor.py - Fensterliste (audit/fenster_auto.json) mit dem Ebenen-Sweep pruefen und ergaenzen (21.11.2026, Kettenstufe 'bauplan').
 - `tools/foto_punkt_picker.py` [seg] foto_punkt_picker.py — erzeugt eine eigenständige HTML-Seite zum PRÄZISEN Markieren von Modell-Passpunkten in einem Foto (Handy/Desktop). Du klickst die bekannten Bauwerks-Punkte (
+- `tools/fusion_vorab.py` [-] fusion_vorab.py - EINE Fusion je Kettenlauf statt zwei (24.11.2026, Laufzeit-Bericht 1122z: TEILFUSION 470 s in 'sfm' + 445 s in 'neu_fusionieren').
 - `tools/gruppen_punkt_tor.py` [col] gruppen_punkt_tor.py <sparse> <objekt.json> <picks.json> [--tol 0.3] - TOR: derselbe Objektpunkt, aus verschiedenen FOTOGRUPPEN trianguliert, muss zusammenfallen.
 - `tools/helm_profil_wolke.py` [-] helm_profil_wolke.py - Profil r(z) eines N-eckigen Helms/Turms (Apothem je Hoehe) aus der Fotowolke, mit Achslage und Flaechenphase (generisch, kein Objektname).
 - `tools/iphone_dicht.py` [col] iphone_dicht.py <bilder> <sparse/N> <ausgabeordner> [max_bild] - COLMAP dicht (undistort -> PatchMatch-Stereo CUDA -> Fusion). Nutzer 8.11.: Punktwolke aus iPhone-Fotos ergaenzen.
@@ -24,6 +25,7 @@
 - `tools/kanten_tiefe_sweep.py` [seg] Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen; je Tiefe zaehlen, in wie vielen Nachbar
 - `tools/kanten_tiefe_sweep_flaeche.py` [seg] Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen; je Tiefe zaehlen, in wie vielen Nachbar
 - `tools/kh_dicht_viewer.py` [gen] kh_dicht_viewer.py - dichte Wolke (tools/dicht_handy.py rechnen) als selbstenthaltene 3D-HTML (three.js Punkte, Fotofarben).
+- `tools/konvergenz_wolke.py` [-] konvergenz_wolke.py <objekt.json> --aus DIR [--fotosatz F] [--wolke PFAD] [--stl P] [--n-max 3000000] [--je-seite K] [--json J] VERLUST "dichte Wolke -> Modell" je Seite (Auftrag 2
 - `tools/modell_wolke_abstand.py` [gen] modell_wolke_abstand.py - Gesamtmodell (STL mm, Massstab) gegen die Wolke: Median/P90 Abstand Wolkenpunkt -> Modellflaeche (Punkte < --rand m), plus Anteil > 0,3 m und die Rueckric
 - `tools/netz_aus_dicht.py` [gen] netz_aus_dicht.py <objekt.json> <dicht-ordner> [--aus ORDNER] [--radius 60] - OpenMVS-Netz aus dem COLMAP-Dichtordner, im MODELLRAHMEN ausgeschnitten.
 - `tools/param_wolke_fit.py` [seg] param_wolke_fit.py - Parameter EINES parametrischen Bauteils (objekt.json['bauteile'][typ]) per CMA-ES gegen die Punktwolke einpassen (Nutzerweg 8.11.: Parameter drehen, immer naeh

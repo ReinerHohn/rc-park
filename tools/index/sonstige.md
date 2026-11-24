@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (130)
+# Werkzeuge: sonstige (132)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -40,6 +40,7 @@
 - `tools/ketten_match.py` [seg] ketten_match.py - Linienzuege (Rippen) per Mehrfoto-Zuordnung triangulieren: Ketten werden in JEDEM Foto aus der Stabilitaetskarte extrahiert (Skelett, Lueckenschluss, Kreuzungen g
 - `tools/knoten_abstimmung.py` [seg] knoten_abstimmung.py - 3D-Knoten (Rippenkreuzungen) per Mehrfoto-Eckenabstimmung statt Handzuordnung (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/kn
 - `tools/konsolen_zelle.py` [seg] konsolen_zelle.py - Konsolenform aus der GEFALTETEN Musterzelle (wie baluster_fit: Profil aus der Faltung), danach Phase je Quelle, Entscheidregel.
+- `tools/laufzeit_bericht.py` [-] laufzeit_bericht.py <kettenlog> [--vorlauf <kettenlog>] [--aus <json>] [--ab-zeile N]
 - `tools/lg_match.py` [seg] lg_match.py - Merkmale + Zuordnungen mit ALIKED + LightGlue (gelernter Matcher) fuer grosse Blickwinkel (Luftbild gegen Strasse).
 - `tools/lg_zwischenspeicher.py` [-] lg_zwischenspeicher.py - Zwischenspeicher fuer ALIKED-Merkmale und Grob-LightGlue-Paarwerte des Nachholens (tools/zusatzfotos_lightglue.py paare), 23.11.2026.
 - `tools/light_prep.py` [gen] light_prep.py — schneidet automatisch LICHT-GEOMETRIE in ein Druckmodell: - LED-Taschen (Durchmesser/Tiefe) MIT Ausrichtung (Lichtkegel zeigt in dir) - Kabelkanäle von der Tasche z
@@ -66,6 +67,7 @@
 - `tools/pose_vertrauen.py` [col] pose_vertrauen.py - Vertrauensmass je registriertem Zusatzfoto (Handyfotos) aus Daten abgeleitet.
 - `tools/pose_vertrauen_gruppen.py` [col] pose_vertrauen_gruppen.py - Posenunsicherheit der Zusatzfotos je Kameragruppe (Register DF, 2026-11-06). Nur Lesen der Eingaben.
 - `tools/quellen_inventar.py` [-] quellen_inventar.py — ERSCHÖPFENDE, ERZWUNGENE Quellen-Inventur für ein Bauwerk.
+- `tools/quellfilter.py` [col] quellfilter.py <workspace> [--ply <workspace>/fused.ply] [--stichprobe N] [--nur_messen] [--threads 4] FREIRAUM-NACHFILTER DER DICHTEN WOLKE (24.11.2026, Kette schwabentor 1122z: b
 - `tools/real_vs_modell.py` [seg] real_vs_modell.py — scharfe Bewertung REALITÄT gegen MODELL.
 - `tools/rund_aus_umriss.py` [seg] rund_aus_umriss.py - RUNDE KOERPER (Treppenturm, Rundturm, Saeule, Erkertuermchen) aus den FOTO-UMRISSEN vermessen (21.11.2026).
 - `tools/saeulen_breite_suche.py` [-] saeulen_breite_suche.py - Breite JEDES verlaengerten Pfeilers vom Foto-Diff bestimmen lassen (statt Mittelprofil; Nutzer 7.11.: echter Unterschied darf nicht untergehen). Je Pfeile
