@@ -1,6 +1,7 @@
 {
  "_hinweis": "Synonymgruppen fuer tools/wissen_suchen.py. Ein Suchbegriff, der zu einem Gruppenwort passt, sucht die ganze Gruppe. Gross/klein und ae/ä egal; Woerter <= 4 Zeichen nur als ganzes Wort. Neue Gruppe = neue Liste.",
  "gruppen": [
+  ["Erkennerkasten", "Erkennerkaesten", "Erkennerbox", "OWLv2", "fassade_parsing", "elemente.json", "erkennerkasten_pruefen", "falscher Kasten"],
   ["Fotoauswahl", "Bildauswahl", "Bildwahl", "Fotowahl", "Teilmenge", "Bildwert", "Sweet Spot", "Sweetspot", "Wichtigkeit", "Fotozahl", "foto_wichtigkeit", "bildwert", "dicht_bildwahl"],
   ["Wolke", "Punktwolke", "dichte Wolke", "PatchMatch", "Fusion", "MVS", "Tiefenkarte"],
   ["Ausrichtung", "Lage", "GPS", "Georeferenz", "LoD2", "LOD2", "Lot", "Massstab", "Maßstab", "DOM1", "Laser", "sfm_ausrichten"],

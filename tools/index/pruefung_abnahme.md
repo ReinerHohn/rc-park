@@ -1,10 +1,11 @@
-# Werkzeuge: pruefung_abnahme (38)
+# Werkzeuge: pruefung_abnahme (39)
 - `tools/breite_quellenvergleich.py` [-] breite_quellenvergleich.py - Helmbreite quer (E-W) je Hoehe aus DERSELBEN Silhouetten-Schaetzung (hybrid_abgleich.silhouette_quer) fuer Strassenwolke, Generator-STL, Drohnenwolke g
 - `tools/diff_parallel.py` [-] diff_parallel.py - Foto-Diff-Auswertung (modell_wettbewerb.py) PARALLEL statt nacheinander (7.11., 'Zeit ist Geld'): je (Glaettung, Modus) ein eigener Job ueber tools/job_start.sh 
 - `tools/durchfahrt_pruefen.py` [-] durchfahrt_pruefen.py - Ist eine gebaute Bogenoeffnung eine DURCHFAHRT durch das ganze Gebaeude? (21.11.2026, Kettenstufe 'fenster' nach oeffnungen_bogen)
 - `tools/editor_draht.py` [seg] Draht-Editor (lokal, Port 8767): Kantenkandidaten anklicken, loeschen, vereinigen, als Spline bearbeiten/glaetten, neue Kanten ueber Wolkenpunkte ziehen, Abdeckung gegen die abgest
 - `tools/editor_modell.py` [seg] editor_modell.py <objekt> --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8766] Browser-Editor (Nutzerwunsch 8.11.): Modellkanten je Bauteil ueber das Foto, Teil ank
 - `tools/element_vergleich.py` [seg] element_vergleich.py - Foto | Modell je ELEMENT automatisch nebeneinander + Oeffnungs-Abgleich (Register CF: "kleine Boegelchen" dreimal uebersehen).
+- `tools/erkennerkasten_pruefen.py` [seg] erkennerkasten_pruefen.py - ERKENNERKASTEN VOR DER VERWENDUNG PRUEFEN (24.11.2026): eine 'tuer'/'fenster'-Box des Erkenners (OWLv2, fassade_parsing -> elemente.json bzw. oeffnungen
 - `tools/freiraum_audit.py` [-] freiraum_audit.py - Freiraumkette fuer das aktuelle Objekt-STL (von tools/bauen_abnehmen.sh vor dem Pruefstand aufgerufen; Pruefstand-Messer freiraum_offen liest das Ergebnis). obj
 - `tools/freiraum_pruefen.py` [seg] freiraum_pruefen.py - ALLGEMEINE Pruefung "Modell gegen gesehenen Freiraum" (Nutzer 5.11. 13:53: keine Spezialfaelle wie "Seitenbogen = Durchgang").
 - `tools/gitter_pruefblatt.py` [seg] Pruefblatt: Drahtgitter auf VIELEN Fotos aus verschiedenen Richtungen pruefen (Nutzerregel: immer in allen Bildern pruefen, nicht nur IMG_6261). (1) Je Foto Stuetzung = Anteil der 

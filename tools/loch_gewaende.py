@@ -25,6 +25,8 @@ geschlossener Tuer aus oeffnungen_aussen.json (klasse 'tuer', flach, keine gebau
      ANNAHME Druckmindestmass (MINMM x SCALE) - im Eintrag vermerkt.
   3. Form: Eintrag ohne Bogen -> Bogen aus der Oberkante des Lochs (bogen_aus_loch: Stich/Rund), wenn messbar. Der Eintrag behaelt seine Bogenform nur, wenn das Loch dieselbe Groesse hat (Breite und Hoehe je +-25 %); sonst war die Form die des Gewaendes -> Rechteck
      (form_quelle nennt den Grund). Tiefe: Sweep im Loch gegen den Wandring (nischen_fenster.tiefe_einzeln); sonst bleibt eine gemessene Tiefe, sonst ANNAHME.
+  ERKENNERKASTEN-PRUEFUNG (24.11.2026, 1122zb f04): Tuerzonen sind Erkennerkaesten - erst erkennerkasten_pruefen.pruefen (Loch fuellt die Box / Rahmen mit
+  Loch / Tiefensprung, dazu Boden oder Schwelle); sonst 'Erkennerkasten verworfen' im Bericht. Eine Tuer, deren Loch schon Eintrag ist (IoU >= 0,5): 'Doppelung'.
   GUARD + FALLBACK: kein gueltiges Loch -> Eintrag unveraendert (Grund im Bericht). Ein Loch, das > 90 % der Zone fuellt, aendert nichts (Zone war schon das Loch).
 Ausgabe: fenster_auto.json neu (Eingang als fenster_auto_vor_loch.json daneben); Eintraege bekommen 'loch' (Mass + Quelle) und ggf. 'gewaende'
   {umriss [[u, z]..], hoehe, hoehe_quelle}; Tueren kommen als Eintrag mit art 'tuer' dazu. Bericht loch_gewaende.json, Bild loch_gewaende_<fid>.jpg (ANSEHEN:
@@ -311,6 +313,12 @@ def eintrag_anpassen(e, erg, npz, fenster_tiefe=0.12):
     return tx
 
 
+def _iou(a, b):
+    """Ueberdeckung (IoU) zweier Kaesten dict(u0, u1, z0, z1)."""
+    iu = max(0.0, min(a["u1"], b["u1"]) - max(a["u0"], b["u0"])); iz = max(0.0, min(a["z1"], b["z1"]) - max(a["z0"], b["z0"])); s = iu * iz
+    return s / max((a["u1"] - a["u0"]) * (a["z1"] - a["z0"]) + (b["u1"] - b["u0"]) * (b["z1"] - b["z0"]) - s, 1e-9)
+
+
 def tueren(oeff, oeff_auto, fenster):
     """Geschlossene Tueren aus oeffnungen_aussen.json: klasse 'tuer', flach (kein Durchblick), keine gebaute Oeffnung und kein Fenster an der Stelle."""
     out = {}
@@ -364,8 +372,10 @@ def main(argv=None):
     ap.add_argument("--oeffnungen", help="audit/oeffnungen_aussen.json (geschlossene Tueren)"); ap.add_argument("--oeffnungen_auto", help="audit/oeffnungen_auto.json (gebaute Oeffnungen)")
     ap.add_argument("--nur", nargs="*"); ap.add_argument("--aus"); ap.add_argument("--dunkel", type=float, default=0.6, help="Loch-Helligkeit hoechstens so viel x Wand-L")
     ap.add_argument("--fenster_tiefe", type=float, default=0.12, help="ANNAHME wie nischen_fenster/bauteile.fenster_aus_json")
+    ap.add_argument("--ohne_kastenpruefung", action="store_true", help="Tuerzonen (Erkennerkaesten) ungeprueft messen (Stand vor 24.11.2026, nur Vergleich)")
     a = ap.parse_args(argv)
     import cv2
+    import erkennerkasten_pruefen as EK
     aus = a.aus or os.path.dirname(os.path.abspath(a.fenster)); os.makedirs(aus, exist_ok=True)
     J = json.load(open(a.fenster)); FF = {F["id"]: F for F in json.load(open(os.path.join(a.fein, "fassaden.json")))["fassaden"]}
     try: E = json.load(open(os.path.join(a.ordner, "elemente.json")))["fassaden"]
@@ -382,15 +392,25 @@ def main(argv=None):
         rs = FF[fid]["raster"]; R = Raster(rs["u0"], rs["z1"], rs["zelle"], *bgr.shape[:2])
         nz = os.path.join(a.ordner, f"tiefe_{fid}.npz"); npz = dict(np.load(nz)) if os.path.exists(nz) else None
         kl = [(e["u0"], e["u1"], e["z0"], e["z1"]) for e in (E.get(fid) or {}).get("elemente", []) if e.get("klasse") in ("fenster", "tuer", "bogen")]
-        br = []; neu_tueren = []
+        br = []; neu_tueren = []; rgb_ = None
         for e in list(F["fenster"]) + T.get(fid, []):
             r = dict(zone=[round(e[k], 3) for k in ("u0", "u1", "z0", "z1")], art=e.get("art", "fenster"))
             if e.get("nische"): r["urteil"] = "uebersprungen: Fenster in Nische (nischen_fenster, zwei Ebenen)"; br.append(r); continue
             if e.get("loch"): r["urteil"] = "uebersprungen: schon vermessen (zweiter Lauf auf derselben Liste)"; br.append(r); continue
+            if e.get("art") == "tuer" and not a.ohne_kastenpruefung:
+                # 24.11.2026 (1122zb f04): Tuerzone = Erkennerkasten -> erst pruefen, ob das Wandbild/die Tiefe dort eine Tuer belegt (Loch/Rahmen/Tiefe + Boden/Schwelle);
+                # zwei falsche Tuerkaesten auf weissem Putz gaben sonst eine ZWEITE Tuer (Loch = echte Tuer darunter) und je Zone einen Schlitz.
+                if rgb_ is None: rgb_ = np.ascontiguousarray(bgr[..., ::-1]); bel_ = rgb_.astype(np.int32).sum(2) > 0
+                pk = EK.pruefen(rgb_, bel_, R.u0, R.z1, R.c, r["zone"], "tuer", npz, FF[fid])
+                if not pk["gilt"]: r["urteil"] = "Erkennerkasten verworfen: " + pk["grund"]; r["erkennerkasten"] = pk["werte"]; br.append(r); continue
             erg = loch_messen(bgr, R, r["zone"], kl, dunkel=a.dunkel)
             if "fehler" in erg:
                 r["urteil"] = "unveraendert: " + erg["fehler"]; br.append(r); continue
             erg.pop("_masken", None)
+            if e.get("art") == "tuer":
+                # Doppelung: das Loch dieser Tuer ist schon ein Eintrag (Fensterliste oder fruehere Tuer) -> nicht noch einmal
+                Lq = erg["loch"]; da = next((q for q in list(F["fenster"]) + neu_tueren if _iou(Lq, q.get("loch") or q) >= 0.5), None)
+                if da is not None: r["urteil"] = f"Doppelung: Loch {Lq['u1'] - Lq['u0']:.2f} x {Lq['z1'] - Lq['z0']:.2f} m ist schon Eintrag u {da['u0']:.2f}..{da['u1']:.2f} z {da['z0']:.2f}..{da['z1']:.2f}"; br.append(r); continue
             r["urteil"] = eintrag_anpassen(e, erg, npz, a.fenster_tiefe); r["loch"] = e.get("loch"); r["gewaende"] = e.get("gewaende"); n_ok += 1; br.append(r)
             if e.get("art") == "tuer": neu_tueren.append(e)
         F["fenster"] = F["fenster"] + neu_tueren
