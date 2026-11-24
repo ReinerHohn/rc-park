@@ -11,6 +11,7 @@ import os, sys, json, time, glob, shutil, subprocess, tempfile
 T = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(T); sys.path.insert(0, T)
 PY = sys.executable
 FEHLER = []
+os.environ["RCPARK_PLATZ_TOR"] = "test_ersetzt"   # 24.11.2026: Platztor (tools/platz_pruefen.py) ersetzt - Tests haengen nicht am echten Plattenplatz (Test des Tors: tools/test_platz_tor_ersetzt.py)
 
 
 def test(name):

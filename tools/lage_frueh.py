@@ -17,6 +17,7 @@ import os, sys, json, time, struct, argparse
 import numpy as np
 
 T = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(T); sys.path.insert(0, T)
+PY_COL = "/media/oem/scan/venv-colmap/bin/python"
 
 
 def sparse_lesen(pfad):
@@ -68,6 +69,10 @@ def sfm_mit_vorstufe(B, lauf, notiz, pipe_cmd, neu_sfm, objekt_rel, P, FV, ziel,
     if rc_f == 3 and modus == "1":
         B["lage"] = dict(bestanden=False, fehler="lage_frueh", tore=kurz, hinweis="vor der dichten Wolke durchgefallen (pipe/lage_frueh/lage_frueh.json)")
         return 0, (f"LAGE FRUEH: {J.get('grund')} - dichte Wolke NICHT gerechnet (Abhilfe: Fotos/Seiten pruefen; nur melden statt abbrechen: RCPARK_LAGE_FRUEH=hinweis, aus: 0)")
+    # 24.11.2026 EINE Fusion je Lauf (tools/fusion_vorab.py): Ausschlusslisten der Tore (Kameras unter Gelaende, Insel-Ketten, Wolken-Gruppen) brauchen keine dichte Wolke ->
+    # hier auf der Ausrichtung des duennen Netzes vorab rechnen; feuert die Neufusion-Regel sicher, kuerzt dicht_kette.py die fusion.cfg schon vor der ersten Fusion.
+    try: __import__("fusion_vorab").plan(P, ziel, lauf, B, log, py_col=PY_COL, py="python3")
+    except Exception as e: print(f"FUSION VORAB: Plan gescheitert ({type(e).__name__}: {e}) - alte Doppelfusion", flush=True)
     alt = os.environ.pop("RCPARK_PIPE_NEU", None)
     try: rc_s = lauf(B, "sfm", pipe_cmd, log, platz=[P], timeout=timeout)[0]
     finally:
@@ -101,6 +106,7 @@ def main(argv=None):
         except Exception as e:
             R["laeufe"].append(dict(loesung=k, kaputt=True, fehler=f"Ausrichtung: {type(e).__name__}: {e}")); return ende(4, f"Ausrichtung Loesung {k} abgestuerzt ({type(e).__name__}: {e}) - kein Urteil")
         if E["rc"] == 5 and E.get("loesung_nr") is None: break
+        if k == 0 and os.path.isfile(au): __import__("shutil").copyfile(au, au[:-5] + ".loesung0.json")      # 24.11.2026: Loesung 0 = Ausrichtung, mit der die Kette die dichte Wolke ausrichtet -> tools/fusion_vorab.py
         with LPS.Mitschrift(log): rc_g = LPS._rc_aus(LGP.main, [ok_, au, "--fotos", a.fotos])
         L = json.load(open(lj)) if os.path.isfile(lj) else {}; gf = L.get("gps_fit") or {}
         rc_p, txt_p = LP.tor_rc(json.load(open(au)).get("transformation"))

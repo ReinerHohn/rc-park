@@ -180,14 +180,45 @@ class Wand:
         a = self.a + d * self.n; return Wand(a, a + self.laenge * self.t, aussen=a + self.n)
 
 
+def wandversatz_fassade(korrekturen_json, o, n, winkel=5.0, abstand=0.3, z=None):
+    """Gesetzte Wandlage (m, + = aussen) der Fassade mit Bezugspunkt o / Normale n aus audit/schleife_korrekturen.json (Eintraege art 'wandversatz', angenommen != false:
+    tools/wandlage_fotokanten.py, tools/ebenen_schleife.py), zugeordnet ueber Normale (< winkel Grad) und Ebenenabstand (< abstand m) wie fassade_ortho.wandversatz.
+    Mehrere Eintraege: der tiefste (wie korrekturen_aus_json: die Wand steht dort, wo die tiefste Korrektur sie hinsetzt). Ohne Eintrag 0.
+    z = (z_unten, z_oben) (24.11.2026): nur Eintraege, deren Scheibe z0..z1 diesen Hoehenbereich ueberlappt (Umgang ueber der Fassaden-Oberkante bleibt auf der alten Wand)."""
+    import json, os
+    if not korrekturen_json or not os.path.exists(korrekturen_json): return 0.0
+    try: KK = json.load(open(korrekturen_json)).get("korrekturen", [])
+    except Exception: return 0.0
+    n = np.asarray(n, float)[:2]; o = np.asarray(o, float)[:2]; ws = []
+    for K in KK:
+        if K.get("art") != "wandversatz" or K.get("angenommen") is False or "w_soll" not in K: continue
+        try: nk = np.asarray(K["n"], float)[:2]; ok_ = np.asarray(K["o"], float)[:2]
+        except Exception: continue
+        if z is not None and K.get("z0") is not None and K.get("z1") is not None and not (float(K["z0"]) < z[1] and z[0] < float(K["z1"])): continue
+        if nk @ n > np.cos(np.radians(winkel)) and abs((ok_ - o) @ n) < abstand: ws.append(float(K["w_soll"]) + float((ok_ - o) @ n))
+    return min(ws) if ws else 0.0
+
+
+def wand_gesetzt(korrekturen_json, F, z=None):
+    """Bezugspunkt einer Fassade F (o, n aus einer Bauteil-JSON, LoD2-Ebene) auf die GESETZTE Wandlage verschoben (wandversatz_fassade) -> (o_neu, wv).
+    Fuer alle Bauteile, die an einer Fassade haengen oder in sie schneiden (Oeffnungen, Laube, Wandbild-Oeffnungen): Tiefen gelten ab der gebauten Wand, nicht ab LoD2."""
+    o = np.array(F["o"], float); wv = wandversatz_fassade(korrekturen_json, o, F["n"], z=z)
+    return o + wv * np.array(F["n"], float)[:len(o)], wv
+
+
 def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     """Automatisch erkannte Fenster (tools/fenster_aus_parsing.py: je Fassade o, d, n und Rechtecke mit Pfosten/Kaempfer) in den Koerper schneiden.
-    Fenster, vor denen im Modell schon etwas steht (Sonde 3-8 cm vor der Flaeche zu > 20 % gefuellt), werden ausgelassen. Liefert (koerper, belege)."""
+    Fenster, vor denen im Modell schon etwas steht (Sonde 3-8 cm vor der Flaeche zu > 20 % gefuellt), werden ausgelassen. Liefert (koerper, belege).
+    24.11.2026: Bezugsebene = GESETZTE Wandlage (wandversatz_fassade: Koerperwand auf die Fotokanten-Ebene zurueckgesetzt, tools/wandlage_fotokanten.py), sonst schnitte
+    eine 0,12-m-Laibung 0,32 m vor der Wand ins Leere (Schwabentor f00) und die Sonde laege in der Wand."""
     import json, os
     if not os.path.exists(datei): return koerper, []
     belege = []; DRUCK_MIN = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0     # 0,8 mm bei 1:87 = 0,07 m
+    kp_ = os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json")
     for fid, F in json.load(open(datei)).items():
-        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0; ann = []; formen = {}
+        o = np.array(F["o"], float); wv_ = wandversatz_fassade(kp_, o, F["n"]); o = o + wv_ * np.array(F["n"], float)[:len(o)]
+        W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0; ann = []; formen = {}
+        if wv_: belege.append(dict(seite="wand", element=f"Fenster Fassade {fid}: Bezugsebene {wv_:+.2f} m (gesetzte Wandlage)", quelle="bauteile.wandversatz_fassade (audit/schleife_korrekturen.json)"))
         for f in F["fenster"]:
             if f.get("stimmen_min", 0) < min(min_stimmen, 2): continue          # Stimmen prueft schon fenster_aus_parsing.py (anteilig); hier nur noch Einzelstimmen aussieben
             N = f.get("nische"); A_ = N or f
@@ -458,7 +489,8 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
     belege = []; ersatz = ersatz or {}
     for fid, F in json.load(open(datei)).items():
         if nur and fid not in nur: continue
-        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); s = -1.0 if W.spiegel else 1.0
+        o, _ = wand_gesetzt(os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json"), F)     # 24.11.2026: Nischentiefe ab der GESETZTEN Wand (wandlage_fotokanten)
+        W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); s = -1.0 if W.spiegel else 1.0
         sicher = {}
         for e in F["oeffnungen"]:
             if e.get("tiefe") is not None and not e.get("flach") and e.get("ncc_innen", 0) >= ncc_min and e.get("ncc_innen", 0) > sicher.get(e["klasse"], (0, 0))[1]: sicher[e["klasse"]] = (e["tiefe"], e["ncc_innen"], e["zone"])
@@ -882,7 +914,9 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
         try: VPJ = {(e.get("id"), e.get("gruppe", 0)): e for e in json.load(open(vpd)).get("fassaden", []) if e.get("profil")}
         except Exception: VPJ = {}
     for F in J.get("fassaden", []):
-        o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0)); w0 = min(0.0, ww) - einbinden
+        o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float); ww = float(F.get("w_wand", 0.0))
+        # 24.11.2026 (Risiko b, wandlage_fotokanten): Einbindung bis hinter die GESETZTE Wand (Front bleibt gemessen ww + Ausladung) - sonst Spalt, wenn die Wand hinter w_wand liegt
+        wv_ = wandversatz_fassade(os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json"), o, n); w0 = min(0.0, ww, wv_) - einbinden
         P = lambda u, z, w: [o[0] + u * d[0] + w * n[0], o[1] + u * d[1] + w * n[1], z]
         for gi_, g in enumerate(F["gruppen"]):
             if g.get("verworfen"): continue      # 23.11.2026: Beleg-/Fototor (tools/vorbau_fototor.py) hat die Gruppe verworfen (Phantom f03 1122t) - Index gi_ bleibt fuer vordach_profil gleich
@@ -891,7 +925,7 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                 # 21.11.2026 (Nutzer: "so wenig allgemeine Bauteile wie moeglich ... was nicht moeglich ist, wird aus allgemeinen Bauteilen gebaut"): Vorbau aus den dichten triangulierten
                 # Fotokanten seiner Ebene (tools/ebenen_bauplan.py -> tools/ebenen_masse.py). Aus Kanten: Kasten (Unter-/Oberkante, Breite, Ausladung), Konsolen (Zahl, Lage, Unterkante),
                 # Strebenfuss, Pfostenlage. Nicht aus Kanten (ANNAHME, im Beleg): Pfostenquerschnitt, Strebe gerade, Raehm, Dachflaeche (nur Traufe/Anschluss gemessen).
-                WG = Wand(o, o + d, aussen=o + n); Kb = KM_["kasten"]; wf = ww + float(KM_["ausladung"]); wi = ww - einbinden; KK = WG.kasten; ann = []
+                WG = Wand(o, o + d, aussen=o + n); Kb = KM_["kasten"]; wf = ww + float(KM_["ausladung"]); wi = min(ww, wv_) - einbinden; KK = WG.kasten; ann = []
                 Br_ = KM_.get("bruestung") or {}; z_p0 = Kb["z_oben"] - 0.02          # z_p0: Pfostenfuss
                 if Br_.get("offen") and os.environ.get("OHNE_BRUESTUNG_OFFEN") != "1":
                     # 24.11.2026 (1122w, Foto 113130: Schwelle, vorstehender Holm, dazwischen offen mit Knaggen an den Pfosten, Gemaelde dahinter sichtbar; Kette baute einen
@@ -934,7 +968,7 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                         wt_ = wf + 0.25; zt = V_["z_traufe"] + (V_["z_anschluss"] - 0.15 - V_["z_traufe"]) * (wt_ - wf) / max(wt_ - wi, 0.1) + 0.05
                     teile.append(KK(Kb["u0"], Kb["u1"], z_d, zt, wf - 0.25, wf)); teile.append(KK(Kb["u0"], Kb["u0"] + 0.25, z_d, zt, wi, wf)); teile.append(KK(Kb["u1"] - 0.25, Kb["u1"], z_d, zt, wi, wf)); ann.append("Raehm 0,25 m stark (Hoehe aus dem Sweep-Band)")
                     if V_ and VP_:                  # 21.11.2026 (Nutzer: Vordach im Foto geschweiftes Walmdach, Modell ebene Platte): Profil + Walm aus Foto-Silhouetten (tools/vordach_profil.py)
-                        teile.append(vordach_walm(WG, VP_["u0"], VP_["u1"], ww, VP_["w_t"], VP_["z_t"], VP_["z_a"], c=VP_["c"], As=VP_["As"], einbinden=einbinden))
+                        teile.append(vordach_walm(WG, VP_["u0"], VP_["u1"], ww, VP_["w_t"], VP_["z_t"], VP_["z_a"], c=VP_["c"], As=VP_["As"], einbinden=einbinden + max(0.0, ww - wv_)))
                         ann.append(f"Vordach {VP_['familie']} (c {VP_['c']:+.1f}, Walm-Ruecksprung {VP_['As']:.2f} m, Traufe w {VP_['w_t']:.2f} z {VP_['z_t']:.2f}, Anschluss z {VP_['z_a']:.2f}) aus "
                                    f"{len(VP_.get('fotos', []))} Foto-Silhouetten ({VP_.get('fotos_familie')} Fotos einzeln gleiche Familie); {VP_.get('annahme', '')}")
                     elif V_:
@@ -986,11 +1020,12 @@ def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5, innenwaende=None)
     Schnitt bis auf die Innenwandebene (gemessene Tiefe statt der Nischen-ANNAHME) - die Innenwand liegt dann im Bogen frei."""
     import json, os
     if not os.path.exists(datei): return koerper, [], None
-    belege = []; z_massiv = None
+    belege = []; z_massiv = None; kp_ = os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json")
     for fid, F in json.load(open(datei)).items():
-        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
         for x in F.get("oeffnungen", []):
             if not x.get("gebaut"): continue
+            # 24.11.2026 (Risiko a, wandlage_fotokanten): Tiefe tiefe_m ab der GESETZTEN Wand - sonst schnitt das f00-Tor (0,6 m) bei Wand -0,32 nur noch 0,28 m ins Mauerwerk
+            o, wv_ = wand_gesetzt(kp_, F, z=(x.get("unten", 0.0), x["scheitel"])); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
             T_ = float(x["tiefe_m"]); iw_ = None
             for iw in (innenwaende or []) if not x.get("durchfahrt") else []:
                 A_ = np.asarray(iw["a"], float); t_ = np.asarray(iw["b"], float) - A_; t_ /= np.linalg.norm(t_); n_ = np.asarray(iw["aussen"], float) - A_; n_ = n_ - (n_ @ t_) * t_; n_ /= np.linalg.norm(n_)
@@ -1002,7 +1037,8 @@ def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5, innenwaende=None)
             if x.get("durchfahrt"): z_massiv = max(z_massiv or -1e9, x["scheitel"] + gewoelbe)
             belege.append(dict(seite="wand", element=("Tordurchfahrt" if x.get("durchfahrt") else "Bogenoeffnung") + f" Fassade {fid} ({x['form']}, automatisch erkannt)",
                                quelle="OWLv2-Bogenkasten als Suchfenster (fassade_parsing.py) -> Ebenen-Sweep ueber die Fotos (fassade_tiefe.py: Durchblick = Fotos in der Wandtiefe nicht deckungsgleich) -> Formfamilie eingepasst (tools/oeffnungen_bogen.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
-                               lichte_breite=x["breite"], kaempfer=x["kaempfer"], scheitel=x["scheitel"], tiefe=x["tiefe_m"], hinweis="ERKENNUNG, am Bild oeffnungen_<id>.jpg pruefen; " + "; ".join(x.get("annahmen", []))))
+                               lichte_breite=x["breite"], kaempfer=x["kaempfer"], scheitel=x["scheitel"], tiefe=x["tiefe_m"], wandlage=round(wv_, 3),
+                               hinweis="ERKENNUNG, am Bild oeffnungen_<id>.jpg pruefen; " + "; ".join(x.get("annahmen", [])) + (f"; Tiefe ab gesetzter Wand {wv_:+.2f} m" if wv_ else "")))
     return koerper, belege, z_massiv
 
 
@@ -1076,6 +1112,23 @@ def eckquader_aus_relief(rel, px, z0, putz_niveau, ecke_links, ecke_rechts, stre
     return erg
 
 
+def ecken_gesetzt(ecken, korrekturen_json, z=None):
+    """Umlauf-Ecken (x, y) eines Bauteils rund um den Koerper (Umgang) auf die GESETZTEN Wandlagen (wandversatz_fassade je Kante, im Hoehenbereich z) verschieben:
+    jede Kante parallel um ihren Versatz, neue Ecke = Schnitt der Nachbarkanten (parallele Nachbarn: verschobener Punkt). 24.11.2026 (Risiko b, wandlage_fotokanten:
+    Umgang stand 0,32 m vor der zurueckgesetzten Wand). Liefert (ecken_neu, versatz je Kante)."""
+    E = np.asarray(ecken, float)[:, :2]; m = E.mean(0); L = []; wvs = []
+    for i in range(len(E)):
+        a_, b_ = E[i], E[(i + 1) % len(E)]; t_ = (b_ - a_) / np.linalg.norm(b_ - a_); n_ = np.array([t_[1], -t_[0]])
+        if (0.5 * (a_ + b_) - m) @ n_ < 0: n_ = -n_
+        wv = wandversatz_fassade(korrekturen_json, 0.5 * (a_ + b_), n_, z=z); wvs.append(round(wv, 3)); L.append((a_ + wv * n_, t_))
+    neu = []
+    for i in range(len(E)):
+        (p1, t1), (p2, t2) = L[i - 1], L[i]; A_ = np.array([t1, -t2]).T
+        if abs(np.linalg.det(A_)) < 1e-6: neu.append(p2); continue
+        s_ = np.linalg.solve(A_, p2 - p1)[0]; neu.append(p1 + s_ * t1)
+    return [tuple(float(c) for c in q) for q in neu], wvs
+
+
 def umgang_aus_json(koerper, datei, tiefe=0.9):
     """Offener Umgang aus der Kettenstufe 'bauplan' (tools/umgang_aus_fotos.py -> audit/umgang_auto.json: z0, z1, pfosten_je_seite, ecken). Baut nur bei gefunden=true.
     Schwelle/Raehm hoechstens 1/5 der Zonenhoehe (ANNAHME Querschnitt), Ruecksprung 'tiefe' = ANNAHME. VOR aushoehlen aufrufen (die Hohlraumschale folgt dem Ruecksprung).
@@ -1089,7 +1142,9 @@ def umgang_aus_json(koerper, datei, tiefe=0.9):
     if h < 0.5 or p < 2 or len(J.get("ecken") or []) < 3:
         return koerper, [dict(seite="wand", element="Laufgang unter der Traufe NICHT gebaut", quelle="bauteile.umgang_aus_json", hinweis="Zone %.2f m / %d Pfosten / Ecken ungueltig" % (h, p))]
     ri = min(0.25, 0.2 * h)
-    koerper = umgang(koerper, [tuple(e) for e in J["ecken"]], z0, z1, tiefe=tiefe, pfosten=p, riegel=ri)
+    ecken, wvs = ecken_gesetzt(J["ecken"], os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json"), z=(z0, z1))
+    koerper = umgang(koerper, [tuple(e) for e in ecken], z0, z1, tiefe=tiefe, pfosten=p, riegel=ri)
+    if any(wvs): J.setdefault("annahmen", []).append("Ecken auf gesetzte Wandlage verschoben (Kanten %s m, bauteile.ecken_gesetzt)" % ", ".join("%+.2f" % w_ for w_ in wvs))
     wz = "; ".join("%s: %s Pfosten, innen u %s (%d Fotos)" % (w["id"], w["pfosten"], w.get("pfosten_u_konsens"), w.get("pfosten_fotos", 0)) for w in J.get("waende", []) if w.get("pfosten"))
     return koerper, [dict(seite="wand", element="Umgang unter der Traufe (offener Laufgang, %d Pfosten je Seite)" % p, quelle="Kettenstufe bauplan: tools/umgang_aus_fotos.py (%d Fotos, Zone aus Bildkanten, Pfosten gezaehlt) -> bauteile.umgang" % J.get("fotos_gut", 0),
                           umgang_z0=z0, umgang_z1=z1, pfosten_je_seite=p, hinweis="ANNAHME: Ruecksprung %.2f m, Schwelle/Raehm %.2f m, Pfosten 0,24 m; %s; " % (tiefe, ri, wz) + "; ".join(J.get("annahmen", [])))]
@@ -1133,7 +1188,9 @@ def laube_aus_wandbild(koerper, innenwaende, datei, pfeiler_tiefe=0.8, vor=0.8, 
     for iw in innenwaende:
         F = FA.get(iw.get("fassade"))
         if not F: belege.append(dict(seite="wand", element="Innenwand %s: Laube NICHT freigelegt" % iw.get("name"), quelle="bauteile.laube_aus_wandbild", hinweis="Fassade %s fehlt in %s" % (iw.get("fassade"), os.path.basename(datei)))); continue
-        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); s = -1.0 if W.spiegel else 1.0
+        # 24.11.2026 (Risiko b, wandlage_fotokanten): Pfeilertiefe ab der GESETZTEN Aussenwand; die Innenwandebene w_iw bleibt absolut (gemessen) und wird gegen die neue Wand gerechnet
+        o, _ = wand_gesetzt(os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json"), F, z=tuple(float(x) for x in iw["z"]) if iw.get("z") else None)
+        W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); s = -1.0 if W.spiegel else 1.0
         A_ = np.asarray(iw["a"], float); t_ = np.asarray(iw["b"], float) - A_; t_ /= np.linalg.norm(t_)
         n_ = np.asarray(iw["aussen"], float) - A_; n_ = n_ - (n_ @ t_) * t_; n_ /= np.linalg.norm(n_)
         if n_ @ W.n < 0.98: belege.append(dict(seite="wand", element="Innenwand %s: Laube NICHT freigelegt" % iw.get("name"), quelle="bauteile.laube_aus_wandbild", hinweis="Innenwand nicht parallel zur Fassade")); continue

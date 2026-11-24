@@ -334,6 +334,9 @@ if STUFE == "schnell": po.window_step = 2   # Messung 15.11.2026 (Schwabentor, 4
 if not _fertig:
     pycolmap.patch_match_stereo(out, options=po)
 fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 800 if GROB else 1600
+# 24.11.2026 EINE Fusion je Kettenlauf (tools/fusion_vorab.py): steht vor dem Lauf sicher fest, dass die Kette nach den Toren ohne bestimmte Bilder neu fusioniert, kuerzt der
+# Plan der Vorstufe 'Lage frueh' die fusion.cfg schon jetzt (Marke stereo/fusion_vorab.json; die Kette prueft nach und faellt bei Abweichung auf die zweite Fusion zurueck).
+import fusion_vorab as _FVB; _FVB.anwenden(out, os.path.dirname(out))
 # 18.11.2026 (Kaufhaus gk2d, 595 Bilder: OOM-Kill nach 90 s, 11 GB RAM + 6 GB Swap): COLMAP-Vorgabe cache_size 32 GB > 15 GB RAM -> use_cache=True (sonst laedt COLMAP alle Karten, cache_size wirkungslos) + nach freiem RAM begrenzen (40 %)
 try:
     _frei_gb = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576
@@ -371,6 +374,17 @@ print("FERTIG", flush=True)
     n_pkt = ply_punkte(fused); ok = n_pkt > 0
     stufe(bericht, "dicht", "OK" if ok else "FEHLER", f"fused.ply {n_pkt} Punkte, {os.path.getsize(fused) if os.path.exists(fused) else 0} Byte" + ("" if ok else " - dichte Wolke LEER oder nicht geschrieben"))
     if not ok: sichern(); return 3
+    # 24.11.2026 FREIRAUM-NACHFILTER (Kette 1122z: blaeuliches Geisterblatt vor der Nordwand = verschleppte Silhouettentiefe fast gleicher Videobilder, gilt in der
+    # Fusion als mehrsichtig): Punkte, durch die viele andere Kameras laut Tiefenkarte HINDURCHsehen, fallen (tools/quellfilter.py; Blatt ~90 % weg, echte Wand/Turm ~1 %).
+    # Laeuft, solange die Marke fused.ply.quellfilter.json fehlt oder einen anderen Code-Stand traegt (auch auf eine Wolke aus dem Cache). RCPARK_QUELLFILTER=0 = aus.
+    try:
+        sys.path.insert(0, os.path.join(ROOT, "tools")); import quellfilter as _QF; _qf = _QF.quellfilter_noetig(fused)
+    except Exception as e: print(f"ACHTUNG quellfilter-Pruefung: {e}", flush=True); _qf = False
+    if _qf:
+        rc_q, out_q = run([PY_COL, "-I", "tools/quellfilter.py", os.path.dirname(fused), "--ply", fused], log)
+        z_q = [l for l in out_q.splitlines() if "quellfilter" in l]
+        stufe(bericht, "quellfilter", "OK" if rc_q == 0 else "FEHLER", (z_q[-1][:200] if z_q else "ohne Ausgabe") + ("" if rc_q == 0 else f" | rc {rc_q} - Wolke unveraendert weiter"))
+        n_pkt = ply_punkte(fused)
     sichern()
 
     # 4 Kandidaten (laufen parallel zur dichten Stufe, hier nur einsammeln)
