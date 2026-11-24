@@ -1,0 +1,45 @@
+{
+ "_hinweis": "Sperrklinke fuer tools/wissen_ablage_pruefen.py (24.11.2026): alte Doppel-IDs und Zahl toter Verweise duerfen nur sinken. Neu schreiben nur bewusst (--basis-schreiben) nach Aufraeumen, nie um eine neue Doppelung durchzulassen.",
+ "tote_verweise": 3,
+ "doppelte_ids": {
+  "VERSUCHSREGISTER_MARTINSTOR.md": {
+   "BR": 2,
+   "BS": 2,
+   "BT": 2,
+   "CQ": 2
+  },
+  "NICHTS_GEBRACHT.md": {
+   "BS22-Ergebnis": 2,
+   "BS49": 2,
+   "BS72": 2
+  },
+  "REZEPT_GEBAEUDE_AUS_FOTOS.md": {
+   "L-GS5": 2,
+   "L-KR17": 3,
+   "L-KR18": 2,
+   "L-KR19": 2,
+   "L-KR2": 2,
+   "L-KR21": 3,
+   "L-KR22": 3,
+   "L-KR23": 3,
+   "L-KR24": 3,
+   "L-KR25": 2,
+   "L-KR28": 5,
+   "L-KR29": 4,
+   "L-KR30": 2,
+   "L-KR31": 3,
+   "L-KR32": 2,
+   "L-KR33": 3,
+   "L-KR34": 2,
+   "L-KR40": 2,
+   "L-KR43": 2,
+   "L11": 2,
+   "L12": 2,
+   "L13": 2,
+   "L31": 2,
+   "L32": 3,
+   "L33": 2,
+   "L55": 5
+  }
+ }
+}
