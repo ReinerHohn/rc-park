@@ -446,6 +446,12 @@ def main():
         else: rc_s = lauf(B, "sfm", _pipe + neu_sfm, log, platz=[P], timeout=_to)[0]
         if rc_s == 0: json.dump(dict(n=len(namen_), sha=sha_, zeit=time.strftime("%Y-%m-%d %H:%M")), open(fsj, "w"))
         B["lage"] = dict(bestanden=None, hinweis="neue SfM - Lage-Tore noch nicht gelaufen (Stufe 'tore')")
+        stj = os.path.join(P, "sfm", "sift_tor.json")                           # 24.11.2026: Pflicht-Tor der Merkmalssuche (tools/sift_einstellung.py) - fehlende Bilder ROT, nie still
+        if os.path.isfile(stj) and os.path.getmtime(stj) >= t_s:
+            try: st_ = json.load(open(stj))
+            except Exception as e_: st_ = dict(rot=True, fehlend=["?"], optionen=f"sift_tor.json unlesbar: {e_}")
+            notiz(B, "sift_tor", not st_.get("rot"), bilder=st_.get("bilder"), fehlend=len(st_.get("fehlend") or []), beispiele=(st_.get("fehlend") or [])[:5],
+                  nachgeholt_cpu=len(st_.get("nachgeholt_cpu") or []), log_failed=st_.get("log_failed"), optionen=st_.get("optionen"))
         mwj = os.path.join(P, "sfm", "mapper_wahl.json")                         # 19.11.2026 (Nutzer): trug der Konsens-Mapper nicht, steht der DATENMANGEL als eigene rote Zeile im Bericht (nie still die langsamere/schlechtere Methode)
         try:
             mw = json.load(open(mwj)) if os.path.isfile(mwj) and os.path.getmtime(mwj) >= t_s else {}

@@ -51,7 +51,8 @@ img, w = sys.argv[1], sys.argv[2]; os.makedirs(w, exist_ok=True); db = f"{w}/db.
 # Vor dem Lauf: defekte Bilder nach quarantaene/ verschieben (Lehre Schwabentor 13.11.: 0-Byte-Datei brach erst im Lauf auf).
 import subprocess
 subprocess.run(["/media/oem/scan/venv-seg/bin/python", "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "fotos_pruefen.py"), img], check=False)
-so = pycolmap.FeatureExtractionOptions(); so.sift.max_num_features = 6400; so.max_image_size = 2400
+# 24.11.2026: SIFT-Einstellung zentral (tools/sift_einstellung.py): volle Aufloesung + first_octave 0 auf der GPU; RCPARK_SIFT_ALT=1 = alt (max_image_size 2400, first_octave -1)
+SIFT_MERKMALE, SIFT_ALT_MAX = 6400, 2400
 # VORSTUFE 'seiten', Schritt 1 (21.11.2026): Masken fuer Personen/Fahrzeuge/Baeume VOR der Merkmalssuche (Martinstor: eine Person in Selbstaufnahme-Videobildern verband Sued- und Nordseite).
 SEITEN = os.environ.get("RCPARK_SEITEN", "1"); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import sfm_seiten_vorstufe as SV, json
 _seiten = {}; _roh = f"{w}/masken"; _mk = f"{w}/db.masken.json"       # db.masken.json = Beleg, dass db.db MIT Masken in der Merkmalssuche entstand
@@ -77,17 +78,13 @@ else:
     if os.path.exists(_mk): os.remove(_mk)                                # Beleg gilt nur fuer die Datenbank, die er beschreibt
     if _mit_maske:                                                        # Masken schon in der Merkmalssuche (COLMAP: <mask_path>/<Bildname>.png, 0 = ignorieren) - besser als nachtraeglich filtern
         _ro.mask_path = f"{w}/masken_colmap"; _n_mask, _n_leer = SV.masken_colmap(img, _roh, _ro.mask_path); print(f"Merkmalssuche mit Masken: {_n_mask} von {_n_fotos} Bildern, {_n_leer} mit leerer Maske (COLMAP ueberspringt Bilder ohne Maskendatei)", flush=True)
-    pycolmap.extract_features(db, img, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, extraction_options=so, device=pycolmap.Device.cuda); print("Merkmale", time.time() - t, flush=True)
-    # 23.11.2026 AUDIT STILLE ERFOLGE (Geschwister von zusatzfotos_registrieren.sift_sicher): SiftGPU laesst Bilder bei 'out of memory' still WEG, extract_features endet normal -
-    # die SfM rechnete dann ohne sie, der Cache-Vergleich (Bilderzahl) merkte es erst im NAECHSTEN Lauf. Fehlende Bilder einmal auf der CPU nachholen, Rest laut melden.
-    from kette_beleg import db_fehlende_bilder
-    _alle = sorted(f for f in os.listdir(img) if os.path.isfile(os.path.join(img, f)) and f.lower().endswith((".jpg", ".jpeg", ".png", ".tif", ".tiff")))
-    _fehl = db_fehlende_bilder(db, _alle)
-    if _fehl:
-        print(f"WARNUNG SIFT: {len(_fehl)} von {len(_alle)} Bildern ohne Merkmale nach GPU-SIFT (COLMAP laesst sie bei SiftGPU 'out of memory' still weg), z. B. {_fehl[:3]} - CPU-SIFT fuer diese", flush=True)
-        pycolmap.extract_features(db, img, image_names=_fehl, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, extraction_options=so, device=pycolmap.Device.cpu)
-        _rest = db_fehlende_bilder(db, _fehl)
-        print(f"{'ACHTUNG SIFT: ' + str(len(_rest)) + ' Bilder auch auf der CPU ohne Merkmale (unlesbar/leere Maske?) - fehlen in der SfM: ' + str(_rest[:5]) if _rest else 'SIFT nachgeholt: alle ' + str(len(_fehl)) + ' Bilder haben jetzt Merkmale'}", flush=True)
+    # 23.11.2026 AUDIT STILLE ERFOLGE: SiftGPU laesst Bilder bei 'out of memory' still WEG, extract_features endet normal - die SfM rechnete dann ohne sie.
+    # 24.11.2026: zentral in sift_einstellung.extrahieren_mit_tor (statt pycolmap.extract_features hier): GPU, fehlende Bilder einmal auf der CPU nachholen,
+    # Pflicht-Tor sfm/sift_tor.json (gesamtkette: Zeile 'sift_tor', rot bei Restfehlern).
+    import sift_einstellung as SE
+    _alle = sorted(f for f in os.listdir(img) if os.path.isfile(os.path.join(img, f)) and f.lower().endswith(SE.BILD_ENDUNGEN))
+    SE.extrahieren_mit_tor(pycolmap, db, img, _alle, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, alt_max=SIFT_ALT_MAX, max_num_features=SIFT_MERKMALE,
+                           geraet="gpu", tor_json=f"{w}/sift_tor.json", stufe="sfm merkmale"); print("Merkmale", time.time() - t, flush=True)
     if _mit_maske and _db_neu: json.dump(dict(masken=_n_mask, bilder=_n_fotos, zeit=time.strftime("%Y-%m-%d %H:%M")), open(_mk, "w"))   # bestand db.db schon (Teilstand), haben alte Bilder Merkmale OHNE Maske -> kein Beleg, Filter-Rueckfall
     _paare = paarliste(db, w)
     if _paare:

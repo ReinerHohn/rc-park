@@ -53,7 +53,9 @@ def main():
     gpu = (not a.cpu) and pycolmap.has_cuda
     if not a.cpu and not gpu: print("WARNUNG: pycolmap ohne CUDA - SIFT/Matching laufen auf der CPU", flush=True)
     dev = pycolmap.Device.cuda if gpu else pycolmap.Device.cpu; print("SIFT/Matching auf", "GPU" if gpu else "CPU", flush=True)
-    pycolmap.extract_features(db, bild, camera_mode=pycolmap.CameraMode.PER_FOLDER, reader_options=ro, device=dev)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import sift_einstellung as SE      # 24.11.2026: SIFT zentral (volle Aufloesung + first_octave 0) + Pflicht-Tor
+    SE.extrahieren_mit_tor(pycolmap, db, bild, camera_mode=pycolmap.CameraMode.PER_FOLDER, reader_options=ro, geraet="gpu" if gpu else "cpu",
+                           tor_json=os.path.join(a.aus, "sift_tor.json"), stufe="video_sfm merkmale")
     if a.matching == "exhaustiv": pycolmap.match_exhaustive(db, device=dev)
     else:
         po = pycolmap.SequentialPairingOptions(); po.overlap = a.overlap; vt = sorted(glob.glob(os.path.expanduser("~/.cache/colmap/*vocab_tree*.bin")))
