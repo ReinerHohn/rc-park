@@ -91,6 +91,7 @@ Details: `modelle/METHODE_MASSTABELLE.md` · `modelle/VORLAGE_BAUTEIL_RUNDE.md` 
 - 16.11. · `pruefstand.z_am_punkt` per Schnitt je z-Stufe → ↺ senkrechte Strahlen · Turm 153 → 35 s, Werte identisch [AUFGABENLISTE 1c]
 - 16.11. · `schnelltest.sh` (29 s, feste Erwartungen) → ✓ gilt · nach jeder Werkzeugänderung [AUFGABENLISTE 5]
 - 16.11. · Umriss-Tor (Dachlinie gegen Himmelskante) → ✓ als Hinweis · sieht nur Kanten gegen Himmel [AUFGABENLISTE 2]
+- 24.11. · „Uhr auf dem Goldnimbus / Zackenrechteck“ (1122zb neben_detail uhr_f01_2/_3) → ✓ Ursache Zonenliste, nicht Bau · `befundliste.bauteil_zonen` las `uhren_auto.json:verworfen` (Nimbus 12er 1,01, Innenkreis 0,43) als Bauteile; jetzt verworfene Einträge/Listen raus [test_zonen_verworfen]
 
 ## Offen
 - Freistehendes (Säulen, Brüstung, Erkerkörper, Konsolrippen) nur Katalog – Form aus Fotokanten mehrerer Ansichten fehlt (L3) [ZIEL_PIPELINE_H0]
