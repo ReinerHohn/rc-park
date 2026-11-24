@@ -111,7 +111,7 @@ def main():
                             flaeche_m2=round(float(fl), 1), art="Vorbau" if wmd > 0 else "Nische", ebene=f"{n[0]:.5f},{n[1]:.5f},0={float(n @ P0):.4f}"))
     if not belastbar: out = []
     A_ = we["a"] if we else 0.0      # gespeicherte Tiefen: relativ zur (geneigten) Wand + Wand am Fassadenfuss -> w - wand_versatz_m = Abstand zur oertlichen Wand (Verbraucher unveraendert)
-    out.sort(key=lambda e: -e["flaeche_m2"]); np.savez_compressed(os.path.join(a.ordner, f"tiefe_f{a.nr:02d}.npz"), w=(wbest + A_).astype(np.float32), sicher=sicher.astype(np.float32), gut=gut, u0=u0, z1=z1, zelle=c)
+    out.sort(key=lambda e: -e["flaeche_m2"]); np.savez_compressed(os.path.join(a.ordner, f"tiefe_f{a.nr:02d}.npz"), w=(wbest + A_).astype(np.float32), sicher=sicher.astype(np.float32), gut=gut, u0=u0, z1=z1, zelle=c, fenster_m=a.fenster * c)   # fenster_m: Kosten-Mittelungsfenster (m) - kleinere Loecher loest der Sweep nicht auf (fenster_tiefe_tor)
     json.dump(dict(fassade=a.nr, fotos=namen[:N], zelle=c, wand_versatz_m=round(w_wand + A_, 3), belastbar=bool(belastbar), wand_anteil=round(wand_anteil, 2), w_bereich=[round(a.w[0] + A_, 3), round(a.w[1] + A_, 3)],
                    wand_ebene=dict(we, a=round(we["a"] + w_wand, 3), hinweis="Wand im Kamerarahmen: w(u,z) = a + b_u*(u-u_ref) + c_z*(z-z_ref); a = wand_versatz_m") if we else None,
                    kandidaten=out, hinweis="Vorschlaege aus dem Ebenen-Sweep; am Bild tiefe_fNN.jpg pruefen, dann auf der eigenen Ebene messen"), open(os.path.join(a.ordner, f"vorbauten_f{a.nr:02d}.json"), "w"), indent=1)

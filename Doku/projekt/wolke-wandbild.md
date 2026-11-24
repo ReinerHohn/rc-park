@@ -86,6 +86,7 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - 17.11. · `oeffnungen_bogen` (Kasten + Durchblick + Formfit) → ✓ Methode · Tordurchfahrt Nord ±0,35 m; Arkadenreihen noch nicht [PIPELINE_FASSADEN Agentenrunde]
 - 16.11. · Vorbauten per Ebenen-Sweep `fassade_tiefe` → ⏸ nur Hinweis · Nord belastbar; Baum/ein Standort/LoD2 2,5 m daneben → Tor lehnt ab [PIPELINE_FASSADEN Z.182, Z.384]
 - 23.11. · Erkennerkasten = Öffnung (1122o: Gitterfenster 2,8×3,1 m, Schlitz als 1,28-m-Rundbogen, Tür nie gebaut, Treppenturm als „Bogen“) → ↺ `loch_gewaende.py` (Loch = dunkle Komponente, Gewände = Nicht-Wand-Farbe am Loch, Tiefe je Zelle gegen Wandring außerhalb) + `bauteile.loch_gewaende_spaet` (Schnitt auf der echten Oberfläche nach Turm/Vorbau) + `wand_anteil` (Zone außerhalb des Fassadenpolygons = Körper davor) · Kopie: Loch 1,05×1,83 / 0,14×0,87 / Tür 0,86×2,11 m; Tür 0,67 m vor der LoD2-Facette [Agent 23.11., test_loch_gewaende]
+- 24.11. · `fenster_tiefe_tor` „keine Nische“ (hinten < 5 %) verwarf das einzige Südfenster (1122u: Sweep 100 % sicher auf Wandtiefe, Loch 0,87×1,08 m, Kostenmittelung 0,44 m, Gitter vorn) → ↺ kein Urteil, wenn im Kasten ein dunkles Loch (loch_messen) mit kleinerer Seite < 2× Sweep-Mittelung liegt; Folgefehler loch_gewaende Stich 0 → Bogenhöhe behalten · Kopie: Süd 1 Fenster (Stichbogen) gebaut; West-Schlitz oben ohne Erkennerkasten bleibt offen [Agent 24.11., test_fenster_tiefe_klein]
 
 ## Offen
 - `tiefe_lokal`: Abdeckung (4000 px, Tiefenkarten statt Fusion), Figuren-Feld, Aufnahme als Kettenstufe (Stand 15.11.)
@@ -98,5 +99,6 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - Unscharfe Fotos aus der Fotowahl der Feinausrichtung werfen (17.11.)
 - `dicht_bildwahl`: Obergrenze nach Platz; PatchMatch-Zwischenweg (Fenster 9, window_step 3) und „Wand-Zellen belegt“ als Tor prüfen (18./19.11.)
 - Rückwand schwab_v3: Plattenecke 8 cm verzogen, Ursache ungeklärt (18.11.)
+- Kleine Öffnungen ohne Erkennerkasten (Schwabentor-1122 West: Schlitz ~0,1×0,6 m in der Uhrzone, 3 Fotos) – dunkle schmale Löcher im Wandbild als Zone vorschlagen (24.11.)
 - Wandbild auf gekrümmtem Rundbau (Turmtür f04): Ortho auf der LoD2-Facette, echte Fläche 0,67 m davor → Tür im Modell ~0,3 m seitlich versetzt; Ortho auf Zylinderfläche nötig (23.11.)
 - Treppenturm-Kegeldach fehlt (1122o); Türblatt-Segmentbogen und Fenstergitter noch Rechteck/offen (23.11.)
