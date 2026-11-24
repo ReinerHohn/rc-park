@@ -1,5 +1,5 @@
 # 🖨️ Modellbau & Druck  ← [PROJEKT.md](../../PROJEKT.md)
-Kapitel: `Doku/modellbau/` · Methoden: `modelle/archiv/METHODIK_KOMPLETT.md`, `modelle/MASSSTAB.md`
+Kapitel: `Doku/modellbau/` · Methoden: `modelle/archiv/METHODIK_KOMPLETT.md`, `modelle/MASSSTAB.md` · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [druck](modellbau-druck/druck.md)
 
 ## Gilt
 - Merksatz: „Alles Flache lasern, alle Körper drucken, den Blickfang scannen/Resin."

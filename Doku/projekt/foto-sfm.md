@@ -1,5 +1,5 @@
 # 📷 Fotos → SfM: Zuordnung, Mapper, Kameras  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTINSTOR.md` · `modelle/NICHTS_GEBRACHT.md` (Inhalt: `modelle/inhalt/`) · Nachbaräste: [lage-seiten](lage-seiten.md), [wolke-wandbild](wolke-wandbild.md), [kanten-messen](kanten-messen.md), [bauteile-kreis](bauteile-kreis.md), [betrieb](betrieb.md)
+Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTINSTOR.md` · `modelle/NICHTS_GEBRACHT.md` (Inhalt: `modelle/inhalt/`) · Nachbaräste: [lage-seiten](lage-seiten.md), [wolke-wandbild](wolke-wandbild.md), [kanten-messen](kanten-messen.md), [bauteile-kreis](bauteile-kreis.md), [betrieb](betrieb.md) · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [fotoauswahl](foto-sfm/fotoauswahl.md) · [kameras](foto-sfm/kameras.md) · [mapper](foto-sfm/mapper.md) · [zuordnung](foto-sfm/zuordnung.md)
 
 ## Gilt
 - **Kernmethode (Nutzer 15.11.):** Form = Fotokanten + Triangulation mit SfM-Kameras; dichte Wolke/LoD2/DOM1 nur Lage-Veto, Höhe, Gegenprobe.

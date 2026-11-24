@@ -1,5 +1,5 @@
 # 🏛️ 3D-Pipeline & Validierung  ← [PROJEKT.md](../../PROJEKT.md)
-Methoden: `modelle/archiv/METHODE_WAHRZEICHEN_AUS_FOTOS.md` · `METHODE_3D_AUS_ALLEN_DATEN.md` · `METHODE_GEBAEUDEGENERATOR.md` · `PROTOKOLL_VALIDATOR.md`
+Methoden: `modelle/archiv/METHODE_WAHRZEICHEN_AUS_FOTOS.md` · `METHODE_3D_AUS_ALLEN_DATEN.md` · `METHODE_GEBAEUDEGENERATOR.md` · `PROTOKOLL_VALIDATOR.md` · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [methodik](pipeline/methodik.md) · [validierung](pipeline/validierung.md)
 
 ## Gilt
 - **Kein Hardcoding:** jedes Detail aus dem Foto erkennen → JSON → Generator liest; bei Fehlern den Detektor bauen, nicht den Wert ändern.

@@ -1,5 +1,5 @@
 # 🧱 Dichte Wolke, Wandbild, Relief & Öffnungen  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fassaden` · Ast [kanten-messen](kanten-messen.md)
+Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fassaden` · Ast [kanten-messen](kanten-messen.md) · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [dichte-wolke](wolke-wandbild/dichte-wolke.md) · [oeffnungen](wolke-wandbild/oeffnungen.md) · [relief](wolke-wandbild/relief.md) · [wandbild](wolke-wandbild/wandbild.md)
 
 ## Gilt
 - Dichte Wolke bleibt Standard (Nutzer 16.11.), liefert aber nur Lage-Veto, Höhe, Bruchstein-Relief [archiv/AUFGABENLISTE_2026-11-16 Z.29; PIPELINE_FASSADEN Z.5]
@@ -15,7 +15,7 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - 19.11. · Fusion `min_num_pixels` 8 → 3 → ✓ Standard · fünffache Punkte, Wand 56 → 76 % belegt, Fehlpunktanteil gleich [LOGBUCH_KETTENTEST_2026-11-19 17:15]
 - 19.11. · PatchMatch Fenster 11 + `filter_min_ncc` 0,05 → ⏸ zurückgestellt · Putz 99 % belegt, aber 2,4-fache Zeit; Nutzerentscheid [ebd.]
 - 19.11. · Wolken-Kontrollbild auf weißem Grund → ⚠ Falle · leere Putzflächen wirkten wie Wand; immer dunkler Grund [ebd.]
-- 19.11. · Tiefenkarten unstabiler Kameras (Fernclip) mitfusioniert → ✗ verworfen · schiefe, zu große Häuserzeile; `dicht_bildwahl --ohne unstabil.txt` [ebd. 09:57]
+- 19.11. · Tiefenkarten unstabiler Kameras (Fernclip) mitfusioniert → ✗ verworfen · schiefe, zu große Häuserzeile; `dicht_bildwahl --ohne unstabil.txt` [ebd. 09:57] · **Bildwert/Sweet Spot nach Fotozahl** schon 02.–07.11.: Foto-Teilmengen verlieren obere Schichten (Türmchen/Zinnen), Sweet Spot war Auflösung 1000–1200 px statt Fotozahl; Greedy-Auswahl nur für Messschleifen [VERSUCHSREGISTER_MARTINSTOR BM/BN/BS6, `foto_wichtigkeit.py`, `bildwert.py`, `sweetspot.py`]
 - 19.11. · Feinstufe im Ordner der Stufe schnell → ⚠ Falle · `geom_consistency` nutzt still gefilterte Karten; jetzt Abbruch rc 5 [ebd.]
 - 18.11. · Fortsetzung nach Platte-voll → ⚠ Falle · leer geschriebene Tiefenkarten brechen die Fusion (0 Punkte) [LOGBUCH_KETTENTEST Z.28-29]
 - 7.11. · CLAHE-/Belichtungs-Sweep für die Wolke → ✗ verworfen · +31 % Punkte, gleicher Fehler, kein neuer Blickwinkel [NICHTS_GEBRACHT Tabelle]

@@ -1,5 +1,5 @@
 # 💶 Konzept & Geschäft  ← [PROJEKT.md](../../PROJEKT.md)
-Kapitel: `Doku/konzept/` · `Doku/markt-kalkulation/` · `Doku/standort/`
+Kapitel: `Doku/konzept/` · `Doku/markt-kalkulation/` · `Doku/standort/` · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [konzept](konzept-geschaeft/konzept.md)
 
 ## Gilt
 - „Anti-Gutach-Regel": Stadt-Laufpublikum, Fixkosten ≈ 0, klein und erweiterbar starten, Interesse zuerst messen (Pop-up/Host).
