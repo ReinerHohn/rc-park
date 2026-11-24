@@ -16,7 +16,8 @@ Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbegin
 
 ## Läuft gerade
 - Kette 1122zc seit 20:30 `--ab bauen` (Unit rcpark-kette-schwabentor-null-1122zc, Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122zc.log, Ende = `JOB_ENDE rc=`), 20:43 bei fassaden_kette; Ende ca. 22:00–22:15. Danach: seiten.jpg + neben_details.jpg ansehen/schicken, Fehlerliste, Formsitz je Seite (audit/konvergenz.jsonl), 3D-HTML V10 gleiche URL (`tools/py tools/modell_3d_html.py ... --wolke ... --farben ...`, nach …_1122z_ende.html kopieren), Logbuchzeile.
-- Agenten (Worktrees .claude/worktrees/agent-*): Wissensverwaltung (Doppelungen, Muster, Relevanz-Rangfolge, Nachweis-Test Recall@5, Vorschlag claude-mds unter tools/claude_mds_vorschlag/) · Höhen waagerechter Bauteile angleichen (Höhensitz) · Ost-Grobform 3,6 m klären. Ergebnisse → Merge-Probe 31.
+- Wissensverwaltung FERTIG, in Merge-Probe 31: Suche mit Rangfolge, Nachweis tools/wissen_wiederfinden.py (12/12 Verlustfaelle, Kontrollsatz nur 4/8 = Synonym-Schleife, kein Beweis fuer Neues), werkzeug_aehnlich.py (15 Doppelgaenger), wissen_ablage_pruefen.py, modelle/WIDERSPRUECHE.md, Doku/projekt/wissen.md; ab 25.11. Pflicht-Kopfzeile 'Verwandt/Vorlaeufer:' in neuen tools/*.py; claude-mds-Vorschlag in merge_probe31/tools/claude_mds_vorschlag/ (UEBERNAHME.txt). Offen fuer Nutzer: 33 doppelte Register-IDs umbenennen?, fehlende modelle/QUALITAETSSTUFEN.md.
+- Agenten (Worktrees .claude/worktrees/agent-*): Höhen waagerechter Bauteile angleichen (Höhensitz) · Ost-Grobform 3,6 m klären. Ergebnisse → Merge-Probe 31.
 - Merge-Probe 31 (/media/oem/scan/rc-park_tmp/merge_probe31): Höhensitz `tools/hoehensitz.py` + konvergenz-Einbau. Erst nach 1122zc-Ende in main.
 
 ## Nächste Schritte
