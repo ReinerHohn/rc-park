@@ -44,6 +44,19 @@ HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
 PIX_M = 0.08; TOL_M = 0.25; K_STUETZ = 3; BAND_M = 0.3; RAND_M = 2.0; BODEN_M = 0.3; N_WOLKE = 6_000_000; N_MODELL = 4_000_000; LANG_MAX = 1600; LANG_MIN = 160
 NULL_M = (1.3, 2.1); TRENN_MIN = 0.25; N_MIN = 3; ROT_M = 0.35; ROT_MARGE = 0.05; ROT_COS = math.cos(math.radians(30))
 PROBE_M = (0.3, 1.0, 2.0); PROBE_GRAD = (2.0, 5.0)
+# Durchblick-Schutz (24.11.2026, Befund Ost 1122zb): Grobstufen 2 und 4 Pixel (16/32 cm am Objekt); ANNAHME Anteil 0,5 = "Block mehrheitlich nicht
+# fein bestaetigt" -> duenne Wand. STANDARD AUS (RCPARK_FORMSITZ_DURCHBLICK=1 an): echt 1122zb Ost nur 0,09 -> 0,14, aendert aber andere Seiten
+# (Nord 0,39 -> 0,33, West 0,47 -> 0,60) und hebt die Trennschaerfe einer 0,6-m-verrauschten Wolke ueber TRENN_MIN (test_formsitz X) -> Durchsicht-Maske statt.
+# Verdeckung (24.11.2026, Befund Ost 1122zb: der Anbau vor der Turm-Ostwand lag ausserhalb des Zuschnitts -> Formsitz verglich unsichtbare Wand):
+# Wolke bis VERDECK_RAND_M um den Vergleichsbereich (Kameras 26-47 m entfernt) als Sichtschutz; RCPARK_FORMSITZ_VERDECKUNG=0 schaltet ab.
+# Durchsicht (gleicher Befund): Pixel, in denen die Wolke hinter dem Modellkoerper liegt, zaehlen nicht; Anteil > DURCHSICHT_MAX (ANNAHME 0,3: dann
+# fehlt fuer ein Drittel der sichtbaren Flaeche der Bezug) -> Seite "Bezug durchsichtig", urteilt nicht. RCPARK_FORMSITZ_DURCHSICHT=0 schaltet ab.
+# UNBEOBACHTET_MAX (ANNAHME 0,5): mehr als die Haelfte der Modellpixel verdeckt ODER durchsichtig -> ebenso kein Urteil (1122zb Ost: 0,32 + 0,29 = 0,60,
+# Rest-Rot-Probe Wand 0,35 m nur 0,05 Abfall = nicht erkannt).
+DURCHSICHT = os.environ.get("RCPARK_FORMSITZ_DURCHSICHT", "1") != "0"; DURCHSICHT_DICKE_M = 1.0; DURCHSICHT_MAX = 0.3; UNBEOBACHTET_MAX = 0.5
+BEZUG_DURCHSICHTIG = "Bezug fehlt (Wolke verdeckt/durchsichtig)"
+VERDECK_RAND_M = 60.0 if os.environ.get("RCPARK_FORMSITZ_VERDECKUNG", "1") != "0" else 0.0; N_VERDECK = 3_000_000
+DURCHBLICK_STUFEN = (2, 4) if os.environ.get("RCPARK_FORMSITZ_DURCHBLICK", "0") == "1" else (); DURCHBLICK_ANTEIL = 0.5
 TRENNT_NICHT = "nicht trennbar (Zufallsniveau)"
 ACHSEN = {"+x": (1.0, 0.0), "-x": (-1.0, 0.0), "+y": (0.0, 1.0), "-y": (0.0, -1.0)}
 
@@ -111,16 +124,9 @@ def nach_tiefe(P, cam):
     z = P @ cam["R"][2].astype(np.float32) + np.float32(cam["t"][2]); return P[np.argsort(z, kind="stable")]
 
 
-def tiefe_vorn(P, cam, k=K_STUETZ, band=BAND_M, sortiert=False, runden=4):
-    """Robuste vorderste Tiefe je Pixel (H, W) float32, inf = leer: vorderste Tiefe d, hinter der innerhalb band mindestens k Punkte des Pixels liegen
-    (sonst den vordersten Punkt verwerfen und erneut, hoechstens runden Mal; Einzelpunkte/Geisterwolke vorn zaehlen nicht); dann eine 3x3-Fuellung.
-    Ohne Sortieren je Variante: P nach Tiefe sortiert (nach_tiefe), Minimum = erster Schreibzugriff in umgekehrter Reihenfolge."""
-    import cv2
-    if not sortiert: P = nach_tiefe(P, cam)
-    W, H = int(cam["W"]), int(cam["H"]); u, v, z = projizieren(cam, P)
-    ok = (z > 1.0) & (u >= -0.5) & (u < W - 0.5) & (v >= -0.5) & (v < H - 0.5)
-    pix = (np.rint(v[ok]).astype(np.int64) * W + np.rint(u[ok]).astype(np.int64)); z = z[ok].astype(np.float32); del u, v, ok
-    D = np.full(H * W, np.inf, np.float32); n = H * W
+def _vorn(pix, z, n, k, band, runden):
+    """Kern von tiefe_vorn fuer einen Pixelindex (nach Tiefe sortierte Punkte) -> (n,) float32, inf = leer."""
+    D = np.full(n, np.inf, np.float32)
     for _ in range(runden):
         if not len(pix): break
         D[:] = np.inf; D[pix[::-1]] = z[::-1]                                     # sortiert -> der vorderste Punkt schreibt zuletzt
@@ -130,7 +136,46 @@ def tiefe_vorn(P, cam, k=K_STUETZ, band=BAND_M, sortiert=False, runden=4):
         weg = schlecht[pix] & (z <= D[pix]); pix, z = pix[~weg], z[~weg]
     else:
         if k > 1 and len(pix): D[schlecht] = np.inf
-    D = D.reshape(H, W)
+    return D
+
+
+def durchblick_fuellen(D, Dc, s, band=BAND_M, anteil=DURCHBLICK_ANTEIL):
+    """DURCHBLICK-SCHUTZ (Befund Ost 1122zb 24.11.2026): eine DUENN belegte Wand (Ost 250-520 statt 2 500-12 000 Punkte/m2) hat im 8-cm-Pixel
+    keine K_STUETZ Punkte -> tiefe_vorn sah durch sie hindurch auf die dichte Rueckwand (West, 12 m dahinter) und zaehlte das als Modellfehler
+    (med|dz| 3,6 m, Wolken-Vorderpunkt y 21 statt 9). Grobstufe Dc (s x s Pixel, gleiche Stuetzregel) findet die duenne Wand.
+    Ein Feinpixel uebernimmt Dc, wenn (a) es leer ist oder mehr als band HINTER Dc liegt (Durchblick), (b) im Block weniger als `anteil` der Feinpixel
+    Dc bestaetigen (duenn belegt; dichte Flaechen mit Fensterlaibung bleiben fein) und (c) der Grobpixel nicht am Rand liegt (3x3 Grobnachbarn belegt:
+    Silhouetten wachsen nicht). Gleich fuer Modell und Wolke angewandt -> Nullprobe bleibt fair."""
+    import cv2
+    H, W = D.shape; Hc, Wc = Dc.shape
+    fin = np.isfinite(Dc)
+    innen = cv2.erode(fin.astype(np.uint8), np.ones((3, 3), np.uint8), borderValue=0) > 0
+    up = lambda A: np.repeat(np.repeat(A, s, 0), s, 1)[:H, :W]
+    Du = up(np.where(fin, Dc, np.inf).astype(np.float32))
+    best = np.isfinite(D) & (np.abs(D - Du) < band)
+    pad = np.zeros((Hc * s, Wc * s), np.float32); pad[:H, :W] = best
+    frac = pad.reshape(Hc, s, Wc, s).mean(axis=(1, 3))
+    duenn = up(innen & (frac < anteil))
+    with np.errstate(invalid="ignore"):
+        ersetzen = duenn & (~np.isfinite(D) | (D > Du + band))
+    out = D.copy(); out[ersetzen] = Du[ersetzen]
+    return out
+
+
+def tiefe_vorn(P, cam, k=K_STUETZ, band=BAND_M, sortiert=False, runden=4, durchblick=None):
+    """Robuste vorderste Tiefe je Pixel (H, W) float32, inf = leer: vorderste Tiefe d, hinter der innerhalb band mindestens k Punkte des Pixels liegen
+    (sonst den vordersten Punkt verwerfen und erneut, hoechstens runden Mal; Einzelpunkte/Geisterwolke vorn zaehlen nicht); dann Durchblick-Schutz
+    (durchblick_fuellen, Grobstufen DURCHBLICK_STUFEN) und eine 3x3-Fuellung.
+    Ohne Sortieren je Variante: P nach Tiefe sortiert (nach_tiefe), Minimum = erster Schreibzugriff in umgekehrter Reihenfolge."""
+    import cv2
+    if not sortiert: P = nach_tiefe(P, cam)
+    W, H = int(cam["W"]), int(cam["H"]); u, v, z = projizieren(cam, P)
+    ok = (z > 1.0) & (u >= -0.5) & (u < W - 0.5) & (v >= -0.5) & (v < H - 0.5)
+    iu, iv = np.rint(u[ok]).astype(np.int64), np.rint(v[ok]).astype(np.int64); z = z[ok].astype(np.float32); del u, v, ok
+    D = _vorn(iv * W + iu, z, H * W, k, band, runden).reshape(H, W)
+    for s in (DURCHBLICK_STUFEN if durchblick is None else ((2, 4) if durchblick else ())):
+        Wc, Hc = (W + s - 1) // s, (H + s - 1) // s
+        D = durchblick_fuellen(D, _vorn((iv // s) * Wc + iu // s, z, Hc * Wc, k, band, runden).reshape(Hc, Wc), s, band)
     leer = ~np.isfinite(D)
     if leer.any():
         Df = cv2.erode(np.where(leer, np.float32(1e9), D), np.ones((3, 3), np.uint8)); fu = leer & (Df < 1e8); D[fu] = Df[fu]
@@ -164,10 +209,43 @@ def im_blick(P, cam, rand=0.3):
     return np.nonzero((z > 1.0) & (u >= -rand * W) & (u < (1 + rand) * W) & (v >= -rand * H) & (v < (1 + rand) * H))[0]
 
 
-def vergleich(Dm, Dw, himmel, cam, tol=TOL_M):
+def tiefe_hinten(P, cam):
+    """Hinterste Tiefe je Pixel (H, W) float32, -inf = leer: Austritt des Sehstrahls aus dem Modellkoerper (3x3-Fuellung wie tiefe_vorn)."""
+    import cv2
+    W, H = int(cam["W"]), int(cam["H"]); u, v, z = projizieren(cam, P)
+    ok = (z > 1.0) & (u >= -0.5) & (u < W - 0.5) & (v >= -0.5) & (v < H - 0.5)
+    pix = np.rint(v[ok]).astype(np.int64) * W + np.rint(u[ok]).astype(np.int64)
+    D = np.full(H * W, -np.inf, np.float32); np.maximum.at(D, pix, z[ok].astype(np.float32)); D = D.reshape(H, W)
+    leer = ~np.isfinite(D)
+    if leer.any():
+        Df = cv2.dilate(np.where(leer, np.float32(-1e9), D), np.ones((3, 3), np.uint8)); fu = leer & (Df > -1e8); D[fu] = Df[fu]
+    return D
+
+
+def durchsicht_maske(Dm, Dh, Dw, band=BAND_M, dicke=DURCHSICHT_DICKE_M):
+    """DURCHSICHT (Befund Ost 1122zb 24.11.2026): die vorderste Wolkenflaeche liegt am oder hinter dem AUSTRITT des Sehstrahls aus dem Modellkoerper
+    (Dw >= Dh - band, Koerper dort >= dicke). Ein Foto kann die Rueckseite eines undurchsichtigen Koerpers nicht sehen -> in der Wolke fehlt die
+    Vorderflaeche (Fremdbau davor nicht rekonstruiert, Wand zu duenn belegt); 1122zb Ost: Vorderpunkt y 21 = Westwand statt y 9 = Ostwand.
+    Diese Pixel sind UNBEOBACHTET, kein Modellfehler. Ein Modell, das 1-3 m zu weit aussen steht, faellt NICHT hinein (Wolkenwand liegt dann im
+    Modellkoerper, nicht dahinter). Maske nur vom unverschobenen Modell -> gleiche Pixelmenge fuer Null-/Probevarianten."""
+    with np.errstate(invalid="ignore"):
+        return np.isfinite(Dm) & np.isfinite(Dh) & np.isfinite(Dw) & (Dh - Dm >= dicke) & (Dw >= Dh - band)
+
+
+def verdeckt_maske(Dv, Dw, band=BAND_M):
+    """VERDECKUNG (Befund Ost 1122zb 24.11.2026): Pixel, in denen eine Wolkenflaeche AUSSERHALB des Vergleichsbereichs (Fremdbau vor dem Objekt; der
+    Zuschnitt auf Modellhuelle + RAND_M hatte sie entfernt) die vorderste belegte Flaeche ist - das Foto sieht dort nicht das Objekt. Unabhaengig vom
+    Modell (nur Wolke) -> fuer Modell, Null- und Probevarianten dieselbe Maske. Dv/Dw = tiefe_vorn der Aussen- bzw. Bereichswolke."""
+    return np.isfinite(Dv) & ~(np.isfinite(Dw) & (Dw < Dv - band))
+
+
+def vergleich(Dm, Dw, himmel, cam, tol=TOL_M, maske=None):
     """Tiefen-IoU + Kennzahlen + Oberkontur fuer ein Modell-Tiefenbild gegen Wolken-Tiefenbild/Himmelsmaske. formsitz = tiefe (Tiefen-IoU); die
     Oberkontur wird nur BERICHTET (kontur): an 3 von 4 Probefotos war die Turmspitze vom Bildrand abgeschnitten oder von Baeumen verdeckt (kontur 0,00-0,21
-    fuer Modell UND verschobenes Modell) - sie verduennte das Mass, statt zu trennen (Probe 1122 24.11.)."""
+    fuer Modell UND verschobenes Modell) - sie verduennte das Mass, statt zu trennen (Probe 1122 24.11.). maske = verdeckte Pixel (verdeckt_maske),
+    zaehlen weder fuer Modell noch Wolke."""
+    if maske is not None and maske.any():
+        Dm = np.where(maske, np.float32(np.inf), Dm); Dw = np.where(maske, np.float32(np.inf), Dw)
     m, w = np.isfinite(Dm), np.isfinite(Dw); beide = m & w; ver = m | w
     if ver.sum() < 50 or m.sum() < 50: return None
     dz = (Dm - Dw)[beide]; ad = np.abs(dz)
@@ -238,9 +316,13 @@ def seiten_auswerten(S, je, trenn_min=TRENN_MIN, n_min=N_MIN):
                  decke=med([q["decke"] for q in fv.values() if q.get("decke") is not None]), decke_null=med([q["decke_null"] for q in fv.values() if q.get("decke_null") is not None]),
                  trennschaerfe=med([q["trennschaerfe"] for q in fv.values() if q.get("trennschaerfe") is not None]),
                  relativ=med([q["relativ"] for q in fv.values() if q.get("relativ") is not None]),
+                 verdeckt=med([q["verdeckt"] for q in fv.values() if q.get("verdeckt") is not None]),
+                 durchsicht=med([q["durchsicht"] for q in fv.values() if q.get("durchsicht") is not None]),
+                 unbeobachtet=med([q["unbeobachtet"] for q in fv.values() if q.get("unbeobachtet") is not None]),
                  fotos={nr: q.get("formsitz") for nr, q in fv.items()})
-        e["trennt"] = bool(e["n"] >= n_min and e["trennschaerfe"] is not None and e["trennschaerfe"] >= trenn_min)
-        e["status"] = "trennt" if e["trennt"] else (TRENNT_NICHT if e["n"] >= n_min else "zu wenig Fotos")
+        durch = (e["durchsicht"] is not None and e["durchsicht"] > DURCHSICHT_MAX) or (e["unbeobachtet"] is not None and e["unbeobachtet"] > UNBEOBACHTET_MAX)
+        e["trennt"] = bool(e["n"] >= n_min and e["trennschaerfe"] is not None and e["trennschaerfe"] >= trenn_min and not durch)
+        e["status"] = "trennt" if e["trennt"] else (BEZUG_DURCHSICHTIG if durch and e["n"] >= n_min else (TRENNT_NICHT if e["n"] >= n_min else "zu wenig Fotos"))
         out[ax] = e
     return out
 
@@ -298,8 +380,13 @@ def main(argv=None):
     box_lo, box_hi = lo.astype(float) - RAND_M, hi.astype(float) + RAND_M; box_lo[2] = lo[2] + BODEN_M
     PW, info = KW.wolke_laden(wp, (box_lo, box_hi), a.n_wolke, boden_m=0.0); info.update(box=[np.round(box_lo, 2).tolist(), np.round(box_hi, 2).tolist()])
     if len(PW) < 1000: print(f"FEHLER: Wolke im Modellbereich fast leer ({info})"); return 1
+    PV = np.zeros((0, 3), np.float32)
+    if VERDECK_RAND_M > 0:                                    # Aussenwolke (Fremdbauten vor dem Objekt) nur als Sichtschutz, nie verglichen
+        PV, iv = KW.wolke_laden(wp, (box_lo - [VERDECK_RAND_M, VERDECK_RAND_M, 0], box_hi + [VERDECK_RAND_M, VERDECK_RAND_M, VERDECK_RAND_M]), N_VERDECK,
+                                saat=2, boden_m=0.0)
+        PV = PV[~np.all((PV >= box_lo) & (PV <= box_hi), axis=1)]; info["n_verdeck"] = int(len(PV))
     mitte = ((lo + hi) / 2).astype(np.float32)
-    print(f"FORMSITZ: Modell {len(PM)} Punkte, Wolke {info['n_box']} im Bereich -> {len(PW)} genutzt ({time.time() - t_start:.0f} s geladen)", flush=True)
+    print(f"FORMSITZ: Modell {len(PM)} Punkte, Wolke {info['n_box']} im Bereich -> {len(PW)} genutzt, {len(PV)} Aussenpunkte als Sichtschutz ({time.time() - t_start:.0f} s geladen)", flush=True)
     nullv = null_varianten(); halb = np.random.default_rng(1).random(len(PW)) < 0.5
     probe_v = {}
     if a.probe:
@@ -321,23 +408,31 @@ def main(argv=None):
             iw = im_blick(PW, cam); PWi = PW[iw]; hA, hB = nach_tiefe(PWi[halb[iw]], cam), PWi[~halb[iw]]; del iw
             im_ = im_blick(PM, cam); PMi = nach_tiefe(PM[im_], cam)
             Dw = tiefe_vorn(PWi, cam); sk = himmel_laden(od, nr, cam); Dm = tiefe_vorn(PMi, cam, sortiert=True)
-            e = vergleich(Dm, Dw, sk, cam)
+            vm = verdeckt_maske(tiefe_vorn(PV[im_blick(PV, cam, rand=0.0)], cam), Dw) if len(PV) else None
+            ds = durchsicht_maske(Dm, tiefe_hinten(PMi, cam), Dw) if DURCHSICHT else None
+            mz = np.isfinite(Dm); anteil = lambda q: float(q[mz].mean()) if q is not None and mz.any() else 0.0
+            vd, dd = anteil(vm), anteil(ds)                                   # Anteil Modellpixel hinter Fremdbau / mit Durchsicht
+            vm = ds if vm is None else (vm if ds is None else (vm | ds)); ud = anteil(vm)
+            vg = lambda A, B, h=sk: vergleich(A, B, h, cam, maske=vm)
+            e = vg(Dm, Dw)
             if e is None: je[nr] = dict(fehler="zu wenig Pixel"); continue
-            nulls = [vergleich(tiefe_vorn(verschoben(PMi, d), cam, sortiert=True), Dw, sk, cam) for d in nullv]
+            nulls = [vg(tiefe_vorn(verschoben(PMi, d), cam, sortiert=True), Dw) for d in nullv]
             s0 = [q["formsitz"] for q in nulls if q]; e["formsitz_null"] = float(np.median(s0)) if s0 else None
             k0 = [q["kontur"] for q in nulls if q and q.get("kontur") is not None]; e["kontur_null"] = float(np.median(k0)) if k0 and "kontur" in e else None
             # DECKE (Trennschaerfe der Daten, unabhaengig vom Modell): Wolkenhaelfte A als "perfektes Modell" gegen Haelfte B, und A verschoben
-            DB = tiefe_vorn(hB, cam); dA = vergleich(tiefe_vorn(hA, cam, sortiert=True), DB, None, cam)
-            dN = [vergleich(tiefe_vorn(verschoben(hA, d), cam, sortiert=True), DB, None, cam) for d in nullv]; dN = [q["formsitz"] for q in dN if q]
+            DB = tiefe_vorn(hB, cam); dA = vg(tiefe_vorn(hA, cam, sortiert=True), DB, None)
+            dN = [vg(tiefe_vorn(verschoben(hA, d), cam, sortiert=True), DB, None) for d in nullv]; dN = [q["formsitz"] for q in dN if q]
             e["decke"] = dA["formsitz"] if dA else None; e["decke_null"] = float(np.median(dN)) if dN else None
             e["trennschaerfe"] = (e["decke"] - e["decke_null"]) if e["decke"] is not None and e["decke_null"] is not None else None
             e["guete"] = guete(e["formsitz"], e["formsitz_null"]); e["bild_px"] = [int(cam["W"]), int(cam["H"])]; e["himmel"] = sk is not None
             e["relativ"] = (e["formsitz"] - e["formsitz_null"]) / e["trennschaerfe"] if e["trennschaerfe"] and e["trennschaerfe"] > 0.02 and e["formsitz_null"] is not None else None
             for k_, (art, p) in probe_v.items():
-                Q = verschoben(PMi, p) if art == "v" else gedreht(PMi, p, mitte); q = vergleich(tiefe_vorn(Q, cam, sortiert=art == "v"), Dw, sk, cam)
+                Q = verschoben(PMi, p) if art == "v" else gedreht(PMi, p, mitte); q = vg(tiefe_vorn(Q, cam, sortiert=art == "v"), Dw)
                 probe_je.setdefault(nr, {})[k_] = None if q is None else round(q["formsitz"], 4)
             for ax, (Q, _) in rot_P.items():
-                q = vergleich(tiefe_vorn(Q[im_], cam), Dw, sk, cam); rot_je.setdefault(nr, {})[ax] = None if q is None else round(q["formsitz"], 4)
+                q = vg(tiefe_vorn(Q[im_], cam), Dw); rot_je.setdefault(nr, {})[ax] = None if q is None else round(q["formsitz"], 4)
+            e["verdeckt"], e["durchsicht"], e["unbeobachtet"] = vd, dd, ud
+            if vm is not None: Dm, Dw = np.where(vm, np.float32(np.inf), Dm), np.where(vm, np.float32(np.inf), Dw)   # Kontrollbild: verdeckt = leer
             e["sek"] = round(time.time() - t0, 1); je[nr] = {k_: (round(x, 4) if isinstance(x, float) else x) for k_, x in e.items()}
             ax_f = next((ax for ax, s in S["seiten"].items() if nr in s["fotos"]), None)
             if a.bild and ax_f and (ax_f not in beispiele or e["px"] > beispiele[ax_f][6]["px"]):
@@ -371,7 +466,7 @@ def main(argv=None):
     for ax, e in seiten.items():
         f = lambda x, n=3: "-" if x is None else f"{x:.{n}f}"
         print(f"  {e['name']}: formsitz {f(e['formsitz'])} Zufall {f(e['formsitz_null'])} guete {f(e['guete'], 2)} | Decke (Wolke/Wolke) {f(e['decke'])} Zufall {f(e['decke_null'])}"
-              f" Trennschaerfe {f(e['trennschaerfe'])} relativ {f(e['relativ'], 2)} | tiefe {f(e['tiefe'])} kontur {f(e['kontur'])} med|dz| {f(e['med_dz'], 2)} m a10 {f(e['a10'], 2)} a25 {f(e['a25'], 2)} (n {e['n']}) -> {e['status']}")
+              f" Trennschaerfe {f(e['trennschaerfe'])} relativ {f(e['relativ'], 2)} | tiefe {f(e['tiefe'])} kontur {f(e['kontur'])} med|dz| {f(e['med_dz'], 2)} m a10 {f(e['a10'], 2)} a25 {f(e['a25'], 2)} verdeckt {f(e.get('verdeckt'), 2)} durchsicht {f(e.get('durchsicht'), 2)} (n {e['n']}) -> {e['status']}")
         if ax in (erg.get("rot") or {}): r = erg["rot"][ax]; print(f"      ROT-Probe Wand {ROT_M} m aussen: Abfall {r['eigene']} -> {'erkannt' if r['erkannt'] else 'NICHT erkannt'} (andere Seiten: {r['abfall_je_verschobener_wand']})")
         if ax in (erg.get("probe") or {}): print("      Probe Abfall: " + ", ".join(f"{k_} {v_:+.3f}" for k_, v_ in erg["probe"][ax].items()))
     print(f"Bericht: {jp} ({erg['sek']} s)")

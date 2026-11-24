@@ -35,6 +35,7 @@ Ein Maß, das ein falsch platziertes Modell fast gleich gut bewertet wie ein ric
   zweites Maß nötig (Traufe/Gesimse über Tiefensprünge).
 - **Längs der Wand schwach** (Nord ±1 m: 0,02–0,06).
 - **Bezug ist die dichte Wolke:** liegt die Wolke falsch, zählt es als Modellfehler → Lage-Tore bleiben Voraussetzung.
+- **Durchsicht/Verdeckung (seit 24.11. abends):** fehlt in der Wolke die Vorderflaeche (Fremdbau davor nicht rekonstruiert, Wand duenn belegt), sah das Tiefenbild auf die Rueckwand (Ost 1122zb: med|dz| 3,57 m ohne Modellfehler). Jetzt: Pixel mit Wolke hinter dem Modellkoerper und Pixel hinter Aussenwolke (60 m Sichtschutz) zaehlen nicht; Felder `durchsicht`/`verdeckt`/`unbeobachtet`; Seite mit Durchsicht > 0,3 oder unbeobachtet > 0,5 → 'Bezug fehlt', kein Urteil (ANNAHMEN). Test `tools/test_formsitz_durchblick.py`.
 - `TRENN_MIN` 0,25 nur an einem Objekt geprüft (synthetisch verrauscht 0,16, echt 0,61–0,65).
 - Oberkontur nur Bericht: Turmspitze in den meisten Satzfotos abgeschnitten/verdeckt.
 
