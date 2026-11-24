@@ -28,7 +28,8 @@ def frontal_kameras(K, e, wahl, n_max=24, winkel=45.0, min_sicht=0.5, max_gsd=0.
     Abstand <= 80 m, Rang Sicht/sqrt(Abstand)). Fuer f02 lagen 49 SfM-Kameras frontal (< winkel Grad), sehen >= 50 % der Wand und hatten 1,2-6,6 cm/px - KEINE davon in
     kam_wahl; dort sahen die 17 'frontalen' die Wand nur schraeg/nah (je Ref 0-265 Punkte). Jetzt je WAND: Kameras aus kam.json (alle SfM-Kameras) vor der Wand, Blick auf die
     Wand (Winkel zur Normale < winkel), >= min_sicht der Wandflaeche im Bildfeld, Bodenaufloesung Abstand/f <= max_gsd m/px; die besten n_max (Aufloesung) zusaetzlich zu kam_wahl.
-    Reine Kameraauswahl - Sweep, Tore und Guards bleiben unveraendert. -> Liste Dateinamen (ohne die schon gewaehlten)."""
+    Reine Kameraauswahl - Sweep, Tore und Guards bleiben unveraendert. Der Sweep zieht seine Referenzen ZUFAELLIG (--refs aus dem Kamerasatz): --refs waechst um die
+    Zahl der ergaenzten Kameras, sonst fielen alte Referenzen heraus (Probe f02: 80 aus 90 -> 816 statt 1316 Punkte). -> Liste Dateinamen (ohne die schon gewaehlten)."""
     o = np.array(e["o"], float); d = np.array(e["d"], float); n = np.array(e["n"], float); u0, u1, z0, z1 = e["zone"]; z0 = max(z0, 0.0)
     rg = np.random.default_rng(0); uu = rg.uniform(u0, u1, n_proben); zz = rg.uniform(z0, z1, n_proben); ww = float(e.get("w", 0.0))
     VF = np.c_[o[0] + uu * d[0] + ww * n[0], o[1] + uu * d[1] + ww * n[1], zz]; c = np.cos(np.radians(winkel)); out = []
@@ -105,7 +106,7 @@ def main():
                 e["kameras_ergaenzt"] = sum(os.path.exists(os.path.join(SD, os.path.splitext(f)[0] + ".png")) for f in plus)
                 if rs.returncode != 0: e["stabil_fehler"] = (rs.stderr.strip().splitlines() or ["?"])[-1][:200]
         r = subprocess.run([PY, "-I", os.path.join(HIER, "kanten_tiefe_sweep_flaeche.py"), kw_e, SD, sw, "--flaeche", stl, "--flaeche_skala", "1.0", "--box3", box, "--band", str(e["band"]), "--ziel_auto",
-                            "--nbdist", "80", "--refs", str(a.refs), "--nb", "12", "--maxpx", str(a.maxpx)], capture_output=True, text=True)
+                            "--nbdist", "80", "--refs", str(a.refs if kw_e == KW else a.refs + len(plus))] + (["--nb_rel", "1.3"] if kw_e != KW else []) + ["--nb", "12", "--maxpx", str(a.maxpx)], capture_output=True, text=True)
         e["punkte"] = int(len(np.load(sw)["P"])) if os.path.exists(sw) else 0; e["sweep"] = sw if e["punkte"] else None; e["sekunden"] = round(time.time() - t0)
         if r.returncode != 0 or not e["punkte"]: e["fehler"] = (r.stderr.strip().splitlines() or r.stdout.strip().splitlines() or ["?"])[-1][:200]
         if e["punkte"]:
