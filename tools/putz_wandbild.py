@@ -31,6 +31,28 @@ def glatt_karte(ffn, fid, zelle=0.05, schwelle=0.8, min_fotos=3, anteil=0.6, hoc
     from scipy.ndimage import gaussian_filter
     key = (os.path.abspath(ffn), fid, zelle, schwelle, min_fotos, anteil, rau_schwelle, rau_fenster)
     if key in _CACHE: return _CACHE[key]
+    gd = os.environ.get("RCPARK_GLATT_CACHE")
+    if gd and os.path.isdir(gd):
+        # 24.11.2026 (tools/bau_parallel.py): Kindprozesse je Wand teilen sich die Putzkarte einer Fassade ueber eine Datei (im seriellen Lauf traf der Speicher-Cache,
+        # parallel rechnete jede Wand dieselbe Fassade neu: w03/w07 17 -> 83 s). Erster Prozess rechnet unter Dateisperre, die anderen laden das Ergebnis (pickle, bitgleich).
+        import fcntl, hashlib, pickle
+        h = hashlib.sha1(repr(key + (hochpass, ort)).encode())
+        for p_ in [os.path.join(ffn, "fassaden.json")] + sorted(glob.glob(os.path.join(ffn, f"ortho_{fid}_einzeln", "*.png"))):
+            try: st_ = os.stat(p_); h.update(f"{p_}|{st_.st_size}|{st_.st_mtime_ns}".encode())
+            except OSError: h.update(p_.encode())
+        pf = os.path.join(gd, h.hexdigest() + ".pkl")
+        with open(pf + ".sperre", "w") as sp:
+            fcntl.flock(sp, fcntl.LOCK_EX)
+            try:
+                if os.path.exists(pf): erg = pickle.load(open(pf, "rb"))
+                else:
+                    os.environ.pop("RCPARK_GLATT_CACHE")
+                    try: erg = glatt_karte(ffn, fid, zelle, schwelle, min_fotos, anteil, hochpass, ort, rau_schwelle, rau_fenster)
+                    finally: os.environ["RCPARK_GLATT_CACHE"] = gd
+                    with open(pf + ".teil", "wb") as f_: pickle.dump(erg, f_)
+                    os.replace(pf + ".teil", pf)
+            finally: fcntl.flock(sp, fcntl.LOCK_UN)
+        _CACHE[key] = erg; return erg
     try: FF = {f["id"]: f for f in json.load(open(os.path.join(ffn, "fassaden.json")))["fassaden"]}
     except Exception: return None
     R = (FF.get(fid) or {}).get("raster"); fs = sorted(glob.glob(os.path.join(ffn, f"ortho_{fid}_einzeln", "*.png")))

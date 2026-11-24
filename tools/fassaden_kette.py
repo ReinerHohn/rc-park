@@ -424,6 +424,97 @@ def quadern(f, objekt_json, Z_basis, art, ecken=(False, False), zone=None):
     return p, (info if p != f else None)
 
 
+def wand_vorbereiten(w, objekt_json, bereinigen=None):
+    """Dateiteil von anbauen() fuer EINE Wand (24.11.2026, tools/bau_parallel.py): alle Relief-Umformungen, die nur Dateien lesen/schreiben (relief_bereinigen, Putz aus dem
+    Wandbild, Vorbau flach, Kantenbeleg, Quaderraster) - kein Koerper. Jede Wand schreibt nur relief/<wand>_*.npz/.jpg, daher je Wand ein eigener Prozess moeglich.
+    Die Stab-Sonde koerper_flaeche (braucht den Grundkoerper) bleibt im Generator: f_fl = Reliefdatei, an der sie messen soll (Stand nach dem Putz, vor Vorbau/Kantenbeleg,
+    wie im alten Ablauf), None = keine Messung. Liefert dict(f, ff, fmo, fm, tf, feld_mo, hat_foto, mono_, f_fl, bel_a (vor der Sonde), bel_b (danach), codefehler)."""
+    od = os.path.dirname(os.path.abspath(objekt_json)); B = os.path.join(od, "audit", "fassaden_kette.json"); n_cf = len(_CODEFEHLER)
+    f = os.path.join(od, "relief", w["name"] + "_voll.npz")
+    Z = np.load(f); n = Z["n"]; bel_a = []; bel_b = []; feld_mo = None
+    fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
+    ff = os.path.join(od, "relief", w["name"] + "_foto.npz"); hat_foto = bool(w.get("foto_feld")) and os.path.exists(ff)
+    # 21.11.2026 (Kettenluecke 2, Nutzer: "was wir damals manuell gemacht haben, muss jetzt automatisch laufen"): Stufe 'mono' rechnet <wand>_mono.npz, gebaut wurde es nur von
+    # Hand (schwab_v3_gen Z.85-95). Wie dort: Feld der Mono-Datei = tief_feld des groben Reliefs, Mono-Relief mit trend=True, rand_auslauf=False; die Feinrechnung (_misch)
+    # steckt im Tiefpass der Mono-Datei und entfaellt dann. OHNE_MONO=1 schaltet ab.
+    fmo = os.path.join(od, "relief", w["name"] + "_mono.npz"); mono_ = (w.get("mono") or {}).get("datei") and os.path.exists(fmo) and os.environ.get("OHNE_MONO") != "1"
+    if mono_:
+        zm_ = np.load(fmo); hm_, wm_ = zm_["rel"].shape; pm_ = float(zm_["px"]); feld_mo = (float(zm_["u0"]), float(zm_["u0"]) + wm_ * pm_, float(zm_["z0"]), float(zm_["z0"]) + hm_ * pm_); tf = [feld_mo]
+    if bereinigen is not None and w.get("quader") is not True and not w.get("nur_foto"):
+        def um(lst):
+            r = []
+            for W_, a_, b_, za, zb in lst:
+                if isinstance(W_, str):                                      # ("rund", Mitte xy, Radius, z0, z1): senkrechter Zylinder (Erker) - auf JEDE nahe Wand projiziert
+                    c_ = np.asarray(a_, float) - Z["a"][:2]
+                    if abs(c_ @ n[:2]) <= b_ + 0.5: uc = c_ @ Z["t"][:2]; r.append((uc - b_, uc + b_, za, zb))
+                    continue
+                if W_.n @ n[:2] < 0.9 or abs((W_.a + 0.5 * (a_ + b_) * W_.t - Z["a"][:2]) @ n[:2]) > 1.5: continue
+                ua, ub = sorted(((W_.a + a_ * W_.t - Z["a"][:2]) @ Z["t"][:2], (W_.a + b_ * W_.t - Z["a"][:2]) @ Z["t"][:2])); r.append((ua, ub, za, zb))
+            return r
+        f2 = os.path.join(od, "relief", w["name"] + "_rein.npz")
+        info = relief_bereinigen(f, f2, um(bereinigen.get("ersetzt", [])), band=bereinigen.get("band", 0.05), lang=bereinigen.get("lang", 1.5), dick=bereinigen.get("dick", 0.45), erhalten=um(bereinigen.get("erhalten", [])))
+        if not info.get("unveraendert"):
+            f = f2; bel_a.append(dict(seite="wand", element=f"Relief Fassade {w['name']}: Restbrei auf Wandniveau, Bauteilflaechen ersetzt", quelle="fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
+                                      hinweis=f"ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg {info['brei_weg'] * 100:.0f} %, durch Fotobauteile ersetzt {info['ersetzt'] * 100:.0f} %, {info['linienhaft_behalten']} linienhafte Stuecke behalten; Bild relief/{w['name']}_rein.jpg"))
+    f_fl = None
+    if w.get("quader") is False and not w.get("nur_foto") and os.environ.get("OHNE_PUTZ_WANDBILD") != "1":
+        # 21.11.2026 (Nutzerbild umgang_bau_ansicht, w02 Stadtseite): Putzwand ohne Quaderwerk. (a) 'Kruemel' auf dem glatten Putz = Netzrauschen auf texturarmem Putz
+        # (39 % Netzloecher, Einzelzellen 5-15 cm daneben; putz_eben liess > 5 cm stehen). Putz jetzt aus dem WANDBILD (tools/putz_wandbild.py: mehrere entzerrte Einzelfotos
+        # einig glatt) -> dort ein Niveau; die Uhrscheiben (audit/uhren_auto.json) baut bauteile.uhren_aus_json, dort ebenfalls Niveau.
+        # (b) das Relief stand ohne Trend auf der LoD2-Ebene (+0,11 m Vorstand), die gemessene Koerperflaeche lag nach der Abweichungsschleife bei -0,15 m (Platte 0,26 m davor);
+        # jetzt Putzniveau genau auf die gemessene Koerperflaeche (koerper_flaeche, im Generator). RELIEF_LOD2_EBENE=1 = alter Stand.
+        ffn = fein_ordner(objekt_json)
+        if ffn:
+            from putz_wandbild import putz_auf_relief, relief_putz_glatt
+            M_ = putz_auf_relief(np.load(f), ffn)
+            if M_ is not None:
+                f3 = os.path.join(od, "relief", w["name"] + "_glatt.npz"); info = relief_putz_glatt(f, f3, M_, frei=uhren_frei(od, Z))
+                if not info.get("unveraendert"):
+                    f = f3; bel_a.append(dict(seite="wand", element=f"Putz Fassade {w['name']} glatt aus dem Wandbild ({info['putz_anteil'] * 100:.0f} % der Wand, {info['frei']} Uhrfeld(er) frei)",
+                                              quelle="tools/putz_wandbild.py: entzerrte Einzelfotos (fassade_fein/ortho_<fid>_einzeln), Putz = >= 3 Fotos sehen die Zelle und >= 60 % davon ohne Feinstruktur",
+                                              putz_anteil=info["putz_anteil"], rausch_vorher_cm=info["rausch_vorher_cm"], hinweis=f"Netzrauschen auf dem Putz vorher {info['rausch_vorher_cm']} cm (Streuung); relief/{w['name']}_glatt.jpg ansehen"))
+        if os.environ.get("RELIEF_LOD2_EBENE") != "1": f_fl = f
+    if os.environ.get("OHNE_VORBAU_FLACH") != "1":
+        # 21.11.2026 (Nutzerbild neben_eigen__IMG_20261106_113231: Wandgemaelde unter dem Vordach als Klumpen): hinter/unter Vorbauten Relief nur mit Tiefensprung in den
+        # triangulierten Fotokanten der Wandebene (putz_wandbild.relief_vorbau_flach); gilt fuer das Netzrelief und das Fotorelief. OHNE_VORBAU_FLACH=1 = alter Stand.
+        from putz_wandbild import vorbau_zonen, kanten_wand, relief_vorbau_flach
+        ffn_ = fein_ordner(objekt_json); ej_ = os.path.join(os.path.dirname(ffn_), "ebenen", "ebenen.json") if ffn_ else ""
+        for art_ in (("f", f), ("ff", ff if hat_foto else None)):
+            if not art_[1]: continue
+            Zv_ = np.load(art_[1]); zon_ = vorbau_zonen(od, Zv_)
+            if not zon_: continue
+            fo_ = art_[1][:-4] + "_vorbau.npz"; inf_ = relief_vorbau_flach(art_[1], fo_, zon_, kanten_wand(ej_, Zv_) if ej_ else None)
+            if inf_.get("unveraendert") or not inf_.get("flach_m2"): continue
+            if art_[0] == "f": f = fo_
+            else: ff = fo_
+            bel_b.append(dict(seite="wand", element=f"Relief {os.path.basename(art_[1])} hinter Vorbau: {inf_['flach_m2']} m2 ohne Kantenbeleg auf Wandniveau, {inf_['belegt_m2']} m2 Tiefensprung belegt",
+                              quelle="putz_wandbild.relief_vorbau_flach (Fotokanten der Wandebene, ebenen.json)", hinweis=f"Bild relief/{os.path.basename(fo_)[:-4]}.jpg; Zone {inf_['zone_m2']} m2"))
+    if os.environ.get("OHNE_KANTENBELEG") != "1" and w.get("quader") is False and not w.get("nur_foto"):
+        f, b_ = kantenbeleg(f, objekt_json, "Netzrelief")
+        if b_: bel_b.append(b_)
+    # 21.11.2026 QUADERRASTER aus dem Wandbild (Nutzer: unterer Turm "geschmolzen", Eckquader "Rauschen"): Reliefs wurden 1:1 gebaut - Fugen 0,1-0,4 mm H0,
+    # Beulen bis 1 mm H0. Jetzt je Stein ebene Stirnflaeche + druckbare Rillen; Wand ohne Quader-Tor (w02: unten Quader, oben Putz) nur in der Steinzone von unten.
+    qbel = []
+    if w.get("quader") is False and not w.get("nur_foto"):
+        f, qi_ = quadern(f, objekt_json, Z, "wand", zone=w.get("steinzone")); qbel.append(("Wand", qi_))
+    if hat_foto:
+        WLq_ = json.load(open(B))["waende"]; ff, qi_ = quadern(ff, objekt_json, Z, "foto", (wandende_ist_ecke(WLq_, w, "a"), wandende_ist_ecke(WLq_, w, "b"))); qbel.append(("Fotorelief", qi_))
+    if mono_: fmo, qi_ = quadern(fmo, objekt_json, Z, "fein"); qbel.append(("Feinrelief mono", qi_))
+    elif tf and os.path.exists(fm): fm, qi_ = quadern(fm, objekt_json, Z, "fein"); qbel.append(("Feinrelief misch", qi_))
+    if os.environ.get("OHNE_KANTENBELEG") != "1":                    # 24.11.2026: Mono/Misch ausserhalb der Quadersteine nur mit Kantenbeleg (Brunnen-Wulst 1122w Sued)
+        if mono_: fmo, b_ = kantenbeleg(fmo, objekt_json, "Feinrelief mono")
+        elif tf and os.path.exists(fm): fm, b_ = kantenbeleg(fm, objekt_json, "Feinrelief misch")
+        else: b_ = None
+        if b_: bel_b.append(b_)
+    for nm_, qi_ in qbel:
+        if qi_: bel_b.append(dict(seite="wand", element=f"Quaderraster {nm_} Fassade {w['name']}: {qi_.get('relief_steine')} Steine eben, Rillen {qi_.get('relief_rille_mm')} mm (Breite, Tiefe H0)",
+                                  quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
+                                  lagen_m=qi_.get("lagen_m", [])[:40], keilsteine=[{k_: v_ for k_, v_ in x_.items() if k_ not in ("ruecken_je_stein", "bogenbreite_je_stein_m")} for x_ in (qi_.get("keilsteine") or [])], eckquader={k_: {kk: v_ for kk, v_ in e_.items() if kk != "bloecke"} | dict(n=len(e_.get("bloecke", []))) for k_, e_ in (qi_.get("eckquader") or {}).items()}, front_p5_p95_m=qi_.get("relief_front_p5_p95_m"), verworfen=qi_.get("verworfen"),
+                                  hinweis="ANNAHME: Rillenbreite/-tiefe = Druckmass (MINMM x SCALE), echte Fugen 1-3 cm; Stirnflaeche eben (Bossen nicht gemessen); Bild relief/<datei>_q.jpg ansehen"))
+    cf = _CODEFEHLER[n_cf:]; del _CODEFEHLER[n_cf:]                     # der Aufrufer (anbauen) traegt sie ein - gleich, ob diese Funktion im eigenen oder einem Kindprozess lief
+    return dict(f=f, ff=ff, fmo=fmo, fm=fm, tf=tf, feld_mo=feld_mo, hat_foto=hat_foto, mono_=mono_, f_fl=f_fl, bel_a=bel_a, bel_b=bel_b, codefehler=cf)
+
+
 def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
     """Fuer Generatoren: alle relief/*_voll.npz der Fassaden-Kette als Platten anfuegen, begrenzt auf die nach aussen verschobene Koerperhuelle.
     fenster = Pfad der Fensterliste (fenster_fuer_bau), wenn die Fenster VOR dem Relief geschnitten wurden: die Reliefplatte bleibt dann in den Fensterrechtecken offen.
@@ -442,98 +533,34 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
             o_ = np.array(F_["o"], float); W_ = Wand(o_, o_ + np.array(F_["d"], float), aussen=o_ + np.array(F_["n"], float))
             frei += [(np.array(F_["n"], float), W_.kasten(q_["u0"], q_["u1"], q_["z0"], q_["z1"], -tiefe - 0.2, 1.0)) for q_ in F_.get("fenster", [])]
     belege = []; basis = koerper      # 16.11.2026: Huelle je Wand aus dem GRUNDKOERPER, nicht aus dem wachsenden Koerper (sonst wird jede weitere Wand gegen alle frueheren Reliefs geschnitten: schwab_auto, 8 Waende, 13,6 GB -> vom System beendet)
-    for w in json.load(open(B))["waende"]:
+    WL = [w for w in json.load(open(B))["waende"] if os.path.exists(os.path.join(od, "relief", w["name"] + "_voll.npz")) and not w.get("aus")]
+    # 24.11.2026 (Profil Schwabentor-1122: 2/3 der Bauzeit = Relief-Dateien je Wand, einfaedig): Dateiteil je Wand in eigenen Prozessen (tools/bau_parallel.py),
+    # Koerperteil (Sonde, Platten, Vereinigung) danach hier in Wandreihenfolge wie bisher. RCPARK_BAU_SERIELL=1 = alter Weg (nacheinander, im Prozess).
+    from bau_parallel import prozess_map
+    gew = [sum(os.path.getsize(p_) for p_ in glob.glob(os.path.join(od, "relief", w["name"] + "_*.npz"))) for w in WL]      # Last je Wand ~ Groesse ihrer Reliefdateien
+    import tempfile, shutil
+    gd_ = None if os.environ.get("RCPARK_BAU_SERIELL") == "1" or os.environ.get("RCPARK_GLATT_CACHE") else tempfile.mkdtemp(prefix="glatt_karte_")
+    if gd_: os.environ["RCPARK_GLATT_CACHE"] = gd_                        # Putzkarte je Fassade nur einmal rechnen, auch ueber Kindprozesse (putz_wandbild.glatt_karte)
+    try: VB = prozess_map("fassaden_kette", "wand_vorbereiten", [((w, objekt_json), dict(bereinigen=bereinigen)) for w in WL], name="Relief-Vorbereitung je Wand", gewichte=gew)
+    finally:
+        if gd_: os.environ.pop("RCPARK_GLATT_CACHE", None); shutil.rmtree(gd_, ignore_errors=True)
+    for w, vb in zip(WL, VB):
         f = os.path.join(od, "relief", w["name"] + "_voll.npz")
-        if not os.path.exists(f) or w.get("aus"): continue
         Z = np.load(f); n = Z["n"]; hu = basis + basis.translate((0.8 * n[0], 0.8 * n[1], 0.0)); koerper.num_tri();      # num_tri: Zwischenergebnis ausrechnen, damit der Rechenbaum nicht ueber alle Waende waechst
-        fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
-        ff = os.path.join(od, "relief", w["name"] + "_foto.npz"); hat_foto = bool(w.get("foto_feld")) and os.path.exists(ff)
-        # 21.11.2026 (Kettenluecke 2, Nutzer: "was wir damals manuell gemacht haben, muss jetzt automatisch laufen"): Stufe 'mono' rechnet <wand>_mono.npz, gebaut wurde es nur von
-        # Hand (schwab_v3_gen Z.85-95). Wie dort: Feld der Mono-Datei = tief_feld des groben Reliefs, Mono-Relief mit trend=True, rand_auslauf=False; die Feinrechnung (_misch)
-        # steckt im Tiefpass der Mono-Datei und entfaellt dann. OHNE_MONO=1 schaltet ab.
-        fmo = os.path.join(od, "relief", w["name"] + "_mono.npz"); mono_ = (w.get("mono") or {}).get("datei") and os.path.exists(fmo) and os.environ.get("OHNE_MONO") != "1"
-        if mono_:
-            zm_ = np.load(fmo); hm_, wm_ = zm_["rel"].shape; pm_ = float(zm_["px"]); feld_mo = (float(zm_["u0"]), float(zm_["u0"]) + wm_ * pm_, float(zm_["z0"]), float(zm_["z0"]) + hm_ * pm_); tf = [feld_mo]
+        f, ff, fmo, fm, tf, feld_mo, hat_foto, mono_ = (vb[k] for k in ("f", "ff", "fmo", "fm", "tf", "feld_mo", "hat_foto", "mono_")); _CODEFEHLER.extend(vb["codefehler"])
         def offen(pl):                                                   # Fensterrechtecke dieser Wandrichtung aus der Platte nehmen
             for nf_, k_ in frei:
                 if nf_ @ n[:2] > 0.9: pl = pl - k_
             return pl
-        if bereinigen is not None and w.get("quader") is not True and not w.get("nur_foto"):
-            def um(lst):
-                r = []
-                for W_, a_, b_, za, zb in lst:
-                    if isinstance(W_, str):                                      # ("rund", Mitte xy, Radius, z0, z1): senkrechter Zylinder (Erker) - auf JEDE nahe Wand projiziert
-                        c_ = np.asarray(a_, float) - Z["a"][:2]
-                        if abs(c_ @ n[:2]) <= b_ + 0.5: uc = c_ @ Z["t"][:2]; r.append((uc - b_, uc + b_, za, zb))
-                        continue
-                    if W_.n @ n[:2] < 0.9 or abs((W_.a + 0.5 * (a_ + b_) * W_.t - Z["a"][:2]) @ n[:2]) > 1.5: continue
-                    ua, ub = sorted(((W_.a + a_ * W_.t - Z["a"][:2]) @ Z["t"][:2], (W_.a + b_ * W_.t - Z["a"][:2]) @ Z["t"][:2])); r.append((ua, ub, za, zb))
-                return r
-            f2 = os.path.join(od, "relief", w["name"] + "_rein.npz")
-            info = relief_bereinigen(f, f2, um(bereinigen.get("ersetzt", [])), band=bereinigen.get("band", 0.05), lang=bereinigen.get("lang", 1.5), dick=bereinigen.get("dick", 0.45), erhalten=um(bereinigen.get("erhalten", [])))
-            if not info.get("unveraendert"):
-                f = f2; belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']}: Restbrei auf Wandniveau, Bauteilflaechen ersetzt", quelle="fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
-                                           hinweis=f"ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg {info['brei_weg'] * 100:.0f} %, durch Fotobauteile ersetzt {info['ersetzt'] * 100:.0f} %, {info['linienhaft_behalten']} linienhafte Stuecke behalten; Bild relief/{w['name']}_rein.jpg"))
+        belege += vb["bel_a"]
         fl_w = None
-        if w.get("quader") is False and not w.get("nur_foto") and os.environ.get("OHNE_PUTZ_WANDBILD") != "1":
-            # 21.11.2026 (Nutzerbild umgang_bau_ansicht, w02 Stadtseite): Putzwand ohne Quaderwerk. (a) 'Kruemel' auf dem glatten Putz = Netzrauschen auf texturarmem Putz
-            # (39 % Netzloecher, Einzelzellen 5-15 cm daneben; putz_eben liess > 5 cm stehen). Putz jetzt aus dem WANDBILD (tools/putz_wandbild.py: mehrere entzerrte Einzelfotos
-            # einig glatt) -> dort ein Niveau; die Uhrscheiben (audit/uhren_auto.json) baut bauteile.uhren_aus_json, dort ebenfalls Niveau.
-            # (b) das Relief stand ohne Trend auf der LoD2-Ebene (+0,11 m Vorstand), die gemessene Koerperflaeche lag nach der Abweichungsschleife bei -0,15 m (Platte 0,26 m davor);
-            # jetzt Putzniveau genau auf die gemessene Koerperflaeche (koerper_flaeche). RELIEF_LOD2_EBENE=1 = alter Stand.
-            ffn = fein_ordner(objekt_json)
-            if ffn:
-                from putz_wandbild import putz_auf_relief, relief_putz_glatt
-                M_ = putz_auf_relief(np.load(f), ffn)
-                if M_ is not None:
-                    f3 = os.path.join(od, "relief", w["name"] + "_glatt.npz"); info = relief_putz_glatt(f, f3, M_, frei=uhren_frei(od, Z))
-                    if not info.get("unveraendert"):
-                        f = f3; belege.append(dict(seite="wand", element=f"Putz Fassade {w['name']} glatt aus dem Wandbild ({info['putz_anteil'] * 100:.0f} % der Wand, {info['frei']} Uhrfeld(er) frei)",
-                                                   quelle="tools/putz_wandbild.py: entzerrte Einzelfotos (fassade_fein/ortho_<fid>_einzeln), Putz = >= 3 Fotos sehen die Zelle und >= 60 % davon ohne Feinstruktur",
-                                                   putz_anteil=info["putz_anteil"], rausch_vorher_cm=info["rausch_vorher_cm"], hinweis=f"Netzrauschen auf dem Putz vorher {info['rausch_vorher_cm']} cm (Streuung); relief/{w['name']}_glatt.jpg ansehen"))
-            if os.environ.get("RELIEF_LOD2_EBENE") != "1":
-                Zf_ = np.load(f); hh_, ww_ = Zf_["rel"].shape; px_ = float(Zf_["px"]); u0_, z0_ = float(Zf_["u0"]), float(Zf_["z0"])
-                fl_w = koerper_flaeche(basis, Zf_["a"], Zf_["t"], Zf_["n"], [(u0_ + fu * ww_ * px_, z0_ + fz * hh_ * px_) for fu in (0.3, 0.5, 0.7) for fz in (0.3, 0.6, 0.9)])
-                if fl_w is not None and "putz_niveau_m" not in Zf_.files:          # Relief ohne Putzniveau (kein Wandbild): Niveau = Median der Wandzellen (relief_roh: 'vorstand')
-                    mw_ = (Zf_["wand"] if "wand" in Zf_.files else np.ones(Zf_["rel"].shape, bool)) & ~Zf_["oeffnung"] & (Zf_["rel"] > 0); fl_w -= float(np.median(Zf_["rel"][mw_])) if mw_.any() else 0.0
-                if fl_w is not None: belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} auf der gemessenen Koerperflaeche ({fl_w:+.2f} m zur Wandebene)", quelle="fassaden_kette.koerper_flaeche (Stab-Sonde gegen den Grundkoerper nach Wandversatz)", relief_auf_flaeche_m=round(fl_w, 3)))
-        if os.environ.get("OHNE_VORBAU_FLACH") != "1":
-            # 21.11.2026 (Nutzerbild neben_eigen__IMG_20261106_113231: Wandgemaelde unter dem Vordach als Klumpen): hinter/unter Vorbauten Relief nur mit Tiefensprung in den
-            # triangulierten Fotokanten der Wandebene (putz_wandbild.relief_vorbau_flach); gilt fuer das Netzrelief und das Fotorelief. OHNE_VORBAU_FLACH=1 = alter Stand.
-            from putz_wandbild import vorbau_zonen, kanten_wand, relief_vorbau_flach
-            ffn_ = fein_ordner(objekt_json); ej_ = os.path.join(os.path.dirname(ffn_), "ebenen", "ebenen.json") if ffn_ else ""
-            for art_ in (("f", f), ("ff", ff if hat_foto else None)):
-                if not art_[1]: continue
-                Zv_ = np.load(art_[1]); zon_ = vorbau_zonen(od, Zv_)
-                if not zon_: continue
-                fo_ = art_[1][:-4] + "_vorbau.npz"; inf_ = relief_vorbau_flach(art_[1], fo_, zon_, kanten_wand(ej_, Zv_) if ej_ else None)
-                if inf_.get("unveraendert") or not inf_.get("flach_m2"): continue
-                if art_[0] == "f": f = fo_
-                else: ff = fo_
-                belege.append(dict(seite="wand", element=f"Relief {os.path.basename(art_[1])} hinter Vorbau: {inf_['flach_m2']} m2 ohne Kantenbeleg auf Wandniveau, {inf_['belegt_m2']} m2 Tiefensprung belegt",
-                                   quelle="putz_wandbild.relief_vorbau_flach (Fotokanten der Wandebene, ebenen.json)", hinweis=f"Bild relief/{os.path.basename(fo_)[:-4]}.jpg; Zone {inf_['zone_m2']} m2"))
-        if os.environ.get("OHNE_KANTENBELEG") != "1" and w.get("quader") is False and not w.get("nur_foto"):
-            f, b_ = kantenbeleg(f, objekt_json, "Netzrelief")
-            if b_: belege.append(b_)
-        # 21.11.2026 QUADERRASTER aus dem Wandbild (Nutzer: unterer Turm "geschmolzen", Eckquader "Rauschen"): Reliefs wurden 1:1 gebaut - Fugen 0,1-0,4 mm H0,
-        # Beulen bis 1 mm H0. Jetzt je Stein ebene Stirnflaeche + druckbare Rillen; Wand ohne Quader-Tor (w02: unten Quader, oben Putz) nur in der Steinzone von unten.
-        qbel = []
-        if w.get("quader") is False and not w.get("nur_foto"):
-            f, qi_ = quadern(f, objekt_json, Z, "wand", zone=w.get("steinzone")); qbel.append(("Wand", qi_))
-        if hat_foto:
-            WLq_ = json.load(open(B))["waende"]; ff, qi_ = quadern(ff, objekt_json, Z, "foto", (wandende_ist_ecke(WLq_, w, "a"), wandende_ist_ecke(WLq_, w, "b"))); qbel.append(("Fotorelief", qi_))
-        if mono_: fmo, qi_ = quadern(fmo, objekt_json, Z, "fein"); qbel.append(("Feinrelief mono", qi_))
-        elif tf and os.path.exists(fm): fm, qi_ = quadern(fm, objekt_json, Z, "fein"); qbel.append(("Feinrelief misch", qi_))
-        if os.environ.get("OHNE_KANTENBELEG") != "1":                    # 24.11.2026: Mono/Misch ausserhalb der Quadersteine nur mit Kantenbeleg (Brunnen-Wulst 1122w Sued)
-            if mono_: fmo, b_ = kantenbeleg(fmo, objekt_json, "Feinrelief mono")
-            elif tf and os.path.exists(fm): fm, b_ = kantenbeleg(fm, objekt_json, "Feinrelief misch")
-            else: b_ = None
-            if b_: belege.append(b_)
-        for nm_, qi_ in qbel:
-            if qi_: belege.append(dict(seite="wand", element=f"Quaderraster {nm_} Fassade {w['name']}: {qi_.get('relief_steine')} Steine eben, Rillen {qi_.get('relief_rille_mm')} mm (Breite, Tiefe H0)",
-                                       quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
-                                       lagen_m=qi_.get("lagen_m", [])[:40], keilsteine=[{k_: v_ for k_, v_ in x_.items() if k_ not in ("ruecken_je_stein", "bogenbreite_je_stein_m")} for x_ in (qi_.get("keilsteine") or [])], eckquader={k_: {kk: v_ for kk, v_ in e_.items() if kk != "bloecke"} | dict(n=len(e_.get("bloecke", []))) for k_, e_ in (qi_.get("eckquader") or {}).items()}, front_p5_p95_m=qi_.get("relief_front_p5_p95_m"), verworfen=qi_.get("verworfen"),
-                                       hinweis="ANNAHME: Rillenbreite/-tiefe = Druckmass (MINMM x SCALE), echte Fugen 1-3 cm; Stirnflaeche eben (Bossen nicht gemessen); Bild relief/<datei>_q.jpg ansehen"))
+        if vb["f_fl"]:                                                   # Stab-Sonde gegen den Grundkoerper an der Putz-Reliefdatei (wand_vorbereiten: Stand nach dem Putz)
+            Zf_ = np.load(vb["f_fl"]); hh_, ww_ = Zf_["rel"].shape; px_ = float(Zf_["px"]); u0_, z0_ = float(Zf_["u0"]), float(Zf_["z0"])
+            fl_w = koerper_flaeche(basis, Zf_["a"], Zf_["t"], Zf_["n"], [(u0_ + fu * ww_ * px_, z0_ + fz * hh_ * px_) for fu in (0.3, 0.5, 0.7) for fz in (0.3, 0.6, 0.9)])
+            if fl_w is not None and "putz_niveau_m" not in Zf_.files:          # Relief ohne Putzniveau (kein Wandbild): Niveau = Median der Wandzellen (relief_roh: 'vorstand')
+                mw_ = (Zf_["wand"] if "wand" in Zf_.files else np.ones(Zf_["rel"].shape, bool)) & ~Zf_["oeffnung"] & (Zf_["rel"] > 0); fl_w -= float(np.median(Zf_["rel"][mw_])) if mw_.any() else 0.0
+            if fl_w is not None: belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} auf der gemessenen Koerperflaeche ({fl_w:+.2f} m zur Wandebene)", quelle="fassaden_kette.koerper_flaeche (Stab-Sonde gegen den Grundkoerper nach Wandversatz)", relief_auf_flaeche_m=round(fl_w, 3)))
+        belege += vb["bel_b"]
         if fl_w is None and w.get("quader") is not False and not w.get("nur_foto"):      # 24.11.2026: auch Quaderwaende auf die gemessene Koerperflaeche (flaeche_relief)
             fl_w = flaeche_relief(basis, f)
             if fl_w is not None: belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} auf der gemessenen Koerperflaeche ({fl_w:+.2f} m zur Wandebene)", quelle="fassaden_kette.flaeche_relief (Stab-Sonde gegen den Grundkoerper)", relief_auf_flaeche_m=round(fl_w, 3)))

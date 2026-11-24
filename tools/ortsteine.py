@@ -475,12 +475,18 @@ def fassade_ortsteine(F, fein, tiefe_dir, stufe=2, min_fotos=3, min_einig_ausr=0
     return erg
 
 
-def ortsteine_erkennen(fein, tiefe_dir=None, nur=None, **kw):
-    """Alle Fassaden des Wandbild-Ordners. tiefe_dir: Ordner mit tiefe_<fid>.npz (Standard: Geschwister 'fassade')."""
+def ortsteine_erkennen(fein, tiefe_dir=None, nur=None, parallel=False, **kw):
+    """Alle Fassaden des Wandbild-Ordners. tiefe_dir: Ordner mit tiefe_<fid>.npz (Standard: Geschwister 'fassade').
+    parallel=True (24.11.2026, Generatorweg ortsteine_anbauen): je Fassade ein Kindprozess (tools/bau_parallel.py; Fassaden unabhaengig, nur Lesen) - dann fehlt
+    _VORSCHAU fuer bild_zeichnen, daher nur dort, wo kein Bild gezeichnet wird. RCPARK_BAU_SERIELL=1 = alter Weg."""
     FF = json.load(open(os.path.join(fein, "fassaden.json")))["fassaden"]
     tiefe_dir = tiefe_dir or os.path.join(os.path.dirname(os.path.abspath(fein)), "fassade")
-    J = dict(quelle="tools/ortsteine.py", fein=fein, druckmass_m=round(druck_m(1.0), 4),
-             fassaden=[fassade_ortsteine(F, fein, tiefe_dir, **kw) for F in FF if F.get("raster") and (nur is None or F["id"] in nur)])
+    FW = [F for F in FF if F.get("raster") and (nur is None or F["id"] in nur)]
+    if parallel:
+        sys.path.insert(0, HIER); from bau_parallel import prozess_map
+        FA = prozess_map("ortsteine", "fassade_ortsteine", [((F, fein, tiefe_dir), kw) for F in FW], name="Ortsteine je Fassade")
+    else: FA = [fassade_ortsteine(F, fein, tiefe_dir, **kw) for F in FW]
+    J = dict(quelle="tools/ortsteine.py", fein=fein, druckmass_m=round(druck_m(1.0), 4), fassaden=FA)
     ks = [K for Fa in J["fassaden"] for K in Fa["kanten"]]
     J["tor"] = dict(kanten=len(ks), bestanden=sum(1 for K in ks if K["tor"]["bestanden"]), verworfen=[f"{Fa['id']} {K['ende']} z {K['z0']:.1f}-{K['z1']:.1f}: {K['tor']['grund']}"
                     for Fa in J["fassaden"] for K in Fa["kanten"] if not K["tor"]["bestanden"]])
@@ -557,6 +563,8 @@ def ortsteine_bauen(koerper, J, einbinden=0.10, probe_ab=0.25, min_formfotos=3):
                                ortsteine=gebaut, vorsprung_m=round(vor, 3),
                                hinweis=(f"Vorsprung gemessen {K['vorsprung_m']} m ({K['vorsprung_quelle']})" + (f", auf Druckmass {v_min:.3f} m angehoben" if K['vorsprung_m'] < v_min else "") if gemessen else
                                         f"ANNAHME: Vorsprung = Druckmass {v_min:.3f} m ({K['vorsprung_quelle']})") + f"; Einbindung {einbinden} m (ANNAHME), Lager-/Stossfuge {fuge:.3f} m (Druckmass)"))
+    from bauteile import _oberflaeche_w_leeren
+    _oberflaeche_w_leeren()                                               # Netz-Zwischenspeicher der Strahlsonde freigeben (24.11.2026)
     return koerper, belege
 
 
@@ -573,7 +581,7 @@ def ortsteine_anbauen(koerper, objekt_json):
         from fassaden_kette import fein_ordner
         ffn = fein_ordner(objekt_json)
         if not ffn: return koerper, []
-        try: J = ortsteine_erkennen(ffn)
+        try: J = ortsteine_erkennen(ffn, parallel=True)
         except Exception as e:
             print(f"    ortsteine: FEHLER {type(e).__name__}: {str(e)[:160]}", flush=True)
             return koerper, [dict(seite="wand", element="Ortsteine NICHT gebaut", quelle="tools/ortsteine.py", hinweis=f"{type(e).__name__}: {str(e)[:160]}")]
