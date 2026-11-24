@@ -17,6 +17,7 @@
 | 🏗️ Bauteile, Generator, Kreis & Abnahme | [`Doku/projekt/bauteile-kreis.md`](Doku/projekt/bauteile-kreis.md) | Maße sind Daten, Bauteile generisch, rote Prüfung vor Generator, Sollwerte nie lockern |
 | 🚂 Bahn & Anlage: Unterbau, Gleis, Steuerung, Malen | [`Doku/projekt/bahn-anlage.md`](Doku/projekt/bahn-anlage.md) | Gebäude = Alleinstellung, Bahn/Unterbau/DCC = Kaufteile + Handwerk; Wartung ist das Risiko |
 | ⚙️ Betrieb: GPU, Jobs, Platten, Git | [`Doku/projekt/betrieb.md`](Doku/projekt/betrieb.md) | systemd + VRAM/RAM-Buchung, GPU immer, Datenplatte, Push je Block |
+| 📚 Wissen verwalten: ablegen, finden, nicht doppelt bauen | [`Doku/projekt/wissen.md`](Doku/projekt/wissen.md) | vor jedem Auftrag wissen_suchen + werkzeug_aehnlich; einchecken; IDs eindeutig; Widersprüche mit Status; Recall@5 als Nachweis |
 
 Jede Ast-Datei: **Gilt** (Vorgaben/Entscheidungen) · **Versucht** (Ansatz → Ergebnis → Lehre) · **Offen**.
 

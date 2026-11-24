@@ -13,7 +13,7 @@ Verfahren:
              uebernommen wird nur ein DEUTLICHES Ergebnis (param_suche 'ok' = beidseitig t >= 2), 'flach' behaelt den Wert.
   fassade    fassade_ortho + fassade_parsing (OWLv2) -> Bauteil fassade_auto; Versuche (Klassen zuschalten, Handbauteile abschalten) nur behalten,
              wenn gepaart ueber die Fotos deutlich besser (t <= -2).
-  (geplant: gemeinsame Optimierung CMA-ES, Farbe je Bauteil - siehe modelle/QUALITAETSSTUFEN.md)
+  (geplant: gemeinsame Optimierung CMA-ES, Farbe je Bauteil - siehe Doku/projekt/pipeline/methodik.md (05.11. Qualitaetsstufen; eigene QUALITAETSSTUFEN.md gab es nie))
 
   /media/oem/scan/venv-seg/bin/python -I tools/qualitaetsstufen.py modelle/<obj>/objekt.json --plan modelle/<obj>/qualitaetsstufen.json [--fotos 12] [--aus DIR]
 Fortsetzbar: <aus>/stand.json (fertige Stufen und Schritte werden uebersprungen).
