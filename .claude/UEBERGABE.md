@@ -15,8 +15,8 @@ Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbegin
 - MachineFrameWork nach /media/oem/rcdaten/ausgelagert_root/git/MachineFrameWork (Prüfsumme gleich, Symlink). Rest mit Root-Rechten: ~/git/MachineFrameWork.rest_rootrechte (96 KB, Nutzer kann `sudo rm -rf`).
 
 ## Läuft gerade
-- Kette 1122y (Start 10:47, alle 10 Zweige) · Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122y.log · Prüfen: `grep -a "JOB_ENDE\|ERGEBNIS DES LAUFS" <log>` · ANNAHME Ende ~13:00 (länger, falls Süd-Bindung Teile neu anstößt).
-- Einmal-Warter bqbhltbl6 auf JOB_ENDE (geht bei /clear verloren → nach Fortsetzen Log selbst prüfen).
+- Kette 1122z (Start 12:12; Drahtmasken + Süd-Wandbindung mit Maßstab + Ost-Nachholen bei teilweise ungesehener Wand) · Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122z.log · Prüfen: `grep -a "JOB_ENDE\|ERGEBNIS DES LAUFS\|LAGE:" <log>` · ANNAHME Ende 16–17 Uhr.
+- 1122y war 11:02 abgebrochen (Grundriss-Tor: Doppelwand durch Süd-Bindung ohne Maßstab) – behoben, main 0 Fehler.
 - Keine Agenten aktiv.
 
 ## Nächste Schritte
