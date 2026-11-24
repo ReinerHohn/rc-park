@@ -1,4 +1,4 @@
-# Werkzeuge: wolke_dicht (90)
+# Werkzeuge: wolke_dicht (91)
 - `tools/bauteil_element_wolke.py` [gen] bauteil_element_wolke.py - Elemente, die die AUTOMATISCHE Elementschleife (generator_elemente_schleife.py) aus dem Restfeld der Wolke ableitet.
 - `tools/bauteil_rumpf_wolke.py` [-] bauteil_rumpf_wolke.py - Rumpf + Dach AUS DER DICHTEN PUNKTWOLKE (Spec S3b, Nutzerregel 6.11.: Wolke = erste Wahrheit).
 - `tools/bogen_aus_wolke.py` [seg] bogen_aus_wolke.py - Bogenoeffnungen als LOECHER in einer duennen Platte der Wolke um die Fassadenebene messen (3D-Lage, keine Foto-Ebenenannahme). Schritte: Rahmen (Umeyama) -> Ti
@@ -54,6 +54,7 @@
 - `tools/wolke_bogenreihe_messen.py` [-] wolke_bogenreihe_messen.py - Parameter einer Bogenreihe (Arkade) AUS DER WOLKE messen (Quelle fuer tools/baukasten_gen.py Bauteil 'bogenreihe'). Generisch: keine Objektnamen; Fassa
 - `tools/wolke_carving.py` [seg] wolke_carving.py - Koerper NUR aus der Buendelwolke per Sichtbarkeits-Carving (Nutzerentscheid 5.11. 20:10; Koordination 21:45: "Punktwolke ist die EINZIGE Basis").
 - `tools/wolke_dom1_pruefen.py` [-] wolke_dom1_pruefen.py - GENERISCH: unabhaengige Kontrolle einer Fotowolke gegen das DOM1-Laserraster (Kaufhaus 2026-11-04).
+- `tools/wolke_draehte.py` [col] wolke_draehte.py - duenne linienhafte Strukturen FREI IM RAUM aus der dichten Wolke nehmen (Draehte, Oberleitung, Spann-/Tragseile) - nur fuer die ANZEIGE.
 - `tools/wolke_ebenen_ransac.py` [-] wolke_ebenen_ransac.py - BS48 Schritt 1 des Eigenbau-Min-Cut: Ebenen aus der (bereinigten) Wolke per iterativem RANSAC (Open3D). Wolke im Netzrahmen (npy) auf Basis-bbox zuschneide
 - `tools/wolke_entzerren_lod2.py` [-] wolke_entzerren_lod2.py - GENERISCH: verzerrte Fotowolke (SfM aus einseitigen Strassenfotos) affin auf die amtliche Umgebung ziehen.
 - `tools/wolke_erker_messen.py` [-] wolke_erker_messen.py - Erker (vor die Wandebene vorspringende Bauteile) AUS DER WOLKE messen. Generisch, keine Objektnamen; Vorbild wolke_bogenreihe_messen.py. Koordinaten: Netzra

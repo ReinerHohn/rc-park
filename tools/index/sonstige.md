@@ -1,7 +1,8 @@
-# Werkzeuge: sonstige (124)
+# Werkzeuge: sonstige (128)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
+- `tools/bau_parallel.py` [-] bau_parallel.py - unabhaengige, rein dateibasierte Vorbereitungsschritte eines Generatorlaufs in eigenen PROZESSEN rechnen (24.11.2026).
 - `tools/bauplan_sheet.py` [seg] bauplan_sheet.py — UNGEFÄHRER BAUPLAN aus vorhandenen Daten: GRUNDRISS (LOD2-Footprint, amtlich) + AUFRISS (LOD2-Höhen Traufe/First + foto-gemessene Fensterachsen + Fassadenbänder)
 - `tools/befundliste.py` [seg] befundliste.py <objekt.json> [--daten DIR] [--bericht B.json --ab-schritt N] [--log L --ab-zeile N] [--neben BILD ...] [--aus audit/befunde.json] [--kachel 30] BEFUNDLISTE (22.11.2
 - `tools/betrachter_note.py` [-] betrachter_note.py - Betrachter-Note (SPEC_BETRACHTER_NOTE, Nutzer 11.11.): Prozent der fuer das Auge SICHTBAREN Merkmale, die stimmen. Zwei Stufen: Besucher (Sichtschwelle 0,25 m 
@@ -44,12 +45,14 @@
 - `tools/loch_gewaende.py` [seg] loch_gewaende.py - LOCH UND GEWAENDE eines Fensters/einer Tuer aus dem feinen Wandbild (23.11.2026, Kettenstufe 'bauplan' nach nischen_fenster.py).
 - `tools/lsd_edges.py` [seg] lsd_edges.py — GERADE menschgemachte Kanten im DEM robust finden (Recherche-Ergebnis): Line Segment Detector (LSD, cv2) auf MULTI-AZIMUT-STREIFLICHT-Hillshade (0-10° Höhe hebt scha
 - `tools/luecken_seite_bauen.py` [seg] luecken_seite_bauen.py - Handy-Seite fuer den Vor-Ort-Termin aus tools/foto_luecken.py (Nutzer 10.11.: "vor Ort sehen, wo ich noch fotografieren muss").
+- `tools/malplan.py` [-] malplan.py - Malplan je Wand aus dem entzerrten Wandbild (24.11.2026, Nutzer 23.11.: "das Malen ist fuer mich das Kritischste").
 - `tools/malwerkzeug.py` [gen] malwerkzeug.py [--aus ORDNER] [teil ...] - druckbare Malhilfen fuer das Bemalen der Modellteile (17.11.2026, Nutzer: "Werkzeug ausdrucken, das Geiles zum Anmalen"). Teile (ohne Ang
 - `tools/manmade3d.py` [-] manmade3d.py — 3D: menschgemachte Objekte (scharfe Kanten + Flächen darin) auf neutralem Gelände. Farbige ebene Platten = die erkannten Flächen (plan-gefittet), rote Linien = die g
 - `tools/manmade_edges.py` [seg] manmade_edges.py — menschgemachte Objekte über SCHARFE Kanten erkennen (+ Flächen darin). Idee: natürliches Gelände ist GLATT (Normale dreht langsam), menschgemachtes (Einschnitt, 
 - `tools/messen_interaktiv.py` [seg] messen_interaktiv.py <objekt> --wolke w.npy --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8765] Interaktives Messen AUS DER WOLKE (Nutzerwunsch 8.11.): lokaler Web
 - `tools/messung_uebernehmen.py` [gen] messung_uebernehmen.py <objekt> [--anwenden] Uebernimmt die BESTAETIGTEN Direktmessungen aus <objekt>/messungen_wolke.json (tools/messen_interaktiv.py) in die Parameter von objekt.
 - `tools/model3d_textured.py` [seg] (kein Docstring)
+- `tools/nachhol_zwischenspeicher.py` [-] nachhol_zwischenspeicher.py - Ergebnis-Zwischenspeicher nach EINGABE-HASH fuer das Nachholen (tools/seiten_luecken.py), 24.11.2026.
 - `tools/neben_details.py` [seg] neben_details.py <objekt.json> [--daten DIR] [--stl a.stl] [--aus DIR] [--max 24] [--kandidaten 6] [--ohne-verdecker] - je erkanntem Bauteil eine DETAILANSICHT Foto | Modell aus de
 - `tools/objekt_daten.py` [-] objekt_daten.py - GENERISCH: amtliche Grunddaten eines neuen Objekts holen und daraus Modellrahmen + 3D-Anker bauen (Nullstart-Stufe 0).
 - `tools/openbuildings_fallback.py` [gen] openbuildings_fallback.py — HEBEL 5: Weltklasse-Fallback-Geometrie, wenn weder Google 3D Tiles (Hebel 1) noch lokales LOD2 (Hebel 3) ein Mesh liefern.
@@ -74,6 +77,7 @@
 - `tools/seiten_erkennen.py` [-] seiten_erkennen.py <db.db> <bilder_ordner> --aus <seiten.json> [--db-aus <kopie.db>] [--min-bilder 12] [--min-paare 20] [--stichprobe 24] [--schwelle 0.45] [--referenz eigen__] [--
 - `tools/seiten_luecken.py` [seg] seiten_luecken.py <objekt.json> <fassaden-ordner> --sparse <SfM-Ordner mit images.bin> --ref-db <db.db> [--schwelle 0.2] [--min_m2 40] [--holen] [--download]
 - `tools/seiten_querspur_binden.py` [col] seiten_querspur_binden.py <modell_a> <modell_b> <ursprungs-db> --gps <vereinen.json> --aus <ordner> [--dicht-a fused.ply --dicht-b fused.ply]
+- `tools/seiten_waende_binden.py` [col] seiten_waende_binden.py <dicht_a.ply> <dicht_b.ply> --gps <vereinen.json> --aus <ordner> [--modell-a <sparse> --modell-b <sparse> --bilder <fotos>]
 - `tools/seiten_wiederholung.py` [-] seiten_wiederholung.py - Entscheidung der Kette, ob nachgeholte Kameras Wandbild/Bau im SELBEN Lauf noch einmal speisen (Stufe seiten, tools/gesamtkette.py).
 - `tools/selbstbau_verdecker.py` [seg] selbstbau_verdecker.py - Verdecker-Modell fuer MESSUNGEN ohne selbst erzeugte Bauteile (21.11.2026, MESSFEHLER zirkulaere Messung).
 - `tools/shape_extract.py` [-] shape_extract.py — FORM AUTOMATISCH AUS DEM FOTO MESSEN (statt Augenmaß).

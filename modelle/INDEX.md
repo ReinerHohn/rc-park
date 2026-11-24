@@ -4,7 +4,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 
 ## Regeln, Methode, Vorlagen
 - `modelle/KI_AUFRAEUMEN_2026-11-20.md` (3 kB) KI-konformes Aufraeumen (20.11.2026)
-- `modelle/LIZENZ_WERKZEUGE.md` (36 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (18 Abschnitte)
+- `modelle/LIZENZ_WERKZEUGE.md` (37 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (18 Abschnitte)
 - `modelle/METHODE_EBENEN_BAUPLAN.md` (7 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)
 - `modelle/METHODE_MASSTABELLE.md` (13 kB) METHODE: Masstabelle + generischer Pruefstand (das Rueckgrat jeder Modellerzeugung aus Daten)
 - `modelle/METHODE_MESSEN_DANN_BAUEN.md` (26 kB) Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md) -> Inhalt `modelle/inhalt/METHODE_MESSEN_DANN_BAUEN.md` (10 Abschnitte)
@@ -27,7 +27,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/BEWERTUNG_KANTENGITTER_2026-11-09.md` (4 kB) Bewertung Kantengitter Kaufhaus - Stand 9.11.2026 abends
 - `modelle/LOGBUCH_HELM_W_2026-11-10.md` (2 kB) Logbuch Kreis helm_geschweift:w (kaufhaus_grob3, 2026-11-10, Lauf 035748a035747 r1)
 - `modelle/LOGBUCH_RIPPEN_2026-11-13.md` (41 kB) Logbuch Rippen unter dem Erker (13.11.2026) - zum spaeteren Analysieren "wie schneller zum Ziel" -> Inhalt `modelle/inhalt/LOGBUCH_RIPPEN_2026-11-13.md` (46 Abschnitte)
-- `modelle/PIPELINE_FASSADEN.md` (86 kB) Fassaden-Pipeline (Stand 15.11.2026) -> Inhalt `modelle/inhalt/PIPELINE_FASSADEN.md` (46 Abschnitte)
+- `modelle/PIPELINE_FASSADEN.md` (87 kB) Fassaden-Pipeline (Stand 15.11.2026) -> Inhalt `modelle/inhalt/PIPELINE_FASSADEN.md` (46 Abschnitte)
 - `modelle/PIPELINE_HYBRID_WOLKE_KANTEN.md` (4 kB) Pipeline Hybrid: Wolke-Körper + 3D-Kanten + Diff gegen Wolke (3D) und JEDES Foto (Perspektive)
 
 ## Versuche, Sackgassen
@@ -43,7 +43,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 ## Logbuecher
 - `modelle/LOGBUCH_GIEBEL_OST_KREIS1_2026-11-10.md` (1 kB) Logbuch Kreis1 Fehlteil fk_+16_+0_+26 (Ost-Staffelgiebel), 2026-11-10
 - `modelle/LOGBUCH_KETTENTEST_2026-11-19.md` (74 kB) Logbuch Kettentest 19.11.2026: Konsens-Mapper als Standard, Netzfotos in der Kette, drei Objekte -> Inhalt `modelle/inhalt/LOGBUCH_KETTENTEST_2026-11-19.md` (37 Abschnitte)
-- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (203 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (51 Abschnitte)
+- `modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (204 kB) Logbuch: Schwabentor von null, Handarbeit in die Kette (20./21.11.2026) -> Inhalt `modelle/inhalt/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md` (51 Abschnitte)
 
 ## Sonstiges
 - `modelle/ANALYSE_SACKGASSEN_2026-11-21.md` (3 kB) Analyse: Warum 19.-21.11.2026 in Sackgassen (Auftrag Nutzer 21.11. 09:57)
