@@ -67,6 +67,7 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 - 17.11. · Feinpunkt-Anker skaliert Mono neu → ✗ nur Gegenprobe · Regressionsdämpfung, F1 sinkt [NICHTS_GEBRACHT 17.11.]
 - 17.11. · Schattierungsmaß `schatten_tor` (Lambert) → ✗ verworfen · trennt Brei nicht (6/9); Albedo dominiert [ebd.]
 - 17.11. · `relief_bereinigen` (Klumpen → Wandniveau, gerade Gesimse bleiben) → ✓ Methode [PIPELINE_FASSADEN Runde 3]
+- 24.11. · Kruemel ohne Fotokante weg (`putz_wandbild.relief_kanten_beleg`, Kettenstufe `fassaden_kette.kantenbeleg`: Netzrelief Putzwand + Mono/Misch ausserhalb der Quadersteine; Abweichung >= 5 cm bleibt nur mit gleichsinniger Kantentiefe, linienhaft oder am Oeffnungsrand; Rand mit flach) → ✓ Methode (Probe auf 1122w-Zwischendaten, Kettenlauf offen) · Ursache: Wandgemaelde/Brunnen zeigen im Wandbild Struktur → kein Putz → Netz-/Mono-Tiefe ungeprueft; Nord-Knochen, Sued-Beulen, Brunnen-Wulst flach, Bogen/Steine bleiben; `OHNE_KANTENBELEG=1` alter Stand [tests/test_kruemel_kantenbeleg.py]
 - 24.11. · Ortsteine/Eckverzahnung aus Wandbild-Farbe (`tools/ortsteine.py`, in `fassaden_kette.anbauen`) → ✓ Methode · Schwabentor 8 Kantenzonen (f00/f01/f03), Kanten im Modell gezahnt; Einzelbilder `ortho_*_einzeln` NICHT ausgerichtet (bis 5 m versetzt, Gegenseite) → Klassen aus dem Mosaik, Einzelbilder nur Bestätigung; LoD2-Kante 0,3–0,5 m neben Fotokante; Vorsprung meist unter Sweep-Auflösung → ANNAHME Druckmaß 3,5 cm [PIPELINE_FASSADEN Nachtrag 24.11.]
 
 **Fenster, Öffnungen, Rückwand, Vorbauten**

@@ -295,6 +295,30 @@ def flaeche_relief(basis, npz, grund=10):
     return fl
 
 
+def kantenbeleg(f, objekt_json, art="Relief"):
+    """Kettenstufe 'Kruemel ohne Kante weg' (24.11.2026, Lauf 1122w: Knochen-Blob Nord, Beulen im bemalten Putz Sued, Brunnen-Wulst): Relief f nur mit Tiefenbeleg in den
+    triangulierten Fotokanten der Wandebene (putz_wandbild.relief_kanten_beleg). Quadersteine ('stein_id' des Quaderrasters) bleiben dem Wandbild ueberlassen.
+    Rueckgabe (Pfad, Beleg-dict oder None). Ohne ebenen.json/passende Wandebene unveraendert (kein Urteil ohne Kantenstufe)."""
+    from putz_wandbild import kanten_wand, relief_kanten_beleg
+    ffn = fein_ordner(objekt_json); ej = os.path.join(os.path.dirname(ffn), "ebenen", "ebenen.json") if ffn else ""
+    if not ej or not os.path.exists(ej) or not f or not os.path.exists(f): return f, None
+    Z = np.load(f); K = kanten_wand(ej, Z)
+    if K is None: return f, None
+    am = (Z["stein_id"] > 0) if "stein_id" in Z.files else None
+    dm = 0.0008 * float(json.load(open(objekt_json)).get("stl_massstab", 87))          # 0,8 mm Druckmass im Massstab
+    fo = f[:-4] + "_kb.npz"
+    try: inf = relief_kanten_beleg(f, fo, K, druck_min=dm, aus_maske=am)
+    except Exception as e:
+        print(f"    kantenbeleg {os.path.basename(f)}: FEHLER {type(e).__name__}: {str(e)[:160]} - Relief unveraendert", flush=True)
+        if isinstance(e, (NameError, TypeError, AttributeError, IndexError, KeyError, ValueError)): _CODEFEHLER.append(f"kantenbeleg {os.path.basename(f)}: {type(e).__name__}: {str(e)[:120]}")
+        return f, None
+    if inf.get("unveraendert") or not inf.get("flach_m2"): return f, None
+    print(f"    kantenbeleg {os.path.basename(f)}: {inf['flach_m2']} m2 ohne Kantenbeleg flach, {inf['belegt_m2']} m2 belegt, Koerper {inf['koerper']}", flush=True)
+    return fo, dict(seite="wand", element=f"{art} {os.path.basename(f)}: {inf['flach_m2']} m2 Relief ohne Fotokanten-Beleg auf Wandniveau, {inf['belegt_m2']} m2 Tiefensprung belegt",
+                    quelle="putz_wandbild.relief_kanten_beleg (triangulierte Fotokanten der Wandebene, ebenen.json)", koerper=inf["koerper"],
+                    hinweis=f"ANNAHME: Abweichung >= 5 cm ohne gleichsinnige Kantentiefe = Netz-/Mono-Kruemel (Gemaelde, Brunnen davor); schmaler als {dm * 100:.0f} cm nicht druckbar; Bild relief/{os.path.basename(fo)[:-4]}.jpg")
+
+
 def fein_ordner(objekt_json):
     """Ordner des feinen Wandbilds (Kettenstufe fenster: fassade_ortho --zelle 0.01 --einzeln -> <daten>/fassade_fein). objekt.json 'fassade_fein' (relativ zum Repo oder absolut)
     geht vor, sonst /media/oem/scan/rc-park_daten/<objektordner>/fassade_fein wie tools/gesamtkette.py. '' wenn nicht da."""
@@ -488,6 +512,9 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
                 else: ff = fo_
                 belege.append(dict(seite="wand", element=f"Relief {os.path.basename(art_[1])} hinter Vorbau: {inf_['flach_m2']} m2 ohne Kantenbeleg auf Wandniveau, {inf_['belegt_m2']} m2 Tiefensprung belegt",
                                    quelle="putz_wandbild.relief_vorbau_flach (Fotokanten der Wandebene, ebenen.json)", hinweis=f"Bild relief/{os.path.basename(fo_)[:-4]}.jpg; Zone {inf_['zone_m2']} m2"))
+        if os.environ.get("OHNE_KANTENBELEG") != "1" and w.get("quader") is False and not w.get("nur_foto"):
+            f, b_ = kantenbeleg(f, objekt_json, "Netzrelief")
+            if b_: belege.append(b_)
         # 21.11.2026 QUADERRASTER aus dem Wandbild (Nutzer: unterer Turm "geschmolzen", Eckquader "Rauschen"): Reliefs wurden 1:1 gebaut - Fugen 0,1-0,4 mm H0,
         # Beulen bis 1 mm H0. Jetzt je Stein ebene Stirnflaeche + druckbare Rillen; Wand ohne Quader-Tor (w02: unten Quader, oben Putz) nur in der Steinzone von unten.
         qbel = []
@@ -497,6 +524,11 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
             WLq_ = json.load(open(B))["waende"]; ff, qi_ = quadern(ff, objekt_json, Z, "foto", (wandende_ist_ecke(WLq_, w, "a"), wandende_ist_ecke(WLq_, w, "b"))); qbel.append(("Fotorelief", qi_))
         if mono_: fmo, qi_ = quadern(fmo, objekt_json, Z, "fein"); qbel.append(("Feinrelief mono", qi_))
         elif tf and os.path.exists(fm): fm, qi_ = quadern(fm, objekt_json, Z, "fein"); qbel.append(("Feinrelief misch", qi_))
+        if os.environ.get("OHNE_KANTENBELEG") != "1":                    # 24.11.2026: Mono/Misch ausserhalb der Quadersteine nur mit Kantenbeleg (Brunnen-Wulst 1122w Sued)
+            if mono_: fmo, b_ = kantenbeleg(fmo, objekt_json, "Feinrelief mono")
+            elif tf and os.path.exists(fm): fm, b_ = kantenbeleg(fm, objekt_json, "Feinrelief misch")
+            else: b_ = None
+            if b_: belege.append(b_)
         for nm_, qi_ in qbel:
             if qi_: belege.append(dict(seite="wand", element=f"Quaderraster {nm_} Fassade {w['name']}: {qi_.get('relief_steine')} Steine eben, Rillen {qi_.get('relief_rille_mm')} mm (Breite, Tiefe H0)",
                                        quelle=f"tools/quader_raster.py: Lagen/Fugen aus {qi_.get('fotos')} entzerrten Einzelfotos (Mehrfoto-Mittel, Fassade {qi_.get('fassade')}), Stirnflaeche = Median der Tiefe je Stein",
