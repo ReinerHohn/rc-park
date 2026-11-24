@@ -231,12 +231,23 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     return koerper, belege
 
 
+_OW_CACHE = [None, None]
+
+
+def _oberflaeche_w_leeren(): _OW_CACHE[:] = [None, None]
+
+
 def _oberflaeche_w(koerper, W, punkte, w_von=3.0, w_bis=-1.5, radius=4.0):
     """Aeusserste Koerperflaeche vor der Wandebene W an den Stellen [(u, z), ...]: Strahl von w_von gegen -n, erster Treffer -> w (None = kein Treffer).
-    Nur Dreiecke im Umkreis 'radius' um die Punkte (schnell auch bei 1 Mio. Dreiecken)."""
-    me = koerper.to_mesh(); V = np.asarray(me.vert_properties)[:, :3].astype(float); F = np.asarray(me.tri_verts)
+    Nur Dreiecke im Umkreis 'radius' um die Punkte (schnell auch bei 1 Mio. Dreiecken).
+    24.11.2026: Netz + Dreiecksmitten des zuletzt befragten Koerpers zwischengespeichert (Manifold ist unveraenderlich: gleicher Koerper = gleiches Netz) -
+    loch_gewaende_spaet/ortsteine_bauen fragen denselben Koerper je Fenster/Kante neu (16 Aufrufe, 45 s je Bau). _oberflaeche_w_leeren() gibt den Speicher frei."""
+    if _OW_CACHE[0] is koerper and os.environ.get("RCPARK_BAU_SERIELL") != "1": V, F, C = _OW_CACHE[1]
+    else:
+        me = koerper.to_mesh(); V = np.asarray(me.vert_properties)[:, :3].astype(float); F = np.asarray(me.tri_verts); C = V[F].mean(1)
+        _OW_CACHE[:] = [koerper, (V, F, C)]
     P = np.array([W.punkt(u, z, 0.0) for u, z in punkte], float); m = P.mean(0)
-    C = V[F].mean(1); sel = np.linalg.norm(C - m, axis=1) < radius + float(np.max(np.linalg.norm(P - m, axis=1)))
+    sel = np.linalg.norm(C - m, axis=1) < radius + float(np.max(np.linalg.norm(P - m, axis=1)))
     if not sel.any(): return [None] * len(punkte)
     A, B, Cc = V[F[sel, 0]], V[F[sel, 1]], V[F[sel, 2]]; e1, e2 = B - A, Cc - A; n3 = np.array([W.n[0], W.n[1], 0.0]); d = -n3
     pv = np.cross(d, e2); det = np.einsum("ij,ij->i", e1, pv); ok = np.abs(det) > 1e-12; inv = np.where(ok, 1.0 / np.where(ok, det, 1.0), 0.0)
@@ -286,6 +297,7 @@ def loch_gewaende_spaet(koerper, datei, einbinden=0.3, min_vor=0.005):
     if neu or aus:
         belege.append(dict(seite="wand", element=f"{len(neu)} Loch/Gewaende auf der echten Oberflaeche nachgezogen (nach allen Anbauten)", quelle="bauteile.loch_gewaende_spaet: Strahltreffer um das Gewaende; Loch/Gewaende aus tools/loch_gewaende.py",
                            masse=neu, **({"hinweis": "; ".join(aus)} if aus else {})))
+    _oberflaeche_w_leeren()
     return koerper, belege
 
 
@@ -1465,13 +1477,44 @@ def entlueften(koerper, breite=0.3, schritt=0.3):
     return koerper, belege
 
 
+def unique_zeilen(A, inverse=False, counts=False, stellen=None):
+    """Wie np.unique(A, axis=0, return_inverse=..., return_counts=...) (gleiche Zeilen, gleiche lexikografische Reihenfolge, gleiche Zuordnung), aber per lexsort
+    statt Strukturtyp-Sortierung: 24.11.2026 Profil Schwabentor-1122 - np.unique(axis=0) auf 2-4 Mio. Ecken/Kanten kostete in kneifkanten_schliessen + stl_schreiben
+    ~100 s je Bau. Ganzzahlen bzw. auf 'stellen' Nachkommastellen gerundete Werte: Zeile als ein int64-Schluessel (wenn <= 62 Bit), sonst lexsort.
+    RCPARK_BAU_SERIELL=1 = alter Weg (np.unique)."""
+    A = np.asarray(A)
+    if os.environ.get("RCPARK_BAU_SERIELL") == "1" or A.ndim != 2 or len(A) == 0:
+        r = np.unique(A, axis=0, return_inverse=inverse, return_counts=counts)
+        if not (inverse or counts): return r
+        r = list(r)
+        if inverse: r[1] = r[1].ravel()
+        return tuple(r)
+    K = None
+    if np.issubdtype(A.dtype, np.integer): K = A.astype(np.int64)
+    elif stellen is not None: K = np.rint(A * 10.0 ** stellen).astype(np.int64)   # A ist schon auf 'stellen' gerundet: k = A * 10^stellen ist eindeutig und ordnungstreu
+    if K is not None:
+        K = K - K.min(0); bits = [int(r).bit_length() for r in K.max(0)]
+        if sum(bits) <= 62:                                              # Zeile -> ein int64-Schluessel (lexikografisch = numerisch), dann 1-D-unique (schnell)
+            key = np.zeros(len(K), np.int64)
+            for j, b in enumerate(bits): key = (key << b) | K[:, j]
+            o = np.argsort(key); ks = key[o]; neu = np.empty(len(A), bool); neu[0] = True; neu[1:] = ks[1:] != ks[:-1]
+        else: K = None
+    if K is None:
+        o = np.lexsort(A.T[::-1]); As = A[o]
+        neu = np.empty(len(A), bool); neu[0] = True; neu[1:] = (As[1:] != As[:-1]).any(1)
+    u = A[o[neu]]; erg = [u]                                             # gleicher Schluessel = gleiche Werte (gerundet), welcher Vertreter ist egal
+    if inverse: inv = np.empty(len(A), np.intp); inv[o] = np.cumsum(neu) - 1; erg.append(inv)
+    if counts: erg.append(np.diff(np.r_[np.flatnonzero(neu), len(A)]))
+    return erg[0] if len(erg) == 1 else tuple(erg)
+
+
 def kneifkanten_schliessen(koerper, r=0.02, runden=6, stellen=4):
     """Kanten, an denen sich der Koerper nur beruehrt (4 Flaechen an einer Kante, z. B. Hohlraum tippt an eine Nische): im STL 'nicht wasserdicht'.
     Um jede solche Kante einen kleinen Klotz (r) auffuellen - schliesst die Beruehrung, oeffnet nie ein Loch."""
     for runde in range(runden):
         me = koerper.to_mesh(); V = np.array(me.vert_properties)[:, :3].astype(np.float64); F = np.asarray(me.tri_verts)
-        vq, inv = np.unique(np.round(V, stellen), axis=0, return_inverse=True); F = inv.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
-        e = np.sort(np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=1); u, cnt = np.unique(e, axis=0, return_counts=True); bad = u[cnt > 2]
+        vq, inv = unique_zeilen(np.round(V, stellen), inverse=True, stellen=stellen); F = inv[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
+        e = np.sort(np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=1); u, cnt = unique_zeilen(e, counts=True); bad = u[cnt > 2]
         if not len(bad): break
         r = r * (1.5 if runde else 1.0)                                  # an gekruemmten Flaechen (Bogenlaibung) wandert die Beruehrung sonst nur weiter
         o = np.array([[sx, sy, sz] for sx in (-r, r) for sy in (-r, r) for sz in (-r, r)])
@@ -1532,9 +1575,9 @@ def stl_schreiben(model, pfad, kopf=b"rcpark"):
         raise SystemExit("stl_schreiben: Modell LEER oder ungueltig (%s, %d Dreiecke) - kein STL geschrieben: %s" % (model.status(), model.num_tri(), pfad))
     model = kneifkanten_schliessen(model, r=0.25, stellen=3)           # im Druckmassstab (mm): Beruehrkanten, die erst nach dem Skalieren zusammenfallen (16.11.2026 Blendmasswerk)
     mesh = model.to_mesh(); V = np.array(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
-    vq, inv = np.unique(np.round(V.astype(np.float64), 3), axis=0, return_inverse=True); F = inv.ravel()[F]; V = vq.astype(np.float32)
+    vq, inv = unique_zeilen(np.round(V.astype(np.float64), 3), inverse=True, stellen=3); F = inv[F]; V = vq.astype(np.float32)
     F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
-    fs = np.sort(F, axis=1); _u, inv2, cnt = np.unique(fs, axis=0, return_inverse=True, return_counts=True); F = F[cnt[inv2.ravel()] == 1]      # Flaechenpaare mit denselben drei Ecken (Lappen ohne Dicke) entfernen
+    fs = np.sort(F, axis=1); _u, inv2, cnt = unique_zeilen(fs, inverse=True, counts=True); F = F[cnt[inv2] == 1]      # Flaechenpaare mit denselben drei Ecken (Lappen ohne Dicke) entfernen
     try:                                                                 # 16.11.2026: Kruemel (<= 8 Dreiecke, z. B. 2-cm-Tetraeder nach dem Aushoehlen) fallen sonst als Einzelkoerper heraus
         from scipy.sparse import coo_matrix; from scipy.sparse.csgraph import connected_components
         e_ = np.sort(np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=1); fi_ = np.tile(np.arange(len(F)), 3); o_ = np.lexsort((e_[:, 1], e_[:, 0])); e_, fi_ = e_[o_], fi_[o_]; g_ = np.flatnonzero((e_[1:] == e_[:-1]).all(1))      # Nachbarschaft ueber gemeinsame KANTEN (wie trimesh.split)
