@@ -48,16 +48,19 @@ r3 = rel.copy(); r3[z < 8.0] = 0.0; assert steinzone_oben(r3, putz, px) == 1.5  
 assert steinzone_oben(rel, None, px) == 12.0 and steinzone_oben(np.zeros((10, 5)), None, px) == 0.5
 PY
 S=$(mktemp -d); O=ober_tvdr;FO=/media/oem/scan/rc-park_daten/$O/fassade; STL_O=$(eingabe modelle/stl/${O}_1-87.stl); FD_O=$(eingabe "$(python3 -c "import json; print(json.load(open('modelle/$O/objekt.json'))['fotos_dir'])")")
-if [ ! -f $FO/elemente.json ]; then ueb "Fenster/Fassadenbild ober_tvdr (4 Pruefungen): $FO/elemente.json fehlt (Datenplatte?)"
+if [ ! -f $FO/elemente.json ]; then ueb "Fenster/Fassadenbild ober_tvdr (5 Pruefungen): $FO/elemente.json fehlt (Datenplatte?)"
 else
   fp=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1)      # 22.11.2026: einmal rechnen, f01 und f02 aus derselben Ausgabe (lief vorher zweimal gleich)
   n=$(echo "$fp" | grep "^f02" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${n:-0}" -ge 6 ] && [ "${n:-0}" -le 8 ] && ok "Fenster ober_tvdr f02: $n (erwartet 6-8)" || rot "Fenster ober_tvdr f02: $n statt 6-8"
   m=$(echo "$fp" | grep "^f01" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${m:-9}" -le 2 ] && ok "gemischte Fassade f01: $m Fenster (erwartet <= 2; seit MAD-Mass und Kamerabereinigung ist die rechte Haelfte sauber)" || rot "gemischte Fassade f01 liefert $m Fenster (erwartet <= 2)"
-  if [ -z "$STL_O" ] || [ -z "$FD_O" ]; then ueb "Fassadenbild f02 + GPU/CPU-Vergleich (2 Pruefungen): ${STL_O:-modelle/stl/${O}_1-87.stl fehlt} ${FD_O:-Fotoordner (fotos_dir) fehlt}"; else
+  if [ -z "$STL_O" ] || [ -z "$FD_O" ]; then ueb "Fassadenbild f02 + GPU/CPU-Vergleich + OOM-Probe (3 Pruefungen): ${STL_O:-modelle/stl/${O}_1-87.stl fehlt} ${FD_O:-Fotoordner (fotos_dir) fehlt}"; else
   k=$($P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/o --nur f02 --min-flaeche 40 2>&1 | grep "f02:" | sed 's/.*, *\([0-9]*\) Fotos, Abdeckung \([0-9]*\)%.*/\1 \2/'); set -- $k; [ "${1:-0}" -ge 4 ] && [ "${2:-0}" -ge 75 ] && ok "Fassadenbild f02: $1 Fotos, $2 % (erwartet >= 4 Fotos, >= 75 %)" || rot "Fassadenbild f02: '$k' (eigene Kameras ausgeschlossen? Loecher schwarz?)"
   # 17.11.2026: Zellrechnung auf der GPU (ab --gpu-ab Zellen) muss dieselben Bilder liefern wie der CPU-Weg (hier erzwungen mit --gpu-ab 0; faellt die Karte aus, meldet das Werkzeug es und rechnet auf der CPU)
   $P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/og --nur f02 --min-flaeche 40 --gpu-ab 0 > $S/og.txt 2>&1; v=$($P -I tools/test_ortho_vergleich.py $S/o $S/og --alle --max-stufe 0 | tail -1)
   case "$v" in *"-> GLEICH") ok "Fassadenbild GPU-Weg = CPU-Weg ($(grep -o 'Zellrechnung: [A-Z, a-z]*' $S/og.txt | head -1); ${v#VERGLEICH })";; *) rot "Fassadenbild GPU-Weg weicht vom CPU-Weg ab: $v";; esac
+  # 24.11.2026 (Befund 1122x: OOM nach 294 Paaren -> Rest CPU): erzwungener Speichermangel (RCPARK_TEST_OOM_AB) -> Block halbieren, weiter auf der GPU, Bilder bitgleich zum normalen GPU-Weg
+  RCPARK_TEST_OOM_AB=20000 $P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl $STL_O --aus $S/oo --nur f02 --min-flaeche 40 --gpu-ab 0 > $S/oo.txt 2>&1; v=$($P -I tools/test_ortho_vergleich.py $S/og $S/oo --alle --max-stufe 0 | tail -1)
+  if grep -q "Zellrechnung: GPU (.*halbiert" $S/oo.txt && [[ "$v" == *"-> GLEICH" ]]; then ok "Fassadenbild GPU-Speichermangel: Block halbiert, weiter auf der GPU, bitgleich (${v#VERGLEICH })"; elif grep -q "Zellrechnung: CPU" $S/og.txt; then ueb "GPU-Speichermangel-Probe: keine Karte (normaler Lauf schon CPU)"; else rot "GPU-Speichermangel: $(grep -o 'Zellrechnung: [^;]*' $S/oo.txt | head -1 | cut -c1-120) / $v"; fi
   fi
 fi
 k=$($P -I tools/test_kette_stabil.py 2>&1); [ $? = 0 ] && ok "Kette gegen stille Fehler: $(echo "$k" | grep -c '^    ok') Tests (veraltete Ausgaben, leere Ergebnisse, Platte/Verknuepfung, Abbruch-Bericht)" || { rot "Kette gegen stille Fehler"; echo "$k" | grep FEHLER; }
@@ -135,6 +138,7 @@ r = O.bogen_umriss(im, F, (2.0, 6.0, 0.0, 4.5)); assert r is not None, "kein Umr
 b = r[1]; assert abs(b["flanke_links"] - 2.5) < 0.05 and abs(b["flanke_rechts"] - 5.5) < 0.05 and abs(b["scheitel"] - 4.0) < 0.05, b
 Z = O.zonen([dict(klasse="bogen", u0=2.0, u1=6.0, z0=0.0, z1=4.5)]); assert Z == [("bogen", 2.0, 6.0, 0.0, 4.5)], Z
 PY
+k=$($P -I tools/test_ortho_oom.py 2>&1); [ $? = 0 ] && ok "GPU-Speichermangel-Logik fassade_ortho (Block halbieren statt CPU, andere Fehler weiter, Budget aus RCPARK_GPU_MB)" || { rot "test_ortho_oom"; echo "$k" | grep FEHL | head -4; }
 k=$($P -I tools/test_flaeche_ortho.py 2>&1); [ $? = 0 ] && ok "Wandbild fuer Rundungen/Erker (flaeche_ortho: Zylinder, Kegel, n-Eck-Erker synthetisch, Gegenprobe falscher Radius/Achse)" || { rot "flaeche_ortho synthetisch"; echo "$k" | tail -6; }
 k=$(python3 tools/importe_pruefen.py 2>&1); [ $? = 0 ] && ok "Importe: kein Generator/Werkzeug importiert etwas, das es nicht mehr gibt (Anlass bauteile.py 15.11.)" || { rot "Importe fehlen: $(echo "$k" | head -3 | tr '\n' ' ' | cut -c1-200)"; }
 k=$($P -I tools/test_stabil_schnitt.py 2>&1); [ $? = 0 ] && ok "Konsens-Schnitt zweier Mapper-Laeufe (sfm_stabil_schnitt: kollineare Strassenkameras, 30 % verschoben erkannt)" || { rot "stabil_schnitt: $(echo "$k" | tail -2)"; }
