@@ -24,6 +24,8 @@ Repo /home/oem/git/rc-park, Objekt `<OBJEKT>`. Sprache Deutsch. Auftrag: Bauteil
 
 ZUERST LESEN: `CLAUDE.md` (Kurzregeln) und in `modelle/REGELN_AUSFUEHRLICH.md` die Regeln 2, 3b, 3c, 8b, 9, 9b, 9c, 9d (gezielt per grep), `modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md` (Messweg und Lehren-Register), `modelle/NICHTS_GEBRACHT.md`, das Logbuch der letzten Generatorrunde von `<OBJEKT>`.
 
+VORARBEIT (vom Auftraggeber eingefuellt, Pflicht seit 24.11.2026): Ergebnis von `python3 -I tools/wissen_suchen.py <BAUTEIL + BEFUND in eigenen Worten>` (TOP 5) und `python3 -I tools/werkzeug_aehnlich.py "<BEFUND>"` (Doppelgaenger-Werkzeuge): `<VORARBEIT>`. Wer ein Werkzeug von dort neu baut statt es zu erweitern, nennt den Grund. Jedes neue `tools/*.py` traegt im Kopf `Verwandt/Vorlaeufer: ...` (Schnelltest `werkzeug_aehnlich.py --kopf-pruefen`). Neue Register-ID: vorher `python3 -I tools/wissen_ablage_pruefen.py` (doppelte IDs sind rot). Masse vorher in `modelle/WIDERSPRUECHE.md` nachsehen.
+
 ### Stufe 0: Formbeschreibung (Pflicht, vor jeder Messung)
 1. Fotos je Bauteil wählen:
    - `tools/bauteil_sichtliste.py --wolke …` und `tools/kamera_bruecke.py --kandidaten`.
