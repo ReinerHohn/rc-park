@@ -6,6 +6,7 @@ Vision `KONZEPT.md`, Dokumentindex `README.md`. Deutsch, Anrede "mein grosser Me
 WISSENSBAEUME (nie ganze Ordner/grosse Dateien lesen):
 - Gesamtprojekt/Geschaeft: `PROJEKT.md` -> `Doku/projekt/<ast>.md` (Gilt · Versucht · Offen; vor neuem Ansatz "Versucht" lesen, nach Versuch eine Zeile eintragen). Businessplan: `./start.sh` bzw. `python3 build.py`.
 - 3D-Pipeline: `modelle/INDEX.md` -> Ast -> grosse Datei ueber `modelle/inhalt/<name>.md` (Read offset/limit); Werkzeuge `tools/INDEX.md` -> `tools/index/<thema>.md`; Archiv `modelle/archiv/INDEX.md`. Neu erzeugen: `python3 tools/baum_erzeugen.py`. Volltext Regeln: `modelle/REGELN_AUSFUEHRLICH.md`.
+- HART (Nutzer 24.11.): vor JEDEM neuen Ansatz/Agentenauftrag `python3 -I tools/wissen_suchen.py "<begriff>"` (Baum+Register+Archiv+Logbuch+Memory+tools+git, Synonyme), Ergebnis in den Auftrag; Archiv nur mit Baumzeile; `tools/wissensbaum_luecken.py` = 0 (Schnelltest), Ast voll -> Unterast, nie kuerzen.
 Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> dort verlinktes Logbuch. Sitzungsbeginn: Skill `sitzungsbeginn`.
 
 ## KERNMETHODE (nie vergessen)
