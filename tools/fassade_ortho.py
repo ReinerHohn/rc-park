@@ -475,6 +475,10 @@ def main(argv=None):
         tr = np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2)); k1 = float(kk.get("k1") or 0.0)
         Cw = -R.T @ np.asarray(t, float) - tr                                                        # Kamerazentrum im Modellrahmen
         erg = {}; weich = {}; tief = [None]
+        # 24.11.2026 DRAHTMASKE (tools/drahtmasken.py; OHNE_DRAHTMASKE=1 aus): Oberleitung/Spanndraehte vor der Wand tragen nicht bei - die Zelle fuellen andere Fotos;
+        # in den Einzelbildern (--einzeln, fassade_fein) bleibt sie schwarz = ungueltig. Rand 3 px gegen Weichzeichnen/Abtastung.
+        dmask = __import__("drahtmasken").maske_fuer(pf[0], im, rand_px=3) if os.environ.get("OHNE_DRAHTMASKE", "0") != "1" else None
+        if dmask is not None and not dmask.any(): dmask = None
         for i, F in enumerate(fas):
             if F["_wahl"] is not None and nr not in F["_wahl"]: continue
             zl = False
@@ -489,6 +493,10 @@ def main(argv=None):
             if zl is False: zl = paar_cpu(F, nr, tief, Cw, tr, R, t, f, cx, cy, k1, W, H); GPU["cpu_paare"] += 1
             if zl is None: continue
             idx, px, mpp, guete = zl                                                                 # nur die sichtbaren Zellen (Felder laufen parallel zu idx)
+            if dmask is not None:
+                frei_ = dmask[np.clip(np.round(px[:, 1]).astype(int), 0, H - 1), np.clip(np.round(px[:, 0]).astype(int), 0, W - 1)] == 0
+                if not frei_.all(): idx, px, mpp, guete = idx[frei_], px[frei_], mpp[frei_], guete[frei_]
+                if len(idx) == 0: continue
             # 15.11.2026: Zelle groesser als der Fotopixel -> Foto vor dem Abtasten auf die Zellgroesse glaetten (sonst Aliasing: das 5-cm-Ortho des Kaufhauses war fleckig/koernig)
             sig_ = 0.4 * (F["raster"]["zelle"] / float(np.median(mpp))); sig_ = min(round(sig_ * 2) / 2.0, 6.0)      # 16.11.2026: gedeckelt - ein Foto mit sehr feiner Aufloesung (Tele/Nahaufnahme, f > 10 000 px) gab Sigma in den Hunderten: der Weichzeichner lief minutenlang auf EINEM Kern (Suedwand Turm > 240 s statt 25 s)
             if sig_ >= 1.0:
