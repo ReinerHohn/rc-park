@@ -45,6 +45,7 @@ def kmeans(X, k, it=50, seed=0):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ws"); ap.add_argument("aus"); ap.add_argument("--max_bilder", type=int, default=0)
     ap.add_argument("--min_num_pixels", type=int, default=5); ap.add_argument("--max_image_size", type=int, default=1600); ap.add_argument("--input_type", default="photometric"); ap.add_argument("--kern_anteil", type=float, default=0.6)
+    ap.add_argument("--mask_path", default="", help="COLMAP-Fusionsmasken (<Bildname>.png, 0 = ignorieren), z. B. Drahtmasken aus tools/drahtmasken.py --colmap")
     a = ap.parse_args(); import pycolmap; t0 = time.time()
     if not a.max_bilder:
         frei = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576; a.max_bilder = max(40, int(0.6 * frei / 0.045))
@@ -85,6 +86,7 @@ def main():
             if os.path.exists(os.path.join(a.ws, "stereo", x)): os.symlink(os.path.join(os.path.abspath(a.ws), "stereo", x), os.path.join(tmp, "stereo", x))
         open(os.path.join(tmp, "stereo", "fusion.cfg"), "w").write("\n".join(liste) + "\n")
         fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.max_image_size; fo.min_num_pixels = a.min_num_pixels; t1 = time.time()
+        if a.mask_path: fo.mask_path = os.path.abspath(a.mask_path)
         pycolmap.stereo_fusion(os.path.join(tmp, "fused.ply"), tmp, options=fo, input_type=a.input_type, output_type="ply")
         P = ply_lesen(os.path.join(tmp, "fused.ply")); ref = vis_ref(os.path.join(tmp, "fused.ply.vis"), len(P))
         behalten = np.array([idx_name.get(int(r)) in ks for r in ref], bool) if len(P) else np.zeros(0, bool); alle.append(P[behalten])

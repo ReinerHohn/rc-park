@@ -133,6 +133,7 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 |---|---|---|---|---|
 | `google/owlv2-base-patch16-ensemble` (Gewichte, HF-Cache `models--google--owlv2-base-patch16-ensemble`), Code transformers `Owlv2ForObjectDetection` | Apache-2.0 (Modellkarte/Paper OWLv2; vom Auftrag so vorgegeben, Modellkarte in dieser Sitzung NICHT erneut abgerufen) | ✓ vorbehaltlich Modellkarte; Trainingsdaten (WebLI-Pseudolabels) nicht geprueft | tools/handy_masken_v2.py (Zusatz Marktplanen, nur Masken fuer SfM-Merkmalsauswahl) | Auftrag; Verifikation der Karte offen |
 | `tools/handy_masken_v2.py`, `tools/handy_masken_vergleich.py`, `tools/test_handy_masken_v2.py` | eigener Code; opencv, numpy, torch, torchvision (NMS) | ✓ unkritisch | - | - |
+| `tools/drahtmaske.py`, `tools/drahtmasken.py`, `tests/test_drahtmaske.py` (24.11.2026, Draht-Masken je Foto) | eigener Code; nur OpenCV (Apache-2.0) + numpy (BSD) | ✓ unkritisch | - | - |
 | SAM2 | Apache-2.0 laut Recherche, aber Gewichte NICHT im Cache und NICHT geladen (Datenplatte ~10 GB frei) | nicht eingesetzt | - | - |
 
 ## Nachtrag 7.11. (Recherche modelle/archiv/RECHERCHE_2026-11-07_MESH_KANTEN.md, Quelle Subagent aus Repo-Seiten/Suchtreffern - vor Verkauf LICENSE-Dateien selbst lesen)

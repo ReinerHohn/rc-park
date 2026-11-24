@@ -229,7 +229,7 @@ def main():
                     with contextlib.redirect_stdout(io.StringIO()): return WN.main()
                 except RuntimeError: return "absturz"
                 finally: WN.fusionieren, sys.argv = alt_
-            zust = lambda: (open(cfg).read().split(), WN.ply_punkte(os.path.join(D, "fused.ply")), sorted(f for f in os.listdir(D) if f.startswith("fused")), os.path.exists(cfg + ".laeuft"))
+            zust = lambda: (open(cfg).read().split(), WN.ply_punkte(os.path.join(D, "fused.ply")), sorted(f for f in os.listdir(D) if f.startswith("fused") and not f.endswith(".drahtmaske.json")), os.path.exists(cfg + ".laeuft"))
             liste(["b"]); assert lauf_(kaputt) == "absturz" and zust() == (["a.jpg", "b.jpg", "c.jpg", "d.jpg"], 400, ["fused.ply"], False), zust()
             gut = lambda z, D_, st: ply(z, 100 * len(WN.zeilen(cfg)))
             assert lauf_(gut) == 0 and zust() == (["a.jpg", "c.jpg", "d.jpg"], 300, ["fused.ply", "fused_alle.ply"], False) and np.load(os.path.join(od, "sfm", "punkte_modell_x.npy")).shape == (300, 3), zust()
