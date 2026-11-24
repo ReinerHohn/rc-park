@@ -113,7 +113,7 @@
 - Z.1658: ## CQ - Bildwert: Bilder nur, wo Luecken sind (2026-11-06)
 - Z.1667: ## CR - Video-Stufe objektunabhaengig (2026-11-06)
 - Z.1675: ## CP - S3b Wolke zuerst: Koerper nur aus der Wolke per Sichtbarkeits-Carving (2026-11-05, Sonnet)
-- Z.1686: ## CQ - S8 Kanten + Ebenen (Sonnet, 2026-11-06): Durchstich Kaufhaus, Synth NICHT bestanden
+- Z.1686: ## CQb - S8 Kanten + Ebenen (Sonnet, 2026-11-06): Durchstich Kaufhaus, Synth NICHT bestanden
 - Z.1695: ## CS - S9 Erkennen + Einpassen: Arkadenboegen Kaufhaus f02 (Sonnet, 2026-11-06)
 - Z.1701: ## CT - S10 Teil A: vier Kantenkarten-Pipelines + Synth-Bewertung (Sonnet, 2026-11-06)
 - Z.1708: ## CU - S10 Teil B: gemeinsames 3D-Kantenfeld (Sonnet, 2026-11-06)
@@ -134,11 +134,11 @@
 - Z.1843: ## DJ – Auslagerung auf Toshiba (6.11.)
 - Z.1846: ## DK - Serie l (Gewoelbe/Gitterfenster) als eigenes SfM-Teilmodell + Sim3 ins Referenzsystem (Sonnet, 2026-11-06)
 - Z.1855: ## DL - Dichte Wolke aus den neu registrierten Handybildern (PatchMatch GPU), Posenguete-Klassen, Gegenprobe gegen dicht_alle (Sonnet, 2026-
-- Z.1864: ## Register BR - Wolke -> Netz, Wettbewerb am Diff (6.11.2026 Abend, Kaufhaus null5, 23 Fotos, Gebaeudemaske, kosten_lr, kleiner = besser)
-- Z.1883: ## Register BS (7.11.2026) - Kamerafehler je Foto / Belichtungs-Sweep (Kaufhaus null5)
+- Z.1864: ## Register BRb - Wolke -> Netz, Wettbewerb am Diff (6.11.2026 Abend, Kaufhaus null5, 23 Fotos, Gebaeudemaske, kosten_lr, kleiner = besser)
+- Z.1883: ## Register BSb (7.11.2026) - Kamerafehler je Foto / Belichtungs-Sweep (Kaufhaus null5)
 - Z.1892: ## BS2-Ergebnis - Belichtungs-/Kontrast-/Farb-Sweep (Kaufhaus null5, 7.11.2026, Sonnet; Werkzeug `tools/belichtung_sweep.py`, Daten `/media/
 - Z.1906: ## BS3c Kamera-Feinlage je Foto ueber foto_diff (7.11., `tools/kamera_feinlage.py`)
-- Z.1935: ## BT - Bogenkontur zuerst messen, dann benennen (Pilot Arkadenboegen f02 Kaufhaus null5, 7.11.2026, Sonnet)
+- Z.1935: ## BTb - Bogenkontur zuerst messen, dann benennen (Pilot Arkadenboegen f02 Kaufhaus null5, 7.11.2026, Sonnet)
 - Z.1946: ## BS3d Gemeinsamer Kamera-Ausgleich gegen Foto-Diff (7.11., `tools/kamera_ausgleich.py`, `tools/test_kamera_ausgleich.py`; Daten /media/oem
 - Z.1955: ### BS11 (7.11. vormittags) Wolke-Frontansicht + Raster-Wettbewerb Glaettung 0,05
 - Z.1968: ## Kaufhaus 7.11. nachmittags (Kurzfassung, Details modelle/NICHTS_GEBRACHT.md BS20-BS29)

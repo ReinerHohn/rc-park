@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (140)
+# Werkzeuge: sonstige (142)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -56,11 +56,11 @@
 - `tools/malwerkzeug.py` [gen] malwerkzeug.py [--aus ORDNER] [teil ...] - druckbare Malhilfen fuer das Bemalen der Modellteile (17.11.2026, Nutzer: "Werkzeug ausdrucken, das Geiles zum Anmalen"). Teile (ohne Ang
 - `tools/manmade3d.py` [-] manmade3d.py — 3D: menschgemachte Objekte (scharfe Kanten + Flächen darin) auf neutralem Gelände. Farbige ebene Platten = die erkannten Flächen (plan-gefittet), rote Linien = die g
 - `tools/manmade_edges.py` [seg] manmade_edges.py — menschgemachte Objekte über SCHARFE Kanten erkennen (+ Flächen darin). Idee: natürliches Gelände ist GLATT (Normale dreht langsam), menschgemachtes (Einschnitt, 
+- `tools/merge_sperre.sh` [sh] merge_sperre.sh [OBJEKT ...] - MERGE-SPERRE nach main (24.11.2026, Nutzer: "sichere das hart ab!"; Skill kette-schleife Schritt 5, tools/ketten_probelauf.sh). Verweigert den Merge,
 - `tools/messen_interaktiv.py` [seg] messen_interaktiv.py <objekt> --wolke w.npy --kameras k.json --bilder dir [--foto ip_IMG_6161.jpg] [--port 8765] Interaktives Messen AUS DER WOLKE (Nutzerwunsch 8.11.): lokaler Web
 - `tools/messung_uebernehmen.py` [gen] messung_uebernehmen.py <objekt> [--anwenden] Uebernimmt die BESTAETIGTEN Direktmessungen aus <objekt>/messungen_wolke.json (tools/messen_interaktiv.py) in die Parameter von objekt.
 - `tools/model3d_textured.py` [seg] (kein Docstring)
 - `tools/nachhol_zwischenspeicher.py` [-] nachhol_zwischenspeicher.py - Ergebnis-Zwischenspeicher nach EINGABE-HASH fuer das Nachholen (tools/seiten_luecken.py), 24.11.2026.
-- `tools/sift_paar_speicher.py` [-] sift_paar_speicher.py - SIFT-Abgleich JE PAAR wiederverwenden (Nachholen, Stufe merkmale in tools/zusatzfotos_registrieren.py), 24.11.2026.
 - `tools/neben_details.py` [seg] neben_details.py <objekt.json> [--daten DIR] [--stl a.stl] [--aus DIR] [--max 24] [--kandidaten 6] [--ohne-verdecker] - je erkanntem Bauteil eine DETAILANSICHT Foto | Modell aus de
 - `tools/objekt_daten.py` [-] objekt_daten.py - GENERISCH: amtliche Grunddaten eines neuen Objekts holen und daraus Modellrahmen + 3D-Anker bauen (Nullstart-Stufe 0).
 - `tools/openbuildings_fallback.py` [gen] openbuildings_fallback.py — HEBEL 5: Weltklasse-Fallback-Geometrie, wenn weder Google 3D Tiles (Hebel 1) noch lokales LOD2 (Hebel 3) ein Mesh liefern.
@@ -93,6 +93,7 @@
 - `tools/shape_extract.py` [-] shape_extract.py — FORM AUTOMATISCH AUS DEM FOTO MESSEN (statt Augenmaß).
 - `tools/sichtrichtung_kohaerenz.py` [-] Sichtrichtungs-Kohaerenz je Wolkenpunkt (allgemein, fuer jedes Objekt mit Dichte-Wolke + vis + Kameras).
 - `tools/sift_einstellung.py` [-] sift_einstellung.py - EINE Stelle fuer die COLMAP-SIFT-Merkmalssuche der Gesamtkette (24.11.2026) + Pflicht-Tor gegen still verworfene Bilder.
+- `tools/sift_paar_speicher.py` [-] sift_paar_speicher.py - SIFT-Abgleich JE PAAR wiederverwenden (Nachholen, Stufe merkmale in tools/zusatzfotos_registrieren.py), 24.11.2026.
 - `tools/sim3_robust.py` [-] sim3_robust.py - EINE gemeinsame robuste Sim3 (Aehnlichkeit X -> Y) mit fester Meter-Schwelle im Zielrahmen (22.11.2026). ANLASS: wand_dicke_tor.teile_laden legte ein Modell per Um
 - `tools/skin_smart_split.py` [gen] skin_smart_split.py — teilt die 3D-Haut KLUG in druckoptimierte Stücke.
 - `tools/snap_in_objekt.py` [-] snap_in_objekt.py - wege3d.json (rippen_pfad_snap.py) -> rippen_pfade.pfade_ohne_spiegel eines erker_polygon (13.11.2026). Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/snap

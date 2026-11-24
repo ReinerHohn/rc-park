@@ -1,4 +1,4 @@
-# Werkzeuge: foto_mass (123)
+# Werkzeuge: foto_mass (124)
 - `tools/bauplan_aus_foto.py` [seg] bauplan_aus_foto.py — die beschriebene Methode als EINE Kette: 1) Gebäude aus Umgebung freistellen (ML-Maske, gebaeude_segment) 2) auf das Gebäude zuschneiden 3) PERSPEKTIVE raus (
 - `tools/bilder_einsortieren.py` [-] bilder_einsortieren.py - PIPELINE-SCHRITT nach bilder_holen.py: geerntete Fotos (fotos_eingang) in den Fotoordner des Objekts einsortieren.
 - `tools/bilder_holen.py` [seg] bilder_holen.py - PIPELINE-SCHRITT: Fotos einer Attraktion aus freien Quellen holen - nur die mit MEHRWERT fuer die Fotowolke.
@@ -85,6 +85,7 @@
 - `tools/masspruefung_vergleich.py` [seg] Vergleich Laser (DOM) gegen Modell auf gleichem 1-m-Raster: Flaeche + Mindestrechteck der Turmkomponente je Hoehenschwelle. Nutzung: python3 tools/masspruefung_vergleich.py [stl] (
 - `tools/massstab_quelle_normobjekte.py` [seg] massstab_quelle_normobjekte.py - Massstabsquelle "Normobjekte in Fotos": Personen als Laengennormal (ANNAHME Erwachsene Median 1,70 m).
 - `tools/massstab_schwarm.py` [-] massstab_schwarm.py - Massstab aus MEHREREN unabhaengigen Quellen sammeln, auf Verträglichkeit pruefen, offen ausweisen (Register BP).
+- `tools/massstab_teile.py` [col] massstab_teile.py --teil <name> <sparse> <dicht.ply> [--teil ...] --bilder <fotos> --ursprung <lat> <lon> [--objekt <objekt.json>] [--aus <bericht.json>]
 - `tools/masstabelle_io.py` [-] masstabelle_io.py - Masstabelle nebenlaeufig sicher aendern (Dateisperre). Mehrere Werkzeuge (foto_breitenprofil, fehlteile_finden, ...) laufen in tools/bauen_abnehmen.sh parallel 
 - `tools/modell_foto_overlay.py` [seg] modell_foto_overlay.py --stl x.stl --fotos kameras_netz.json --bilder dir --foto name.jpg [--wolke w.npy] --out jpg [--verdeckt aus|gestrichelt|alle] [--winkel 0.6] Ganzes Modell (
 - `tools/modell_fotofarbe.py` [seg] modell_fotofarbe.py - Modelloberflaeche mit echten Fotofarben einfaerben (Viewer, Nutzer 10.11.: "Echtheitseindruck").

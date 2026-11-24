@@ -26,21 +26,22 @@
 - Z.244: ## Sofort-Urteil fuer Fotos vor Ort (`tools/foto_schnellcheck.py`, Aufruf `tools/foto_check.sh <objekt> <datei>`) - 16.11.2026
 - Z.255: ## Lehren 16.11.2026 nachmittags (fuer das naechste Gebaeude) und was davon schon generisch ist
 - Z.273: ## Runde Bauteile und Wandebene - 16.11.2026 mittags (Nutzer: Treppenturm "kleine Fensterchen", "wichtig fuer Schloesser"; "Warum nicht auto
-- Z.305: ## HAERTETEST 16.11.2026 nachmittags: drittes Gebaeude `ober_tvdr` (LoD2 DEBW_0010007Tvdr, Haeuserzeile Oberlinden noerdlich des Tors)
-- Z.392: ## Nachtrag 16.11.2026 nachts: Fehlersuche (statische Pruefung + Kettenbericht + Bild Modell neben Foto)
-- Z.413: ## Nachtrag 16.11.2026 spaet nachts: zweite Fehlersuche (Kameras)
-- Z.422: ## Nachtrag 17.11.2026 00:30: Stabilisierung der Kette
-- Z.433: ## Nachtrag 17.11.2026: Bausatz - Farbteile, Druckteilung, Druckzeit (Nutzerziel: mehrere Teile, je Farbe ein Teil, Stein flach drucken, gut
-- Z.446: ### Druckzeit gemessen (17.11.2026, Turm, PrusaSlicer-Standardprofil, Bett 256 mm) - Grundlage fuer die naechste Bauart
-- Z.455: ### Bausatz Turm, Stand 17.11.2026 vormittags (Variante 2,2 mm Wand, nie gedruckt)
-- Z.464: ### Bausatz fuer zwei Drucker (17.11.2026, Nutzer: grobe Teile Prusa MK4S 0,8-mm-Duese, feine Teile Bambu) - `tools/bausatz.sh <objekt> <mas
-- Z.473: ### Drucker aus der Sitzung starten + Demonstrator (17.11.2026)
-- Z.480: ### Agentenrunde 17.11.2026 (von mir nachgeprueft)
-- Z.489: ## Nachtrag 17.11.2026: Bauteil-Katalog erweitert (Bauteil-Runde Kaufhaus, `tools/bauteile.py`)
-- Z.500: ## Feinrelief aus Einzelfotos per monokularer Tiefe (`tools/relief_aus_fotos_mono.py`) - VERSUCH 17.11.2026
-- Z.516: ### Nachtrag 17.11.2026 abends: Mono-Relief im Schwabentor-Generator und in der Gesamtkette
-- Z.532: ### Nachtrag 17.11.2026 nachts: Feinausrichtung der Wandbilder ("pixelgenau uebereinander") - `tools/wand_feinausrichtung.py`
-- Z.551: ## Nachtrag 17.11.2026 abends: Runde 3 Kaufhaus - Feinteil-Mass, Restbrei, Erker-Masswerk, Dachdeckung, Figuren
-- Z.563: ### Nachtrag 17.11.2026 nachts: Gestalt aus Wandbild + Tiefe - `tools/form_aus_wandbild.py` (Versuch, nicht Standard)
-- Z.570: ### Nachtrag 18.11.2026 nachts: Kanten einrasten + affiner Konsens (form_aus_wandbild, Agent Kanten)
-- Z.577: ## Nachtrag 18.11.2026: Rueckwand hinter Oeffnungen (Regel A) und Innenwaende (Laube/Arkade)
+- Z.309: ## HAERTETEST 16.11.2026 nachmittags: drittes Gebaeude `ober_tvdr` (LoD2 DEBW_0010007Tvdr, Haeuserzeile Oberlinden noerdlich des Tors)
+- Z.396: ## Nachtrag 16.11.2026 nachts: Fehlersuche (statische Pruefung + Kettenbericht + Bild Modell neben Foto)
+- Z.417: ## Nachtrag 16.11.2026 spaet nachts: zweite Fehlersuche (Kameras)
+- Z.426: ## Nachtrag 17.11.2026 00:30: Stabilisierung der Kette
+- Z.437: ## Nachtrag 17.11.2026: Bausatz - Farbteile, Druckteilung, Druckzeit (Nutzerziel: mehrere Teile, je Farbe ein Teil, Stein flach drucken, gut
+- Z.450: ### Druckzeit gemessen (17.11.2026, Turm, PrusaSlicer-Standardprofil, Bett 256 mm) - Grundlage fuer die naechste Bauart
+- Z.459: ### Bausatz Turm, Stand 17.11.2026 vormittags (Variante 2,2 mm Wand, nie gedruckt)
+- Z.468: ### Bausatz fuer zwei Drucker (17.11.2026, Nutzer: grobe Teile Prusa MK4S 0,8-mm-Duese, feine Teile Bambu) - `tools/bausatz.sh <objekt> <mas
+- Z.477: ### Drucker aus der Sitzung starten + Demonstrator (17.11.2026)
+- Z.484: ### Agentenrunde 17.11.2026 (von mir nachgeprueft)
+- Z.493: ## Nachtrag 17.11.2026: Bauteil-Katalog erweitert (Bauteil-Runde Kaufhaus, `tools/bauteile.py`)
+- Z.504: ## Feinrelief aus Einzelfotos per monokularer Tiefe (`tools/relief_aus_fotos_mono.py`) - VERSUCH 17.11.2026
+- Z.520: ### Nachtrag 17.11.2026 abends: Mono-Relief im Schwabentor-Generator und in der Gesamtkette
+- Z.536: ### Nachtrag 17.11.2026 nachts: Feinausrichtung der Wandbilder ("pixelgenau uebereinander") - `tools/wand_feinausrichtung.py`
+- Z.555: ## Nachtrag 17.11.2026 abends: Runde 3 Kaufhaus - Feinteil-Mass, Restbrei, Erker-Masswerk, Dachdeckung, Figuren
+- Z.567: ### Nachtrag 17.11.2026 nachts: Gestalt aus Wandbild + Tiefe - `tools/form_aus_wandbild.py` (Versuch, nicht Standard)
+- Z.574: ### Nachtrag 18.11.2026 nachts: Kanten einrasten + affiner Konsens (form_aus_wandbild, Agent Kanten)
+- Z.581: ## Nachtrag 18.11.2026: Rueckwand hinter Oeffnungen (Regel A) und Innenwaende (Laube/Arkade)
+- Z.603: ## Nachtrag 24.11.2026: Ortsteine / Eckverzahnung aus dem Wandbild (`tools/ortsteine.py`)

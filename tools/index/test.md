@@ -1,7 +1,8 @@
-# Werkzeuge: test (215)
+# Werkzeuge: test (220)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
+- `tools/test_bestand_tor.py` [-] Test BESTAND-TOR (24.11.2026, Rueckfall Galerie -> Treppenkloetze 1122z-zc; Verwandt: test_foto_tor_bezug.py, test_vorbau_keine_treppe.py; Vorlaeufer: keiner je Zone). Ohne GPU: Me
 - `tools/test_bildschaerfe.py` [seg] Tests fuer tools/bildschaerfe.py und tools/zusatzfotos_registrieren.py (vorbereiten: Dubletten, Ausschlussliste, Wasserzeichenstreifen, Namen). /media/oem/scan/venv-seg/bin/python 
 - `tools/test_bildwert.py` [-] test_bildwert.py - Beweise S7 (Minimalform 2026-11-06): T1 synthetische Luecke (Kaufhaus), T4 Martinstor Bedarf (Sued groesster, ohne Handwert). T2/T3 entfallen (Budget). Ausgabe n
 - `tools/test_bogen_kontur.py` [seg] test_bogen_kontur.py - synthetischer Beweis fuer tools/bogen_kontur.py (Exit 0 = ALLE BESTANDEN). Testfassade: Rotwand, Bogenoeffnung mit BEKANNTER Kontur (Goldlinie 3 cm, innen du
@@ -77,6 +78,7 @@
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
 - `tools/test_kantenstufe_kreis.py` [seg] test_kantenstufe_kreis.py - WAECHTER gegen den Kreis in der KERNMETHODE (CPU, ohne Daten, ~1 min; 22.11.2026).
+- `tools/test_kantenstufe_traufzone.py` [seg] test_kantenstufe_traufzone.py - WAECHTER Traufzone der Kantenstufe (CPU, ohne Daten, ~30 s; 24.11.2026). Verwandt/Vorlaeufer: tools/test_kantenstufe_kreis.py (Szene/Kameras/Stabilk
 - `tools/test_kegeldach_rund.py` [seg] test_kegeldach_rund.py - fester synthetischer Test fuer das KEGELDACH auf Rundkoerpern (rund_aus_umriss.kegeldach + bauteile.kegeldach_teile), 23.11.2026. Anlass: Kettenlauf 1122o 
 - `tools/test_keilsteine.py` [-] test_keilsteine.py - fester synthetischer Test fuer quader_raster.keilsteine (21.11.2026 spaet), < 20 s, nur CPU.
 - `tools/test_kette_1122c.py` [-] test_kette_1122c.py - fester Test (CPU, Sekunden, echte kleine Fixtures aus dem Kettenlauf schwabentor-1120 1122c, 22.11.2026).
@@ -137,6 +139,7 @@
 - `tools/test_rund_aus_umriss.py` [seg] test_rund_aus_umriss.py - fester synthetischer Test fuer tools/rund_aus_umriss.py (21.11.2026). Zylinder r 1,50 m (Mitte 0,3 / -0,2) mit Steinfugen-Textur vor gestreiftem Hintergru
 - `tools/test_rund_eigenverdeckung.py` [seg] test_rund_eigenverdeckung.py - Verdeckungspruefung in tools/rund_aus_umriss.py ignoriert das VORMODELL des gemessenen Rundkoerpers (23.11.2026). Befund Kettenlauf 1122p (Schwabento
 - `tools/test_rund_huelle.py` [gen] test_rund_huelle.py - Rundkoerper mit Dach aus EINSEITIGEN Silhouetten (tools/rund_aus_huelle.py, tools/drehkoerper_aus_fotos.py), 23.11.2026.
+- `tools/test_rund_kranz.py` [seg] test_rund_kranz.py - fester synthetischer Test: KRANZ eines Rundkoerpers (rund_aus_umriss.kranz_messen / kranz_einbauen), 24.11.2026. Verwandt: tools/test_rund_aus_umriss.py (Zylin
 - `tools/test_rund_putz_glatt.py` [gen] test_rund_putz_glatt.py - glatter Putz-Schaft am Rundkoerper (rund_aus_umriss.profil_bereinigen + bauteile.drehkoerper_aus_wolkenrest), 24.11.2026. Anlass: Kettenlauf 1122zb Schwab
 - `tools/test_s4.py` [gen] test_s4.py - Beweise S4 (SPEC_S4_FEHLENDE_BAUTEILE.md Abschnitt 4): T1 Vorbauflaechen, T2 Kacheln, T3 Neuvernetzung der Figuren-Netze. Ausgaben unter /media/oem/scan/rc-park_null/t
 - `tools/test_schwerkraft_je_bild.py` [seg] Fester Test fuer schwerkraft_je_bild.py: synthetisches Bild einer Fassade (senkrechte Kanten) aus einer nach oben geneigten, leicht gerollten Kamera. Erwartung: 'unten' im Kamerasy
@@ -185,14 +188,16 @@
 - `tools/test_tor_verschiebung.py` [seg] test_tor_verschiebung.py - BEWEIS fuer tools/tor_verschiebung.py (Nullkontrolle des Foto-Tors) auf synthetischer Wahrheit.
 - `tools/test_traufe_aus_fotos.py` [seg] test_traufe_aus_fotos.py - Traufe des Hauptdachs aus Fotokanten (tools/traufe_aus_fotos.py, bauteile.traufkasten/traufe_einbauen, hand_vergleich), 21.11.2026. Anlass Schwabentor-11
 - `tools/test_uhr_beleg.py` [seg] test_uhr_beleg.py - fester synthetischer Test (23.11.2026, Kettenlauf 1122p: goldener Heiligenschein im Wandgemaelde f01 als Uhr gebaut, dieselbe Uhr zweimal (Aussenrand + Ziffernr
-- `tools/test_umgang_eckquader.py` [gen] test_umgang_eckquader.py - fester synthetischer Test (21.11.2026) fuer (1) tools/umgang_aus_fotos.py: Zone unter der Traufe aus Zeilenkanten (dunkler Ruecksprung ueber heller Wand)
+- `tools/test_umgang_eckquader.py` [seg] test_umgang_eckquader.py - fester synthetischer Test (21.11.2026) fuer (1) tools/umgang_aus_fotos.py: Zone unter der Traufe aus Zeilenkanten (dunkler Ruecksprung ueber heller Wand)
 - `tools/test_undefinierte_namen.py` [-] Undefinierte Namen in tools/*.py (pyflakes) - Lauf 1121t verlor die Feinrechnung, weil 'q5, q95 = ...' bei einem Agenten-Merge in einen Kommentar rutschte (NameError erst nach 20 m
 - `tools/test_verbund_schwachstellen.py` [-] Synthetischer Test verbund_schwachstellen.py (Sekunden): zwei dichte Bildgruppen, verbunden ueber 1 / 3 / 10 Bruecken-Bilder; eine Gruppe allein. Erwartet: Gelenk bei 1 Bild (zu_du
 - `tools/test_verlustbilanz.py` [-] test_verlustbilanz.py - Verlustbilanz (tools/verlustbilanz.py) an synthetischen Kettenordnern (Sekunden, keine echten Daten). Faelle: (1) Nulllauf schwabentor-1122: gewaehlter Clip
 - `tools/test_versuch_log.py` [-] Test versuch_log: Eintrag, Identitaetswarnung (BS7-Fall), Fehlschlag, Liste. Exit 0 = ALLE BESTANDEN.
 - `tools/test_vis_mapping.py` [-] test_vis_mapping.py - Beweis und Dauerwaechter fuer die Zuordnung vis-Index -> Bild (Register CV/CW).
 - `tools/test_vorbau_beleg.py` [-] test_vorbau_beleg.py - synthetisch, CPU, < 5 s (23.11.2026, Befund Kette 1122t: 'Vorbau f03' West war ein Phantom).
+- `tools/test_vorbau_keine_treppe.py` [gen] Test (24.11.2026, RUECKFALL Treppenkloetze Kette 1122z/zb/zc Schwabentor; Verwandt: test_vorbau_pfosten.py, test_vorbau_beleg.py; Vorlaeufer: Sackgasse 21.11. "Hoehenfeld als Gesta
 - `tools/test_vorbau_pfosten.py` [gen] Test (24.11.2026, Kette 1122u Schwabentor): Abnahme "Anzahl getrennte Koerper 2 (Soll 1)" - zweiter Koerper = Galerie-Pfosten f00 bei u 4,25, Kasten aus den Fotokanten nur bis u 4,
+- `tools/test_vordach_ohne_kasten.py` [gen] test_vordach_ohne_kasten.py - Vordach-Profil und Galerie-Pfosten auch OHNE Kanten-Kasten (24.11.2026). Sekunden, < 400 MB. Verwandt: tools/test_kette_vordach_laterne.py (Kettenfall
 - `tools/test_vordach_traufe.py` [seg] test_vordach_traufe.py - fester synthetischer Test (22.11.2026, Befund Lauf 1122a schwabentor-1120 Stadtseite, Bild audit/neben_eigen__IMG_20261106_113231.jpg): Vordach im Foto wei
 - `tools/test_vordach_vorbau.py` [seg] test_vordach_vorbau.py - fester synthetischer Test (21.11.2026, schwabentor-1120 Stadtseite, Nutzerbild neben_eigen__IMG_20261106_113231) fuer (1) tools/vordach_profil.messen: Walm
 - `tools/test_vordergrund_quader.py` [-] test_vordergrund_quader.py - synthetischer Test (21.11.2026, Schwabentor w01, Lauf 1121s) fuer (1) tools/relief_vordergrund.py: Verkehrsschild (0,6 x 0,8 m, +15 cm) DIREKT auf eine
