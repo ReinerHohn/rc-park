@@ -9,7 +9,9 @@ Ablauf je Fassade:
      staerksten Kantenstuetze; Innenkreis (Ziffernring innen) = staerkster konzentrischer Kreis mit 0,45-0,85 x Aussenradius (Mitte < 6 % R daneben), sonst keiner.
      Stuetze = Anteil der Kreispunkte mit Kante in 2 cm; Tor >= --min_stuetze, sonst verworfen (Name der Ursache im JSON).
   3. BELEG (23.11.2026, 1122p: Heiligenschein im Wandgemaelde als Uhr gebaut) = 12er-Teilung (Ziffern/Striche) im Ring 0,55-0,97 R, zifferblatt_beleg();
-     ohne Beleg verworfen. Konzentrische Kreise derselben Stelle (Aussenrand + Ziffernring) -> eine Uhr (dubletten_zusammenfassen).
+     ohne Beleg verworfen. 24.11.2026 (1122x: Uhr f01 fehlte, Mosaik-Naht quer durch den Ziffernring, 1,14 < 1,2; in 1122w kam sie nur durch den Teillauf mit
+     anders zusammengesetztem Mosaik): faellt das Mosaik durch, entscheidet die Mehrheit der Einzelfotos mit ganzer Scheibe (beleg_aus_einzelfotos, gleiches Tor je Foto,
+     >= 3 Fotos) - das Urteil haengt so nicht mehr davon ab, welche Fotos das Mosaik gerade zusammensetzt. Konzentrische Kreise derselben Stelle (Aussenrand + Ziffernring) -> eine Uhr (dubletten_zusammenfassen).
 Aufruf:  uhren_wandbild.py <objekt.json> <fassade_fein-ordner> --elemente <fassade/elemente.json> [--aus audit/uhren_auto.json]
 Ausgabe: {fid: {o, d, n, uhren: [{u, z, d_aussen, d_innen, stuetze_aussen, stuetze_innen, kasten, quelle}], verworfen: [...]}} + Bild <aus>.jpg
 rc 0 = mindestens eine Uhr, rc 3 = keine.
@@ -76,19 +78,11 @@ def druckbar(maske, px, d_min=0.8 * 87 / 1000.0):
     return m & ~np.isin(lab, weg)
 
 
-def zifferblatt_aus_fotos(fein, fid, raster, U, aus, px=0.02, rand=1.0, min_fotos=3, mehrheit=0.5, w_ring=0.10, w_feld=0.06, hoch=0.07, zeiger=True):
-    """ZIFFERBLATT-RELIEF AUS DEM WANDBILD (21.11.2026, Nutzerbild: Uhr nur flacher Kreis; Katalog-Ziffern sind verboten - kein Baukasten).
-    Je entzerrtem Einzelfoto (fein/ortho_<fid>_einzeln) die Scheibe suchen (Kreis-Hough, Radius = gemessener Aussenradius +- 12 %, Suchfenster +- rand m: die Einzelbilder
-    liegen bis 0,85 m gegeneinander versetzt), auf die Scheibe normieren (Mitte, Radius) und die Goldteile ausschneiden.
-    Feste Teile (Ziffernring, Randwulst: r >= Innenradius) = Mehrheit von >= min_fotos Fotos (Kabel/Spiegelung fallen heraus).
-    Zeiger (r < Innenradius) bewegen sich zwischen den Fotos -> aus dem SCHAERFSTEN Foto (zeiger=True; Uhrzeit dieses Fotos).
-    Hoehen ueber der Wandflaeche: Innenfeld w_feld, Ziffernring w_ring, Gold + hoch (ANNAHME 6 / 10 / +7 cm = 0,7 / 1,15 / +0,8 mm im Druck).
-    Schreibt aus (.npz wie relief_einsatz: rel, a, t, n, u0, z0, px + scheibe d_aussen) und aus.jpg; Rueckgabe dict oder None."""
+def scheiben_in_einzelfotos(fein, fid, raster, u, z, ra, rand=1.0, min_st=0.7):
+    """Je entzerrtem Einzelfoto (fein/ortho_<fid>_einzeln/*.png, Raster wie das Wandbild) die Scheibe um (u, z) mit Radius ra (m) +- 12 % suchen (Kreis-Hough im
+    Suchfenster +- rand m: die Einzelbilder liegen bis 0,85 m gegeneinander versetzt), Kantenstuetze >= min_st. Liefert je Foto dict(foto, im, cx, cy, r, stuetze) in Pixeln."""
     import glob
-    c = float(raster["zelle"]); u0r, z1r = float(raster["u0"]), float(raster["z1"]); ra = 0.5 * float(U["d_aussen"]); ri = 0.5 * float(U["d_innen"]) if U.get("d_innen") else 0.66 * ra
-    cx0 = (float(U["u"]) - u0r) / c; cy0 = (z1r - float(U["z"])) / c; R0 = ra / c; m_ = int((ra + rand) / c)
-    S = ra + 0.06; N = int(np.ceil(2 * S / px)); g_ = (np.arange(N) + 0.5) * px - S; X, Y = np.meshgrid(g_, -g_); rr = np.hypot(X, Y); inn = rr <= ra
-    K = []
+    c = float(raster["zelle"]); cx0 = (float(u) - float(raster["u0"])) / c; cy0 = (float(raster["z1"]) - float(z)) / c; R0 = ra / c; m_ = int((ra + rand) / c)
     for f in sorted(glob.glob(os.path.join(fein, f"ortho_{fid}_einzeln", "*.png"))):
         im = cv2.imread(f)
         if im is None: continue
@@ -98,20 +92,59 @@ def zifferblatt_aus_fotos(fein, fid, raster, U, aus, px=0.02, rand=1.0, min_foto
         C = cv2.HoughCircles(gs, cv2.HOUGH_GRADIENT, dp=1, minDist=3, param1=110, param2=15, minRadius=int(0.88 * R0 * s), maxRadius=int(1.12 * R0 * s) + 1)
         if C is None: continue
         kan = cv2.Canny(gs, 40, 110); st, cx, cy, r = max(((stuetze(kan, a_, b_, r_), a_, b_, r_) for a_, b_, r_ in C[0][:40]), key=lambda t: t[0])
-        if st < 0.7: continue
-        cx, cy, r = x0 + cx / s, y0 + cy / s, r / s; k_ = r / R0                                   # Scheibe dieses Fotos -> Normraster (Mitte, Radius gleich)
+        if st < min_st: continue
+        yield dict(foto=os.path.basename(f)[:-4], im=im, cx=x0 + cx / s, cy=y0 + cy / s, r=r / s, stuetze=float(st))
+
+
+def beleg_aus_einzelfotos(fein, fid, raster, u, z, ra, f0=0.55, f1=0.97, min_fotos=3, mehrheit=0.5, rand=None):
+    """ZIFFERBLATT-BELEG AUS EINZELFOTOS (24.11.2026, Lauf 1122x: Uhr f01 im Mosaik verworfen, 12er-Teilung 1,14 < 1,2 - das feine Wandbild setzt die Scheibe aus
+    mehreren Fotos zusammen, unteres Drittel aus einem Foto mit ausgewaschenem/versetztem Ring (Naht quer durch die Ziffern), dazu Zeiger mit Sonne/Mond im Ring 0,55-0,66 R).
+    Je Einzelfoto, das die GANZE Scheibe zeigt (>= 97 % der Scheibe belegt), zifferblatt_beleg mit demselben Tor (keine Schwelle gesenkt); Uhr belegt, wenn
+    >= min_fotos Fotos die Scheibe zeigen und mehr als mehrheit davon die 12er-Teilung belegen. Zeiger stehen in jedem Foto anders, Nahtfehler gibt es im Einzelfoto nicht.
+    Rueckgabe dict(ok, n, n_ok, verh_median, fotos=[(foto, verh, ok)], grund)."""
+    c = float(raster["zelle"]); E = []
+    for D in scheiben_in_einzelfotos(fein, fid, raster, u, z, ra, rand=ra * 0.4 if rand is None else rand):
+        g = cv2.cvtColor(D["im"], cv2.COLOR_BGR2GRAY); cx, cy, r = D["cx"], D["cy"], D["r"]
+        t = np.linspace(0, 2 * np.pi, 180, endpoint=False); rr_ = np.linspace(0.1, 1.0, 10) * r
+        X = np.round(cx + np.outer(rr_, np.cos(t))).astype(int); Y = np.round(cy - np.outer(rr_, np.sin(t))).astype(int); H, W = g.shape
+        ok_ = (X >= 0) & (X < W) & (Y >= 0) & (Y < H)
+        if ok_.mean() < 0.97 or (g[Y[ok_], X[ok_]] > 0).sum() < 0.97 * X.size: continue        # Scheibe nicht ganz im Foto (Rand/Leere des Einzelbilds)
+        b = zifferblatt_beleg(g, cx, cy, r, f0, f1); E.append((D["foto"], b["verh"], b["ok"]))
+    n, n_ok = len(E), sum(e[2] for e in E); vm = float(np.median([e[1] for e in E])) if E else 0.0
+    ok = n >= min_fotos and n_ok > mehrheit * n
+    grund = "" if ok else (f"nur {n} Einzelfotos zeigen die ganze Scheibe (< {min_fotos})" if n < min_fotos else f"12er-Teilung nur in {n_ok} von {n} Einzelfotos (Mehrheit noetig)")
+    return dict(ok=bool(ok), n=n, n_ok=int(n_ok), verh_median=round(vm, 2), fotos=E, grund=grund)
+
+
+def zifferblatt_aus_fotos(fein, fid, raster, U, aus, px=0.02, rand=1.0, min_fotos=3, mehrheit=0.5, w_ring=0.10, w_feld=0.06, hoch=0.07, zeiger=True):
+    """ZIFFERBLATT-RELIEF AUS DEM WANDBILD (21.11.2026, Nutzerbild: Uhr nur flacher Kreis; Katalog-Ziffern sind verboten - kein Baukasten).
+    Je entzerrtem Einzelfoto (fein/ortho_<fid>_einzeln) die Scheibe suchen (Kreis-Hough, Radius = gemessener Aussenradius +- 12 %, Suchfenster +- rand m: die Einzelbilder
+    liegen bis 0,85 m gegeneinander versetzt), auf die Scheibe normieren (Mitte, Radius) und die Goldteile ausschneiden.
+    Feste Teile (Ziffernring, Randwulst: r >= Innenradius) = Mehrheit von >= min_fotos Fotos (Kabel/Spiegelung fallen heraus).
+    Zeiger (r < Innenradius) bewegen sich zwischen den Fotos -> aus dem SCHAERFSTEN Foto (zeiger=True; Uhrzeit dieses Fotos).
+    Hoehen ueber der Wandflaeche: Innenfeld w_feld, Ziffernring w_ring, Gold + hoch (ANNAHME 6 / 10 / +7 cm = 0,7 / 1,15 / +0,8 mm im Druck).
+    Schreibt aus (.npz wie relief_einsatz: rel, a, t, n, u0, z0, px + scheibe d_aussen) und aus.jpg; Rueckgabe dict oder None."""
+    c = float(raster["zelle"]); ra = 0.5 * float(U["d_aussen"]); ri = 0.5 * float(U["d_innen"]) if U.get("d_innen") else 0.66 * ra
+    S = ra + 0.06; N = int(np.ceil(2 * S / px)); g_ = (np.arange(N) + 0.5) * px - S; X, Y = np.meshgrid(g_, -g_); rr = np.hypot(X, Y); inn = rr <= ra
+    K = []
+    for D in scheiben_in_einzelfotos(fein, fid, raster, U["u"], U["z"], ra, rand=rand):
+        im, cx, cy, r = D["im"], D["cx"], D["cy"], D["r"]; k_ = r / (ra / c)                     # Scheibe dieses Fotos -> Normraster (Mitte, Radius gleich)
         B = cv2.remap(im, (cx + X / c * k_).astype(np.float32), (cy - Y / c * k_).astype(np.float32), cv2.INTER_LINEAR, borderValue=(0, 0, 0))
         if (B.sum(2) > 0)[inn].mean() < 0.97: continue
         sch = float(cv2.Laplacian(cv2.cvtColor(B, cv2.COLOR_BGR2GRAY).astype(np.float32), cv2.CV_32F)[inn].var())
-        K.append(dict(foto=os.path.basename(f)[:-4], schaerfe=sch, stuetze=st, gold=gold_maske(B), bild=B))
+        K.append(dict(foto=D["foto"], schaerfe=sch, stuetze=D["stuetze"], gold=gold_maske(B), bild=B))
     if len(K) < min_fotos: return None
     K.sort(key=lambda k: -k["schaerfe"]); ref = cv2.GaussianBlur(cv2.cvtColor(K[0]["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32); mk = inn.astype(np.uint8)
+    grad = lambda g: cv2.GaussianBlur(cv2.magnitude(cv2.Sobel(g, cv2.CV_32F, 1, 0), cv2.Sobel(g, cv2.CV_32F, 0, 1)), (0, 0), 2.0)
     for k in K[1:]:                                                       # Feinausrichtung auf das schaerfste Foto (ECC affin): die Einzelbilder sind leicht verschert/verdreht entzerrt
-        try:
-            M = np.eye(2, 3, dtype=np.float32); _, M = cv2.findTransformECC(ref, cv2.GaussianBlur(cv2.cvtColor(k["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32), M, cv2.MOTION_AFFINE,
-                                                                             (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 100, 1e-5), mk, 5)
-            k["bild"] = cv2.warpAffine(k["bild"], M, (N, N), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP); k["gold"] = gold_maske(k["bild"]); k["ecc"] = True
-        except cv2.error: k["ecc"] = False
+        gk = cv2.GaussianBlur(cv2.cvtColor(k["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32); k["ecc"] = False
+        # 24.11.2026 (1122x f01): Grauwert-ECC scheitert zwischen Fotos verschiedener Anstriche (altes Foto: schwarzer Ring, neu: grau/blau) -> zweiter Versuch auf dem
+        # Kantenbetrag (Ziffern-/Randkanten sind farbunabhaengig)
+        for a_, b_ in ((ref, gk), (grad(ref), grad(gk))):
+            try:
+                M = np.eye(2, 3, dtype=np.float32); _, M = cv2.findTransformECC(a_, b_, M, cv2.MOTION_AFFINE, (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 100, 1e-5), mk, 5)
+                k["bild"] = cv2.warpAffine(k["bild"], M, (N, N), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP); k["gold"] = gold_maske(k["bild"]); k["ecc"] = True; break
+            except cv2.error: pass
     K = [K[0]] + [k for k in K[1:] if k.get("ecc")]
     if len(K) < min_fotos: return None
     stimme = np.mean([k["gold"] for k in K], 0)
@@ -172,7 +205,13 @@ def main():
             if best[0] < a.min_stuetze: e_["verworfen"].append(dict(kasten=[k["u0"], k["u1"], k["z0"], k["z1"]], grund=f"Kreis nur zu {best[0] * 100:.0f} % von Kanten gestuetzt")); continue
             sa, cx, cy, r = best
             zb_ = zifferblatt_beleg(im, x0 + cx / s, cy / s + y0, r / s)        # 23.11.2026: Kreis allein ist keine Uhr (Heiligenschein) - 12er-Teilung im Ring
-            if not zb_["ok"]: e_["verworfen"].append(dict(kasten=[k["u0"], k["u1"], k["z0"], k["z1"]], grund=zb_["grund"], beleg_12=zb_["verh"])); continue
+            be_ = None
+            if not zb_["ok"] and zb_["k"] is not None:                          # 24.11.2026 (1122x f01): Mosaik-Naht/Zeiger verschmieren die Teilung -> Mehrheit der Einzelfotos, gleiches Tor
+                be_ = beleg_aus_einzelfotos(a.fein, fid, R_, u0r + (x0 + cx / s) * c, z1r - (y0 + cy / s) * c, r / s * c)
+                print(f"{fid}: Mosaik ohne 12er-Teilung ({zb_['verh']:.2f}) -> Einzelfotos: {be_['n_ok']} von {be_['n']} belegt " + str([(f_, v_) for f_, v_, _ in be_["fotos"]]))
+            if not zb_["ok"] and not (be_ and be_["ok"]):
+                e_["verworfen"].append(dict(kasten=[k["u0"], k["u1"], k["z0"], k["z1"]], grund=zb_["grund"] + (f"; Einzelfotos: {be_['grund']}" if be_ else ""), beleg_12=zb_["verh"],
+                                            **(dict(beleg_einzelfotos=dict(n=be_["n"], n_ok=be_["n_ok"], verh_median=be_["verh_median"])) if be_ else {}))); continue
             innen = None
             for f_ in np.arange(0.45, 0.86, 0.01):
                 for dx in (-0.04, 0, 0.04):
@@ -182,8 +221,11 @@ def main():
             cx, cy, r = float(cx), float(cy), float(r); uc = u0r + (x0 + cx / s) * c; zc = z1r - (y0 + cy / s) * c; da = 2 * r / s * c; di = 2 * innen[1] / s * c if innen and innen[0] >= a.min_stuetze else None
             e_["uhren"].append(dict(u=round(uc, 3), z=round(zc, 3), d_aussen=round(da, 3), d_innen=round(di, 3) if di else None, stuetze_aussen=round(sa, 2), stuetze_innen=round(innen[0], 2) if innen else None,
                                     kasten=[round(k["u0"], 2), round(k["u1"], 2), round(k["z0"], 2), round(k["z1"], 2)], stimmen=k.get("stimmen"), beleg_12=zb_["verh"],
-                                    quelle="Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze + 12er-Teilung im feinen Wandbild (1 cm)"))
-            print(f"{fid}: UHR Mitte u {uc:.2f} z {zc:.2f}, Durchmesser {da:.2f} m" + (f", innen {di:.2f} m" if di else ", Innenkreis nicht belegt") + f" (Kantenstuetze {sa * 100:.0f} %, 12er-Teilung {zb_['verh']:.2f})")
+                                    **(dict(beleg_einzelfotos=dict(n=be_["n"], n_ok=be_["n_ok"], verh_median=be_["verh_median"], fotos=[f_ for f_, _, o_ in be_["fotos"] if o_])) if be_ else {}),
+                                    quelle="Zone OWLv2 'uhr' (fassade_parsing) -> Kreis-Hough + Kantenstuetze + 12er-Teilung im feinen Wandbild (1 cm)"
+                                           + (f" bzw. Mehrheit der Einzelfotos ({be_['n_ok']} von {be_['n']})" if be_ else "")))
+            print(f"{fid}: UHR Mitte u {uc:.2f} z {zc:.2f}, Durchmesser {da:.2f} m" + (f", innen {di:.2f} m" if di else ", Innenkreis nicht belegt") + f" (Kantenstuetze {sa * 100:.0f} %, 12er-Teilung {zb_['verh']:.2f}"
+                  + (f", Einzelfotos {be_['n_ok']}/{be_['n']}" if be_ else "") + ")")
             vis = cv2.cvtColor(As, cv2.COLOR_GRAY2BGR); cv2.circle(vis, (int(cx), int(cy)), int(r), (0, 255, 0), 2)
             if di: cv2.circle(vis, (int(cx), int(cy)), int(innen[1]), (0, 200, 255), 2)
             vis_[id(e_["uhren"][-1])] = vis
