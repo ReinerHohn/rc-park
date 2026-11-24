@@ -750,6 +750,10 @@ def main():
                 if os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")):
                     erg_["vorbau_beleg_rc"] = lauf(B, "bauplan_vorbau_beleg", [PY, "-W", "ignore", "-I", "tools/vorbau_fototor.py", "--beleg", os.path.join(Z, "audit", "vorbauten_auto.json"), fo, os.path.join(eb_, "ebenen.json")], log, ok=(0, 2, 3))[0]
             beleg(B, "bauplan_ebenen", [os.path.join(eb_, "ebenen.json")], t_eb, altstand_beiseite=True, folge="Altstand beiseite - Oeffnungen aus Kanten und Abweichung je Ebene rechnen NICHT mit den Ebenen eines frueheren Laufs")   # 23.11.2026 AUDIT
+            # 24.11.2026 (Befund 1122x f00: Koerperwand 0,32-0,40 m VOR Fotokanten und Wolke, weil der Koerper auf der LoD2-Ebene stand): KOERPERWAND AUF DIE FOTOKANTEN-EBENE
+            # (tools/wandlage_fotokanten.py, Guard: Fotokanten belastbar + Wolke gleiche Seite) -> 'wandversatz' in audit/schleife_korrekturen.json -> Generator setzt die Wand
+            # am Grundkoerper zurueck (bauteile.korrekturen_aus_json), Relief/Fenster/Uhr folgen. Kettenlog: je Fassade eine Zeile 'WANDLAGE fNN: alt w, neu w, Beleg, uebernommen'.
+            erg_["wandlage_rc"] = lauf(B, "bauplan_wandlage", [PY, "-W", "ignore", "-I", "tools/wandlage_fotokanten.py", ZR, eb_, "--fassade", fo] + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3))[0]
             if os.path.exists(fa_): erg_["fenster_tor_rc"] = lauf(B, "bauplan_fenster_tiefe", [PY, "-I", "tools/fenster_tiefe_tor.py", fa_, fo], log)[0]
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["nischen_fenster_rc"] = lauf(B, "bauplan_nischen_fenster", [PY, "-I", "tools/nischen_fenster.py", fa_, fo, ffn], log, ok=(0, 3))[0]   # 21.11.2026: Fenster in Nischen = zwei Ebenen, Umriss aus Bildkanten (Schwabentor: 1 statt 2 Rundbogenfenster, Nische 0,59 statt ~2 m)
             # 24.11.2026 (1122w West: Schlitz und Luke ueber 28 m fehlten - OWLv2 ohne Kasten, feines Wandbild dort leer wegen --max-mpp 0,02): kleine dunkle Oeffnungen
