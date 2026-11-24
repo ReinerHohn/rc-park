@@ -57,7 +57,12 @@ keine Zeitreihe, Laeufe nicht vergleichbar (Lehre NICHTS_GEBRACHT 10.11. Kreis a
 Ausgabe: Zeile in audit/konvergenz.jsonl (lauf, zeit, git, stl_sha, je Seite F1 grob/fein + n + Status + Restfehler), Text, audit/konvergenz.png (F1 je
 Seite ueber die Laeufe, grob und fein). --lesen DIR: foto_diff_<foto>.json aus DIR statt neu rechnen (Probe/Test); --fein-json: teil_fotoform-Bericht lesen.
 --aus DIR: Fotosatz/Reihe/Bild dorthin statt audit/ (Probe ohne Objektordner). --trocken: keine Zeile anhaengen.
-Exit 0 = Zeile geschrieben, 1 = Aufruf falsch, 3 = keine Seite mit Beleg (Bericht, kein Kettenfehler).
+Exit 0 = Zeile geschrieben, 1 = Aufruf falsch, 3 = keine Seite mit Beleg (Bericht, kein Kettenfehler),
+4 = KONVERGENZ NICHT GEMESSEN (eine Gruppe grob oder fein NUR aus Messfehlern: OOM/Absturz/keine Ausgabe; Zeile trotzdem geschrieben, Stufe nicht in Ordnung).
+Jeder None-Wert hat einen Grund: fotos_grund / bauteile_fein_grund je Seite (Praefix MESSFEHLER oder DATENDECKE); messfehler/gemessen/modus_grob je Zeile.
+--modus-grob punkt|raster (fest im Fotosatz messart_grob, Wechsel = Bruch), --stl P misst ein anderes STL im selben Rahmen (Rueckrechnung), --threads N.
+Wiederholung derselben Lauf-ID ersetzt deren Zeile (Kette wiederholt die Stufe nach Speichermangel).
+Verwandt/Vorlaeufer: tools/konvergenz_bericht.py (Kreis, 10.11.), tools/konvergenz_wolke.py, tools/formsitz.py, tools/hoehensitz.py.
 Umgebung: cv2/numpy (Kettenmodus ruft foto_diff_batch/teil_fotoform mit venv-seg auf): /media/oem/scan/venv-seg/bin/python -I tools/konvergenz.py ...
 """
 import sys, os, json, glob, math, time, hashlib, subprocess, argparse
@@ -74,6 +79,9 @@ KEIN = "kein Beleg (Datendecke -> Fotoauftrag)"
 # 24.11.2026 (Kette 1122zb): alle Seiten 'kein Beleg (Datendecke -> Fotoauftrag)', Ursache waren Werkzeugfehler (foto_diff_batch 20/20 CUDA-OOM am eigenen
 # 1500-MiB-Deckel, teil_fotoform FileNotFoundError durch Pfad statt Objektname) - kein Datenbefund. Scheitert die MESSUNG, heisst der Status so:
 MESSFEHLER = "Messfehler (Werkzeug, kein Datenbefund) -> Werkzeug beheben, kein Fotoauftrag"
+# Nachtrag 24.11. (Agent konvergenz-f1): jeder None-Wert traegt einen GRUND (fotos_grund / bauteile_fein_grund je Seite, Praefix MF = Werkzeug, DD = Foto/Kamera);
+# eine Gruppe grob oder fein NUR aus Messfehlern -> Exit 4 "KONVERGENZ NICHT GEMESSEN" (Kette: Stufe nicht in Ordnung, nicht still rc 3).
+MF = "MESSFEHLER"; DD = "DATENDECKE"; MODUS_GROB_STD = "raster"
 
 
 def messfehler_grob(quelle):
@@ -313,6 +321,44 @@ def fein_lesen(tf, bt):
     return out
 
 
+def grund_grob(d, batch_fehler=None, batch_rc=None):
+    """Grund, warum ein Foto KEINEN groben F1-Wert hat (None = Wert vorhanden). MESSFEHLER = Werkzeug, DATENDECKE = Foto/Kamera."""
+    if batch_fehler: return f"{MF} foto_diff: {str(batch_fehler)[:160]}"
+    if d is None: return f"{MF} keine foto_diff-Ausgabe" + (f" (foto_diff_batch {batch_rc})" if batch_rc else "")
+    if d.get("beurteilbar") is False: return f"{DD} nicht beurteilbar (Modellkanten {d.get('modellkanten_px')} px; Kamera sieht das Modell nicht oder Foto leer)"
+    if f1_foto(d) is None: return f"{MF} foto_diff-JSON ohne anteil_modellkanten_ohne_foto/anteil_fotokanten_ohne_modell"
+    return None
+
+
+def gruende_fein(tf, bt, tf_fehler=None, geschnitten=None):
+    """{bauteil: Grund} fuer Bauteile OHNE feinen Wert (dieselben Regeln wie fein_lesen). geschnitten = aus dem STL ausgeschnittene Teile (None = unbekannt)."""
+    out = {}
+    for nm, e in bt.items():
+        bel = [k for k in e["kameras"] if k.get("belastbar")]
+        if not e["kameras"]: out[nm] = f"{DD} keine SfM-Kamera beim Einfrieren"; continue
+        if not bel:
+            out[nm] = f"{DD} keine belastbare Kamera (beste Aufloesung {min(k['aufloesung_m'] for k in e['kameras']) * 100:.0f} cm > {FEIN_ZIEL_M * 100:.0f} cm -> Nahaufnahme)"; continue
+        if geschnitten is not None and nm not in geschnitten: out[nm] = f"{DD} Bauteil im STL leer (keine Dreiecke im eingefrorenen Kasten)"; continue
+        if tf_fehler: out[nm] = f"{MF} teil_fotoform: {str(tf_fehler)[:160]}"; continue
+        je = ((tf or {}).get("teile") or {}).get(nm)
+        if not je: out[nm] = f"{DD} teil_fotoform: Teil in keinem Foto beurteilbar"; continue
+        g = []
+        for k in bel:
+            q = je.get(k["foto"])
+            if not isinstance(q, dict): g.append(f"{k['foto']}: kein Ergebnis")
+            elif "f1_f" not in q: g.append(f"{k['foto']}: ohne f1_f")
+            elif min(q.get("mkf_px", 0), q.get("fkf_px", 0)) < FEIN_MIN_PX: g.append(f"{k['foto']}: Feinkanten {q.get('mkf_px', 0)}/{q.get('fkf_px', 0)} px < {FEIN_MIN_PX}")
+            else: g = None; break
+        if g: out[nm] = f"{DD} " + "; ".join(g)[:200]
+    return out
+
+
+def ist_messfehler(gruende, schluessel):
+    """Alle genannten Eintraege haben einen MESSFEHLER-Grund (und es gibt mindestens einen)."""
+    s = list(schluessel)
+    return bool(s) and all(str(gruende.get(k) or "").startswith(MF) for k in s)
+
+
 def _wert(x):
     return x[0] if isinstance(x, (tuple, list)) else x
 
@@ -458,11 +504,14 @@ def main(argv=None):
     ap.add_argument("--trocken", action="store_true"); ap.add_argument("--ohne-fein", action="store_true")
     ap.add_argument("--ohne-wolke", action="store_true"); ap.add_argument("--wolke", help="dichte Wolke (npy, Kamerarahmen) statt der Standardwolke")
     ap.add_argument("--ohne-formsitz", action="store_true"); ap.add_argument("--ohne-hoehe", action="store_true")
+    ap.add_argument("--modus-grob", choices=["punkt", "raster"], help="Messart grobes F1 (Standard: aus dem Fotosatz, sonst raster); Wechsel = BRUCH der Reihe")
+    ap.add_argument("--threads", type=int, help="Faeden foto_diff_batch (Standard raster 2, punkt 3)")
+    ap.add_argument("--stl", help="anderes STL im selben Rahmen messen (Rueckrechnung/Vergleich, z. B. Handmodell); Standard objekt.json stl")
     a = ap.parse_args(argv)
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt))
     root = os.path.dirname(os.path.dirname(od)); fotos_dir = os.path.join(root, obj.get("fotos_dir", ""))
     audit = os.path.join(root, obj.get("audit") or os.path.relpath(os.path.join(od, "audit"), root)); aus = a.aus or audit; os.makedirs(aus, exist_ok=True)
-    stl = os.path.join(root, obj.get("stl") or "-")
+    stl = os.path.abspath(a.stl) if a.stl else os.path.join(root, obj.get("stl") or "-")
     huelle = None
     if not obj.get("rahmen_wand") and os.path.exists(stl):
         import neben_details as ND
@@ -478,6 +527,20 @@ def main(argv=None):
     else:
         S = fotosatz_anlegen(kand, W_, a.k, fotos_dir, a.lauf); bruch = {ax: dict(neu=True) for ax in S["seiten"]}
         print(f"FOTOSATZ ANGELEGT (fest ab jetzt): " + "; ".join(f"{s['name']} {len(s['fotos'])}" for s in S["seiten"].values()))
+    # Reihe lesen; fruehere Zeilen DIESER Lauf-ID (Kette wiederholt die Stufe nach Speichermangel) zaehlen nicht doppelt, die neue ersetzt sie
+    jp = os.path.join(aus, "konvergenz.jsonl"); zeilen = []
+    if os.path.exists(jp):
+        for ln in open(jp):
+            try: zeilen.append(json.loads(ln))
+            except Exception: pass
+    zeilen = [z for z in zeilen if z.get("lauf") != a.lauf]
+    # Messart grob fest im Fotosatz (punkt = CPU-Punktrender, raster = GPU); Wechsel = BRUCH aller Seiten (Werte nicht vergleichbar: 093 Nord raster 0,177/0,624, punkt 0,170/0,568)
+    modus = a.modus_grob or S.get("messart_grob") or MODUS_GROB_STD
+    alt_modus = S.get("messart_grob") or next((z.get("modus_grob") or "raster" for z in reversed(zeilen) if any(e.get("f1") is not None for e in (z.get("seiten") or {}).values())), None)
+    if alt_modus and alt_modus != modus:
+        print(f"MESSART GROB {alt_modus} -> {modus}: BRUCH aller Seiten ab {a.lauf}")
+        for ax in S["seiten"]: bruch.setdefault(ax, dict(messart=modus))
+    S["messart_grob"] = modus
     # feine Bauteile einfrieren (erst, wenn neben_details vorliegt)
     ndp = os.path.join(audit, "neben_details.json")
     if "bauteile" not in S and os.path.exists(ndp) and not a.ohne_fein:
@@ -495,35 +558,54 @@ def main(argv=None):
     json.dump(S, open(sp + ".tmp", "w"), indent=1, ensure_ascii=False); os.replace(sp + ".tmp", sp)
     satz = sorted({nr for s in S["seiten"].values() for nr in s["fotos"]})
     # --- grob messen / lesen
+    batch_rc = None
     if a.lesen: quelle = a.lesen
     else:
         quelle = os.path.join(a.daten or aus, "konvergenz", a.lauf); os.makedirs(quelle, exist_ok=True)
-        if satz and os.path.exists(stl):
+        if not os.path.exists(stl): batch_rc = f"STL fehlt: {stl}"
+        elif satz:
+            for p_ in glob.glob(os.path.join(quelle, "m", "*", "foto_diff_*.json")) + [os.path.join(quelle, "batch_ergebnis.json")]:   # Wiederholung: nichts Altes lesen
+                try: os.remove(p_)
+                except OSError: pass
             r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "foto_diff_batch.py"), a.objekt, "--aus", quelle, "--stl", f"m={stl}",
-                                "--fotos", ",".join(satz), "--modus", "raster", "--threads", "2"], cwd=root, capture_output=True, text=True)
-            if r.returncode: print(f"HINWEIS: foto_diff_batch rc {r.returncode}: {(r.stderr or r.stdout)[-300:]}")
+                                "--fotos", ",".join(satz), "--modus", modus, "--threads", str(a.threads or (3 if modus == "punkt" else 2))], cwd=root, capture_output=True, text=True,
+                               env=dict(os.environ, CUDA_VISIBLE_DEVICES="") if modus == "punkt" else dict(os.environ))
+            if r.returncode: batch_rc = r.returncode; print(f"HINWEIS: foto_diff_batch rc {r.returncode}: {(r.stderr or r.stdout)[-300:]}")
     fehl_grob = messfehler_grob(quelle)
     if fehl_grob: print(f"FEHLER: grobe Messung (foto_diff_batch) {len(fehl_grob)} von {len(satz)} Fotos ohne Ergebnis, z. B. {next(iter(fehl_grob))}: {next(iter(fehl_grob.values()))[:100]} - Werkzeugfehler, kein Datenbefund")
-    diffs, alt = {}, []
+    diffs, alt, grob_grund = {}, [], {}
     for nr in satz:
         d, p = diff_lesen(quelle, nr)
+        gg = grund_grob(d, fehl_grob.get(nr), batch_rc)
+        if gg: grob_grund[nr] = gg
         if d is None: continue
         diffs[nr] = d; kp = os.path.join(od, "messprotokoll", f"K-{nr}.json")
         if p and os.path.exists(kp) and os.path.getmtime(kp) > os.path.getmtime(p) + 1: alt.append(nr)
     if alt: print(f"HINWEIS: {len(alt)} foto_diff aelter als ihre K-Datei (Kamera seither neu): {alt[:6]} - Werte gehoeren zu einem frueheren Stand")
     # --- fein messen / lesen
-    tf = None; fein_fehl = False
+    tf = None; fein_fehl = False; tf_fehler = None; geschnitten = None
     if bt and a.fein_json and os.path.exists(a.fein_json): tf = json.load(open(a.fein_json))
-    elif bt and not a.lesen and os.path.exists(stl) and not a.ohne_fein:
+    elif bt and a.fein_json: tf_fehler = f"--fein-json {a.fein_json} fehlt"
+    elif bt and a.lesen: tf_fehler = "nicht gemessen (--lesen ohne --fein-json)"
+    elif bt and a.ohne_fein: tf_fehler = "abgeschaltet (--ohne-fein)"
+    elif bt and not os.path.exists(stl): tf_fehler = f"STL fehlt: {stl}"
+    elif bt:
         from pfade import temp_ordner
-        td = temp_ordner("konv_teile_"); nt = teile_schreiben(stl, obj, bt, td)
+        td = temp_ordner("konv_teile_"); nt = teile_schreiben(stl, obj, bt, td); geschnitten = {os.path.basename(p_)[:-4] for p_ in glob.glob(os.path.join(td, "*.stl"))}
         fot = sorted({k["foto"] for e in bt.values() for k in e["kameras"] if k["belastbar"]}); tfp = os.path.join(quelle, "teil_fotoform.json")
+        if os.path.exists(tfp): os.remove(tfp)
         if nt and fot:
-            r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "teil_fotoform.py"), a.objekt, "--teile_dir", td, "--fotos", ",".join(fot),
-                                "--wolke_verdeckung", "aus", "--fein", "an", "--aus", tfp], cwd=root, capture_output=True, text=True)
-            if r.returncode: print(f"FEHLER: teil_fotoform rc {r.returncode} (feine Messung gescheitert - Werkzeugfehler, kein Datenbefund): {(r.stderr or r.stdout)[-300:]}"); fein_fehl = True
+            # --stl = das gemessene Gesamtmodell als Verdecker (sonst objekt.json stl - bei --stl/Rueckrechnung das falsche Modell)
+            r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "teil_fotoform.py"), a.objekt, "--teile_dir", td, "--fotos", ",".join(fot), "--stl", stl,
+                                "--wolke_verdeckung", "aus", "--fein", "an", "--aus", tfp], cwd=root, capture_output=True, text=True,
+                               env=dict(os.environ, CUDA_VISIBLE_DEVICES="") if modus == "punkt" else dict(os.environ))
+            if r.returncode:
+                print(f"FEHLER: teil_fotoform rc {r.returncode} (feine Messung gescheitert - Werkzeugfehler, kein Datenbefund): {(r.stderr or r.stdout)[-300:]}"); fein_fehl = True
+                tf_fehler = f"rc {r.returncode}: " + (((r.stderr or r.stdout).strip().splitlines() or ["?"])[-1])[:160]
             if os.path.exists(tfp) and not r.returncode: tf = json.load(open(tfp))
+            elif not tf_fehler: tf_fehler = "kein Bericht geschrieben"
     fein = fein_lesen(tf, bt) if bt else {}
+    fein_grund = gruende_fein(tf, bt, tf_fehler, geschnitten) if bt else {}
     # --- Wolke gegen Modell (Verlust der Modellierung) messen / lesen
     wolke = None; wj = os.path.join(a.lesen or quelle, "konvergenz_wolke.json")
     if not a.ohne_wolke and not a.lesen and satz and os.path.exists(stl):
@@ -559,12 +641,8 @@ def main(argv=None):
         except Exception as ex: print(f"HINWEIS: {hj} unlesbar ({ex})")
     if form is None and not a.ohne_formsitz: print("HINWEIS: kein Formsitz - Status aus grobem F1 (Nullprobe 24.11.: nur 0,00-0,16 ueber Zufall, PLATEAU-Urteil ungeprueft)")
     # --- Zeile
-    jp = os.path.join(aus, "konvergenz.jsonl"); zeilen = []
-    if os.path.exists(jp):
-        for ln in open(jp):
-            try: zeilen.append(json.loads(ln))
-            except Exception: pass
-    Z = dict(lauf=a.lauf, zeit=time.strftime("%Y-%m-%d %H:%M:%S"), git=git_hash(), stl_sha=sha(stl), quelle=quelle, seiten={},
+    Z = dict(lauf=a.lauf, zeit=time.strftime("%Y-%m-%d %H:%M:%S"), git=git_hash(), stl_sha=sha(stl), stl=os.path.relpath(stl, root) if stl.startswith(root + os.sep) else stl,
+             modus_grob=modus, quelle=quelle, seiten={},
              wolke=(wolke or {}).get("wolke"), wolke_schwellen=(wolke or {}).get("schwellen"))
     gruppen = [(ax, s["name"]) for ax, s in S["seiten"].items()] + ([("rund", "rund")] if any(e["gruppe"] == "rund" for e in bt.values()) else [])
     for g, name in gruppen:
@@ -574,7 +652,13 @@ def main(argv=None):
         fb = {nm: v[0] for nm, v in fein.items() if bt[nm]["gruppe"] == g}; mf, nf, _ = median_oder_none(list(fb.values()))
         e = dict(name=name, f1=round(m, 4) if m is not None else None, n=nn, spreizung_fotos=round(se, 4) if se else None, fotos=fv,
                  f1_fein=round(mf, 4) if mf is not None else None, n_fein=nf, bauteile_fein={k: (round(v, 3) if v is not None else None) for k, v in fb.items()},
-                 bruch=g in bruch)
+                 bruch=g in bruch, bruch_grund=None if g not in bruch else ("Reihe neu angelegt" if bruch[g].get("neu") is True else
+                                                                            f"Messart grob -> {bruch[g]['messart']}" if bruch[g].get("messart") else
+                                                                            f"Foto ersetzt: {[w_['foto'] for w_ in bruch[g].get('weg', [])]} -> {bruch[g].get('neu')}"),
+                 fotos_grund={nr: grob_grund.get(nr, f"{MF} ohne Grund") for nr, v in fv.items() if v is None},
+                 bauteile_fein_grund={k: fein_grund.get(k, f"{MF} ohne Grund") for k, v in fb.items() if v is None})
+        e["nicht_gemessen"] = [t for t, ja in (("grob", g != "rund" and e["f1"] is None and ist_messfehler(e["fotos_grund"], fv)),
+                                                ("fein", e["f1_fein"] is None and ist_messfehler(e["bauteile_fein_grund"], fb))) if ja]
         we = ((wolke or {}).get("seiten") or {}).get(g)
         if we:
             e.update(f1_wolke=we.get("f1_wolke"), f1_modell_gleich=we.get("f1_modell_gleich"), verlust=we.get("verlust"), abdeckung_wolke=we.get("abdeckung"),
@@ -611,11 +695,24 @@ def main(argv=None):
             sh = status_reihe(reihe(zeilen_neu, g, "hoehensitz"), sh_eff) if e["hoehensitz_trennt"] else TRENNT_NICHT
             e.update(status_hoehe=sh, schwelle_hoehe=round(sh_eff, 4), status=status_mit_hoehe(e["status"], sh))
         e["status"] = status_messfehler(e["status"], S["seiten"].get(g, {}).get("fotos", []), fehl_grob, fein_fehl, rund=(g == "rund"))
+        if "fein" in e["nicht_gemessen"]: e["status_fein"] = MESSFEHLER
+        if "grob" in e["nicht_gemessen"]: e["status_grob"] = MESSFEHLER
         if e["status"] == MESSFEHLER: e["messfehler"] = dict(grob=sorted(nr for nr in S["seiten"].get(g, {}).get("fotos", []) if nr in fehl_grob), fein=fein_fehl)
         if e["status"] in (PLATEAU, KEIN, TRENNT_NICHT) or e["status"].startswith("faellt"):
             e["restfehler"] = restfehler(diffs, S["seiten"].get(g, {}).get("fotos", []), bt, g, fein)
+    mfg = sorted(nr for nr, q in grob_grund.items() if q.startswith(MF)); mff = sorted(nm for nm, q in fein_grund.items() if q.startswith(MF))
+    Z["messfehler"] = dict(grob=len(mfg), grob_von=len(satz), fein=len(mff), fein_von=len(bt), beispiel=([grob_grund[mfg[0]]] if mfg else []) + ([fein_grund[mff[0]]] if mff else []))
+    Z["gemessen"] = not any(e["nicht_gemessen"] or e["status"] == MESSFEHLER for e in Z["seiten"].values())
     if not a.trocken:
-        with open(jp, "a") as fh: fh.write(json.dumps(Z, ensure_ascii=False) + "\n")
+        alt_ = []
+        if os.path.exists(jp):
+            for ln in open(jp):
+                try:
+                    if json.loads(ln).get("lauf") == a.lauf: continue                       # Wiederholung derselben Stufe ersetzt ihre Zeile
+                except Exception: pass
+                alt_.append(ln if ln.endswith("\n") else ln + "\n")
+        with open(jp + ".tmp", "w") as fh: fh.writelines(alt_ + [json.dumps(Z, ensure_ascii=False) + "\n"])
+        os.replace(jp + ".tmp", jp)
     try: kurve(zeilen_neu, gruppen, os.path.join(aus, "konvergenz.png"))
     except Exception as ex: print(f"HINWEIS: Kurvenbild nicht geschrieben ({type(ex).__name__}: {ex})")
     # --- Text
@@ -624,7 +721,9 @@ def main(argv=None):
         e = Z["seiten"][g]
         fg = f"grob F1 {e['f1']:.3f} (n {e['n']}" + (f", Fotos streuen +-{e['spreizung_fotos']:.2f}" if e["spreizung_fotos"] else "") + ")" if e["f1"] is not None else "grob: kein Beleg"
         ff = f"fein F1 {e['f1_fein']:.3f} (n {e['n_fein']})" if e["f1_fein"] is not None else "fein: kein Beleg"
-        print(f"  {name}: {fg}; {ff} -> {e['status']}" + (" [BRUCH]" if e["bruch"] else ""))
+        print(f"  {name}: {fg}; {ff} -> {e['status']}" + (f" [BRUCH: {e['bruch_grund']}]" if e["bruch"] else ""))
+        for nr, q in list(e["fotos_grund"].items())[:3]: print(f"      ohne grob {nr}: {q}")
+        if e["bauteile_fein_grund"]: print(f"      ohne fein {len(e['bauteile_fein_grund'])}/{len(e['bauteile_fein'])}: " + "; ".join(f"{k}: {q[:90]}" for k, q in list(e["bauteile_fein_grund"].items())[:2]))
         if e.get("formsitz") is not None:
             print(f"      Formsitz {e['formsitz']:.3f} (Zufall {e['formsitz_null']}, Trennschaerfe {e['formsitz_trennschaerfe']}, relativ {e['formsitz_relativ']}) med|dz| {e['med_dz']} m"
                   f" a25 {e['a25']} kontur {e['kontur']} -> {e['status_formsitz']}")
@@ -637,6 +736,12 @@ def main(argv=None):
         for q in (e.get("restfehler") or {}).get("fein", [])[:3]: print(f"      Rest fein: {q['bauteil']} F1 {q['f1_fein']}")
         if (e.get("restfehler") or {}).get("fein_nicht_belastbar"): print(f"      fein nicht belastbar (Kamera zu fern/ungenau -> Nahaufnahme): {e['restfehler']['fein_nicht_belastbar']}")
     print(f"Reihe: {jp}  Bild: {os.path.join(aus, 'konvergenz.png')}  Fotosatz: {sp}")
+    if not Z["gemessen"]:
+        print(f"KONVERGENZ NICHT GEMESSEN - NICHT IN ORDNUNG: Messfehler grob {Z['messfehler']['grob']}/{Z['messfehler']['grob_von']} Fotos, fein "
+              f"{Z['messfehler']['fein']}/{Z['messfehler']['fein_von']} Bauteile; Gruppen "
+              + ", ".join(f"{e['name']} ({'+'.join(e['nicht_gemessen']) or 'grob'})" for e in Z["seiten"].values() if e["nicht_gemessen"] or e["status"] == MESSFEHLER)
+              + " | " + " | ".join(Z["messfehler"]["beispiel"]))
+        return 4
     return 0 if any(e["f1"] is not None or e["f1_fein"] is not None for e in Z["seiten"].values()) else 3
 
 
