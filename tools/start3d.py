@@ -117,13 +117,13 @@ def letzter_lauf(B):
     s = B.get("schritte", []); i = max([k for k, x in enumerate(s) if x.get("stufe") == "LAUF_START"] or [0]); return s[i:]
 
 
-STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "bauplan", "seiten", "html", "vergleich", "druck"]
+STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "bauplan", "seiten", "draehte", "html", "vergleich", "druck"]
 ERKL = dict(anlegen="Gebaeude im amtlichen 3D-Modell (LoD2) suchen, Rahmen anlegen", commons="freie Netzfotos holen (Commons, Openverse)",
             video="YouTube-Clips suchen, Bilder herausziehen", vorpruefen="Fremdbilder aussortieren (zeigt das Bild wirklich das Gebaeude?)",
             sammeln="alle Bilder zusammenlegen, Dubletten weg", sfm="Kameras berechnen (SfM) + dichte Punktwolke", tore="Lage-Pruefungen (GPS, Grundriss, Kameras)",
             dach="Dach aus Hoehenmodell vermessen", bauen="Grundmodell bauen + Abnahme", kanten="Fotokanten in 3D (Kernmethode)", fototor="Modell gegen Fotos pruefen",
             fassaden="Wandbilder entzerren, Relief", fenster="Fenster/Oeffnungen aus Wandbildern", bauplan="Bauplan je Wand", seiten="ungesehene Seiten suchen",
-            html="3D-Seite erzeugen", vergleich="Vergleich mit Referenz", druck="in Druckteile aufteilen")
+            draehte="Draehte/Oberleitung aus der Anzeige-Wolke nehmen", html="3D-Seite erzeugen", vergleich="Vergleich mit Referenz", druck="in Druckteile aufteilen")
 
 
 def hauptstufe(name):

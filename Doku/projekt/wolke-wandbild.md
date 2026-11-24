@@ -11,6 +11,7 @@ Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fa
 ## Versucht
 **Dichte Wolke (PatchMatch, Fusion, Tiefe)**
 - 15.11. · PatchMatch `window_step` 2 (Stufe schnell) → ✓ Methode · 2,5× schneller, −11 % Punkte, Abweichung Median 1,3 cm [archiv/STAND_2026-11-14 Z.122]
+- 24.11. · Draht-/Fahnenfilter `tools/wolke_draehte.py` (Kettenstufe `draehte` vor `html`, nur Anzeige-Kopie) → ✓ Werkzeug · Oberleitung steht in der Wolke meist als schmales schräges Blatt („Fahne“ 0,8 × 4 m), selten als Linie; Nordturm-Ausschnitt 1122: 5-m-Draht, Fahrdraht im Tor und eine Fahne weg, Wand/Vordach/Gesims/Giebelkante bleiben; Gewirr direkt an der Turmwand bleibt (braucht Sichtbarkeitsprüfung); „Strich an der Spitze“ = Dachfläche von der Kante, echt [tests/test_wolke_draehte.py]
 - 15.11. · PatchMatch 10 statt 20 Quellbilder → ✗ verworfen · nur 19 % schneller, −23 % Punkte; schlechter als window_step 2 [NICHTS_GEBRACHT]
 - 19.11. · Fusion `min_num_pixels` 8 → 3 → ✓ Standard · fünffache Punkte, Wand 56 → 76 % belegt, Fehlpunktanteil gleich [LOGBUCH_KETTENTEST_2026-11-19 17:15]
 - 19.11. · PatchMatch Fenster 11 + `filter_min_ncc` 0,05 → ⏸ zurückgestellt · Putz 99 % belegt, aber 2,4-fache Zeit; Nutzerentscheid [ebd.]
