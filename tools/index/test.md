@@ -1,4 +1,4 @@
-# Werkzeuge: test (192)
+# Werkzeuge: test (193)
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -79,6 +79,7 @@
 - `tools/test_koerper_schleife.py` [gen] test_koerper_schleife.py - fester Test ohne GPU fuer tools/wolke_rest.py (Grobformen, Nachbar-Abtrennung), bauteile.wolkenrest_koerper und tools/koerper_schleife.py (21.11.2026).
 - `tools/test_konsens_urteil.py` [-] Test der Konsens-Annahme (global_mapper_konsens.urteil, 19.11.2026): gutes Modell traegt; duennes Rueckgrat / wenig Bilder / kein Clip -> Gruende + Ursache + Abhilfe.
 - `tools/test_kontur_mittel.py` [-] Beweistest (synthetisch): Mittelform aus verrauschten Kopien, Kreisbogen-RANSAC. Aufruf: python tools/test_kontur_mittel.py --synth
+- `tools/test_konvergenz.py` [seg] test_konvergenz.py - synthetische Pruefung von tools/konvergenz.py (24.11.2026, Nutzer: "Augenmass ist doof").
 - `tools/test_konvergenz_logik.py` [-] test_konvergenz_logik.py - Trockenlauf der Konvergenzschleife OHNE GPU und OHNE Generatorbau (S3 Phase A, 2026-11-05). Prueft die STEUERUNG von qualitaetsstufen.v_konvergenz mit vo
 - `tools/test_lage_eine_funktion.py` [-] Fester Test (CPU, Sekunden): EINE Funktion je Groesse fuer Ausrichtung (sfm_lod2_ausrichten) und Lage-Tore (lage_gps_pruefen, lage_proben) - 22.11.2026. Befund Lage-Pruefstand (sch
 - `tools/test_lage_frueh.py` [-] Fester Test (CPU, synthetisch, ~1 min): Vorstufe 'Lage frueh' (tools/lage_frueh.py) - Ausrichtung + GPS-Tor + Lageproben auf dem duennen Netz VOR der dichten Wolke (22.11.2026). 1 
