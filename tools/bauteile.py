@@ -1084,14 +1084,17 @@ def zylinder_oeffnungen(datei, tiefe=0.7, innen=0.45, nur=None):
 def umgang(koerper, ecken, z0, z1, tiefe=0.9, pfosten=4, b=0.24, riegel=0.25, vor=0.08):
     """Offener Umgang / Laufgang unter der Traufe eines Turms (GENERISCH): rundum zurueckgesetzte Wand hinter einer Pfostenreihe.
     ecken: Wandecken (x, y) im Umlauf auf Hoehe des Umgangs; z0..z1: Schwelle unten bis Raehm oben (beide 'riegel' hoch, stehen 'vor' vor der Wand);
-    dazwischen ist die Wand um 'tiefe' zurueckgesetzt und zwischen 'pfosten' Pfosten je Seite (Eckpfosten mitgezaehlt) offen.
+    dazwischen ist die Wand um 'tiefe' zurueckgesetzt und zwischen 'pfosten' Pfosten je Seite (Eckpfosten mitgezaehlt) offen; 'pfosten' als Liste = Zahl je Kante
+    (Kante k = ecken[k] -> ecken[k+1], 24.11.2026: je Wand gezaehlt statt Mehrheit).
     Zu messen: z0, z1, Pfostenzahl (am Foto zaehlen); tiefe, Querschnitte = ANNAHME. Liefert den neuen Koerper."""
     m = np.mean(np.asarray(ecken, float), axis=0); zus = None; ab = None
-    for a_, b_ in zip(ecken, list(ecken[1:]) + [ecken[0]]):
+    pl = list(pfosten) if isinstance(pfosten, (list, tuple)) and len(pfosten) == len(ecken) else [int(pfosten if np.isscalar(pfosten) else max(pfosten))] * len(ecken)
+    for ki, (a_, b_) in enumerate(zip(ecken, list(ecken[1:]) + [ecken[0]])):
+        pfosten_k = max(2, int(pl[ki]))
         mi = 0.5 * (np.asarray(a_, float) + np.asarray(b_, float)); W = Wand(a_, b_, aussen=tuple(2 * mi - m)); L = W.laenge
         c_ = W.kasten(-0.05, L + 0.05, z0 + riegel, z1 - riegel, -tiefe, vor + 0.3); ab = c_ if ab is None else ab + c_
         t_ = W.kasten(-vor, L + vor, z0, z0 + riegel, -0.3, vor) + W.kasten(-vor, L + vor, z1 - riegel, z1, -0.3, vor)
-        for k_ in range(pfosten): u_ = k_ * (L - b) / (pfosten - 1); t_ = t_ + W.kasten(u_, u_ + b, z0 + riegel - 0.02, z1 - riegel + 0.02, -0.3, vor - 0.01)
+        for k_ in range(pfosten_k): u_ = k_ * (L - b) / (pfosten_k - 1); t_ = t_ + W.kasten(u_, u_ + b, z0 + riegel - 0.02, z1 - riegel + 0.02, -0.3, vor - 0.01)
         zus = t_ if zus is None else zus + t_
     return koerper - ab + zus
 
@@ -1171,10 +1174,11 @@ def umgang_aus_json(koerper, datei, tiefe=0.9):
         return koerper, [dict(seite="wand", element="Laufgang unter der Traufe NICHT gebaut", quelle="bauteile.umgang_aus_json", hinweis="Zone %.2f m / %d Pfosten / Ecken ungueltig" % (h, p))]
     ri = min(0.25, 0.2 * h)
     ecken, wvs = ecken_gesetzt(J["ecken"], os.path.join(os.path.dirname(os.path.abspath(datei)), "schleife_korrekturen.json"), z=(z0, z1))
-    koerper = umgang(koerper, [tuple(e) for e in ecken], z0, z1, tiefe=tiefe, pfosten=p, riegel=ri)
+    pk = J.get("pfosten_kanten"); pk = [int(x) for x in pk] if isinstance(pk, list) and len(pk) == len(ecken) and all(int(x) >= 2 for x in pk) else p   # je Kante (24.11.2026), alt: Mehrheit
+    koerper = umgang(koerper, [tuple(e) for e in ecken], z0, z1, tiefe=tiefe, pfosten=pk, riegel=ri)
     if any(wvs): J.setdefault("annahmen", []).append("Ecken auf gesetzte Wandlage verschoben (Kanten %s m, bauteile.ecken_gesetzt)" % ", ".join("%+.2f" % w_ for w_ in wvs))
     wz = "; ".join("%s: %s Pfosten, innen u %s (%d Fotos)" % (w["id"], w["pfosten"], w.get("pfosten_u_konsens"), w.get("pfosten_fotos", 0)) for w in J.get("waende", []) if w.get("pfosten"))
-    return koerper, [dict(seite="wand", element="Umgang unter der Traufe (offener Laufgang, %d Pfosten je Seite)" % p, quelle="Kettenstufe bauplan: tools/umgang_aus_fotos.py (%d Fotos, Zone aus Bildkanten, Pfosten gezaehlt) -> bauteile.umgang" % J.get("fotos_gut", 0),
+    return koerper, [dict(seite="wand", element="Umgang unter der Traufe (offener Laufgang, Pfosten je Seite %s)" % (pk if isinstance(pk, list) else p), quelle="Kettenstufe bauplan: tools/umgang_aus_fotos.py (%d Fotos, Zone aus Bildkanten, Pfosten gezaehlt) -> bauteile.umgang" % J.get("fotos_gut", 0),
                           umgang_z0=z0, umgang_z1=z1, pfosten_je_seite=p, hinweis="ANNAHME: Ruecksprung %.2f m, Schwelle/Raehm %.2f m, Pfosten 0,24 m; %s; " % (tiefe, ri, wz) + "; ".join(J.get("annahmen", [])))]
 
 

@@ -1,54 +1,44 @@
-# Übergabe 24.11.2026 11:00
+# Übergabe 24.11.2026 21:00
 Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbeginn`.
 
 ## Auftrag
-- Stehend (seit 22.11.): „Keine Handangriffe, nur Automatik." · „Ich will die Südseite" · „parallel", „Vollgas", „Verbessere die Pipeline". Arbeitsweise Skill `kette-schleife`.
-- Heute: „Was können wir noch verbessern?" → „Ja, mach alles." · Bau auf mehreren Kernen: „Ja." · „Ja, du darfst verschieben." (MachineFrameWork, ~/.codex)
-- Nutzerfrage: „Wann verschwindet diese letzte Fehlerwolke?" (Oberleitung in der Wolke am Nordturm) · „Die Gaube auf der Nordseite … warum nicht wiederverwenden?" (beantwortet: Katalogteil schwab_v3 abgeschaltet nach Regel 21.11.; Kette misst selbst, Pfosten fehlten wegen 100-Punkte-Schwelle).
-- Projektast „Bahn & Anlage" (Doku/projekt/bahn-anlage.md): Laser-Unterbau, erst N-Probemodul, dann H0 + CO2-Laser (1 Durchgang, möglichst Open Source).
+- Stehend: „Keine Handangriffe, nur Automatik." · „Ich will die Südseite" · parallel/Vollgas · Skill `kette-schleife` (Kette → Bild → je Befund Agent → Merge-Probe → Merge nur bei Schnelltest 0).
+- Heute Abend: „Suche weitere Verbesserungen." · „Können wir nicht irgendwas noch verbessern?" · Bildwert-Idee („nur die gewinnbringendsten Bilder in der ersten Stufe").
+- Wissen: „Das ist eine Katastrophe" (Wissensbaum unvollständig) · „archivierte … so machen, dass wir immer alles finden" · „Schicke einen Agenten los, der … lernt, wie wir Wissen besser archivieren" · Werkzeug soll nach ~/git/claude-mds („damit alle davon profitieren").
+- Nutzer will verstehen, wo wir stehen: je Lauf Zahl je Seite (Formsitz in % der Obergrenze, Höhensitz). Einfach erklären, kein Fachjargon.
 
 ## Erledigt und geprüft
-- 1122w (01:45–06:48, 5 h): Süd-Quader, Steinzone, Eckquader, Südfenster; Fehlerliste im Logbuch. 3D-Artifact V6 https://claude.ai/artifact/ScV8KGvyjJrxxHCAzCM6pi
-- Merge-Probe 25 (Schnelltest 0): tiefe_lokal-Hash, Krümel-Kantenbeleg, Bogen-Gewände, Ortsteine Mehrfoto.
-- 1122x (07:28–10:13, 2 h 45, kein Kamera-Nachholen nötig): Gewände sichtbar, Krümel weg; Süd-Uhr fehlte. ANNAHME Süd ~50 %, Nord ~55 %. Bilder: scratchpad q/x_eigen__IMG_20261106_113830.jpg, x_…113231.jpg
-- Merge-Probe 26 → main a9b1baefe (Schnelltest 0, 568 s), 10 Zweige: Südfenster-Gewände, Nachhol-Zwischenspeicher, West-Schlitze (schlitze_wandbild.py) + grobes Wandbild für Ortsteine, Malplan (tools/malplan.py, Weißabgleich), Vorbau Nord (3 Pfosten, offene Brüstung, 6 Konsolen), Ost-Teil (Teil 1, laut seiten_konvention Ostseite – vorher fälschlich „Süd-Teil“) über Wände gebunden (tools/seiten_waende_binden.py; war 10° gekippt), wolke_draehte.py (Anzeige, ~45 %), gemessene Bogenfugen, Uhr aus Einzelfotos, Bau parallel (421→274 s, STL bitgleich).
-- MachineFrameWork nach /media/oem/rcdaten/ausgelagert_root/git/MachineFrameWork (Prüfsumme gleich, Symlink). Rest mit Root-Rechten: ~/git/MachineFrameWork.rest_rootrechte (96 KB, Nutzer kann `sudo rm -rf`).
+- 1122zb (15:31–18:09) fertig: Wandlage f00 −0,357 / f01 −0,288 m aus Fotokanten, Ost-Teil auf Gelände, Quellfilter 1,6 %, 3D V9 https://claude.ai/artifact/ScV8KGvyjJrxxHCAzCM6pi (Logbuch 18:09).
+- Merge-Probe 29+30 in main (Schnelltest 0 nach Fixes): Lot-Tore Teil 1 (10° Kippung richtig, Maßstabslücke 12–14 % offen), f02-Fernkameras, Ketten-Probelauf `tools/ketten_probelauf.sh` (Grundstand kprobe_kaufhaus steht, Probelauf p30 rc 0), Formsitz `modelle/FEATURE_FORMSITZ.md`, Uhr-Zonen verworfen, Schlitz-Mindestmaß, Unschärfe-Tor nur bei schwachem Kontrast, Erkennerkasten-Prüfung (f04 3/3 Schlitze), Treppenturm-Kerbe (Suchrand), seiten_luecken-Abbildungsfehler (alle Kameras im Turm → robuste Abbildung + Tor), Wissensbaum 0 Lücken (942 nachgetragen, 24 Unteräste), `tools/wissen_suchen.py`, `tools/wissensbaum_luecken.py`.
+- Formsitz Modell 1122zb gegen volle Wolke (relativ zur Obergrenze): Süd 0,61 · West 0,52 · Nord 0,43 · Ost 0,09; med|dz| 0,15/0,20/0,29/3,57 m.
+- Bildwert-Stufe 1 (61/625 Bilder) für die Wolke ✗: 1,0 statt 16,8 Mio. Punkte, Formsitz 60–70 % von „alle“, Zufall kaum schlechter (Baum foto-sfm/fotoauswahl.md).
+- claude-mds: doku-pflege „Ast voll → Unterast, nie kürzen" (Commit 14f0b95, gepusht).
 
-## Läuft gerade (Stand 24.11. 18:40)
-- 1122za brach 15:25 nach 2 min ab (dichte Wolke aelter als neu geschriebenes Netz) -> pipeline_objekt.dicht_alt_behandeln (automatisch beiseite). 1122zb 15:31-18:09 fertig (rc 4, 3 rot), 3D V9 https://claude.ai/artifact/ScV8KGvyjJrxxHCAzCM6pi, Fehlerliste im Logbuch 18:09.
-- Merge-Probe 29 in main (Lot-Tore Teil 1: 10 Grad Kippung richtig, Massstab-Luecke 12-14 % offen; f02-Fernkameras; tools/ketten_probelauf.sh; Formsitz modelle/FEATURE_FORMSITZ.md), Schnelltest 0 nach Temp-Fix.
-- Job ketten-probe-grund (Grundstand Probelauf kprobe_kaufhaus, Log job_logs/ketten-probe-grund.log). Danach vor jedem Merge `tools/ketten_probelauf.sh --rev <zweig>` als Job.
-- Agenten: Uhr f01 (Zackenrand, Uhr auf Wandgemaelde) und Fenster f03 (Schlitz statt Bogen) / f04 (Videounschaerfe). Danach Merge-Probe 30 -> Probelauf -> Kette ab bauplan.
+## Läuft gerade
+- Kette 1122zc seit 20:30 `--ab bauen` (Unit rcpark-kette-schwabentor-null-1122zc, Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122zc.log, Ende = `JOB_ENDE rc=`), 20:43 bei fassaden_kette; Ende ca. 22:00–22:15. Danach: seiten.jpg + neben_details.jpg ansehen/schicken, Fehlerliste, Formsitz je Seite (audit/konvergenz.jsonl), 3D-HTML V10 gleiche URL (`tools/py tools/modell_3d_html.py ... --wolke ... --farben ...`, nach …_1122z_ende.html kopieren), Logbuchzeile.
+- Wissensverwaltung FERTIG, in Merge-Probe 31: Suche mit Rangfolge, Nachweis tools/wissen_wiederfinden.py (12/12 Verlustfaelle, Kontrollsatz nur 4/8 = Synonym-Schleife, kein Beweis fuer Neues), werkzeug_aehnlich.py (15 Doppelgaenger), wissen_ablage_pruefen.py, modelle/WIDERSPRUECHE.md, Doku/projekt/wissen.md; ab 25.11. Pflicht-Kopfzeile 'Verwandt/Vorlaeufer:' in neuen tools/*.py; claude-mds-Vorschlag in merge_probe31/tools/claude_mds_vorschlag/ (UEBERNAHME.txt). Offen fuer Nutzer: 33 doppelte Register-IDs umbenennen?, fehlende modelle/QUALITAETSSTUFEN.md.
+- Agenten (Worktrees .claude/worktrees/agent-*): Höhen waagerechter Bauteile angleichen (Höhensitz) · Ost-Grobform 3,6 m klären. Ergebnisse → Merge-Probe 31.
+- Merge-Probe 31 (/media/oem/scan/rc-park_tmp/merge_probe31): Höhensitz `tools/hoehensitz.py` + konvergenz-Einbau. Erst nach 1122zc-Ende in main.
 
 ## Nächste Schritte
-1. Nach 1122y-Ende: `audit/seiten.jpg`, neben_*.jpg, `tools/py tools/modell_neben_foto.py modelle/schwabentor-1122/objekt.json eigen__IMG_20261106_113830 <aus.jpg>` (Süd) und …113231 (Nord), malplan_*.jpg ansehen. Prüfen: Vorbau-Pfosten/Brüstung, Südfenster-Gewände, Bogenfugen, Süd-Uhr, West-Schlitz, Süd-Lage (seiten_modelle meldet waende_stufe?), Laufzeit je Stufe.
-2. Fehlerliste + Realitäts-% je Seite an Nutzer, Bilder per SendUserFile, 3D-Artifact mit gleicher URL neu (HTML /media/oem/scan/rc-park_daten/schwabentor-1122/schwabentor-1122_3d.html), Logbuchzeile, push.
-3. Zweig worktree-agent-a62da684d0af546e8 (Drahtmasken je Foto, 840a50f05, Schnelltest 0) in Merge-Probe 27 → erzwingt Neufusion + stabil_alle neu (ANNAHME +1 h).
-4. Neue Agenten je Befund aus 1122y (kette-schleife). Kandidaten: Ost-Seite 239 m² ohne Fotos löst kein Nachholen aus (nur „ganz ungesehen" zählt); Mono-Versatz 10–13 cm (evtl. Folge der 10°-Kippung – nach 1122y neu messen); Knaggenform/Zierbretter Vorbau; Ortsteine West oben links; Schnittbaum in aushoehlen.
-5. SIFT-GPU-Messung (first_octave 0, 27 MPx) wenn GPU frei.
+1. Nach JOB_ENDE 1122zc: auswerten wie oben, dem Nutzer Bilder + Zahlen je Seite (einfach erklärt).
+2. Agentenzweige in Probe 31 mergen; `bash tools/ketten_probelauf.sh --rev merge-probe-31` als Job (JOB_RAM_MB=7000 JOB_GPU_MB=3000), dann Merge main + `CUDA_VISIBLE_DEVICES= bash tools/schnelltest.sh` = 0, push.
+3. Wissens-Vorschlag prüfen (Recall@5 hoch?) → nach ~/git/claude-mds/claude/skills/doku-pflege übernehmen, committen, pushen.
+4. Nächste Kette mit Höhensitz; GPU-Pausen für Auflösungs-Leiter (BN: 1000/1200/1600 px, sweetspot.py anpassen).
+5. Worktree agent-a250d1c46da5208e8 (Bildwert, Commit 865b8b785) nur als Option mergen oder entfernen (Ergebnis ✗ für Wolke).
 
 ## Entscheidungen des Nutzers
-- ✓ Verschieben MachineFrameWork + ~/.codex erlaubt. ~/.codex NICHT verschoben, weil Codex lief (sqlite aktiv) – nachholen, wenn Codex beendet.
-- ✓ Bogenfugen: nur gemessene (Regel 15.11. bleibt: nichts generieren) – in PIPELINE_FASSADEN.md vermerkt.
-- ? Löschen /media/oem/rcdaten/tmp/bau_parallel_agent (~1,1 GB) + /media/oem/rcdaten/tmp/tools_alt – nur nach „Ja".
-- ? Löschen 88-MB-Ordner /media/oem/scan/rc-park_daten/_agent_ortsteine – nur nach „Ja".
-- ? Nachkauf Farben: mattes Grün (Vordach), Ocker/Orange (Malplan-Hinweis).
+- ✓ Probelauf darf rc-park_tmp/ketten_probe/{code,arbeit} jederzeit ersetzen.
+- ? Nicht eingecheckte fremde Dateien modelle/archiv/SPEC_FLAECHENMASS.md, STAND_2026-11-10_NACHMITTAG.md, STAND_2026-11-12_VORMITTAG_lang.md: einchecken? (SPEC = Flächenmaß-Vorläufer des Formsitz, 11.11.)
+- ? Alte Merge-Probe-Worktrees 11/14/28/29 + rc-park_tmp/flaechen/wt entfernen (Löschen nur nach „Ja").
 
-## Fehler und Lehren dieser Sitzung
-- Agenten-Worktrees bleiben nach Hand-back gesperrt: sauber+gemergt → `git worktree unlock`, dann `remove` (ohne --force). Im Logbuch.
-- Malplan-Agent benannte Seiten erst falsch (eigene Kompassrechnung) – Seitennamen immer aus objekt.json seiten_konvention.
-- Süd-Uhr hing verdeckt vom Teillauf ab (Mosaik-Naht) – Urteile nie von Mosaik-Zufall abhängig machen (jetzt Einzelfoto-Beleg).
-- GPS-Lage des Ost-Teils (Teil 1) war 10° gekippt bei gemeldeten ±1,4° – GPS-Lot aus wenigen Fotos ist kein Beleg (lage-seiten.md Versucht).
-- `rm -rf` beim Auslagern scheiterte an root-eigenen Dateien → vorher `find ! -user $USER` prüfen.
-- Schnelltest-Doku-Budget (≤ 110 Zeilen je Ast) beim Mergen vieler Versucht-Zeilen beachten.
-
-## Wichtige Pfade und Befehle
-- Logbuch: modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md (Zeilen 24.11.).
-- Merge-Probe: Zweig merge-probe-N im Haupt-Checkout, Konflikte in schnelltest.sh/Doku: beide Seiten behalten (Marker-Zeilen löschen), dann `bash tools/schnelltest.sh`, `--ff-only` nach main, `python3 tools/baum_erzeugen.py`.
-- Kettenstart: `JOB_RAM_MB=11000 JOB_GPU_MB=6000 tools/job_start.sh kette-schwabentor-null-<id> <log> /usr/bin/env RCPARK_LAGE_FRUEH=hinweis /media/oem/scan/venv-seg/bin/python -I tools/gesamtkette.py schwab_auto --ziel schwabentor-1122 --ab vorpruefen --dicht-stufe schnell`
-- Malplan-Bilder: /media/oem/rcdaten/tmp/malplan_agent/wb_ende/
+## Fehler und Lehren dieser Sitzung (Details: modelle/ERKENNTNISSE.md, Baum)
+- Vorarbeit Bildwert/Flächenmaß nicht gefunden → Wissenssuche vor jedem Auftrag (CLAUDE.md, Memory feedback-archiv-immer-auffindbar).
+- Suche findet noch nicht zuverlässig („Formmaß Fläche" → irrelevant oben) – Rangfolge/Nachweis-Test beauftragt; NICHT als bewiesen melden.
+- Probelauf-Auswertung 2× falsch (Endmarke) vor erstem echten Lauf; dann echter Absturz gefunden (zusatzfotos_registrieren None-Format).
+- Befund „schiefer Putz" falsch gelesen (war runder Treppenturm) – erst Bauteil prüfen, dann Auftrag.
+- Maschine lag 20 min leer – parallele Jobs bei jedem Start mitdenken.
 
 ## Vorsicht
-- Nur EIN Kettenlauf; Agenten rechnen nicht schwer während der Kette. Root ≥ 15 GB Ziel (jetzt ~9,6 GB, je Agent-Worktree 620 MB, hart 5 GB).
-- Worktrees agent-ae5474668c0142117 (dirty) und agent-a1b159488c8983a24 (ungemergt) nicht anfassen.
-- Fremde uncommittete Dateien (kaufhaus_grob3, martinstor*, ober_tvdr, schwab_nachbar, modelle/inhalt/PIPELINE_FASSADEN.md) nie committen. Toshiba nie anfassen. Löschen nur nach „Ja".
+- Fremde uncommittete Dateien nie committen (modelle/INDEX.md, LIZENZ_WERKZEUGE.md, PIPELINE_FASSADEN.md, kaufhaus_grob3, martinstor*, archiv/ untracked).
+- Nur EINE Kette; Agenten ohne GPU/Rechenläufe während Kette. Worktrees nie --force; .claude/worktrees kein Symlink.
