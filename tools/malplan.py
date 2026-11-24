@@ -12,7 +12,11 @@ Ablauf je Wand (alles aus den Daten, keine Koordinaten im Code):
   5. Je Zone: mittlere Farbe (sRGB-Hex, aus dem UNgeglaetteten Bild), Material-Vorschlag aus Lab + Textur (ANNAHME, Farbregel),
      naechster Ton der Grundpalette (Bestand des Nutzers, Memory user-malmaterial-bestand) + beste Zweiermischung, Flaechenanteil,
      Malschritte Grundierung -> Grundton -> Lasur -> Trockenbuersten -> Mattlack nach Doku/projekt/bahn-anlage.md (Gestaltung/Malen).
-Ausgabe (--aus): malplan.json, malplan_<fNN_Seite>.jpg (Wandbild | Zonenkarte mit Legende), malplan.md (kurze Anleitung).
+  0. WEISSABGLEICH (24.11.2026, Koordinator): Durchgang 1 roh -> Putz-Zone (hellste grosse neutrale Zone) je Wand; von Kries im linearen sRGB: Putz -> neutral,
+     Helligkeit aller Waende auf den hellsten Putz (Schattenseite wird nicht schwarz); Guard Verstaerkung <= --max-gain; Durchgang 2 auf dem abgeglichenen Bild.
+  6. Gebaeude: EINE Malfarbe je Material (flaechengewichtetes Mittel ueber alle Waende) -> plan['gebaeude'].
+Wandnamen: Seite aus objekt.json 'seiten_konvention' (Achse der Wandnormale, wie befundliste/seiten.jpg) + Wand-ID, z. B. malplan_Nord_f00.jpg; ohne Konvention nur ID.
+Ausgabe (--aus): malplan.json, malplan_<Seite>_<fNN>.jpg (roh | abgeglichen | Zonenkarte mit Legende), malplan.md (kurze Anleitung).
 rc 0 = mindestens eine Wand, rc 3 = keine Wandbilder gefunden.
 
 Aufruf:  tools/py tools/malplan.py <daten>/fassade_fein --aus <ordner> [--nur f02 f03] [--massstab 87] [--min-mm 2]
@@ -24,6 +28,7 @@ from PIL import Image, ImageDraw, ImageFont
 from scipy import ndimage as ndi
 
 Image.MAX_IMAGE_PIXELS = None
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))                     # -I: Geschwister (pfade, abdeckung_quellen) importierbar
 
 # Grundpalette = was der Nutzer hat (Memory user-malmaterial-bestand, 17.11.2026). ANNAHME: Hex-Werte sind Naeherungen der Herstellertoene (nicht gemessen).
 # rolle: "deck" = Grundton/Trockenbuersten erlaubt, "lasur" = NUR stark verduennt als Lasur (OBI-Wandfarbe: dick/kreidig, verschmiert Details - Memory).
@@ -119,16 +124,21 @@ def palette_naechste(rgb, rolle="deck"):
 
 
 def palette_mischung(rgb, rolle="deck"):
-    """Beste Zweiermischung (Anteile 1:3, 1:1, 3:1) aus Farben der Rolle - ANNAHME: Mischung linear im linearen sRGB (grobe Naeherung echter Pigmente)."""
+    """Beste Zweiermischung (Anteile 1:3, 1:1, 3:1) aus Farben der Rolle - ANNAHME: Mischung linear im linearen sRGB (grobe Naeherung echter Pigmente).
+    Nur Abtoenen/Abdunkeln (ein Partner unbunt: Weiss/Schwarz/Grau) - zwei Buntfarben mischen sich als Pigment subtraktiv (Blau+Gelb = Gruen), das kann das Modell nicht."""
     lab = rgb_zu_lab(rgb); best = None; P = _pal(rolle)
+    unbunt = lambda h_: math.hypot(*rgb_zu_lab(hex_zu_rgb(h_))[1:]) < 5
     for i, (n1, h1) in enumerate(P):
         for n2, h2 in P[i + 1:]:
-            for w in (0.25, 0.5, 0.75):
+            if not (unbunt(h1) or unbunt(h2)): continue
+            for w in (0.0, 0.25, 0.5, 0.75, 1.0):                           # 0/1 = Farbe pur
                 m = linear_zu_srgb(w * srgb_zu_linear(hex_zu_rgb(h1)) + (1 - w) * srgb_zu_linear(hex_zu_rgb(h2)))
                 d = delta_e(rgb_zu_lab(m), lab)
-                if best is None or d < best[0]: best = (d, n1, n2, w, m)
+                if best is None or d < best[0] - 1e-9: best = (d, n1, n2, w, m)
     teil = lambda t: f"{t} Teil" if t == 1 else f"{t} Teile"
-    d, n1, n2, w, m = best; t1 = int(round(w * 4)); return dict(text=f"{teil(t1)} {n1} + {teil(4 - t1)} {n2}", hex=rgb_zu_hex(m), delta_e=round(d, 1))
+    d, n1, n2, w, m = best; t1 = int(round(w * 4))
+    text = f"{n1} pur" if t1 == 4 else f"{n2} pur" if t1 == 0 else f"{teil(t1)} {n1} + {teil(4 - t1)} {n2}"
+    return dict(text=text, hex=rgb_zu_hex(m), delta_e=round(d, 1))
 
 
 # ------------------------------------------------------------------ Clusterung + Glaettung
@@ -193,20 +203,38 @@ def kleine_zonen_aufloesen(lbl, gueltig, min_px):
 
 
 # ------------------------------------------------------------------ Eingabe
-def seite_aus_normale(n):
-    """wie tools/bildwert.seite_aus_normale (Normale (x, y) im Objektrahmen, +y = Nord)."""
-    a = math.degrees(math.atan2(n[1], n[0])) % 360
-    return "Ost" if (a < 45 or a >= 315) else "Nord" if a < 135 else "West" if a < 225 else "Sued"
+def seiten_konvention(objekt_json):
+    """{'+x': 'Nord', ...} aus objekt.json 'seiten_konvention' (wie tools/abdeckung_quellen.seiten_aus_konvention). Fehlt sie -> {}: dann KEIN Seitenname und
+    keine eigene Kompassrechnung - sonst hiesse dieselbe Wand im Malplan anders als in seiten.jpg/neben-Bildern (Koordinator 24.11.2026)."""
+    if not objekt_json or not os.path.exists(objekt_json): return {}
+    try:
+        from abdeckung_quellen import seiten_aus_konvention
+        return seiten_aus_konvention(json.load(open(objekt_json)))
+    except Exception as e: print(f"  Warnung: seiten_konvention aus {objekt_json} nicht lesbar ({type(e).__name__})"); return {}
 
 
-def waende_finden(ordner):
-    """-> Liste dict(id, seite, bild, abdeckung, relief, zelle_m). Liest fassaden.json, faellt auf Dateinamen zurueck."""
-    meta = {}
+def seite_name(n, konv):
+    """Achse mit groesstem Skalarprodukt zur Wandnormale (Objektkoordinaten) -> Seitenname der Konvention (wie tools/befundliste.seite_name)."""
+    if not konv or n is None: return ""
+    ach = {"+x": (1, 0), "-x": (-1, 0), "+y": (0, 1), "-y": (0, -1)}
+    return konv.get(max(ach, key=lambda k: ach[k][0] * n[0] + ach[k][1] * n[1]), "")
+
+
+def waende_finden(ordner, objekt_json=None):
+    """-> (Liste dict(id, seite, bild, abdeckung, relief, zelle_m), objekt.json mit Konvention oder None). Seitenkonvention aus objekt.json
+    (Standard: 'objekt' in fassaden.json, ueber tools/pfade.repo_pfad aufgeloest)."""
+    meta = {}; obj_rel = None
     fj = os.path.join(ordner, "fassaden.json")
     if os.path.exists(fj):
         try:
-            for f in json.load(open(fj)).get("fassaden") or []: meta[f["id"]] = f
+            fd = json.load(open(fj)); obj_rel = fd.get("objekt")
+            for f in fd.get("fassaden") or []: meta[f["id"]] = f
         except Exception as e: print(f"  Warnung: {fj} nicht lesbar ({type(e).__name__}) - Wandnamen ohne Seite")
+    if not objekt_json and obj_rel:
+        try:
+            from pfade import repo_pfad; objekt_json = repo_pfad(obj_rel)
+        except Exception: objekt_json = obj_rel
+    konv = seiten_konvention(objekt_json)
     ids = sorted({os.path.basename(p).split("_")[1] for p in glob.glob(os.path.join(ordner, "ortho_f*.png"))})
     out = []
     for i in ids:
@@ -215,7 +243,46 @@ def waende_finden(ordner):
         ab = next((p for p in (os.path.join(ordner, f"abdeckung_{i}_fein.png"), os.path.join(ordner, f"abdeckung_{i}.png")) if os.path.exists(p)), None)
         rel = os.path.join(ordner, f"relief_{i}.png"); m = meta.get(i, {})
         zelle = float((m.get("raster") or {}).get("zelle") or 0) or None
-        out.append(dict(id=i, seite=seite_aus_normale(m["n"]) if m.get("n") else "", bild=bild, abdeckung=ab, relief=rel if os.path.exists(rel) else None, zelle_m=zelle))
+        out.append(dict(id=i, seite=seite_name(m.get("n"), konv), bild=bild, abdeckung=ab, relief=rel if os.path.exists(rel) else None, zelle_m=zelle))
+    return out, (objekt_json if konv else None)
+
+
+# ------------------------------------------------------------------ Weissabgleich (von Kries im linearen sRGB, Bezug Putz)
+def luminanz(lin): return float(0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2])
+
+
+def putz_bezug(zonen, voll, rgb, min_anteil):
+    """Hellste grosse neutrale Zone = Putz (Material 'Putz', Anteil >= min_anteil; bei mehreren die hellste) -> mittleres lineares RGB oder None."""
+    k = [z for z in zonen if z["material"] == "Putz" and z["anteil"] >= min_anteil]; art = "Putz"
+    if not k:      # Putz im Farbstich (Schattenseite mit Himmelslicht) faellt roh unter 'Himmel/Fremd': hellste grosse, nur maessig bunte Zone (C* < 25)
+        k = [z for z in zonen if z["anteil"] >= min_anteil and math.hypot(*z["lab"][1:]) < 25 and z["lab"][0] > 25]; art = "hellste grosse Zone (Putz im Farbstich, ANNAHME)"
+    if not k: return None
+    z = max(k, key=lambda z_: z_["lab"][0]); m = voll == z["label"]
+    return (srgb_zu_linear(rgb[m]).mean(0), art) if m.any() else None
+
+
+def abgleichen(rgb, gain):
+    """von Kries: je Kanal im linearen sRGB verstaerken (gain = Ziel-Y / Putz je Kanal -> Putz neutral und auf gemeinsamer Helligkeit)."""
+    return linear_zu_srgb(srgb_zu_linear(rgb) * np.asarray(gain, float)[None, None, :]).round().astype(np.uint8)
+
+
+def gebaeude_farben(waende):
+    """Eine Malfarbe je Material fuer das ganze Gebaeude: flaechengewichtetes Mittel (linear) der abgeglichenen Zonenfarben aller Waende."""
+    acc = {}
+    for w in waende:
+        for z in w["zonen"]:
+            if z["nicht_malen"]: continue
+            e = acc.setdefault(z["material"], dict(s=np.zeros(3), d=np.zeros(3), h=np.zeros(3), a=0.0, waende=[]))
+            f = z["flaeche_m2"]; e["a"] += f; e["waende"].append(w["wand"])
+            for k_, q_ in (("s", "hex"), ("d", "ton_dunkel"), ("h", "ton_hell")): e[k_] += f * srgb_zu_linear(hex_zu_rgb(z[q_]))
+    out = {}
+    for m, e in sorted(acc.items(), key=lambda kv: -kv[1]["a"]):
+        if e["a"] <= 0: continue
+        c = linear_zu_srgb(e["s"] / e["a"])
+        z = dict(material=m, hex=rgb_zu_hex(c), ton_dunkel=rgb_zu_hex(linear_zu_srgb(e["d"] / e["a"])), ton_hell=rgb_zu_hex(linear_zu_srgb(e["h"] / e["a"])))
+        z["palette"] = palette_naechste(c); z["mischung"] = palette_mischung(c); z["schritte"] = malschritte(z)
+        out[m] = dict(hex=z["hex"], flaeche_m2=round(e["a"], 2), waende=sorted(set(e["waende"])), ton_dunkel=z["ton_dunkel"], ton_hell=z["ton_hell"],
+                      palette=z["palette"], mischung=z["mischung"], schritte=z["schritte"])
     return out
 
 
@@ -337,9 +404,12 @@ def schrift(gr):
     except TypeError: return ImageFont.load_default()
 
 
-def bild_schreiben(pfad, rgb, gueltig, voll, zonen, titel, max_h=1400):
+def bild_schreiben(pfad, rgb, gueltig, voll, zonen, titel, max_h=1400, rgb_k=None):
     H, W = gueltig.shape; s = min(1.0, max_h / H); h, w = max(1, int(H * s)), max(1, int(W * s))
     links = Image.fromarray(rgb).resize((w, h), Image.BILINEAR)
+    if rgb_k is not None:                                                         # roh | abgeglichen nebeneinander im linken Feld
+        lk = Image.new("RGB", (2 * w + 6, h), (255, 255, 255)); lk.paste(links, (0, 0)); lk.paste(Image.fromarray(rgb_k).resize((w, h), Image.BILINEAR), (w + 6, 0))
+        links = lk
     karte = np.zeros((H, W, 3), np.uint8); karte[...] = (40, 40, 40)
     for z in zonen:
         m = voll == z["label"]; c = hex_zu_rgb(z["hex"]).astype(np.uint8)
@@ -350,11 +420,12 @@ def bild_schreiben(pfad, rgb, gueltig, voll, zonen, titel, max_h=1400):
     rand = ndi.binary_dilation(rand, iterations=max(1, int(round(1.5 / s))))
     karte[rand] = (0, 0, 0)
     rechts = Image.fromarray(karte).resize((w, h), Image.NEAREST)
-    leg_w = 520; zeile = 30; f = schrift(17); fk = schrift(14)
-    out = Image.new("RGB", (2 * w + 30 + leg_w, max(h, 60 + zeile * 2 * len(zonen) + 40)), (255, 255, 255))
-    out.paste(links, (0, 0)); out.paste(rechts, (w + 10, 0))
-    d = ImageDraw.Draw(out); x0 = 2 * w + 30; d.text((x0, 8), titel, fill=(0, 0, 0), font=f)
-    d.text((x0, 32), "links Wandbild | rechts Zonen (Zonenfarbe = Mittelfarbe)", fill=(80, 80, 80), font=fk)
+    leg_w = 640; zeile = 30; f = schrift(17); fk = schrift(14)
+    lw = links.width
+    out = Image.new("RGB", (lw + w + 30 + leg_w, max(h, 60 + zeile * 2 * len(zonen) + 40)), (255, 255, 255))
+    out.paste(links, (0, 0)); out.paste(rechts, (lw + 10, 0))
+    d = ImageDraw.Draw(out); x0 = lw + w + 30; d.text((x0, 8), titel, fill=(0, 0, 0), font=f)
+    d.text((x0, 32), ("Wandbild roh | weissabgeglichen (Putz) | Zonen" if rgb_k is not None else "links Wandbild | rechts Zonen") + " (Zonenfarbe = Mittelfarbe)", fill=(80, 80, 80), font=fk)
     y = 60
     for z in zonen:
         c = tuple(int(v) for v in hex_zu_rgb(z["hex"])); d.rectangle([x0, y, x0 + 40, y + 2 * zeile - 8], fill=c, outline=(0, 0, 0))
@@ -371,10 +442,16 @@ def md_schreiben(pfad, plan):
     z = [f"# Malplan {plan.get('objekt') or ''}".rstrip(), "",
          f"Automatisch aus den Wandbildern ({plan['quelle']}), Massstab 1:{plan['massstab']}, Mindestzone {plan['min_mm']} mm in H0. "
          "Material = Vorschlag aus Farbe/Textur (ANNAHME), vor dem Malen am Foto pruefen. Palette-Hex = Naeherung der Herstellertoene (ANNAHME). "
-         "Zonenfarben sind fotografiert (Licht, Schatten, Wetter): Schattenseiten wirken dunkler/grauer als das Material - Ton am Original bzw. an der Sonnenseite abgleichen. "
+         "Zonenfarben sind fotografiert; je Wand weissabgeglichen (Putz -> neutral, Helligkeit auf den hellsten Putz aller Waende). ANNAHME: Putz ist neutral hell; "
+         "Restfehler (Streulicht, Wetter) moeglich - Ton am Original pruefen. "
          "OBI-Wandfarben nur stark verduennt als Lasur, nie als Grundton.", "",
          "Grundablauf (Doku/projekt/bahn-anlage.md): Grundierung -> Grundton -> Lasur -> Trockenbuersten -> Mattlack. "
-         "Erst an Fehldrucken/Probewaenden ueben (2-3 Stueck). Grosse Grundflaechen zuerst, Fenster/Details zuletzt.", ""]
+         "Erst an Fehldrucken/Probewaenden ueben (2-3 Stueck). Grosse Grundflaechen zuerst, Fenster/Details zuletzt.", "",
+         "## Eine Malfarbe je Material (ganzes Gebaeude, flaechengewichtet ueber alle Waende)"]
+    for m, g in (plan.get("gebaeude") or {}).items():
+        z.append(f"- {m} {g['hex']} ({g['flaeche_m2']} m2; {', '.join(g['waende'])}): Grundton {g['mischung']['text']} (dE {g['mischung']['delta_e']}); "
+                 f"Lasur: {g['schritte'][2]['was']}; Trockenbuersten: {g['schritte'][3]['was']}")
+    z.append("")
     for w in plan["waende"]:
         z.append(f"## Wand {w['wand']} (Bild {os.path.basename(w['bild_ausgabe'])})")
         for zo in w["zonen"]:
@@ -396,16 +473,25 @@ def main(argv=None):
     ap.add_argument("--fenster-textur", type=float, default=6.0, help="... und die L*-Streuung innen hoechstens so gross ist (Fugen/Steinstruktur = Textur)")
     ap.add_argument("--glatt-mm", type=float, default=0.5, help="Fenster fuer Median-Vorglaettung und Mehrheitsfilter in mm H0 (0,5 mm = 4 cm echt: Fugen weg, Scharten bleiben)")
     ap.add_argument("--objekt", default="")
+    ap.add_argument("--objekt-json", default="", help="objekt.json fuer seiten_konvention; Standard: 'objekt' aus fassaden.json")
+    ap.add_argument("--ohne-weissabgleich", dest="weissabgleich", action="store_false", help="Farben roh aus dem Wandbild (kein Abgleich auf den Putz)")
+    ap.add_argument("--putz-min-anteil", type=float, default=0.10, help="Putz-Zone zaehlt als Weissbezug ab diesem Wandanteil")
+    ap.add_argument("--max-gain", type=float, default=4.0, help="Guard: hoechste Verstaerkung je Kanal beim Abgleich")
     a = ap.parse_args(argv)
     ordner = a.ordner
     if not glob.glob(os.path.join(ordner, "ortho_f*.png")):
         for u in ("fassade_fein", "fassade"):
             if glob.glob(os.path.join(ordner, u, "ortho_f*.png")): ordner = os.path.join(ordner, u); break
-    waende = [w for w in waende_finden(ordner) if not a.nur or w["id"] in a.nur]
+    waende, obj_json = waende_finden(ordner, a.objekt_json or None)
+    waende = [w for w in waende if not a.nur or w["id"] in a.nur]
     if not waende: print(f"malplan: keine Wandbilder ortho_fNN*.png in {ordner}"); return 3
+    if not obj_json: print("  Hinweis: keine seiten_konvention (objekt.json) - Waende nur mit ID benannt")
     os.makedirs(a.aus, exist_ok=True)
-    plan = dict(objekt=a.objekt, quelle=os.path.abspath(ordner), massstab=a.massstab, min_mm=a.min_mm, palette=[dict(name=n, hex=h, rolle=r) for n, h, r in PALETTE],
-                hinweis="nur Ausgabe, aendert nichts am Modell; Material/Palette = ANNAHME (Farbregel bzw. Naeherung)", waende=[])
+    plan = dict(objekt=a.objekt, objekt_json=obj_json, quelle=os.path.abspath(ordner), massstab=a.massstab, min_mm=a.min_mm, weissabgleich=a.weissabgleich,
+                palette=[dict(name=n, hex=h, rolle=r) for n, h, r in PALETTE],
+                hinweis="nur Ausgabe, aendert nichts am Modell; Material/Palette = ANNAHME (Farbregel bzw. Naeherung); Farben nach Weissabgleich auf den Putz", waende=[])
+    kw = dict(massstab=a.massstab, min_mm=a.min_mm, arbeit_m=a.arbeit_m, k_max=a.k_max, de_merge=a.de_merge, fenster_kontrast=a.fenster_kontrast, fenster_textur=a.fenster_textur, glatt_mm=a.glatt_mm)
+    roh = []
     for w in waende:
         rgb = np.array(Image.open(w["bild"]).convert("RGB")); H, W_ = rgb.shape[:2]
         g = np.ones((H, W_), bool)
@@ -418,14 +504,38 @@ def main(argv=None):
         g &= rgb.max(2) > 3                                                        # schwarze Loecher im Wandbild
         zelle = w["zelle_m"] or 0.01
         if not w["zelle_m"]: print(f"  {w['id']}: ANNAHME Zelle 1 cm (kein raster.zelle in fassaden.json)")
-        zonen, voll, info = malplan_wand(rgb, g, zelle, massstab=a.massstab, min_mm=a.min_mm, arbeit_m=a.arbeit_m, k_max=a.k_max, de_merge=a.de_merge, fenster_kontrast=a.fenster_kontrast, fenster_textur=a.fenster_textur, glatt_mm=a.glatt_mm)
+        # Durchgang 1 (roh): Putz-Bezug dieser Wand
+        putz = None
+        if a.weissabgleich:
+            z0, v0, _ = malplan_wand(rgb, g, zelle, **kw); putz = putz_bezug(z0, v0, rgb, a.putz_min_anteil)
+        roh.append(dict(w=w, rgb=rgb, g=g, zelle=zelle, putz=putz[0] if putz else None, putz_art=putz[1] if putz else None))
+    # Gemeinsames Ziel: Helligkeit des hellsten Putzes aller Waende (Sonnenseite am naechsten am Material); Guard: Verstaerkung je Kanal <= --max-gain
+    bez = [r_["putz"] for r_ in roh if r_["putz"] is not None]; Y_ziel = max(luminanz(p_) for p_ in bez) if bez else None; gains_ok = []
+    for r_ in roh:
+        r_["gain"] = None
+        if r_["putz"] is not None:
+            gn = Y_ziel / np.maximum(r_["putz"], 1e-4); r_["quelle"] = f"{r_['putz_art']} dieser Wand"
+            if gn.max() > a.max_gain: gn = gn * (a.max_gain / gn.max()); r_["quelle"] += f" (Guard: auf x{a.max_gain} begrenzt)"
+            r_["gain"] = gn; gains_ok.append(gn)
+    for r_ in roh:
+        if r_["gain"] is None:
+            r_["gain"] = np.median(gains_ok, 0) if gains_ok else np.ones(3)
+            r_["quelle"] = (f"ANNAHME: Median der anderen Waende (kein Putz >= {100 * a.putz_min_anteil:.0f} %)" if gains_ok else "kein Abgleich (kein Putz)") if a.weissabgleich else "aus"
+    # Durchgang 2: auf dem abgeglichenen Wandbild
+    for r_ in roh:
+        w, rgb, g, zelle = r_["w"], r_["rgb"], r_["g"], r_["zelle"]
+        rgb_k = abgleichen(rgb, r_["gain"]) if a.weissabgleich else rgb
+        zonen, voll, info = malplan_wand(rgb_k, g, zelle, **kw)
         zonen = zonen_anreichern(zonen)
-        name = w["id"] + (f"_{w['seite']}" if w["seite"] else "")
+        name = (f"{w['seite']}_" if w["seite"] else "") + w["id"]                # Seite (objekt.json seiten_konvention) + Wand-ID der Kette
         bp = os.path.join(a.aus, f"malplan_{name}.jpg")
-        if zonen: bild_schreiben(bp, rgb, g, voll, zonen, f"Malplan {name} ({a.objekt})" if a.objekt else f"Malplan {name}")
-        plan["waende"].append(dict(wand=name, id=w["id"], seite=w["seite"], bild=w["bild"], bild_ausgabe=bp if zonen else "", zelle_m=zelle, **info, zonen=zonen))
+        if zonen: bild_schreiben(bp, rgb, g, voll, zonen, f"Malplan {name} ({a.objekt})" if a.objekt else f"Malplan {name}", rgb_k=rgb_k if a.weissabgleich else None)
+        wb = dict(gain=[round(float(x), 3) for x in r_["gain"]], quelle=r_["quelle"], putz_roh=rgb_zu_hex(linear_zu_srgb(r_["putz"])) if r_["putz"] is not None else None)
+        plan["waende"].append(dict(wand=name, id=w["id"], seite=w["seite"], bild=w["bild"], bild_ausgabe=bp if zonen else "", zelle_m=zelle, weissabgleich=wb, **info, zonen=zonen))
         for t_ in sorted(info.get("dunkle_teile") or [], key=lambda t_: -t_["px"])[:8]: print(f"    dunkel {t_['px']} px: Kontrast {t_['kontrast_L']}, Textur {t_['textur_L']}, umschlossen {t_['umschlossen']} -> {t_['material']}")
-        print(f"  {name}: {len(zonen)} Zonen, " + ", ".join(f"{z['material']} {z['hex']} {z['anteil'] * 100:.0f}%" for z in zonen))
+        print(f"  {name}: Abgleich x{'/'.join(f'{x:.2f}' for x in r_['gain'])} ({r_['quelle']}); {len(zonen)} Zonen, " + ", ".join(f"{z['material']} {z['hex']} {z['anteil'] * 100:.0f}%" for z in zonen))
+    plan["gebaeude"] = gebaeude_farben(plan["waende"])
+    for m_, v_ in plan["gebaeude"].items(): print(f"  GEBAEUDE {m_}: {v_['hex']} ({v_['flaeche_m2']} m2, {len(v_['waende'])} Waende) -> {v_['mischung']['text']} (dE {v_['mischung']['delta_e']})")
     json.dump(plan, open(os.path.join(a.aus, "malplan.json"), "w"), indent=1, ensure_ascii=False)
     md_schreiben(os.path.join(a.aus, "malplan.md"), plan)
     print(f"malplan: {len(plan['waende'])} Waende -> {a.aus}/malplan.json, malplan.md, malplan_<wand>.jpg")

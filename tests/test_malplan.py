@@ -43,18 +43,29 @@ def wand(mit_fenster=True, seed=3):
     return np.clip(img, 0, 255).astype(np.uint8), ab
 
 
-def ordner_bauen(d, mit_fenster):
+def schatten(rgb, faktor=(0.30, 0.36, 0.50)):
+    """Schattenseite mit Blaustich: linear je Kanal abdunkeln (Himmelslicht statt Sonne)."""
+    return MP.linear_zu_srgb(MP.srgb_zu_linear(rgb) * np.array(faktor)[None, None, :]).round().astype(np.uint8)
+
+
+def ordner_bauen(d, mit_fenster, objekt=None, zweite_wand=False):
     rgb, ab = wand(mit_fenster)
     Image.fromarray(rgb).save(os.path.join(d, "ortho_f00_fein.png")); Image.fromarray(ab).save(os.path.join(d, "abdeckung_f00_fein.png"))
-    json.dump(dict(fassaden=[dict(id="f00", n=[0.0, 1.0], raster=dict(zelle=0.01, u0=0, z1=8, nu=400, nz=800))]), open(os.path.join(d, "fassaden.json"), "w"))
+    fa = [dict(id="f00", n=[0.99, 0.05], raster=dict(zelle=0.01, u0=0, z1=8, nu=400, nz=800))]
+    if zweite_wand:                                                              # Gegenseite: gleiche Materialien, im Schatten + Farbstich
+        rgb2, ab2 = wand(mit_fenster, seed=7); rgb2 = schatten(rgb2); rgb2[ab2 == 0] = 0
+        Image.fromarray(rgb2).save(os.path.join(d, "ortho_f01_fein.png")); Image.fromarray(ab2).save(os.path.join(d, "abdeckung_f01_fein.png"))
+        fa.append(dict(id="f01", n=[-0.99, -0.05], raster=dict(zelle=0.01, u0=0, z1=8, nu=400, nz=800)))
+    json.dump(dict(objekt=objekt, fassaden=fa), open(os.path.join(d, "fassaden.json"), "w"))
 
 
 def main():
     t = temp_ordner("test_malplan_"); ein = os.path.join(t, "fassade_fein"); aus = os.path.join(t, "aus"); os.makedirs(ein)
-    ordner_bauen(ein, True)
-    rc = MP.main([os.path.dirname(ein), "--aus", aus, "--objekt", "test"])      # Datenordner: fassade_fein darunter wird gefunden
+    oj = os.path.join(t, "objekt.json"); json.dump(dict(seiten_konvention={"+x": "Nord", "-x": "Sued", "+y": "West", "-y": "Ost"}), open(oj, "w"))
+    ordner_bauen(ein, True, objekt=oj)
+    rc = MP.main([os.path.dirname(ein), "--aus", aus, "--objekt", "test"])      # Datenordner: fassade_fein darunter wird gefunden; objekt.json aus fassaden.json
     pruef(rc == 0, f"rc 0 (ist {rc})")
-    for f_ in ("malplan.json", "malplan.md", "malplan_f00_Nord.jpg"): pruef(os.path.exists(os.path.join(aus, f_)), f"Ausgabe {f_} da (Seite aus der Normale: +y = Nord)")
+    for f_ in ("malplan.json", "malplan.md", "malplan_Nord_f00.jpg"): pruef(os.path.exists(os.path.join(aus, f_)), f"Ausgabe {f_} da (Seite aus objekt.json seiten_konvention: Normale +x = Nord)")
     plan = json.load(open(os.path.join(aus, "malplan.json"))); w = plan["waende"][0]; z = {z_["material"]: z_ for z_ in w["zonen"]}
     pruef(set(z) == {"Putz", "Sandstein-Quader", "Fenster dunkel"}, f"genau drei Zonen Putz/Sandstein/Fenster (ist {sorted(z)})")
     soll = {"Putz": (200 * 750 - 100 * 150) / (400 * 750), "Sandstein-Quader": 0.5, "Fenster dunkel": 100 * 150 / (400 * 750)}
@@ -84,6 +95,26 @@ def main():
     MP.main([ein2, "--aus", os.path.join(t, "aus2")])
     m2 = {z_["material"] for z_ in json.load(open(os.path.join(t, "aus2", "malplan.json")))["waende"][0]["zonen"]}
     pruef(m2 == {"Putz", "Sandstein-Quader"}, f"Rot-Probe ohne Fenster: nur Putz + Sandstein (ist {sorted(m2)})")
+    pruef(os.path.exists(os.path.join(t, "aus2", "malplan_f00.jpg")), "ohne objekt.json-Konvention: nur Wand-ID, keine eigene Kompassrechnung (malplan_f00.jpg)")
+    # Weissabgleich: Sonnenwand + Schattenwand mit Blaustich -> gleiche Materialfarbe je Material, Gebaeudefarbe je Material
+    ein3 = os.path.join(t, "wb", "fassade_fein"); os.makedirs(ein3); ordner_bauen(ein3, True, objekt=oj, zweite_wand=True)
+    rc3 = MP.main([ein3, "--aus", os.path.join(t, "aus3")]); p3 = json.load(open(os.path.join(t, "aus3", "malplan.json")))
+    w3 = {w_["wand"]: {z_["material"]: z_ for z_ in w_["zonen"]} for w_ in p3["waende"]}
+    pruef(rc3 == 0 and set(w3) == {"Nord_f00", "Sued_f01"}, f"zwei Waende Nord_f00 + Sued_f01 (ist {sorted(w3)})")
+    lab = lambda h_: MP.rgb_zu_lab(MP.hex_zu_rgb(h_))
+    for m in ("Putz", "Sandstein-Quader"):
+        if all(m in v for v in w3.values()):
+            de = MP.delta_e(lab(w3["Nord_f00"][m]["hex"]), lab(w3["Sued_f01"][m]["hex"]))
+            pruef(de < 5, f"{m}: Sonne {w3['Nord_f00'][m]['hex']} ~ Schatten {w3['Sued_f01'][m]['hex']} nach Abgleich (dE {de:.1f} < 5)")
+        else: pruef(False, f"{m} fehlt auf einer Wand ({ {k: sorted(v) for k, v in w3.items()} })")
+    roh_s = MP.rgb_zu_hex(MP.linear_zu_srgb(MP.srgb_zu_linear(MP.hex_zu_rgb("#8a5545")) * np.array((0.30, 0.36, 0.50))))
+    pruef(MP.delta_e(lab(roh_s), lab("#8a5545")) > 20, f"Probe ist hart: Schatten-Sandstein roh {roh_s} weicht stark ab (dE > 20)")
+    pruef(w3["Sued_f01"].get("Sandstein-Quader", {}).get("lab", [0])[0] > 30, "Schattenseite-Sandstein nach Abgleich nicht schwarz (L* > 30)")
+    g3 = p3.get("gebaeude") or {}
+    pruef({"Putz", "Sandstein-Quader"} <= set(g3) and len(g3["Sandstein-Quader"]["waende"]) == 2, f"Gebaeude: eine Farbe je Material ueber beide Waende ({ {k: v['hex'] for k, v in g3.items()} })")
+    if "Putz" in g3: pruef(np.hypot(*lab(g3["Putz"]["hex"])[1:]) < 3, f"Gebaeude-Putz neutral ({g3['Putz']['hex']})")
+    gn = [w_["weissabgleich"]["gain"] for w_ in p3["waende"]]
+    pruef(gn[1][0] > gn[1][2] > 1.5, f"Schattenwand: Verstaerkung {gn[1]} hebt an und gleicht den Blaustich aus (Rot > Blau > 1,5)")
     print(f"test_malplan: {'BESTANDEN' if F == 0 else f'{F} FEHLER'}")
     return 1 if F else 0
 

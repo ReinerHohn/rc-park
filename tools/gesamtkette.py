@@ -917,7 +917,7 @@ def main():
             if not KB_frisch(os.path.join(Z, "audit", "malplan.json"), t_mp): raise FileNotFoundError("nicht in diesem Lauf geschrieben (Stand eines frueheren Laufs)")
             mp_ = json.load(open(os.path.join(Z, "audit", "malplan.json")))
             notiz(B, "malplan_ergebnis", rc_mp == 0, waende=len(mp_.get("waende") or []), zonen={w_["wand"]: [f"{z_['material']} {z_['hex']} {round(100 * z_['anteil'])}%" for z_ in w_["zonen"]] for w_ in mp_.get("waende") or []},
-                  hinweis="ANSEHEN: audit/malplan_<wand>.jpg; Anleitung audit/malplan.md (Material = Farbregel-ANNAHME)")
+                  gebaeude={m_: f"{g_['hex']} -> {g_['mischung']['text']}" for m_, g_ in (mp_.get("gebaeude") or {}).items()}, hinweis="ANSEHEN: audit/malplan_<wand>.jpg; Anleitung audit/malplan.md (Material = Farbregel-ANNAHME)")
         except Exception as e: notiz(B, "malplan_ergebnis", False, fehler=f"audit/malplan.json nicht lesbar (rc {rc_mp}): {type(e).__name__} {e}"[:240])
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
