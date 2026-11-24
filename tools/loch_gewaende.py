@@ -193,7 +193,11 @@ def eintrag_anpassen(e, erg, npz, fenster_tiefe=0.12):
         b_ = e.get("bogen")
         if b_ and b_.get("form", "gerade") != "gerade":
             if gleich:
-                k_ = b_.get("kaempfer"); e["bogen"] = dict(b_, scheitel=e["z1"], kaempfer=min(k_, e["z1"]) if k_ is not None else e["z1"])
+                # 24.11.2026 (Schwabentor-1122 Sued, Stichbogen k 24,46 / s 24,61, Loch oben 24,21): min(kaempfer, z1) gab kaempfer = scheitel -> Stich 0 -> Generator
+                # ZeroDivisionError in bauteile.stichbogen. Jetzt: gemessene Bogenhoehe (scheitel - kaempfer) am neuen Scheitel behalten, hoechstens bis z0.
+                k_, s_ = b_.get("kaempfer"), b_.get("scheitel"); h_ = (s_ - k_) if (k_ is not None and s_ is not None) else 0.0
+                h_ = min(max(h_, 0.0), e["z1"] - e["z0"])
+                e["bogen"] = dict(b_, scheitel=e["z1"], kaempfer=round(e["z1"] - h_, 3)) if h_ > 1e-3 else dict(form="gerade", kaempfer=e["z1"], scheitel=e["z1"])
             else:
                 e["form_vorher"] = b_; e["bogen"] = dict(form="gerade", kaempfer=e["z1"], scheitel=e["z1"])
                 e["form_quelle"] = f"loch_gewaende: Bogen '{b_.get('form')}' war die Form des Gewaendes/Farbfelds ({bu:.2f} m), Loch {lb:.2f} x {lh:.2f} m -> Rechteck"
