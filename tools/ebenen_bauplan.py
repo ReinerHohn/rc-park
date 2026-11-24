@@ -98,7 +98,9 @@ def main():
         box = ",".join(f"{x:.2f}" for x in np.r_[V.min(0) - e["band"] - 1.0, V.max(0) + e["band"] + 1.0]); sw = os.path.join(ed, "sweep.npz")
         if os.path.exists(sw): os.remove(sw)
         kw_e = KW
-        if e["art"] == "wand" and a.kam_ergaenzen > 0 and KALLE:
+        # 24.11.2026 (Rueckfall Treppenkloetze 1122z-zc): auch die VORBAU-Ebene bekommt frontale Zusatzkameras - f00_vb0 hatte 3375 statt 13 116 Kantenpunkte,
+        # die Galerie-Fotos (IMG_..._1131xx, frontal, nah) standen nicht in kam_wahl -> Holm/Unterkante luechig, kein Kantenkasten. OHNE_VORBAU_KAM=1 = alter Weg.
+        if (e["art"] == "wand" or (e["art"] == "vorbau" and os.environ.get("OHNE_VORBAU_KAM") != "1")) and a.kam_ergaenzen > 0 and KALLE:
             plus = frontal_kameras(KALLE, e, KWAHL, n_max=a.kam_ergaenzen)
             if plus:
                 kw_e = os.path.join(ed, "kam_wand.json"); json.dump({**KWAHL, **{f: KALLE[f] for f in plus}}, open(kw_e, "w")); kp = os.path.join(ed, "kam_plus.json"); json.dump({f: KALLE[f] for f in plus}, open(kp, "w"))

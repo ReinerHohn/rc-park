@@ -930,10 +930,58 @@ def vordach_walm(W, u0, u1, w_wand, w_t, z_t, z_a, c=0.0, As=0.0, dk=0.15, einbi
     return M.batch_boolean(teile, OpType.Add)
 
 
+def vorbau_kasten_ersatz(g, min_aus=0.15):
+    """ERSATZ-KANTENMASS fuer einen Vorbau ohne Kantenkasten (24.11.2026, Rueckfall Treppenkloetze 1122z-zc). Liefert ein dict im Format von ebenen_masse 'kanten_mass'
+    (kasten, ausladung, konsolen, streben), damit vorbauten_aus_json denselben Kasten-Zweig baut - nie das Hoehenfeld. Quellen in Rangfolge (alle aus den Fotos):
+      1. galerie (vorbauten_bauplan.galerie_messen: Bruestungsband z_boden..z_holm, u0..u1, Ausladung w, Streben im feinen Wandbild gezaehlt, Strebenfuss)
+      2. koerper (Grobband des Ebenen-Sweeps: u0..u1, z0..z1, w_median) = ein Kasten.
+    GUARD: Breite 0,5..30 m, Hoehe 0,3..8 m, Ausladung min_aus..3 m, sonst naechste Quelle / None (nichts bauen)."""
+    def ok(u0, u1, z0, z1, a):
+        return all(np.isfinite([u0, u1, z0, z1, a])) and 0.5 <= u1 - u0 <= 30 and 0.3 <= z1 - z0 <= 8 and min_aus <= a <= 3.0
+    G = g.get("galerie") or {}
+    try:
+        u0, u1, zb, zh, a = (float(G[k]) for k in ("u0", "u1", "z_boden", "z_holm", "w"))
+        if ok(u0, u1, zb, zh, a):
+            km = dict(ausladung=a, kasten=dict(z_unten=zb, z_oben=zh, u0=u0, u1=u1, breite=round(u1 - u0, 2)), ersatz="Galerie (Ebenen-Sweep + Wandbild)",
+                      quelle="vorbauten_bauplan.galerie_messen (Ersatz, Kanten zu duenn)", ersatz_annahme="ERSATZ Galerie-Messung: Kasten = Bruestungsband, Ausladung Sweep (kein Kantenkasten)")
+            # Konsolen/Streben NICHT im Ersatz: ihre Querschnitte waeren feste Zahlen (Nutzer 24.11.: "Alle Masse muessen aus Fotos kommen") - Beleg nennt die Luecke
+            if G.get("streben_u"): km["ersatz_annahme"] += "; %d Streben im Wandbild gezaehlt, aber ohne gemessenen Querschnitt NICHT gebaut" % len(G["streben_u"])
+            return km
+    except (KeyError, TypeError, ValueError): pass
+    k = g.get("koerper") or {}
+    try:
+        u0, u1, z0, z1, a = (float(k[x]) for x in ("u0", "u1", "z0", "z1", "w_median"))
+        if ok(u0, u1, z0, z1, a):
+            return dict(ausladung=a, kasten=dict(z_unten=z0, z_oben=z1, u0=u0, u1=u1, breite=round(u1 - u0, 2)), ersatz="Grobkoerper (Ebenen-Sweep)",
+                        quelle="vorbauten_bauplan koerper (Ersatz, Kanten zu duenn)", ersatz_annahme="ERSATZ Grobkoerper: ein Kasten (Band + Median-Ausladung), keine Konsolen")
+    except (KeyError, TypeError, ValueError): pass
+    return None
+
+
+def treppen_anteil(mesh, o, d, n, u0, u1, z0, z1, w_min=0.1, zelle=0.1, klein=(0.03, 0.4)):
+    """TREPPEN-MASS einer Vorbau-Gestalt (24.11.2026, Guard gegen den Hoehenfeld-Rueckfall): Tiefenkarte der Front (Strahlen von vorn, Raster 'zelle') im Bereich u0..u1 x z0..z1,
+    Tiefe w gegen die Ebene (o, d, n). Gezaehlt werden waagrecht benachbarte Zellen, die beide Vorbau sind (w > w_min): Anteil mit KLEINEM Tiefensprung (klein[0]..klein[1] m).
+    Kasten/Galerie/Vordach: gleiche Tiefe entlang u, Spruenge nur an Kanten zur Wand (gross) -> ~0. Hoehenfeld: Laeufe verschiedener Tiefe je Zeile -> deutlich > 0.
+    mesh: trimesh.Trimesh. Liefert (anteil, paare)."""
+    import trimesh
+    o = np.asarray(o, float); d = np.asarray(d, float); n = np.asarray(n, float)
+    uu = np.arange(u0 + zelle / 2, u1, zelle); zz = np.arange(z0 + zelle / 2, z1, zelle); U, Z = np.meshgrid(uu, zz)
+    w_vor = 6.0; ori = np.c_[o[0] + U.ravel() * d[0] + w_vor * n[0], o[1] + U.ravel() * d[1] + w_vor * n[1], Z.ravel()]
+    dirs = np.tile([-n[0], -n[1], 0.0], (len(ori), 1))
+    loc, idx, _ = mesh.ray.intersects_location(ori, dirs, multiple_hits=False)
+    W = np.full(len(ori), -9.0)
+    if len(idx): W[idx] = (loc[:, :2] - o[:2]) @ n[:2]
+    W = W.reshape(U.shape); A = (W[:, 1:] > w_min) & (W[:, :-1] > w_min); dW = np.abs(np.diff(W, axis=1))
+    paare = int(A.sum()); kl = int((A & (dW >= klein[0]) & (dW <= klein[1])).sum())
+    return (kl / paare if paare else 0.0), paare
+
+
 def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
     """Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep an die Wand bauen (20.11.2026, GENERISCH; Liste: tools/vorbauten_bauplan.py
     -> audit/vorbauten_auto.json, Kettenstufe 'bauplan'). Je Gruppe ein Hoehenfeld w[zeile][spalte] (m vor der gemessenen Wand, Raster 'raster', Zeile 0 = oben):
     zeilenweise gleich tiefe Laeufe (auf 'stufe' gerundet) werden Kaesten von 'einbinden' m in der Wand bis zur Front. Gestalt = gemessene Tiefe je Zelle, kein Musterteil.
+    24.11.2026: das Hoehenfeld wird NICHT mehr als Gestalt gebaut (Treppenkloetze, Rueckfall 1122z-zc) - ohne kanten_mass.kasten baut der Kasten-Zweig aus
+    vorbau_kasten_ersatz (Galerie-Messung / Grobkoerper); MIT_HOEHENFELD=1 nur fuer Vergleich und rote Probe (tools/test_vorbau_keine_treppe.py).
     Liefert (koerper, belege); ohne Datei unveraendert."""
     if not os.path.exists(datei): return koerper, []
     J = json.load(open(datei)); teile = []; belege = []; VPJ = {}
@@ -949,6 +997,15 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
         for gi_, g in enumerate(F["gruppen"]):
             if g.get("verworfen"): continue      # 23.11.2026: Beleg-/Fototor (tools/vorbau_fototor.py) hat die Gruppe verworfen (Phantom f03 1122t) - Index gi_ bleibt fuer vordach_profil gleich
             KM_ = g.get("kanten_mass"); G_ = g.get("galerie")
+            if not (KM_ and KM_.get("kasten")) and os.environ.get("MIT_HOEHENFELD") != "1" and not (G_ and os.environ.get("MIT_KATALOG_GALERIE") == "1"):
+                # 24.11.2026 RUECKFALL 1122z/zb/zc (Nutzer: "wir hatten mal so einen geilen Stand und du machst KI-Muell"): ohne Kantenkasten fiel der Bau STILL auf das
+                # Hoehenfeld je 0,2-m-Zelle zurueck = Treppenkloetze (bekannte Sackgasse 21.11., METHODE_EBENEN_BAUPLAN). Jetzt nie mehr Hoehenfeld als Gestalt: Ersatz-Kasten aus
+                # den uebrigen Fotomessungen derselben Gruppe (Galerie-Messung, sonst Grobkoerper) im SELBEN Kasten-Zweig; ohne gueltigen Ersatz wird nichts gebaut (Beleg).
+                KM_ = vorbau_kasten_ersatz(g)
+                if not KM_:
+                    belege.append(dict(seite="wand", element=f"Vorbau {F.get('id', '')} u {g['u0']:.2f}..{g['u1']:.2f} NICHT gebaut", quelle="bauteile.vorbau_kasten_ersatz",
+                                       hinweis="kein Kantenkasten und keine gueltige Ersatzmessung (Galerie/Grobkoerper) - Hoehenfeld als Gestalt ist verworfen (Treppenkloetze)"))
+                    continue
             if KM_ and KM_.get("kasten") and os.environ.get("OHNE_KANTENMASS") != "1":
                 # 21.11.2026 (Nutzer: "so wenig allgemeine Bauteile wie moeglich ... was nicht moeglich ist, wird aus allgemeinen Bauteilen gebaut"): Vorbau aus den dichten triangulierten
                 # Fotokanten seiner Ebene (tools/ebenen_bauplan.py -> tools/ebenen_masse.py). Aus Kanten: Kasten (Unter-/Oberkante, Breite, Ausladung), Konsolen (Zahl, Lage, Unterkante),
@@ -978,6 +1035,10 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                             teile.append(WG.huelle([(u_, z_, w_) for u_ in (a_, b_) for z_, w_ in ((St["z_fuss"], wi), (St["z_fuss"] + 0.3, wi), (Ko["z_unten"] + 0.02, wf - 0.3), (Ko["z_unten"] + 0.02, wf - 0.05))]))
                     ann.append("Konsolen als Balken von der Wand bis zur Front" + ("; Streben gerade vom Wandfuss zur Konsole" if St else ""))
                 z_d = (G_ or {}).get("z_dach"); V_ = (G_ or {}).get("vordach"); Pf = KM_.get("pfosten") or []
+                if 0 < len(Pf) < 2 and z_d and len((G_ or {}).get("pfosten") or []) >= 2:
+                    # 24.11.2026 (1122zc, duenne Kanten: nur 1 Pfosten aus einer Knagge) - Vordach auf einem Pfosten; Sweep-Pfostenspalten ergaenzen, die nicht schon belegt sind
+                    Pf = sorted(list(Pf) + [dict(u=float(u_), breite=None) for u_ in G_["pfosten"] if all(abs(float(u_) - float(p_["u"])) >= 0.6 for p_ in Pf)], key=lambda p_: float(p_["u"]))
+                    ann.append("Pfosten aus Kanten ergaenzt um Sweep-Pfostenspalten (nur %d aus Kanten)" % 1)
                 if not Pf and z_d and len((G_ or {}).get("pfosten") or []) >= 2:
                     # 24.11.2026 (1122w, Nutzer: "Bild-Vorbau hatten wir mal fast perfekt"): ohne Kanten-Pfosten stand das Vordach ohne Stuetze ueber der Galerie (getrennter Koerper,
                     # offene Galerie fehlte). Ersatz = Pfostenspalten des Ebenen-Sweeps (vorbauten_bauplan.galerie_messen, ebenfalls aus den Fotos), Querschnitt Standard.
@@ -1003,7 +1064,8 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                         ua, ub, dk, wt = Kb["u0"] - 0.15, Kb["u1"] + 0.15, 0.15, wf + 0.25
                         teile.append(WG.huelle([(u_, z_, w_) for u_ in (ua, ub) for z_, w_ in ((V_["z_anschluss"], wi), (V_["z_anschluss"] - dk, wi), (V_["z_traufe"] + dk, wt), (V_["z_traufe"], wt))]))
                         ann.append("Vordach = ebene Platte (allgemeines Bauteil): Traufe und Wandanschluss gemessen, Ueberstand 0,25 m und Dachhaut 0,15 m Standard")
-                belege.append(dict(seite="wand", element=f"Vorbau {F.get('id', '')} aus Fotokanten: Kasten z {Kb['z_unten']:.2f}-{Kb['z_oben']:.2f}, Breite {Kb['breite']:.2f}, Ausladung {KM_['ausladung']:.2f} m"
+                if KM_.get("ersatz"): ann.append(KM_["ersatz_annahme"])
+                belege.append(dict(seite="wand", element=f"Vorbau {F.get('id', '')} aus {'Fotokanten' if not KM_.get('ersatz') else 'Ersatzmessung ' + KM_['ersatz']}: Kasten z {Kb['z_unten']:.2f}-{Kb['z_oben']:.2f}, Breite {Kb['breite']:.2f}, Ausladung {KM_['ausladung']:.2f} m"
                                    + (f", {Ko['anzahl']} Konsolen" if Ko else "") + (f", {len(Pf)} Pfosten" if Pf and z_d else "") + (", Vordach" if V_ and z_d else ""),
                                    quelle=KM_.get("quelle", "tools/ebenen_masse.py"), kasten=Kb, konsolen=(Ko or {}).get("anzahl"), konsolen_abstand=(Ko or {}).get("abstand"), strebenfuss=(St or {}).get("z_fuss"),
                                    pfosten_u=[p_["u"] for p_ in Pf], traufe=(V_ or {}).get("z_traufe"), anschluss=(V_ or {}).get("z_anschluss"), hinweis="ANNAHME: " + "; ".join(ann) if ann else ""))
@@ -1020,6 +1082,7 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                                    quelle="Masse aus Ebenen-Sweep + feinem Wandbild (tools/vorbauten_bauplan.py galerie_messen), Gestalt bauteile.Wand.galerie", ausladung=G_["w"], traufe=(V_ or {}).get("z_traufe"),
                                    streben_quelle=G_.get("streben_quelle"), hinweis="ANNAHME: Querschnitte (Pfosten/Riegel 0,22 m), Knaggen, Bodenplatte 0,35 m (Bauteil-Standard); " + ((V_ or {}).get("annahme") or "")))
                 continue
+            # NUR NOCH MIT_HOEHENFELD=1 (Vergleich/Rote Probe): Hoehenfeld als Gestalt = Treppenkloetze, verworfen 21.11. und 24.11. (Rueckfall 1122z-zc)
             W_ = np.round(np.array(g["w"], float) / stufe) * stufe; r_ = float(g["raster"]); nk = 0
             for r in range(W_.shape[0]):
                 za, zb = g["z1"] - (r + 1) * r_, g["z1"] - r * r_; s = 0
