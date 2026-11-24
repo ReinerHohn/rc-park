@@ -17,3 +17,6 @@ Gemessen in rc-park (Memory aus, git log aus):
   (NICHTS_GEBRACHT-Tabellenzeilen/Datumskoepfe, Uhrzeit-Verweise) -> rc-park behaelt wissensbaum_luecken.py als Projektadapter.
 Nach Uebernahme in rc-park: tools/wissen_suchen.py, werkzeug_aehnlich.py, wissen_wiederfinden.py sind identische Projektkopien -> durch
   Dreizeiler ersetzen, der ~/.claude/skills/doku-pflege/<x>.py mit gleichen Argumenten aufruft (Fallback: Kopie, falls Skill fehlt).
+
+UEBERNOMMEN 24.11.2026 21:15: claude-mds Commit e1c78ab (gepusht). Projektkopien bleiben (Tests importieren sie);
+Schnelltest prueft Gleichstand Kopie = ~/.claude/skills/doku-pflege (rot bei Abweichung).
