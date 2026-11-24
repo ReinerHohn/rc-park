@@ -219,7 +219,9 @@ def relief_vorbau_flach(f_in, f_out, zonen, kanten, band=0.05, radius=0.3, min_p
             s2 = tuple(slice(max(0, s.start - r_), s.stop + r_) for s in sl); cc = lab[s2] == k_; um = ndi.binary_dilation(cc, st)
             n_ = float(alle[s2][um].sum()); g_ = float(zahl[s2][um].sum())
             if n_ >= min_punkte and g_ >= anteil * n_: beleg[s2] |= cc
-    flach = ab & ~beleg; neu = rel.copy(); neu[flach] = L[flach]
+    flach = ab & ~beleg
+    if os.environ.get("OHNE_KANTENBELEG") != "1": flach = _rand_mit(flach, dv, zo, px, band=band)      # 24.11.2026: Umriss der Klumpen mit (sonst 'wirre Wuelste' 1122w Nord)
+    neu = rel.copy(); neu[flach] = L[flach]
     Z["rel"] = neu; Z["vorbau_flach"] = flach; np.savez_compressed(f_out, **Z)
     try:
         from PIL import Image
@@ -229,6 +231,91 @@ def relief_vorbau_flach(f_in, f_out, zonen, kanten, band=0.05, radius=0.3, min_p
     except Exception: pass
     return dict(zone_m2=round(float(zo.sum()) * px * px, 2), abweichung_m2=round(float(ab.sum()) * px * px, 2), flach_m2=round(float(flach.sum()) * px * px, 2),
                 belegt_m2=round(float((ab & beleg).sum()) * px * px, 2), kanten=0 if kanten is None else int(len(kanten)))
+
+
+def _rand_mit(flach, dv, m, px, rand=0.3, band=0.05, eps=0.005):
+    """Flachgelegte Abweichungskoerper MIT ihrem Uebergangsrand: gleichsinnige Zellen unter 'band' (|dv| > eps), die mit dem Koerper zusammenhaengen, hoechstens 'rand' m weit
+    (sonst bleibt der Umriss als 1-5-cm-Stufe stehen - 24.11.2026 Nutzerbild 1122w Nord: 'wirre Wuelste' = Umrisslinien der in relief_vorbau_flach flachgelegten Gemaelde-Klumpen)."""
+    from scipy import ndimage as ndi
+    if not flach.any() or rand <= 0: return flach
+    r_ = max(1, int(round(rand / px))); st = np.ones((2 * r_ + 1, 2 * r_ + 1), bool); out = flach.copy()
+    for sg in (1.0, -1.0):
+        f_ = flach & (sg * dv > 0)
+        if not f_.any(): continue
+        zone = ndi.binary_dilation(f_, st) & m & (sg * dv > eps) & ((np.abs(dv) < band) | f_)
+        lab, n = ndi.label(zone)
+        if n: out |= np.isin(lab, np.unique(lab[f_ & zone])) & (lab > 0) & (np.abs(dv) < band)
+    return out
+
+
+def relief_kanten_beleg(f_in, f_out, kanten, band=0.05, radius=0.3, min_punkte=4, anteil=0.35, tol=0.15, umfeld=1.0, rand=0.3, lang=1.5, dick=0.45, fuell=0.5,
+                        druck_min=0.07, kachel=2.0, aus_maske=None, rille=0.06):
+    """KRUEMEL OHNE KANTE WEG - Relief einer ganzen Wand nur mit Tiefenbeleg in den triangulierten Fotokanten (24.11.2026, Lauf 1122w, Nutzerbild neben_eigen__IMG_20261106_113231
+    + neben_sued_w: 'Knochen'-Blob ueber dem Torbogen Nord, Beulen im bemalten Putzfeld Sued, Wulst am Brunnen). URSACHE: relief_putz_glatt glaettet nur die Zellen, die das
+    Wandbild als Putz (glatt in allen Einzelfotos) belegt; ein Wandgemaelde, ein freistehender Brunnen davor oder Quaderwerk zeigen dort Feinstruktur -> kein Putz -> die Netztiefe
+    (bzw. Mono-Tiefe aus Farbe) blieb ungeprueft als Relief stehen (putz_wandbild auf w02/w06 = 0 % Putz). KRITERIUM (Kernmethode Form = Fotokanten + Triangulation):
+    ein zusammenhaengender Abweichungskoerper (>= band vom Wandniveau, gleiches Vorzeichen) bleibt nur, wenn
+      (a) im Umriss + radius >= min_punkte Kantenpunkte liegen, deren Tiefe (gegen den Median der Kanten im Umfeld 'umfeld' m) gleichsinnig >= band/2 und hoechstens
+          Koerperhoehe + tol vor/hinter der Wand liegt, und das >= anteil der Kanten bis zu dieser Tiefe sind (Gemaelde: Kanten auf der Wand; Vordach/Galerie 1 m davor zaehlt nicht), oder
+      (b) er linienhaft ist (Gesims/Band/Lisene wie relief_bereinigen: lang x dick, gerade), oder
+      (c) er den Oeffnungsrand beruehrt (Bogen/Gewaende: dort ist der Oeffnungsrand die Kante);
+    Zellen der Maske aus_maske (Quaderraster 'stein_id' > 0) samt 'rille' m Rand werden nicht gewertet (dort entscheidet das Wandbild);
+    und seine kleinere Ausdehnung >= druck_min m ist (0,8 mm H0 bei 1:87 = 0,07 m; schmalere Grate druckt man nicht).
+    Sonst Wandniveau samt Uebergangsrand (_rand_mit). kanten = (N, 3) u, z, w (kanten_wand) - ohne Kanten (None/leer) bleibt das Relief UNVERAENDERT
+    (keine Kantenstufe = kein Urteil). Schreibt f_out (+ .jpg: rot = ohne Kantenbeleg flach, gruen = belegt, blau = linienhaft), Rueckgabe dict."""
+    from scipy import ndimage as ndi
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from fassaden_kette import wandniveau
+    Z = dict(np.load(f_in)); rel = Z["rel"].astype(np.float32); px = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); H, W = rel.shape
+    if kanten is None or len(kanten) < min_punkte: return dict(unveraendert=True, grund="keine Fotokanten der Wandebene")
+    m = np.isfinite(rel) & (rel != 0)
+    if "wand" in Z: m &= np.asarray(Z["wand"], bool)
+    if "oeffnung" in Z: m &= ~np.asarray(Z["oeffnung"], bool)
+    if m.sum() < 20: return dict(unveraendert=True, grund="keine Wandzellen")
+    L = wandniveau(rel, m, px, kachel=kachel)
+    if L is None: return dict(unveraendert=True, grund="kein Wandniveau")
+    dv = np.where(m, rel - L, 0.0).astype(np.float32)
+    K = np.asarray(kanten, float); ci = (H - 1 - np.floor((K[:, 1] - z0) / px)).astype(int); cj = np.floor((K[:, 0] - u0) / px).astype(int)
+    ok = (ci >= 0) & (ci < H) & (cj >= 0) & (cj < W); K, ci, cj = K[ok], ci[ok], cj[ok]
+    if len(K) < min_punkte: return dict(unveraendert=True, grund="keine Fotokanten im Reliefraster")
+    # Kanten je Zelle als Liste (Index sortiert nach Zelle) fuer schnelle Auswahl je Koerper
+    zid = ci * W + cj; ordn = np.argsort(zid, kind="stable"); zid_s = zid[ordn]
+    def kanten_in(maske):
+        z_ = np.flatnonzero(maske.ravel()); lo = np.searchsorted(zid_s, z_, "left"); hi = np.searchsorted(zid_s, z_, "right")
+        if not len(z_) or not (hi > lo).any(): return np.zeros(0, int)
+        return np.concatenate([ordn[a:b] for a, b in zip(lo, hi) if b > a])
+    r_ = max(1, int(round(radius / px))); ru = max(r_, int(round(umfeld / px)))
+    aus = np.zeros((H, W), bool) if aus_maske is None else np.asarray(aus_maske, bool)
+    if aus.any(): aus = ndi.binary_dilation(aus, np.ones((2 * max(1, int(round(rille / px))) + 1,) * 2, bool))      # Steine + ihre Rillen (Quaderraster) nicht werten
+    oe = np.asarray(Z["oeffnung"], bool) if "oeffnung" in Z else np.zeros((H, W), bool)
+    oe_d = ndi.binary_dilation(oe, np.ones((5, 5), bool)) if oe.any() else oe          # Gewaende/Bogen am Oeffnungsrand: Kante = der Oeffnungsrand selbst (Laibung baut eigene Stufe)
+    flach = np.zeros((H, W), bool); bel_m = np.zeros((H, W), bool); lin_m = np.zeros((H, W), bool); n_k = dict(belegt=0, linienhaft=0, oeffnung=0, flach=0, schmal=0)
+    for sg in (1.0, -1.0):
+        lab, nk = ndi.label(m & ~aus & (sg * dv >= band))
+        for k_, sl in enumerate(ndi.find_objects(lab), 1):
+            if sl is None: continue
+            cc = lab[sl] == k_; h_ = (sl[0].stop - sl[0].start) * px; b_ = (sl[1].stop - sl[1].start) * px
+            def setz(ziel): ziel[sl] |= cc
+            if (oe_d[sl] & cc).any(): n_k["oeffnung"] += 1; continue
+            if min(h_, b_) < druck_min - 1e-9: setz(flach); n_k["schmal"] += 1; continue
+            if ((b_ >= lang and h_ <= dick) or (h_ >= lang and b_ <= dick)) and cc.mean() >= fuell: setz(lin_m); n_k["linienhaft"] += 1; continue
+            s2 = tuple(slice(max(0, s.start - ru), s.stop + ru) for s in sl); ganz = np.zeros((H, W), bool); ganz[sl] = cc
+            nah = ndi.binary_dilation(ganz[s2], np.ones((2 * r_ + 1, 2 * r_ + 1), bool)); weit = ndi.binary_dilation(ganz[s2], np.ones((2 * ru + 1, 2 * ru + 1), bool))
+            N_ = np.zeros((H, W), bool); N_[s2] = nah; Wm = np.zeros((H, W), bool); Wm[s2] = weit & ~nah
+            iw = kanten_in(Wm); inah = kanten_in(N_); hmax = float((sg * dv[sl])[cc].max())
+            wref = float(np.median(K[iw, 2])) if len(iw) >= min_punkte else (float(np.median(K[inah, 2])) if len(inah) else 0.0)
+            dk = sg * (K[inah, 2] - wref); bis = dk <= hmax + tol; gl = bis & (dk >= band / 2)
+            if gl.sum() >= min_punkte and gl.sum() >= anteil * max(bis.sum(), 1): setz(bel_m); n_k["belegt"] += 1; continue
+            setz(flach); n_k["flach"] += 1
+    weg = _rand_mit(flach, dv, m, px, rand=rand, band=band) & ~aus
+    neu = rel.copy(); neu[weg] = L[weg]; Z["rel"] = neu.astype(np.float32); Z["ohne_kantenbeleg"] = weg; np.savez_compressed(f_out, **Z)
+    try:
+        from PIL import Image
+        lx = np.gradient(neu, px, axis=1); lz = np.gradient(neu, px, axis=0); g_ = (np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1) * 255).astype(np.uint8); im_ = np.stack([g_] * 3, -1)
+        for mm, col in ((weg, (120, 0, 0)), (bel_m, (0, 90, 0)), (lin_m, (0, 0, 110))): im_[mm] = (im_[mm] * 0.6 + np.array(col)).astype(np.uint8)
+        Image.fromarray(np.repeat(np.repeat(im_, 3, 0), 3, 1)).save(f_out[:-4] + ".jpg", quality=88)
+    except Exception: pass
+    return dict(flach_m2=round(float(weg.sum()) * px * px, 2), belegt_m2=round(float(bel_m.sum()) * px * px, 2), linienhaft_m2=round(float(lin_m.sum()) * px * px, 2),
+                koerper=n_k, kanten=int(len(K)))
 
 
 def main():
