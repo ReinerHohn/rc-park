@@ -16,7 +16,7 @@ Gemeinsame Ursache: der Erkennerkasten umfasst Loch UND Gewaende; die Kette hatt
 Methode (KERNMETHODE, WANDBILD = BAUPLAN; Erkennen = nur Zone): je Eintrag der Fensterliste OHNE Nische (Paare aus nischen_fenster bleiben unberuehrt) und je
 geschlossener Tuer aus oeffnungen_aussen.json (klasse 'tuer', flach, keine gebaute Oeffnung an der Stelle):
   1. Loch = groesste dunkle Komponente nahe der Zonenmitte (Schliessen 4 cm gegen Gitterstaebe), Kasten = 2-/98-%-Werte ihrer Zellen.
-     Gueltig nur: >= 0,1 m in beiden Richtungen, >= 40 % Fuellung des Kastens, Mitte in der Zone, Loch deutlich dunkler (L <= --dunkel x Wand-L).
+     Gueltig nur: lange Seite >= 0,1 m, schmale Seite >= max(Druckmindestmass, 3 Zellen) (Schlitze, 24.11.2026), >= 40 % Fuellung des Kastens, Mitte in der Zone, Loch deutlich dunkler (L <= --dunkel x Wand-L).
      Beruehrt das Loch den Rand der belegten Zellen (Wandbild angeschnitten), gilt fuer diese Seite der kleinste Erkennerkasten, der das Loch enthaelt (sonst bleibt
      die Seite mit 'angeschnitten' im Eintrag).
   2. Gewaende = Nicht-Wand-Zellen, die das Loch beruehren (Komponente am um 10 cm gewachsenen Loch), ohne Loch; Umriss (2 cm vereinfacht) in u/z.
@@ -155,7 +155,7 @@ def loch_messen(bgr, R, zone, kleine_kaesten=(), dunkel=0.6, min_m=0.1, fuell_mi
     mu, mz = (u0 + u1) / 2, (z0 + z1) / 2; best = None
     for q in range(1, n):
         m = lab_k == q; fl = float(m.sum()) * c * c
-        if fl < (min_m * min_m) * 0.5: continue
+        if fl < (schmal_minimum(c, min_m) * min_m) * 0.5: continue
         cu, cz = float(U[m].mean()), float(Z[m].mean())
         if not (u0 <= cu <= u1 and z0 <= cz <= z1): continue
         wert = fl / (1.0 + np.hypot((cu - mu) / bu, (cz - mz) / bz))
@@ -166,7 +166,12 @@ def loch_messen(bgr, R, zone, kleine_kaesten=(), dunkel=0.6, min_m=0.1, fuell_mi
     lu0 -= c / 2; lu1 += c / 2; lz0 -= c / 2; lz1 += c / 2
     Lloch = float(np.median(Lf[m])); fuell = float(m.sum()) * c * c / max((lu1 - lu0) * (lz1 - lz0), 1e-9)
     if Lloch > dunkel * Lw: return dict(fehler=f"Loch nicht dunkel genug (L {Lloch:.0f} gegen Wand {Lw:.0f})")
-    if lu1 - lu0 < min_m or lz1 - lz0 < min_m: return dict(fehler=f"Loch zu klein ({lu1 - lu0:.2f} x {lz1 - lz0:.2f} m)")
+    # 24.11.2026 (Kettenlauf 1122zb, neben_detail fenster_f03_3): Lichtschlitz 0,09 x 0,73 m im gestuften Sandsteingewaende fiel hier mit 'Loch zu klein' weg
+    # (min_m 0,1 in BEIDEN Richtungen) -> der Eintrag blieb der Erkennerkasten des GEWAENDES (1,33 x 1,66 m) und wurde ein Rundbogenfenster. Schlitze sind schmal:
+    # die SCHMALE Seite braucht nur das Druckmindestmass und 3 Zellen (messbar), die LANGE Seite weiter min_m.
+    schmal_min = schmal_minimum(c, min_m)
+    if min(lu1 - lu0, lz1 - lz0) < schmal_min or max(lu1 - lu0, lz1 - lz0) < min_m:
+        return dict(fehler=f"Loch zu klein ({lu1 - lu0:.2f} x {lz1 - lz0:.2f} m; schmale Seite >= {schmal_min:.2f}, lange >= {min_m:.2f} m)")
     if fuell < fuell_min: return dict(fehler=f"Loch fuellt seinen Kasten nur zu {fuell * 100:.0f} % (kein Rechteck/Bogen, eher Schatten/Fleck)")
     # angeschnitten: Lochrand neben Zellen ohne Foto -> Seite aus dem kleinsten Erkennerkasten, der das Loch enthaelt
     leer = cv2.dilate((~bel).astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool) & m
@@ -247,6 +252,11 @@ def sweep_werte(npz, umriss, loch, ring=RING, min_gut=0.3):
 
 def druck_min():
     return float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
+
+
+def schmal_minimum(c, min_m=0.1):
+    """Mindestbreite der SCHMALEN Lochseite: Druckmindestmass (MINMM x SCALE), mindestens 3 Zellen des Wandbilds, hoechstens min_m (24.11.2026, Schlitz f03_3)."""
+    return min(min_m, max(druck_min(), 3.0 * float(c)))
 
 
 def eintrag_anpassen(e, erg, npz, fenster_tiefe=0.12):
