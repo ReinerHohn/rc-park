@@ -24,6 +24,62 @@ def stuecke(u, lo, hi, zelle=0.05, min_p=5):
     return [(float(e[s[0].start]), float(e[s[0].stop]), int(h[s[0]].sum())) for s in ndi.find_objects(L)]
 
 
+def laeufe(c, t, luecke=3, min_lauf=3):
+    """Laeufe von Zellen mit c >= t (Luecken bis 'luecke' Zellen ueberbrueckt), nur Laeufe mit >= min_lauf belegten Zellen: [(i0, i1 inkl.)]."""
+    r, a, b, n, gap = [], None, None, 0, 0
+    for i, v in enumerate(c):
+        if v >= t:
+            if a is None: a, n = i, 0
+            b, n, gap = i, n + 1, 0
+        elif a is not None:
+            gap += 1
+            if gap > luecke:
+                if n >= min_lauf: r.append((a, b))
+                a, gap = None, 0
+    if a is not None and n >= min_lauf: r.append((a, b))
+    return r
+
+
+def bruestung(u, z, w, aus, K, zelle=0.02, d_min=0.08):
+    """BRUESTUNG zwischen Unter- und Oberkante des Kastens aus den Kantenpunkten (24.11.2026, Befund 1122w: Bild-Vorbau Nord als glatter Kasten, im Foto
+    Schwelle + vorstehender Holm, dazwischen offen mit Knaggen an den Pfosten, Wandgemaelde dahinter sichtbar). Alles in Tiefe w ab der Wand.
+      holm      zusammenhaengendes Kantenband (Luecken <= 3 Zellen) von der Oberkante abwaerts -> Unterkante; Front = Median-Tiefe der Punkte vor der Bruestungsfront,
+                Rueckseite = Median der Holmpunkte hinter der Front (Unterkanten-Ansicht), sonst None.
+      schwelle  erster dichter Lauf ueber Unterkante + 0,15 m = Oberkante der Schwelle (dort beginnt das Feld); keiner -> None (Bau nimmt ANNAHME).
+      knaggen   u-Haufen der Frontpunkte im Feld (10 cm, >= 3 Punkte je Zelle, Luecken <= 0,3 m, >= 20 Punkte, <= 1,2 m breit).
+      offen     Feld ohne waagrechte Frontkanten ausserhalb der Knaggen (belegt < 15 % der Breite) und >= 2 Knaggen - geschlossene Bretter mit Fugen/Kanten bleiben Kasten.
+    Mindestdicke d_min (0,08 m = 0,9 mm in H0, Druckmindestmass 0,8 mm)."""
+    zu, zo, ua, ub = K["z_unten"], K["z_oben"], K["u0"], K["u1"]
+    if zo - zu < 0.6: return None
+    mu = (u > ua - 0.1) & (u < ub + 0.1); m = mu & (w > 0.4) & (w < aus + 0.4)
+    zb = np.arange(zo - 0.45, zo + 0.06 + 1e-6, zelle); c, _ = np.histogram(z[m], bins=zb); io = int(min(len(c) - 1, (zo - zb[0]) / zelle))
+    top = c[max(0, io - 2): io + 3].max() if len(c) else 0
+    if top < 15: return None
+    L = [l_ for l_ in laeufe(c, max(15, 0.05 * top)) if l_[0] <= io + 2 and l_[1] >= io - 2]
+    if not L: return None
+    hu = float(min(zb[L[0][0]], zo - d_min)); hu_q = "Kantenband"
+    if L[0][0] == 0: hu, hu_q = zo - 0.15, "ANNAHME 0,15 m (Kantenband reicht ueber das Suchfenster)"
+    hb = m & (z >= hu) & (z <= zo + 0.04); hv = hb & (w > aus - 0.15); hh = hb & (w <= aus - 0.15)
+    h_front = round(max(float(np.median(w[hv])) if hv.sum() >= 15 else aus, aus), 2); h_hinten = round(float(np.median(w[hh])), 2) if hh.sum() >= 30 else None
+    zs = np.arange(zu + 0.15, hu - 0.2 + 1e-6, zelle); cs, _ = np.histogram(z[m], bins=zs) if len(zs) > 1 else (np.zeros(0), None)
+    Ls = laeufe(cs, 12, luecke=1) if len(cs) else []
+    so = round(float(zs[Ls[0][0]]), 2) if Ls else None
+    if so is not None and so - zu < d_min: so = None
+    fz0, fz1 = (so if so is not None else zu + 0.3) + 0.02, hu - 0.02
+    if fz1 - fz0 < 0.2: return None
+    fm = mu & (np.abs(w - aus) < 0.25) & (z > fz0) & (z < fz1)
+    ub_ = np.arange(ua - 0.1, ub + 0.1 + 1e-6, 0.1); cu, _ = np.histogram(u[fm], bins=ub_)
+    kn, belegt = [], 0.0
+    for a_, b_ in laeufe(cu, 3, luecke=3, min_lauf=1):
+        n_ = int(cu[a_:b_ + 1].sum()); breite = ub_[b_ + 1] - ub_[a_]
+        if n_ >= 20 and breite <= 1.2: kn.append(dict(u0=round(float(ub_[a_]), 2), u1=round(float(ub_[b_ + 1]), 2), punkte=n_))
+        else: belegt += float((cu[a_:b_ + 1] >= 3).sum()) * 0.1
+    offen = len(kn) >= 2 and belegt < 0.15 * (ub - ua)
+    return dict(holm_unten=round(hu, 2), holm_unten_quelle=hu_q, holm_front=h_front, holm_hinten=h_hinten, schwelle_oben=so, knaggen=kn, feld_belegt_m=round(belegt, 2), offen=bool(offen),
+                feld=[round(fz0, 2), round(fz1, 2)], quelle="Kantenpunkte der Vorbau-Ebene (ebenen_masse.bruestung)",
+                hinweis="offen = keine waagrechten Frontkanten im Feld ausser an den Knaggen; Knaggenform (Trapez) und Brettstaerke = ANNAHME")
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ebenen"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); vp = os.path.join(od, "audit", "vorbauten_auto.json")
@@ -56,7 +112,9 @@ def main():
                     us = [x for s_ in lu["stuecke"] for x in s_]; km["kasten"] = dict(z_unten=lu["z"], z_oben=lo_["z"], u0=round(min(us), 2), u1=round(max(us), 2), breite=round(max(us) - min(us), 2))
                     kl = [l_ for l_ in lin if lu["z"] - 0.5 <= l_["z"] < lu["z"] - 0.08]
                     if kl:
-                        kb = max(kl, key=lambda l_: l_["punkte"]); ks = [s_ for s_ in kb["stuecke"] if 0.15 <= s_[1] - s_[0] <= 0.9 and km["kasten"]["u0"] - 0.2 <= s_[0] and s_[1] <= km["kasten"]["u1"] + 0.2]
+                        # 24.11.2026 (1122w: 5 statt 6 Konsolen, Foto 113130 zeigt 6): die letzte Konsole (u 4,09..4,39) ragte 0,05 m ueber 'Kastenende + 0,2' hinaus - das
+                        # Kastenende ist die belegte Unterkante und endet an der Wand frueher. Entscheidend ist die MITTE des Stuecks im Kastenbereich (+-0,2 m).
+                        kb = max(kl, key=lambda l_: l_["punkte"]); ks = [s_ for s_ in kb["stuecke"] if 0.15 <= s_[1] - s_[0] <= 0.9 and km["kasten"]["u0"] - 0.2 <= 0.5 * (s_[0] + s_[1]) <= km["kasten"]["u1"] + 0.2]
                         if len(ks) >= 2:
                             km["konsolen"] = dict(z_unten=kb["z"], anzahl=len(ks), lage=[[s_[0], s_[1]] for s_ in ks], abstand=round(float(np.median(np.diff([0.5 * (s_[0] + s_[1]) for s_ in ks]))), 2))
                             mu = np.zeros(len(u), bool)
@@ -76,6 +134,14 @@ def main():
                             if pf and x - pf[-1][-1] < 0.5: pf[-1].append(float(x))
                             else: pf.append([float(x)])
                         km["pfosten"] = [dict(u=round(float(np.mean(c_)), 2), breite=round(c_[-1] - c_[0], 2) if len(c_) >= 2 and c_[-1] - c_[0] >= 0.12 else None, punkte=int(((np.abs(u - np.mean(c_)) < 0.3) & mz).sum())) for c_ in pf]
+                    br_ = bruestung(u, z, w, aus, km["kasten"])
+                    if br_:
+                        km["bruestung"] = br_
+                        for k_ in br_["knaggen"]:              # Knagge sitzt am Pfostenfuss: Knagge ohne Kanten-Pfosten in 0,6 m = Pfostenlage (1122w: Mittelpfosten im Band Holm..Raehm ohne Punkte)
+                            um_ = 0.5 * (k_["u0"] + k_["u1"])
+                            if not any(abs(p_["u"] - um_) < 0.6 for p_ in km.get("pfosten") or []):
+                                km.setdefault("pfosten", []).append(dict(u=round(um_, 2), breite=None, punkte=k_["punkte"], quelle="Knagge im Bruestungsfeld"))
+                        if km.get("pfosten"): km["pfosten"].sort(key=lambda p_: p_["u"])
             if "kasten" in km:
                 g["kanten_mass"] = km; n_ok += 1; K_ = km["kasten"]
                 print(f"{e['id']}: KASTEN z {K_['z_unten']:.2f}..{K_['z_oben']:.2f}, u {K_['u0']:.2f}..{K_['u1']:.2f} (Breite {K_['breite']:.2f}), Ausladung {km['ausladung']:.2f} m"

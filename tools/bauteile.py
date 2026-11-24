@@ -841,7 +841,22 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                 # Fotokanten seiner Ebene (tools/ebenen_bauplan.py -> tools/ebenen_masse.py). Aus Kanten: Kasten (Unter-/Oberkante, Breite, Ausladung), Konsolen (Zahl, Lage, Unterkante),
                 # Strebenfuss, Pfostenlage. Nicht aus Kanten (ANNAHME, im Beleg): Pfostenquerschnitt, Strebe gerade, Raehm, Dachflaeche (nur Traufe/Anschluss gemessen).
                 WG = Wand(o, o + d, aussen=o + n); Kb = KM_["kasten"]; wf = ww + float(KM_["ausladung"]); wi = ww - einbinden; KK = WG.kasten; ann = []
-                teile.append(KK(Kb["u0"], Kb["u1"], Kb["z_unten"], Kb["z_oben"], wi, wf))
+                Br_ = KM_.get("bruestung") or {}; z_p0 = Kb["z_oben"] - 0.02          # z_p0: Pfostenfuss
+                if Br_.get("offen") and os.environ.get("OHNE_BRUESTUNG_OFFEN") != "1":
+                    # 24.11.2026 (1122w, Foto 113130: Schwelle, vorstehender Holm, dazwischen offen mit Knaggen an den Pfosten, Gemaelde dahinter sichtbar; Kette baute einen
+                    # vollen Kasten): Riegel und Knaggen aus den Kantenpunkten (ebenen_masse.bruestung), Feld offen. Schwelle traegt Boden und Pfosten.
+                    so_ = Br_.get("schwelle_oben") or (Kb["z_unten"] + 0.3); hu_ = Br_["holm_unten"]
+                    hf_ = max(ww + float(Br_["holm_front"]), wf); hh_ = ww + float(Br_["holm_hinten"]) if Br_.get("holm_hinten") is not None else wf - 0.2
+                    hh_ = min(hh_, wf - 0.12)
+                    teile.append(KK(Kb["u0"], Kb["u1"], Kb["z_unten"], so_, wi, wf))                                   # Schwelle + Boden
+                    teile.append(KK(Kb["u0"] - 0.05, Kb["u1"] + 0.05, hu_, Kb["z_oben"], hh_, hf_))                     # Holm (steht vor)
+                    for k_ in Br_.get("knaggen") or []:                                                                 # Knaggen: Trapez, unten Haufenbreite, oben Pfostenbreite
+                        um_ = 0.5 * (k_["u0"] + k_["u1"]); hb_ = max(0.5 * (k_["u1"] - k_["u0"]), 0.15)
+                        teile.append(WG.huelle([(um_ + s_ * hb_, so_ - 0.02, w_) for s_ in (-1, 1) for w_ in (wf - 0.12, wf)] + [(um_ + s_ * 0.11, hu_ + 0.02, w_) for s_ in (-1, 1) for w_ in (wf - 0.12, wf)]))
+                    z_p0 = so_ - 0.02
+                    ann.append("Bruestung offen (Kanten): Schwelle z %.2f-%.2f%s, Holm z %.2f-%.2f vor bis w %.2f, %d Knaggen (Trapez, 0,12 m stark = ANNAHME)"
+                               % (Kb["z_unten"], so_, "" if Br_.get("schwelle_oben") else " (Oberkante ANNAHME +0,3 m)", hu_, Kb["z_oben"], hf_ - ww, len(Br_.get("knaggen") or [])))
+                else: teile.append(KK(Kb["u0"], Kb["u1"], Kb["z_unten"], Kb["z_oben"], wi, wf))
                 Ko = KM_.get("konsolen"); St = KM_.get("streben")
                 if Ko:
                     for a_, b_ in Ko["lage"]:
@@ -860,7 +875,7 @@ def vorbauten_aus_json(koerper, datei, stufe=0.05, min_w=0.15, einbinden=0.10):
                         # Pfosten traegt Raehm und steht auf dem Kasten -> Mitte in dessen u-Bereich ziehen (Kanten-Pfostenlage und Kastenende uneinig = Messunschaerfe am Rand)
                         bp = p_["breite"] or 0.22; up = min(max(float(p_["u"]), Kb["u0"] + bp / 2), Kb["u1"] - bp / 2)
                         if abs(up - float(p_["u"])) > 1e-6: ann.append("Pfosten u %.2f lag neben dem Kasten (u %.2f..%.2f) -> auf %.2f an dessen Ende gerueckt" % (p_["u"], Kb["u0"], Kb["u1"], up))
-                        teile.append(KK(up - bp / 2, up + bp / 2, Kb["z_oben"] - 0.02, z_d + 0.02, wf - bp, wf))
+                        teile.append(KK(up - bp / 2, up + bp / 2, z_p0, z_d + 0.02, wf - bp, wf))
                     if Pf: ann.append("Pfostenquerschnitt %s" % ", ".join(("%.2f m gemessen" % p_["breite"]) if p_["breite"] else "0,22 m Standard" for p_ in Pf))
                     zt = V_["z_traufe"] if V_ else z_d + 0.3
                     VP_ = VPJ.get((F.get("id"), gi_))
