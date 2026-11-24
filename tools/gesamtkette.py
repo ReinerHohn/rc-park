@@ -837,7 +837,9 @@ def main():
                 erg_.update({n_: k_.get(n_) for n_ in ("wolke_am_modell_vorher", "wolke_am_modell_nachher")}, wolkenkoerper=dict(angenommen=[x_["id"] for x_ in k_.get("angenommen", [])], verworfen=[x_["id"] for x_ in k_.get("verworfen", [])], gemeldet=[f"{x_['id']} {x_['form']}" for x_ in k_.get("gemeldet", [])]))
                 # 21.11.2026 (KERNMETHODE, Nutzer: "Form aus Fotos, Wolke nur Lage"): runde Koerper aus den FOTO-UMRISSEN nachmessen (tools/rund_aus_umriss.py, Bildpyramide,
                 # Beruehrlinien je Blickrichtung gewichtet) - ersetzt Wolkenradius/-profil (Schwabentor Treppenturm: Wolke r 1,73, Foto 1,585, Handstand 1,555; Traufe 11,25 / 11,57).
-                rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"], log, ok=(0, 3, 4))[0]
+                # 24.11.2026: Kranz-/Traufhoehe aus den triangulierten Fotokanten (KD/sweep.npz) bzw. der Wolken-Flaechenmitte statt Silhouette (Auskragungs-Falle L31, 1122 Rundturm)
+                rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"] + (["--kanten", os.path.join(KD, "sweep.npz")] if os.path.exists(os.path.join(KD, "sweep.npz")) else [])
+                           + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3, 4))[0]
                 erg_["rund_umriss_rc"] = rr_
                 # 23.11.2026 (Kette 1122s: Treppentuermchen hoher Zylinder ohne Dach - Umriss-Stuetze lief bis zum Suchende 13,75, Traufe/Dach nie gefunden): Schaft und DACH
                 # als Drehkoerper aus EINSEITIGEN Silhouetten gegen Himmel (tools/rund_aus_huelle.py, Bausteine tools/drehkoerper_aus_fotos.py wie die Laternenhaube)
