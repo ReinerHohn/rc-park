@@ -3,6 +3,7 @@ Suche: erst Ast waehlen, dann bei grossen Dateien das Inhaltsverzeichnis (modell
 Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md.
 
 ## Regeln, Methode, Vorlagen
+- Feature Formsitz (trennscharfes Formmaß, Konvergenz): [FEATURE_FORMSITZ.md](FEATURE_FORMSITZ.md)
 - `modelle/KI_AUFRAEUMEN_2026-11-20.md` (3 kB) KI-konformes Aufraeumen (20.11.2026)
 - `modelle/LIZENZ_WERKZEUGE.md` (37 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (18 Abschnitte)
 - `modelle/METHODE_EBENEN_BAUPLAN.md` (7 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)

@@ -10,6 +10,7 @@ Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-
 - Messwerkzeug schreibt nichts, bevor `plausibel()` (möglich?) und `pruefe()` (Streuung ≤ Unsicherheit) bestanden sind [VERSUCHSREGISTER AC/AD]
 - Jede Kennzahl braucht Nullkontrolle (gedreht/verschoben) und Positivkontrolle an sicherer Kante [REZEPT L15, L46]
 - Vorher/nachher nur auf gemeinsamen Fotos und gleichem Bereich vergleichen [REZEPT L38]
+- Fortschritt/PLATEAU nur mit dem trennscharfen Formmaß **Formsitz** (Tiefen-IoU Modell–Wolke je Foto, Nullprobe + Trennschärfe; urteilt nur bei Trennschärfe ≥ 0,25; höhenblind) → [modelle/FEATURE_FORMSITZ.md](../../modelle/FEATURE_FORMSITZ.md) (24.11.)
 - Wiederholungs-Prior: Periode, Instanzen falten, jede Kopie am Foto abnehmen; zuerst Konstanz der Abstände prüfen (Nutzer 9.11.) [memory feedback-wiederholungs-prior; REZEPT L1]
 - Nie eine fotobelegte Kante verlieren: Gitter über Läufe vereinigen (`gitter_zurueck.py`) (Nutzer 9.11.) [memory feedback-nie-belegte-kanten-verlieren]
 
