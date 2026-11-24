@@ -28,6 +28,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
              Original + Wolke-Tore unveraendert), Bericht audit/wolke_draehte.json + audit/wolke_draehte.jpg (24.11.2026, Nutzerbefund 1122 Nordseite)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html (Wolke = gefilterte Kopie, wenn neuer als das Original)
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
+  (am Ende) tools/konvergenz.py -> audit/konvergenz.jsonl + konvergenz.png: F1 grob/fein je Seite auf FESTEM Fotosatz, Status steigt/PLATEAU/kein Beleg
   (immer am Ende) tools/befundliste.py -> audit/befunde.json + audit/befunde/bNN.jpg: sichtbare Fehler je Ort/Art/Beleg/Werkzeug fuer die Agenten-Schleife
 Umgebung: venv-seg (s.o.) oder `tools/py tools/gesamtkette.py ...`; Teilschritte mit pycolmap ruft die Kette selbst mit venv-colmap.
 Exit: 0 = Kette durchgelaufen, 2 = Datenplatte fehlt / modelle/<ziel>/objekt.json fehlt, 3 = keine Lage besteht alle Tore oder Platz zu knapp,
@@ -935,6 +936,30 @@ def main():
             notiz(B, "malplan_ergebnis", rc_mp == 0, waende=len(mp_.get("waende") or []), zonen={w_["wand"]: [f"{z_['material']} {z_['hex']} {round(100 * z_['anteil'])}%" for z_ in w_["zonen"]] for w_ in mp_.get("waende") or []},
                   gebaeude={m_: f"{g_['hex']} -> {g_['mischung']['text']}" for m_, g_ in (mp_.get("gebaeude") or {}).items()}, hinweis="ANSEHEN: audit/malplan_<wand>.jpg; Anleitung audit/malplan.md (Material = Farbregel-ANNAHME)")
         except Exception as e: notiz(B, "malplan_ergebnis", False, fehler=f"audit/malplan.json nicht lesbar (rc {rc_mp}): {type(e).__name__} {e}"[:240])
+    # 24.11.2026 KONVERGENZ (Nutzer: "Augenmass ist doof"): FESTER Fotosatz je Seite (audit/konvergenz_fotosatz.json, einmal gewaehlt) + feste Bauteil-Kameras
+    # aus neben_details -> grobes F1 (foto_diff_batch auf das End-STL, Ausgabe <daten>/konvergenz/<lauf>) und feines F1 je Bauteil (teil_fotoform f1_fein) ->
+    # Zeile audit/konvergenz.jsonl + audit/konvergenz.png; Status je Seite steigt / PLATEAU (Methode erschoepft, mit Restfehler-Ort) / kein Beleg. Bericht, kein Tor.
+    if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
+        try:
+            t_kv = time.time(); lid_ = os.environ.get("RCPARK_JOB") or time.strftime("lauf_%Y%m%d_%H%M")
+            rc_kv, _ = lauf(B, "konvergenz", [PY, "-W", "ignore", "-I", "tools/konvergenz.py", ZR, "--lauf", lid_, "--daten", D], log, ok=(0, 3), timeout=3600)
+            zl_ = open(os.path.join(Z, "audit", "konvergenz.jsonl")).read().splitlines()[-1] if KB_frisch(os.path.join(Z, "audit", "konvergenz.jsonl"), t_kv) else None
+            if zl_ is None: raise FileNotFoundError("audit/konvergenz.jsonl nicht in diesem Lauf geschrieben")
+            kv_ = json.loads(zl_)
+            notiz(B, "konvergenz_ergebnis", True, lauf=lid_, seiten={e_["name"]: f"grob {e_.get('f1')} fein {e_.get('f1_fein')} -> {e_.get('status')}" for e_ in kv_["seiten"].values()},
+                  hinweis="ANSEHEN: audit/konvergenz.png; PLATEAU = Methode erschoepft -> restfehler in audit/konvergenz.jsonl zeigt, wo neu ansetzen")
+        except Exception as e: notiz(B, "konvergenz_ergebnis", True, hinweis=f"Konvergenzmessung ohne Ergebnis (kein Kettenfehler): {type(e).__name__} {e}"[:240])
+    # 24.11.2026 LAUFZEIT-BERICHT (modelle/ERKENNTNISSE.md 24.11.: Doppel-Fusion 470 + 450 s, 6 volle Bauten 38 min blieben unbemerkt): Laufzeit je Stufenfamilie
+    # aus gesamtkette.log ab diesem Lauf, Vorlauf = frueherer Abschnitt derselben Datei, Fusionen der SfM-Stufe aus pipe/pipeline.log -> audit/laufzeit.json. Bericht, kein Tor.
+    if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
+        try:
+            _lz = [PY, "-I", "tools/laufzeit_bericht.py", log, "--aus", os.path.join(Z, "audit", "laufzeit.json"), "--ab-zeile", str(log_ab)]
+            if os.environ.get("RCPARK_JOB"): _lz += ["--unterlog", os.path.join(D, "pipe", "pipeline.log"), "--job", os.environ["RCPARK_JOB"]]
+            lauf(B, "laufzeit", _lz, log, ok=(0,), timeout=300)
+            _lzj = json.load(open(os.path.join(Z, "audit", "laufzeit.json")))
+            notiz(B, "laufzeit_ergebnis", True, summe_min=_lzj.get("summe_min"), hinweise=(_lzj.get("hinweise") or [])[:8],
+                  hinweis="DOPPELARBEIT/WIEDERHOLUNG/GEWACHSEN = Beschleunigungs-Befund fuer die Agenten-Schleife")
+        except Exception as e: notiz(B, "laufzeit_ergebnis", True, hinweis=f"Laufzeit-Bericht ohne Ergebnis (kein Kettenfehler): {type(e).__name__} {e}"[:240])
     # 22.11.2026 BEFUNDLISTE (Agenten-Schleife automatisch, 0_DURCHBRUCH_AGENTEN_SCHLEIFE.md): nach allen Toren und der letzten Abnahme (neben_*.jpg sind frisch) die
     # sichtbaren Fehler maschinenlesbar -> audit/befunde.json + Ausschnitte audit/befunde/bNN.jpg (Foto | Modell). Bericht, kein Tor (ok auch mit Befunden).
     if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF:
