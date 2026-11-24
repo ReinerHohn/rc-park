@@ -9,6 +9,8 @@ Welt: Kastenturm 10 x 8 m, 30 m hoch, dazu ein Nachbarhaus westlich (nur A) und 
   3 WEIT WEG  wahre Lage 12 m neben dem GPS (ausserhalb der Suche) -> abgelehnt, keine Matrix.
   4 GPS-PROBE gps_urteil: keine Geotags / Median deutlich schlechter / zu wenige unter 12 m -> Ablehnung; knapp schlechter -> bestanden.
   6 MASSSTAB  GPS-Massstab 10 % daneben, B sieht Turm + Nachbarhaus -> Massstab aus den Waenden; ohne Beleg starr -> Doppelwand -> abgelehnt; Ecke = Hebel 0.
+  7 HOEHE     (1122z) Fassaden mit Fenstern/Gesimsen, B 5,5 m zu tief -> Struktur + Boden korrigieren; ohne Boden Meldung; Boden gegen Waende versetzt -> uneinig;
+              ohne gemeinsame Saeulen/Boden -> 'nicht belegt' (kein Raten); Tor unter Gelaende; binden() mit falschem GPS-Fusspunkt -> senkrecht < 0,5 m.
   5 VERDRAHTUNG sfm_seiten_modelle (waende_stufe, RCPARK_WAENDE, Code-Stand, Weg 'gps+waende' ohne GPS-Ausgleich), seiten_lage_beleg ('gps+waende' belegt)."""
 import os, sys
 import numpy as np
@@ -121,6 +123,43 @@ welt_b = np.vstack([turm_b_sued, turm_b_ost, mauer, boden_b])
 z = WB.zuege(np.r_[np.c_[np.full(100, 5.0), np.linspace(-4, 4, 100)], np.c_[np.linspace(-5, 5, 100), np.full(100, -4.0)]],
              np.r_[np.tile([1.0, 0], (100, 1)), np.tile([0, 1.0], (100, 1))])
 pruef(len(z) == 2 and WB.hebel(z) == 0.0, f"Ecke aus zwei Waenden: {len(z)} Wandzuege, Hebel {WB.hebel(z)} (Massstab nicht bestimmt)")
+
+print("7 HOEHE (1122z: Teil 1 am GPS-Fusspunkt 6,4 m zu tief, 19 % unter Gelaende, Spitze 39 statt 45 m)")
+def fassade(p0, p1, z0, z1, rng, fenster=(), gesimse=()):
+    """Wand mit Fensterreihen (Hoehenbereiche ohne Punkte in Abschnitten) und Gesimsen (waagerechte Vorspruenge 0,4 m)."""
+    W = wand(p0, p1, z0, z1, 60, rng); p0, p1 = np.asarray(p0, float), np.asarray(p1, float); L = np.linalg.norm(p1 - p0); d = (p1 - p0) / L
+    u = (W[:, :2] - p0) @ d; weg = np.zeros(len(W), bool)
+    for a, b in fenster: weg |= (W[:, 2] > a) & (W[:, 2] < b) & ((u % 3.0) > 1.0) & ((u % 3.0) < 2.2)
+    W = W[~weg]; nn = np.array([-d[1], d[0]]); G = []
+    for h in gesimse:
+        n = int(60 * L * 0.4); t = rng.random(n) * L; q = rng.random(n) * 0.4; G.append(np.c_[p0 + np.outer(t, d) + np.outer(q, nn), np.full(n, h) + rng.normal(0, 0.02, n)])
+    return np.vstack([W] + G)
+rng7 = np.random.default_rng(7); FE = [(4, 6), (9.5, 11.5), (15, 17.5), (21, 23)]; GS = [7.5, 13.0, 19.0, 26.0]
+haus_a = np.vstack([fassade(SW, SO, 0, 30, rng7, FE, GS), fassade(SO, NO, 0, 30, rng7, FE, GS), fassade(NO, NW, 0, 30, rng7, FE, GS)])
+haus_b = np.vstack([fassade(SW, SO, 0, 30, rng7, FE, GS), fassade(SO, NO, 0, 30, rng7, FE, GS)])
+bo_a = np.c_[rng7.uniform(-25, 25, 40000), rng7.uniform(-25, 25, 40000), rng7.normal(0, 0.03, 40000)]
+bo_b = np.c_[rng7.uniform(-20, 20, 20000), rng7.uniform(-25, -4.5, 20000), rng7.normal(0, 0.03, 20000)]
+PA7 = np.vstack([haus_a, bo_a]); dz7 = -5.5; PB7 = np.vstack([haus_b, bo_b]) + [0, 0, dz7]
+h = WB.hoehe_belegen(PA7, PB7)
+pruef(h["quelle"] == "struktur" and abs(h["dz_m"] + dz7) < 0.15, f"B um {dz7} m verschoben -> Struktur {h['dz_m']:+.2f} m ({h['meldung'][:140]})")
+pruef(h["boden"]["messbar"] and abs(h["boden"]["dz_m"] + dz7) < 0.15, f"Boden-Gegenprobe {h['boden']['dz_m']} m ({h['boden']['zellen']} Zellen)")
+u0, u1 = WB.unter_gelaende(PA7, PB7), WB.unter_gelaende(PA7, PB7 + [0, 0, h["dz_m"]])
+pruef(u0["ok"] is False and u1["ok"] is True, f"Tor unter Gelaende: vorher {u0['anteil_b']} (abgelehnt), nachher {u1['anteil_b']} (A {u1['anteil_a']})")
+h = WB.hoehe_belegen(PA7, haus_b[haus_b[:, 2] > 3.0] + [0, 0, dz7])                                 # B sieht weder Strasse noch Wandfuss (Autos, Mauer davor)
+pruef(h["quelle"] == "struktur" and abs(h["dz_m"] + dz7) < 0.15 and "Boden nicht pruefbar" in h["meldung"], f"ohne B-Boden: Struktur, Boden gemeldet ({h['meldung'][:120]})")
+h = WB.hoehe_belegen(PA7, np.vstack([haus_b, bo_b + [0, 0, 3.0]]) + [0, 0, dz7])
+pruef(h["uneinig"] is True and h["dz_m"] == 0.0, f"Boden 3 m gegen die Waende versetzt -> uneinig ({h['meldung'][:120]})")
+fremd = wand((30, 30), (40, 30), 0, 20, 60, rng7) + [0, 0, dz7]                                     # B sieht nur eine Wand, die A nicht hat; kein Boden
+h = WB.hoehe_belegen(PA7, fremd)
+pruef(h["quelle"] == "nicht belegt" and h["dz_m"] == 0.0 and WB.unter_gelaende(PA7, fremd)["ok"] is None, f"ohne Beleg: kein Raten ({h['meldung'][:120]})")
+alt_m = WB.Z_MIN_SAEULEN; WB.Z_MIN_SAEULEN = 10 ** 9
+h = WB.hoehe_belegen(PA7, PB7); WB.Z_MIN_SAEULEN = alt_m
+pruef(h["quelle"] == "boden" and abs(h["dz_m"] + dz7) < 0.15, f"Struktur nicht messbar -> Boden {h['dz_m']:+.2f} m")
+welt_b = np.vstack([turm_b_sued, turm_b_ost, mauer, boden_b])
+W5 = np.eye(4); W5[2, 3] = -5.5; Mg7 = MA @ W5 @ np.linalg.inv(MA) @ gps_lage()                     # GPS-Lage, dazu B 5,5 m zu tief (falscher Fusspunkt)
+e = WB.binden(DA, DB, G_von(Mg7), lot_a, ref_b); T_ = np.vstack([turm_b_sued, turm_b_ost])   # Grenze wie Fall 1 (Restkippung der GPS-Lage am Turm ~0,4 m)
+pruef(e.get("ok") is True and fehler_m(np.asarray(e["B_nach_A"]), T_, "senkrecht") < 0.5, f"binden: GPS-Fusspunkt 5,5 m zu tief (vorher {fehler_m(Mg7, T_, 'senkrecht'):.1f} m) -> senkrecht "
+      f"{fehler_m(np.asarray(e['B_nach_A']), T_, 'senkrecht') if e.get('ok') else None} m ({(e['pruefung'].get('hoehe_3d') or {}).get('meldung', e.get('urteil', ''))[:140]})")
 
 print("5 VERDRAHTUNG")
 src = open(os.path.join(TOOLS, "sfm_seiten_modelle.py")).read()

@@ -1,4 +1,4 @@
-# Werkzeuge: bauteil_generator (63)
+# Werkzeuge: bauteil_generator (64)
 - `tools/_test_baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baum_erzeugen.py` [-] baum_erzeugen.py - Wissensbaum fuer KI-Suche (Nutzer 20.11.2026: "Informationen baumartig, damit der Kontext nicht vollballert"). Erzeugt (nie von Hand pflegen, nach neuen Dateien 
@@ -39,6 +39,7 @@
 - `tools/handy_zoom_verdacht.py` [col] handy_zoom_verdacht.py - je Handybild f frei schaetzen (Profil ueber f, PnP bei festem f, robuste Kosten) und Bilder mit f deutlich ausserhalb des Hauptclusters als 'gezoomt' kennz
 - `tools/helm_aus_scan.py` [gen] helm_aus_scan.py — Hybrid: Schaft/Tor aus dem Generator-Modell (H0, mm), Helm aus den gemessenen Scan-Breiten.
 - `tools/helm_fit.py` [seg] Turmhelme als Formfamilie (n-eckige Pyramide, Achse lotrecht) aus Tiefen-Sweep-Punkten fitten (GPU-Rastersuche), statt Geraden-RANSAC auf einem Kegel. Ablauf: (1) Kandidaten automa
+- `tools/konvergenz.py` [seg] konvergenz.py <objekt.json> --lauf ID [--daten DIR] [--lesen DIR] [--fein-json F] [--aus DIR] [--k 5] [--schwelle 0.02] [--trocken] FESTE, OBJEKTIVE Messgroesse je Seite und Lauf +
 - `tools/konvergenz_bericht.py` [seg] konvergenz_bericht.py - Konvergenz je Bau: wird das Modell von Lauf zu Lauf besser? (Nutzerziel 9.11.: 'konvergieren gegen ein druckbares Modell, alle Kanten beschrieben')
 - `tools/kreis_elemente.py` [gen] kreis_elemente.py - ELEMENT-MESSREGION fuer das Rauschtor (tools/kreis_rauschtor.py, Auftrag 12.11.).
 - `tools/kreis_nachmessen.py` [gen] kreis_nachmessen.py - verworfene Kreisrunden mit dem FOTO-TOR nachmessen (Nutzer 10.11. abends: "Kannst du aus den heutigen Laeufen die Daten weiterhin nutzen? Wenn das Foto gewinn
