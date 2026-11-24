@@ -20,6 +20,9 @@ Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> d
 - Verwerfen nur mit benannter Ursache. Vor neuen Versuchen: `modelle/NICHTS_GEBRACHT.md`, `modelle/VERSUCHSREGISTER_MARTINSTOR.md`, `modelle/LIZENZ_WERKZEUGE.md` (nur verkaufstaugliche Lizenzen; NC nur Test).
 
 ## Pflicht-Pruefungen (Ablauf je Skill)
+- ⛔ HART (Nutzer 24.11. „sichere das hart ab"): NIE SCHLECHTER ALS DER BESTE STAND. Nach jedem Kettenlauf ZUERST `audit/neben_*.jpg` neben das
+  Bestbild in `modelle/<obj>/bestand/` legen und ansehen, BEIDE dem Nutzer schicken, erst dann Zahlen. Bestand-Tor rot oder Bauteil sichtbar
+  schlechter = Rueckschritt: nicht als Fortschritt melden, NICHT nach main mergen, Ursache-Agent. Dokumentierte Sackgasse ohne roten Test = Luecke -> Test bauen.
 - Generatoraenderung -> Skill `abnahme` (`tools/bauen_abnehmen.sh <objekt>`; nur bei "alle Pruefungen bestanden" weiter; Sollwerte nie lockern ohne neue Quelle + `historie`).
 - tools-Aenderung -> Skill `tools-pruefen` (`bash tools/schnelltest.sh`, dann `tools/regression.py ... --pruefen`).
 - Nach dichter Wolke -> Skill `wolke-tore`.
