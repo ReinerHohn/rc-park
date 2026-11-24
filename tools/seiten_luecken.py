@@ -150,6 +150,23 @@ def kamera_verfeinern_zeile(VS, T, objekt, fassaden_json, audit, Z):
             f"if [ -s {L} ]; then {VS} -W ignore {T}/kamera_verfeinern.py {objekt} {fassaden_json} - --liste {L} --schreiben || [ $? = 3 ]; fi   # neue Kameras am Modell nachziehen (rc 3 = keine bestimmt, kein Abbruch; Absturz = Abbruch, 24.11.2026 1122u: '|| true' schluckte KeyError 'world' -> Erfolgsmarke trotz 0 belegt)")
 
 
+def download_zeile(Z, name, cmd, bei_fehler):
+    """Bash-Zeilen: Download-Befehl <cmd> nur, wenn sein letzter erfolgreicher Lauf (gleicher Befehl = gleiche Suche/Quelle) aelter ist als
+    RCPARK_DOWNLOAD_FRISCH_H Stunden (Standard 24; 0 = immer laden) - endete er mit Drosselung (HTTP 429/503 in der Ausgabe), gilt RCPARK_DOWNLOAD_DROSSEL_H (Standard 6).
+    24.11.2026 (Kette 1122w): Download 5 min, obwohl alle Bilder schon da waren - Commons-/Openverse-Abfragen (Seiten mit 2-3 s Pause) und Drossel-Versuche je Lauf.
+    Die Werkzeuge laden schon Vorhandenes nicht neu (Datei-Cache) und warten bei 429 mit Retry-After/Backoff (tools/http_holen.py, Drossel-Marke 24 h);
+    hier faellt zusaetzlich die ganze Abfrage weg, solange sie frisch ist. ANNAHME: Suchtreffer/Lizenzen freier Quellen aendern sich innerhalb eines Tages nicht nennenswert.
+    Marke <Z>/download_stand/<name>_<befehls-hash>.ok bzw. .drossel; rc != 0 -> <bei_fehler> (kein Abbruch, keine Marke)."""
+    h = hashlib.sha1(cmd.encode()).hexdigest()[:12]; D = f"{Z}/download_stand"; M = f"{D}/{name}_{h}"; L = f"{D}/{name}.log"
+    return [f"mkdir -p {D}; FH=${{RCPARK_DOWNLOAD_FRISCH_H:-24}}; DH=${{RCPARK_DOWNLOAD_DROSSEL_H:-6}}",
+            f'if [ "$FH" != 0 ] && {{ [ -n "$(find {M}.ok -mmin -$((FH * 60)) 2>/dev/null)" ] || [ -n "$(find {M}.drossel -mmin -$((DH * 60)) 2>/dev/null)" ]; }}; then',
+            f'  echo "DOWNLOAD {name}: letzter Lauf frisch (< $FH h, gedrosselt < $DH h) - Abfrage uebersprungen, vorhandene Bilder bleiben (neu laden: RCPARK_DOWNLOAD_FRISCH_H=0)"',
+            "else",
+            f"  RC=0; {cmd} 2>&1 | tee {L}; RC=${{PIPESTATUS[0]}}; rm -f {M}.ok {M}.drossel",
+            f'  if [ $RC != 0 ]; then {bei_fehler}; elif grep -q -E "HTTP (429|503)|[Dd]rossel" {L}; then touch {M}.drossel; else touch {M}.ok; fi',
+            "fi"]
+
+
 def stl_dreiecke(p):
     """Zahl der Dreiecke einer STL-Datei (binaer oder ASCII), ohne trimesh (venv-colmap hat es nicht). None = keine lesbare STL."""
     try:
@@ -227,10 +244,12 @@ def main():
               f"{VC} {T}/colmap_rig_abgleich.py probe --db {a.ref_db} --sparse {a.sparse}   # 22.11.2026 SCHNELL SCHEITERN: Lade-Check von triangulate_points (Kamera/Rig Modell vs. DB) in Sekunden statt nach 44 min", roh_neu_zeile(Z)] + schritt_helfer(Z, T)
     if a.download and obj.get("koordinate_utm"):
         lat, lon = utm32_nach_geo(*obj["koordinate_utm"][:2])
-        zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 60 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons || echo \"Commons: nichts geholt (rc $?) - weiter mit den anderen Quellen\"   # freie Lizenzen, manifest.json; 17.11.2026: rc 2 bei 0 Bildern darf das Nachholen (set -e) nicht abbrechen")
+        # freie Lizenzen, manifest.json; 17.11.2026: rc 2 bei 0 Bildern darf das Nachholen (set -e) nicht abbrechen. 24.11.2026: frische Abfragen nicht wiederholen (download_zeile)
+        zeilen += download_zeile(Z, "commons", f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 60 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons",
+                                 'echo "Commons: nichts geholt (rc $RC) - weiter mit den anderen Quellen"')
         nm = f"{obj.get('name', '')} {obj.get('ort', '').split(' im ')[0]}".strip(); ort = obj.get("ort", "").split(" im ")[0]
-        zeilen.append(f"python3 {T}/online_ansichten_holen.py --aus {Z}/hochblick --suche \"{nm}\" \"{ort} Luftbild\" \"{ort} Panorama\" --max 40 || true   # Hochblicke (Commons): sehen Seiten ueber Nachbardaechern")
-        zeilen.append(f"python3 {T}/openverse_holen.py --aus {Z}/openverse --suche \"{nm}\" \"{obj.get('name', '')}\" \"{ort} Altstadt Blick\" --max 150 || true   # Flickr u. a. ueber Openverse, nur CC0/BY/BY-SA")
+        zeilen += download_zeile(Z, "hochblick", f"python3 {T}/online_ansichten_holen.py --aus {Z}/hochblick --suche \"{nm}\" \"{ort} Luftbild\" \"{ort} Panorama\" --max 40", ":")      # Hochblicke (Commons): sehen Seiten ueber Nachbardaechern
+        zeilen += download_zeile(Z, "openverse", f"python3 {T}/openverse_holen.py --aus {Z}/openverse --suche \"{nm}\" \"{obj.get('name', '')}\" \"{ort} Altstadt Blick\" --max 150", ":")      # Flickr u. a. ueber Openverse, nur CC0/BY/BY-SA
         zeilen.append(f"for f in {Z}/commons/*.jpg {Z}/hochblick/orig/*.jpg {Z}/openverse/*.jpg; do [ -e \"$f\" ] && ln -sf \"$f\" {Z}/roh/dl_$(basename $(dirname \"$f\"))__$(basename \"$f\"); done")
     zeilen += [f"ln -sf \"{f}\" {Z}/roh/" for f in kand]
     vf = kamera_verfeinern_zeile(VS, T, os.path.abspath(a.objekt), os.path.join(os.path.abspath(a.fassaden), 'fassaden.json'), audit, Z)
