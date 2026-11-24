@@ -48,6 +48,12 @@ keine Zeitreihe, Laeufe nicht vergleichbar (Lehre NICHTS_GEBRACHT 10.11. Kreis a
    formsitz_relativ, formsitz_trennt, med_dz, a10, a25, kontur. ER ERSETZT DAS GROBE F1 IM URTEIL: status = steigt/PLATEAU/faellt aus der formsitz-Reihe
    (+ fein wie bisher), aber NUR wenn formsitz_trennt; sonst "nicht trennbar (Zufallsniveau)" (kein PLATEAU). Ohne Formsitz (keine Wolke, --ohne-formsitz)
    bleibt das alte Urteil aus dem groben F1 mit HINWEIS (Rueckfall, nicht trennscharf). --lesen liest DIR/formsitz.json.
+7. HOEHENSITZ (Nachtrag 24.11. nachts, tools/hoehensitz.py; Befund: der Formsitz ist fast HOEHENBLIND, Modell +-0,3 m in z -> Abfall <= 0,005): waagerechte
+   Strukturlinien (Traufe, Gesimse, Dachfuss, Sohlbank/Sturz, Uhrkanten) als Spruenge der Aussenlage je Wandstreifen und Hoehe im 3D-Rahmen je Seite, Modell
+   gegen dichte Wolke; Zufall = Modell 1,3/2,1 m in z, Trennschaerfe = Wolkenhaelfte gegen Wolkenhaelfte minus deren Zufall. Felder hoehensitz,
+   hoehensitz_null, hoehensitz_trennschaerfe, hoehensitz_trennt, hoehe_a10, hoehe_a25, hoehe_med_dz, hoehe_fehler (Linien mit falscher Hoehe).
+   URTEIL: status_hoehe = steigt/PLATEAU/faellt aus der hoehensitz-Reihe NUR wenn hoehensitz_trennt; es ergaenzt den Seitenstatus (status_mit_hoehe):
+   faellt die Hoehe, faellt die Seite; steigt sie, ist die Seite nicht im PLATEAU. --ohne-hoehe schaltet ab; --lesen liest DIR/hoehensitz.json.
 Ausgabe: Zeile in audit/konvergenz.jsonl (lauf, zeit, git, stl_sha, je Seite F1 grob/fein + n + Status + Restfehler), Text, audit/konvergenz.png (F1 je
 Seite ueber die Laeufe, grob und fein). --lesen DIR: foto_diff_<foto>.json aus DIR statt neu rechnen (Probe/Test); --fein-json: teil_fotoform-Bericht lesen.
 --aus DIR: Fotosatz/Reihe/Bild dorthin statt audit/ (Probe ohne Objektordner). --trocken: keine Zeile anhaengen.
@@ -323,7 +329,7 @@ def status_seite(sg, sf):
     return KURZ
 
 
-EINZEL = {"f1": "fotos", "f1_fein": "bauteile_fein", "formsitz": "fotos_formsitz"}
+EINZEL = {"f1": "fotos", "f1_fein": "bauteile_fein", "formsitz": "fotos_formsitz", "hoehensitz": "streifen_hoehensitz"}
 TRENNT_NICHT = "nicht trennbar (Zufallsniveau)"
 
 
@@ -333,6 +339,15 @@ def status_mit_formsitz(sform, sf, trennt):
     belegtes feines steigt/faellt bleibt."""
     if not trennt: return sf if sf in (STEIGT, FAELLT) else TRENNT_NICHT
     return status_seite(sform, sf)
+
+
+def status_mit_hoehe(status, sh):
+    """Seitenstatus + HOEHENSITZ-Status (tools/hoehensitz.py, Nachtrag 24.11.): der Formsitz ist hoehenblind, deshalb ergaenzt die Hoehe das Urteil -
+    faellt die Hoehe (belegt, trennt), faellt die Seite; steigt sie, ist die Seite nicht im PLATEAU (auch nicht 'nicht trennbar'/'zu kurz').
+    Ohne belegten Hoehenstatus (KEIN/KURZ/nicht trennbar/None) bleibt der Seitenstatus."""
+    if sh == FAELLT: return FAELLT
+    if sh == STEIGT and status in (PLATEAU, TRENNT_NICHT, KURZ, KEIN): return STEIGT
+    return status
 
 
 def reihe(zeilen, gruppe, feld):
@@ -379,8 +394,8 @@ def kurve(zeilen, gruppen, pfad):
     import cv2
     n = len(gruppen); sp = 2 if n > 1 else 1; zl = (n + sp - 1) // sp; FW, FH, M = 520, 320, 48
     img = np.full((zl * FH + 40, sp * FW, 3), (251, 252, 252), np.uint8)
-    farbe = {"f1": (214, 120, 42), "f1_fein": (52, 104, 235), "f1_wolke": (96, 160, 34), "formsitz": (150, 50, 140)}   # BGR von #2a78d6 / #eb6834 / #22a060 / #8c3296
-    cv2.putText(img, "je Seite: blau F1 grob, orange F1 fein, gruen Wolke, violett FORMSITZ (Urteil); Strich = Bruch", (10, 26), 0, 0.5, (40, 40, 40), 1, cv2.LINE_AA)
+    farbe = {"f1": (214, 120, 42), "f1_fein": (52, 104, 235), "f1_wolke": (96, 160, 34), "formsitz": (150, 50, 140), "hoehensitz": (40, 40, 40)}   # BGR von #2a78d6 / #eb6834 / #22a060 / #8c3296 / #282828
+    cv2.putText(img, "je Seite: blau F1 grob, orange F1 fein, gruen Wolke, violett FORMSITZ, schwarz HOEHENSITZ; Strich = Bruch", (10, 26), 0, 0.5, (40, 40, 40), 1, cv2.LINE_AA)
     for i, (g, name) in enumerate(gruppen):
         x0, y0 = (i % sp) * FW + M, 40 + (i // sp) * FH + 30; w, h = FW - M - 20, FH - 100
         cv2.putText(img, name, (x0, y0 - 10), 0, 0.6, (11, 11, 11), 1, cv2.LINE_AA)
@@ -425,7 +440,7 @@ def main(argv=None):
     ap.add_argument("--aus"); ap.add_argument("--k", type=int, default=K_STD); ap.add_argument("--schwelle", type=float, default=SCHWELLE)
     ap.add_argument("--trocken", action="store_true"); ap.add_argument("--ohne-fein", action="store_true")
     ap.add_argument("--ohne-wolke", action="store_true"); ap.add_argument("--wolke", help="dichte Wolke (npy, Kamerarahmen) statt der Standardwolke")
-    ap.add_argument("--ohne-formsitz", action="store_true")
+    ap.add_argument("--ohne-formsitz", action="store_true"); ap.add_argument("--ohne-hoehe", action="store_true")
     a = ap.parse_args(argv)
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt))
     root = os.path.dirname(os.path.dirname(od)); fotos_dir = os.path.join(root, obj.get("fotos_dir", ""))
@@ -512,6 +527,17 @@ def main(argv=None):
     if not a.ohne_formsitz and os.path.exists(fj):
         try: form = json.load(open(fj))
         except Exception as ex: print(f"HINWEIS: {fj} unlesbar ({ex})")
+    # --- Hoehensitz (waagerechte Strukturlinien Modell gegen dichte Wolke, Nullprobe in z + Trennschaerfe; tools/hoehensitz.py, CPU)
+    hoehe = None; hj = os.path.join(a.lesen or quelle, "hoehensitz.json")
+    if not a.ohne_hoehe and not a.lesen and satz and os.path.exists(stl):
+        try:
+            r = subprocess.run([PY_SEG, "-W", "ignore", "-I", os.path.join(HIER, "hoehensitz.py"), a.objekt, "--fotosatz", sp, "--json", hj, "--bild", os.path.join(aus, "hoehensitz.jpg")]
+                               + (["--wolke", a.wolke] if a.wolke else []), cwd=root, capture_output=True, text=True, timeout=900, env=dict(os.environ, CUDA_VISIBLE_DEVICES=""))
+            if r.returncode: print(f"HINWEIS: hoehensitz rc {r.returncode}: {(r.stdout + r.stderr)[-300:]}")
+        except subprocess.TimeoutExpired: print("HINWEIS: hoehensitz nach 900 s abgebrochen - Status ohne Hoehe (Formsitz ist hoehenblind)")
+    if not a.ohne_hoehe and os.path.exists(hj):
+        try: hoehe = json.load(open(hj))
+        except Exception as ex: print(f"HINWEIS: {hj} unlesbar ({ex})")
     if form is None and not a.ohne_formsitz: print("HINWEIS: kein Formsitz - Status aus grobem F1 (Nullprobe 24.11.: nur 0,00-0,16 ueber Zufall, PLATEAU-Urteil ungeprueft)")
     # --- Zeile
     jp = os.path.join(aus, "konvergenz.jsonl"); zeilen = []
@@ -541,6 +567,11 @@ def main(argv=None):
                      formsitz_trennschaerfe=fe.get("trennschaerfe"), formsitz_decke=fe.get("decke"), formsitz_trennt=bool(fe.get("trennt")), n_formsitz=fe.get("n"),
                      med_dz=fe.get("med_dz"), a10=fe.get("a10"), a25=fe.get("a25"), kontur=fe.get("kontur"), kontur_null=fe.get("kontur_null"),
                      fotos_formsitz=fe.get("fotos") or {})
+        he = ((hoehe or {}).get("seiten") or {}).get(g)
+        if he and he.get("hoehensitz") is not None:
+            e.update(hoehensitz=he.get("hoehensitz"), hoehensitz_null=he.get("hoehensitz_null"), hoehensitz_guete=he.get("guete"),
+                     hoehensitz_trennschaerfe=he.get("trennschaerfe"), hoehensitz_trennt=bool(he.get("trennt")), hoehe_a10=he.get("a10"), hoehe_a25=he.get("a25"),
+                     hoehe_med_dz=he.get("med_dz"), hoehe_n_linien=he.get("n_wolke"), hoehe_fehler=(he.get("fehler") or [])[:5])
         Z["seiten"][g] = e
     allf = [v for e in Z["seiten"].values() for v in e["fotos"].values()]; allb = [v[0] for v in fein.values()]
     Z["gesamt"] = dict(f1=median_oder_none(allf)[0], n=median_oder_none(allf)[1], f1_fein=median_oder_none(allb)[0], n_fein=median_oder_none(allb)[1])
@@ -556,6 +587,10 @@ def main(argv=None):
             sto = streuung(zeilen_neu, g, "formsitz"); so_eff = max(a.schwelle, 2 * sto) if sto is not None else a.schwelle
             sform = status_reihe(reihe(zeilen_neu, g, "formsitz"), so_eff) if e["formsitz_trennt"] else TRENNT_NICHT
             e.update(status_formsitz=sform, schwelle_formsitz=round(so_eff, 4), status=status_mit_formsitz(sform, sf, e["formsitz_trennt"]))
+        if e.get("hoehensitz") is not None and g != "rund":                                 # Hoehensitz ergaenzt (Formsitz ist hoehenblind)
+            sth = streuung(zeilen_neu, g, "hoehensitz"); sh_eff = max(a.schwelle, 2 * sth) if sth is not None else a.schwelle
+            sh = status_reihe(reihe(zeilen_neu, g, "hoehensitz"), sh_eff) if e["hoehensitz_trennt"] else TRENNT_NICHT
+            e.update(status_hoehe=sh, schwelle_hoehe=round(sh_eff, 4), status=status_mit_hoehe(e["status"], sh))
         if e["status"] in (PLATEAU, KEIN, TRENNT_NICHT) or e["status"].startswith("faellt"):
             e["restfehler"] = restfehler(diffs, S["seiten"].get(g, {}).get("fotos", []), bt, g, fein)
     if not a.trocken:
@@ -572,6 +607,10 @@ def main(argv=None):
         if e.get("formsitz") is not None:
             print(f"      Formsitz {e['formsitz']:.3f} (Zufall {e['formsitz_null']}, Trennschaerfe {e['formsitz_trennschaerfe']}, relativ {e['formsitz_relativ']}) med|dz| {e['med_dz']} m"
                   f" a25 {e['a25']} kontur {e['kontur']} -> {e['status_formsitz']}")
+        if e.get("hoehensitz") is not None:
+            fl = "; ".join(f"z {q['z']} m {q['art']}" + (f" {q['dz']:+.2f}" if q.get("dz") is not None else "") for q in (e.get("hoehe_fehler") or [])[:2])
+            print(f"      Hoehensitz {e['hoehensitz']:.3f} (Zufall {e['hoehensitz_null']}, Trennschaerfe {e['hoehensitz_trennschaerfe']}) a10 {e['hoehe_a10']} a25 {e['hoehe_a25']}"
+                  f" med|dz| {e['hoehe_med_dz']} m -> {e['status_hoehe']}" + (f" | {fl}" if fl else ""))
         if e.get("status_wolke"): print(f"      Wolke F1 {e['f1_wolke']} / Modell (Punktfassung) {e['f1_modell_gleich']} -> verlust {e['verlust']} (ueber Zufall {e.get('verlust_zufall')}), Abdeckung {e['abdeckung_wolke']} (n {e['n_wolke']}): {e['status_wolke']}")
         for q in (e.get("restfehler") or {}).get("grob", [])[:3]: print(f"      Rest grob: {q['art']} {q['ort']} {q['laenge']} m Kante")
         for q in (e.get("restfehler") or {}).get("fein", [])[:3]: print(f"      Rest fein: {q['bauteil']} F1 {q['f1_fein']}")

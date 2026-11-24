@@ -30,6 +30,9 @@ def main():
     with tempfile.TemporaryDirectory() as t:
         w = Path(t)
         m = w / "modelle"
+        # Quellen-Konfig wie im Projekt (wissen_suchen ist projektunabhaengig, rc-park traegt modelle/ in .claude/doku-pflege.json ein)
+        schreibe(w / ".claude" / "doku-pflege.json",
+                 (Path(__file__).resolve().parent.parent / ".claude" / "doku-pflege.json").read_text(encoding="utf-8"))
         schreibe(w / "tools" / "bildwert.py", '"""bildwert.py - Bildwert messen: nur Bilder, die Luecken schliessen."""\n')
         schreibe(w / "tools" / "sweetspot.py", "# Sweet Spot der Aufloesung\n")
         schreibe(w / "tools" / "foto_wichtigkeit.py", '"""Wichtigkeit je Foto."""\n')
