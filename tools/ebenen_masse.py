@@ -80,6 +80,27 @@ def bruestung(u, z, w, aus, K, zelle=0.02, d_min=0.08):
                 hinweis="offen = keine waagrechten Frontkanten im Feld ausser an den Knaggen; Knaggenform (Trapez) und Brettstaerke = ANNAHME")
 
 
+def duenne_linien(imb, bmax, breite_zone, galerie, min_anteil=0.2, min_spanne=0.6, rand=0.3):
+    """STUFE 2 der Kastensuche bei DUENNEN Kanten (24.11.2026, Rueckfall 1122z/zb/zc: Vorbau-Ebene f00_vb0 nur 3375 statt 13 116 Kantenpunkte, die frontalen Galerie-Fotos
+    fehlten in kam_wahl; Holm/Unterkante nur 3,2 / 1,6 m belegt < 0,4 x Zonenbreite 8,92 m -> kein Kasten -> Generator baute das Hoehenfeld als Treppenkloetze).
+    Die Linien sind da, nur luechig: angenommen werden Linien mit belegt >= 0,5 x laengste, wenn
+      - die laengste >= min_anteil x Zonenbreite belegt ist,
+      - jede Linie ueber >= min_spanne der Zonenbreite STREUT (erstes bis letztes Stueck - eine durchgehende Kante mit Luecken, kein Einzelfleck),
+      - eine UNABHAENGIGE Messung desselben Vorbaus (galerie: Bruestungsband aus Ebenen-Sweep + Wandbild, vorbauten_bauplan.galerie_messen) beide Linien im Band
+        z_boden - rand .. z_holm + rand bestaetigt. Ohne Galerie-Messung keine Stufe 2 (Phantom-Schutz).
+    -> Liste der angenommenen Linien (leer = kein Kasten)."""
+    G = galerie or {}
+    if bmax < min_anteil * breite_zone or G.get("z_boden") is None or G.get("z_holm") is None: return []
+    out = []
+    for l_ in imb:
+        st = l_.get("stuecke") or []
+        if l_["belegt_m"] < 0.5 * bmax or not st: continue
+        if max(b_ for _, b_ in st) - min(a_ for a_, _ in st) < min_spanne * breite_zone: continue
+        if not (G["z_boden"] - rand <= l_["z"] <= G["z_holm"] + rand): continue
+        out.append(l_)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ebenen"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); vp = os.path.join(od, "audit", "vorbauten_auto.json")
@@ -90,14 +111,17 @@ def main():
             g.pop("kanten_mass", None); e = EJ.get(f"f{F['nr']:02d}_vb{k}")
             if not e or not e.get("sweep") or not os.path.exists(e["sweep"]): continue
             o = np.array(e["o"]); d = np.array(e["d"]); n = np.array(e["n"]); ww = float(e.get("w_wand", 0.0)); P = np.load(e["sweep"])["P"].astype(float)
-            ew = EJ.get(f"f{F['nr']:02d}_wand")                                # Kanten der Wandebene derselben Fassade dazu (Strebenfuesse liegen an der Wand, ausserhalb des Bands der Vorbau-Ebene)
-            if ew and ew.get("sweep") and os.path.exists(ew["sweep"]): P = np.vstack([P, np.load(ew["sweep"])["P"].astype(float)])
+            ew = EJ.get(f"f{F['nr']:02d}_wand"); vb_ = np.ones(len(P), bool)    # Kanten der Wandebene derselben Fassade dazu (Strebenfuesse liegen an der Wand, ausserhalb des Bands der Vorbau-Ebene)
+            if ew and ew.get("sweep") and os.path.exists(ew["sweep"]):
+                Pw_ = np.load(ew["sweep"])["P"].astype(float); P = np.vstack([P, Pw_]); vb_ = np.r_[vb_, np.zeros(len(Pw_), bool)]
             u = (P[:, :2] - o) @ d; z = P[:, 2]; ne = e.get("neigung")
             w = (P[:, :2] - o) @ n - ww - ((ne["b_u"] * (u - ne["u_ref"]) + ne["c_z"] * (z - ne["z_ref"])) if ne else 0.0)      # 22.11.2026: Tiefe gegen die oertliche (geneigte) Wand
-            u0, u1, z0, z1 = e["zone"]; ok = (u >= u0) & (u <= u1) & (z >= z0) & (z <= z1); u, z, w = u[ok], z[ok], w[ok]
-            vorn = w > 0.4
+            u0, u1, z0, z1 = e["zone"]; ok = (u >= u0) & (u <= u1) & (z >= z0) & (z <= z1); u, z, w, vb_ = u[ok], z[ok], w[ok], vb_[ok]
+            # 24.11.2026 (1122zc: Ausladung 0,46 statt 1,28 m): seit die Wandebene frontale Zusatzkameras bekommt (65349fca7), liegen viele Wandpunkte am Bandrand w ~ 0,45 -
+            # die FRONT (Ausladung, Kasten-, Konsolen-, Pfostenlinien) kommt nur aus den Punkten der Vorbau-Ebene; Wandpunkte nur fuer die Streben
+            vorn = (w > 0.4) & vb_
             if vorn.sum() < 500: continue
-            h, ed = np.histogram(w[vorn], bins=np.arange(0.4, max(w.max(), 0.6) + 0.05, 0.05)); wp = float(ed[h.argmax()] + 0.025); fr = np.abs(w - wp) < 0.2; aus = float(np.median(w[fr]))
+            h, ed = np.histogram(w[vorn], bins=np.arange(0.4, max(w[vb_].max() if vb_.any() else 0.6, 0.6) + 0.05, 0.05)); wp = float(ed[h.argmax()] + 0.025); fr = (np.abs(w - wp) < 0.2) & vb_; aus = float(np.median(w[fr]))
             km = dict(ausladung=round(aus, 2), ausladung_p10_p90=[round(float(x), 2) for x in np.percentile(w[fr], [10, 90])], punkte_front=int(fr.sum()), quelle=f"dichte triangulierte Fotokanten {e['id']} ({len(u)} Punkte)")
             zb = np.arange(z0, z1 + 0.02, 0.02); hz, _ = np.histogram(z[fr], bins=zb); s = np.convolve(hz, np.ones(3), "same"); pk, _ = find_peaks(s, height=max(40, 0.01 * fr.sum()), distance=6)
             breite_zone = g["koerper"]["u1"] - g["koerper"]["u0"]; lin = []
@@ -106,6 +130,9 @@ def main():
                 lin.append(dict(z=round(zl, 2), belegt_m=round(bel, 2), stuecke=[[round(a_, 2), round(b_, 2)] for a_, b_, _ in st], punkte=int(s[p])))
             km["linien"] = [dict(z=l_["z"], belegt_m=l_["belegt_m"], punkte=l_["punkte"]) for l_ in lin]
             gz0, gz1 = g["koerper"]["z0"] - 0.5, g["koerper"]["z1"] + 0.5; imb = [l_ for l_ in lin if gz0 <= l_["z"] <= gz1]; bmax = max([l_["belegt_m"] for l_ in imb] or [0.0]); voll = [l_ for l_ in imb if l_["belegt_m"] >= 0.5 * bmax and bmax >= 0.4 * breite_zone]      # 'durchgehend' = mindestens halb so lang belegt wie die laengste Linie im Grobband (Holm Schwabentor: 4,85 von 7,6 m - Draehte/Schatten unterbrechen)
+            if len(voll) < 2 and os.environ.get("OHNE_DUENNE_KANTEN") != "1":
+                voll = duenne_linien(imb, bmax, breite_zone, g.get("galerie"))
+                if len(voll) >= 2: km["kasten_stufe"] = "duenn (Kanten duenn, Galerie-Band bestaetigt)"
             if len(voll) >= 2:
                 lu, lo_ = min(voll, key=lambda l_: l_["z"]), max(voll, key=lambda l_: l_["z"])
                 if lo_["z"] - lu["z"] >= 0.5:
@@ -123,6 +150,12 @@ def main():
                             if q.sum() >= 50:
                                 prof = [[round(float(za), 2), round(float(np.median(w[mu & (z >= za) & (z < za + 0.4) & (w > -0.3) & (w < aus + 0.2)])), 2)] for za in np.arange(max(z0, kb["z"] - 2.4), kb["z"], 0.4) if (mu & (z >= za) & (z < za + 0.4) & (w > -0.3) & (w < aus + 0.2)).sum() >= 30]
                                 km["streben"] = dict(z_fuss=round(float(np.percentile(z[q], 5)), 2), punkte_zwischen=int(q.sum()), tiefenprofil=prof, hinweis="gerade Strebe vom Wandfuss zur Konsole = ANNAHME (Profil zeigt die gemessene Tiefe je Hoehenband)")
+                    GS_ = [s_ for s_ in ((g.get("galerie") or {}).get("streben_u") or []) if km["kasten"]["u0"] - 0.2 <= s_ <= km["kasten"]["u1"] + 0.2]
+                    if km.get("kasten_stufe") and km.get("konsolen") and len(GS_) > km["konsolen"]["anzahl"]:
+                        # Stufe 'duenn': luechige Konsolenlinie zaehlt zu wenig - die Zahl/Lage kommt aus dem feinen Wandbild (galerie.streben_u, am Foto gezaehlt), Unterkante bleibt aus Kanten
+                        bk_ = float(np.median([s_[1] - s_[0] for s_ in km["konsolen"]["lage"]]))
+                        km["konsolen"].update(anzahl=len(GS_), lage=[[round(s_ - bk_ / 2, 2), round(s_ + bk_ / 2, 2)] for s_ in GS_], abstand=round(float(np.median(np.diff(GS_))), 2) if len(GS_) > 1 else None,
+                                              lage_quelle="feines Wandbild (galerie.streben_u) - Kantenlinie duenn (%d Stuecke)" % km["konsolen"]["anzahl"])
                     mz = fr & (z > lo_["z"] + 0.2) & (z < (g.get("galerie") or {}).get("z_dach", g["z1"]) - 0.1)
                     # 24.11.2026 (Lauf 1122w: 'keine Pfosten belegt', Vordach schwebte ohne Stuetze ueber der Galerie): das Band zwischen Holm und Raehm war duenn
                     # trianguliert (94 Punkte), die zwei Pfosten aber klar (24 / 61 Punkte je 6 cm, wie 1122t-v: u -3,45 / 4,25). Das Sammeltor 'mz >= 100' warf sie weg -
@@ -134,7 +167,7 @@ def main():
                             if pf and x - pf[-1][-1] < 0.5: pf[-1].append(float(x))
                             else: pf.append([float(x)])
                         km["pfosten"] = [dict(u=round(float(np.mean(c_)), 2), breite=round(c_[-1] - c_[0], 2) if len(c_) >= 2 and c_[-1] - c_[0] >= 0.12 else None, punkte=int(((np.abs(u - np.mean(c_)) < 0.3) & mz).sum())) for c_ in pf]
-                    br_ = bruestung(u, z, w, aus, km["kasten"])
+                    br_ = bruestung(u[vb_], z[vb_], w[vb_], aus, km["kasten"])
                     if br_:
                         km["bruestung"] = br_
                         for k_ in br_["knaggen"]:              # Knagge sitzt am Pfostenfuss: Knagge ohne Kanten-Pfosten in 0,6 m = Pfostenlage (1122w: Mittelpfosten im Band Holm..Raehm ohne Punkte)

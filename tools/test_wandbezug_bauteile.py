@@ -59,7 +59,7 @@ pruef(fz < 0.01 and fm > 0.99, f"C Umgang: Ruecksprung 0,9 m ab gesetzter Wand o
 
 # D Vorbau mit w_wand 0 (alte Ebene)
 vj = os.path.join(A, "vorbauten_auto.json")
-json.dump(dict(fassaden=[dict(id="f00", o=o0, d=d0, n=n0, w_wand=0.0, gruppen=[dict(w=[[0.6, 0.6], [0.6, 0.6]], raster=0.5, u0=-3.0, u1=-2.0, z0=8.0, z1=9.0, koerper=dict(w_median=0.6))])]), open(vj, "w"))
+json.dump(dict(fassaden=[dict(id="f00", o=o0, d=d0, n=n0, w_wand=0.0, gruppen=[dict(w=[[0.6, 0.6], [0.6, 0.6]], raster=0.5, u0=-3.0, u1=-2.0, z0=8.0, z1=9.0, koerper=dict(u0=-3.0, u1=-2.0, z0=8.0, z1=9.0, w_median=0.6))])]), open(vj, "w"))   # 24.11.: Grobkoerper vollstaendig (Ersatz-Kasten statt Hoehenfeld)
 K, _ = BT.vorbauten_aus_json(K, vj)
 fs = fuell(K, XW + 0.01, 5.0, -2.9, -2.1, 8.1, 8.9)
 pruef(fs > 0.99, f"D Vorbau: kein Spalt zwischen gesetzter Wand und Vorbau ({fs:.2f} gefuellt)")
