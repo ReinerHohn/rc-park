@@ -13,6 +13,9 @@ ABLAUF (nur Daten der Kette, nichts von Hand):
   mosaik_karte(fein, fid)    Klassenbild aus dem feinen Wandbild (Mosaik ortho_<fid>_fein.png: Bezugsfoto + ausgerichtete Fotos).
   ausrichten(...)            MEHRFOTO: jedes Einzelbild ortho_<fid>_einzeln/* per Verschiebung auf das Mosaik (FFT-Korrelation der Stein/Putz-Karten, grob -> fein);
                              Einigkeit im Ueberlapp = Guete. Fehl ausgerichtete / fremde Fotos fallen unter min_einig.
+  grob_einzeln_laden / einzeln_vereinen  MEHRAUFLOESUNG (Befund 1122w West, 24.11.2026): das feine Wandbild nimmt nur Fotozellen <= 2 cm/px (fassade_ortho --max-mpp 0,02);
+                             West ueber 27,5 m sehen die Strassenfotos mit 2,4-3 cm/px -> fein leer (ueber 30 m 1 Foto), grob (5 cm, <= 6 cm/px) 15 Fotos. Je Foto: grobes Einzelbild
+                             (eigene Ausrichtung aufs Mosaik) als Grund, feines darueber -> ein Foto zaehlt einmal; Ergaenzung/Bestaetigung zaehlen so die Fotos, die die Zone wirklich zeigen.
   karte_ergaenzen(...)       Zellen, die das Mosaik NICHT sieht (Schwabentor Nord: Uhrzone ueber 28,6 m), aus >= 3 ausgerichteten Einzelbildern mit Mehrheit fuellen.
   steinkante(...)            Fotokante der Steine nahe der LoD2-Kante (Schwabentor: 0,3-0,5 m daneben, Nachbarwand hell).
   kanten_zonen(...)          je Wandende: Zeilen mit Steinstreifen ab der Kante UND danach Putz - entweder im festen Innenband (innen_ab..innen_ab+band) ODER direkt hinter
@@ -139,6 +142,54 @@ def einzeln_laden(dateien, form, stufe=2):
         a = np.asarray(im)
         if a.shape[:2] != tuple(form): continue
         out.append(dict(datei=f, rgb=a, kl=klassen(a)))
+    return out
+
+
+def grob_einzeln_laden(grob_dir, fid, form, u0, z1, c):
+    """MEHRAUFLOESUNG (Befund 1122w West, 24.11.2026): Einzelbilder des GROBEN Wandbilds (fassade_ortho 5 cm, --max-mpp 0,06; Ordner <grob>/ortho_<fid>_einzeln)
+    auf das Arbeitsraster (form, linke obere Ecke u0/z1, Zelle c) des feinen Mosaiks abtasten (naechste Zelle, gleiche Wandebene, nur anderes Raster).
+    Grund: das feine Wandbild (1 cm, --max-mpp 0,02) nimmt nur Fotozellen <= 2 cm/px; Strassenfotos sehen den oberen Turm steil und weit (2,4-3 cm/px) - dort ist
+    das feine Bild leer, obwohl 15 Fotos die Zone zeigen. Ortsteine (Lagen 0,3-0,5 m) brauchen keine 2 cm/px. Liefert dict(datei, rgb, kl, grob=True) oder []."""
+    fs = sorted(glob.glob(os.path.join(grob_dir, f"ortho_{fid}_einzeln", "*.png")))
+    return [dict(datei=f, rgb=b, kl=klassen(b), grob=True) for f in fs for b in [grob_auf_raster(f, grob_dir, fid, form, u0, z1, c)] if b is not None]
+
+
+def grob_auf_raster(datei, grob_dir, fid, form, u0, z1, c):
+    """Ein Bild des groben Wandbild-Ordners (gleiche Wandebene, Raster aus <grob_dir>/fassaden.json) auf das Arbeitsraster abtasten (naechste Zelle). None = nicht
+    moeglich (kein Raster, nicht groeber, nicht lesbar)."""
+    from PIL import Image
+    try: G = {F["id"]: F for F in json.load(open(os.path.join(grob_dir, "fassaden.json")))["fassaden"]}[fid]["raster"]
+    except Exception: return None
+    cg = float(G["zelle"]); H, W = form
+    if cg <= c * 1.01: return None                                           # nicht groeber als das Arbeitsraster: nichts zu gewinnen
+    try: a = np.asarray(Image.open(datei).convert("RGB"))
+    except Exception: return None
+    zz = z1 - (np.arange(H) + 0.5) * c; uu = u0 + (np.arange(W) + 0.5) * c
+    ii = np.floor((float(G["z1"]) - zz) / cg).astype(int); jj = np.floor((uu - float(G["u0"])) / cg).astype(int)
+    ok_i = (ii >= 0) & (ii < a.shape[0]); ok_j = (jj >= 0) & (jj < a.shape[1])
+    b = np.zeros((H, W, 3), np.uint8); b[np.ix_(ok_i, ok_j)] = a[np.ix_(ii[ok_i], jj[ok_j])]
+    return b
+
+
+def einzeln_vereinen(gut_fein, grob, km, c, max_m=1.5, min_einig=0.8):
+    """Je FOTO ein Einzelbild im Mosaikrahmen: grobes Einzelbild (eigene Ausrichtung aufs Mosaik) als Grund, feines (ausgerichtet) darueber, wo es Daten hat.
+    So zaehlt ein Foto, das die Zone nur grob sieht, als EIN Foto (keine Doppelzaehlung fein + grob). Rueckgabe: Liste dict(datei, rgb, kl, dy=0, dx=0, einig, grob_anteil)."""
+    name = lambda e: os.path.splitext(os.path.basename(e["datei"]))[0]
+    fein = {name(e): e for e in gut_fein}; out = []; gesehen = set()
+    for g in grob:
+        r = ausrichten(km, g["kl"], c, max_m=max_m)
+        if not r or r["einig"] < min_einig: continue
+        n = name(g); gesehen.add(n)
+        rgb = verschieben(g["rgb"], r["dy"], r["dx"]); kl = verschieben(g["kl"], r["dy"], r["dx"]); einig = r["einig"]
+        e = fein.get(n); m = np.zeros(kl.shape, bool)
+        if e is not None:
+            a = verschieben(e["rgb"], e["dy"], e["dx"]); m = a.astype(np.int32).sum(2) > 30
+            rgb = rgb.copy(); kl = kl.copy(); rgb[m] = a[m]; kl[m] = verschieben(e["kl"], e["dy"], e["dx"])[m]; einig = e["einig"]
+        out.append(dict(datei=(e or g)["datei"], rgb=rgb, kl=kl, dy=0, dx=0, einig=einig, grob=True, grob_versatz=(r["dy"], r["dx"]), grob_einig=r["einig"],
+                        grob_anteil=1.0 if e is None else round(float(1.0 - m.mean()), 3), fein_maske=m))
+    for n, e in fein.items():
+        if n in gesehen: continue
+        e = dict(e); e["fein_maske"] = verschieben(e["rgb"], e["dy"], e["dx"]).astype(np.int32).sum(2) > 30; out.append(e)
     return out
 
 
@@ -351,8 +402,9 @@ def tor_kante(kl, c, jk, r_, i0, i1, breite, lagen_zeilen, max_b=2.5, min_iou=0.
 _VORSCHAU = {}
 
 
-def fassade_ortsteine(F, fein, tiefe_dir, stufe=2, min_fotos=3, min_einig_ausr=0.8, max_versatz=1.5, **kw):
-    """Eine Fassade (fassade_fein/fassaden.json-Eintrag) -> dict mit Kanten/Lagen oder grund."""
+def fassade_ortsteine(F, fein, tiefe_dir, stufe=2, min_fotos=3, min_einig_ausr=0.8, max_versatz=1.5, grob_dir=None, **kw):
+    """Eine Fassade (fassade_fein/fassaden.json-Eintrag) -> dict mit Kanten/Lagen oder grund. grob_dir: Ordner des groben Wandbilds (Standard tiefe_dir = 'fassade')
+    - seine Einzelbilder ergaenzen die feinen, wo diese wegen der Aufloesungsgrenze leer sind (grob_einzeln_laden)."""
     fs = sorted(glob.glob(os.path.join(fein, f"ortho_{F['id']}_einzeln", "*.png")))
     erg = dict(id=F["id"], o=F["o"], d=F["d"], n=F["n"], fotos=len(fs), kanten=[])
     R = F["raster"]; c = float(R["zelle"]) * stufe
@@ -367,6 +419,12 @@ def fassade_ortsteine(F, fein, tiefe_dir, stufe=2, min_fotos=3, min_einig_ausr=0
         r = ausrichten(kl, e["kl"], c, max_m=max_versatz)
         if r and r["einig"] >= min_einig_ausr: e.update(r); gut.append(e)
     erg["einzeln_ausgerichtet"] = [dict(foto=os.path.basename(e["datei"]), dy_m=round(-e["dy"] * c, 2), du_m=round(e["dx"] * c, 2), einig=e["einig"]) for e in gut]
+    gd = grob_dir if grob_dir is not None else tiefe_dir
+    grob = grob_einzeln_laden(gd, F["id"], kl.shape, float(R["u0"]), float(R["z1"]), c) if gd else []
+    if grob:
+        gut = einzeln_vereinen(gut, grob, kl, c, max_m=max_versatz, min_einig=min_einig_ausr)
+        erg["einzeln_grob"] = dict(ordner=gd, geladen=len(grob), fotos_mit_grob=sum(1 for e in gut if e.get("grob")), nur_grob_fotos=sum(1 for e in gut if e.get("grob_anteil") == 1.0),
+                                   quelle="grobes Wandbild (5 cm) je Foto aufs Mosaik ausgerichtet, feines darueber; fuellt Zonen, die das feine Bild wegen --max-mpp nicht zeigt")
     zz = float(R["z1"]) - (np.arange(kl.shape[0]) + 0.5) * c; uu = float(R["u0"]) + (np.arange(kl.shape[1]) + 0.5) * c
     rahmen = ((zz >= F["z"][0]) & (zz <= F["z"][1]))[:, None] & ((uu >= F["u"][0]) & (uu <= F["u"][1]))[None, :]      # nur innerhalb der LoD2-Kanten (daneben sehen Schraegfotos die Nachbarseite)
     kl, hell, rgb, neu = karte_ergaenzen(kl, hell, rgb, daten, rahmen, gut, min_fotos=min_fotos)
