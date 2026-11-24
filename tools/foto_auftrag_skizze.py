@@ -24,8 +24,14 @@ STANDPUNKTE (nummeriert, je mit Blickrichtung, Entfernung, Hoch-/Querformat, GPS
   (c) FERNSTANDORTE: Abstand >= GPS-Rest (gps_anker.rest_m) / tan(MAX_DREH_SD/2) (Drehfehler halb so gross wie die Grenze des GPS-Tors, seiten_gps_vereinen) und
       <= Gebaeudehoehe x f_px / MIN_PIXEL_HOEHE; Richtung zwischen den Normalen der beiden Waende einer Ecke (beide Seiten im Bild); nur Orte ausserhalb jedes
       LoD2-Grundrisses mit freier Sicht (3D: Sichtlinie Auge AUGE_M -> Ecke auf halber Traufhoehe ueber jedem Nachbargebaeude, Gelaende eben = ANNAHME).
+  (d) UEBER DEM NACHBARDACH (24.11.2026, schwabentor-1122 Ostseite: vorher nur 'nur Fernfotos', 0 Standpunkte): rote Wand, die erst ueber einem angebauten
+      Nachbarn frei ist -> HOCHBLICK-Standorte (Faecher +-60 Grad, 6..HOCH_MAX_M m; freies Band an 3 Wandstellen ueber allen Daechern sichtbar) und an BEIDEN Wandenden
+      PFLICHT-ECKFOTOS: rote Wand + angrenzende belegte Zielwand im selben Bild, gemeinsames Hoehenband (Ueberlappung = Kopplung des Seitenteils), je Ecke 1 Fernstandort.
+      Sicht (Klasse Sicht): DOM1 + DGM1 aus GEO_WURZEL, wenn vorhanden (Haus = LoD2-Grundriss hart; Baeume nur Hinweis), sonst LoD2-Klotz. 'Hoehe im Bild':
+      'Handy ~N Grad nach oben; im Bild ... von X m bis zur Spitze', Format, Zoom; Neigung <= MAX_NEIGUNG_GRAD. Hoechstens MAX_STANDPUNKTE nummeriert, Rest 'reserve'.
+Karte: Luftbild DOP20 (lokal, GEO_WURZEL) als Hintergrund, wenn vorhanden; zusaetzlich foto_auftrag_handy.png (Hochformat, grosse Nummern, kurze Liste).
 Strassennamen: nur wenn lokale Geodaten sie liefern - im Bestand (_geo: LoD2/DGM/DOM/DOP) gibt es keine, also weggelassen (nichts erfunden).
-AUSGABE: <aus>/foto_auftrag.png (Nahplan | Uebersicht | Liste), foto_auftrag.json, foto_auftrag.md. Rueckgabe 0 = Skizze geschrieben, 2 = keine Daten (kein LoD2/Rahmen).
+AUSGABE: <aus>/foto_auftrag.png (Nahplan | Uebersicht | Liste), foto_auftrag_handy.png, foto_auftrag.json, foto_auftrag.md. Rueckgabe 0 = Skizze geschrieben, 2 = keine Daten (kein LoD2/Rahmen).
 FOTO PRUEFEN (Skill foto-vor-ort): --pruefen <foto_auftrag.json> <foto...> -> je Foto naechster Standpunkt aus EXIF-GPS, Abstand, Verschiebung links/rechts/vor/zurueck
   relativ zur Soll-Blickrichtung, Kompass (EXIF GPSImgDirection) gegen Soll-Blick; Urteil 'erfuellt Standpunkt N' / 'bitte X m ...'.
 AUFRUF: tools/py seg tools/foto_auftrag_skizze.py modelle/<obj>/objekt.json [--wolke npy] [--ausrichtung json] [--seiten-modelle json] [--fotos ordner] [--aus ordner]
@@ -53,6 +59,8 @@ GPS_REST_ANNAHME = 5.0     # ANNAHME Telefon-GPS (m), nur wenn die Ausrichtung k
 MIN_PIXEL_HOEHE = 500      # ANNAHME: Gebaeude mind. 500 px hoch im Fernfoto (Merkmale fuer die Zuordnung)
 AUGE_M = 1.6
 FERN_JE_ECKE = 2
+HOCH_MAX_M = 90.0         # ANNAHME: Hochblick/Eckfotos hoechstens 90 m entfernt (Detail; weiter = Fernfoto)
+MAX_STANDPUNKTE = 8        # Nutzer 24.11.2026: hoechstens ~8 nummerierte Standpunkte je Auftrag (Rest -> 'reserve' im JSON)
 VERBINDUNG_MAX_M = 60.0   # ANNAHME: hoechstens 60 m Verbindungsreihe entlang roter Nachbarfassaden bis zur Bruecken-Ecke
 FARBE = dict(gruen="#2e8b3e", gelb="#e0a800", rot="#d0281c")
 TEIL_FARBEN = ["#1f5fbf", "#8a2be2", "#e07b00", "#009e9e", "#b0306f", "#6b8e23"]
@@ -125,6 +133,166 @@ def sicht_frei(p0, z0, p1, z1, geb, ausser=()):
             t = schnitt_t(p0, p1, r)
             if t is not None and z0 + t * (z1 - z0) < g["oben"]: return False, g["id"]
     return True, None
+
+
+# ---------------------------------------------------------------- Hoehenmodell + Sicht (24.11.2026, Ostseite schwabentor-1122)
+GEO_WURZEL = "/media/oem/scan/rc-park_daten/_geo"
+SICHT_RAND_M = 2.0         # Sichtlinie endet 2 m vor dem Zielpunkt (DOM-Pixel 1 m mischen die Wand selbst ein)
+MAX_NEIGUNG_GRAD = 45.0    # ANNAHME: Handy hoechstens 45 Grad nach oben (Bandmitte) - steiler: stark verzerrt, Merkmale ordnen sich kaum zu
+SICHT_LUFT_M = 0.3         # Sichtlinie muss 0,3 m ueber dem Hindernis liegen
+BAUM_GRENZE_M = 2.5        # DOM - DGM > 2,5 m ausserhalb jedes LoD2-Grundrisses = Baum/Sonstiges (ANNAHME: im Winter kahl -> nur Hinweis, kein Ausschluss)
+
+
+def raster(art, rahmen, radius, wurzel=GEO_WURZEL, schritt=1):
+    """Amtliche Kacheln um die Rahmenmitte (LGL: <art>_32_<E km>_<N km>_1_bw_*.tif + .tfw = Mitte Pixel links oben; dgm1 auch als .xyz) -> dict(A, x0, y0, px)
+    (x0/y0 = UTM der Pixelmitte links oben, px Pixelgroesse m) oder None. art: 'dom1', 'dgm1', 'dop20rgb'."""
+    from PIL import Image
+    Image.MAX_IMAGE_PIXELS = None
+    E0, N0 = float(rahmen.m0[0]), float(rahmen.m0[1]); dateien = {}
+    for f in glob.glob(os.path.join(wurzel, "**", f"{art}_32_*_*_1_bw*.*"), recursive=True):
+        m = re.search(rf"{art}_32_(\d+)_(\d+)_1_bw[^.]*\.(tif|xyz)$", os.path.basename(f))
+        if m: dateien.setdefault((int(m.group(1)), int(m.group(2))), {}).setdefault(m.group(3), f)
+    if not dateien: return None
+    px = None; out = None
+    for (e, n), ff in sorted(dateien.items()):
+        if e * 1000 > E0 + radius or (e + 1) * 1000 < E0 - radius or n * 1000 > N0 + radius or (n + 1) * 1000 < N0 - radius: continue
+        if "tif" in ff and os.path.isfile(ff["tif"][:-4] + ".tfw"):
+            tf = [float(x) for x in open(ff["tif"][:-4] + ".tfw")]; p_ = tf[0]; xt, yt = tf[4], tf[5]; im = Image.open(ff["tif"])
+            c0, c1 = max(0, int((E0 - radius - xt) / p_)), min(im.size[0], int(math.ceil((E0 + radius - xt) / p_)) + 1)
+            r0, r1 = max(0, int((yt - (N0 + radius)) / p_)), min(im.size[1], int(math.ceil((yt - (N0 - radius)) / p_)) + 1)
+            if c1 <= c0 or r1 <= r0: continue
+            B = np.asarray(im.crop((c0, r0, c1, r1)))[::schritt, ::schritt]; xs, ys = xt + c0 * p_, yt - r0 * p_
+        elif "xyz" in ff:
+            X = np.fromfile(ff["xyz"], sep=" ").reshape(-1, 3); m_ = (np.abs(X[:, 0] - E0) <= radius) & (np.abs(X[:, 1] - N0) <= radius); X = X[m_]
+            if not len(X): continue
+            p_ = 1.0; xs, ys = X[:, 0].min(), X[:, 1].max(); B = np.full((int(round((ys - X[:, 1].min()) / p_)) + 1, int(round((X[:, 0].max() - xs) / p_)) + 1), np.nan)
+            B[np.round((ys - X[:, 1]) / p_).astype(int), np.round((X[:, 0] - xs) / p_).astype(int)] = X[:, 2]; B = B[::schritt, ::schritt]
+        else: continue
+        pp = p_ * schritt
+        if out is None:
+            px = pp; nx = int(math.ceil(2 * radius / px)) + 1; x0, y0 = E0 - radius, N0 + radius
+            out = np.full((nx, nx) + B.shape[2:], np.nan if B.ndim == 2 else 0, np.float32 if B.ndim == 2 else np.uint8)
+        ci, ri = int(round((xs - x0) / px)), int(round((y0 - ys) / px)); a0, b0 = max(0, -ri), max(0, -ci); a1, b1 = min(B.shape[0], out.shape[0] - ri), min(B.shape[1], out.shape[1] - ci)
+        if a1 > a0 and b1 > b0: out[ri + a0:ri + a1, ci + b0:ci + b1] = B[a0:a1, b0:b1]
+    if out is None: return None
+    if out.ndim == 2: out[out < -100] = np.nan
+    return dict(A=out, x0=x0, y0=y0, px=px, art=art)
+
+
+def raster_wert(R, utm):
+    """Naechster Rasterwert an UTM-Punkten (n x 2) -> Array (nan ausserhalb)."""
+    utm = np.atleast_2d(utm); c = np.round((utm[:, 0] - R["x0"]) / R["px"]).astype(int); r = np.round((R["y0"] - utm[:, 1]) / R["px"]).astype(int)
+    ok = (r >= 0) & (c >= 0) & (r < R["A"].shape[0]) & (c < R["A"].shape[1]); v = np.full(len(utm), np.nan); v[ok] = R["A"][r[ok], c[ok]]; return v
+
+
+class Sicht:
+    """Sichtlinie Auge -> Wandpunkt. Mit DOM1 (+ DGM1): echte Dach- und Baumhoehen, Augenhoehe ueber dem Gelaende; sonst LoD2-Klotz ('oben') und ebenes Gelaende.
+    z_min(p, T) = tiefste Hoehe (Modellrahmen, m ueber rahmen.gelaende) am Wandpunkt T, die vom Standort p aus ueber alle Haeuser sichtbar ist:
+    max ueber die Proben s der Linie von z_auge + (h(s) + Luft - z_auge) / s  (s = Anteil der Strecke) - einmal je Linie, ohne Hoehen-Schleife."""
+    def __init__(self, geb, rahmen, dom=None, dgm=None, radius=160.0, zelle=0.5):
+        from matplotlib.path import Path
+        self.geb, self.rahmen, self.dom, self.dgm = geb, rahmen, dom, dgm
+        self.quelle = ("DOM1 (Daecher + Baeume)" + (" + DGM1 (Gelaende)" if dgm else ", Gelaende eben")) if dom else "LoD2-Klotzhoehen, Gelaende eben (ANNAHME)"
+        n = int(2 * radius / zelle) + 1; self.R, self.z = radius, zelle; self.H = np.full((n, n), -99.0, np.float32)     # LoD2-Hoehe je Zelle (Modellrahmen x = Zeile, y = Spalte)
+        for g in geb:
+            for r in g["ringe"]:
+                lo = np.clip(np.floor((r.min(0) + radius) / zelle).astype(int), 0, n - 1); hi = np.clip(np.ceil((r.max(0) + radius) / zelle).astype(int), 0, n - 1)
+                if (hi <= lo).any(): continue
+                ii, jj = np.mgrid[lo[0]:hi[0] + 1, lo[1]:hi[1] + 1]; P = np.c_[ii.ravel(), jj.ravel()] * zelle - radius
+                m = Path(r).contains_points(P).reshape(ii.shape); sub = self.H[lo[0]:hi[0] + 1, lo[1]:hi[1] + 1]; sub[m] = np.maximum(sub[m], g["oben"])
+    def _lod2(self, Q):
+        ij = np.round((Q + self.R) / self.z).astype(int); ok = (ij >= 0).all(1) & (ij < self.H.shape[0]).all(1); h = np.full(len(Q), -99.0)
+        h[ok] = self.H[ij[ok, 0], ij[ok, 1]]; return h
+    def ort_frei(self, p, rand=1.0):
+        """Standort ausserhalb jedes LoD2-Grundrisses mit Abstand >= rand (Rasterprobe, schnell)."""
+        o = np.arange(-rand, rand + 1e-6, self.z); Q = np.asarray(p, float) + np.stack(np.meshgrid(o, o), -1).reshape(-1, 2); return bool((self._lod2(Q) <= -98).all())
+    def boden(self, p):
+        if self.dgm is None: return 0.0
+        v = raster_wert(self.dgm, self.rahmen.utm(np.atleast_2d(p)))[0]; return 0.0 if np.isnan(v) else float(v - self.rahmen.gelaende)
+    def _hoehen(self, Q):
+        """Je Probe: harte Hindernishoehe (Haus = in einem LoD2-Grundriss: DOM bzw. LoD2-oben; sonst Gelaende DGM) und weiche (DOM: Baeume, Masten)."""
+        hl = self._lod2(Q); haus = hl > -98
+        if self.dom is None: return hl, hl
+        U = self.rahmen.utm(Q); h = raster_wert(self.dom, U) - self.rahmen.gelaende; h = np.where(np.isnan(h), hl, h)
+        b = raster_wert(self.dgm, U) - self.rahmen.gelaende if self.dgm is not None else np.full(len(Q), -99.0); b = np.where(np.isnan(b), -99.0, b)
+        return np.where(haus, h, b), h
+    def z_min(self, p, T, rand=SICHT_RAND_M):
+        """-> (z ab der T ueber Haeuser + Gelaende sichtbar ist, z ab der auch ueber Baeume, Augenhoehe)."""
+        p, T = np.asarray(p, float), np.asarray(T, float); L = float(np.linalg.norm(T - p)); za = self.boden(p) + AUGE_M
+        if L <= rand + 0.5: return za, za, za
+        s = np.arange(0.5, L - rand, 0.5) / L; Q = p + np.outer(s, T - p); hart, weich = self._hoehen(Q)
+        zh = float((za + (hart + SICHT_LUFT_M - za) / s).max()); zb = float((za + (weich + SICHT_LUFT_M - za) / s).max())
+        return max(zh, za - 50), max(zb, zh), za
+
+
+def _sicht_text(z_lo, z_hi, za, d):
+    """Neigung (Grad) zur Bandmitte und benoetigter senkrechter Bildwinkel."""
+    a0 = math.degrees(math.atan2(z_lo - za, d)); a1 = math.degrees(math.atan2(z_hi - za, d)); return round(0.5 * (a0 + a1)), round(a1 - a0, 1)
+
+
+def hochblick(w, z_top, sicht, geb, rahmen, hfov, f_px, d_max, n_max=2):
+    """Wand, die erst ueber einem Nachbardach frei ist (oder rot ohne Platz fuer eine Frontalreihe): Standorte im Faecher +-60 Grad um die Normale, von denen aus der
+    freie Teil (w['ab'] .. z_top) an drei Stellen der Wand (20/50/80 %) ueber alle Daecher sichtbar ist. Bewertung: sichtbarer Anteil des freien Bands, frontal, nah
+    (Aufloesung f_px / d). -> Liste dict(ok, fotos=[p], ziel, abstand_m, sicht_ab_m, sicht_bis_m, neigung_grad, band_grad, format, zoom, baeume)."""
+    ab = float(w.get("ab") or 0.0); band = max(z_top - ab, 1.0); m = 0.5 * (w["a"] + w["b"]); a0 = rahmen.azimut(w["n"]); kand = []
+    T = [w["a"] + w["d"] * w["L"] * t + w["n"] * 0.5 for t in (0.2, 0.5, 0.8)]
+    for off in np.arange(-60, 60.1, 7.5):
+        v = rahmen.richtung((a0 + off) % 360)
+        for d in np.arange(6.0, d_max + 1e-6, 3.0):
+            p = m + v * d
+            if not sicht.ort_frei(p): continue
+            zz = [sicht.z_min(p, t) for t in T]; zh = max(z[0] for z in zz); zb = max(z[1] for z in zz); za = zz[0][2]
+            lo = max(zh, ab); anteil = (z_top - lo) / band
+            if anteil < 0.5: continue
+            neig, bg = _sicht_text(lo, z_top, za, d)
+            if neig > MAX_NEIGUNG_GRAD: continue
+            kand.append((2.0 * anteil - abs(off) / 90.0 - 0.6 * d / d_max - (0.3 if zb > lo + 1 else 0.0), off, d, p, lo, zb, za, neig, bg))
+    kand.sort(key=lambda k: -k[0]); wahl = []
+    for k in kand:
+        if all(abs(k[1] - x[1]) >= 20 or abs(k[2] - x[2]) >= 12 for x in wahl): wahl.append(k)
+        if len(wahl) >= n_max: break
+    aus = []
+    for sc, off, d, p, lo, zb, za, neig, bg in wahl:
+        hf_k, hf_l = hfov[1], hfov[0]; fmt = "Hochformat" if bg > 0.85 * hf_k else "Querformat"; vf = hf_l if fmt == "Hochformat" else hf_k
+        zoom = (f"{min(3.0, max(1.0, 0.8 * vf / max(bg, 1.0))):.1f}x Zoom" if bg < 0.45 * vf else "ohne Zoom") if bg <= 0.95 * vf else "zwei Fotos (unten + oben)"
+        aus.append(dict(ok=True, fotos=[p], ziel=m, abstand_m=round(float(d), 0), sicht_ab_m=round(lo, 0), sicht_bis_m=round(z_top, 0), neigung_grad=neig, band_grad=bg, format=fmt, zoom=zoom,
+                        baeume=bool(zb > lo + 1.0), versatz_grad=round(float(off), 0)))
+    return aus, len(kand)
+
+
+def eckfotos(wr, wb, K, z_top, sicht, geb, rahmen, hfov, d_max, n_max=2):
+    """PFLICHT-ECKFOTOS: rote Wand wr + angrenzende belegte (gekoppelte) Wand wb im selben Bild, im gemeinsamen Hoehenband ueber allen Daechern (Ueberlappung, die das
+    Seitenteil an das Hauptmodell bindet). Faecher zwischen den Normalen, Abstand 8 m .. d_max; Probepunkte je Wand 1/3 der kuerzeren Wandlaenge von der Ecke.
+    -> Liste dict(ok, fotos=[p], ziel=K, abstand_m, sicht_ab_m, sicht_bis_m, neigung_grad, ...)."""
+    ab = float(wr.get("ab") or 0.0); band = max(z_top - ab, 1.0); Lv = min(wr["L"], wb["L"])
+    u = lambda w: w["d"] * (-1 if np.linalg.norm(w["b"] - K) < np.linalg.norm(w["a"] - K) else 1)
+    Tr = K + u(wr) * Lv / 3 + wr["n"] * 0.5; Tb = K + u(wb) * Lv / 3 + wb["n"] * 0.5
+    a1, a2 = rahmen.azimut(wr["n"]), rahmen.azimut(wb["n"]); da = (a2 - a1 + 180) % 360 - 180
+    if abs(da) < 10: return [], 0
+    kand = []
+    for f in np.linspace(0.25, 0.75, 7):                                  # >= ~22 Grad zu jeder Wandebene (sonst streifend, keine Zuordnung)
+        az = (a1 + da * f) % 360; v = rahmen.richtung(az)
+        for d in np.arange(8.0, d_max + 1e-6, 3.0):
+            p = K + v * d
+            if not sicht.ort_frei(p): continue
+            zr = sicht.z_min(p, Tr); zbq = sicht.z_min(p, Tb); lo = max(zr[0], zbq[0], ab); anteil = (z_top - lo) / band
+            if anteil < 0.4: continue
+            wv = np.degrees(abs(math.atan2(*(Tr - p)[::-1]) - math.atan2(*(Tb - p)[::-1]))); wv = min(wv, 360 - wv)
+            if wv > 0.8 * hfov[0]: continue                                     # beide Probepunkte nicht in einem Bild
+            neig, bg = _sicht_text(lo, z_top, zr[2], d)
+            if neig > MAX_NEIGUNG_GRAD: continue
+            kand.append((2.0 * anteil - abs(f - 0.5) - 0.8 * d / d_max - (0.3 if max(zr[1], zbq[1]) > lo + 1 else 0.0), f, d, p, lo, max(zr[1], zbq[1]), neig, bg, wv))
+    kand.sort(key=lambda k: -k[0]); wahl = []
+    for k in kand:
+        if all(abs(k[1] - x[1]) >= 0.25 or abs(k[2] - x[2]) >= 10 for x in wahl): wahl.append(k)
+        if len(wahl) >= n_max: break
+    aus = []
+    for sc, f, d, p, lo, zb, neig, bg, wv in wahl:
+        fmt = "Hochformat" if bg > 0.85 * hfov[1] else "Querformat"; vf, hf = (hfov[0], hfov[1]) if fmt == "Hochformat" else (hfov[1], hfov[0])
+        z_ = min(0.8 * vf / max(bg, 1.0), 0.8 * hf / max(1.5 * wv, 1.0), 3.0)             # Zoom: Hoehenband fuellt das Bild, beide Waende (1,5 x Probenwinkel) bleiben drin
+        aus.append(dict(ok=True, fotos=[p], ziel=K, abstand_m=round(float(d), 0), sicht_ab_m=round(lo, 0), sicht_bis_m=round(z_top, 0), neigung_grad=neig, band_grad=bg, format=fmt,
+                        zoom="ohne Zoom" if z_ < 1.4 else f"{z_:.1f}x Zoom (beide Wände im Bild lassen)", baeume=bool(zb > lo + 1.0), winkel_waende_grad=round(float(wv), 0)))
+    return aus, len(kand)
 
 
 # ---------------------------------------------------------------- Daten
@@ -398,8 +566,9 @@ def fern(w1, w2, K, z_ziel, d_min, d_max, geb, zid, rahmen, n_max=FERN_JE_ECKE):
 
 
 # ---------------------------------------------------------------- Hauptablauf
-def erzeugen(objekt_json, wolke=None, ausrichtung=None, seiten_modelle=None, fotos=None, aus=".", radius=None, zeichnen=True, obj=None, geb=None, kam=None):
-    """Alles in einem Aufruf (auch fuer Tests: obj/geb/kam direkt uebergeben). -> Ergebnis-dict (auch als JSON geschrieben)."""
+def erzeugen(objekt_json, wolke=None, ausrichtung=None, seiten_modelle=None, fotos=None, aus=".", radius=None, zeichnen=True, obj=None, geb=None, kam=None, geo_wurzel=None):
+    """Alles in einem Aufruf (auch fuer Tests: obj/geb/kam direkt uebergeben). geo_wurzel: Ordner mit DOM1/DGM1/DOP-Kacheln (Standard: GEO_WURZEL, wenn das LoD2
+    aus den Daten kommt; in Tests nur ausdruecklich). -> Ergebnis-dict (auch als JSON geschrieben)."""
     obj = obj or json.load(open(objekt_json)); rahmen = Rahmen(obj); os.makedirs(aus, exist_ok=True)
     C_a, N_a, hfov, f_px, gps_rest = kam if kam is not None else kameras_teil_a(ausrichtung, rahmen)
     hfov_q = "Median der eigenen Fotos (Ausrichtung)" if hfov else f"ANNAHME {HFOV_ANNAHME} Grad (keine eigenen Fotos)"; hfov = hfov or HFOV_ANNAHME
@@ -409,13 +578,19 @@ def erzeugen(objekt_json, wolke=None, ausrichtung=None, seiten_modelle=None, fot
     except Exception: MAX_DREH_SD = 6.0
     d_min = gps_rest / math.tan(math.radians(MAX_DREH_SD / 2))
     if geb is None:
-        geb, zid = gebaeude(obj, rahmen, radius or 340.0)
+        geb, zid = gebaeude(obj, rahmen, radius or 340.0); geo_wurzel = geo_wurzel or GEO_WURZEL
     else: zid = (obj.get("lod2") or {}).get("id")
     ziel = [g for g in geb if g["ziel"]]
     if not ziel: print("FEHLER foto_auftrag_skizze: Zielgebaeude (lod2.id) nicht im LoD2 - keine Skizze"); return None
     traufe = max(g["first"] for g in ziel); first = traufe              # Wandhoehe = LoD2-Gebaeudehoehe (eave_m ist die tiefste Dachkante, oft ein Anbau)
     f_ph = f_px or (0.5 * 4000 / math.tan(math.radians(HFOV_ANNAHME[0] / 2)))
     d_max = max(first * f_ph / MIN_PIXEL_HOEHE, 1.5 * d_min); d_max = min(d_max, (radius or 340.0) - 20)
+    d_hoch = min(HOCH_MAX_M, d_max)                                      # Hochblick/Eckfotos: nah genug fuer Wanddetail
+    t0 = time.time(); dom = dgm = dop = None
+    if geo_wurzel:
+        try: dom = raster("dom1", rahmen, d_hoch + 30, geo_wurzel); dgm = raster("dgm1", rahmen, d_hoch + 30, geo_wurzel); dop = raster("dop20rgb", rahmen, min(d_max + 40, 300.0), geo_wurzel, schritt=3)
+        except Exception as ex: print("Hoehenmodell/Luftbild nicht lesbar:", str(ex)[:120])
+    sicht = Sicht(geb, rahmen, dom, dgm, radius=d_hoch + 30)
     W = waende(geb, rahmen); WF = [w for w in W if w["frei"]]; WZ = [w for w in WF if not w["nachbar"]]     # WZ: Waende des Zielgebaeudes
     bel = belegung(WF, wolke, Z0_M, max(traufe, Z0_M + 3))
     for w in WF:
@@ -473,12 +648,33 @@ def erzeugen(objekt_json, wolke=None, ausrichtung=None, seiten_modelle=None, fot
         if not u["ok"]: meldungen.append(f"{name}: Uebereck-Bogen nicht moeglich ({u['grund']})"); continue
         SP.append(dict(art="uebereck", titel=f"Übereck-Bogen {name}", waende=[wb["nr"], wr["nr"]], **u))
     for w in [w for w in WZ if w["klasse"] == "rot" and w["L"] >= Lmin] + verbindung:
-        if w.get("ab"): meldungen.append(f"{w['seite']}: erst oberhalb des angebauten Nachbardachs ({w['ab']:.0f} m) frei - keine Frontalreihe, nur Fernfotos"); continue
+        if w.get("ab"): continue                                            # ueber dem Nachbardach: Hochblick + Pflicht-Eckfotos (unten)
         f = frontal(w, traufe, hfov, geb, zid)
         tit = f"Verbindungsreihe {w['seite']} Nachbarhaus" if w["nachbar"] else f"Frontalreihe {w['seite']}"
         if not f["ok"]: meldungen.append(f"{tit}: nicht moeglich ({f['grund']})"); continue
         SP.append(dict(art="frontal", titel=tit, waende=[w["nr"]], **f))
     n_fern_kand = 0
+    # (d) 24.11.2026 (schwabentor-1122 Ostseite, Teil 1 mit 63 Bildern nicht angebunden): eine rote Wand, die erst UEBER einem angebauten Nachbardach frei ist, bekam
+    # nur den Hinweis 'nur Fernfotos' und 0 Standpunkte. Jetzt: Hochblick-Standorte (freies Band ueber allen Daechern sichtbar, DOM1/DGM1 wenn vorhanden) und an
+    # beiden Enden PFLICHT-ECKFOTOS mit der angrenzenden belegten Zielwand im selben Bild (Ueberlappung = Kopplung), dazu je Ecke ein Fernstandort.
+    hoch_ecken = []
+    for w in WZ:
+        if w["klasse"] != "rot" or w["L"] < Lmin or not w.get("ab"): continue
+        hb, nk = hochblick(w, traufe, sicht, geb, rahmen, hfov, f_ph, d_hoch)
+        if not hb: meldungen.append(f"{w['seite']}: frei erst über {w['ab']:.0f} m - kein Standort bis {d_hoch:.0f} m, von dem das freie Band über die Dächer zu sehen ist ({sicht.quelle})")
+        for h in hb: SP.append(dict(art="hochblick", titel=f"{w['seite']} über dem Nachbardach", waende=[w["nr"]], **h))
+        for K in (w["a"], w["b"]):
+            nb = [x for x in WZ if x is not w and x["klasse"] != "rot" and x["L"] >= Lmin and min(np.linalg.norm(x["a"] - K), np.linalg.norm(x["b"] - K)) < 1.5 and abs((x["az"] - w["az"] + 180) % 360 - 180) > 30]
+            if not nb: meldungen.append(f"{w['seite']}: an der Ecke {np.round(K, 1).tolist()} keine belegte Nachbarwand - kein Eckfoto"); continue
+            wb = max(nb, key=lambda x: x["L"]); e_, nk = eckfotos(w, wb, K, traufe, sicht, geb, rahmen, hfov, d_hoch)
+            nm = f"{w['seite'].replace('seite', '')}/{wb['seite'].replace('seite', '')}"
+            if not e_: meldungen.append(f"Ecke {nm}: kein Standort bis {d_hoch:.0f} m mit beiden Wänden über den Dächern ({sicht.quelle})")
+            for h in e_: SP.append(dict(art="eck", titel=f"PFLICHT-Eckfoto {nm}", waende=[wb["nr"], w["nr"]], **h))
+            hoch_ecken.append((wb, w, K))
+    for (wb, wr, K) in hoch_ecken:
+        fl, nk = fern(wb, wr, K, 0.5 * (wr["ab"] + traufe), d_min, d_max, geb, zid, rahmen, n_max=1); n_fern_kand += nk
+        for f in fl: f["hinweis"] = "Gebaeude bildfuellend (Zoom), 2-3 Aufnahmen vom selben Ort"; SP.append(dict(art="fern", titel=f"Fernfoto {wr['seite'].replace('seite', '')}/{wb['seite'].replace('seite', '')} aus {f['abstand_m']:.0f} m", waende=[wb["nr"], wr["nr"]],
+                                    format="Hochformat", **f))
     for (wb, wr, K) in ecken:
         fl, nk = fern(wb, wr, K, 0.5 * traufe, d_min, d_max, geb, zid, rahmen); n_fern_kand += nk
         if not fl: meldungen.append(f"Fern {wr['seite']}/{wb['seite']}: kein freier Fernstandort {d_min:.0f}-{d_max:.0f} m (LoD2-Sichtlinie)")
@@ -486,7 +682,9 @@ def erzeugen(objekt_json, wolke=None, ausrichtung=None, seiten_modelle=None, fot
                                     format="Hochformat" if first > 0.6 * max(wb["L"], wr["L"]) else "Querformat", **f))
     # Reihenfolge = Wichtigkeit: 1 Bruecke direkt am Ziel (Uebereck an der Zielwand, Frontalreihe der Luecke), 2 Fernfotos (Drehung/Massstab), 3 Umweg ueber Nachbarfassaden
     for s in SP: s["prio"] = 3 if (s["art"] == "frontal" and "Nachbarhaus" in s["titel"]) or (s["art"] == "uebereck" and "Nachbarhaus" in s["titel"]) else (2 if s["art"] == "fern" else 1)
-    SP.sort(key=lambda s: s["prio"])
+    SP.sort(key=lambda s: (s["prio"], {"eck": 0, "uebereck": 1, "hochblick": 2, "frontal": 3, "fern": 4}[s["art"]]))
+    reserve = SP[MAX_STANDPUNKTE:]; SP = SP[:MAX_STANDPUNKTE]
+    if reserve: meldungen.append(f"{len(reserve)} weitere Standpunkte nur im JSON ('reserve') - erst die {MAX_STANDPUNKTE} nummerierten")
     # Ausgabe je Standpunkt: Blick, Entfernung, GPS
     for i, s in enumerate(SP, 1):
         s["nr"] = i; z = s["ziel"]; s["ziel_xy"] = [round(float(z[0]), 2), round(float(z[1]), 2)]; s["ziel_geo"] = [round(v, 6) for v in rahmen.geo(z)]
@@ -496,6 +694,10 @@ def erzeugen(objekt_json, wolke=None, ausrichtung=None, seiten_modelle=None, fot
             zj = zl[j - 1] if zl else z; la, lo = rahmen.geo(p); bl = rahmen.azimut(zj - p); fl.append(dict(i=j, x=round(float(p[0]), 2), y=round(float(p[1]), 2), lat=round(la, 6), lon=round(lo, 6), blick_grad=round(bl), entfernung_m=round(float(np.linalg.norm(zj - p)), 1)))
         s["fotos"] = fl; s["anzahl"] = len(fl); s["gps_an"] = True; s["entfernung_m"] = round(float(np.median([f["entfernung_m"] for f in fl])), 0)
         s["blick"] = kompass(float(np.median([f["blick_grad"] for f in fl]))) if s["art"] != "uebereck" else f"auf die Ecke ({kompass(fl[0]['blick_grad'])} bis {kompass(fl[-1]['blick_grad'])})"
+        if s.get("neigung_grad") is not None:                               # Hoehe im Bild (Hochblick/Eckfoto)
+            s["blick"] = f"{kompass(fl[0]['blick_grad'])} ({fl[0]['blick_grad']:.0f}°)"
+            s["im_bild"] = (f"Handy ~{s['neigung_grad']:.0f}° nach oben; im Bild {('die Ecke, beide Wände' if s['art'] == 'eck' else 'die Wand')} von {s['sicht_ab_m']:.0f} m bis zur Spitze ({s['sicht_bis_m']:.0f} m)"
+                            + f", {s['zoom']}" + (", Bäume im Weg möglich: zwischen den Ästen zielen" if s.get("baeume") else ""))
         s.pop("ziel", None)
     erg = dict(objekt=obj.get("name"), zeit=time.strftime("%Y-%m-%d %H:%M"), quellen=dict(wolke=wolke, ausrichtung=ausrichtung, seiten_modelle=seiten_modelle, fotos=fotos),
                rahmen=dict(mitte_utm=rahmen.m0.tolist(), xhat_utm=rahmen.xh.tolist(), yhat_utm=rahmen.yh.tolist()), wolke=bel,
@@ -506,14 +708,15 @@ def erzeugen(objekt_json, wolke=None, ausrichtung=None, seiten_modelle=None, fot
                traufe_m=round(traufe, 1), first_m=round(first, 1),
                waende=[dict(nr=w["nr"], seite=w["seite"], azimut_normale=w["az"], laenge_m=w["L"], frei=w["frei"], frei_ab_m=w.get("ab") or 0.0, punkte_m2=w.get("dichte"), rel=w.get("rel"), kameras=w.get("kameras"), klasse=w.get("klasse", "angebaut"),
                             luecke=w.get("luecke"), von=[round(float(v), 2) for v in w["a"]], bis=[round(float(v), 2) for v in w["b"]]) for w in W],
-               luecken=luecken, standpunkte=SP, meldungen=meldungen)
+               luecken=luecken, standpunkte=SP, meldungen=meldungen, sicht=sicht.quelle, luftbild=bool(dop),
+               reserve=[dict(art=r["art"], titel=r["titel"], geo=[round(v, 6) for v in rahmen.geo(r["fotos"][0])]) for r in reserve])
     erg["teile_gps"] = {}
     tg = kameras_teile_gps(seiten_modelle, fotos, rahmen) if kam is None else {}
     for t, P in tg.items(): erg["teile_gps"][str(t)] = len(P)
-    pfad = os.path.join(aus, "foto_auftrag"); erg["bild"] = pfad + ".png"; erg["text"] = pfad + ".md"
+    pfad = os.path.join(aus, "foto_auftrag"); erg["bild"] = pfad + ".png"; erg["bild_handy"] = pfad + "_handy.png"; erg["text"] = pfad + ".md"
     json.dump(erg, open(pfad + ".json", "w"), indent=1, ensure_ascii=False, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o))
     open(pfad + ".md", "w").write(text(erg))
-    if zeichnen: zeichne(erg, geb, W, C_a, tg, rahmen, pfad + ".png")
+    if zeichnen: zeichne(erg, geb, W, C_a, tg, rahmen, pfad + ".png", dop); zeichne_handy(erg, geb, W, tg, rahmen, pfad + "_handy.png", dop)
     return erg
 
 
@@ -528,74 +731,136 @@ def text(e):
                  + (f", Seitenschritt ~{s['schritt_m']} m" if s.get("schritt_m") else "") + (f" ({s['hinweis']})" if s.get("hinweis") else "") + ".")
         z.append(f"   Start {f0['lat']:.6f}, {f0['lon']:.6f}" + (f" | Mitte {fm['lat']:.6f}, {fm['lon']:.6f} | Ende {f1['lat']:.6f}, {f1['lon']:.6f}" if s["anzahl"] > 1 else "")
                  + f" | https://www.google.com/maps/search/?api=1&query={fm['lat']},{fm['lon']}")
+        if s.get("im_bild"): z.append(f"   {s['im_bild']}.")
     for m in e["meldungen"]: z.append(f"- HINWEIS: {m}")
     z += ["", "Wände: " + "; ".join(f"{w['nr']} {w['seite']} {w['laenge_m']:.0f} m {w['klasse']}" + (f" ({w['punkte_m2']:.0f}/m2, {w['kameras']} Kam.)" if w.get("punkte_m2") is not None else "") for w in e["waende"] if w["frei"])]
     return "\n".join(z) + "\n"
 
 
-def zeichne(e, geb, W, C_a, tg, rahmen, png):
-    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
-    from matplotlib.patches import Polygon as Poly, FancyArrowPatch
+ART_FARBE = {"uebereck": "#c2185b", "frontal": "#1565c0", "fern": "#6a1b9a", "eck": "#e65100", "hochblick": "#00838f"}
+ART_NAME = {"uebereck": "Übereck-Bogen", "frontal": "Frontalreihe", "fern": "Fernstandort", "eck": "PFLICHT-Eckfoto (beide Wände)", "hochblick": "Hochblick über das Nachbardach"}
+
+
+def _luftbild(ax, dop, rahmen, b0, b1):
+    """Luftbild (DOP20, lokal vorhanden) als Hintergrund: Strassen/Plaetze erkennt der Mensch vor Ort daran (keine Online-Karte noetig)."""
+    if not dop: return False
+    x0, y0, px = dop["x0"] - rahmen.m0[0], dop["y0"] - rahmen.m0[1], dop["px"]; A = dop["A"]
+    c0, c1 = max(0, int((b0[0] - x0) / px)), min(A.shape[1], int((b1[0] - x0) / px) + 1); r0, r1 = max(0, int((y0 - b1[1]) / px)), min(A.shape[0], int((y0 - b0[1]) / px) + 1)
+    if c1 <= c0 or r1 <= r0: return False
+    B = A[r0:r1, c0:c1]; B = (0.6 * B + 0.4 * 255).astype(np.uint8)                        # aufgehellt: Markierungen bleiben lesbar
+    ax.imshow(B, extent=(x0 + c0 * px - px / 2, x0 + c1 * px - px / 2, y0 - r1 * px + px / 2, y0 - r0 * px + px / 2), zorder=0, interpolation="bilinear"); return True
+
+
+def _karte(ax, e, geb, W, C_a, tg, rahmen, box, ist_nah, dop=None, gr=1.0, fern_zeigen=False):
+    from matplotlib.patches import Polygon as Poly, FancyArrowPatch, Wedge
+    L = rahmen.lokal; SP = e["standpunkte"]; b0, b1 = box; lb = _luftbild(ax, dop, rahmen, b0, b1)
+    for g in geb:
+        for r in g["ringe"]:
+            q = L(r)
+            if q[:, 0].max() < b0[0] or q[:, 0].min() > b1[0] or q[:, 1].max() < b0[1] or q[:, 1].min() > b1[1]: continue
+            ax.add_patch(Poly(q, closed=True, fc=("#9aa39d" if g["ziel"] else "#d9dcd6"), ec="#55605a" if g["ziel"] else "#8f958d", lw=1.2 if g["ziel"] else 0.5,
+                              alpha=(0.75 if g["ziel"] else 0.3) if lb else 1.0, zorder=1))
+    for w in W:
+        q = L(w["polylinie"])
+        if not w["frei"]: ax.plot(q[:, 0], q[:, 1], color="#777", lw=1, ls=":", zorder=2); continue
+        ax.plot(q[:, 0], q[:, 1], color=FARBE[w["klasse"]], lw=((4 if w.get("ab") else 7) if ist_nah else 4) * gr, ls="--" if w.get("ab") else "-", solid_capstyle="butt", zorder=3)
+        if ist_nah and w["L"] >= 2 and gr == 1.0:
+            m = L(0.5 * (w["a"] + w["b"]) + w["n"] * 2.2); ax.text(m[0], m[1], (f"{w['seite'].replace('seite', '')}\n{w.get('dichte') or 0:.0f}/m²" if w.get("dichte") is not None else w["seite"]) + (f"\nab {w['ab']:.0f} m" if w.get("ab") else ""), ha="center", va="center", fontsize=8, color=FARBE[w["klasse"]], weight="bold", zorder=6, clip_on=True)
+        if w.get("luecke") and ist_nah:
+            m = L(0.5 * (w["a"] + w["b"]) + w["n"] * (5.0 if gr == 1.0 else 0.06 * (b1[0] - b0[0]) + 4.0)); ax.text(m[0], m[1], f"{w['seite'].upper()} FEHLT" + (f"\n(frei ab {w['ab']:.0f} m)" if w.get("ab") else "") + f"\nTeil {w['luecke']['teil']}, {w['luecke']['bilder']} Bilder", ha="center", va="center", fontsize=8 * gr, color=FARBE["rot"], weight="bold", zorder=6, clip_on=True, bbox=dict(fc="white", ec=FARBE["rot"], lw=0.8, alpha=0.9))
+    if len(C_a) and gr == 1.0: q = L(C_a[:, :2]); ax.scatter(q[:, 0], q[:, 1], s=6 if ist_nah else 4, c=TEIL_FARBEN[0], alpha=0.55, lw=0, zorder=2, label=f"Kameras Teil A ({len(C_a)})")
+    for k, (t, P) in enumerate(sorted(tg.items())):
+        if len(P) and gr == 1.0: q = L(P); ax.scatter(q[:, 0], q[:, 1], s=14 if ist_nah else 8, marker="x", c=TEIL_FARBEN[1 + k % 5], alpha=0.8, lw=1, zorder=2, label=f"Teil {t} nicht angebunden ({len(P)}, nur GPS)")
+    hf = math.radians(e["kamera"]["hfov_kurz_grad"]); sp_ = b1[0] - b0[0]
+    for s in SP:
+        if ist_nah and s["art"] == "fern" and not fern_zeigen: continue
+        P = L(np.array([[f["x"], f["y"]] for f in s["fotos"]])); Z = L(np.array(s["ziel_xy"])); col = ART_FARBE[s["art"]]
+        drin = (P[:, 0] >= b0[0]) & (P[:, 0] <= b1[0]) & (P[:, 1] >= b0[1]) & (P[:, 1] <= b1[1])
+        if not drin.any():                                                  # Standort ausserhalb der Karte (Fernfoto): Pfeil am Rand in seine Richtung
+            v = P[0] - Z; v = v / max(np.linalg.norm(v), 1e-9); c_ = 0.5 * (np.array(b0) + np.array(b1)); hw = 0.5 * sp_; t_ = 0.9 / max(abs(v[0]), abs(v[1]))
+            ax.annotate("", xy=tuple(c_ + v * t_ * hw), xytext=tuple(c_ + v * (t_ - 0.2) * hw), arrowprops=dict(arrowstyle="-|>", color=col, lw=2.5 * gr), zorder=7)
+            ax.text(*(c_ + v * (t_ - 0.3) * hw), f"{s['nr']}: {s['entfernung_m']:.0f} m", ha="center", va="center", fontsize=8 * gr, color="white", weight="bold", zorder=7, bbox=dict(fc=col, ec="white", lw=0.8))
+            continue
+        ax.plot(P[:, 0], P[:, 1], "-", color=col, lw=1 * gr, alpha=0.6, zorder=4); ax.scatter(P[:, 0], P[:, 1], s=(16 if ist_nah else 22) * gr * gr, color=col, zorder=5, ec="white", lw=0.5)
+        if len(P) == 1 and s["art"] in ("eck", "hochblick", "fern"):          # Sichtlinie zum Ziel + kurzer Bildkeil (Blickrichtung)
+            az_ = s["fotos"][0]["blick_grad"]; ax.plot([P[0][0], Z[0]], [P[0][1], Z[1]], ls=(0, (4, 3)), color=col, lw=1.2 * gr, alpha=0.8, zorder=4)
+            ax.add_patch(Wedge(tuple(P[0]), 0.07 * sp_, 90 - az_ - math.degrees(hf) / 2, 90 - az_ + math.degrees(hf) / 2, fc=col, ec="white", alpha=0.55, lw=0.8, zorder=4))
+        elif ist_nah or s["art"] == "fern":
+            for k_ in (range(0, len(P), max(1, len(P) // 4)) if len(P) > 4 else range(len(P))):
+                p = P[k_]; f_ = s["fotos"][k_]; ln = f_["entfernung_m"]; az_ = math.radians(f_["blick_grad"])         # Blickpfeil je Foto (lokal Ost/Nord)
+                v = np.array([math.sin(az_), math.cos(az_)]) * min(ln * 0.45, 4.5 if ist_nah else ln * 0.5)
+                ax.add_patch(FancyArrowPatch(tuple(p), tuple(p + v), arrowstyle="-|>", mutation_scale=9, color=col, lw=1, zorder=5))
+        pm = P[len(P) // 2]; off = (pm - Z) / max(np.linalg.norm(pm - Z), 1e-9) * (0.035 * sp_)
+        ax.text(*(pm + off), str(s["nr"]), ha="center", va="center", fontsize=(10 if ist_nah else 9) * gr, color="white", weight="bold", zorder=7, bbox=dict(boxstyle="circle,pad=0.25", fc=col, ec="white", lw=1))
+    ax.set_xlim(b0[0], b1[0]); ax.set_ylim(b0[1], b1[1]); ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
+    bl = [v for v in (5, 10, 20, 50, 100, 200) if v <= sp_ / 4][-1]; x0, y0 = b0[0] + 0.04 * sp_, b0[1] + 0.04 * sp_
+    ax.plot([x0, x0 + bl], [y0, y0], color="k", lw=4, zorder=8); ax.text(x0 + bl / 2, y0 + 0.015 * sp_, f"{bl} m", ha="center", fontsize=9 * gr, zorder=8, weight="bold")
+    ax.annotate("", xy=(b1[0] - 0.05 * sp_, b1[1] - 0.04 * sp_), xytext=(b1[0] - 0.05 * sp_, b1[1] - 0.13 * sp_), arrowprops=dict(arrowstyle="-|>", color="k", lw=2), zorder=8)
+    ax.text(b1[0] - 0.05 * sp_, b1[1] - 0.16 * sp_, "N", ha="center", fontsize=12 * gr, weight="bold", zorder=8)
+    return lb
+
+
+def _boxen(e, geb, rahmen):
+    L = rahmen.lokal; SP = e["standpunkte"]
+    zpts = np.vstack([L(r) for g in geb if g["ziel"] for r in g["ringe"]])
+    nah = np.vstack([zpts] + [L(np.array([[f["x"], f["y"]] for f in s["fotos"]])) for s in SP if s["art"] != "fern"]); lo, hi = nah.min(0) - 12, nah.max(0) + 12; c = 0.5 * (lo + hi); h = 0.5 * max(hi - lo)
+    alle = np.vstack([nah] + [L(np.array([[f["x"], f["y"]] for f in s["fotos"]])) for s in SP]); lo2, hi2 = alle.min(0) - 30, alle.max(0) + 30; c2 = 0.5 * (lo2 + hi2); h2 = max(0.5 * max(hi2 - lo2), 60)
+    return (c - h, c + h), (c2 - h2, c2 + h2), zpts.mean(0)
+
+
+def _zeile(s):
+    fm = s["fotos"][len(s["fotos"]) // 2]; pr = ['', 'zuerst', 'dann', 'nur wenn Zeit'][s['prio']]
+    z = f"{s['nr']:>2}. [{pr}] {s['titel']}: {s['anzahl']} Foto(s)" + (" (2-3 vom selben Ort)" if s["anzahl"] == 1 and s["art"] in ("eck", "hochblick") else "") + f", {s.get('format', '')}, Blick {s['blick']}, ~{s['entfernung_m']:.0f} m"
+    if s.get("schritt_m"): z += f", Schritt {s['schritt_m']} m"
+    return z + f", GPS {fm['lat']:.6f}, {fm['lon']:.6f}"
+
+
+def zeichne(e, geb, W, C_a, tg, rahmen, png, dop=None):
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt, textwrap
+    from matplotlib.lines import Line2D
     fig = plt.figure(figsize=(16, 11.5), dpi=100); gs = fig.add_gridspec(2, 2, width_ratios=[1.35, 1], height_ratios=[1, 0.36], hspace=0.12, wspace=0.08)
     axn, axu, axt = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[1, :])
-    L = rahmen.lokal; SP = e["standpunkte"]
-    zpts = np.vstack([L(r) for g in geb if g["ziel"] for r in g["ringe"]]); zm = zpts.mean(0)
-    nah_p = [zpts] + [L(np.array([[f["x"], f["y"]] for f in s["fotos"]])) for s in SP if s["art"] != "fern"]
-    nah = np.vstack(nah_p); lo, hi = nah.min(0) - 12, nah.max(0) + 12; c = 0.5 * (lo + hi); h = 0.5 * max(hi - lo); nah_box = (c - h, c + h)
-    alle = np.vstack([nah] + [L(np.array([[f["x"], f["y"]] for f in s["fotos"]])) for s in SP]); lo2, hi2 = alle.min(0) - 30, alle.max(0) + 30; c2 = 0.5 * (lo2 + hi2); h2 = max(0.5 * max(hi2 - lo2), 60); ueb_box = (c2 - h2, c2 + h2)
-    for ax, (b0, b1), ist_nah in ((axn, nah_box, True), (axu, ueb_box, False)):
-        for g in geb:
-            for r in g["ringe"]:
-                q = L(r)
-                if q[:, 0].max() < b0[0] or q[:, 0].min() > b1[0] or q[:, 1].max() < b0[1] or q[:, 1].min() > b1[1]: continue
-                ax.add_patch(Poly(q, closed=True, fc="#9aa39d" if g["ziel"] else "#d9dcd6", ec="#55605a" if g["ziel"] else "#b5bab3", lw=1.2 if g["ziel"] else 0.5, zorder=1))
-        for w in W:
-            q = L(w["polylinie"])
-            if not w["frei"]: ax.plot(q[:, 0], q[:, 1], color="#777", lw=1, ls=":", zorder=2); continue
-            ax.plot(q[:, 0], q[:, 1], color=FARBE[w["klasse"]], lw=(4 if w.get("ab") else 7) if ist_nah else 4, ls="--" if w.get("ab") else "-", solid_capstyle="butt", zorder=3)
-            if ist_nah and w["L"] >= 2:
-                m = L(0.5 * (w["a"] + w["b"]) + w["n"] * 2.2); ax.text(m[0], m[1], (f"{w['seite'].replace('seite', '')}\n{w.get('dichte') or 0:.0f}/m²" if w.get("dichte") is not None else w["seite"]) + (f"\nab {w['ab']:.0f} m" if w.get("ab") else ""), ha="center", va="center", fontsize=8, color=FARBE[w["klasse"]], weight="bold", zorder=6, clip_on=True)
-            if w.get("luecke") and ist_nah:
-                m = L(0.5 * (w["a"] + w["b"]) + w["n"] * 5.0); ax.text(m[0], m[1], f"nicht angebunden\n(Teil {w['luecke']['teil']}, {w['luecke']['bilder']} Bilder)", ha="center", va="center", fontsize=8, color=FARBE["rot"], zorder=6, clip_on=True, bbox=dict(fc="white", ec=FARBE["rot"], lw=0.8, alpha=0.9))
-        if len(C_a): q = L(C_a[:, :2]); ax.scatter(q[:, 0], q[:, 1], s=6 if ist_nah else 4, c=TEIL_FARBEN[0], alpha=0.55, lw=0, zorder=2, label=f"Kameras Teil A ({len(C_a)})")
-        for k, (t, P) in enumerate(sorted(tg.items())):
-            if len(P): q = L(P); ax.scatter(q[:, 0], q[:, 1], s=14 if ist_nah else 8, marker="x", c=TEIL_FARBEN[1 + k % 5], alpha=0.8, lw=1, zorder=2, label=f"Teil {t} nicht angebunden ({len(P)}, nur GPS)")
-        for s in SP:
-            if ist_nah and s["art"] == "fern": continue
-            P = L(np.array([[f["x"], f["y"]] for f in s["fotos"]])); Z = L(np.array(s["ziel_xy"]))
-            col = {"uebereck": "#c2185b", "frontal": "#1565c0", "fern": "#6a1b9a"}[s["art"]]
-            ax.plot(P[:, 0], P[:, 1], "-", color=col, lw=1, alpha=0.6, zorder=4); ax.scatter(P[:, 0], P[:, 1], s=16 if ist_nah else 22, color=col, zorder=5, ec="white", lw=0.5)
-            if ist_nah or s["art"] == "fern":
-                for k_ in (range(0, len(P), max(1, len(P) // 4)) if len(P) > 4 else range(len(P))):
-                    p = P[k_]; f_ = s["fotos"][k_]; ln = f_["entfernung_m"]; az_ = math.radians(f_["blick_grad"])         # Blickpfeil je Foto (lokal Ost/Nord)
-                    v = np.array([math.sin(az_), math.cos(az_)]) * min(ln * 0.45, 4.5 if ist_nah else ln * 0.5)
-                    ax.add_patch(FancyArrowPatch(tuple(p), tuple(p + v), arrowstyle="-|>", mutation_scale=9, color=col, lw=1, zorder=5))
-            pm = P[len(P) // 2]; off = (pm - Z) / max(np.linalg.norm(pm - Z), 1e-9) * (2.6 if ist_nah else 0.03 * (b1[0] - b0[0]))
-            ax.text(*(pm + off), str(s["nr"]), ha="center", va="center", fontsize=10 if ist_nah else 9, color="white", weight="bold", zorder=7, bbox=dict(boxstyle="circle,pad=0.25", fc=col, ec="white", lw=1))
-        ax.set_xlim(b0[0], b1[0]); ax.set_ylim(b0[1], b1[1]); ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
-        sp = b1[0] - b0[0]; bl = [v for v in (5, 10, 20, 50, 100, 200) if v <= sp / 4][-1]; x0, y0 = b0[0] + 0.04 * sp, b0[1] + 0.04 * sp
-        ax.plot([x0, x0 + bl], [y0, y0], color="k", lw=4, zorder=8); ax.text(x0 + bl / 2, y0 + 0.015 * sp, f"{bl} m", ha="center", fontsize=9, zorder=8)
-        ax.annotate("", xy=(b1[0] - 0.05 * sp, b1[1] - 0.04 * sp), xytext=(b1[0] - 0.05 * sp, b1[1] - 0.13 * sp), arrowprops=dict(arrowstyle="-|>", color="k", lw=2), zorder=8)
-        ax.text(b1[0] - 0.05 * sp, b1[1] - 0.16 * sp, "N", ha="center", fontsize=12, weight="bold", zorder=8)
-        if not ist_nah:
-            r_ = ueb_box[1][0] - ueb_box[0][0]
-            for d in (e["fern"]["d_min_m"], e["fern"]["d_max_m"]):
-                if d < r_: ax.add_patch(matplotlib.patches.Circle(tuple(zm), d, fill=False, ls="--", ec="#6a1b9a", lw=0.7, alpha=0.6, zorder=2))
-    axn.set_title(f"Fotoauftrag {e['objekt']} - Nahplan (Norden oben)", fontsize=13, loc="left"); axu.set_title(f"Übersicht mit Fernstandorten ({e['fern']['d_min_m']}-{e['fern']['d_max_m']} m)", fontsize=11, loc="left")
-    from matplotlib.lines import Line2D
+    SP = e["standpunkte"]; nah_box, ueb_box, zm = _boxen(e, geb, rahmen)
+    lb = _karte(axn, e, geb, W, C_a, tg, rahmen, nah_box, True, dop); _karte(axu, e, geb, W, C_a, tg, rahmen, ueb_box, False, dop)
+    r_ = ueb_box[1][0] - ueb_box[0][0]
+    for d in (e["fern"]["d_min_m"], e["fern"]["d_max_m"]):
+        if d < r_: axu.add_patch(matplotlib.patches.Circle(tuple(zm), d, fill=False, ls="--", ec="#6a1b9a", lw=0.7, alpha=0.6, zorder=2))
+    axn.set_title(f"Fotoauftrag {e['objekt']} - Nahplan (Norden oben)" + (", Luftbild LGL DOP20" if lb else ""), fontsize=13, loc="left")
+    axu.set_title(f"Übersicht mit Fernstandorten ({e['fern']['d_min_m']}-{e['fern']['d_max_m']} m)", fontsize=11, loc="left")
     hl = [Line2D([], [], color=FARBE["gruen"], lw=6, label=f"Wand belegt (>= {100 * GRUEN_REL:.0f} % der besten)"), Line2D([], [], color=FARBE["gelb"], lw=6, label="Wand schwach"), Line2D([], [], color=FARBE["rot"], lw=6, label=f"Wand fehlt / nicht angebunden (< {100 * GELB_REL:.0f} %)"),
-          Line2D([], [], color="#777", ls=":", label="angebaut (kein Foto nötig)"), Line2D([], [], color="#555", ls="--", lw=3, label="frei erst über dem Nachbardach"), Line2D([], [], marker="o", ls="-", color="#c2185b", label="Übereck-Bogen"), Line2D([], [], marker="o", ls="-", color="#1565c0", label="Frontalreihe"), Line2D([], [], marker="o", ls="", color="#6a1b9a", label="Fernstandort")]
+          Line2D([], [], color="#777", ls=":", label="angebaut (kein Foto nötig)"), Line2D([], [], color="#555", ls="--", lw=3, label="frei erst über dem Nachbardach")]
+    hl += [Line2D([], [], marker="o", ls="-" if a in ("uebereck", "frontal") else "", color=c, label=ART_NAME[a]) for a, c in ART_FARBE.items() if a in ("uebereck", "frontal", "fern") or any(s["art"] == a for s in SP)]
     h_, l_ = axn.get_legend_handles_labels(); axu.legend(handles=hl + h_, loc="upper left", bbox_to_anchor=(1.02, 1.0), fontsize=8, framealpha=0.9, borderaxespad=0)
-    import textwrap
     axt.axis("off"); zeilen = []
     for L_ in e["luecken"]: zeilen += textwrap.wrap(f"LÜCKE {L_.get('seite') or '?'}: {L_['satz']}", 175, subsequent_indent="    ")
     for s in SP:
-        fm = s["fotos"][len(s["fotos"]) // 2]
-        zeilen.append(f"{s['nr']:>2}. [{['', 'zuerst', 'dann', 'nur wenn Zeit'][s['prio']]}] {s['titel']}: {s['anzahl']} Fotos, {s.get('format', '')}, Blick {s['blick']}, ~{s['entfernung_m']:.0f} m" + (f", Schritt {s['schritt_m']} m" if s.get("schritt_m") else "") + f", GPS an  |  {fm['lat']:.6f}, {fm['lon']:.6f}")
+        zeilen.append(_zeile(s))
+        if s.get("im_bild"): zeilen.append("      " + s["im_bild"])
     for m in e["meldungen"][:4]: zeilen.append("Hinweis: " + m[:200])
     if not SP: zeilen.append("Keine Standpunkte nötig." if not e["luecken"] else "Keine Standpunkte gefunden (siehe Hinweise).")
-    axt.text(0.0, 1.0, "\n".join(zeilen[:16]), va="top", ha="left", fontsize=9, family="monospace", transform=axt.transAxes)
+    axt.text(0.0, 1.0, "\n".join(zeilen[:22]), va="top", ha="left", fontsize=8.5, family="monospace", transform=axt.transAxes)
     fig.savefig(png, dpi=100, bbox_inches="tight"); plt.close(fig)
+
+
+def zeichne_handy(e, geb, W, tg, rahmen, png, dop=None):
+    """Hochformat fuers Handy (1080 px breit): oben Karte mit grossen Nummern (Luftbild, Fernstandorte als Randpfeile), darunter je Standpunkt 2-4 kurze Zeilen."""
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt, textwrap
+    SP = e["standpunkte"]; nah_box, _, _ = _boxen(e, geb, rahmen); zeilen = []
+    for L_ in e["luecken"][:2]: zeilen += textwrap.wrap(f"FEHLT: {L_.get('seite') or '?'} - " + L_["satz"].split(" - ")[0], 58)
+    zeilen.append("")
+    for s in SP:
+        fm = s["fotos"][len(s["fotos"]) // 2]
+        zeilen += textwrap.wrap(f"{s['nr']}  {['', 'ZUERST', 'DANN', 'WENN ZEIT'][s['prio']]}: {s['titel']}", 58)
+        zeilen += textwrap.wrap(f"   {s['anzahl']} Foto(s) {s.get('format', '')}, Blick {s['blick']}, {s['entfernung_m']:.0f} m" + (f", je {s['schritt_m']} m weiter" if s.get("schritt_m") else ""), 58, subsequent_indent="   ")
+        if s.get("im_bild"): zeilen += textwrap.wrap("   " + s["im_bild"], 58, subsequent_indent="   ")
+        zeilen.append(f"   GPS {fm['lat']:.6f}, {fm['lon']:.6f}")
+    zeilen += ["", "Bei jedem Foto: Standort (GPS) in der Kamera-App AN."]
+    hz = 0.255 * len(zeilen) + 0.4; H = 10.8 + hz
+    fig = plt.figure(figsize=(10.8, H), dpi=100); ax = fig.add_axes([0.01, hz / H, 0.98, 10.5 / H]); at = fig.add_axes([0.03, 0.0, 0.95, hz / H])
+    lb = _karte(ax, e, geb, W, np.zeros((0, 3)), {}, rahmen, nah_box, True, dop, gr=1.7, fern_zeigen=True)
+    ax.set_title(f"Fotoauftrag {e['objekt']} - Norden oben" + (" (Luftbild)" if lb else ""), fontsize=20, loc="left")
+    at.axis("off"); at.text(0.0, 1.0, "\n".join(zeilen), va="top", ha="left", fontsize=14.5, transform=at.transAxes, linespacing=1.2)
+    fig.savefig(png, dpi=100); plt.close(fig)
 
 
 # ---------------------------------------------------------------- Foto gegen Auftrag

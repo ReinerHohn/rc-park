@@ -6,6 +6,8 @@
   2 Fotoluecke     seiten_modelle 'fotoluecken' Azimut 165 Grad -> Suedwand 'nicht angebunden' mit Begruendung aus 'grund'.
   3 angebaut       niedriger Nachbar an der Ostseite -> Ostwand des Ziels 'frei ab' Nachbarhoehe, Umriss laeuft ueber den Block (Nachbarwaende markiert).
   4 Foto pruefen   GPS am Soll-Ort + Kompass in Blickrichtung -> erfuellt; 20 m dahinter -> 'PASST NICHT' mit Meterangabe; Kompass falsch -> drehen; ohne GPS -> Hinweis.
+  6 ueber Nachbar  Turm 40 m, Nachbar 25 m an der Ostseite, Fotoluecke Ost -> Hochblick-Standorte jenseits des Nachbarn (Sicht ueber das Dach ab >= 25 m, Neigung
+                   <= MAX_NEIGUNG_GRAD, 'Handy ~N Grad nach oben'), PFLICHT-Eckfotos an BEIDEN Enden der Ostwand im Faecher zur gekoppelten Wand, <= 8 Standpunkte, Handy-Bild.
   5 Kette          gesamtkette ruft das Werkzeug nach der SfM und am Laufende auf (Schalter RCPARK_FOTOAUFTRAG_SKIZZE), Bildpfad im Bericht.
 Python: /media/oem/scan/venv-seg/bin/python -I tools/test_foto_auftrag_skizze.py"""
 import os, sys, json, math, tempfile, shutil
@@ -76,6 +78,29 @@ try:
     r = FS.pruefen(A, "x.jpg", gps=(f["lat"], f["lon"], (f["blick_grad"] + 90) % 360)); assert r["urteil"] == "nicht" and "drehen" in r["text"], r
     r = FS.pruefen(A, os.path.join(tmp, "gibtsnicht.jpg")); assert r["urteil"] == "ohne_gps" and "GPS" in r["text"], r
     print("ok 4: Foto pruefen - am Soll erfuellt, 20 m dahinter -> Meterangabe, Kompass falsch -> drehen, ohne GPS -> Hinweis")
+
+    # ---------- 6 Wand nur ueber dem Nachbardach frei + nicht angebunden (24.11.2026, schwabentor-1122 Ostseite: vorher 0 Standpunkte, nur 'nur Fernfotos')
+    TURM = G("Z", [[0, 0], [12, 0], [12, 10], [0, 10]], 40.0, True); NB = G("N3", [[0, -8], [12, -8], [12, 0], [0, 0]], 25.0)
+    rng = np.random.default_rng(2); P = []
+    for (a_, b_) in [([12, 0], [12, 10]), ([0, 10], [12, 10]), ([0, 0], [0, 10])]:                     # Nord, West, Sued belegt, Ost (ueber 25 m) leer
+        t = rng.random(60000); a_, b_ = np.array(a_, float), np.array(b_, float); P.append(np.c_[a_ + np.outer(t, b_ - a_), 2 + 38 * rng.random(60000)])
+    np.save(wp, np.vstack(P)); sm6 = os.path.join(tmp, "sm6.json")
+    json.dump(dict(nicht_vereint=[1], fotoluecken=[dict(teil=1, bilder=63, seite="Ostseite", azimut_grad=88.0, grund="nur GPS - gps_ehrlich: NICHT bestanden (Drehung +-9 Grad)")]), open(sm6, "w"))
+    S6 = FS.Sicht([TURM, NB], R); zmin, _, za = S6.z_min(np.array([6.0, -60.0]), np.array([6.0, -0.5]))      # nahe Dachkante bei 52 m: 1,6 + 23,7 / 0,874 = 28,7 m
+    assert 25.0 < zmin < 32.0 and abs(za - FS.AUGE_M) < 1e-6, f"Sicht ueber das 25-m-Nachbardach: ab {zmin:.1f} m"
+    e6 = FS.erzeugen(None, wp, None, sm6, None, os.path.join(tmp, "a6"), obj=OBJ, geb=[TURM, NB, FERN], kam=KAM)
+    ow = [w for w in e6["waende"] if w["seite"] == "Ostseite" and w["frei_ab_m"] > 0]; assert ow and ow[0]["klasse"] == "rot" and ow[0]["luecke"], ow
+    hb = [s for s in e6["standpunkte"] if s["art"] == "hochblick"]; ek = [s for s in e6["standpunkte"] if s["art"] == "eck"]
+    assert hb and all(s["sicht_ab_m"] >= 25 and s["neigung_grad"] <= FS.MAX_NEIGUNG_GRAD and s["fotos"][0]["y"] < -8 and "nach oben" in s["im_bild"] for s in hb), [(s.get("sicht_ab_m"), s["fotos"][0]) for s in hb]
+    ecken6 = sorted({tuple(int(v) for v in np.round(s["ziel_xy"])) for s in ek}); assert ecken6 == [(0, 0), (12, 0)], f"Pflicht-Eckfotos nicht an beiden Enden der Ostwand: {ecken6}"
+    for s in ek:
+        K = np.array(s["ziel_xy"]); q = np.array([s["fotos"][0]["x"], s["fotos"][0]["y"]]) - K; nb_ = np.array([1.0 if K[0] > 6 else -1.0, 0.0])      # Normale der gekoppelten Wand (Nord bzw. Sued)
+        assert q[1] < -1 and q @ nb_ > 1, f"Eckfoto {s['nr']} nicht im Faecher zwischen Ost und {'Nord' if K[0] > 6 else 'Sued'}: {q}"
+        assert s["sicht_ab_m"] >= 25 and "beide Wände" in s["im_bild"] and s["prio"] == 1 and "PFLICHT" in s["titel"], s
+    alle6 = np.array([[f["x"], f["y"]] for s in e6["standpunkte"] for f in s["fotos"]]); assert not FS.innen(alle6, TURM["ringe"] + NB["ringe"] + FERN["ringe"]).any(), "Standpunkt in einem Gebaeude"
+    assert len(e6["standpunkte"]) <= FS.MAX_STANDPUNKTE and not any("nur Fernfotos" in m for m in e6["meldungen"]), (len(e6["standpunkte"]), e6["meldungen"])
+    assert os.path.getsize(os.path.join(tmp, "a6", "foto_auftrag_handy.png")) > 20000, "Handy-Skizze fehlt"
+    print(f"ok 6: Ostwand frei ab 25 m - {len(hb)} Hochblick (Sicht ab {[s['sicht_ab_m'] for s in hb]} m), PFLICHT-Eckfotos an {ecken6}, Handy-Skizze")
 
     # ---------- 5 Kette
     gk = open(os.path.join(T, "gesamtkette.py")).read()
