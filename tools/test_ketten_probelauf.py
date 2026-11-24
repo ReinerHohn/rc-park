@@ -38,6 +38,9 @@ R = KP.auswerten(B_, ["kein Ende"]); pruef(R["urteil"] == 1 and R["ablauf"][-1][
 R = KP.auswerten(bericht(gut, {}), ENDE + ["Traceback (most recent call last):", "KeyError: 'x'"]); pruef(R["urteil"] == 1 and R["ablauf"][0][0] == "traceback", "Traceback im Log = FEHLER")
 bel = gut + [dict(stufe="fenster_beleg", ok=False, fehler="fassaden.json nicht in diesem Lauf geschrieben")]
 R = KP.auswerten(bericht(bel, {}), ENDE); pruef(R["urteil"] == 1 and R["erster_fehler"][0] == "fenster_beleg", "roter *_beleg (stiller Erfolg) = FEHLER")
+B_t = bericht(gut); B_t["teillauf_ergebnis"] = dict(zeit="2026-11-24 15:40:00", rc=0, abbruch="")
+R = KP.auswerten(B_t, ["GESAMTKETTE_TEILLAUF_ENDE /x/gesamtkette_bericht.json"]); pruef(R["urteil"] == 0, "Teillauf (--bis anlegen) mit GESAMTKETTE_TEILLAUF_ENDE = OK, kein Absturz (Grundstand 24.11.)")
+R = KP.auswerten(B_t); pruef(R["urteil"] == 0, "Teillauf ohne Log: teillauf_ergebnis zaehlt als Ende")
 R = KP.auswerten(bericht(bel, {}), ENDE, bekannt=["fenster_beleg"]); pruef(R["urteil"] == 0, "dieselbe Stufe im Grundstand schon rot (--bekannt) = nur Hinweis")
 pruef(R["stufen"] == 4 and all(n != "alt_rot" for n, _ in R["daten"] + R["ablauf"]), "nur der letzte Lauf (ab LAUF_START) zaehlt")
 
