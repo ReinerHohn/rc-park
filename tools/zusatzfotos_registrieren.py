@@ -177,6 +177,22 @@ def sift_paare_matchen(db, paare_txt, pycolmap=None, saat=False):
     return ver
 
 
+def sift_paare_matchen_gespeichert(db, paare_txt, pycolmap):
+    """sift_paare_matchen mit SIFT-PAARSPEICHER (24.11.2026, Kette 1122zb: merkmale 1005 s von 1777 s seiten_luecken; jedes neue SfM aendert die Paarliste,
+    der Eintrags-Zwischenspeicher verfehlt, obwohl fast alle Paare gleich sind): bekannte Paare aus tools/sift_paar_speicher.py, COLMAP matcht nur den Rest;
+    Stichprobe als Guard. Ohne Treffer derselbe Aufruf wie sift_paare_matchen. Schalter RCPARK_SIFT_PAARSPEICHER=0 (aus)."""
+    import inspect
+    import sift_paar_speicher as SP
+    o = SP.ablage(db)
+    if not o: return sift_paare_matchen(db, paare_txt, pycolmap)
+    try: b_ = SP.basis(pycolmap, inspect.getsource(sift_paare_matchen), db)
+    except (sqlite3.Error, AttributeError, TypeError) as e_:
+        print(f"SIFT-Paarspeicher: AUS ({type(e_).__name__}: {str(e_)[:120]}) - bisheriger Weg", flush=True); return sift_paare_matchen(db, paare_txt, pycolmap)
+    ver, st = SP.matchen(db, paare_txt, lambda d_, p_: sift_paare_matchen(d_, p_, pycolmap), b_, o)
+    print(f"SIFT-Paarspeicher: {st}", flush=True)
+    return ver
+
+
 def merkmale_schluessel(a, V, names, paare_txt, pycolmap, aufgeschoben):
     """ZWISCHENSPEICHER-Schluessel der Stufe merkmale (24.11.2026, Kette 1122w: SIFT + Abgleich 388 Bilder 18 min, db.db am Skriptende geloescht -> jeder Lauf neu).
     Alles, was in db.db/merkmale.json eingeht: INHALT der Referenz-DB und jedes vorbereiteten Bildes (bilder/<name>) samt Bildgroesse, Paarliste (paare.txt),
@@ -186,7 +202,7 @@ def merkmale_schluessel(a, V, names, paare_txt, pycolmap, aufgeschoben):
     from lg_zwischenspeicher import inhalt_hash
     T_ = os.path.dirname(os.path.abspath(__file__)); import sift_einstellung as SE
     bilder = [(n, inhalt_hash(os.path.join(a.aus, "bilder", n)), V["bilder"][n]["bild"]) for n in names]
-    quell = [inspect.getsource(f) for f in (merkmale, sift_sicher, sift_fehlend, sift_paare_matchen)] + [inhalt_hash(os.path.join(T_, d)) for d in ("sift_einstellung.py", "colmap_db_schema.py")]
+    quell = [inspect.getsource(f) for f in (merkmale, sift_sicher, sift_fehlend, sift_paare_matchen, sift_paare_matchen_gespeichert)] + [inhalt_hash(os.path.join(T_, d)) for d in ("sift_einstellung.py", "colmap_db_schema.py", "sift_paar_speicher.py")]
     import nachhol_zwischenspeicher as NZ
     return NZ.text_hash("merkmale-1", inhalt_hash(a.ref_db), bilder, inhalt_hash(paare_txt), float(a.f_px), SE.beschreibung(SE.optionen(pycolmap, geraet="auto")),
                         {k: os.environ.get(k) for k in ("RCPARK_SIFT_ALT", "RCPARK_SIFT_MAX")}, bool(aufgeschoben), getattr(pycolmap, "__version__", "?"), quell)
@@ -222,7 +238,7 @@ def merkmale(a):
     if aufgeschoben:      # 23.11.2026 (Kette 1122q: 19,8 min fuer 438.900 Paare): Matching erst in zusatzfotos_lightglue.py einlesen, nur auf lg/sift_paare.txt
         print(f"RCPARK_NACHHOL_SIFT_NUR_GEWAEHLT=1: SIFT-Matching der {len(paare)} Kandidatenpaare AUFGESCHOBEN - nur die LightGlue-Auswahl (mit Marge) wird in der Stufe einlesen gematcht", flush=True)
         ver = None
-    else: ver = sift_paare_matchen(db, pf, pycolmap)
+    else: ver = sift_paare_matchen_gespeichert(db, pf, pycolmap)      # 24.11.2026: je Paar aus dem Speicher (sift_paar_speicher.py, Stichprobe als Guard)
     con = sqlite3.connect(db); nk = {n: con.execute("select rows from keypoints where image_id=?", (ids[n],)).fetchone()[0] for n in names}; con.close()
     leer = [n for n, k in nk.items() if not k]
     if leer: raise SystemExit(f"FEHLER: {len(leer)} Bilder ohne Schluesselpunkte (SiftGPU scheitert bei VRAM-Mangel STILL mit rc 0): {leer[:5]} - VRAM pruefen (nvidia-smi), RCPARK_SIFT_MAX=1600")

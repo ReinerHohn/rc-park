@@ -56,6 +56,7 @@
 - `tools/messung_uebernehmen.py` [gen] messung_uebernehmen.py <objekt> [--anwenden] Uebernimmt die BESTAETIGTEN Direktmessungen aus <objekt>/messungen_wolke.json (tools/messen_interaktiv.py) in die Parameter von objekt.
 - `tools/model3d_textured.py` [seg] (kein Docstring)
 - `tools/nachhol_zwischenspeicher.py` [-] nachhol_zwischenspeicher.py - Ergebnis-Zwischenspeicher nach EINGABE-HASH fuer das Nachholen (tools/seiten_luecken.py), 24.11.2026.
+- `tools/sift_paar_speicher.py` [-] sift_paar_speicher.py - SIFT-Abgleich JE PAAR wiederverwenden (Nachholen, Stufe merkmale in tools/zusatzfotos_registrieren.py), 24.11.2026.
 - `tools/neben_details.py` [seg] neben_details.py <objekt.json> [--daten DIR] [--stl a.stl] [--aus DIR] [--max 24] [--kandidaten 6] [--ohne-verdecker] - je erkanntem Bauteil eine DETAILANSICHT Foto | Modell aus de
 - `tools/objekt_daten.py` [-] objekt_daten.py - GENERISCH: amtliche Grunddaten eines neuen Objekts holen und daraus Modellrahmen + 3D-Anker bauen (Nullstart-Stufe 0).
 - `tools/openbuildings_fallback.py` [gen] openbuildings_fallback.py — HEBEL 5: Weltklasse-Fallback-Geometrie, wenn weder Google 3D Tiles (Hebel 1) noch lokales LOD2 (Hebel 3) ein Mesh liefern.
