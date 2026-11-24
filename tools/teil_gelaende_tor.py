@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""teil_gelaende_tor.py <dicht_a.ply> <dicht_b.ply> --matrix <json mit B_nach_A> --aus <ergebnis.json> [--modell-a <A-Modell>] [--gps <vereinen.json des GPS-Wegs>] [--teil N] [--weg W]
+"""teil_gelaende_tor.py <dicht_a.ply> <dicht_b.ply> --matrix <json mit B_nach_A> --aus <ergebnis.json> [--modell-a <A-Modell>] [--gps <vereinen.json des GPS-Wegs>] [--bilder <Fotos>] [--teil N] [--weg W]
 
 TOR 'TEIL UNTER GELAENDE' FUER JEDEN BINDUNGSWEG (24.11.2026, schwabentor-1122z: der Ost-Teil steckte 6,4 m im Boden, KEIN Tor fand es - der Nutzer sah es im 3D-Viewer).
 Das Tor gab es nur in tools/seiten_waende_binden.py (Weg 'gps+waende'). Die anderen Wege, ein Seitenteil einzubinden (Klappung seiten_vereinen, Eckmodell seiten_eck_koppeln,
@@ -10,7 +10,9 @@ Pruefung (dieselben Funktionen und Grenzen wie seiten_waende_binden: unter_gelae
 System von A (z = Lot: Bild-x-Lot der A-Kameras, an den Waenden der A-Wolke nachgeschaerft; Meter je Einheit aus dem GPS-Rahmen von A), B mit B_nach_A dazu; Anteil der
 B-Punkte in Strassenzellen von A, die > 1 m unter dem Boden von A liegen. Zum Vergleich derselbe Anteil von A selbst und der Bodenversatz A - B (Hinweis 'B x m zu tief').
 rc 0 = bestanden, 3 = B unter Gelaende (ABGELEHNT), 2 = nicht pruefbar (kein Massstab, zu wenig gemeinsame Strassenzellen, Wolke fehlt) - immer mit Logzeile je Teil.
-GRENZEN: Massstab nur aus dem GPS-Rahmen von A (rahmen_a.massstab); auf dem Klappungs-/Eck-Weg ohne GPS-Ergebnis 'nicht pruefbar' (gemeldet, nicht geraten).
+Massstab: GPS-Rahmen von A aus dem GPS-Weg (vereinen.json rahmen_a.massstab); fehlt der (Klappungs-/Eck-Weg, 24.11. Nachtrag), derselbe Rahmen aus Teil A ALLEIN
+(seiten_gps_vereinen.rahmen auf den Kameras von A + EXIF-GPS der Fotos, --modell-a + --bilder) - nur wenn er als Lagebeleg taugt (guete leer, Bootstrap-Massstabsfehler
+<= MAX_MASS_SD 15 % wie die Annahme-Regel des GPS-Wegs; der ehrliche Fehler steht nur im Bericht); sonst 'nicht pruefbar' (gemeldet, nicht geraten). Der Massstab haengt nicht vom GPS-Ursprung ab, darum gleich dem rahmen_a des GPS-Wegs.
 Test: tools/test_teil_gelaende_tor.py. Python: /media/oem/scan/venv-colmap/bin/python -I (pycolmap nur fuer das Kameralot von A; ohne Modell: Lot = z-Achse von A, an den Waenden geschaerft)."""
 import os, sys, json, argparse
 import numpy as np
@@ -28,6 +30,30 @@ def massstab_aus_gps(vj):
     try: m = float(((vj or {}).get("rahmen_a") or {}).get("massstab") or 0)
     except (TypeError, ValueError): return None
     return m if np.isfinite(m) and m > 0 else None
+
+
+def massstab_aus_a(namen, C, oben, G, boden=None):
+    """Meter je Einheit aus dem GPS-Rahmen von Teil A ALLEIN (seiten_gps_vereinen.rahmen, gleiche Grenzen wie der GPS-Weg). namen/C/oben = Kameras von A, G = {Name: (ost, nord)}.
+    -> (Massstab oder None, Begruendung)."""
+    import seiten_gps_vereinen as SGV
+    try: F = SGV.rahmen(namen, np.asarray(C, float), np.asarray(oben, float), G, boden)
+    except Exception as ex: return None, f"GPS-Rahmen von A nicht berechenbar ({type(ex).__name__}: {ex})"
+    g = SGV.guete(F)
+    if g: return None, "GPS-Rahmen von A taugt nicht: " + "; ".join(g)
+    sd = float(F.get("mass_sd_rel", 1.0))                                                # Bootstrap-Streuung wie die Annahme-Regel des GPS-Wegs (b_nach_a); ehrlich nur Bericht
+    if not np.isfinite(sd) or sd > SGV.MAX_MASS_SD: return None, f"Massstab aus dem GPS von A nur auf +-{100 * sd:.0f} % belegt (Grenze {100 * SGV.MAX_MASS_SD:.0f} %)"
+    m = float(F["massstab"])
+    if not (np.isfinite(m) and m > 0): return None, "GPS-Rahmen von A: Massstab ungueltig"
+    return m, f"GPS-Rahmen von Teil A allein ({F['inlier']} von {F['n_gps']} GPS-Kameras, Rest {F['rest_median_m']} m, Massstab +-{100 * sd:.1f} %, ehrlich +-{100 * float(F.get('mass_sd_ehrlich_rel', sd)):.1f} %)"
+
+
+def a_kameras_gps(modell_a, bilder):
+    """Kameras von A (seiten_gps_vereinen.kameras) + EXIF-GPS als ENU {Name: (ost, nord)} um den Median der A-Fotos. -> (namen, C, oben, G)."""
+    import seiten_gps_vereinen as SGV
+    namen, C, oben = SGV.kameras(modell_a); roh = SGV.gps_roh(bilder, namen)
+    if not roh: return namen, C, oben, {}
+    la0, lo0 = np.median([v[0] for v in roh.values()]), np.median([v[1] for v in roh.values()])
+    return namen, C, oben, SGV.enu(roh, la0, lo0)
 
 
 def pruefen(DA, DB, M, lot, m_je_einheit, teil="B", weg="?"):
@@ -68,7 +94,7 @@ def lot_von_a(DA, modell_a=None):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0]); ap.add_argument("dicht_a"); ap.add_argument("dicht_b"); ap.add_argument("--matrix", required=True); ap.add_argument("--aus", required=True)
-    ap.add_argument("--modell-a"); ap.add_argument("--gps"); ap.add_argument("--teil", default="B"); ap.add_argument("--weg", default="?"); a = ap.parse_args(argv)
+    ap.add_argument("--modell-a"); ap.add_argument("--gps"); ap.add_argument("--bilder"); ap.add_argument("--teil", default="B"); ap.add_argument("--weg", default="?"); a = ap.parse_args(argv)
     os.makedirs(os.path.dirname(os.path.abspath(a.aus)), exist_ok=True)
     def ende(erg):
         print(erg["meldung"], flush=True); json.dump(erg, open(a.aus, "w"), indent=1, ensure_ascii=False); return erg["rc"]
@@ -78,8 +104,14 @@ def main(argv=None):
     except Exception as ex: return ende(dict(basis_erg, meldung=f"GELAENDE-TOR Teil {a.teil} (Weg {a.weg}): NICHT PRUEFBAR - Matrix B_nach_A nicht lesbar ({type(ex).__name__})"))
     try: m = massstab_aus_gps(json.load(open(a.gps))) if a.gps and os.path.isfile(a.gps) else None
     except Exception: m = None
-    DA = ply_lesen(a.dicht_a, MAX_PUNKTE); DB = ply_lesen(a.dicht_b, MAX_PUNKTE); lot, lq = lot_von_a(DA, a.modell_a)
-    erg = pruefen(DA, DB, M, lot, m, a.teil, a.weg); erg.update(lot=[round(float(x), 5) for x in lot], lot_quelle=lq, m_je_einheit=m, massstab_quelle=a.gps if m else None)
+    DA = ply_lesen(a.dicht_a, MAX_PUNKTE); DB = ply_lesen(a.dicht_b, MAX_PUNKTE); lot, lq = lot_von_a(DA, a.modell_a); mq = a.gps if m else None
+    if m is None and a.modell_a and a.bilder and os.path.isdir(a.bilder):                 # kein GPS-Weg: Massstab aus dem GPS-Rahmen von A allein
+        try: m, mq = massstab_aus_a(*a_kameras_gps(a.modell_a, a.bilder), boden=DA)
+        except Exception as ex: m, mq = None, f"GPS von A nicht lesbar ({type(ex).__name__})"
+        print(f"GELAENDE-TOR Teil {a.teil}: Massstab ohne GPS-Weg -> {mq}", flush=True)
+        if m is None: mq = "keiner: " + str(mq)
+    erg = pruefen(DA, DB, M, lot, m, a.teil, a.weg); erg.update(lot=[round(float(x), 5) for x in lot], lot_quelle=lq, m_je_einheit=m, massstab_quelle=mq)
+    if m is None and mq: erg["meldung"] += f" ({mq})"
     return ende(erg)
 
 

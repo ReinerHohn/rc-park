@@ -102,6 +102,48 @@ with tempfile.TemporaryDirectory() as d:
         finally: SM.LAUF = echt
         pruef("4 Werkzeug im Code-Stand der Nachstufe", "teil_gelaende_tor.py" in SM.NACHSTUFE)
 
+# ---------- 5 Massstab aus dem GPS-Rahmen von Teil A allein (kein GPS-Weg, z. B. Klappung)
+ka = np.array([[18 * np.cos(w), 18 * np.sin(w), 1.6] for w in np.linspace(0, 2 * np.pi, 40, endpoint=False)])   # 40 Kameras im Kreis um den Turm (Meter)
+namen_a = [f"a{i:02d}.jpg" for i in range(len(ka))]; G_a = {n: tuple(k[:2] + rng.normal(0, 2.0, 2)) for n, k in zip(namen_a, ka)}   # Handy-GPS +-2 m
+m5, q5 = TG.massstab_aus_a(namen_a, zu_A(ka), lot_a, G_a, boden=DA)
+pruef("5 Massstab aus A allein ~ 0,5 m je Einheit", m5 is not None and abs(m5 - m_a) / m_a < 0.05, (m5, q5))
+m5b, q5b = TG.massstab_aus_a(namen_a[:8], zu_A(ka[:8]), lot_a, {n: G_a[n] for n in namen_a[:8]}, boden=DA)
+pruef("5 zu wenig GPS-Kameras -> kein Massstab (nicht geraten)", m5b is None and "GPS" in q5b, (m5b, q5b))
+with tempfile.TemporaryDirectory() as d:
+    fa, fb, mj, aus = (os.path.join(d, x) for x in ("a.ply", "b.ply", "m.json", "g.json")); ply(fa, DA); ply(fb, DB); fo = os.path.join(d, "fotos"); os.makedirs(fo)
+    echt_k = TG.a_kameras_gps; TG.a_kameras_gps = lambda modell, bilder: (namen_a, zu_A(ka), lot_a, G_a)
+    try:
+        for dz, soll in ((6.4, 3), (0.0, 0)):
+            json.dump(dict(B_nach_A=matrix(dz).tolist()), open(mj, "w"))
+            rc = TG.main([fa, fb, "--matrix", mj, "--aus", aus, "--modell-a", os.path.join(d, "kein_modell"), "--bilder", fo, "--teil", "1", "--weg", "klappung"]); j = json.load(open(aus))
+            pruef(f"5 ohne GPS-Weg, Massstab aus A: B {dz} m tiefer -> rc {soll}", rc == soll and "Teil A allein" in str(j.get("massstab_quelle")), (rc, j.get("meldung"), j.get("massstab_quelle")))
+    finally: TG.a_kameras_gps = echt_k
+
+# ---------- 6 Nachpruefung NACH dem GPS-Ausgleich (sfm_seiten_modelle.ausgleich_gelaende_stufe)
+if SM is not None:
+    with tempfile.TemporaryDirectory() as d:
+        fa, fb = os.path.join(d, "a.ply"), os.path.join(d, "b.ply"); ply(fa, DA); ply(fb, DB)
+        ma = os.path.join(d, "modell_a"); os.makedirs(ma); open(os.path.join(ma, "images.bin"), "wb").write(b"x")
+        vo = os.path.join(d, "vereinen_0_1"); os.makedirs(vo + "_gps"); json.dump(dict(rahmen_a=dict(massstab=m_a)), open(os.path.join(vo + "_gps", "vereinen.json"), "w"))
+        A6 = dict(teil=0, modell=ma, dicht=dict(fused=fa)); B6 = dict(teil=1, dicht=dict(fused=fb), vereinen=dict(ordner=vo, weg="klappung"))
+        def runter(dz_m):                                                                  # Ausgleichs-Delta im A-System: dz_m Meter entlang -Lot
+            Dl = np.eye(4); Dl[:3, 3] = -lot_a * dz_m / m_a; return Dl
+        Dg = np.eye(4); Dg[:3, :3] = drehung([0, 0, 1], 20.0) * 1.3; Dg[:3, 3] = [5, -3, 2]   # gemeinsame Aehnlichkeit aller Teile (kein Lagefehler)
+        M6 = []
+        u = SM.ausgleich_gelaende_stufe(d, [(A6, None), (B6, (runter(6.4) @ matrix(0.0)).tolist())], None, M6)
+        pruef("6 Ausgleich drueckt Teil 6,4 m unter Gelaende -> erkannt", u == [1] and B6["vereinen"]["gelaende_tor_nach_ausgleich"]["rc"] == 3
+              and "gps_ausgleich" in B6["vereinen"]["gelaende_tor_nach_ausgleich"]["meldung"], (u, B6["vereinen"].get("gelaende_tor_nach_ausgleich")))
+        u = SM.ausgleich_gelaende_stufe(d, [(A6, None), (B6, matrix(0.0).tolist())], None, M6)
+        pruef("6 Ausgleich ohne Verschiebung -> bestanden", u == [] and B6["vereinen"]["gelaende_tor_nach_ausgleich"]["rc"] == 0, B6["vereinen"].get("gelaende_tor_nach_ausgleich"))
+        u = SM.ausgleich_gelaende_stufe(d, [(A6, Dg.tolist()), (B6, (Dg @ matrix(0.0)).tolist())], None, M6)
+        pruef("6 A und B gemeinsam bewegt (A nicht Anker) -> relativ zu A bestanden", u == [], B6["vereinen"].get("gelaende_tor_nach_ausgleich"))
+        u = SM.ausgleich_gelaende_stufe(d, [(A6, Dg.tolist()), (B6, (Dg @ runter(6.4) @ matrix(0.0)).tolist())], None, M6)
+        pruef("6 A bewegt, B zusaetzlich 6,4 m tiefer -> erkannt", u == [1], B6["vereinen"].get("gelaende_tor_nach_ausgleich"))
+    q = open(os.path.join(T, "sfm_seiten_modelle.py")).read()
+    i_a = q.find("unter = ausgleich_gelaende_stufe(vz, neu"); i_v = q.find("GPS-Ausgleich VERWORFEN", i_a); i_d = q.find("dichte = neu", i_a); i_s = q.find('copytree(ga["sparse"]', i_a); i_z = q.find("dicht_zusammen(", i_a)
+    pruef("6 Einbau: Nachpruefung vor der Uebernahme (dichte = neu, Ausgleichsmodell) und vor dicht_zusammen; Ablehnung verwirft den Ausgleich",
+          0 < i_a < i_v < i_d < i_s < i_z and "dichte = [(x, None if" not in q, (i_a, i_v, i_d, i_s, i_z))
+
 # ---------- 4 Einbau im gemeinsamen Block
 q = open(os.path.join(T, "sfm_seiten_modelle.py")).read()
 i_block = q.find('        if rc == 0 and "B_nach_A" in v:\n'); i_tor = q.find("gelaende_stufe(vo", i_block); i_zus = q.find("modelle_zusammen(", i_block)
