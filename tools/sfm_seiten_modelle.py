@@ -60,7 +60,7 @@ GPS_VEREINEN = os.environ.get("RCPARK_SEITEN_GPS", "1") != "0"
 # gebunden: Vereinen (Klappung, Foto-GPS), Zusammenlegen, Blick-/GPS-Seiten-Tor, Einsetzen. Die Werkzeuge der Nachstufe (samt ihrer Hilfsmodule, tools/code_stand.py) ergeben
 # 'nachstufe_code' in seiten_modelle.json; tools/pipeline_objekt.py rechnet iphone_sfm.py erneut (nur die Nachstufe), wenn er nicht mehr zum Code passt.
 NACHSTUFE = ("sfm_seiten_modelle.py", "seiten_eck_koppeln.py", "sim3_robust.py", "seiten_vereinen.py", "seiten_gps_vereinen.py", "seiten_blick_tor.py", "gps_seiten_pruefen.py", "sfm_gps_ausgleich.py", "seiten_querspur_binden.py",
-             "seiten_lod2_je_teil.py", "seiten_lage_beleg.py")
+             "seiten_lod2_je_teil.py", "seiten_lage_beleg.py", "seiten_waende_binden.py")
 # 22.11.2026 TEILE UEBER QUERSPUREN BINDEN nach dem GPS-Vereinen (tools/seiten_querspur_binden.py, querspur_stufe; Nulllauf 1122f: GPS-Lage von Teil 1 nur +-3,6 Grad/+-12 %,
 # Ostwand 1-2,5 m ausserhalb LoD2, Westwand doppelt). Querpaare der Ursprungs-DB -> 3D-3D -> RANSAC-Sim3 NUR im GPS-Korridor (GPS = Veto, nicht gemittelt). NUR auf dem GPS-Weg:
 # auf dem Klappungs-Weg (Martinstor) SIND die Querpaare die Gegenseiten-Verwechslung und es gibt kein unabhaengiges Veto. Nach einer Bindung wird der GPS-Ausgleich AUSGELASSEN:
@@ -84,6 +84,11 @@ LOD2_JE_TEIL = os.environ.get("RCPARK_LOD2_JE_TEIL", "1") != "0"
 # A und B, wird ein kleines Eckmodell gebaut und B ueber gemeinsame 3D-Punkte an A gekoppelt (beide Kopplungen stimmig, Massstab belegt). Danach Blick-Tor + GPS-Seiten-Tor
 # (Veto) wie beim GPS-Weg. Ohne Brueckenpaare (Martinstor, alle Laeufe ohne --durchblick) aendert sich nichts. Abschalten: RCPARK_ECK_KOPPELN=0.
 ECK_KOPPELN = os.environ.get("RCPARK_ECK_KOPPELN", "1") != "0"
+# 24.11.2026 GEGENSEITE UEBER GEMEINSAME WAENDE BINDEN (tools/seiten_waende_binden.py, waende_stufe; Kettenlauf 1122w Teil 1 = Suedseite: Klappung falscher Ansatz (keine
+# Verwechslung), Querspur abgelehnt, GPS-Lage 10 Grad gekippt und 4-5 Grad verdreht). Nach der Querspur, vor LoD2 je Teil, nur auf dem GPS-Weg mit dichten Wolken beider Teile:
+# Lot von B aus seinen Waenden, Grundriss-Suche der B-Waende auf den A-Waenden im (ehrlichen) GPS-Korridor, Proben: eindeutig, zwei Hoehenbaender, Geotags von B, Turmspitze.
+# Weg 'gps+waende' gilt als belegt (seiten_lage_beleg). Abschalten: RCPARK_WAENDE=0.
+WAENDE = os.environ.get("RCPARK_WAENDE", "1") != "0"
 # 22.11.2026 REGEL "TEIL NUR BEI BELEGTER LAGE EINSETZEN" (tools/seiten_lage_beleg.py; schwabentor-1122: Teil 1 nur ueber GPS gelegt, 3-4 m versetzt -> Grundriss-Tor A 17,6 %,
 # Wanddicke 'doppelwand'). Ein Teil auf dem GPS-Weg wird nur eingesetzt, wenn eine eigene Probe seine Lage belegt (Querspur, LoD2 je Teil, oder GPS ehrlich belegt UND
 # Wanddicke der GPS-Lage widerspruchsfrei); sonst WEGGELASSEN und als FOTOLUECKE gemeldet (ber['fotoluecken']). Abschalten: RCPARK_TEIL_NUR_BELEGT=0 (steht im Code-Stand).
@@ -442,6 +447,12 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
                 if qs.get("ok") and "B_nach_A" in qs:
                     v = dict(vgd, B_nach_A=qs["B_nach_A"]); e.update(weg="gps+querspur", urteil=qs.get("urteil")); M_.append(f"Teil {B['teil']}: GPS-Lage ueber Querspuren an Teil A gebunden: {qs.get('urteil')}")
                 else: M_.append(f"Teil {B['teil']}: Querspur-Bindung NICHT uebernommen - GPS-Lage bleibt: {qs.get('urteil')}")
+                if e["weg"] == "gps" and WAENDE and fa and fb:                          # Querspuren banden nicht -> gemeinsame Waende der dichten Wolken (Gegenseite, 24.11.)
+                    wb_ = waende_stufe(vo + "_waende", A, B, fa, fb, vgj, fotos)
+                    e["waende"] = {k: wb_.get(k) for k in ("rc", "ok", "urteil", "pruefung", "korridor", "bild", "ordner") if k in wb_}
+                    if wb_.get("ok") and "B_nach_A" in wb_:
+                        v = dict(vgd, B_nach_A=wb_["B_nach_A"]); e.update(weg="gps+waende", urteil=wb_.get("urteil")); M_.append(f"Teil {B['teil']}: GPS-Lage ueber gemeinsame Waende gebunden: {wb_.get('urteil')}")
+                    else: M_.append(f"Teil {B['teil']}: Waende-Bindung NICHT uebernommen - GPS-Lage bleibt: {wb_.get('urteil')}")
                 if e["weg"] == "gps":                                                   # Querspuren banden nicht -> jeder Teil einzeln an LoD2 (Kasten = seine GPS-Unsicherheit)
                     lo = lod2_stufe(vo + "_lod2", A, B, fa, fb, vgj, fotos) if LOD2_JE_TEIL else dict(ok=False, urteil="abgeschaltet (RCPARK_LOD2_JE_TEIL=0)")
                     e["lod2_je_teil"] = {k: lo.get(k) for k in ("rc", "ok", "urteil", "ordner", "bild", "korridor") if k in lo}
@@ -481,7 +492,7 @@ def dicht_vereinen(w, fotos, sj, db_ursprung, ber, ohne_dicht=False):
         ber["nicht_vereint"].append(B["teil"])
     if ang:                                                                              # das letzte angenommene Zwischenmodell ist das Ergebnis
         ziel = os.path.join(vz, "sparse"); dichte = [(A, None)] + ang; dicht_ok = True
-        gebunden = [x["teil"] for x, _ in ang if (x.get("vereinen") or {}).get("weg") in ("gps+querspur", "gps+lod2")]
+        gebunden = [x["teil"] for x, _ in ang if (x.get("vereinen") or {}).get("weg") in ("gps+querspur", "gps+lod2", "gps+waende")]
         if not GPS_AUSGLEICH: ga = dict(ok=False, urteil="abgeschaltet (RCPARK_GPS_AUSGLEICH=0)")
         elif gebunden: ga = dict(ok=False, urteil=f"ausgelassen: Teile {gebunden} ueber Querspuren bzw. LoD2 je Teil gelegt - ohne gemeinsame 3D-Punkte zoege der GPS-Ausgleich sie wieder einzeln aufs GPS")
         else: ga = gps_ausgleich_stufe(vz, stand_sparse, fotos, sj, A, ang, M_)
@@ -563,6 +574,25 @@ def querspur_stufe(qo, A, B, db_ursprung, fa, fb, vgj):
     try: d = json.load(open(qj))
     except Exception as ex: d = dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, rc {rc}, {qo}/log.txt)")
     d.update(rc=rc, ordner=qo)
+    if rc != 0: d["ok"] = False
+    return d
+
+
+def waende_stufe(wo, A, B, fa, fb, vgj, fotos):
+    """GEGENSEITE UEBER GEMEINSAME WAENDE BINDEN (tools/seiten_waende_binden.py) nach dem GPS-Vereinen von B, wenn die Querspur nicht band. Zwischenstand an Eingaben
+    (Modelle, dichte Wolken, GPS-Ergebnis, Fotos) + Code-Stand gebunden. -> waende.json als dict mit 'rc' und 'ordner' (ok False = GPS-Lage bleibt)."""
+    wj = os.path.join(wo, "waende.json"); sf = os.path.join(wo, "stand.json")
+    st = _stand(os.path.join(A["modell"], "images.bin"), os.path.join(B["modell"], "images.bin"), fa, fb, vgj) + [os.path.abspath(fotos), code_stand("seiten_waende_binden.py", wurzel=T)]
+    try: alt = json.load(open(sf)) if os.path.isfile(wj) else None
+    except Exception: alt = None
+    if alt and alt.get("stand") == st: rc = alt["rc"]
+    else:
+        os.makedirs(wo, exist_ok=True); sag(f"SEITENMODELLE: Teil {B['teil']} ueber gemeinsame Waende an Teil {A['teil']} binden (tools/seiten_waende_binden.py) ...")
+        rc = LAUF([PYC, "-I", os.path.join(T, "seiten_waende_binden.py"), fa, fb, "--gps", vgj, "--aus", wo, "--modell-a", A["modell"], "--modell-b", B["modell"], "--bilder", fotos], os.path.join(wo, "log.txt"))
+        json.dump(dict(stand=st, rc=rc), open(sf, "w"))
+    try: d = json.load(open(wj))
+    except Exception as ex: d = dict(ok=False, urteil=f"kein Ergebnis ({type(ex).__name__}, rc {rc}, {wo}/log.txt)")
+    d.update(rc=rc, ordner=wo)
     if rc != 0: d["ok"] = False
     return d
 
