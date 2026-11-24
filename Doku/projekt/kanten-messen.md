@@ -76,6 +76,7 @@ Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-
 - 13.11. · Kameras am Ziel nach px/m sortieren, Tiefenbereich aus Abstand → ✓ Methode · größter Zeitgewinn bei Rippen [LOGBUCH_RIPPEN Kap. 19, 23, 24]
 - 13.11. · Fotoabdeckung zuerst messen (Azimut × Höhe) → ✓ Methode · 19 von 24 Bins ohne Foto [METHODE_MESSEN 13.11.]
 - 16.11. · `zylinder_mass` (Sehstrahl × Zylinder) für Rundtürme → ✓ Methode [PIPELINE_FASSADEN Z.272]
+- 24.11. · f02/Ost (1122z) nur 1316 Fotokantenpunkte: Ursache 62 % der Wand ohne Foto (Nachbarhaus davor, ortho_f02 schwarz unter z ~25 m) + frontale Fotos aus der Strassenflucht 70-100 m fielen aus kam_wahl (Abstand > 80 m, Sektor-Rundlauf) und aus dem Sweep (--nbdist 80: 0 Nachbarn) → ⚠ teils · `ebenen_bauplan` ergaenzt je Wand frontale Kameras, Sweep `--nb_rel` skaliert Nachbarsuche mit Ref-Abstand: CPU-Probe +10 Fernfotos 1316 → 1653 Punkte, 340 davon bei w −0,35..−0,45 (Wolke −0,36), Rest Gebaeudeecken bei w ~0 → Guard bleibt zu Recht zu; sichtbarer Teil nur oben (z 28-30) [Agent 24.11., Zweig worktree-agent-a899cc833e1adbe96]
 
 ## Offen
 - Rippen: Vollständigkeit (West 15,7 von > 20 m), Kappentiefe ANNAHME, Nahfotos nach AUFNAHMEPLAN; Nutzerbeobachtung „Bogenfelder hängen durch“ ungemessen (13.11.)

@@ -512,6 +512,7 @@ k=$(python3 -I tools/test_platz_tor_ersetzt.py 2>&1); [ $? = 0 ] && ok "Platztor
 k=$($P -W ignore -I tools/test_wandbezug_bauteile.py 2>&1); [ $? = 0 ] && ok "Bauteile an der GESETZTEN Wand (wandversatz): Tor schneidet volle Tiefe, Laubenpfeiler/Umgang/Vorbau schliessen ohne Spalt an, ein Stueck" || { rot "wandbezug_bauteile: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"; }
 k=$(/media/oem/scan/venv-colmap/bin/python -I tools/test_kamerahoehe_dgm.py 2>&1); [ $? = 0 ] && ok "Kamerahoehe gegen DGM1 an der GPS-Lage (1122z Ost-Teil: Schlossberg-Kameras echt 20-36 m hoch; Modell/DGM gestaucht/gestreckt -> rot, ebenes Umfeld -> Steigung nicht messbar)" || rot "kamerahoehe_dgm: $(echo "$k" | grep -E "FEHLER|Error|assert" | head -3 | cut -c1-300)"
 k=$($P -W ignore -I tools/test_dicht_alt_auto.py 2>&1); [ $? = 0 ] && ok "Dichte Wolke aelter als das SfM-Netz: --bis kameras nur Hinweis, sonst automatisch beiseitelegen + neu (1122za-Abbruch 24.11.)" || rot "dicht_alt_auto: $(echo "$k" | grep FEHLER | head -2)"
+k=$($P -W ignore -I tools/test_ebenen_kam_ergaenzen.py 2>&1); [ $? = 0 ] && ok "Ebenen-Bauplan ergaenzt je Wand frontale SfM-Kameras aus kam.json (1122z f02/Ost: 49 frontale Kameras fehlten in kam_wahl, 1316 Kantenpunkte); hinter/parallel/zu grob/schon gewaehlt -> nicht" || rot "ebenen_kam_ergaenzen: $(echo "$k" | grep FEHLER | head -3 | tr '\n' ' ' | cut -c1-300)"
 #<<< PRUEFUNGEN
 fi
 rm -rf $S
