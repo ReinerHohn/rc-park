@@ -7,7 +7,9 @@ unplausibel (bis 119 m unter dem Gelaende, Regel tools/kamera_plausibel.py), nur
 waere als reine SfM-Pose in fassade_ortho gegangen (Namensregel dl_/neu__ griff nicht mehr, Sammelordner-Praefixe eigen__/commons_...).
 Regel je NEUER Kamera (audit/kameras_nachtragen.json 'neu'):
   1. Standort/Brennweite/Verzeichnung plausibel (kamera_plausibel.datei_pruefen) - sonst GESPERRT 'unplausibel';
-  2. am Modell belegt ('vertrauen' aus kamera_verfeinern.py: >= 2 Waende mit >= 15 Inliern, Rest/Abstand plausibel) - sonst GESPERRT 'unbelegt'.
+  2. am Modell belegt ('vertrauen' aus kamera_verfeinern.py: >= 2 Waende mit >= 15 Inliern, Rest/Abstand plausibel) - sonst GESPERRT 'unbelegt';
+  3. (24.11.2026, Kette 1122zb) Standort NICHT im Gebaeude (im_gebaeude) - sonst GESPERRT 'unplausibel'; dasselbe fuer vorhandene ABGELEITETE Kameras (Altbestand,
+     auch allein mit --altbestand vor kameras_nachtragen).
   Gesperrt = der Zustand VOR dem Nachtragen: K-Datei ohne eigene Picks -> umbenannt in K-<foto>.json.unplausibel bzw. .unbelegt (kein Werkzeug liest sie, nichts geloescht;
   ein spaeteres kamera_verfeinern kann das Foto ohne Startpose neu bestimmen); K-Datei mit Picks/Linien -> nur 'kamera' entfernt (als 'kamera_gesperrt' behalten).
 Zusaetzlich je Wand aus --fassaden (fassaden.json von fassade_ortho; ohne Angabe keine Wandliste): wie viele BELEGTE neue Kameras
@@ -60,11 +62,40 @@ def sicht_anteil(k, F, max_winkel=70.0, max_mpp=0.06, n_u=12, n_z=24):
     return float(ok.mean())
 
 
+def im_gebaeude(k, FF, rand=0.3):
+    """24.11.2026 (Kette 1122zb): 21 nachgetragene Kameras lagen nach einer gekippten Abbildung (kameras_nachtragen, Massstab 0,0017) im Turm [1,4 14,0 2,1], bestanden
+    kamera_verfeinern ('vertrauen') und sahen keine Wand. Regel: Standort HINTER JEDER Wandebene (n zeigt nach aussen, wie sicht_anteil) um > <rand> m UND unter der
+    hoechsten Wandoberkante = im Gebaeude. Hinreichend, nicht notwendig (auch bei einspringenden Grundrissen liegt der Schnitt aller Innen-Halbraeume im Gebaeude);
+    Drohnen-/Hochblick ueber dem Dach bleibt erlaubt. FF = fassaden.json 'fassaden'. -> bool."""
+    import cv2
+    if not FF or not isinstance(k, dict) or "rvec" not in k: return False
+    C = -cv2.Rodrigues(np.asarray(k["rvec"], float))[0].T @ np.asarray(k["t"], float)
+    if not np.isfinite(C).all(): return False
+    hinter = all(float(np.dot(np.asarray(F["n"], float)[:2], C[:2] - np.asarray(F["o"], float)[:2])) < -rand for F in FF)
+    return bool(hinter and C[2] < max(float(F["z"][1]) for F in FF))
+
+
+def altbestand_sperren(mp, FF, ausser, schreiben=True):
+    """Bereits vorhandene ABGELEITETE Kameras (kamera_rahmen.abgeleitet: nachregistriert/kamera_verfeinern) im Gebaeude sperren - kameras_nachtragen ueberschreibt
+    vorhandene K-Dateien nie, ein frueherer Fehllauf (1122zb) bliebe sonst fuer immer 'belegt'. Danach bestimmt das naechste Nachholen das Foto neu. -> Liste."""
+    import glob, kamera_rahmen as KR
+    aus = []
+    for kp in sorted(glob.glob(os.path.join(mp, "K-*.json"))):
+        n_ = os.path.basename(kp)[2:-5]
+        if n_ in ausser: continue
+        try: k = json.load(open(kp)).get("kamera")
+        except Exception: continue
+        if KR.abgeleitet(k) and im_gebaeude(k, FF):
+            g_ = "unplausibel: Standort im Gebaeude (Altbestand, abgeleitete Kamera)"; aus.append(dict(foto=n_, grund=g_, aktion=sperren(kp, g_, "unplausibel") if schreiben else "-"))
+    return aus
+
+
 def pruefen(objekt, fassaden=None, min_sicht=0.1, schreiben=True):
     od = os.path.dirname(os.path.abspath(objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(objekt))
     au = os.path.join(root, obj.get("audit", os.path.join(od, "audit"))); mp = os.path.join(od, "messprotokoll"); kn = os.path.join(au, "kameras_nachtragen.json")
     if not os.path.exists(kn): return None
     neu = [e["foto"] for e in json.load(open(kn)).get("neu", [])]
+    FF = json.load(open(fassaden))["fassaden"] if fassaden and os.path.exists(fassaden) else []
     belegt, gesperrt, kams = [], [], {}
     for n_ in dict.fromkeys(neu):
         kp = os.path.join(mp, "K-" + n_ + ".json")
@@ -83,13 +114,16 @@ def pruefen(objekt, fassaden=None, min_sicht=0.1, schreiben=True):
         ok_b, g_b = urteil(k)
         if not ok_b:
             gesperrt.append(dict(foto=n_, grund=g_b, aktion=sperren(kp, g_b, "unbelegt") if schreiben else "-")); continue
+        if im_gebaeude(k, FF):
+            g_ = "unplausibel: Standort im Gebaeude (hinter allen Wandebenen, unter der Oberkante)"; gesperrt.append(dict(foto=n_, grund=g_, aktion=sperren(kp, g_, "unplausibel") if schreiben else "-")); continue
         belegt.append(n_); kams[n_] = k
+    alt_gesperrt = altbestand_sperren(mp, FF, set(neu), schreiben) if FF else []
     waende = []
-    if fassaden and os.path.exists(fassaden):
-        for i, F in enumerate(json.load(open(fassaden))["fassaden"]):
+    if FF:
+        for i, F in enumerate(FF):
             sieht = [n_ for n_, k in kams.items() if KP.messkamera(n_, k, False) and sicht_anteil(k, F) >= min_sicht]
             waende.append(dict(nr=i, id=F.get("id", "f%02d" % i), neu_sicht=len(sieht), fotos=sieht[:40], fotos_vorher=len(F.get("fotos") or {})))
-    erg = dict(zeit=__import__("time").strftime("%Y-%m-%d %H:%M"), neu=len(neu), belegt=belegt, gesperrt=gesperrt, waende=waende, fassaden=fassaden,
+    erg = dict(zeit=__import__("time").strftime("%Y-%m-%d %H:%M"), neu=len(neu), belegt=belegt, gesperrt=gesperrt, altbestand_gesperrt=alt_gesperrt, waende=waende, fassaden=fassaden,
                regel="plausibel (kamera_plausibel) UND am Modell nachgezogen (kamera_verfeinern 'vertrauen'); gesperrt = Zustand vor dem Nachtragen")
     if schreiben: __import__("json_sicher").schreiben(os.path.join(au, "kameras_nachtragen_tor.json"), erg)
     return erg
@@ -97,12 +131,19 @@ def pruefen(objekt, fassaden=None, min_sicht=0.1, schreiben=True):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--fassaden", default=""); ap.add_argument("--min-sicht", type=float, default=0.1)
-    ap.add_argument("--trocken", action="store_true", help="nur Bericht auf stdout, nichts umbenennen/schreiben"); a = ap.parse_args()
+    ap.add_argument("--trocken", action="store_true", help="nur Bericht auf stdout, nichts umbenennen/schreiben")
+    ap.add_argument("--altbestand", action="store_true", help="NUR vorhandene abgeleitete Kameras im Gebaeude sperren (vor kameras_nachtragen, 24.11.2026), Exit 0"); a = ap.parse_args()
+    if a.altbestand:
+        od = os.path.dirname(os.path.abspath(a.objekt)); FF = json.load(open(a.fassaden))["fassaden"] if a.fassaden and os.path.exists(a.fassaden) else []
+        aus = altbestand_sperren(os.path.join(od, "messprotokoll"), FF, set(), schreiben=not a.trocken) if FF else []
+        print(f"ALTBESTAND: {len(aus)} abgeleitete Kamera(s) im Gebaeude gesperrt" + (f" (z. B. {aus[0]['foto']}) - werden jetzt neu nachgetragen" if aus else "") + ("" if FF else " (keine fassaden.json - nicht geprueft)"))
+        return 0
     erg = pruefen(a.objekt, a.fassaden or None, a.min_sicht, schreiben=not a.trocken)
     if erg is None: print("kein audit/kameras_nachtragen.json - nichts zu pruefen"); return 2
     from collections import Counter
     print(f"TOR nachgetragene Kameras: {erg['neu']} neu, {len(erg['belegt'])} BELEGT, {len(erg['gesperrt'])} gesperrt ("
           + ", ".join(f"{n} {g}" for g, n in Counter(x["grund"].split(":")[0] for x in erg["gesperrt"]).most_common()) + ")")
+    if erg.get("altbestand_gesperrt"): print(f"  Altbestand: {len(erg['altbestand_gesperrt'])} abgeleitete Kamera(s) im Gebaeude gesperrt (z. B. {erg['altbestand_gesperrt'][0]['foto']}) - naechstes Nachholen bestimmt sie neu")
     for w in erg["waende"]: print(f"  Wand {w['id']}: {w['neu_sicht']} belegte neue Kamera(s) sehen sie (vorher {w['fotos_vorher']} Fotos im Wandbild)")
     return 0 if erg["belegt"] else 3
 

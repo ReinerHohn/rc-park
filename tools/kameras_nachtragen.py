@@ -20,6 +20,39 @@ def umeyama(A, B):
     return s, R, mb - s * R @ ma
 
 
+# 24.11.2026 (Kette 1122zb, schwabentor-1122): EINE Altkamera lag im SfM ~60 000 Einheiten (~600 km) weg - die Mittelwert-Abbildung (Umeyama auf ALLEN) kippte auf
+# Massstab 0,0017 statt ~10,1, Restfehler Median 20 m; die 3 Ausreisser-Runden konnten das nicht mehr retten. Alle 173 neuen Kameras landeten auf dem Turmmittelpunkt
+# [1,4 14,0 2,1], 21 davon bestanden danach sogar das Tor ('vertrauen') und sahen KEINE Wand -> 29,6 min Nachholen ohne Nutzen. Darum: Start auf dem KERN (je Rahmen
+# Abstand zum koordinatenweisen Median <= Median der Abstaende: die innere Haelfte, Ausreisser jeder Groesse ohne Einfluss), dann Inlier-Runden auf allen;
+# danach GUELTIGKEITS-TOR: K-Dateien der Referenzbilder sind aus DEMSELBEN SfM abgeleitet (kameras_aus_buendel) -> Rest ~0 (gemessen 0,00 m in 6 Laeufen);
+# Median > ABB_MAX_REST_M oder < ABB_MIN_ANTEIL der gemeinsamen Kameras im Konsens = Abbildung unbrauchbar -> nichts schreiben, rc 4 (Skript bricht ab, Fehlschlag-Marke).
+ABB_MAX_REST_M = 0.5      # ANNAHME: Lagefehler Modell/LoD2 (~0,5 m, seiten_luecken.NACHBAR_VOR_M); weit ueber dem gemessenen Rest 0,00 m, weit unter dem Fehlfall 20 m
+ABB_MIN_ANTEIL = 0.5      # Mehrheit der gemeinsamen Kameras muss die Abbildung tragen (sonst passen zwei Rahmen nicht zusammen)
+
+
+def abbildung_robust(A, B, runden=4):
+    """Aehnlichkeit A (SfM) -> B (Modell) robust gegen einzelne weit entfernte Ausreisser. -> (s, R, t, gut, rest)."""
+    A, B = np.asarray(A, float), np.asarray(B, float)
+    da = np.linalg.norm(A - np.median(A, 0), axis=1); db = np.linalg.norm(B - np.median(B, 0), axis=1)
+    gut = (da <= np.median(da)) & (db <= np.median(db))
+    if gut.sum() < 3: gut = da <= np.median(da)
+    for _ in range(runden):
+        s, R, t = umeyama(A[gut], B[gut]); rest = np.linalg.norm((s * (R @ A.T).T + t) - B, axis=1)
+        neu = rest < max(3 * np.median(rest[gut]), 0.3)
+        if neu.sum() < 3 or (neu == gut).all(): break
+        gut = neu
+    s, R, t = umeyama(A[gut], B[gut]); rest = np.linalg.norm((s * (R @ A.T).T + t) - B, axis=1)
+    return s, R, t, gut, rest
+
+
+def abbildung_tor(gut, rest, max_rest=ABB_MAX_REST_M, min_anteil=ABB_MIN_ANTEIL):
+    """-> (ok, grund). Gueltigkeits-Tor der Abbildung SfM -> Modell (siehe oben)."""
+    med = float(np.median(rest[gut])) if gut.any() else float("inf"); ant = float(gut.mean()) if len(gut) else 0.0
+    if med > max_rest: return False, f"Restfehler Median {med:.2f} m > {max_rest} m"
+    if ant < min_anteil: return False, f"nur {gut.sum()} von {len(gut)} gemeinsamen Kameras ({ant:.0%}) im Konsens < {min_anteil:.0%}"
+    return True, ""
+
+
 def main():
     import pycolmap
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("sparse"); ap.add_argument("--bilder", help="Ordner mit den Originalen der neuen Fotos (z. B. <ziel>/roh)"); ap.add_argument("--ueberschreiben", action="store_true"); a = ap.parse_args()
@@ -37,11 +70,16 @@ def main():
         neu.append((im, R, C, k))
     alt_s, alt_m = np.array(alt_s), np.array(alt_m)
     if len(alt_s) < 10: print("zu wenige gemeinsame Bilder mit K-Datei"); return 2
-    gut = np.ones(len(alt_s), bool)
-    for _ in range(3):                                                    # Ausreisser (falsch registrierte Altkameras) verwerfen
-        s, Ra, ta = umeyama(alt_s[gut], alt_m[gut]); rest = np.linalg.norm((s * (Ra @ alt_s.T).T + ta) - alt_m, axis=1); gut = rest < max(3 * np.median(rest), 0.3)
+    s, Ra, ta, gut, rest = abbildung_robust(alt_s, alt_m)               # Ausreisser (falsch registrierte / weit entfernte Altkameras) ohne Einfluss, siehe abbildung_robust
     print(f"Abbildung SfM -> Modell aus {gut.sum()} von {len(gut)} gemeinsamen Kameras: Massstab {s:.4f}, Restfehler Median {np.median(rest[gut]):.2f} m, p90 {np.percentile(rest[gut], 90):.2f} m")
     bericht = dict(gemeinsam=int(gut.sum()), massstab=float(s), rest_median_m=float(np.median(rest[gut])), neu=[], gegenprobe=[])
+    ok_a, grund_a = abbildung_tor(gut, rest)
+    au = os.path.join(root, obj.get("audit", os.path.join(od, "audit"))); bericht["abbildung_ok"] = ok_a
+    if not ok_a:                                                          # nichts schreiben: jede neue Kamera laege falsch (1122zb: alle auf einem Punkt im Turm)
+        bericht["abbildung_fehler"] = grund_a; json.dump(bericht, open(os.path.join(au, "kameras_nachtragen.json"), "w"), indent=1)
+        print(f"FEHLER: ABBILDUNG SfM -> Modell UNBRAUCHBAR ({grund_a}) - KEINE K-Datei geschrieben, {sum(1 for x in neu if x[3] is None)} neue Kameras NICHT nachgetragen "
+              f"(nicht gerechnet: kamera_verfeinern, kameras_tor, Wiederholung). Ursache suchen: Ankerkameras im falschen Rahmen? messprotokoll/RAHMEN.json", flush=True)
+        return 4
     for im, R, C, k in neu:
         Cm = s * Ra @ C + ta; Rm = R @ Ra.T; stem = os.path.splitext(im.name)[0]
         if k is not None and not a.ueberschreiben:                         # vorhandene Kamera bleibt IMMER (16.11.2026: der Gesamtlauf ueberschrieb die am Modell nachgezogene Kamera von ov_0005 mit der schlechteren SfM-Pose)

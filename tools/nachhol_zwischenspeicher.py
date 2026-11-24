@@ -53,10 +53,14 @@ def holen(art, schl, ziele, melden=print):
     return True
 
 
-def ablegen(art, schl, quellen, behalten="std", melden=print, extra=None):
-    """quellen {name: pfad}. Legt eine Kopie unter <wurzel>/<art>/<schl>/ ab. Rueckgabe True/False (aus, zu wenig Platz, Fehler - nie Ausnahme)."""
+def ablegen(art, schl, quellen, behalten="std", melden=print, extra=None, gruppe=None):
+    """quellen {name: pfad}. Legt eine Kopie unter <wurzel>/<art>/<schl>/ ab. Rueckgabe True/False (aus, zu wenig Platz, Fehler - nie Ausnahme).
+    gruppe (Standard: Ordner der ersten Quelle = je Objekt): 'behalten' gilt JE GRUPPE (24.11.2026, nach Kette 1122zb: der 1,4-GB-Eintrag des Schwabentors war nach
+    zwei 33-MB-Probelaeufen eines anderen Objekts der aelteste von 3 - der naechste fremde Eintrag haette ihn verdraengt, der Turm haette 17 min neu gerechnet).
+    Standard statt Aufruferangabe, weil der Quelltext von zusatzfotos_registrieren.merkmale im Schluessel steht (eine Aenderung dort verwirft den vorhandenen Eintrag)."""
     d = _ordner(art, schl)
     if d is None: return False
+    if gruppe is None and quellen: gruppe = os.path.dirname(os.path.abspath(next(iter(quellen.values()))))      # Standard: Ordner der ersten Quelle (Nachholen: <daten>/<objekt>/seiten_nachholen)
     try:
         groesse = sum(os.path.getsize(p) for p in quellen.values()); os.makedirs(os.path.dirname(d), exist_ok=True)
         frei = shutil.disk_usage(os.path.dirname(d)).free
@@ -65,7 +69,7 @@ def ablegen(art, schl, quellen, behalten="std", melden=print, extra=None):
             return False
         tmp = d + f".tmp{os.getpid()}"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
         for n, p in quellen.items(): shutil.copyfile(p, os.path.join(tmp, n))
-        json.dump(dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), groessen={n: os.path.getsize(os.path.join(tmp, n)) for n in quellen}, **(extra or {})), open(os.path.join(tmp, "meta.json"), "w"), indent=1)
+        json.dump(dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), groessen={n: os.path.getsize(os.path.join(tmp, n)) for n in quellen}, **({"gruppe": str(gruppe)} if gruppe is not None else {}), **(extra or {})), open(os.path.join(tmp, "meta.json"), "w"), indent=1)
         shutil.rmtree(d, ignore_errors=True); os.rename(tmp, d)
     except OSError as e:
         if melden: melden(f"ZWISCHENSPEICHER {art}: Ablegen fehlgeschlagen ({type(e).__name__} {e}) - Ergebnis bleibt gueltig, naechster Lauf rechnet neu", flush=True)
@@ -73,13 +77,19 @@ def ablegen(art, schl, quellen, behalten="std", melden=print, extra=None):
     if behalten == "std":
         try: behalten = int(os.environ.get("RCPARK_NACHHOL_CACHE_N", "3"))
         except ValueError: behalten = 3
-    if behalten: aufraeumen(art, behalten)
+    if behalten: aufraeumen(art, behalten, gruppe=gruppe)
     if melden and groesse > 2 ** 24: melden(f"ZWISCHENSPEICHER {art}: Eintrag {schl[:16]} abgelegt ({groesse / 2 ** 30:.2f} GB unter {os.path.dirname(d)})", flush=True)
     return True
 
 
-def aufraeumen(art, behalten):
-    """Nur die <behalten> zuletzt benutzten Eintraege der Art bleiben (Temp-Reste aelter als 1 h weg)."""
+def _gruppe(p):
+    try: return json.load(open(os.path.join(p, "meta.json"))).get("gruppe")
+    except (OSError, ValueError): return None
+
+
+def aufraeumen(art, behalten, gruppe=None):
+    """Nur die <behalten> zuletzt benutzten Eintraege der Art bleiben (Temp-Reste aelter als 1 h weg) - mit <gruppe> nur unter den Eintraegen DIESER Gruppe
+    (fremde Gruppen bleiben unberuehrt; Eintraege ohne Gruppe zaehlen als eigene Gruppe None)."""
     w = wurzel()
     if w is None or not os.path.isdir(os.path.join(w, art)): return
     eintr = []
@@ -88,7 +98,7 @@ def aufraeumen(art, behalten):
         if ".tmp" in n:
             if time.time() - os.path.getmtime(p) > 3600: shutil.rmtree(p, ignore_errors=True)
             continue
-        if os.path.isdir(p): eintr.append((os.path.getmtime(p), p))
+        if os.path.isdir(p) and _gruppe(p) == (None if gruppe is None else str(gruppe)): eintr.append((os.path.getmtime(p), p))
     for _, p in sorted(eintr, reverse=True)[behalten:]: shutil.rmtree(p, ignore_errors=True)
 
 
