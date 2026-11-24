@@ -757,6 +757,13 @@ def main():
             if os.path.exists(fa_) and os.path.isdir(ffn): erg_["fenster_form_tor_rc"] = lauf(B, "bauplan_fenster_form_tor", [PY, "-I", "tools/fenster_form_tor.py", fa_, ffn], log, ok=(0, 2, 3))[0]   # 21.11.2026 spaet: FORM der gebauten Fenster/Nischen an >= 3 Einzelfotos (rc 2 = FALSCH, hand_vergleich liest audit/fenster_form_tor.json)
             if os.path.isdir(ffn): erg_["umgang_rc"] = lauf(B, "bauplan_umgang", [PY, "-I", "tools/umgang_aus_fotos.py", ZR, ffn], log, ok=(0, 3))[0]   # 21.11.2026: offener Umgang unter der Traufe aus den Einzelfotos (Wandbild endet unter dem Dachueberstand)
             if os.path.isdir(ffn): erg_["uhren_rc"] = lauf(B, "bauplan_uhren", [PY, "-I", "tools/uhren_wandbild.py", ZR, ffn, "--elemente", os.path.join(fo, "elemente.json")], log, ok=(0, 3))[0]     # 21.11.2026 Kettenluecke 9: Uhr aus Erkennerzone + Kreis im 1-cm-Wandbild
+            # 24.11.2026 (Befund 1122w: Ortsteine als duenne gleich lange Streifen, Uhrzone/Kante oben leer): ORTSTEINE als eigene Stufe - Wandbild + ausgerichtete Einzelfotos,
+            # Lagen/Verzahnung/Stossfugen, TOR je Kante (IoU gegen die Steinflaeche + Deckung der Ortsteinzeilen; rc 2 = Kante verworfen und nicht gebaut). Beleg audit/ortsteine_auto.json
+            # + audit/ortsteine_auto.jpg (ansehen!); der Generator (fassaden_kette.anbauen -> ortsteine.ortsteine_anbauen) liest das JSON.
+            if os.path.isdir(ffn) and os.environ.get("OHNE_ORTSTEINE") != "1":
+                t_os = time.time(); os_j = os.path.join(Z, "audit", "ortsteine_auto.json")
+                erg_["ortsteine_rc"] = lauf(B, "bauplan_ortsteine", [PY, "-W", "ignore", "-I", "tools/ortsteine.py", ZR, "--fein", ffn, "--aus", os_j, "--bild", os.path.join(Z, "audit", "ortsteine_auto.jpg")], log, ok=(0, 2, 3))[0]
+                beleg(B, "bauplan_ortsteine", [os_j], t_os, altstand_beiseite=True, folge="Altstand beiseite - Generator rechnet die Ortsteine ohne Beleg-JSON selbst (ortsteine_anbauen)")
             try: erg_["vorbauten"] = [(F_["id"], g_["u0"], g_["u1"], g_["z0"], g_["z1"], g_["koerper"]["w_median"]) for F_ in json.load(open(os.path.join(Z, "audit", "vorbauten_auto.json")))["fassaden"] for g_ in F_["gruppen"]]
             except Exception as e_: erg_["vorbauten"] = f"nicht lesbar: {e_}"
             # 21.11.2026 (Schwabentor: Wolke/Sweep gaben Tor 4,86-5,37 m, Rundbogen; das Wandbild zeigt Spitzbogen, lichte Weite 4,50 = Hand 4,49): Oeffnungen aus Wolke + Kanten + FEINEM
