@@ -92,6 +92,18 @@ def teil2():
     n2, g2, kan, *_ = SW.bestaetigen(k, fotos2, R)
     pruef(n2 >= 3 and n2 >= SW.MEHRHEIT * g2 and kan is not None and abs(kan[1] - kan[0] - 0.4) < 0.05, f"echtes Loch bleibt: {n2} von {g2}, Breite {None if kan is None else round(kan[1] - kan[0], 3)}")
     # alle gleich scharf -> niemand faellt weg
+    # 24.11.2026 abends (Regression merge-probe-30): Tor nur bei schwachem Kontrast. Rot-Proben aus 1122zb: Sockelschatten f04 L 9,8 / Ring 20,4 -> Tor AN;
+    # Schlitze f00 z 34 L 18,2 / Ring 71,0 und L 15,4 / Ring 70,3 -> Tor AUS (unscharfe = entfernte Fotos zaehlen, 15 von 21 bzw. 12 von 20 statt 8 von 14)
+    t_s, tx = SW.tor_schaerfe(dict(L=9.8, ring_L=20.4)); pruef(t_s > 0, f"Sockelschatten f04 (Kontrast 0,48): Unschaerfe-Tor an - {tx}")
+    t_a, _ = SW.tor_schaerfe(dict(L=18.2, ring_L=71.0)); t_b, _ = SW.tor_schaerfe(dict(L=15.4, ring_L=70.3))
+    pruef(t_a == 0 and t_b == 0, "Schlitze f00 z 34 in hellem Putz (Kontrast 0,26/0,22): Tor aus")
+    pruef(SW.tor_schaerfe(dict(L=10.0, ring_L=float("nan")))[0] > 0 and SW.tor_schaerfe(dict(L=5.0, ring_L=70.0), 0)[0] == 0, "Ring unbekannt -> Tor an; --schaerfe 0 -> aus")
+    # Rot-Probe Ablauf: starker Schlitz, den v. a. unscharfe Fotos bestaetigen und scharfe groesser sehen (f00 z 34): mit Tor verworfen, ohne (Kontrast stark) Mehrheit
+    def gross(seed):                                                              # scharfes Foto sieht das Loch samt Schattenrand groesser (0,6 x 0,4 m)
+        a_ = foto(c, H, W, True, 0, seed); a_[int((2.0 - 0.55) / c):int((2.0 - 0.15) / c), int(0.2 / c):int(0.8 / c)] = 25; return a_
+    fs = [dict(rgb=foto(c, H, W, True, 4.0 if i < 8 else 0, 30 + i), datei=f"IMG_fern_{i:02d}.png") for i in range(12)] + [dict(rgb=gross(60 + i), datei=f"IMG_nah_{i}.png") for i in range(5)]
+    na, ga, *_ = SW.bestaetigen(k, fs, R, schaerfe_min=SW.SCHAERFE_MIN); nb, gb, *_ = SW.bestaetigen(k, fs, R, schaerfe_min=0)
+    pruef(na < SW.MEHRHEIT * ga and nb >= SW.MEHRHEIT * gb, f"heller-Putz-Schlitz: mit Tor {na} von {ga} (verworfen), Tor aus {nb} von {gb} (Mehrheit)")
     s, ref = SW.scharfe_auswahl([100.0, 110.0, 95.0, 105.0])
     pruef(all(s), "gleich scharfe Fotos: alle stimmen mit")
     s, ref = SW.scharfe_auswahl([100.0, None, 10.0])

@@ -23,6 +23,8 @@ METHODE (je Fassade):
                     Masse = Median der Einzelfoto-Kanten (Streuung im Eintrag), Lage im Mosaikrahmen (Fotos aufs Mosaik ausgerichtet).
                     UNSCHAERFE-TOR (24.11.2026, 1122zb fenster_f04 am Sockel): nur Fotos, die die Stelle scharf zeigen (Laplace-Varianz >= SCHAERFE_MIN x 80-%-Wert
                     der sehenden Fotos), stimmen mit; verwaschene Videobilder verschmelzen Schatten zwischen Steinen zu einem 'Loch' (--schaerfe 0 = aus).
+                    NUR BEI SCHWACHEM KONTRAST (Loch-L > KONTRAST_STARK x Ring-L, 24.11.2026 abends): Unschaerfe senkt Kontrast, ein Schlitz in hellem Putz (L/Ring 0,2-0,3)
+                    entsteht nicht aus Schattenfugen; dort zaehlen auch unscharfe (entfernte) Fotos - sonst fielen die f00-Schlitze z 34 (8 von 14 scharfen) weg.
   Tiefe: Ebenen-Sweep im Loch gegen den Wandring (loch_gewaende.sweep_werte, Plausibilitaet dort), sonst ANNAHME wie nischen_fenster (0,12 m; Bau >= Druckmindestmass).
 Ausgabe: Eintraege in der Fensterliste (fenster_auto.json; Eingang als fenster_auto_vor_schlitze.json daneben) mit 'loch' (loch_gewaende misst sie nicht nochmal),
   bogen gerade, form_quelle 'n von m Einzelfotos', quelle, aufloesung_m; Bericht schlitze_wandbild.json, Bild schlitze_<fid>.jpg (ANSEHEN: gruen = gebaut, rot = verworfen
@@ -45,6 +47,10 @@ FUELL_MIN = 0.5       # Anteil dunkler Zellen im Kasten (Rechteck/Schlitz statt 
 TOL_FORM = 0.35       # Breite/Hoehe je Einzelfoto gegen das Mosaik
 MEHRHEIT = 0.6        # Anteil der sehenden Fotos, die das Loch bestaetigen muessen (Loch dunkel aus jedem Blick; Stein/Schatten lichtabhaengig)
 SCHAERFE_MIN = 0.4     # Unschaerfe-Tor: Foto stimmt nur mit, wenn seine Laplace-Varianz an der Stelle >= so viel x Bezug (ANNAHME; 1122zb Sockel f04: 5 von 7 Videobildern + 3 Fotos 10-40 %; Urteil 'verworfen' gleich fuer 0,15..0,4, echte Schlitze f03 bleiben 5/5, 14/15, 13/17)
+KONTRAST_STARK = 0.35   # Unschaerfe-Tor nur bei SCHWACHEM Kontrast (Loch-L > so viel x Ring-L im Mosaik): Unschaerfe mittelt Loch und Umgebung, sie SENKT den Kontrast -
+                        # ein Loch, das im Mosaik >= ~3x dunkler ist als sein Ring (Schlitz in hellem Putz), kann sie nicht aus Schattenfugen erzeugen; dort sind unscharfe
+                        # (meist nur entfernte, niedrig aufgeloeste) Fotos gueltige Belege. Schwach (dunkel in dunkel, Sockelschatten zwischen Bossen 0,48) -> Tor an.
+                        # ANNAHME 0,35 = Mitte zwischen Schlitz in Putz (1122zb f00 z 34: 0,22/0,26) und DUNKEL-Grenze 0,6. 24.11.2026 abends (Regression merge-probe-30)
 SCHAERFE_Q = 80        # Bezug = 80-%-Wert der sehenden Fotos (robust gegen ein einzelnes ueberscharfes/verrauschtes Foto)
 RING_STEIN_MAX = 0.4   # Ring 0,1-0,3 m um den Kandidaten hoechstens so viel Steinfarbe: im Quader-/Eckquaderwerk sind dunkle Steine und Schattenfugen nicht vom Loch zu trennen
 
@@ -199,6 +205,16 @@ def scharfe_auswahl(werte, anteil=SCHAERFE_MIN, q=SCHAERFE_Q):
     return [x is None or ref <= 0 or x >= anteil * ref for x in werte], ref
 
 
+def tor_schaerfe(k, schaerfe_min=SCHAERFE_MIN, kontrast_stark=KONTRAST_STARK):
+    """(schaerfe_min fuer bestaetigen, Text): Unschaerfe-Tor nur, wenn der Kandidat im Mosaik SCHWACHEN Kontrast hat (L > kontrast_stark x Ring-L).
+    Unschaerfe mittelt Loch und Umgebung und senkt den Kontrast - sie macht aus Schattenfugen zwischen dunklen Steinen ein 'Loch' (Sockel f04, 0,48), aber
+    kein Loch, das ~3x dunkler ist als heller Putz ringsum (Schlitze f00 z 34, 0,22/0,26). Ring-L unbekannt -> Tor an."""
+    if schaerfe_min <= 0: return 0.0, "aus (--schaerfe 0)"
+    rl = k.get("ring_L"); kontrast = k["L"] / rl if rl and np.isfinite(rl) and rl > 0 else 1.0
+    if kontrast > kontrast_stark: return schaerfe_min, f"an (Kontrast Loch/Ring {kontrast:.2f} > {kontrast_stark})"
+    return 0.0, f"aus (Kontrast Loch/Ring {kontrast:.2f} <= {kontrast_stark}: Unschaerfe erzeugt kein so dunkles Loch, unscharfe Fotos zaehlen)"
+
+
 def bestaetigen(k, fotos, R, min_fotos=3, tol=TOL_FORM, schaerfe_min=SCHAERFE_MIN):
     """Mehrfoto-Kanten: je Einzelfoto (im Mosaikrahmen, ortsteine.einzeln_vereinen) Kanten der dunklen Komponente. Liefert (anzahl, gesehen, kanten-Median, streuung, je_foto).
     UNSCHAERFE-TOR (24.11.2026, Befund 1122zb fenster_f04: 'Fenster' 0,39 x 0,26 m am Sockel zwischen Bossenquadern, 11 von 18 Fotos - davon 7 von 8 Videobildern,
@@ -308,6 +324,7 @@ def main(argv=None):
     ap.add_argument("--mehrheit", type=float, default=MEHRHEIT, help="Anteil der sehenden Fotos, die bestaetigen muessen")
     ap.add_argument("--fenster_tiefe", type=float, default=0.12, help="ANNAHME wie nischen_fenster/loch_gewaende")
     ap.add_argument("--schaerfe", type=float, default=SCHAERFE_MIN, help="Unschaerfe-Tor: Foto stimmt nur ab so viel x Bezugsschaerfe mit (0 = aus)")
+    ap.add_argument("--kontrast_stark", type=float, default=KONTRAST_STARK, help="Unschaerfe-Tor nur, wenn Loch-L > so viel x Ring-L (schwacher Kontrast); 0 = Tor immer (Stand merge-probe-30)")
     ap.add_argument("--ohne_kastenpruefung", action="store_true", help="Erkennerkaesten ungeprueft als bekannt nehmen (Stand vor 24.11.2026, nur Vergleich)")
     a = ap.parse_args(argv)
     aus = a.aus or os.path.dirname(os.path.abspath(a.fenster)); os.makedirs(aus, exist_ok=True)
@@ -332,7 +349,8 @@ def main(argv=None):
         if kand:
             fotos = fotos_laden(a.fein, a.ordner, fid, R)
             for k in kand:
-                n, ges, kanten, st, je = bestaetigen(k, fotos, R, a.min_fotos, schaerfe_min=a.schaerfe)
+                tor, k["unschaerfe_tor"] = tor_schaerfe(k, a.schaerfe, a.kontrast_stark)   # Unschaerfe-Tor nur fuer schwachen Kontrast (siehe KONTRAST_STARK)
+                n, ges, kanten, st, je = bestaetigen(k, fotos, R, a.min_fotos, schaerfe_min=tor)
                 k.update(fotos_bestaetigt=n, fotos_gesehen=ges, je_foto=je, fotos_unscharf=sum(1 for v in je.values() if v.startswith("unscharf")))
                 if n < a.min_fotos: k["grund"] = f"Formfamilie nur in {n} von {ges} Einzelfotos bestaetigt (< {a.min_fotos})"; weg.append(k); continue
                 if n < a.mehrheit * ges: k["grund"] = f"nur {n} von {ges} sehenden Fotos zeigen das Loch (< {a.mehrheit * 100:.0f} %: lichtabhaengig dunkel = Stein/Schatten)"; weg.append(k); continue
