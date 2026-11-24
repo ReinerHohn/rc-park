@@ -17,6 +17,10 @@ Grundlage: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` (lesen). Nichts am Modell von Hand
    `audit/neben_details.json`). Ein festes Nebenbild (Steilblick, Gegenlicht) taeuscht ("Vordach flach, Laterne fehlt" 22.11. war falsch).
    Fehlt die Detailansicht: `tools/py tools/neben_details.py modelle/<ziel>/objekt.json` (CPU, ~5 min, < 1 GB bei 1,4 Mio. Dreiecken). SCHWACH im Bild = verdeckt/kein Fotobeleg, nicht bewerten.
 3. **Je Befund ein Agent** (hoechstens 2-3 gleichzeitig): `isolation: "worktree"`, `model: "opus"`, `run_in_background: true`.
+   PFLICHT VOR DEM AUFTRAG (24.11.: Bildauswahl, Flaechenmass, Brennweite doppelt gebaut): `python3 -I tools/wissen_suchen.py <Befund in
+   eigenen Worten>` + `python3 -I tools/werkzeug_aehnlich.py "<Befund>"`; die TOP-5-Zeilen (Vorlaeufer, ✗-Versuche) WOERTLICH in den Auftrag
+   unter "Vorarbeit". Neues Werkzeug braucht die Kopfzeile `Verwandt/Vorlaeufer: ...` (Schnelltest prueft). Fehlsuche -> Synonym in
+   `tools/wissen_synonyme.json` + Fall in `tools/wissen_wiederfinden.json`.
    Auftrag: EIN Befund mit Bildpfad/Log/Zahlen; Ursache mit Belegen; generisch als Kettenstufe/Werkzeug + Test + Zeile in
    `tools/schnelltest.sh`; `test_undefinierte_namen` vor Commit; keine Handstand-Werte; Objektordner auf main nicht aendern;
    KEINE Rechenlaeufe waehrend der Kette; nur committen im eigenen Zweig, nicht mergen; Bericht Fehlerliste zuerst, Realitaets-%.
@@ -30,7 +34,10 @@ Grundlage: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` (lesen). Nichts am Modell von Hand
 5. **Nach Laufende:** vor dem Merge in main: `tools/ketten_probelauf.sh --rev merge-probe-<x>` = 0 (als Job: `JOB_RAM_MB=7000 JOB_GPU_MB=3000
    bash tools/job_start.sh ketten-probe-<x> <log> bash tools/ketten_probelauf.sh --rev merge-probe-<x>`; vorher `--plan`; einmalig `--grundstand`). Er laesst die
    ganze Kette auf kprobe_kaufhaus (60 Fotos) in einer Kopie laufen: Szenario Cache + Szenario verstellte Code-Staende (Fall 1122za). rc 1 = Ablauffehler
-   (veralteter Stand, Handanweisung, Absturz, *_beleg) -> nicht mergen; Bestand-Tor rot im letzten Kettenlauf -> NICHT mergen (HART); rc 2 = kein Urteil (Lage o. ae.) -> melden. Dann Probe in main mergen, `bash tools/schnelltest.sh` = 0 Fehler, sonst zurueck + melden; `tools/baum_erzeugen.py`;
+   (veralteter Stand, Handanweisung, Absturz, *_beleg) -> nicht mergen; rc 2 = kein Urteil (Lage o. ae.) -> melden;
+   rc 4 = MERGE GESPERRT. HART (Nutzer 24.11.: "sichere das hart ab!"): unmittelbar vor `git merge` in main IMMER `bash tools/merge_sperre.sh` = 0 -
+   Exit 1 heisst: der letzte Kettenlauf eines Objekts hatte BESTAND RUECKSCHRITT (tools/bestand_tor.py, Kettenende rc 6, Zone im Log); nicht mergen,
+   Zone + Bild `modelle/<objekt>/bestand/` gegen `audit/neben_*.jpg` melden, Befund-Agent. Keine Umgehung. Dann Probe in main mergen, `bash tools/schnelltest.sh` = 0 Fehler, sonst zurueck + melden; `tools/baum_erzeugen.py`;
    `git pull --no-rebase --no-edit && git push`; gemergte saubere Worktrees entfernen (nie --force). Naechster Lauf (Schritt 1).
 6. **Abbruch/melden:** zwei Laeufe hintereinander schlechter (Bild oder Zahl), Schnelltest rot, Platz < 15 GB trotz Aufraeumen,
    Loeschen noetig. Kippelt ein Mass von Lauf zu Lauf: zuerst zirkulaere Messung (misst eine Stufe ihr eigenes Vormodell?) suchen.

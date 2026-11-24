@@ -1,4 +1,4 @@
-# Werkzeuge: lage_ausrichtung (54)
+# Werkzeuge: lage_ausrichtung (55)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
@@ -53,3 +53,4 @@
 - `tools/video_ausrichten.py` [col] video_ausrichten.py - Drohnen-/Video-SfM (video_sfm.py) per 3D-3D-Punktkorrespondenzen am Nordnetz ausrichten (Aehnlichkeitstransformation, RANSAC) (Register BQ).
 - `tools/wand_feinausrichtung.py` [seg] wand_feinausrichtung.py - Feinausrichtung mehrerer entzerrter Wandbilder (gleiches Wandraster) gegeneinander, NACH Homographie/Kameraprojektion.
 - `tools/wandlage_fotokanten.py` [-] wandlage_fotokanten.py - KOERPERWAND AUF DIE FOTOKANTEN-EBENE (24.11.2026, Kettenstufe 'bauplan', nach bauplan_ebenen, vor bauen_mit_bauplan).
+- `tools/wissen_ablage_pruefen.py` [-] wissen_ablage_pruefen.py - Ablage-Tor fuer Projektwissen: liegt das Wissen so, dass die Baumsuche (wissen_suchen.py) es findet?

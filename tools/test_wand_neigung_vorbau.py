@@ -93,8 +93,8 @@ pruef(VF.urteil({"_gesamt": dict(praez=0.62, recall=0.4, f1=0.48, fotos=5)})[0] 
 try:
     import manifold3d  # noqa: F401
     with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as T:
-        g = dict(u0=-1.0, u1=1.0, z0=5.0, z1=6.0, raster=0.5, w=[[1.0] * 4, [1.0] * 4], koerper=dict(w_median=1.0), dach=None)
-        vj = os.path.join(T, "vorbauten_auto.json"); json.dump(dict(fassaden=[dict(id="f00", nr=0, o=[0, 0], d=[0, 1], n=[1, 0], w_wand=0.0, gruppen=[g, dict(g, u0=3.0, u1=4.0, w=[[0.8] * 2] * 2)])]), open(vj, "w"))
+        g = dict(u0=-1.0, u1=1.0, z0=5.0, z1=6.0, raster=0.5, w=[[1.0] * 4, [1.0] * 4], koerper=dict(u0=-1.0, u1=1.0, z0=5.0, z1=6.0, w_median=1.0), dach=None)      # 24.11.: Grobkoerper vollstaendig - ohne Kantenkasten baut der Ersatz-Kasten daraus (nie Hoehenfeld)
+        vj = os.path.join(T, "vorbauten_auto.json"); json.dump(dict(fassaden=[dict(id="f00", nr=0, o=[0, 0], d=[0, 1], n=[1, 0], w_wand=0.0, gruppen=[g, dict(g, u0=3.0, u1=4.0, w=[[0.8] * 2] * 2, koerper=dict(u0=3.0, u1=4.0, z0=5.0, z1=6.0, w_median=0.8))])]), open(vj, "w"))
         aus = VF.exportieren(vj, os.path.join(T, "teile"), 87.0)
         import trimesh
         m0 = trimesh.load(os.path.join(T, "teile", "vorbau_f00_0.stl")); m1 = trimesh.load(os.path.join(T, "teile", "vorbau_f00_1.stl"))

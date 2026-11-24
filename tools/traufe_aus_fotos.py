@@ -18,6 +18,8 @@ Verfahren je Seite (-d, +d, -n, +n) - Kanten-Tiefen-Sweep fuer WAAGRECHTE Kanten
  4. STIRN-UNTERKANTE: Spalte a_aussen, flache Fotos (Hoehenwinkel < EL_STIRN, dort sieht man die Stirnflaeche von vorn), Spitze zwischen Wandanschluss
     und Aussenkante, ebenfalls in beiden Haelften. Nicht gefunden -> z_unten = None (ehrlich: nicht aufgeloest), Bau: Untersicht als Ebene vom Wandanschluss
     zur Aussenkante, Stirn nur Druckmindestmass (ANNAHME im Beleg).
+ 5. (24.11.2026) ohne Unterkante aus 4.: STIRN-UNTERKANTE aus den triangulierten 3D-Kanten der Kantenstufe (sweep.npz, Traufzone bis Dachfuss + 1 m;
+    stirn_aus_kanten: Spitze in der Spalte a_aussen, waagrechte Linie ueber die Seite, >= 3 Referenzfotos). Erst wenn auch das fehlt: ANNAHME wie bisher.
  Ungesehene Seiten (zu wenige Fotos/keine bestaetigte Kante) bleiben ungueltig: dort baut dach_aus_profil weiter aus Wolke/DOM1 und vermerkt das.
 Ausgabe: Block 'traufe_foto' in audit/dach_profil.json {seiten: {"+n": {gueltig, a_wand, z_wand, a_aussen, z_oben, z_unten, ueberstand, stirn_m, untersicht_grad,
 fotos, staerke, grund}}, gueltige_seiten, quelle, annahmen}; Bild audit/traufe_foto.jpg (Summenkarte je Seite + Fotoausschnitte mit den gemessenen Kanten).
@@ -173,6 +175,50 @@ def kameras_seite(cams, o, e, h, z0, t=None, hl=None):
     return out
 
 
+KANTE_MIN_PUNKTE = 20        # Stirn-Unterkante aus der Kantenstufe: Spitze mind. 20 triangulierte Punkte (Einzelstrahlen/Rauschen geben 1-5 je 4-cm-Scheibe)
+KANTE_DECKUNG = 0.5          # ... ueber mind. 50 % der 0,5-m-Abschnitte der mittleren Seite verteilt (waagrechte LINIE, kein Haufen an einer Stelle)
+KANTE_REFS = 3               # ... aus mind. 3 Referenzfotos (Formfamilie)
+
+
+def stirn_aus_kanten(P, ref, D, seite, E, scheibe=RASTER):
+    """STIRN-UNTERKANTE aus den triangulierten 3D-Kanten der Kantenstufe (24.11.2026, Befund Hoehen-Angleich 1122 Nord: ohne aufgeloeste Unterkante ANNAHME
+    'Untersicht in Raehmhoehe', Modell-Stirn 36,7-38,1 m gegen Wolke 37,55-38,15). Seit der Traufzone der Kantenstufe (sweep.npz reicht bis Dachfuss + 1 m)
+    gibt es dort Kanten: Spalte a_aussen +-TOL_A, mittlere ANTEIL der Seite, z zwischen Wandanschluss + AUSSEN_MIN_Z und Aussenkante - 0,1 m.
+    Spitze des z-Histogramms (4-cm-Scheiben, +-1 Nachbar) gilt, wenn sie (a) >= KANTE_MIN_PUNKTE und >= STARK x mittlere Scheibe der Spalte, (b) als LINIE ueber
+    >= KANTE_DECKUNG der 0,5-m-Abschnitte und (c) aus >= KANTE_REFS tragenden Referenzfotos (je >= 3 Punkte und >= 5 % der Spitze; Linie/Deckung nur aus diesen). Liefert (z oder None, Beleg-dict)."""
+    if not E.get("gueltig") or E.get("a_aussen") is None or P is None or not len(P): return None, dict(grund="keine Kantenpunkte/keine gueltige Aussenkante")
+    o = np.asarray(D["o"], float); e, t, h, hl = rahmen(D, seite); q = P[:, :2] - o; a = q @ e - h; s = q @ t
+    z_lo, z_hi = float(E["z_wand"]) + AUSSEN_MIN_Z, float(E["z_oben"]) - 0.1
+    k = (np.abs(a - float(E["a_aussen"])) <= TOL_A) & (np.abs(s) <= ANTEIL * hl) & (P[:, 2] > z_lo) & (P[:, 2] < z_hi)
+    b = dict(spalte_punkte=int(k.sum()), z_bereich=[round(z_lo, 2), round(z_hi, 2)])
+    if z_hi - z_lo < 3 * scheibe or k.sum() < KANTE_MIN_PUNKTE: return None, dict(b, grund=f"zu wenig Kantenpunkte in der Stirnspalte ({int(k.sum())})")
+    zk = P[k, 2]; sk = s[k]; rk = np.asarray(ref)[k]; kanten_ = np.arange(z_lo, z_hi + scheibe, scheibe); hz, _ = np.histogram(zk, bins=kanten_)
+    h3 = np.convolve(hz, np.ones(3, int), "same"); j = int(np.argmax(h3)); zc = float(kanten_[j] + 0.5 * scheibe); mittel = 3.0 * float(hz.mean())
+    w = np.abs(zk - zc) <= 1.5 * scheibe; ur, uc = np.unique(rk[w], return_counts=True); trag = ur[uc >= max(3, 0.05 * w.sum())]   # tragende Referenzen (Einzelpunkte = Rauschen)
+    w &= np.isin(rk, trag); ab = np.arange(-ANTEIL * hl, ANTEIL * hl + 1e-9, 0.5); nb_ = max(len(ab) - 1, 1)
+    hb, _ = np.histogram(sk[w], bins=ab); deck = float((hb >= max(2, 0.2 * w.sum() / nb_)).sum()) / nb_          # Abschnitt zaehlt ab 20 % der Gleichverteilung (Streupunkte nicht)
+    nref = len(trag); b.update(z=round(zc, 2), punkte=int(h3[j]), staerke=round(float(h3[j]) / max(mittel, 1e-9), 2), deckung=round(min(deck, 1.0), 2), refs=nref)
+    if h3[j] < KANTE_MIN_PUNKTE or h3[j] < STARK * mittel: return None, dict(b, grund=f"keine ausgepraegte Spitze ({int(h3[j])} Punkte, {b['staerke']} x Mittel, verlangt {KANTE_MIN_PUNKTE} / {STARK})")
+    if deck < KANTE_DECKUNG: return None, dict(b, grund=f"Spitze ist keine Linie entlang der Seite (Deckung {deck:.2f} < {KANTE_DECKUNG})")
+    if nref < KANTE_REFS: return None, dict(b, grund=f"nur {nref} Referenzfotos (verlangt {KANTE_REFS})")
+    return zc, b
+
+
+def stirn_einsetzen(E, z_u, beleg):
+    """Gemessene Stirn-Unterkante (aus stirn_aus_kanten) in das Seitenergebnis uebernehmen - nur wenn die 2D-Suche keine hatte."""
+    if z_u is None or E.get("z_unten") is not None: return E
+    E = dict(E, z_unten=round(z_u, 2), z_unten_bau=round(z_u, 2), stirn_m=round(float(E["z_oben"]) - z_u, 2), stirn_gemessen=True,
+             untersicht_grad=round(math.degrees(math.atan2(z_u - float(E["z_wand"]), float(E["a_aussen"]) - float(E["a_wand"]))), 1),
+             unterkante_quelle=f"Fotokanten der Kantenstufe (sweep.npz, Traufzone): {beleg.get('punkte')} Punkte, {beleg.get('refs')} Referenzfotos, Deckung {beleg.get('deckung')}")
+    return E
+
+
+def kanten_laden(pfad):
+    """sweep.npz der Kantenstufe -> (P, ref) oder (None, None)."""
+    try: Z = np.load(pfad); return Z["P"].astype(float), Z["ref"]
+    except Exception: return None, None
+
+
 def umgang_anpassen(E, U):
     """Offener Umgang unter der Traufe (audit/umgang_auto.json, tools/umgang_aus_fotos.py: Zone aus Zeilenkanten der entzerrten Fotos): der Traufkasten darf den
     Laufgang nicht fuellen. Der helle->dunkle Wandanschluss der Traufmessung ist dann die UNTERKANTE DES UMGANGS (Schwabentor: Kante z 36,18, Umgang 35,92..36,97),
@@ -245,6 +291,7 @@ def main(argv=None):
     import flaeche_ortho as FO
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--profil"); ap.add_argument("--aus"); ap.add_argument("--bild"); ap.add_argument("--max-fotos", type=int, default=120)
     ap.add_argument("--seiten", default=",".join(SEITEN)); ap.add_argument("--nur-messen", action="store_true"); ap.add_argument("--root", help="Projektwurzel fuer fotos_dir (Standard: Repo)")
+    ap.add_argument("--kanten", help="sweep.npz der Kantenstufe (Standard <daten>/<objekt>/kanten/sweep.npz) fuer die Stirn-Unterkante")
     a = ap.parse_args(argv)
     od = os.path.dirname(os.path.abspath(a.objekt)); Au = os.path.join(od, "audit"); pp = a.profil or os.path.join(Au, "dach_profil.json")
     try: D = json.load(open(pp))
@@ -255,8 +302,15 @@ def main(argv=None):
     erg, karten = {}, {}
     try: U = json.load(open(os.path.join(Au, "umgang_auto.json")))
     except Exception: U = None
+    kp = a.kanten
+    if not kp:
+        import pfade; kp = os.path.join(pfade.DATEN, os.path.basename(od), "kanten", "sweep.npz")
+    KP, KR = kanten_laden(kp); print(f"Kantenstufe: {kp} ({'keine' if KP is None else len(KP)} Punkte)")
     for s in a.seiten.split(","):
-        E, K = seite_messen(D, s, cams, a.max_fotos); E = umgang_anpassen(E, U); erg[s] = E
+        E, K = seite_messen(D, s, cams, a.max_fotos)
+        if E.get("gueltig") and E.get("z_unten") is None:                       # 24.11.2026: Stirn-Unterkante aus den 3D-Kanten der Traufzone statt ANNAHME
+            zk, bk = stirn_aus_kanten(KP, KR, D, s, E); E["stirn_kanten"] = bk; E = stirn_einsetzen(E, zk, bk)
+        E = umgang_anpassen(E, U); erg[s] = E
         if K: karten[s] = K
         print(f"  {s}: " + (f"GUELTIG Wandanschluss a {E['a_wand']:+.2f} z {E['z_wand']:.2f}, Aussenkante a {E['a_aussen']:+.2f} z {E['z_oben']:.2f} -> Ueberstand {E['ueberstand']:.2f} m, "
                              f"Stirn {'%.2f m' % E['stirn_m'] if E.get('stirn_m') else 'Unterkante nicht aufgeloest'}, Untersicht {E['untersicht_grad']} Grad (Staerke {E['staerke']})"

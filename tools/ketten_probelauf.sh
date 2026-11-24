@@ -9,7 +9,8 @@
 #   2 marke: danach jeder Code-Stand in den Stand-Dateien verstellt + SfM-Netz "neu geschrieben" (tools/ketten_probe.py marken) -> Folgestufen muessen neu rechnen
 #            (Fall 1122za), Lauf bis --bis2 (Standard 'bauen': die Stufen mit Netz-/Wolken-/Kamera-Staenden; was danach kommt, prueft Szenario 1).
 # Ablauffehler = veralteter Stand, Handanweisung (--neu ...), Absturz/Traceback, Abbruch, stiller Erfolg (*_beleg), kein GESAMTKETTE_ENDE. Rote Tor-Urteile am
-#   Objekt (Daten) werden gemeldet, sperren aber nicht. Exit: 0 = beide Szenarien OK, 1 = Ablauffehler, 2 = kein Urteil (Datenabbruch, z. B. Lage), 3 = Aufruf/Umgebung.
+#   Objekt (Daten) werden gemeldet, sperren aber nicht. Exit: 0 = beide Szenarien OK, 1 = Ablauffehler, 2 = kein Urteil (Datenabbruch, z. B. Lage), 3 = Aufruf/Umgebung,
+#   4 = MERGE GESPERRT (letzter Kettenlauf eines Objekts mit BESTAND RUECKSCHRITT, tools/merge_sperre.sh; 24.11.2026).
 # Orte (nie Originaldaten): /media/oem/scan/rc-park_tmp/ketten_probe/{code (git archive REV), arbeit (Kopie), grundstand, ergebnis_*.json, probelauf_*.log};
 #   /media/oem/scan/rc-park_daten/kprobe_kaufhaus = Verknuepfung -> arbeit (die Kette schreibt fest nach rc-park_daten/<ziel>).
 #   Quelle (nur gelesen): rc-park_daten/kaufhaus_gk/pipe/kameras.json + fotos/.
@@ -52,6 +53,10 @@ if [ "$GRUND" = 1 ]; then
 else
   [ -f "$GS/stand.json" ] || fehler "kein Grundstand $GS/stand.json - zuerst: ketten_probelauf.sh --grundstand (als Job)"
 fi
+# 24.11.2026 BESTAND-SPERRE (Nutzer: "sichere das hart ab!"): hatte der letzte Kettenlauf eines Objekts einen BESTAND RUECKSCHRITT (tools/bestand_tor.py), kein Merge -> Exit 4
+SPERRE=$(bash "$HIER/merge_sperre.sh" 2>&1); SPERRE_RC=$?
+if [ "$SPERRE_RC" != 0 ]; then echo "$SPERRE" | grep -E "GESPERRT|=>" ; [ "${RCPARK_SPERRE_TEST:-}" = 1 ] && exit 4; [ "$PLAN" = 1 ] || exit 4; echo "PLAN: Merge waere GESPERRT (Exit 4)"; fi
+[ "${RCPARK_SPERRE_TEST:-}" = 1 ] && { echo "Bestand-Sperre frei"; exit 0; }
 [ "$PLAN" = 1 ] || [ "$OHNEJOB" = 1 ] || [ -n "${RCPARK_JOB:-}" ] || fehler "nicht als Job gestartet (Skill langer-job): JOB_RAM_MB=7000 JOB_GPU_MB=3000 bash tools/job_start.sh ketten-probe-$ZEIT /media/oem/scan/rc-park_daten/job_logs/ketten-probe-$ZEIT.log bash tools/ketten_probelauf.sh $*"
 
 echo "KETTEN-PROBELAUF $( [ $PLAN = 1 ] && echo '(PLAN, nichts wird gerechnet)') Stand $REV=$SHA, Objekt $ZIEL (Quelle $QUELLE, $N Fotos), Platz ${FREI} GB, Grundstand ${GSG} GB"

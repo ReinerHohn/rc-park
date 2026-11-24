@@ -128,14 +128,30 @@ def main():
         z = f"{e['urteil']:6s} {e['bauteil']:20s}" + ("  [nur Wolke - vorlaeufig]" if e.get("quelle") == "wolke" else "")
         if e["urteil"] == "FALSCH": z += "  " + ", ".join(f"{k} {v['ist']} statt {v['soll']}" for k, v in e["masse"].items() if not v["ok"])
         print(z)
+    # 24.11.2026 HOEHENBEZUG (Nutzer: "tief ueberpruefen, ob wir konvergieren"): Kette 1122 lag gegen dieselbe Referenz im Median +0,56 m hoeher als Kette 1120
+    # (z-Null der Ausrichtung; laut DGM1-Probe liegt eher die Hand zu tief). Ein gemeinsamer Versatz ist EIN Befund, kein Fehler je Bauteil: zusaetzlich
+    # bezugsbereinigt urteilen (Median der Hoehenabweichungen abziehen, ab 5 Hoehenmassen). Das Haupturteil 'passt' bleibt unveraendert (absolut).
+    HOEHEN = set(R.get("hoehen_masse") or ("schwelle_unten", "holm_oben", "traufe_z", "anschluss_z", "mitte_z", "scheitel", "scheitel_aussen", "kaempfer", "sohlbank_z", "spitze_z", "krempe_z", "traufe"))
+    dz = sorted(float(v["ist"]) - float(v["soll"]) for e in erg for k, v in (e.get("masse") or {}).items()
+                if k in HOEHEN and v.get("ist") is not None and not v.get("hand_annahme") and isinstance(v.get("soll"), (int, float)))
+    bezug = None; n_frei = None; urteile_frei = {}
+    if len(dz) >= 5:
+        bezug = round((dz[(len(dz) - 1) // 2] + dz[len(dz) // 2]) / 2, 3); tol = {r["bauteil"]: float(r.get("toleranz_m", 0.3)) for r in R["bauteile"]}; n_frei = 0
+        for e in erg:
+            if e["urteil"] == "FEHLT": urteile_frei[e["bauteil"]] = "FEHLT"; continue
+            ok = all((abs(float(v["ist"]) - bezug - float(v["soll"])) <= tol[e["bauteil"]]) if (k in HOEHEN and v.get("ist") is not None and not v.get("hand_annahme") and isinstance(v.get("soll"), (int, float))) else v["ok"]
+                     for k, v in e["masse"].items())
+            urteile_frei[e["bauteil"]] = "PASST" if ok else "FALSCH"; n_frei += ok
+        print(f"HOEHENBEZUG: Kette liegt im Median {bezug:+.2f} m gegen die Hand ({len(dz)} Hoehenmasse, Spanne {dz[0]:+.2f}..{dz[-1]:+.2f}); bezugsbereinigt passen {n_frei} von {len(erg)}"
+              + ("" if abs(bezug) <= 0.15 else "  -> gemeinsamer Hoehenversatz = EIN Befund (z-Null der Ausrichtung pruefen), nicht je Bauteil"))
     n_wolke = sum(1 for e in erg if e["urteil"] == "PASST" and e.get("quelle") == "wolke")
     print(f"HANDSTAND ERREICHT: {n_passt} von {len(erg)} Bauteilen passen ({100 * n_passt / len(erg):.0f} %), davon {n_passt - n_wolke} aus Fotos, {n_wolke} nur aus der Wolke (vorlaeufig)")
-    json.dump(dict(referenz=R["quelle"], passt=n_passt, passt_nur_wolke=n_wolke, gesamt=len(erg), bauteile=erg), open(os.path.join(A, "hand_vergleich.json"), "w"), indent=1, ensure_ascii=False)
+    json.dump(dict(referenz=R["quelle"], passt=n_passt, passt_nur_wolke=n_wolke, gesamt=len(erg), hoehenbezug_m=bezug, passt_bezugsfrei=n_frei, urteile_bezugsfrei=urteile_frei, bauteile=erg), open(os.path.join(A, "hand_vergleich.json"), "w"), indent=1, ensure_ascii=False)
     import time, subprocess      # 21.11.2026 (Nutzer: "Loggst du deine ganzen Versuche mit, dass wir das spaeter nochmal nachspielen koennen?"): Verlauf je Lauf mit git-Stand
     try: rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=od).stdout.strip()
     except Exception: rev = "?"
     with open(os.path.join(A, "hand_vergleich_verlauf.jsonl"), "a") as f_:
-        f_.write(json.dumps(dict(zeit=time.strftime("%Y-%m-%d %H:%M"), git=rev, passt=n_passt, passt_nur_wolke=n_wolke, gesamt=len(erg), urteile={e["bauteil"]: e["urteil"] for e in erg},
+        f_.write(json.dumps(dict(zeit=time.strftime("%Y-%m-%d %H:%M"), git=rev, hoehenbezug_m=bezug, passt_bezugsfrei=n_frei, passt=n_passt, passt_nur_wolke=n_wolke, gesamt=len(erg), urteile={e["bauteil"]: e["urteil"] for e in erg},
                                  daneben={e["bauteil"]: {k: [v["ist"], v["soll"]] for k, v in e["masse"].items() if not v["ok"]} for e in erg if e["urteil"] == "FALSCH"}), ensure_ascii=False) + "\n")
     return 0
 

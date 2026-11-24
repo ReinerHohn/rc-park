@@ -81,7 +81,7 @@ with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as T:
     GEN = os.path.expanduser("~/.venvs/rcpark/bin/python")
     if os.path.exists(GEN):
         gb = dict(u0=-1.0, u1=1.0, z0=5.0, z1=6.0, raster=0.5, w=[[1.0] * 4, [1.0] * 4], koerper=dict(w_median=1.0), dach=None)
-        vj2 = os.path.join(T, "vb2.json"); json.dump(dict(fassaden=[dict(id="f00", nr=0, o=[0, 0], d=[0, 1], n=[1, 0], w_wand=0.0, gruppen=[dict(gb, verworfen="Test"), dict(gb, u0=3.0, u1=4.0)])]), open(vj2, "w"))
+        vj2 = os.path.join(T, "vb2.json"); json.dump(dict(fassaden=[dict(id="f00", nr=0, o=[0, 0], d=[0, 1], n=[1, 0], w_wand=0.0, gruppen=[dict(gb, verworfen="Test"), dict(gb, u0=3.0, u1=4.0, koerper=dict(u0=3.0, u1=4.0, z0=5.0, z1=6.0, w_median=1.0))])]), open(vj2, "w"))
         code = ("import sys; sys.path.insert(0, sys.argv[1]); from manifold3d import Manifold as M; from bauteile import vorbauten_aus_json as V; k, b = V(M(), sys.argv[2]); "
                 "import numpy as np; m = k.to_mesh(); v = np.asarray(m.vert_properties)[:, :3]; print(len(b), round(float(v[:, 1].min()), 2) if len(v) else 'leer')")
         r = subprocess.run([GEN, "-I", "-c", code, HIER, vj2], capture_output=True, text=True); o_ = r.stdout.split()

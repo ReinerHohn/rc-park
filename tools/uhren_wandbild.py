@@ -12,6 +12,9 @@ Ablauf je Fassade:
      ohne Beleg verworfen. 24.11.2026 (1122x: Uhr f01 fehlte, Mosaik-Naht quer durch den Ziffernring, 1,14 < 1,2; in 1122w kam sie nur durch den Teillauf mit
      anders zusammengesetztem Mosaik): faellt das Mosaik durch, entscheidet die Mehrheit der Einzelfotos mit ganzer Scheibe (beleg_aus_einzelfotos, gleiches Tor je Foto,
      >= 3 Fotos) - das Urteil haengt so nicht mehr davon ab, welche Fotos das Mosaik gerade zusammensetzt. Konzentrische Kreise derselben Stelle (Aussenrand + Ziffernring) -> eine Uhr (dubletten_zusammenfassen).
+  4. GESTALT (zifferblatt_aus_fotos, 24.11.2026 neu: Kette baute nur Kleckse) = zeichen_maske je Zone + schaerfstes Foto, bestaetigt durch die Mehrheit; druckbar per Skelett.
+Verwandt: tools/bauteile.py uhren_aus_json (Bau), tools/relief_einsatz.py (npz -> Koerper), tools/neben_details.py (Detailbild). Vorlaeufer: Hand-Generator schwab_v3
+(Wand.zifferblatt, Katalog-Ziffern - nicht in der Kette), gold_maske + Aufweiten um d_min/2 (21.-24.11.). Tests: tests/test_zifferblatt_gestalt.py, tests/test_uhr_einzelfotos.py, tools/test_putz_uhr.py.
 Aufruf:  uhren_wandbild.py <objekt.json> <fassade_fein-ordner> --elemente <fassade/elemente.json> [--aus audit/uhren_auto.json]
 Ausgabe: {fid: {o, d, n, uhren: [{u, z, d_aussen, d_innen, stuetze_aussen, stuetze_innen, kasten, quelle}], verworfen: [...]}} + Bild <aus>.jpg
 rc 0 = mindestens eine Uhr, rc 3 = keine.
@@ -64,6 +67,33 @@ def gold_maske(bgr):
     return (h >= 12) & (h <= 35) & (s >= 70) & (v >= 90)
 
 
+def zeichen_maske(bgr, rr, ri, ra, rand=0.03, gueltig=None):
+    """ZEICHEN des Zifferblatts (Ziffern, Striche, Raender, Zeiger) je Zone (Ziffernring ri..ra, Innenfeld < ri) als MINDERHEIT gegen den Zonengrund (24.11.2026).
+    Anlass (Kette: Uhr nur verwaschene Kleckse): gold_maske (Farbton gelb, Saettigung >= 70) traf an der Schwabentor-Uhr nur die SAEUME der Ziffern (Schaerfungssaum
+    im Foto); das Innere der Striche ist blass-hell (Saettigung < 40) und die Zeigerschaefte fehlten ganz - druckbar machte aus den Doppelsaeumen Kleckse.
+    Jetzt Helligkeit (V) je Zone: Grund = Median; Zeichen = weiter als die halbe Ausreisserspanne (p99,5 bzw. p0,5) vom Grund weg, mindestens 25 Grauwerte;
+    Polaritaet = die Seite mit mehr solchen Pixeln (helle Ziffern auf dunklem Grund wie Schwabentor, oder dunkle auf hellem). Keine Farbannahme.
+    gueltig: vom Foto belegte Pixel (Teilfotos: schwarzer Rand zaehlt nicht zum Grund). Rueckgabe bool-Maske (nur in der Scheibe)."""
+    v = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)[..., 2].astype(np.float32); m = np.zeros(v.shape, bool); g_ok = np.ones(v.shape, bool) if gueltig is None else gueltig
+    # Zonen ohne 3-cm-Saum an den Kreisen (rand): dort liegt der Uebergang Ring/Feld im Foto - im Feld zaehlten die dunklen Saumpixel mehr als ein duenner heller
+    # Zeiger und kehrten die Polaritaet um (Test: Zeiger fehlte). Die Kreise selbst baut der Wulst an den gemessenen Kreisen.
+    for zone in ((rr >= ri + rand) & (rr <= ra - rand), rr <= ri - rand):
+        zone = zone & g_ok
+        if zone.sum() < 50: continue
+        w = v[zone]; med = float(np.median(w)); hi = float(np.percentile(w, 99.5)) - med; lo = med - float(np.percentile(w, 0.5))
+        hell = zone & (v > med + max(25.0, 0.5 * hi)); dunkel = zone & (v < med - max(25.0, 0.5 * lo))
+        m |= hell if hell.sum() >= dunkel.sum() else dunkel                 # Polaritaet = die Seite mit mehr Zeichen (ein duenner Zeiger allein ist < 1 % des Feldes)
+    return m
+
+
+def skelett(maske):
+    """Morphologische Mittellinie (Lantuejoul: Vereinigung von erode^k(M) - open(erode^k(M))), nur numpy/cv2. Fuer druckbar: duenne Striche auf ihre Mittellinie."""
+    E = cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 3)); m = maske.astype(np.uint8); s = np.zeros_like(m)
+    while m.any():
+        e = cv2.erode(m, E); s |= m & ~cv2.dilate(e, E) & 1; m = e
+    return s.astype(bool)
+
+
 def druckbar(maske, px, d_min=0.8 * 87 / 1000.0):
     """Mindestmass im Druck: Striche duenner als d_min (m, Standard 0,8 mm bei 1:87 = 7 cm) auf d_min verbreitern (Oeffnung mit d_min trennt duenn/dick,
     duenne Teile um d_min/2 je Seite aufgeweitet), Flecken < d_min^2 weg. Keine Form erfunden: nur vorhandene Striche werden dicker."""
@@ -71,8 +101,13 @@ def druckbar(maske, px, d_min=0.8 * 87 / 1000.0):
     maske = maske & ~np.isin(lab0, np.flatnonzero(st0[1:, cv2.CC_STAT_AREA] * px * px < 0.25 * d_min * d_min) + 1)
     k = max(3, int(np.ceil(d_min / px)) | 1); E = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k)); m8 = maske.astype(np.uint8)
     dick = cv2.morphologyEx(m8, cv2.MORPH_OPEN, E).astype(bool); duenn = maske & ~dick
-    r = max(1, int(round(0.5 * d_min / px))); E2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
-    m = dick | cv2.dilate(duenn.astype(np.uint8), E2).astype(bool)
+    # 24.11.2026 (Nutzer: "wir hatten schon mal einen viel besseren Stand", Uhr in der Kette nur verwaschene Kleckse): bisher wurde jeder duenne Strich um d_min/2 JE SEITE
+    # aufgeweitet (5-cm-Ziffernstrich -> 12 cm), die Luecken zwischen den Strichen der Ziffern (5-8 cm) liefen zu, VIII/XII wurden ein Klecks. Jetzt: Mittellinie
+    # (Skelett) der duennen Teile auf genau d_min Breite aufweiten (Abstand zur Mittellinie <= d_min/2) und mit dem Original vereinen - der Strich wird so breit
+    # wie noetig, nicht breiter; die Luecken bleiben offen.
+    sk = skelett(duenn); dt = cv2.distanceTransform((~sk).astype(np.uint8), cv2.DIST_L2, 5) if sk.any() else None
+    rk = int(np.ceil(0.5 * (d_min / px - 1.0) - 1e-9))                     # (2 rk + 1) Zellen >= d_min
+    m = dick | duenn | ((dt <= rk + 1e-6) if dt is not None else False)
     n, lab, st, _ = cv2.connectedComponentsWithStats(m.astype(np.uint8), connectivity=8)
     weg = np.flatnonzero(st[1:, cv2.CC_STAT_AREA] * px * px < d_min * d_min) + 1
     return m & ~np.isin(lab, weg)
@@ -116,25 +151,32 @@ def beleg_aus_einzelfotos(fein, fid, raster, u, z, ra, f0=0.55, f1=0.97, min_fot
     return dict(ok=bool(ok), n=n, n_ok=int(n_ok), verh_median=round(vm, 2), fotos=E, grund=grund)
 
 
-def zifferblatt_aus_fotos(fein, fid, raster, U, aus, px=0.02, rand=1.0, min_fotos=3, mehrheit=0.5, w_ring=0.10, w_feld=0.06, hoch=0.07, zeiger=True):
+def zifferblatt_aus_fotos(fein, fid, raster, U, aus, px=0.8 * 87 / 1000.0 / 3, rand=1.0, min_fotos=3, mehrheit=0.5, w_ring=0.10, w_feld=0.06, hoch=0.07, zeiger=True, min_deckung=0.6):
     """ZIFFERBLATT-RELIEF AUS DEM WANDBILD (21.11.2026, Nutzerbild: Uhr nur flacher Kreis; Katalog-Ziffern sind verboten - kein Baukasten).
     Je entzerrtem Einzelfoto (fein/ortho_<fid>_einzeln) die Scheibe suchen (Kreis-Hough, Radius = gemessener Aussenradius +- 12 %, Suchfenster +- rand m: die Einzelbilder
-    liegen bis 0,85 m gegeneinander versetzt), auf die Scheibe normieren (Mitte, Radius) und die Goldteile ausschneiden.
+    liegen bis 0,85 m gegeneinander versetzt), auf die Scheibe normieren (Mitte, Radius) und die Zeichen ausschneiden (zeichen_maske: Minderheit gegen den Zonengrund, seit 24.11.2026 statt Goldfarbe).
     Feste Teile (Ziffernring, Randwulst: r >= Innenradius) = Mehrheit von >= min_fotos Fotos (Kabel/Spiegelung fallen heraus).
     Zeiger (r < Innenradius) bewegen sich zwischen den Fotos -> aus dem SCHAERFSTEN Foto (zeiger=True; Uhrzeit dieses Fotos).
     Hoehen ueber der Wandflaeche: Innenfeld w_feld, Ziffernring w_ring, Gold + hoch (ANNAHME 6 / 10 / +7 cm = 0,7 / 1,15 / +0,8 mm im Druck).
     Schreibt aus (.npz wie relief_einsatz: rel, a, t, n, u0, z0, px + scheibe d_aussen) und aus.jpg; Rueckgabe dict oder None."""
     c = float(raster["zelle"]); ra = 0.5 * float(U["d_aussen"]); ri = 0.5 * float(U["d_innen"]) if U.get("d_innen") else 0.66 * ra
-    S = ra + 0.06; N = int(np.ceil(2 * S / px)); g_ = (np.arange(N) + 0.5) * px - S; X, Y = np.meshgrid(g_, -g_); rr = np.hypot(X, Y); inn = rr <= ra
+    # 24.11.2026 (Kette: Ziffern nur Kleckse): Gestalt im Raster des Wandbilds (c, 1 cm) bestimmen - bei px = 2 cm war ein 5-cm-Ziffernstrich nur 2-3 Zellen breit und die
+    # ECC-Ausrichtung/Mehrheit verschmierte ihn; erst am Ende auf px fuer das Relief verkleinern (Flaechenmittel >= 0,5).
+    px_aus = float(px); S = np.ceil((ra + 0.06) / px_aus) * px_aus; N = int(np.floor(2 * S / min(px_aus, c))); px = 2 * S / N     # feines Raster deckt genau dieselbe Flaeche
+    # (floor: px >= 1 cm, sonst d_min/px = 7,02 -> druckbar rundet auf 9 statt 7 Zellen und schliesst die Luecken)
+    g_ = (np.arange(N) + 0.5) * px - S; X, Y = np.meshgrid(g_, -g_); rr = np.hypot(X, Y); inn = rr <= ra
     K = []
     for D in scheiben_in_einzelfotos(fein, fid, raster, U["u"], U["z"], ra, rand=rand):
         im, cx, cy, r = D["im"], D["cx"], D["cy"], D["r"]; k_ = r / (ra / c)                     # Scheibe dieses Fotos -> Normraster (Mitte, Radius gleich)
         B = cv2.remap(im, (cx + X / c * k_).astype(np.float32), (cy - Y / c * k_).astype(np.float32), cv2.INTER_LINEAR, borderValue=(0, 0, 0))
-        if (B.sum(2) > 0)[inn].mean() < 0.97: continue
-        sch = float(cv2.Laplacian(cv2.cvtColor(B, cv2.COLOR_BGR2GRAY).astype(np.float32), cv2.CV_32F)[inn].var())
-        K.append(dict(foto=D["foto"], schaerfe=sch, stuetze=D["stuetze"], gold=gold_maske(B), bild=B))
+        # 24.11.2026 (Uhr Sued f01: nur 2 Fotos zeigten die GANZE Scheibe -> kein Zifferblatt, nur Ring): Teilfotos (>= min_deckung der Scheibe) zaehlen mit, die
+        # Stimme je Pixel nur unter den Fotos, die ihn zeigen (deckung); Gestalt-Foto bleibt ein ganzes (falls vorhanden).
+        dk = cv2.erode(((B.sum(2) > 0) & inn).astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)        # Randsaum der Entzerrung weg
+        if dk[inn].mean() < min_deckung: continue
+        sch = float(cv2.Laplacian(cv2.cvtColor(B, cv2.COLOR_BGR2GRAY).astype(np.float32), cv2.CV_32F)[dk].var())
+        K.append(dict(foto=D["foto"], schaerfe=sch, stuetze=D["stuetze"], gold=zeichen_maske(B, rr, ri, ra, gueltig=dk), bild=B, deckung=dk, ganz=bool(dk[inn].mean() >= 0.97)))
     if len(K) < min_fotos: return None
-    K.sort(key=lambda k: -k["schaerfe"]); ref = cv2.GaussianBlur(cv2.cvtColor(K[0]["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32); mk = inn.astype(np.uint8)
+    K.sort(key=lambda k: (not k["ganz"], -k["schaerfe"])); ref = cv2.GaussianBlur(cv2.cvtColor(K[0]["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32)
     grad = lambda g: cv2.GaussianBlur(cv2.magnitude(cv2.Sobel(g, cv2.CV_32F, 1, 0), cv2.Sobel(g, cv2.CV_32F, 0, 1)), (0, 0), 2.0)
     for k in K[1:]:                                                       # Feinausrichtung auf das schaerfste Foto (ECC affin): die Einzelbilder sind leicht verschert/verdreht entzerrt
         gk = cv2.GaussianBlur(cv2.cvtColor(k["bild"], cv2.COLOR_BGR2GRAY), (0, 0), 1.0).astype(np.float32); k["ecc"] = False
@@ -142,24 +184,48 @@ def zifferblatt_aus_fotos(fein, fid, raster, U, aus, px=0.02, rand=1.0, min_foto
         # Kantenbetrag (Ziffern-/Randkanten sind farbunabhaengig)
         for a_, b_ in ((ref, gk), (grad(ref), grad(gk))):
             try:
+                mk = (inn & K[0]["deckung"] & k["deckung"]).astype(np.uint8)
                 M = np.eye(2, 3, dtype=np.float32); _, M = cv2.findTransformECC(a_, b_, M, cv2.MOTION_AFFINE, (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 100, 1e-5), mk, 5)
-                k["bild"] = cv2.warpAffine(k["bild"], M, (N, N), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP); k["gold"] = gold_maske(k["bild"]); k["ecc"] = True; break
+                k["bild"] = cv2.warpAffine(k["bild"], M, (N, N), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+                k["deckung"] = cv2.warpAffine(k["deckung"].astype(np.uint8), M, (N, N), flags=cv2.INTER_NEAREST + cv2.WARP_INVERSE_MAP).astype(bool) & inn
+                k["gold"] = zeichen_maske(k["bild"], rr, ri, ra, gueltig=k["deckung"]) & k["deckung"]; k["ecc"] = True; break
             except cv2.error: pass
     K = [K[0]] + [k for k in K[1:] if k.get("ecc")]
     if len(K) < min_fotos: return None
-    stimme = np.mean([k["gold"] for k in K], 0)
-    fest = (stimme >= mehrheit) & (rr >= ri - 2 * px) & inn
+    n_dk = np.sum([k["deckung"] for k in K], 0); stimme = np.sum([k["gold"] & k["deckung"] for k in K], 0) / np.maximum(n_dk, 1)
+    # 24.11.2026 (Kette: Ziffern verwaschen): die reine Mehrheit der ausgerichteten Fotos verschmiert die Striche (Restversatz 1-3 cm nach ECC, unschaerfere Fotos
+    # mit breiteren Goldsaeumen) - die Stimmkarte zeigte Doppelkonturen. Jetzt: GESTALT aus dem schaerfsten Foto, BESTAETIGT durch die Mehrheit mit Toleranz
+    # (Goldmaske je Foto um tol aufgeweitet: Versatz zaehlt nicht als Widerspruch); wo das schaerfste Foto verdeckt ist (Kabel, Spiegelung), traegt eine klare
+    # Mehrheit (>= 0,6) der anderen. Kabel/Spiegelungen eines Fotos fallen weiter heraus (keine Mehrheit).
+    tk = max(1, int(round(0.02 / px))); Et = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * tk + 1, 2 * tk + 1))
+    stimme_tol = np.sum([cv2.dilate(k["gold"].astype(np.uint8), Et).astype(bool) & k["deckung"] for k in K], 0) / np.maximum(n_dk, 1)
+    fest = (K[0]["gold"] | (stimme >= max(0.6, mehrheit))) & (stimme_tol >= mehrheit) & (n_dk >= 2) & (rr >= ri - 2 * px) & inn      # >= 2 Fotos je Pixel
     zg = (K[0]["gold"] & (rr < ri - 2 * px)) if zeiger else np.zeros_like(fest)
-    gold = druckbar(fest | zg, px) & inn
-    rel = np.where(rr > ri, w_ring, w_feld) + hoch * gold; rel[~inn] = 0.0
-    erg = dict(rel=rel.astype(np.float32), px=px, d_aussen=2 * ra, d_innen=2 * ri, gold_anteil=float(gold[inn].mean()), fotos=[k["foto"] for k in K], zeiger_foto=K[0]["foto"] if zeiger else "")
-    vis = K[0]["bild"].copy(); vis[gold] = (0, 215, 255); vis[~inn] = (60, 60, 60)
+    fest = cv2.morphologyEx(fest.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))).astype(bool)   # 1-px-Loecher (Rauschen) schliessen
+    # Randwulst an den GEMESSENEN Kreisen (Aussen- und Innenkreis mit Kantenstuetze, uhren_wandbild main): Breite = Mindestmass, nach innen bzw. mittig; keine Formannahme
+    # ueber die gemessenen Kreise hinaus. Ohne gemessenen Innenkreis kein Innenwulst.
+    d_min = 0.8 * 87 / 1000.0; wulst = (rr <= ra) & (rr >= ra - d_min)
+    if U.get("d_innen"): wulst |= np.abs(rr - ri) <= 0.5 * d_min
+    gold_f = (druckbar(fest | zg, px) | wulst) & inn
+    if px_aus > px + 1e-9:                                                 # Relief-Raster px_aus: Flaechenmittel >= 0,5 (kein zweites druckbar: s. u.)
+        Nn = int(round(2 * S / px_aus)); gn_ = (np.arange(Nn) + 0.5) * px_aus - S; Xn, Yn = np.meshgrid(gn_, -gn_); rrn = np.hypot(Xn, Yn); innn = rrn <= ra
+        grob = cv2.resize(gold_f.astype(np.float32), (Nn, Nn), interpolation=cv2.INTER_AREA) >= 0.5
+        wn = (rrn <= ra) & (rrn >= ra - d_min); wn |= (np.abs(rrn - ri) <= 0.5 * d_min) if U.get("d_innen") else False
+        # Kein druckbar im groben Raster: es wirkt in ungeraden Zellenzahlen um die Mittellinie - ein 2-Zellen-Lauf eines 7-cm-Strichs wurde auf 3 Zellen neben der Mitte
+        # verbreitert und schloss die 4-cm-Luecke (Test Teil 1: 57 % offen). Ein Strich >= d_min (fein) bedeckt im Raster d_min/3 stets >= 3 Zellenmitten (Teil 2 prueft).
+        gold = (grob | wn) & innn; px_r, rr_r, inn_r = px_aus, rrn, innn
+    else: gold, px_r, rr_r, inn_r = gold_f, px, rr, inn
+    rel = np.where(rr_r > ri, w_ring, w_feld) + hoch * gold; rel[~inn_r] = 0.0
+    erg = dict(rel=rel.astype(np.float32), px=px_r, d_aussen=2 * ra, d_innen=2 * ri, gold_anteil=float(gold[inn_r].mean()), fotos=[k["foto"] for k in K], zeiger_foto=K[0]["foto"] if zeiger else "")
+    vis = K[0]["bild"].copy(); vis[gold_f] = (0, 215, 255); vis[~inn] = (60, 60, 60)
     cv2.imwrite(aus[:-4] + ".jpg", np.hstack([K[0]["bild"], vis, cv2.cvtColor((np.clip(stimme, 0, 1) * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)]))
     return erg
 
 
-def zifferblaetter(od, fein, uhren, px=0.02):
-    """Fuer jede Uhr in uhren (dict wie audit/uhren_auto.json) das Zifferblatt-Relief rechnen -> audit/uhr_<fid>_<k>.npz, Eintrag U['zifferblatt'] (relativ zu audit/)."""
+def zifferblaetter(od, fein, uhren, px=0.8 * 87 / 1000.0 / 3):
+    """Fuer jede Uhr in uhren (dict wie audit/uhren_auto.json) das Zifferblatt-Relief rechnen -> audit/uhr_<fid>_<k>.npz, Eintrag U['zifferblatt'] (relativ zu audit/).
+    px (24.11.2026) = Mindestmass / 3 (2,32 cm = 0,27 mm H0): ein Strich mit genau Mindestbreite sind 3 Zellen. Bei 2 cm wurde ein 7-cm-Strich auf 5 Zellen = 10 cm
+    gerundet (druckbar wirkt in ungeraden Zellenzahlen um die Mittellinie) und schloss die Luecken zwischen den Ziffernstrichen."""
     FF = {f["id"]: f for f in json.load(open(os.path.join(fein, "fassaden.json")))["fassaden"]}; n = 0
     for fid, F in uhren.items():
         R_ = (FF.get(fid) or {}).get("raster")
@@ -167,8 +233,8 @@ def zifferblaetter(od, fein, uhren, px=0.02):
             if not R_: continue
             aus = os.path.join(od, "audit", f"uhr_{fid}_{k}.npz"); E = zifferblatt_aus_fotos(fein, fid, R_, U, aus, px=px)
             if E is None: U["zifferblatt_fehlt"] = "weniger als 3 Einzelfotos zeigen die ganze Scheibe"; print(f"{fid}: Uhr {k}: kein Zifferblatt ({U['zifferblatt_fehlt']})"); continue
-            S = 0.5 * E["rel"].shape[0] * px
-            np.savez_compressed(aus, rel=E["rel"], a=np.asarray(F["o"], float), t=np.asarray(F["d"], float), n=np.asarray(F["n"], float), u0=float(U["u"]) - S, z0=float(U["z"]) - S, px=px,
+            pe = float(E["px"]); S = 0.5 * E["rel"].shape[0] * pe
+            np.savez_compressed(aus, rel=E["rel"], a=np.asarray(F["o"], float), t=np.asarray(F["d"], float), n=np.asarray(F["n"], float), u0=float(U["u"]) - S, z0=float(U["z"]) - S, px=pe,
                                 d_aussen=E["d_aussen"], d_innen=E["d_innen"], gold_anteil=E["gold_anteil"])
             U["zifferblatt"] = os.path.basename(aus); U["zifferblatt_fotos"] = E["fotos"]; U["zeiger_foto"] = E["zeiger_foto"]; U["gold_anteil"] = round(E["gold_anteil"], 3); n += 1
             print(f"{fid}: Uhr {k}: Zifferblatt aus {len(E['fotos'])} Einzelfotos (Gold {E['gold_anteil'] * 100:.0f} % der Scheibe, Zeiger aus {E['zeiger_foto']}) -> {aus}")

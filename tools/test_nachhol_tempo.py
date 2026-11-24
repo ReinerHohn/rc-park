@@ -91,7 +91,7 @@ n_ = ZL.sift_nachholen(Zd, matchen); M = json.load(open(os.path.join(Zd, "merkma
 pruef(n_ == 2 and gerufen and gerufen[0][0] == os.path.join(Zd, "db.db") and gerufen[0][2] and M["sift_matching"] == "nur_gewaehlt" and M["verifizierte_paare_gesamt"] == 17,
       f"aufgeschoben -> nur die 2 Paare der Liste in Z/db.db gematcht (Saat gesetzt), merkmale.json nachgetragen ({M})")
 rs = open(os.path.join(TD, "zusatzfotos_registrieren.py")).read()
-pruef("aufgeschoben = sift_nur_gewaehlt()" in rs and "else: ver = sift_paare_matchen(db, pf, pycolmap)" in rs, "merkmale: Standardweg matcht weiter alle Kandidatenpaare (Quelltext)")
+pruef("aufgeschoben = sift_nur_gewaehlt()" in rs and "else: ver = sift_paare_matchen_gespeichert(db, pf, pycolmap)" in rs, "merkmale: Standardweg matcht weiter alle Kandidatenpaare (Quelltext)")
 
 # ---------- (3) Messskript ----------
 import nachhol_sift_gewaehlt_messen as MS

@@ -31,8 +31,9 @@ def exportieren(vj, td, skala=87.0):
             tj = os.path.join(td, f"_vb_{F['id']}_{k}.json")
             json.dump(dict(J, fassaden=[dict(F, gruppen=[g])]), open(tj, "w"))
             # vordach_profil.json liegt neben vorbauten_auto.json und wird ueber (id, gruppe) zugeordnet -> Gruppe k muss Gruppe k bleiben
+            # 24.11.2026: Platzhalter davor als 'verworfen' (sonst baut der Ersatz-Kasten aus ihrem Grobkoerper mit - Hoehenfeld gibt es nicht mehr)
             if k:
-                json.dump(dict(J, fassaden=[dict(F, gruppen=[dict(g0, kanten_mass=None, galerie=None, w=[[0.0]]) for g0 in F["gruppen"][:k]] + [g])]), open(tj, "w"))
+                json.dump(dict(J, fassaden=[dict(F, gruppen=[dict(g0, kanten_mass=None, galerie=None, w=[[0.0]], verworfen="Export-Platzhalter") for g0 in F["gruppen"][:k]] + [g])]), open(tj, "w"))
             vp = os.path.join(os.path.dirname(os.path.abspath(vj)), "vordach_profil.json")
             if os.path.exists(vp): __import__("shutil").copy(vp, os.path.join(td, "vordach_profil.json"))
             kp, _ = vorbauten_aus_json(M(), tj)

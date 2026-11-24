@@ -198,6 +198,67 @@ def abnahme_nachholen(B, ziel, log):
     return lauf(B, "abnahme_nach_" + n, ["bash", "tools/bauen_abnehmen.sh", ziel, "--nur-pruefen"], log, ok=(0, 1))
 
 
+RC_BESTAND_RUECKSCHRITT = 6
+
+
+def bestand_rueckschritt(B, rc, pfad, t0, liste):
+    """BESTAND-TOR auswerten (24.11.2026): rc 5 von tools/bestand_tor.py = Rueckschritt -> je Zone Zeile 'BESTAND RUECKSCHRITT: <zone> F1 alt->neu' ins Log (stdout),
+    Notiz rot mit den Zonen, Zonen in 'liste' (Ergebniszeile + rc 6 am Laufende). rc 0/2 = Notiz gruen/Hinweis. Bericht muss in diesem Lauf geschrieben sein."""
+    try:
+        if not (os.path.exists(pfad) and os.path.getmtime(pfad) >= t0 - 1): raise FileNotFoundError("audit/bestand_tor.json nicht in diesem Lauf geschrieben")
+        J = json.load(open(pfad))
+    except Exception as e:
+        notiz(B, "bestand_tor_urteil", rc != 1, hinweis=f"kein Bericht ({type(e).__name__} {e})"[:240], **({"fehler": f"Bestand-Tor abgestuerzt (rc {rc})"} if rc == 1 else {})); return []
+    rs = list(J.get("rueckschritt") or [])
+    if rc == 5 and not rs: rs = ["(Zone unbekannt - Bericht ohne Liste)"]
+    for r_ in rs: print("BESTAND RUECKSCHRITT: " + r_, flush=True)
+    if rs:
+        liste.extend(rs); notiz(B, "bestand_rueckschritt", False, zonen=rs, fehler="BESTAND RUECKSCHRITT: " + "; ".join(rs)[:400] + " - Bilder modelle/<objekt>/bestand/ gegen audit/neben_*.jpg ansehen; Merge gesperrt (tools/merge_sperre.sh)")
+    else:
+        notiz(B, "bestand_tor_urteil", True, urteil=J.get("urteil") or ("fortgeschrieben" if J.get("fortgeschrieben") else "kein Rueckschritt"),
+              zonen={z: e.get("urteil") for z, e in (J.get("zonen") or {}).items()}, hinweis="rc 2 = kein Urteil (Bestand angelegt oder zu wenig Fotos)" if rc == 2 else "")
+    return rs
+
+
+def handstand_referenz(root, ziel, zj):
+    """24.11.2026 (P1, PLAN_HANDMODELL_IN_KETTE: in 21 Laeufen 1122 lief der Handvergleich NIE - referenz_hand.json fehlte, Stufe still uebersprungen).
+    -> (pfad | None, fehlt-Grund | None). Fehlt die Referenz, obwohl objekt.json eine nennt ('referenz_hand') oder ein Geschwister-Objekt (gleicher Name bis zum
+    letzten '-', z. B. schwabentor-1120 fuer schwabentor-1122) eine hat, ist das ein Fehler ('HANDSTAND NICHT GEMESSEN'), kein stilles Ueberspringen."""
+    z_ = os.path.join(root, "modelle", ziel); p = os.path.join(z_, "referenz_hand.json")
+    if os.path.exists(p): return p, None
+    try: kfg = (json.load(open(zj)) or {}).get("referenz_hand")
+    except Exception: kfg = None
+    if kfg: return None, f"objekt.json nennt referenz_hand '{kfg}', {p} fehlt"
+    stamm = ziel.rsplit("-", 1)[0] if "-" in ziel else None
+    gesch = sorted(q for q in glob.glob(os.path.join(root, "modelle", stamm + "-*", "referenz_hand.json")) if os.path.dirname(q) != z_) if stamm else []
+    if gesch: return None, f"{p} fehlt, Geschwister-Objekt hat eine ({os.path.relpath(gesch[0], root)}) - kopieren/anpassen, sonst misst die Kette ihren Handstand nie"
+    return None, None
+
+
+def bauteile_zeile(hand, bestand_rs, B, n_start):
+    """Zusatz zur Zeile ERGEBNIS DES LAUFS: 'x von N Bauteile PASST' (hand_vergleich) + Bestand-Urteil (bestand_tor)."""
+    t = ""
+    if hand: t += f" - BAUTEILE {hand[0].get('passt')} von {hand[0].get('gesamt')} PASST (Handstand)"
+    elif any(e.get("stufe") == "handstand" and e.get("ok") is False for e in B.get("schritte", [])[n_start:]): t += " - HANDSTAND NICHT GEMESSEN"
+    bt = [e for e in B.get("schritte", [])[n_start:] if e.get("stufe") in ("bestand_tor_urteil", "bestand_rueckschritt")]
+    if bestand_rs: t += " - BESTAND: RUECKSCHRITT"
+    elif bt: t += f" - BESTAND: {bt[-1].get('urteil') or 'ok'}"
+    else: t += " - BESTAND: nicht gemessen"
+    return t
+
+
+def verlauf_bauteile(z, hand, bestand_rs, B, n_start, rc):
+    """Je Lauf eine Zeile audit/verlauf_bauteile.jsonl (lauf, zeit, x, N, je Bauteil Status, Bestand) - der Verlauf zeigt Rueckfaelle (1120 11/11 -> 1122 4/11)."""
+    try:
+        if not os.path.isdir(os.path.join(z, "audit")): return
+        h = hand[0] if hand else {}
+        bt = [e for e in B.get("schritte", [])[n_start:] if e.get("stufe") in ("bestand_tor_urteil", "bestand_rueckschritt")]
+        zeile = dict(lauf=os.environ.get("RCPARK_JOB") or time.strftime("lauf_%Y%m%d_%H%M"), zeit=time.strftime("%Y-%m-%d %H:%M:%S"), x=h.get("passt"), N=h.get("gesamt"),
+                     bauteile=h.get("bauteile") or {}, bestand=("RUECKSCHRITT" if bestand_rs else (bt[-1].get("urteil") if bt else None)), rueckschritt=list(bestand_rs), rc=rc)
+        with open(os.path.join(z, "audit", "verlauf_bauteile.jsonl"), "a") as f_: f_.write(json.dumps(zeile, ensure_ascii=False) + "\n")
+    except Exception as e: print("verlauf_bauteile nicht geschrieben:", type(e).__name__, e, flush=True)
+
+
 def notiz(B, name, ok, **k):
     B["schritte"].append(dict(stufe=name, ok=ok, **k)); __import__("json_sicher").schreiben(B["_pfad"], B); print(f"    {name}: {k}", flush=True)
 
@@ -330,6 +391,9 @@ def main():
     B["_pfad"] = bp; i0, i1 = STUFEN.index(a.ab), STUFEN.index(a.bis); dran = lambda s: i0 <= STUFEN.index(s) <= i1
     QJ = os.path.join(ROOT, "modelle", a.quelle, "objekt.json"); P = os.path.join(D, "pipe")
 
+    _BESTAND_RS = []                                                          # 24.11.2026: Zonen mit BESTAND RUECKSCHRITT in DIESEM Lauf (tools/bestand_tor.py)
+    _HAND = []                                                                # 24.11.2026: Ergebnis hand_vergleich DIESES Laufs (x von N PASST)
+
     def abschluss(rc=0, abbruch=""):
         """Ende JEDES Laufs, auch der Abbrueche (17.11.2026: `return 3/4` mitten in der Kette liess 'lauf_ergebnis' und oft auch 'lage' des VORIGEN Laufs im Bericht stehen - der Bericht sah gut aus, der Lauf war abgebrochen)."""
         _ABSCHLUSS[0] = None
@@ -347,8 +411,11 @@ def main():
         except Exception as e: print("Verlustbilanz nicht erstellt:", type(e).__name__, e, flush=True)
         rot = [e for e in B["schritte"][n_start:] if e.get("ok") is False]      # 16.11.2026: die Kette endete IMMER mit rc 0 - auch mit abgestuerzten Stufen
         rc = rc or (4 if rot else 0)
+        if _BESTAND_RS and rc in (0, 4): rc = RC_BESTAND_RUECKSCHRITT         # 24.11.2026 BESTAND-TOR: eigener rc, die Ergebniszeile nennt die Zonen
         B["teillauf_ergebnis" if TEILLAUF else "lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot], rc=rc, abbruch=abbruch, verlust_warnungen=len((B.get("verlustbilanz") or {}).get("warnungen") or [])); __import__("json_sicher").schreiben(bp, B)
-        print(f"ERGEBNIS DES {'TEILLAUFS (seiten_wiederholung)' if TEILLAUF else 'LAUFS'}: {len(B['schritte']) - n_start} Stufen, " + (f"{len(rot)} NICHT in Ordnung: " + ", ".join(e["stufe"] for e in rot) if rot else "alle in Ordnung") + (" - ABGEBROCHEN" if abbruch else ""), flush=True)
+        print(f"ERGEBNIS DES {'TEILLAUFS (seiten_wiederholung)' if TEILLAUF else 'LAUFS'}: {len(B['schritte']) - n_start} Stufen, " + (f"{len(rot)} NICHT in Ordnung: " + ", ".join(e["stufe"] for e in rot) if rot else "alle in Ordnung") + (" - ABGEBROCHEN" if abbruch else "")
+              + ("".join(" - BESTAND RUECKSCHRITT: " + r_ for r_ in _BESTAND_RS)) + bauteile_zeile(_HAND, _BESTAND_RS, B, n_start), flush=True)
+        if not TEILLAUF and not abbruch and os.path.isdir(os.path.join(Z, "audit")): verlauf_bauteile(Z, _HAND, _BESTAND_RS, B, n_start, rc)      # nie einen Objektordner anlegen
         for e in rot: print(f"    {e['stufe']}: {str(e.get('fehler') or ' | '.join(e.get('ende', [])) or e.get('hinweis', ''))[:200]}", flush=True)
         print("GESAMTKETTE_TEILLAUF_ENDE" if TEILLAUF else "GESAMTKETTE_ENDE", bp, flush=True); return rc      # Teillauf: eigene Marke (Waechter/Skills suchen GESAMTKETTE_ENDE)
     _ABSCHLUSS[0] = abschluss
@@ -710,7 +777,7 @@ def main():
     # Von Hand eingetragene Werte (ohne "auto") bleiben unberuehrt (die Werkzeuge melden rc 3).
     if dran("bauplan") and os.path.exists(AU):
         fo = os.path.join(D, "fassade"); ffn = fo + "_fein"; bp_ = os.path.join(D, "bauplan"); os.makedirs(bp_, exist_ok=True); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); erg_ = {}
-        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "wolkenrest_koerper", "dach_aus_profil", "umgang_aus_json", "loch_gewaende_spaet", "bogen_gewaende_spaet")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
+        if os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("rueckwaende", "laube_aus_wandbild", "vorbauten_aus_json", "uhren_aus_json", "korrekturen_aus_json", "wolkenrest_koerper", "dach_aus_profil", "umgang_aus_json", "loch_gewaende_spaet", "bogen_gewaende_spaet", "hoehen_aus_json", "linien_aus_json")): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
         if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
         else:
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
@@ -802,6 +869,16 @@ def main():
             # 24.11.2026 (1122w: Torboegen f00/f01 nur glattes Loch, Foto zeigt Sandstein-Gewaende aus Bogensteinen): Gewaende-Band je gebauter Oeffnung aus dem feinen
             # Wandbild (radiale Fugen-Kohaerenz, tools/bogen_gewaende.py) -> 'gewaende_band' in oeffnungen_auto.json -> bauteile.bogen_gewaende_spaet (echte Oberflaeche)
             if os.path.exists(oa_) and os.path.isdir(ffn): erg_["bogen_gewaende_rc"] = lauf(B, "bauplan_bogen_gewaende", [PY, "-W", "ignore", "-I", "tools/bogen_gewaende.py", oa_, ffn, "--fassade", fo, "--aus", os.path.join(Z, "audit")], log, ok=(0, 3))[0]
+            # 24.11.2026 (WEG_HAND_ZU_KETTE Punkt 5: Gesims Sued/West, Verdachung, Balkenkoepfe fehlten; kantenstufe 'fehlende_kanten_haufen' ohne Leser): LINIEN-BAUTEILE -
+            # waagerechte Fotokanten je Wandebene (ebenen/<wand>/sweep.npz), Ausladung aus Sweep-Tiefe bzw. Blickschraege der Einzelorthos, Profil aus den Kanten,
+            # Balkenkopf-Reihen aus kompakten vorstehenden Haufen (tools/linien_bauteile.py -> audit/linien_auto.json + linien_auto.jpg ANSEHEN; bauteile.linien_aus_json).
+            # Guard: rc 0 = gebaut, 3 = nichts belegt (nur Bericht); Absturz/Altstand -> beiseite, der Generator baut dann keine Linien-Bauteile (Fallback = Stand ohne Gesims).
+            if os.path.exists(os.path.join(eb_, "ebenen.json")) and os.environ.get("OHNE_LINIEN") != "1":
+                t_li = time.time(); li_j = os.path.join(Z, "audit", "linien_auto.json")
+                erg_["linien_rc"] = lauf(B, "bauplan_linien", [PY, "-W", "ignore", "-I", "tools/linien_bauteile.py", ZR, eb_, fo] + (["--fein", ffn] if os.path.isdir(ffn) else [])
+                                         + (["--kanten", os.path.join(KD, "kanten_bericht.json")] if os.path.exists(os.path.join(KD, "kanten_bericht.json")) else [])
+                                         + ["--bild", os.path.join(Z, "audit", "linien_auto.jpg")], log, ok=(0, 3))[0]
+                beleg(B, "bauplan_linien", [li_j], t_li, altstand_beiseite=True, folge="Altstand beiseite - Generator baut KEINE Gesimse/Baender/Balkenkoepfe eines frueheren Laufs")
             if os.path.exists(gp_): bauen(B, "bauen_mit_bauplan", a.ziel, log)
             # 22.11.2026 (1122n: Bilderker fehlte ohne Meldung): Foto-F1 je gebautem Vorbau (teil_fotoform) - rc 2 = NICHT BELEGT (Praezision < 0,5), rc 3 = nichts zu pruefen
             vba_ = os.path.join(Z, "audit", "vorbauten_auto.json")
@@ -837,7 +914,9 @@ def main():
                 erg_.update({n_: k_.get(n_) for n_ in ("wolke_am_modell_vorher", "wolke_am_modell_nachher")}, wolkenkoerper=dict(angenommen=[x_["id"] for x_ in k_.get("angenommen", [])], verworfen=[x_["id"] for x_ in k_.get("verworfen", [])], gemeldet=[f"{x_['id']} {x_['form']}" for x_ in k_.get("gemeldet", [])]))
                 # 21.11.2026 (KERNMETHODE, Nutzer: "Form aus Fotos, Wolke nur Lage"): runde Koerper aus den FOTO-UMRISSEN nachmessen (tools/rund_aus_umriss.py, Bildpyramide,
                 # Beruehrlinien je Blickrichtung gewichtet) - ersetzt Wolkenradius/-profil (Schwabentor Treppenturm: Wolke r 1,73, Foto 1,585, Handstand 1,555; Traufe 11,25 / 11,57).
-                rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"], log, ok=(0, 3, 4))[0]
+                # 24.11.2026: Kranz-/Traufhoehe aus den triangulierten Fotokanten (KD/sweep.npz) bzw. der Wolken-Flaechenmitte statt Silhouette (Auskragungs-Falle L31, 1122 Rundturm)
+                rr_ = lauf(B, "bauplan_rund_umriss", [PY, "-u", "-W", "ignore", "-I", "tools/rund_aus_umriss.py", ZR, "--uebernehmen"] + (["--kanten", os.path.join(KD, "sweep.npz")] if os.path.exists(os.path.join(KD, "sweep.npz")) else [])
+                           + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 3, 4))[0]
                 erg_["rund_umriss_rc"] = rr_
                 # 23.11.2026 (Kette 1122s: Treppentuermchen hoher Zylinder ohne Dach - Umriss-Stuetze lief bis zum Suchende 13,75, Traufe/Dach nie gefunden): Schaft und DACH
                 # als Drehkoerper aus EINSEITIGEN Silhouetten gegen Himmel (tools/rund_aus_huelle.py, Bausteine tools/drehkoerper_aus_fotos.py wie die Laternenhaube)
@@ -847,6 +926,13 @@ def main():
                 if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
                     notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
+            # 24.11.2026 (Hoehensitz-Befund 1122): HOEHEN-ANGLEICH waagerechter Bauteile - jede waagerechte Strukturlinie des GEBAUTEN Modells gegen Wolken-Linien UND
+            # triangulierte Fotokanten (Kantenstufe sweep.npz); angeglichen nur, wenn beide Quellen einig sind (tools/hoehen_angleich.py -> audit/hoehen_angleich.json,
+            # Generator bauteile.hoehen_aus_json als letzter Bauschritt). rc 0 = Korrektur angenommen -> Neubau; 2 = keine; 3 = keine Kantenpunkte (nur Bericht).
+            if os.path.exists(os.path.join(KD, "sweep.npz")):
+                rc_ha = lauf(B, "bauplan_hoehen", [PY, "-W", "ignore", "-I", "tools/hoehen_angleich.py", ZR, "--kanten", os.path.join(KD, "sweep.npz"), "--bild", os.path.join(Z, "audit", "hoehen_angleich.jpg")], log, ok=(0, 2, 3))[0]
+                erg_["hoehen_angleich_rc"] = rc_ha
+                if rc_ha == 0: bauen(B, "bauen_mit_hoehen", a.ziel, log)
             notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
     # --- Ende Stufe 'bauplan' ---
     abnahme_nachholen(B, a.ziel, log)                                    # 21.11.2026: volle Abnahme auf dem Endstand der Zwischenbauten (bauen)
@@ -893,11 +979,19 @@ def main():
         if hat(os.path.join(Z, "audit", "oeffnungen_auto.json")) and "oeffnungen_aus_json" not in gtxt: sg_.append("audit/oeffnungen_auto.json (Boegen/Durchfahrten) - Generator ruft oeffnungen_aus_json nicht")
         if hat(os.path.join(Z, "audit", "uhren_auto.json")) and any(v.get("uhren") for v in json.load(open(os.path.join(Z, "audit", "uhren_auto.json"))).values()) and "uhren_aus_json" not in gtxt: sg_.append("audit/uhren_auto.json (Uhren) - Generator ruft bauteile.uhren_aus_json nicht")
         if hat(os.path.join(Z, "audit", "umgang_auto.json")) and json.load(open(os.path.join(Z, "audit", "umgang_auto.json"))).get("gefunden") and "umgang_aus_json" not in gtxt: sg_.append("audit/umgang_auto.json (Umgang) - Generator ruft bauteile.umgang_aus_json nicht")
+        if hat(os.path.join(Z, "audit", "linien_auto.json"), "n_bauteile") and "linien_aus_json" not in gtxt: sg_.append("audit/linien_auto.json (Gesimse/Baender/Balkenkoepfe) - Generator ruft bauteile.linien_aus_json nicht")
         if hat(os.path.join(Z, "audit", "fenster_auto.json")) and "fenster_aus_json" not in gtxt: sg_.append("audit/fenster_auto.json (Fenster) - Generator ruft fenster_aus_json nicht")
         fv_ = glob.glob(os.path.join(D, "fassade", "vorbauten_f*.json"))
         if any(json.load(open(f_)).get("kandidaten") for f_ in fv_) and not os.path.exists(os.path.join(Z, "audit", "vorbauten_auto.json")): sg_.append("fassade/vorbauten_fNN.json mit Kandidaten, aber keine Bauliste (tools/vorbauten_bauplan.py lief nicht)")
-        if os.path.exists(os.path.join(Z, "referenz_hand.json")):
+        ref_hv, fehlt_hv = handstand_referenz(ROOT, a.ziel, ZJ)
+        if fehlt_hv: notiz(B, "handstand", False, fehler="HANDSTAND NICHT GEMESSEN: " + fehlt_hv)      # 24.11.2026: 21 Laeufe 1122 ohne Handvergleich, still uebersprungen
+        if ref_hv:
             t_hv = time.time(); lauf(B, "hand_vergleich", ["python3", "tools/hand_vergleich.py", ZR], log)
+            try:
+                hv_ = json.load(open(os.path.join(Z, "audit", "hand_vergleich.json")))
+                if os.path.getmtime(os.path.join(Z, "audit", "hand_vergleich.json")) >= t_hv - 1:
+                    _HAND[:] = [dict(passt=hv_.get("passt"), gesamt=hv_.get("gesamt"), bauteile={e_["bauteil"]: e_["urteil"] for e_ in hv_.get("bauteile") or []})]
+            except Exception: pass
             beleg(B, "hand_vergleich", [os.path.join(Z, "audit", "hand_vergleich.json")], t_hv, altstand_beiseite=True, folge="Altstand beiseite - befundliste/Agenten-Schleife vergleichen NICHT mit dem Handstand-Vergleich eines frueheren Laufs")   # 24.11.2026 AUDIT      # 21.11.2026: Kettenergebnis gegen den frueheren Handstand (audit/hand_vergleich.json)
         notiz(B, "sackgassen", not sg_, offen=sg_, hinweis="Kettenergebnisse ohne Verbraucher im Generator; bekannte, noch nicht verbaute Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md")
     W_ANZ = os.path.join(D, "wolke_anzeige", os.path.basename(W))                         # 24.11.2026: Anzeige-Kopie ohne Draehte/Fahnen (tools/wolke_draehte.py)
@@ -954,6 +1048,13 @@ def main():
             notiz(B, "malplan_ergebnis", rc_mp == 0, waende=len(mp_.get("waende") or []), zonen={w_["wand"]: [f"{z_['material']} {z_['hex']} {round(100 * z_['anteil'])}%" for z_ in w_["zonen"]] for w_ in mp_.get("waende") or []},
                   gebaeude={m_: f"{g_['hex']} -> {g_['mischung']['text']}" for m_, g_ in (mp_.get("gebaeude") or {}).items()}, hinweis="ANSEHEN: audit/malplan_<wand>.jpg; Anleitung audit/malplan.md (Material = Farbregel-ANNAHME)")
         except Exception as e: notiz(B, "malplan_ergebnis", False, fehler=f"audit/malplan.json nicht lesbar (rc {rc_mp}): {type(e).__name__} {e}"[:240])
+    # 24.11.2026 BESTAND-TOR (HART, Nutzer: "wir hatten mal so einen geilen Stand und du machst KI-Muell" / "sichere das hart ab!"; Rueckfall 1122z-zc Galerie als
+    # Treppenkloetze lief an allen Toren vorbei): Foto-F1 je erkannter Bauteilzone des End-STL gegen den BESTEN bisherigen Stand (modelle/<objekt>/bestand/bestand.json,
+    # tools/bestand_tor.py; Schwelle = Rauschen der gepaarten Fotodifferenz). Rueckschritt: Zeile "BESTAND RUECKSCHRITT: <zone> F1 alt->neu" im Log und in der
+    # Ergebniszeile, die Kette laeuft weiter und endet mit rc 6; tools/merge_sperre.sh (ketten_probelauf, Skill kette-schleife Schritt 5) sperrt dann den Merge.
+    if os.path.isdir(os.path.join(Z, "audit")) and not TEILLAUF and os.path.exists(gp_) and os.environ.get("OHNE_BESTAND_TOR") != "1":
+        t_bt = time.time(); rc_bt, _ = lauf(B, "bestand_tor", [PY, "-W", "ignore", "-I", "tools/bestand_tor.py", ZR, "--daten", D], log, ok=(0, 2, 5), timeout=3600)
+        bestand_rueckschritt(B, rc_bt, os.path.join(Z, "audit", "bestand_tor.json"), t_bt, _BESTAND_RS)
     # 24.11.2026 KONVERGENZ (Nutzer: "Augenmass ist doof"): FESTER Fotosatz je Seite (audit/konvergenz_fotosatz.json, einmal gewaehlt) + feste Bauteil-Kameras
     # aus neben_details -> grobes F1 (foto_diff_batch auf das End-STL, Ausgabe <daten>/konvergenz/<lauf>) und feines F1 je Bauteil (teil_fotoform f1_fein) ->
     # Zeile audit/konvergenz.jsonl + audit/konvergenz.png; Status je Seite steigt / PLATEAU (Methode erschoepft, mit Restfehler-Ort) / kein Beleg. Bericht, kein Tor.

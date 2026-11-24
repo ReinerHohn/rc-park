@@ -38,7 +38,7 @@ from code_stand import code_stand, dateien as code_dateien
 from speicher_muster import speicher_fehler
 # Werkzeuge des Nachhol-Skripts (Unterprozesse - die Importsuche von code_stand sieht sie nicht, darum hier genannt): CODE-STAND der Fehlschlag-Marke
 NACHHOL_WERKZEUGE = ("seiten_luecken.py", "colmap_rig_abgleich.py", "zusatzfotos_registrieren.py", "zusatzfotos_lightglue.py", "kameras_nachtragen.py", "kamera_verfeinern.py",
-                     "kameras_nachtragen_tor.py", "commons_harvest.py", "online_ansichten_holen.py", "openverse_holen.py")
+                     "kameras_nachtragen_tor.py", "commons_harvest.py", "online_ansichten_holen.py", "openverse_holen.py", "sift_paar_speicher.py")
 
 
 def sperrt(F, cs):

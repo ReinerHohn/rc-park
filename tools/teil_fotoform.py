@@ -142,6 +142,17 @@ def flecken(maske, pos, n=3, min_px=40):
     return out
 
 
+def objekt_name(o):
+    """Objekt-NAME (Ordner unter modelle/). 24.11.2026 (Kette 1122zb, Stufe konvergenz): konvergenz.py gab den Pfad 'modelle/<obj>/objekt.json' (wie alle
+    anderen Werkzeuge dort) -> 'modelle/modelle/<obj>/objekt.json/objekt.json' FileNotFoundError, feines F1 aller Seiten 'kein Beleg (Datendecke)'.
+    Pfad auf eine objekt.json -> Name ihres Ordners; sonst unveraendert."""
+    if o.endswith(".json"):
+        d = os.path.dirname(os.path.abspath(o)); n = os.path.basename(d)
+        if os.path.abspath(os.path.join(R0, "modelle", n)) != d: print(f"WARNUNG: {o} liegt nicht unter {R0}/modelle - gelesen wird {R0}/modelle/{n}/objekt.json", file=sys.stderr)
+        return n
+    return o
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--teile_dir"); ap.add_argument("--fotos")
     ap.add_argument("--stl"); ap.add_argument("--schwelle", type=float, default=0.4, help="Anteil der Kappe (0,35 m): 0,4 = 0,14 m")
@@ -165,6 +176,7 @@ def main(argv=None):
     ap.add_argument("--bereich_von", help="Teile-Verzeichnis VORHER (STLs gleichen Namens): Teilbereich (ROI) = Vereinigung aus vorher- und nachher-Teil, Recall zaehlt Fotokanten in der Vereinigung "
                     "(Schrumpf-Falle: gekuerztes Teil -> weniger Fotokanten im Bereich -> F1 steigt trivial). Verdeckung des Vorher-Teils gegen das NACHHER-Modell (ANNAHME: Verdecker unveraendert)")
     a = ap.parse_args(argv)
+    a.objekt = objekt_name(a.objekt)
     objp = os.path.join(R0, "modelle", a.objekt, "objekt.json"); obj = json.load(open(objp))
     stl = a.stl or os.path.join(R0, obj["stl"])
     td = a.teile_dir
