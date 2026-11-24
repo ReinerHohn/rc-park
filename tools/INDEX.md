@@ -18,4 +18,4 @@ Suche: Thema waehlen und nur diese Datei lesen, oder `grep -ih <stichwort> tools
 - ansicht_html_render (23) -> `tools/index/ansicht_html_render.md`
 - bewertung_beweis (27) -> `tools/index/bewertung_beweis.md`
 - geometrie_flaechen (38) -> `tools/index/geometrie_flaechen.md`
-- sonstige (128) -> `tools/index/sonstige.md`
+- sonstige (130) -> `tools/index/sonstige.md`
