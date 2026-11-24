@@ -303,6 +303,29 @@ def bogen_gewaende_band(form, breite, kaempfer, scheitel, unten, aussen):
     return (huelle ^ ueber) - innen
 
 
+def bogen_fugen_rillen(fugen, innen, aussen, breite_min, steg_min=None):
+    """RILLEN fuer GEMESSENE Fugen im Gewaende-Band (24.11.2026; Fugen aus tools/bogen_gewaende.py, je Fuge Umrisspunkt q (quer, z) und Aussennormale n).
+    Je Fuge ein Streifen quer zum lichten Umriss von innen bis aussen (m vom Umriss), Breite max(gemessene Breite, breite_min = Druckmindestmass). Keine Teilung,
+    keine erfundene Fuge: nur die uebergebenen Stellen. DRUCKBAR: verbleibender Steg zwischen zwei Rillen (an der engsten Stelle, Innenkante) >= steg_min (Standard
+    breite_min); sonst entfaellt die schwaecher belegte Fuge (Vermerk). Liefert (CrossSection, gebaut [fuge], weg [text])."""
+    steg_min = breite_min if steg_min is None else steg_min
+    gebaut, weg = [], []
+    for f in sorted(fugen, key=lambda f: -int(f.get("fotos", 0))):
+        b = max(float(f.get("breite_foto") or 0.0), float(breite_min)); q = np.array(f["q"], float); n = np.array(f["n"], float); n = n / (np.linalg.norm(n) + 1e-12)
+        p_in = q + innen * n; zu_nah = None
+        for g in gebaut:
+            d = float(np.linalg.norm(p_in - (np.array(g["q"], float) + innen * np.array(g["n"], float))))
+            if d - 0.5 * (b + g["_b"]) < steg_min: zu_nah = g; break
+        if zu_nah is not None:
+            weg.append(f"Fuge s {f.get('s', '?')} ({f.get('fotos')} Fotos): Steg zur Fuge s {zu_nah.get('s', '?')} < {steg_min:.3f} m - nicht druckbar, nicht gebaut"); continue
+        gebaut.append(dict(f, _b=b))
+    cs = CrossSection()
+    for g in gebaut:
+        q = np.array(g["q"], float); n = np.array(g["n"], float); n = n / (np.linalg.norm(n) + 1e-12); m = q + 0.5 * (innen + aussen) * n
+        cs = cs + CrossSection.square((aussen - innen, g["_b"]), center=True).rotate(float(np.degrees(np.arctan2(n[1], n[0])))).translate((float(m[0]), float(m[1])))
+    return cs, [{k: v for k, v in g.items() if k != "_b"} | {"breite_gebaut": round(g["_b"], 3)} for g in sorted(gebaut, key=lambda g: g.get("s", 0))], weg
+
+
 def bogen_gewaende_spaet(koerper, datei, einbinden=0.15, abtrag=0.3, ring=0.15):
     """24.11.2026 (1122w, Schwabentor Nord f00 / Sued f01: Torboegen nur glattes Loch, Foto zeigt Sandstein-Gewaende aus Bogensteinen): GEWAENDE-Band um gebaute
     Tor-/Bogenoeffnungen (audit/oeffnungen_auto.json, Eintrag 'gewaende_band' von tools/bogen_gewaende.py: Aussenkante 'aussen' m vom lichten Umriss, 'vorsprung')
@@ -332,8 +355,20 @@ def bogen_gewaende_spaet(koerper, datei, einbinden=0.15, abtrag=0.3, ring=0.15):
             ws = float(np.median(wr)); w_lo = max(ws - einbinden, -T_ + 0.02)
             koerper = koerper - W.prisma(band, u=float(x["u"]), w0=ws + h_, w1=ws + h_ + abtrag)
             koerper = koerper + W.prisma(band, u=float(x["u"]), w0=w_lo, w1=ws + h_)
-            neu.append(dict(fassade=fid, u=x["u"], form=x["form"], lichte_breite=x["breite"], band_aussen=round(b_, 3), vorsprung=round(h_, 3), oberflaeche_w=round(ws, 3),
-                            vorsprung_quelle=G.get("vorsprung_quelle", ""), pfosten_quelle=G.get("pfosten_quelle", "")))
+            e_ = dict(fassade=fid, u=x["u"], form=x["form"], lichte_breite=x["breite"], band_aussen=round(b_, 3), vorsprung=round(h_, 3), oberflaeche_w=round(ws, 3),
+                      vorsprung_quelle=G.get("vorsprung_quelle", ""), pfosten_quelle=G.get("pfosten_quelle", ""))
+            FG = (x.get("gewaende_fugen") or {}).get("fugen")
+            if FG:                                                            # 24.11.2026: nur GEMESSENE Fugen (Mehrfoto-Beleg), nie eine Teilung
+                tf = min(float(os.environ.get("FUGE_TIEFE_MM", "0.5")) * float(os.environ.get("SCALE", "87")) / 1000.0, h_ + einbinden - 0.01)
+                rl, geb, weg = bogen_fugen_rillen(FG, float(G.get("innen") or 0.0), b_, DRUCK_MIN)
+                rl = rl ^ band
+                if not rl.is_empty(): koerper = koerper - W.prisma(rl, u=float(x["u"]), w0=ws + h_ - tf, w1=ws + h_ + abtrag)
+                e_.update(fugen_gebaut=len(geb), fugen_gemessen=len(FG), fugen_winkel_grad=[g.get("winkel_grad") for g in geb],
+                          fugen_breite=round(DRUCK_MIN, 3), fugen_tiefe=round(tf, 3),
+                          fugen_quelle="tools/bogen_gewaende.py: radiale Fugenlinien je Einzelfoto, Mehrfoto-Beleg; Breite >= Druckmindestmass (MINMM x SCALE)",
+                          fugen_tiefe_quelle="ANNAHME: Rillentiefe FUGE_TIEFE_MM (0,5 mm H0) - Fugentiefe im Wandbild nicht messbar")
+                if weg: aus += [f"{fid} u {x['u']:.2f}: {t}" for t in weg]
+            neu.append(e_)
     if neu or aus:
         belege.append(dict(seite="wand", element=f"{len(neu)} Gewaende-Band um Tor-/Bogenoeffnungen (Werkstein-Rahmen)", quelle="bauteile.bogen_gewaende_spaet: Band aus tools/bogen_gewaende.py "
                            "(radiale Fugen-Kohaerenz im feinen Wandbild), auf der echten Oberflaeche nach allen Anbauten", masse=neu, **({"hinweis": "; ".join(aus)} if aus else {})))
