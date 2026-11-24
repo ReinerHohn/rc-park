@@ -463,6 +463,58 @@ def sohlbank(koerper, W, sb, druck_min=None, einbinden=0.10):
     return koerper + W.kasten(u0, u1, z0, z1, wf - einbinden, wf + d), ann
 
 
+def linien_profil(W, u0, u1, profil, wf, einbinden=0.10, druck_min=None):
+    """WAAGERECHTES LINIEN-BAUTEIL (Gesims/Band/Verdachung, 24.11.2026) als Prisma ueber u0..u1: Querschnitt = konvexe Huelle der gemessenen Kantenpunkte
+    (z, Ausladung a ab der Koerperflaeche wf) + Rueckseite 'einbinden' m IN der Flaeche. Ausladung/Hoehe unter Druckmindestmass werden angehoben (Vermerk).
+    Liefert (koerper_teil, vermerke) oder (None, vermerke) bei unbrauchbarem Profil."""
+    if druck_min is None: druck_min = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
+    pr = sorted((float(z), float(a)) for z, a in profil); ann = []
+    if u1 - u0 < druck_min or not pr or max(a for _, a in pr) <= 0: return None, [f"Linienbauteil u {u0:.2f}..{u1:.2f}: unbrauchbar (Laenge {u1 - u0:.2f}, Profil {pr})"]
+    if max(a for _, a in pr) < druck_min: ann.append(f"Ausladung {max(a for _, a in pr):.3f} -> {druck_min:.3f} m (Druckmindestmass)"); pr = [(z, druck_min if a > 0 else a) for z, a in pr]
+    if pr[-1][0] - pr[0][0] < druck_min: ann.append(f"Hoehe {pr[-1][0] - pr[0][0]:.3f} -> {druck_min:.3f} m (Druckmindestmass, nach oben)"); pr.append((pr[0][0] + druck_min, pr[-1][1]))
+    pts = [(u, z, wf + a) for u in (u0, u1) for z, a in pr] + [(u, z, wf - einbinden) for u in (u0, u1) for z in (pr[0][0], pr[-1][0])]
+    return W.huelle(pts), ann
+
+
+def linien_aus_json(koerper, datei, einbinden=0.10):
+    """Gesimse, Baender, Verdachungen und Balkenkopf-Reihen aus tools/linien_bauteile.py (audit/linien_auto.json, Kettenstufe 'bauplan_linien', 24.11.2026).
+    Lage der Koerperflaeche je Bauteil per Stab-Sonde (flaeche_w, 3 Stellen 0,15 m unter dem Profil, sonst darueber) - das Bauteil haengt an der GEBAUTEN Wand
+    (Relief/Wandversatz), nicht an der Messebene. Masse (Hoehe je Kante, Ausladung, Stueckzahl, Teilung) aus den Fotos; ANNAHMEN stehen im JSON und im Beleg.
+    Ohne getroffene Flaeche wird nichts gebaut (nichts schwebend). Liefert (koerper, belege)."""
+    if not os.path.exists(datei): return koerper, []
+    try: J = json.load(open(datei))
+    except Exception as e: return koerper, [dict(seite="wand", element="Linien-Bauteile NICHT gebaut", quelle=datei, hinweis=f"JSON nicht lesbar: {e}")]
+    belege = []; teile = []
+    for fid, F in (J.get("fassaden") or {}).items():
+        o = np.array(F["o"], float); W_ = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
+        def wand_bei(us, z_unten, z_oben):
+            ws = [w for w in (flaeche_w(koerper, W_, u_, z_unten - 0.15) for u_ in us) if w is not None]
+            if not ws: ws = [w for w in (flaeche_w(koerper, W_, u_, z_oben + 0.15) for u_ in us) if w is not None]
+            return float(np.median(ws)) if ws else None
+        for B in F.get("bauteile", []):
+            u0, u1 = float(B["u0"]), float(B["u1"]); wf = wand_bei([u0 + f * (u1 - u0) for f in (0.2, 0.5, 0.8)], float(B["z0"]), float(B["z1"]))
+            if wf is None: belege.append(dict(seite="wand", element=f"{B['typ']} {fid} z {B['z0']:.2f}: NICHT gebaut", quelle="tools/linien_bauteile.py", hinweis="keine Koerperflaeche an der Stelle getroffen")); continue
+            t_, ann = linien_profil(W_, u0, u1, B["profil"], wf, einbinden)
+            if t_ is None: belege.append(dict(seite="wand", element=f"{B['typ']} {fid}: NICHT gebaut", quelle="tools/linien_bauteile.py", hinweis="; ".join(ann))); continue
+            teile.append(t_)
+            belege.append(dict(seite="wand", element=f"{B['typ'].capitalize()} {fid} z {B['z0']:.2f}-{B['z1']:.2f} m, u {u0:.2f}..{u1:.2f}, Ausladung {B['ausladung']:.2f} m",
+                               quelle="tools/linien_bauteile.py: waagerechte Fotokanten (Ebenen-Sweep, " + str(B.get("fotos")) + " Fotos)" + (f", Profil von Wand {B['uebertragen']}" if B.get("uebertragen") else ""),
+                               z0=B["z0"], z1=B["z1"], u0=u0, u1=u1, ausladung=B["ausladung"], profil=B["profil"], wand_w=round(wf, 3), fehlende_kanten_haufen=len(B.get("haufen") or []),
+                               hinweis="; ".join((B.get("annahmen") or []) + ann + [f"Ausladung aus {', '.join(sorted(set(k.get('aus', '?') for k in B.get('kanten', []))))}"])))
+        for R in F.get("balkenkoepfe", []):
+            b, a, z0, z1 = float(R["b"]), float(R["ausladung"]), float(R["z0"]), float(R["z1"]); n_ok = 0
+            for u_ in R["u"]:
+                wf = wand_bei([u_], z0, z1)
+                if wf is None: continue
+                t_, ann = linien_profil(W_, u_ - b / 2, u_ + b / 2, [(z0, a), (z1, a)], wf, einbinden)
+                if t_ is not None: teile.append(t_); n_ok += 1
+            belege.append(dict(seite="wand", element=f"Balkenkopf-Reihe {fid}: {n_ok} von {R['n']} gebaut, z {z0:.2f}-{z1:.2f}, Breite {b:.2f}, Ausladung {a:.2f} m",
+                               quelle="tools/linien_bauteile.py: kompakte vorstehende Kantenhaufen (Ebenen-Sweep, >= 3 Fotos je Kopf)", u=R["u"], teilung=R.get("teilung"),
+                               hinweis=R.get("ausladung_aus", "") + "; Groesse = Ausdehnung der Kantenhaufen"))
+    if teile: koerper = koerper + M.batch_boolean(teile, OpType.Add) if len(teile) > 1 else koerper + teile[0]
+    return koerper, belege
+
+
 def _umriss_prisma(W, o, unten, w0, w1):
     """Schnittkoerper eines Umrisses aus tools/nischen_fenster.py (u0, u1, z1, bogen{form, kaempfer, scheitel}) von Hoehe 'unten' an, Tiefe w0..w1."""
     b = o.get("bogen") or {}; br = o["u1"] - o["u0"]; m = (o["u0"] + o["u1"]) / 2

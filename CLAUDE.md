@@ -9,6 +9,10 @@ WISSENSBAEUME (nie ganze Ordner/grosse Dateien lesen):
 - HART (Nutzer 24.11.): vor JEDEM neuen Ansatz/Agentenauftrag `python3 -I tools/wissen_suchen.py "<begriff>"` (Baum+Register+Archiv+Logbuch+Memory+tools+git, Synonyme), Ergebnis in den Auftrag; Archiv nur mit Baumzeile; `tools/wissensbaum_luecken.py` = 0 (Schnelltest), Ast voll -> Unterast, nie kuerzen.
 Stand 3D zuerst: `modelle/ZIEL_PIPELINE_H0.md` (UEBERGABE/NACHTRAG am Ende) -> dort verlinktes Logbuch. Sitzungsbeginn: Skill `sitzungsbeginn`.
 
+## ⛔ HAUPTZIEL (Nutzer 24.11.: "davon haengt mein Projekt ab"): `modelle/PLAN_HANDMODELL_IN_KETTE.md`
+Kette baut automatisch mindestens so gut wie Handmodell schwab_v3: jeder Hand-Schritt (Punkte picken -> Mass -> Bauart) als Kettenstufe
+(Zone im Wandbild -> Kanten-Sweep -> Massliste -> generischer Baustein). Arbeit an der Kette richtet sich nach dessen Reihenfolge + Checkliste.
+
 ## KERNMETHODE (nie vergessen)
 - Form = Fotokanten + Triangulation (Kanten-Tiefen-Sweep mit SfM-Kameras). SfM liefert die KAMERAS. Dichte Wolke/LoD2/DOM1 nur Lage-Veto, Hoehe, Gegenprobe.
 - WANDBILD = BAUPLAN: Wand aus vielen Fotos entzerrt (`tools/fassade_fein.py`) + Tiefe je Zelle -> Gestalt nachbilden. Erkennen = nur Zone/Loch. Keine Musterteile; Katalog nur Freistehendes.
