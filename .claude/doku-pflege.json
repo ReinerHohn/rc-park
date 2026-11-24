@@ -27,5 +27,33 @@
     "Doku/modellbau/": "Scan/Druck/Modelle",
     "Doku/archiv/": "Bericht/Status"
   },
-  "main_branch": "kaufhaus-freiburg"
+  "main_branch": "kaufhaus-freiburg",
+  "wissen": {
+    "_hinweis": "Quellen fuer wissen_suchen.py / luecken.py / wiederfinden.py (Skill doku-pflege, Abschnitt Wissen finden; rc-park-Kopie tools/wissen_suchen.py)",
+    "baum": ["PROJEKT.md", "Doku/projekt/**/*.md"],
+    "register": ["modelle/*.md"],
+    "logbuch": ["modelle/LOGBUCH_*.md", "modelle/*/LOGBUCH*.md"],
+    "archiv": ["modelle/archiv/*.md", "Doku/archiv/**/*.md"],
+    "werkzeuge": ["tools/*.py"],
+    "meta_werkzeuge": ["wissen_suchen.py", "werkzeug_aehnlich.py", "wissensbaum_luecken.py", "wissen_ablage_pruefen.py",
+                       "wissen_wiederfinden.py", "test_wissensbaum_luecken.py", "test_wissen_ablage.py"],
+    "synonyme": "tools/wissen_synonyme.json",
+    "faelle": "tools/wissen_wiederfinden.json",
+    "luecken": [
+      {"name": "VERSUCHSREGISTER", "glob": "modelle/VERSUCHSREGISTER_*.md", "art": "abschnitt", "kopf": "^## (.*)",
+       "id": "^(?:Register\\s+)?([A-Z]{1,3}[0-9]{0,3}[a-z]?(?:-[A-Z][A-Za-z]+)?)(?=[\\s.:)(\\-,]|$)",
+       "aliase": ["VERSUCHSREGISTER_MARTINSTOR", "VERSUCHSREGISTER", "Versuchsregister", "Register"]},
+      {"name": "NICHTS_GEBRACHT", "glob": "modelle/NICHTS_GEBRACHT.md", "art": "zeile", "zeile": "^- (.*)",
+       "id": "^([A-Z]{1,3}[0-9]{1,3}[a-z]?(?:-[A-Za-z]+)?)(?=[\\s.:)(,]|$)", "aliase": ["NICHTS_GEBRACHT"]},
+      {"name": "NICHTS_GEBRACHT §", "glob": "modelle/NICHTS_GEBRACHT.md", "art": "abschnitt", "kopf": "^## (.*)", "aliase": ["NICHTS_GEBRACHT"]},
+      {"name": "REZEPT", "glob": "modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md", "art": "zeile", "zeile": "^\\s*[-|]\\s*\\**(L(?:-[A-Z]+)?[0-9]+[a-z]?\\b.*)",
+       "id": "^(L(?:-[A-Z]+)?[0-9]+[a-z]?)", "aliase": ["REZEPT_GEBAEUDE_AUS_FOTOS", "REZEPT", "Rezept"], "frei": true},
+      {"name": "LERNJOURNAL", "glob": "modelle/LERNJOURNAL_MARTINSTOR.md", "art": "abschnitt", "kopf": "^## (.*)",
+       "id": "^Eintrag (\\d+[a-z]?)", "aliase": ["LERNJOURNAL_MARTINSTOR", "LERNJOURNAL"]},
+      {"name": "ERKENNTNISSE", "glob": "modelle/ERKENNTNISSE.md", "art": "zeile",
+       "zeile": "^- \\d{1,2}\\.\\d{1,2}\\.(?:\\d{2,4})?\\s*·\\s*[^·]+?\\s*·\\s*(.*)", "aliase": ["ERKENNTNISSE"]},
+      {"name": "LOGBUCH", "glob": "modelle/LOGBUCH_*.md", "art": "abschnitt", "kopf": "^## (.*)", "aliase": [], "alias_datei": true},
+      {"name": "archiv", "glob": "modelle/archiv/*.md", "art": "datei"}
+    ]
+  }
 }
