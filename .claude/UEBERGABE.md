@@ -14,10 +14,11 @@ Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbegin
 - Merge-Probe 26 → main a9b1baefe (Schnelltest 0, 568 s), 10 Zweige: Südfenster-Gewände, Nachhol-Zwischenspeicher, West-Schlitze (schlitze_wandbild.py) + grobes Wandbild für Ortsteine, Malplan (tools/malplan.py, Weißabgleich), Vorbau Nord (3 Pfosten, offene Brüstung, 6 Konsolen), Ost-Teil (Teil 1, laut seiten_konvention Ostseite – vorher fälschlich „Süd-Teil“) über Wände gebunden (tools/seiten_waende_binden.py; war 10° gekippt), wolke_draehte.py (Anzeige, ~45 %), gemessene Bogenfugen, Uhr aus Einzelfotos, Bau parallel (421→274 s, STL bitgleich).
 - MachineFrameWork nach /media/oem/rcdaten/ausgelagert_root/git/MachineFrameWork (Prüfsumme gleich, Symlink). Rest mit Root-Rechten: ~/git/MachineFrameWork.rest_rootrechte (96 KB, Nutzer kann `sudo rm -rf`).
 
-## Läuft gerade
-- Kette 1122za seit 15:23 (Unit rcpark-kette-schwabentor-null-1122za, Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122za.log) - erste Kette mit allen 16 Fixes vom 24.11. (Merge-Probe 28, siehe Logbuch 15:23). Abnahme AM BILD: Geisterblatt weg? Ost-Teil auf Boden? Wand f00/f01 auf Fotokanten, Tor/Umgang mit? Relief ruhiger? Laufzeit (audit/laufzeit.json).
-- 1122z um 15:23 bei seiten_luecken gestoppt (Nutzerentscheid), STL 15:06 = 3D-HTML V8 (Vergleich vor Fixes).
-- Danach: kurze Modellierungsrunden nur ab bauplan (--ab ...), Zweig worktree-agent-a899cc833e1adbe96 (Ost/f02 Fernkameras) einspielen, trennscharfes Formmass mit Nullprobe bauen, Kippung Teil 1 (Hang-Kameras gestaucht 0,86).
+## Läuft gerade (Stand 24.11. 18:40)
+- 1122za brach 15:25 nach 2 min ab (dichte Wolke aelter als neu geschriebenes Netz) -> pipeline_objekt.dicht_alt_behandeln (automatisch beiseite). 1122zb 15:31-18:09 fertig (rc 4, 3 rot), 3D V9 https://claude.ai/artifact/ScV8KGvyjJrxxHCAzCM6pi, Fehlerliste im Logbuch 18:09.
+- Merge-Probe 29 in main (Lot-Tore Teil 1: 10 Grad Kippung richtig, Massstab-Luecke 12-14 % offen; f02-Fernkameras; tools/ketten_probelauf.sh; Formsitz modelle/FEATURE_FORMSITZ.md), Schnelltest 0 nach Temp-Fix.
+- Job ketten-probe-grund (Grundstand Probelauf kprobe_kaufhaus, Log job_logs/ketten-probe-grund.log). Danach vor jedem Merge `tools/ketten_probelauf.sh --rev <zweig>` als Job.
+- Agenten: Uhr f01 (Zackenrand, Uhr auf Wandgemaelde) und Fenster f03 (Schlitz statt Bogen) / f04 (Videounschaerfe). Danach Merge-Probe 30 -> Probelauf -> Kette ab bauplan.
 
 ## Nächste Schritte
 1. Nach 1122y-Ende: `audit/seiten.jpg`, neben_*.jpg, `tools/py tools/modell_neben_foto.py modelle/schwabentor-1122/objekt.json eigen__IMG_20261106_113830 <aus.jpg>` (Süd) und …113231 (Nord), malplan_*.jpg ansehen. Prüfen: Vorbau-Pfosten/Brüstung, Südfenster-Gewände, Bogenfugen, Süd-Uhr, West-Schlitz, Süd-Lage (seiten_modelle meldet waende_stufe?), Laufzeit je Stufe.
