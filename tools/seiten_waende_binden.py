@@ -18,12 +18,16 @@ VERFAHREN (nur CPU, Sekunden):
      B-Wandpunkte zu den A-Waenden (Abstandsfeld, Kreuzkorrelation per FFT). Dann Feinausgleich Punkt-zu-Linie (Drehung + Verschiebung, Massstab bleibt GPS).
   4. HOEHE: Hoehenprofil der gemeinsam belegten Wandstuecke (Fenster, Gesimse, Traufe) von A und B kreuzkorreliert -> Versatz in z; nur bei eindeutigem Gipfel, sonst bleibt
      die GPS-Hoehe (gemeldet).
+  5. MASSSTAB (24.11., 1122y): Aehnlichkeit Punkt-zu-Linie (Fangfenster DOPPEL_MAX_M) - uebernommen nur, wenn die Treffer-Wandzuege ihn belegen (nicht durch einen
+     gemeinsamen Punkt, Hebel >= HEBEL_MIN_M), er >= 3 Streuungen vom GPS abweicht, <= 25 % und mehr Treffer bringt; sonst GPS-Massstab.
 TOR (jede Probe einzeln, uebernommen nur wenn ALLE bestehen; sonst bleibt die GPS-Lage):
   - eindeutig: zweitbester Gipfel >= ABSTAND_ZWEIT_M entfernt hoechstens ZWEIT_ANTEIL des besten (eine Wand allein gleitet laengs -> mehrdeutig);
   - nicht am Kastenrand der Suche; Ergebnis im GPS-Korridor (Drehung, Massstab, Lage der B-Kameras; die KIPPUNG wird hier aus den Waenden gemessen, nicht vom GPS);
   - beide Wandrichtungen tragen (je >= MIN_RICHTUNG_ANTEIL der Treffer), Trefferanteil >= MIN_TREFFER;
   - ZWEI HOEHENBAENDER (unter/ueber dem Median der B-Wandpunkte) einzeln ausgeglichen stimmen ueberein (<= BAND_LAGE_M, <= BAND_DREH_GRAD) - zwei getrennte Bauteile;
   - Wandabstand B->A danach kleiner als in der GPS-Lage;
+  - DOPPELWAND: kein B-Wandblatt (>= max(40 Punkte, 3 %)) parallel 0,5-3 m neben einer A-Wand ohne selbst zu treffen (1122y starr: 200 Punkte 2,6 m neben der
+    Nachbarwand, 22 m vom Anker -> 9-m-Blatt im Grundriss-Tor, Kette abgebrochen; Massstab 0,881 x GPS (Hebel 9,4 m) deckte beide, Treffer 60 -> 74 %);
   - TURMSPITZE (in der Bindung nicht benutzt): sehen beide Wolken eine schlanke Spitze in gleicher Hoehe, liegt sie waagerecht uebereinander (sonst 'nicht messbar', Bericht);
   - GEOTAGS VON B (main, --bilder): B-Kameras nach der Bindung ueber den A-Rahmen in ENU - Median hoechstens GPS_MEHR_M schlechter als die GPS-Lage, >= 70 % unter 12 m.
   Der Korridor nutzt die EHRLICHE GPS-Unsicherheit (Bootstrap + Sitzungsfehler); die Lage der B-Kameras zaehlt nur waagerecht; die Kippung um die Mitte der B-Kameras
@@ -32,7 +36,8 @@ TOR (jede Probe einzeln, uebernommen nur wenn ALLE bestehen; sonst bleibt die GP
   Geotags von B 5,1 -> 7,8 m (79 % < 12 m), Turmspitze nicht messbar (A-Wolke oben duenn), Hoehe am Fusspunkt nach GPS (Profil nicht eindeutig, nur Bericht). Seitenansicht: Turm, Helm und Uhr
   von A und B decken sich (vorher Helm um Meter versetzt und geneigt).
 Ausgabe <aus>/waende.json (ok, urteil, B_nach_A nur bei ok, B_nach_A_gps, pruefung{...}, korridor), Kontrollbild <aus>/waende.jpg (Grundriss vorher/nachher + Hoehe).
-rc 0 = gebunden, 2 = zu wenig Eingabe/Wandpunkte (nichts getan), 3 = abgelehnt. GRENZEN: Massstab bleibt der des GPS (nur gemeldet: B-Turm gegen A); braucht einen Teil A,
+rc 0 = gebunden, 2 = zu wenig Eingabe/Wandpunkte (nichts getan), 3 = abgelehnt. GRENZEN: Massstab nur mit Wand-Beleg (sonst GPS; 1122y: Waende 0,881 belegt, dann
+lehnt die Geotag-Probe ab: Median 5,1 -> 8,4 m bei Grenze +3 m - der Massstab verschiebt die 24 m entfernten B-Kameras ~3 m); braucht einen Teil A,
 der die von B gesehenen Waende mitsieht (Drohne/Fernbild/Uebereck); bei einem Kastenturm mit vier gleichen Seiten verhindert der GPS-Korridor die 90-Grad-Verwechslung.
 Test: tests/test_seiten_waende_binden.py. Python: /media/oem/scan/venv-colmap/bin/python -I (pycolmap nur fuer die B-Kameras; ohne Modell: B-Wolke als Bezug)."""
 import os, sys, json, argparse
@@ -65,6 +70,18 @@ GPS_MEHR_M = 3.0          # ANNAHME: Geotags von B duerfen nach der Bindung im M
 GPS_ANTEIL_MIN = 0.70     # ANNAHME: und >= 70 % unter seiten_gps_vereinen.GRENZE_M (12 m)
 DREH_SUCHE_MAX = 20.0     # ANNAHME: Suche um das Lot hoechstens +-20 Grad (weit weg von 45/90 Grad - Kastenturm-Verwechslung)
 LAGE_SUCHE_MAX_M = 8.0    # ANNAHME: Verschiebung hoechstens +-8 m (Rechenaufwand; ein Turm von 8-12 m Seite wuerde sonst auf die Nachbarwand rutschen)
+# MASSSTAB AUS DEN WAENDEN + DOPPELWAND-GEGENPROBE (24.11.2026, Kettenlauf 1122y: starr gebunden sass Teil 1 auf der Turm-Ostwand, die Nachbarwand 22 m weiter lag
+# 2,6 m parallel daneben = 9-m-Wandblatt im Grundriss-Tor; Massstab 0,88 deckte beide, GPS-Massstab hat ehrlich +-16 %)
+PARALLEL_GRAD = 15.0      # ANNAHME: Wandstuecke gelten als parallel unter 15 Grad (Normalen der dichten Wolke streuen ~5 Grad)
+MIN_ZUG_PUNKTE = 30       # ANNAHME: ein Wandzug traegt ab 30 Treffern (Grundriss-Wandpunkte, ~0,5 % der B-Wandpunkte 1122)
+HEBEL_MIN_M = 5.0         # Massstab nur mitschaetzen ab 5 m Hebel: Streuung ~ SIGMA_M / Hebel <= 3 % - deutlich besser als das GPS (ehrlich 16 %, 1122)
+MASS_SIGNIFIKANZ = 3.0    # Massstab nur uebernehmen, wenn er um >= 3 Streuungen (SIGMA_M / Hebel) von dem des GPS abweicht - sonst bleibt der GPS-Massstab
+MASS_MAX_REL = 0.25       # ANNAHME: Massstab aus den Waenden hoechstens +-25 % gegen GPS (~1,5 x ehrliche GPS-Streuung 1122; dahinter faengt das 3-m-Fenster falsche Waende)
+DOPPEL_MIN_M = 0.5        # Doppelwand: B-Blatt 0,5 ...
+DOPPEL_MAX_M = 3.0        # ... bis 3 m neben einer parallelen A-Wand (unter 0,5 m = Rauschen/Wanddicke; ueber 3 m = andere Wand). Zugleich Fangfenster der Massstab-Suche.
+DOPPEL_LAENGS_M = 1.0     # A-Punkt hoechstens 1 m laengs versetzt (die A-Wand laeuft am B-Blatt entlang)
+DOPPEL_MIN_PUNKTE = 40    # ANNAHME: ein Blatt zaehlt ab 40 Punkten ...
+DOPPEL_ANTEIL = 0.03      # ... und 3 % der B-Wandpunkte (1122y: 199 Punkte = 11 %; Einzelpunkte an Erkern/Simsen bleiben darunter)
 
 
 # ---------- Grundlagen
@@ -132,18 +149,84 @@ def suche(PA2, PB2, c, grad_max, lage_max):
     return dict(dreh=g, schieb=sv, wert=w, zweit=z, zweit_abstand=float(np.hypot(ii[zi] - sv[0], jj[zi] - sv[1])), rand=rand)
 
 
-def fein(PA2, NA2, PB2, c, g0, s0, runden=15, grenze=0.5):
-    """Punkt-zu-Linie-Ausgleich (Drehung um c, Verschiebung): B-Wandpunkte auf die naechste A-Wand. -> (dreh, schieb, treffer-Maske)."""
+def fein(PA2, NA2, PB2, c, g0, s0, runden=15, grenze=0.5, m=1.0):
+    """Punkt-zu-Linie-Ausgleich (Drehung um c, Verschiebung; Massstab m um c FEST): B-Wandpunkte auf die naechste A-Wand. -> (dreh, schieb, treffer-Maske)."""
+    g, s, m, tr = fein_aehnlich(PA2, NA2, PB2, c, g0, s0, runden, grenze, m0=m, frei=False); return g, s, tr
+
+
+def bild2(PB2, c, g, s, m=1.0): return m * (PB2 - c) @ r2(g).T + c + s
+
+
+def fein_aehnlich(PA2, NA2, PB2, c, g0, s0, runden=15, grenze=0.5, m0=1.0, frei=True):
+    """Wie fein(), mit frei=True zusaetzlich der MASSSTAB m um c (Aehnlichkeit im Grundriss). -> (dreh, schieb, m, treffer-Maske)."""
     from scipy.spatial import cKDTree
-    baum = cKDTree(PA2); g, s = float(g0), np.asarray(s0, float).copy()
+    baum = cKDTree(PA2); g, s, m = float(g0), np.asarray(s0, float).copy(), float(m0)
     for k in range(runden):
-        Q = (PB2 - c) @ r2(g).T + c + s; d, i = baum.query(Q); gr = max(TREFFER_M, grenze * (1 - k / runden))
+        Q = bild2(PB2, c, g, s, m); d, i = baum.query(Q); gr = max(TREFFER_M, grenze * (1 - k / runden))
         ok = d < gr
         if ok.sum() < 10: break
         n = NA2[i[ok]]; q = Q[ok]; p = PA2[i[ok]]; rq = q - c - s; J = np.c_[(n[:, 1] * rq[:, 0] - n[:, 0] * rq[:, 1]), n]   # d(n.(q-p))/d(dreh rad, sx, sy)
-        r = np.einsum('ij,ij->i', n, q - p); x = np.linalg.lstsq(J, -r, rcond=None)[0]; g += float(np.degrees(x[0])); s += x[1:]
+        if frei: J = np.c_[J, np.einsum('ij,ij->i', n, rq) / m]                                            # d/dm
+        r = np.einsum('ij,ij->i', n, q - p); x = np.linalg.lstsq(J, -r, rcond=None)[0]; g += float(np.degrees(x[0])); s += x[1:3]
+        if frei: m += float(x[3])
         if np.abs(x).max() < 1e-5: break
-    Q = (PB2 - c) @ r2(g).T + c + s; d, _ = baum.query(Q); return g, s, d < TREFFER_M
+    Q = bild2(PB2, c, g, s, m); d, _ = baum.query(Q); return g, s, m, d < TREFFER_M
+
+
+def zuege(P, N, verbind_m=0.5, min_n=None):
+    """Wandzuege der Treffer: Punkte (Grundriss) mit Normalen, verbunden wenn < verbind_m entfernt UND parallel (< PARALLEL_GRAD). -> Liste dict(n, normale, d, mitte, laenge)."""
+    from scipy.spatial import cKDTree
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    min_n = MIN_ZUG_PUNKTE if min_n is None else min_n
+    if len(P) < min_n: return []
+    pa = cKDTree(P).query_pairs(verbind_m, output_type="ndarray"); cp = np.cos(np.radians(PARALLEL_GRAD))
+    pa = pa[np.abs(np.einsum('ij,ij->i', N[pa[:, 0]], N[pa[:, 1]])) > cp]
+    _, lab = connected_components(coo_matrix((np.ones(len(pa)), (pa[:, 0], pa[:, 1])), shape=(len(P), len(P))), directed=False); aus = []
+    for l in np.unique(lab):
+        j = lab == l
+        if j.sum() < min_n: continue
+        nn = N[j] * np.sign(N[j] @ N[j][0])[:, None]; n = nn.mean(0); n /= np.linalg.norm(n); t = np.array([-n[1], n[0]]); u = P[j] @ t
+        aus.append(dict(n=int(j.sum()), normale=n, d=float(np.median(P[j] @ n)), mitte=P[j].mean(0), laenge=float(np.percentile(u, 98) - np.percentile(u, 2))))
+    return aus
+
+
+def hebel(zg):
+    """MASSSTAB-HEBEL der Wandzuege (m): Abstand der Wandlinien von ihrem gemeinsamen Ausgleichspunkt (Wurzel der Restquadratsumme / (Zuege - 2), die Verschiebung
+    nimmt 2 Freiheitsgrade). Laufen alle Linien durch einen Punkt (eine Ecke, eine Wand, zwei Waende), legt eine Verschiebung sie alle fest und der Massstab um diesen
+    Punkt ist NICHT bestimmt (Hebel 0). Erst nicht parallele Wandzuege in unterschiedlichem Abstand (oder zwei parallele Waende) belegen ihn; die Restquadratsumme ist
+    die Information ueber den Massstab neben der Verschiebung -> Massstab-Streuung ~ Wandlage-Rauschen / Hebel."""
+    if len(zg) < 3: return 0.0
+    Nn = np.array([z["normale"] for z in zg]); d = np.array([z["d"] for z in zg]); x = np.linalg.lstsq(Nn, d, rcond=None)[0]
+    return float(np.sqrt(np.sum((Nn @ x - d) ** 2) / (len(zg) - 2)))
+
+
+def doppelwand(PA2, NA2, Q, NQ, tr):
+    """DOPPELWAND-GEGENPROBE nach der Bindung: B-Wandpunkte, die selbst NICHT auf A treffen, aber parallel (< PARALLEL_GRAD) und DOPPEL_MIN_M..DOPPEL_MAX_M neben einer
+    A-Wand liegen (laengs hoechstens DOPPEL_LAENGS_M versetzt), zu Blaettern verbunden (1 m). -> Liste dict(n, versatz_m, mitte, abstand_anker_m), groesste zuerst."""
+    from scipy.spatial import cKDTree
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    baum = cKDTree(PA2); cp = np.cos(np.radians(PARALLEL_GRAD)); kand = []; off = []
+    for i in np.flatnonzero(~tr):
+        J = np.array(baum.query_ball_point(Q[i], DOPPEL_MAX_M), int)
+        if not len(J): continue
+        n = NA2[J]; dq = Q[i] - PA2[J]; quer = np.abs(np.einsum('ij,ij->i', dq, n)); laengs = np.abs(dq[:, 0] * n[:, 1] - dq[:, 1] * n[:, 0])
+        ok = (np.abs(n @ NQ[i]) > cp) & (laengs < DOPPEL_LAENGS_M)
+        if not ok.any(): continue
+        q = float(quer[ok].min())
+        if DOPPEL_MIN_M <= q <= DOPPEL_MAX_M: kand.append(i); off.append(q)
+    if not kand: return []
+    kand = np.array(kand); off = np.array(off); pa = cKDTree(Q[kand]).query_pairs(1.0, output_type="ndarray")
+    _, lab = connected_components(coo_matrix((np.ones(len(pa)), (pa[:, 0], pa[:, 1])), shape=(len(kand), len(kand))), directed=False)
+    anker = Q[tr].mean(0) if tr.any() else Q.mean(0); aus = []
+    for l in np.unique(lab):
+        j = lab == l; m_ = Q[kand[j]].mean(0)
+        aus.append(dict(n=int(j.sum()), versatz_m=round(float(np.median(off[j])), 2), mitte=[round(float(x), 2) for x in m_], abstand_anker_m=round(float(np.linalg.norm(m_ - anker)), 1)))
+    return sorted(aus, key=lambda x: -x["n"])
+
+
+def doppel_grenze(n_b): return max(DOPPEL_MIN_PUNKTE, int(np.ceil(DOPPEL_ANTEIL * n_b)))
 
 
 def z_versatz(ZA, ZB, grenze):
@@ -189,8 +272,25 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     d_vor = float(np.median(cKDTree(A2).query(B2)[0]))
     s = suche(A2, B2, c, gd, lg); pr["suche"] = dict(dreh_grad=round(s["dreh"], 2), schieb_m=[round(float(x), 2) for x in s["schieb"]], wert=round(s["wert"], 3), zweit=round(s["zweit"], 3),
                                                     zweit_abstand_m=round(s["zweit_abstand"], 2), kastenrand=s["rand"])
-    g, sv, tr = fein(A2, NA2, B2, c, s["dreh"], s["schieb"])
-    Q = (B2 - c) @ r2(g).T + c + sv
+    g, sv, tr = fein(A2, NA2, B2, c, s["dreh"], s["schieb"]); tr0 = tr
+    # MASSSTAB MITSCHAETZEN (Aehnlichkeit im Grundriss um c, in der Hoehe um den Fusspunkt von B): der Massstab B->A kam bisher ungeprueft vom GPS (1122: ehrlich +-16 %).
+    # Starr passt alles nahe am Anker, 20 m weiter entsteht eine Doppelwand (1122y). Uebernommen nur, wenn die Treffer ihn BELEGEN: Wandzuege, die nicht durch einen
+    # gemeinsamen Punkt laufen (Hebel >= HEBEL_MIN_M), Abweichung >= MASS_SIGNIFIKANZ Streuungen, hoechstens MASS_MAX_REL, mehr Treffer als starr. Sonst GPS-Massstab.
+    NB2 = nwb[:, :2] / (np.linalg.norm(nwb[:, :2], axis=1, keepdims=True) + 1e-12); nq = lambda g_: NB2 @ r2(g_).T
+    dop0 = doppelwand(A2, NA2, bild2(B2, c, g, sv), nq(g), tr)
+    gm, svm, mm, trm = fein_aehnlich(A2, NA2, B2, c, g, sv, runden=30, grenze=DOPPEL_MAX_M)
+    zg = zuege(bild2(B2, c, gm, svm, mm)[trm], nq(gm)[trm]); hb = hebel(zg); sd_m = SIGMA_M / hb if hb > 0 else float("inf")
+    mg = []
+    if hb < HEBEL_MIN_M: mg.append(f"Hebel {hb:.1f} m < {HEBEL_MIN_M} m ({len(zg)} Wandzuege)")
+    if not (np.isfinite(mm) and mm > 0): mg.append(f"Aehnlichkeit entartet (Massstab {mm})"); mm = 1.0
+    elif abs(np.log(mm)) < MASS_SIGNIFIKANZ * sd_m: mg.append(f"Abweichung {100 * (mm - 1):+.1f} % unter {MASS_SIGNIFIKANZ:.0f} Streuungen ({100 * sd_m:.1f} %)")
+    if abs(mm - 1) > MASS_MAX_REL: mg.append(f"Abweichung {100 * (mm - 1):+.1f} % ueber {100 * MASS_MAX_REL:.0f} %")
+    if trm.mean() <= tr.mean(): mg.append(f"nicht mehr Treffer ({100 * tr.mean():.0f} -> {100 * trm.mean():.0f} %)")
+    ms = 1.0
+    if not mg: g, sv, ms, tr = gm, svm, mm, trm
+    pr["massstab"] = dict(gegen_gps=round(mm, 4), uebernommen=not mg, gruende=mg, hebel_m=round(hb, 2), streuung_rel=round(min(sd_m, 9.9), 4), wandzuege=len(zg),
+                          treffer_starr=round(float(tr0.mean()), 3), treffer_aehnlich=round(float(trm.mean()), 3))
+    Q = bild2(B2, c, g, sv, ms)
     di, ii = cKDTree(A2).query(Q); d_nach = float(np.median(di))
     ax = (np.degrees(np.arctan2(NA2[:, 1], NA2[:, 0])) % 90); az = float(np.degrees(np.angle(np.exp(4j * np.radians(ax)).mean())) / 4 % 90)
     u = np.array([np.cos(np.radians(az)), np.sin(np.radians(az))]); v = np.array([-u[1], u[0]])   # die zwei Wandrichtungen (Normalen) von A
@@ -202,8 +302,8 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
     zm = float(np.median(wb[:, 2])); baender = []
     for m in (wb[:, 2] < zm, wb[:, 2] >= zm):
         if m.sum() < MIN_WANDPUNKTE // 2: baender.append(None); continue
-        gb_, sb_, tb_ = fein(A2, NA2, B2[m], c, g, sv); mm = np.zeros(len(B2), bool); mm[np.flatnonzero(m)[tb_]] = True
-        baender.append((gb_, sb_, richt(mm), float(tb_.mean())))
+        gb_, sb_, tb_ = fein(A2, NA2, B2[m], c, g, sv, m=ms); mk = np.zeros(len(B2), bool); mk[np.flatnonzero(m)[tb_]] = True
+        baender.append((gb_, sb_, richt(mk), float(tb_.mean())))
     # Hoehe: Profile der B-Treffer und der A-Wandpunkte in ihrer Naehe
     ZB = wb[tr, 2]
     nah_a = cKDTree(Q[tr]).query(wa[:, :2])[0] < TREFFER_M if tr.any() else np.zeros(len(wa), bool); ZA = wa[nah_a, 2]
@@ -212,7 +312,8 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
               wandabstand_median_m=dict(gps=round(d_vor, 3), nach=round(d_nach, 3)), hoehe=dict(dz_m=round(dz, 2), eindeutig=z_ok, guete=round(z_g, 3), n_a=int(len(ZA)), n_b=int(len(ZB))),
               baender=[None if b is None else dict(dreh_grad=round(b[0], 3), schieb_m=[round(float(x), 3) for x in b[1]], richtungen=[round(float(x), 3) for x in b[2]], treffer=round(b[3], 3)) for b in baender])
     # Gesamtmatrix B -> A: L^-1 * P * L * Mk * Mg, P = Drehung um c (Lot) + Verschiebung + dz im lokalen System
-    P = np.eye(4); P[:2, :2] = r2(g); P[:2, 3] = c + sv - r2(g) @ c
+    zf = float(np.percentile(lb[:, 2], 2))                                             # Fusspunkt-Hoehe von B: der Massstab aendert sie nicht (dort traegt das GPS)
+    P = np.eye(4); P[:2, :2] = ms * r2(g); P[2, 2] = ms; P[:2, 3] = c + sv - ms * r2(g) @ c; P[2, 3] = zf - ms * zf
     M = np.linalg.inv(L) @ P @ L @ Mk @ Mg
     # HOEHE bleibt am Fusspunkt die der GPS-Lage (s. Kippung). Das Hoehenprofil der gemeinsamen Waende (Fenster, Gesimse, Traufe) ist nur Bericht: 1122w war es nicht
     # eindeutig (-3,0 m bei Guete 0,26), die Seitenansicht zeigte dagegen Traufe/Helm deckungsgleich.
@@ -247,10 +348,16 @@ def binden(DA, DB, G, lot0, ref_b, bild=None):
             messbar = bool(dh <= SPITZE_HOEHE_ANTEIL and max(sa_[3], sb_[3]) <= SPITZE_SCHLANK_M)   # flaches Dach/Traufkante (einseitig gesehen) ist keine Spitze
             pr["spitze"] = dict(a_hoehe_m=round(sa_[1], 2), b_hoehe_m=round(sb_[1], 2), streuung_m=[round(sa_[3], 2), round(sb_[3], 2)], abstand_m=round(dxy, 2), messbar=messbar)
             if messbar and dxy > max(SPITZE_M, 0.02 * H): gr.append(f"Turmspitzen {dxy:.2f} m auseinander (Grenze {max(SPITZE_M, 0.02 * H):.2f} m)")
+    # DOPPELWAND-GEGENPROBE (nach Bindung und Massstab): B-Wandblaetter parallel 0,5-3 m neben einer A-Wand, ohne selbst zu treffen, = dieselbe Wand doppelt
+    # (1122y starr: 199 Punkte 2,6 m neben der Nachbarwand, 22 m vom Anker -> 9-m-Blatt im Grundriss-Tor). Bindung dann ABGELEHNT (GPS-Lage bleibt, Ausweichweg).
+    dop = doppelwand(A2, NA2, Q, nq(g), tr); dg = doppel_grenze(len(B2)); grob = [x for x in dop if x["n"] >= dg]
+    pr["doppelwand"] = dict(grenze_punkte=dg, starr=[x for x in dop0 if x["n"] >= dg][:5], nachher=grob[:5], nachher_klein=[x for x in dop if x["n"] < dg][:3])
+    if grob: gr.append(f"Doppelwand: {len(grob)} B-Wandblatt/-blaetter parallel neben einer A-Wand (groesstes {grob[0]['n']} Punkte, {grob[0]['versatz_m']:.1f} m daneben, "
+                       f"{grob[0]['abstand_anker_m']:.0f} m vom Anker; Grenze {dg} Punkte)")
     if bild: kontrollbild(bild, A2, B2, Q, wa, wb, tr, 0.0, pr, gr)
     if gr: erg.update(ok=False, urteil="ABGELEHNT: " + "; ".join(gr) + " - GPS-Lage bleibt"); return erg
     erg.update(ok=True, B_nach_A=M.tolist(), urteil=f"ueber gemeinsame Waende gebunden: Kippung {kipp:.1f} Grad (Wand-Lot), Drehung {g:+.2f} Grad, Verschiebung {np.hypot(*sv):.2f} m, "
-               f"Hoehe am Fusspunkt nach GPS; Wandabstand {d_vor:.2f} -> {d_nach:.2f} m, Treffer {100 * tr.mean():.0f} %; gegen GPS {k['dreh_lot_grad']:+.1f} Grad, "
+               "Massstab " + (f"aus den Waenden {ms:.3f} x GPS (Hebel {hb:.1f} m)" if ms != 1.0 else "nach GPS") + f", Hoehe am Fusspunkt nach GPS; Wandabstand {d_vor:.2f} -> {d_nach:.2f} m, Treffer {100 * tr.mean():.0f} %; gegen GPS {k['dreh_lot_grad']:+.1f} Grad, "
                f"Lage der B-Kameras {k['lage_m']:.1f} m (Grenze {k['lage_grenze_m']} m)")
     return erg
 
@@ -293,6 +400,9 @@ def kontrollbild(pfad, A2, B2, Q, wa, wb, tr, dz, pr, gr):
         cv2.putText(im, titel, (8, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 0, 0), 1); return im
     a = grund(B2, f"VORHER GPS-Lage (gekippt), Abstand {pr['wandabstand_median_m']['gps']:.2f} m"); b = grund(Q, f"NACHHER, Abstand {pr['wandabstand_median_m']['nach']:.2f} m, Treffer {100 * pr['treffer']:.0f} %")
     im = np.hstack([a, b]); cv2.putText(im, ("GEBUNDEN" if not gr else "ABGELEHNT: " + "; ".join(gr))[:150], (8, 45), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 160) if gr else (0, 120, 0), 1)
+    ms_, dp_ = pr.get("massstab") or {}, pr.get("doppelwand") or {}
+    if ms_: cv2.putText(im, f"Massstab Waende {ms_['gegen_gps']:.3f} x GPS ({'uebernommen' if ms_['uebernommen'] else 'nicht: ' + '; '.join(ms_['gruende'])}), Hebel {ms_['hebel_m']:.1f} m; "
+                            f"Doppelwand starr {sum(x['n'] for x in dp_.get('starr', []))} / nachher {sum(x['n'] for x in dp_.get('nachher', []))} Pkt", (8, 65), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 0, 0), 1)
     cv2.imwrite(pfad, im)
 
 
@@ -328,7 +438,13 @@ def main(argv=None):
             try: gp = gps_probe(a.bilder, a.modell_a, a.modell_b, np.asarray(erg["B_nach_A"]), np.asarray(erg["B_nach_A_gps"]))
             except Exception as ex: print(f"GPS-Probe nicht moeglich ({type(ex).__name__}: {ex})")
         erg["pruefung"]["gps_probe"] = gp; gpr = gps_urteil(gp)
-        if gpr: erg.update(ok=False, urteil="ABGELEHNT: " + gpr + " - GPS-Lage bleibt"); erg.pop("B_nach_A", None)
+        if gpr:
+            erg.update(ok=False, urteil="ABGELEHNT: " + gpr + " - GPS-Lage bleibt"); erg.pop("B_nach_A", None)
+            try:                                                                       # Kontrollbild entstand vor der Geotag-Probe ("GEBUNDEN") -> Ablehnung nachtragen
+                import cv2
+                im = cv2.imread(erg["bild"]); cv2.rectangle(im, (0, 30), (690, 50), (255, 255, 255), -1)
+                cv2.putText(im, ("ABGELEHNT (Geotags): " + gpr)[:110], (8, 45), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 160), 1); cv2.imwrite(erg["bild"], im)
+            except Exception: pass
         else: erg["urteil"] += f"; Geotags von B Median {gp['gps']['median_m']} -> {gp['neu']['median_m']} m"
     return ende(erg, 0 if erg["ok"] else (2 if erg.get("zu_wenig") else 3))
 

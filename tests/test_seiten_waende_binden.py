@@ -8,6 +8,7 @@ Welt: Kastenturm 10 x 8 m, 30 m hoch, dazu ein Nachbarhaus westlich (nur A) und 
   2 EINE WAND B sieht nur die Suedwand -> abgelehnt (Lage laengs der Wand nicht bestimmt), keine Matrix.
   3 WEIT WEG  wahre Lage 12 m neben dem GPS (ausserhalb der Suche) -> abgelehnt, keine Matrix.
   4 GPS-PROBE gps_urteil: keine Geotags / Median deutlich schlechter / zu wenige unter 12 m -> Ablehnung; knapp schlechter -> bestanden.
+  6 MASSSTAB  GPS-Massstab 10 % daneben, B sieht Turm + Nachbarhaus -> Massstab aus den Waenden; ohne Beleg starr -> Doppelwand -> abgelehnt; Ecke = Hebel 0.
   5 VERDRAHTUNG sfm_seiten_modelle (waende_stufe, RCPARK_WAENDE, Code-Stand, Weg 'gps+waende' ohne GPS-Ausgleich), seiten_lage_beleg ('gps+waende' belegt)."""
 import os, sys
 import numpy as np
@@ -52,9 +53,9 @@ lot_a = MA[:3, :3] @ [0, 0, 1.0]; lot_a /= np.linalg.norm(lot_a)
 DA = WB.anwenden(MA, welt_a)
 
 
-def gps_lage(kipp=7.0, dreh=4.0, schieb=(1.5, 1.3)):
+def gps_lage(kipp=7.0, dreh=4.0, schieb=(1.5, 1.3), mass=1.0):
     """GPS-Lage in A: wahre Lage, dann im Welt-System um den Fusspunkt der B-Wolke gekippt (um x; dort traegt das GPS die Hoehe: Boden unter den nahen Kameras), um das Lot gedreht, waagerecht verschoben."""
-    W = np.eye(4); c = np.r_[np.median(welt_b[:, :2], 0), np.percentile(welt_b[:, 2], 2)]; R = rot([0, 0, 1], dreh) @ rot([1, 0, 0], kipp); W[:3, :3] = R; W[:3, 3] = c - R @ c + [schieb[0], schieb[1], 0]
+    W = np.eye(4); c = np.r_[np.median(welt_b[:, :2], 0), np.percentile(welt_b[:, 2], 2)]; R = mass * rot([0, 0, 1], dreh) @ rot([1, 0, 0], kipp); W[:3, :3] = R; W[:3, 3] = c - R @ c + [schieb[0], schieb[1], 0]
     return MA @ W @ np.linalg.inv(MA) @ M_wahr
 
 
@@ -80,6 +81,7 @@ if e.get("ok"):
     pruef(f1z < 0.5, f"senkrecht {f1z:.3f} m (< 0,5 m: Waende legen die Hoehe nicht fest, sie bleibt am Fusspunkt GPS-genau; Fusspunkt der gekippten Wolke liegt ~3 m anders)")
     pruef(abs(e["pruefung"]["kippung_gps_grad"] - 7.0) < 0.5, f"Kippung der GPS-Lage aus den Waenden {e['pruefung']['kippung_gps_grad']} Grad (eingespielt 7)")
     pruef(e["pruefung"]["baender_uneinig"]["richtungen_verglichen"] == 2, "zwei Hoehenbaender, beide Wandrichtungen verglichen")
+    m1 = e["pruefung"]["massstab"]; pruef(not m1["uebernommen"] or abs(m1["gegen_gps"] - 1) < 0.01, f"GPS-Massstab stimmt: bleibt ({m1['gegen_gps']}, {m1['gruende']})")
 
 print("2 EINE WAND")
 welt_b1 = np.vstack([turm_b_sued, boden_b]); e = WB.binden(DA, WB.anwenden(MB, welt_b1), G_von(Mg), lot_a, ref_b)
@@ -95,6 +97,25 @@ pruef(WB.gps_urteil(None) != "", "ohne Geotags: keine Gegenprobe -> Ablehnung")
 pruef(WB.gps_urteil(g(5.1, 9.0, 0.8)) != "", "Median 5,1 -> 9,0 m -> Ablehnung")
 pruef(WB.gps_urteil(g(5.1, 6.0, 0.5)) != "", "nur 50 % unter 12 m -> Ablehnung")
 pruef(WB.gps_urteil(g(5.1, 7.8, 0.79)) == "", "1122w-Werte (5,1 -> 7,8 m, 79 %) -> bestanden")
+
+print("6 MASSSTAB (1122y: GPS-Massstab 12 % daneben, starr Doppelwand 2,6 m neben der Nachbarwand 22 m vom Anker)")
+nb_b = np.vstack([wand((-9, -3), (-9, 6), 3.5, 12, 25, rng), wand((-20, -3), (-9, -3), 3.5, 12, 25, rng)])    # B sieht auch das Nachbarhaus (A hat es)
+welt_b6 = np.vstack([turm_b_sued, turm_b_ost, nb_b, mauer, boden_b]); DB6 = WB.anwenden(MB, welt_b6)
+welt_b = welt_b6; Mg6 = gps_lage(kipp=5.0, dreh=3.0, schieb=(1.0, 0.8), mass=1.10)
+e = WB.binden(DA, DB6, G_von(Mg6), lot_a, ref_b); ms = e["pruefung"].get("massstab") or {}; dp = e["pruefung"].get("doppelwand") or {}
+pruef(e.get("ok") is True, f"gebunden ({e.get('urteil', '')[:200]})")
+pruef(ms.get("uebernommen") is True and abs(ms.get("gegen_gps", 0) - 1 / 1.10) < 0.01, f"Massstab aus den Waenden {ms.get('gegen_gps')} (wahr {1 / 1.10:.4f}), Hebel {ms.get('hebel_m')} m")
+pruef(sum(x["n"] for x in dp.get("starr", [])) > 0 and not dp.get("nachher"), f"Doppelwand starr erkannt ({[x['versatz_m'] for x in dp.get('starr', [])]} m), nachher keine")
+if e.get("ok"):
+    f6 = fehler_m(np.asarray(e["B_nach_A"]), np.vstack([turm_b_sued, turm_b_ost, nb_b]), "waagerecht")
+    pruef(f6 < 0.08, f"B-Turm + Nachbarwand nachher waagerecht {f6:.3f} m neben der Wahrheit (< 0,08 m)")
+alt_h = WB.HEBEL_MIN_M; WB.HEBEL_MIN_M = 1e9                                                             # Massstab nicht belegt -> starr -> Doppelwand
+e = WB.binden(DA, DB6, G_von(Mg6), lot_a, ref_b); WB.HEBEL_MIN_M = alt_h
+pruef(e.get("ok") is False and "B_nach_A" not in e and "Doppelwand" in e["urteil"], f"ohne Massstab-Beleg: abgelehnt wegen Doppelwand ({e['urteil'][:160]})")
+welt_b = np.vstack([turm_b_sued, turm_b_ost, mauer, boden_b])
+z = WB.zuege(np.r_[np.c_[np.full(100, 5.0), np.linspace(-4, 4, 100)], np.c_[np.linspace(-5, 5, 100), np.full(100, -4.0)]],
+             np.r_[np.tile([1.0, 0], (100, 1)), np.tile([0, 1.0], (100, 1))])
+pruef(len(z) == 2 and WB.hebel(z) == 0.0, f"Ecke aus zwei Waenden: {len(z)} Wandzuege, Hebel {WB.hebel(z)} (Massstab nicht bestimmt)")
 
 print("5 VERDRAHTUNG")
 src = open(os.path.join(TOOLS, "sfm_seiten_modelle.py")).read()
