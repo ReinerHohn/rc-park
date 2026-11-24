@@ -289,6 +289,53 @@ def loch_gewaende_spaet(koerper, datei, einbinden=0.3, min_vor=0.005):
     return koerper, belege
 
 
+def bogen_gewaende_band(form, breite, kaempfer, scheitel, unten, aussen):
+    """Querschnitt (quer um die Oeffnungsmitte, hoch = z) des GEWAENDE-Bands um eine Bogen-/Toroeffnung: lichter Umriss (bogen_querschnitt) um 'aussen' m
+    nach aussen versetzt (rund), unten an der Schwelle abgeschnitten, ohne das Loch selbst. Pfosten = gleiche Breite wie der Bogen."""
+    innen = bogen_querschnitt(form, breite, kaempfer, scheitel, unten - 0.5)
+    huelle = bogen_querschnitt(form, breite, kaempfer, scheitel, unten).offset(float(aussen), JoinType.Round, circular_segments=48)
+    x0, _, x1, z1 = huelle.bounds()
+    ueber = CrossSection.square((x1 - x0 + 2.0, z1 - unten + 1.0)).translate((x0 - 1.0, unten))
+    return (huelle ^ ueber) - innen
+
+
+def bogen_gewaende_spaet(koerper, datei, einbinden=0.15, abtrag=0.3, ring=0.15):
+    """24.11.2026 (1122w, Schwabentor Nord f00 / Sued f01: Torboegen nur glattes Loch, Foto zeigt Sandstein-Gewaende aus Bogensteinen): GEWAENDE-Band um gebaute
+    Tor-/Bogenoeffnungen (audit/oeffnungen_auto.json, Eintrag 'gewaende_band' von tools/bogen_gewaende.py: Aussenkante 'aussen' m vom lichten Umriss, 'vorsprung')
+    auf der ECHTEN Oberflaeche nach allen Anbauten. Oberflaeche w_s = Median der Strahltreffer auf einem Ring 'ring' m ausserhalb des Bands; im Band wird Relief
+    vor w_s + vorsprung bis 'abtrag' abgetragen (glatte Werksteine statt Bruchsteinrelief) und das Band von w_s - einbinden bis w_s + vorsprung gebaut
+    (vorsprung mindestens Druckmindestmass). Das Loch bleibt frei (Band ohne lichten Umriss). GUARD: < 3 Ringtreffer oder Streuung (P10-P90) > 0,5 m -> nichts.
+    Liefert (koerper, belege)."""
+    import json, os
+    if not datei or not os.path.exists(datei): return koerper, []
+    DRUCK_MIN = float(os.environ.get("MINMM", "0.8")) * float(os.environ.get("SCALE", "87")) / 1000.0
+    belege = []; neu = []; aus = []
+    for fid, F in json.load(open(datei)).items():
+        if not isinstance(F, dict) or F.get("o") is None: continue
+        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); s_ = -1.0 if W.spiegel else 1.0
+        for x in F.get("oeffnungen", []):
+            G = x.get("gewaende_band")
+            if not x.get("gebaut") or not G or not G.get("aussen"): continue
+            b_ = float(G["aussen"]); h_ = max(float(G.get("vorsprung") or 0.0), DRUCK_MIN); T_ = float(x.get("tiefe_m") or 0.6); un = float(x.get("unten", 0.0))
+            band = bogen_gewaende_band(x["form"], float(x["breite"]), float(x["kaempfer"]), float(x["scheitel"]), un, b_)
+            if band.is_empty(): aus.append(f"{fid} u {x['u']:.2f}: Band leer"); continue
+            rp = [p for poly in bogen_querschnitt(x["form"], float(x["breite"]), float(x["kaempfer"]), float(x["scheitel"]), un).offset(b_ + ring, JoinType.Round).to_polygons() for p in poly]
+            rp = [p for p in rp if p[1] > un + 0.5]
+            rp = rp[:: max(1, len(rp) // 16)]
+            w = _oberflaeche_w(koerper, W, [(float(x["u"]) + s_ * float(p[0]), float(p[1])) for p in rp]); wr = [v for v in w if v is not None]
+            if len(wr) < 3 or float(np.percentile(wr, 90) - np.percentile(wr, 10)) > 0.5:
+                aus.append(f"{fid} u {x['u']:.2f}: Oberflaeche um das Gewaende nicht eben/nicht getroffen ({len(wr)} Treffer)"); continue
+            ws = float(np.median(wr)); w_lo = max(ws - einbinden, -T_ + 0.02)
+            koerper = koerper - W.prisma(band, u=float(x["u"]), w0=ws + h_, w1=ws + h_ + abtrag)
+            koerper = koerper + W.prisma(band, u=float(x["u"]), w0=w_lo, w1=ws + h_)
+            neu.append(dict(fassade=fid, u=x["u"], form=x["form"], lichte_breite=x["breite"], band_aussen=round(b_, 3), vorsprung=round(h_, 3), oberflaeche_w=round(ws, 3),
+                            vorsprung_quelle=G.get("vorsprung_quelle", ""), pfosten_quelle=G.get("pfosten_quelle", "")))
+    if neu or aus:
+        belege.append(dict(seite="wand", element=f"{len(neu)} Gewaende-Band um Tor-/Bogenoeffnungen (Werkstein-Rahmen)", quelle="bauteile.bogen_gewaende_spaet: Band aus tools/bogen_gewaende.py "
+                           "(radiale Fugen-Kohaerenz im feinen Wandbild), auf der echten Oberflaeche nach allen Anbauten", masse=neu, **({"hinweis": "; ".join(aus)} if aus else {})))
+    return koerper, belege
+
+
 def flaeche_w(koerper, W, u, z, w_aussen=1.0, w_innen=-1.0, schritt=0.002, halb=0.05):
     """Lage der Koerperflaeche vor der Wandebene W an (u, z): aeusserste Tiefe w, bei der ein Stab (2*halb breit/hoch) von w bis w_aussen den Koerper trifft
     (Halbierung, wie fassaden_kette.koerper_flaeche). None, wenn bis w_innen nichts getroffen wird (Loch, Oeffnung)."""
