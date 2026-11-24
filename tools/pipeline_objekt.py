@@ -106,6 +106,25 @@ def seiten_nachstufe_veraltet(daten):
     return None if alt == neu else f"Code der Nachstufe geaendert ({alt or 'ohne Code-Stand'} -> {neu}; {', '.join(SM.NACHSTUFE)})"
 
 
+def dicht_alt_behandeln(daten, fotos, st, bis_kameras, bericht, auto=None):
+    """24.11.2026 (1122za brach nach 2 min ab, Netz neu, Wolke alt): dichte Wolke aelter als das SfM-Netz.
+    --bis kameras: kein Fehler (die Wolke wird erst im folgenden Aufruf gebraucht) -> HINWEIS, rc 0.
+    sonst (Nur Automatik, Nutzer 22.11.): eine Wolke eines FRUEHEREN Netzes ist nie verwendbar -> dicht/ + sfm/sparse_dicht automatisch beiseitelegen (nie loeschen)
+    und weiter (die Stufe dicht rechnet neu); RCPARK_DICHT_ALT_AUTO=0 = alter Abbruch rc 3 mit Handanweisung. -> (st, rc)"""
+    if not st["dicht_alt"]: return st, 0
+    if bis_kameras:
+        print("HINWEIS dicht aelter als das SfM-Netz (" + ", ".join(st["dicht_alt"]) + ") - bei --bis kameras ohne Belang, der folgende Aufruf rechnet die dichte Wolke neu", flush=True)
+        return st, 0
+    if (os.environ.get("RCPARK_DICHT_ALT_AUTO", "1") if auto is None else ("1" if auto else "0")) != "0":
+        weg = beiseite([os.path.join(daten, "dicht"), os.path.join(daten, "sfm", "sparse_dicht")], time.strftime("%Y%m%d_%H%M%S"))
+        stufe(bericht, "dicht", "ACHTUNG", "aelter als das SfM-Netz: " + ", ".join(st["dicht_alt"]) + " - automatisch beiseitegelegt, wird neu gerechnet (wie --neu dicht): "
+              + (", ".join(os.path.relpath(q, daten) for q in weg) or "nichts vorhanden") + " (abschalten: RCPARK_DICHT_ALT_AUTO=0)")
+        st = stand_pruefen(daten, fotos)
+        if not st["dicht_alt"]: return st, 0
+    stufe(bericht, "dicht", "FEHLER", "aelter als das SfM-Netz: " + ", ".join(st["dicht_alt"]) + " - Bildwahl/Tiefenkarten/Wolke gehoeren zu einem FRUEHEREN Netz; neu rechnen mit --neu dicht bzw. RCPARK_PIPE_NEU=dicht (legt dicht/ und sfm/sparse_dicht beiseite)")
+    return st, 3
+
+
 def stand_pruefen(daten, fotos):
     """Passen die Zwischenstaende unter `daten` zum Fotoordner und zueinander? Nur lesen. Rueckgabe dict:
     neu/fehlend = Bilder im Ordner, die die SfM nie sah / die die SfM sah und die es nicht mehr gibt (None = keine Datenbank);
@@ -249,9 +268,10 @@ def main():
               (f"{len(st['fehlend'])} Bilder des Netzes gibt es im Fotoordner nicht mehr (z. B. {', '.join(st['fehlend'][:3])})" if st["fehlend"] else "")
         print(f"ACHTUNG Bildbestand: {txt} - das Netz ({st['bilder_sfm']} Bilder) wurde NICHT neu gerechnet. Neue Bilder ins Netz: --neu sfm bzw. RCPARK_PIPE_NEU=sfm (nachregistrierte Fotos der Stufe 'seiten' sind hier zu erwarten)", flush=True)
         stufe(bericht, "bildbestand", "ACHTUNG", txt + " - Netz nicht neu gerechnet (--neu sfm)"); sichern()
-    if st["dicht_alt"]:
-        stufe(bericht, "dicht", "FEHLER", "aelter als das SfM-Netz: " + ", ".join(st["dicht_alt"]) + " - Bildwahl/Tiefenkarten/Wolke gehoeren zu einem FRUEHEREN Netz; neu rechnen mit --neu dicht bzw. RCPARK_PIPE_NEU=dicht (legt dicht/ und sfm/sparse_dicht beiseite)")
-        sichern(); return 3
+    bis_kameras_ = "--bis" in sys.argv and sys.argv[sys.argv.index("--bis") + 1:sys.argv.index("--bis") + 2] == ["kameras"]
+    st, rc_da = dicht_alt_behandeln(daten, fotos, st, bis_kameras_, bericht)
+    if rc_da: sichern(); return rc_da
+    sichern()
 
     # Kameras als JSON fuer die GPU-Umgebung (Ausrichtung und Luecken brauchen kein pycolmap mehr)
     kam_json = os.path.join(daten, "kameras.json")
