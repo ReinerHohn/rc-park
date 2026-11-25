@@ -5,24 +5,32 @@
    "bauteil": "galerie",
    "seite": "Stadtseite",
    "masse": {
-    "schwelle_unten": 10.22,
-    "holm_oben": 11.42,
+    "schwelle_unten": 10.49,
+    "holm_oben": 11.73,
     "ausladung": 1.45,
     "breite": 8.06,
     "pfosten": 3,
     "streben": 6
    },
-   "toleranz_m": 0.4
+   "toleranz_m": 0.4,
+   "hand_original": {
+    "schwelle_unten": 10.22,
+    "holm_oben": 11.42
+   }
   },
   {
    "bauteil": "vordach",
    "seite": "Stadtseite",
    "masse": {
-    "traufe_z": 16.09,
-    "anschluss_z": 19.43,
+    "traufe_z": 16.52,
+    "anschluss_z": 19.95,
     "ausladung": 1.54
    },
-   "toleranz_m": 0.4
+   "toleranz_m": 0.4,
+   "hand_original": {
+    "traufe_z": 16.09,
+    "anschluss_z": 19.43
+   }
   },
   {
    "bauteil": "uhr",
@@ -123,6 +131,12 @@
    "quelle": "Hoehen-Agent 21.11. 17:41 (modelle/LOGBUCH_SCHWABENTOR_KETTE_2026-11-21.md, Nachtrag 17:41): Hand-Abstaende ueber der Galerie gleichmaessig ~3,4 % kuerzer (Sohlbank-Galerie 11,17/11,57, Uhr-Galerie 19,83/20,49, Uhr-D 5,00/5,13), Doppelverhaeltnisse gleich; Kettenwerte im feinen und mittleren Ortho auf Uhrnabe/Sohlbankkante; Kettenmassstab ueber LoD2-Grundriss und DOM1-Traufe belegt; Hand-Quelle mit Lasermassstab 0,933 aus Dachflaechen",
    "freigabe": "Nutzer 21.11.2026 ~20:12: 'Ja, berichtigen'",
    "nicht_geaendert": "vordach anschluss_z 19,43 (gleicher Faktor ergaebe 19,66; neuer Stufen-Detektor misst 19,67-19,73) - nur mit eigener Freigabe"
+  },
+  {
+   "datum": "2026-11-25",
+   "aenderung": "galerie schwelle_unten/holm_oben, vordach traufe_z/anschluss_z: Hand-Hoehen x 1,0269 (Hand minus Wolke -2,62 +-0,35 %); Originale unter hand_original",
+   "quelle": "ERKENNTNISSE 25.11. (ANNAHME WIDERLEGT, Handstand-Hoehen), 9 Merkmale an dichter Wolke, Massstab belegt (massstab_hoehe_tor.py, Kette-Wolke +0,18 +-0,29 %)",
+   "freigabe": "Nutzer 25.11.2026: 'Ja klar, mach die 4 berechtigten Hoehenwerte'"
   }
  ]
 }
