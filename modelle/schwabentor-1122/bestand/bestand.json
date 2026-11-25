@@ -1,0 +1,639 @@
+{
+ "zonen": {
+  "laterne": {
+   "f1": {
+    "netz_commons_geo__013_Freiburg_im_Breisgau-_Blick_vom_Münster_auf_Schwabentor_und_Martinstor_-_LA": 0.5092,
+    "online2_orig__od_13": 0.8158
+   },
+   "fotos": [
+    "netz_commons_geo__013_Freiburg_im_Breisgau-_Blick_vom_Münster_auf_Schwabentor_und_Martinstor_-_LA",
+    "online2_orig__od_13",
+    "eigen__IMG_20261106_114009",
+    "eigen__eigen__IMG_20261123_153212_usb0",
+    "eigen__eigen__IMG_20261123_153226_usb0",
+    "eigen__eigen__IMG_20261123_153510_1ae941d0",
+    "eigen__eigen__IMG_20261123_153523_usb0",
+    "eigen__eigen__IMG_20261123_153501_8d73c533"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "rund",
+    "achse": [
+     -2.132,
+     15.211
+    ],
+    "r": 1.22,
+    "z0": 46.26,
+    "z1": 54.86
+   }
+  },
+  "spitze": {
+   "f1": {
+    "netz_commons_geo__013_Freiburg_im_Breisgau-_Blick_vom_Münster_auf_Schwabentor_und_Martinstor_-_LA": 0.5406,
+    "online2_orig__od_13": 0.7054
+   },
+   "fotos": [
+    "netz_commons_geo__013_Freiburg_im_Breisgau-_Blick_vom_Münster_auf_Schwabentor_und_Martinstor_-_LA",
+    "online2_orig__od_13",
+    "eigen__IMG_20261106_114009",
+    "eigen__eigen__IMG_20261123_153212_usb0",
+    "eigen__eigen__IMG_20261123_153226_usb0",
+    "eigen__eigen__IMG_20261123_153510_1ae941d0",
+    "eigen__eigen__IMG_20261123_153523_usb0",
+    "eigen__eigen__IMG_20261123_153501_8d73c533"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "rund",
+    "achse": [
+     -2.132,
+     15.211
+    ],
+    "r": 1.97,
+    "z0": 44.86,
+    "z1": 53.41
+   }
+  },
+  "vorbau_f00": {
+   "f1": {
+    "eigen__IMG_20261106_113130": 0.3482,
+    "eigen__eigen__IMG_20261123_153341_usb0": 0.5468,
+    "eigen__eigen__IMG_20261123_152810_usb0": 0.4711,
+    "commons_orig2__049": 0.4346,
+    "eigen__IMG_20261106_113148": 0.3608,
+    "commons_orig2__050": 0.5012,
+    "commons_orig2__051": 0.4581,
+    "eigen__IMG_20261106_113149": 0.339
+   },
+   "fotos": [
+    "eigen__IMG_20261106_113130",
+    "eigen__eigen__IMG_20261123_153341_usb0",
+    "eigen__eigen__IMG_20261123_152810_usb0",
+    "commons_orig2__049",
+    "eigen__IMG_20261106_113148",
+    "commons_orig2__050",
+    "commons_orig2__051",
+    "eigen__IMG_20261106_113149"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f00",
+    "o": [
+     3.736338765143183,
+     15.285188595694338
+    ],
+    "d": [
+     -0.029655713502864632,
+     0.999560172604249
+    ],
+    "n": [
+     0.999560172604249,
+     0.029655713502864632
+    ],
+    "u0": -3.82,
+    "u1": 5.1,
+    "z0": 9.86,
+    "z1": 20.34,
+    "w0": -0.3,
+    "w1": 0.54
+   }
+  },
+  "oeffnung_bogen_f01": {
+   "f1": {
+    "eigen__eigen__IMG_20261123_153557_usb0": 0.6065,
+    "online_orig__od_08": 0.3248,
+    "commons_orig2__052": 0.5258,
+    "commons_orig2__191": 0.4846,
+    "commons_orig2__190": 0.4943,
+    "online_orig__od_02": 0.5852,
+    "commons_orig2__217": 0.555,
+    "commons_orig2__218": 0.6246
+   },
+   "fotos": [
+    "eigen__eigen__IMG_20261123_153557_usb0",
+    "online_orig__od_08",
+    "commons_orig2__052",
+    "commons_orig2__191",
+    "commons_orig2__190",
+    "online_orig__od_02",
+    "commons_orig2__217",
+    "commons_orig2__218"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f01",
+    "o": [
+     -7.9413026159985,
+     14.903203890713131
+    ],
+    "d": [
+     0.04368482726755523,
+     -0.999045362266701
+    ],
+    "n": [
+     -0.999045362266701,
+     -0.04368482726755523
+    ],
+    "u0": -2.55,
+    "u1": 2.33,
+    "z0": 0.08,
+    "z1": 6.8,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "oeffnung_bogen_f00": {
+   "f1": {
+    "eigen__IMG_20261106_113602": 0.6739,
+    "eigen__eigen__IMG_20261123_152810_usb0": 0.4282,
+    "commons_orig2__049": 0.0458,
+    "eigen__IMG_20261106_113148": 0.266,
+    "commons_orig2__050": 0.2824,
+    "commons_orig2__051": 0.3342,
+    "eigen__IMG_20261106_113149": 0.2423,
+    "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg": 0.3792
+   },
+   "fotos": [
+    "eigen__IMG_20261106_113602",
+    "eigen__eigen__IMG_20261123_152810_usb0",
+    "commons_orig2__049",
+    "eigen__IMG_20261106_113148",
+    "commons_orig2__050",
+    "commons_orig2__051",
+    "eigen__IMG_20261106_113149",
+    "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f00",
+    "o": [
+     3.736338765143183,
+     15.285188595694338
+    ],
+    "d": [
+     -0.029655713502864632,
+     0.999560172604249
+    ],
+    "n": [
+     0.999560172604249,
+     0.029655713502864632
+    ],
+    "u0": -2.42,
+    "u1": 1.78,
+    "z0": 0.03,
+    "z1": 7.19,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "fenster_f00_2": {
+   "f1": {
+    "eigen__IMG_20261106_113205": 0.9354,
+    "eigen__eigen__IMG_20261123_152810_usb0": 0.8526,
+    "commons_orig2__049": 0.6324,
+    "eigen__IMG_20261106_113148": 0.853,
+    "commons_orig2__050": 0.8787,
+    "commons_orig2__051": 0.9083,
+    "eigen__IMG_20261106_113149": 0.8911,
+    "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg": 0.7422
+   },
+   "fotos": [
+    "eigen__IMG_20261106_113205",
+    "eigen__eigen__IMG_20261123_152810_usb0",
+    "commons_orig2__049",
+    "eigen__IMG_20261106_113148",
+    "commons_orig2__050",
+    "commons_orig2__051",
+    "eigen__IMG_20261106_113149",
+    "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f00",
+    "o": [
+     3.736338765143183,
+     15.285188595694338
+    ],
+    "d": [
+     -0.029655713502864632,
+     0.999560172604249
+    ],
+    "n": [
+     0.999560172604249,
+     0.029655713502864632
+    ],
+    "u0": 1.824,
+    "u1": 2.324,
+    "z0": 23.23,
+    "z1": 24.95,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "uhr_f00": {
+   "f1": {
+    "eigen__IMG_20261106_113205": 0.2478,
+    "eigen__eigen__IMG_20261123_152810_usb0": 0.145,
+    "commons_orig2__049": 0.1601,
+    "eigen__IMG_20261106_113148": 0.1672,
+    "commons_orig2__051": 0.1018,
+    "eigen__IMG_20261106_113149": 0.1596,
+    "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg": 0.044
+   },
+   "fotos": [
+    "eigen__IMG_20261106_113205",
+    "eigen__eigen__IMG_20261123_152810_usb0",
+    "commons_orig2__049",
+    "eigen__IMG_20261106_113148",
+    "commons_orig2__050",
+    "commons_orig2__051",
+    "eigen__IMG_20261106_113149",
+    "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f00",
+    "o": [
+     3.736338765143183,
+     15.285188595694338
+    ],
+    "d": [
+     -0.029655713502864632,
+     0.999560172604249
+    ],
+    "n": [
+     0.999560172604249,
+     0.029655713502864632
+    ],
+    "u0": -2.46,
+    "u1": 2.75,
+    "z0": 29.54,
+    "z1": 34.74,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "uhr_f01": {
+   "f1": {
+    "online_orig__od_04": 0.2113,
+    "commons_orig2__191": 0.1768,
+    "commons_orig2__190": 0.1977,
+    "online_orig__od_02": 0.3534,
+    "commons_orig2__217": 0.2013,
+    "commons_orig2__218": 0.174
+   },
+   "fotos": [
+    "online_orig__od_04",
+    "online_orig__od_08",
+    "commons_orig2__052",
+    "commons_orig2__191",
+    "commons_orig2__190",
+    "online_orig__od_02",
+    "commons_orig2__217",
+    "commons_orig2__218"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f01",
+    "o": [
+     -7.9413026159985,
+     14.903203890713131
+    ],
+    "d": [
+     0.04368482726755523,
+     -0.999045362266701
+    ],
+    "n": [
+     -0.999045362266701,
+     -0.04368482726755523
+    ],
+    "u0": -2.65,
+    "u1": 2.39,
+    "z0": 29.37,
+    "z1": 34.43,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "uhr_f01_3": {
+   "f1": {
+    "commons_orig2__191": 0.0447,
+    "commons_orig2__190": 0.0504,
+    "online_orig__od_02": 0.2554,
+    "commons_orig2__217": 0.0198
+   },
+   "fotos": [
+    "online_orig__od_08",
+    "commons_orig2__052",
+    "commons_orig2__191",
+    "commons_orig2__190",
+    "online_orig__od_02",
+    "commons_orig2__217",
+    "commons_orig2__218",
+    "eigen__IMG_20261106_113852"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f01",
+    "o": [
+     -7.9413026159985,
+     14.903203890713131
+    ],
+    "d": [
+     0.04368482726755523,
+     -0.999045362266701
+    ],
+    "n": [
+     -0.999045362266701,
+     -0.04368482726755523
+    ],
+    "u0": -1.7914780438221074,
+    "u1": 1.5571547686778926,
+    "z0": 30.22,
+    "z1": 33.61,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "fenster_tuer_f04": {
+   "f1": {
+    "eigen__IMG_20261106_113426": 0.9407,
+    "eigen__IMG_20261106_114112": 0.9468,
+    "eigen__eigen__IMG_20261123_153335_1f18c1ee": 0.8321,
+    "eigen__eigen__IMG_20261123_153336_usb0": 0.8839,
+    "eigen__eigen__IMG_20261123_153337_usb0": 0.8002,
+    "eigen__IMG_20261106_114122": 0.7217,
+    "eigen__video_frames_VID20261123154247__vf_000": 0.6568,
+    "eigen__video_frames_VID20261123154247__vf_016": 0.6954
+   },
+   "fotos": [
+    "eigen__IMG_20261106_113426",
+    "eigen__IMG_20261106_114112",
+    "eigen__eigen__IMG_20261123_153335_1f18c1ee",
+    "eigen__eigen__IMG_20261123_153336_usb0",
+    "eigen__eigen__IMG_20261123_153337_usb0",
+    "eigen__IMG_20261106_114122",
+    "eigen__video_frames_VID20261123154247__vf_000",
+    "eigen__video_frames_VID20261123154247__vf_016"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f04",
+    "o": [
+     2.967750999769615,
+     22.213053000076812
+    ],
+    "d": [
+     -0.033242108222572134,
+     0.9994473283975093
+    ],
+    "n": [
+     0.9994473283975093,
+     0.033242108222572134
+    ],
+    "u0": 0.229,
+    "u1": 0.804,
+    "z0": 0.32,
+    "z1": 2.4,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "fenster_tuer_f04_3": {
+   "f1": {
+    "eigen__IMG_20261106_113426": 0.9396,
+    "eigen__IMG_20261106_114112": 0.9463,
+    "eigen__eigen__IMG_20261123_153335_1f18c1ee": 0.8327,
+    "eigen__eigen__IMG_20261123_153336_usb0": 0.8846,
+    "eigen__eigen__IMG_20261123_153337_usb0": 0.8009,
+    "eigen__IMG_20261106_114122": 0.7223,
+    "eigen__video_frames_VID20261123154247__vf_000": 0.655,
+    "eigen__video_frames_VID20261123154247__vf_016": 0.6954
+   },
+   "fotos": [
+    "eigen__IMG_20261106_113426",
+    "eigen__IMG_20261106_114112",
+    "eigen__eigen__IMG_20261123_153335_1f18c1ee",
+    "eigen__eigen__IMG_20261123_153336_usb0",
+    "eigen__eigen__IMG_20261123_153337_usb0",
+    "eigen__IMG_20261106_114122",
+    "eigen__video_frames_VID20261123154247__vf_000",
+    "eigen__video_frames_VID20261123154247__vf_016"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f04",
+    "o": [
+     2.967750999769615,
+     22.213053000076812
+    ],
+    "d": [
+     -0.033242108222572134,
+     0.9994473283975093
+    ],
+    "n": [
+     0.9994473283975093,
+     0.033242108222572134
+    ],
+    "u0": 0.241,
+    "u1": 0.829,
+    "z0": 0.29,
+    "z1": 2.39,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "fenster_f01": {
+   "f1": {
+    "online_orig__od_03": 0.6442,
+    "online_orig__od_02": 0.737
+   },
+   "fotos": [
+    "online_orig__od_03",
+    "online_orig__od_08",
+    "commons_orig2__052",
+    "commons_orig2__191",
+    "commons_orig2__190",
+    "online_orig__od_02",
+    "commons_orig2__217",
+    "commons_orig2__218"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f01",
+    "o": [
+     -7.9413026159985,
+     14.903203890713131
+    ],
+    "d": [
+     0.04368482726755523,
+     -0.999045362266701
+    ],
+    "n": [
+     -0.999045362266701,
+     -0.04368482726755523
+    ],
+    "u0": -0.566,
+    "u1": 0.314,
+    "z0": 23.09,
+    "z1": 24.37,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "fenster_f00": {
+   "f1": {
+    "eigen__IMG_20261106_113148": 0.994
+   },
+   "fotos": [
+    "eigen__eigen__IMG_20261123_152810_usb0",
+    "commons_orig2__049",
+    "eigen__IMG_20261106_113148",
+    "commons_orig2__050",
+    "commons_orig2__051",
+    "eigen__IMG_20261106_113149",
+    "netz_commons_geo__134_Landappbw_316425_1818_Schwabentor_Freiburg",
+    "eigen__IMG_20261106_113233"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f00",
+    "o": [
+     3.736338765143183,
+     15.285188595694338
+    ],
+    "d": [
+     -0.029655713502864632,
+     0.999560172604249
+    ],
+    "n": [
+     0.999560172604249,
+     0.029655713502864632
+    ],
+    "u0": -2.296,
+    "u1": -1.806,
+    "z0": 24.55,
+    "z1": 24.8,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "fenster_f03_2": {
+   "f1": {
+    "commons_orig2__192": 0.0652,
+    "eigen__eigen__IMG_20261123_153444_6210cc32": 0.0
+   },
+   "fotos": [
+    "eigen__IMG_20261106_114133",
+    "commons_orig2__192",
+    "eigen__eigen__IMG_20261123_153445_97089c76",
+    "eigen__eigen__IMG_20261123_153433_633e77f0",
+    "eigen__eigen__IMG_20261123_153444_6210cc32",
+    "eigen__eigen__IMG_20261123_153436_b1ff2e13",
+    "eigen__eigen__IMG_20261123_153434_usb0",
+    "eigen__eigen__IMG_20261123_153435_8af14eb5"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f03",
+    "o": [
+     -1.5459415024223213,
+     21.216985409295155
+    ],
+    "d": [
+     -0.9991775400966542,
+     -0.04054927084916809
+    ],
+    "n": [
+     -0.04054927084916809,
+     0.9991775400966542
+    ],
+    "u0": 0.88,
+    "u1": 1.01,
+    "z0": 11.05,
+    "z1": 11.96,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  },
+  "fenster_f04": {
+   "f1": {
+    "eigen__video_frames_VID20261123154247__vf_018": 0.8234,
+    "eigen__IMG_20261106_114112": 0.8506,
+    "eigen__eigen__IMG_20261123_153335_1f18c1ee": 0.9367,
+    "eigen__eigen__IMG_20261123_153336_usb0": 0.6357,
+    "eigen__eigen__IMG_20261123_153337_usb0": 0.4064,
+    "eigen__IMG_20261106_114122": 0.6702,
+    "eigen__video_frames_VID20261123154247__vf_000": 0.3656,
+    "eigen__video_frames_VID20261123154247__vf_016": 0.4698
+   },
+   "fotos": [
+    "eigen__video_frames_VID20261123154247__vf_018",
+    "eigen__IMG_20261106_114112",
+    "eigen__eigen__IMG_20261123_153335_1f18c1ee",
+    "eigen__eigen__IMG_20261123_153336_usb0",
+    "eigen__eigen__IMG_20261123_153337_usb0",
+    "eigen__IMG_20261106_114122",
+    "eigen__video_frames_VID20261123154247__vf_000",
+    "eigen__video_frames_VID20261123154247__vf_016"
+   ],
+   "seit": "2026-11-25_0227",
+   "geo": {
+    "art": "fassade",
+    "fassade": "f04",
+    "o": [
+     2.967750999769615,
+     22.213053000076812
+    ],
+    "d": [
+     -0.033242108222572134,
+     0.9994473283975093
+    ],
+    "n": [
+     0.9994473283975093,
+     0.033242108222572134
+    ],
+    "u0": -0.663,
+    "u1": -0.275,
+    "z0": 0.19,
+    "z1": 0.46,
+    "w0": -0.3,
+    "w1": 0.3
+   }
+  }
+ },
+ "verlauf": [
+  {
+   "zeit": "2026-11-25_0227",
+   "stl_sha": "afefc28cab7ff75a",
+   "quelle": "angelegt aus /media/oem/rcdaten/tmp/bau_parallel_agent/modelle/stl/schwabentor-1122_1-87.stl"
+  }
+ ],
+ "objekt": "schwabentor-1122",
+ "stl_sha": "afefc28cab7ff75a",
+ "stl_ablage": "/media/oem/rcdaten/rc-park_bestand/schwabentor-1122/2026-11-25_0227",
+ "zeit": "2026-11-25_0227",
+ "quelle": "angelegt aus /media/oem/rcdaten/tmp/bau_parallel_agent/modelle/stl/schwabentor-1122_1-87.stl",
+ "eingang": {
+  "f00_wand:kantenpunkte": 30207,
+  "f01_wand:kantenpunkte": 108902,
+  "f02_wand:kantenpunkte": 1707,
+  "f03_wand:kantenpunkte": 136626,
+  "f00_vb0:kantenpunkte": 3354,
+  "f00_vb0_li:kantenpunkte": 141,
+  "f00_vb0_re:kantenpunkte": 3,
+  "f00_vb0:punkte_front": 2430
+ }
+}
