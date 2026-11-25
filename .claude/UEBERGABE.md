@@ -1,52 +1,29 @@
-# Übergabe 24.11.2026 21:00
+# Übergabe 25.11.2026 02:00
 Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbeginn`.
 
-## Auftrag
-- Stehend: „Keine Handangriffe, nur Automatik." · „Ich will die Südseite" · parallel/Vollgas · Skill `kette-schleife` (Kette → Bild → je Befund Agent → Merge-Probe → Merge nur bei Schnelltest 0).
-- Heute Abend: „Suche weitere Verbesserungen." · „Können wir nicht irgendwas noch verbessern?" · Bildwert-Idee („nur die gewinnbringendsten Bilder in der ersten Stufe").
-- Wissen: „Das ist eine Katastrophe" (Wissensbaum unvollständig) · „archivierte … so machen, dass wir immer alles finden" · „Schicke einen Agenten los, der … lernt, wie wir Wissen besser archivieren" · Werkzeug soll nach ~/git/claude-mds („damit alle davon profitieren").
-- Nutzer will verstehen, wo wir stehen: je Lauf Zahl je Seite (Formsitz in % der Obergrenze, Höhensitz). Einfach erklären, kein Fachjargon.
+## Auftrag (Nutzerworte)
+- HAUPTZIEL (24.11.): „Das ist extrem wichtig ... davon hängt mein Projekt ab." Kette baut das Schwabentor automatisch mindestens so gut wie das Handmodell schwab_v3, dann generalisiert (zweites Objekt). Plan: `modelle/PLAN_HANDMODELL_IN_KETTE.md`.
+- „Alle Maße müssen aus Fotos kommen." Bausteine nur mit gemessenen Maßen; fehlt eins: erst mehr Fotos, dann ANNAHME mit Herleitung; nie feste Zahlen.
+- HART „sichere das hart ab!": nie schlechter als der beste Stand. Nach jedem Kettenlauf ZUERST `audit/neben_*.jpg` neben `modelle/<obj>/bestand/` (und ZIEL_*) legen, beide schicken, erst dann Zahlen. Rückschritt nie mergen.
+- „Keine Handangriffe, nur Automatik." Deutsch, „mein grosser Meister", keine breiten Tabellen.
+- Nutzer fragte zuletzt, ob das Kettenergebnis „demnächst nah an den Handlauf kommt" -> ehrliche Antwort: erster Lauf grob 7-9 von 11 (Schätzung), nah dran eher 2-4 Runden à ~4 h; Abbruchregel P7 (2 Läufe ohne Anstieg = Methode wechseln).
 
-## Erledigt und geprüft
-- 1122zb (15:31–18:09) fertig: Wandlage f00 −0,357 / f01 −0,288 m aus Fotokanten, Ost-Teil auf Gelände, Quellfilter 1,6 %, 3D V9 https://claude.ai/artifact/ScV8KGvyjJrxxHCAzCM6pi (Logbuch 18:09).
-- Merge-Probe 29+30 in main (Schnelltest 0 nach Fixes): Lot-Tore Teil 1 (10° Kippung richtig, Maßstabslücke 12–14 % offen), f02-Fernkameras, Ketten-Probelauf `tools/ketten_probelauf.sh` (Grundstand kprobe_kaufhaus steht, Probelauf p30 rc 0), Formsitz `modelle/FEATURE_FORMSITZ.md`, Uhr-Zonen verworfen, Schlitz-Mindestmaß, Unschärfe-Tor nur bei schwachem Kontrast, Erkennerkasten-Prüfung (f04 3/3 Schlitze), Treppenturm-Kerbe (Suchrand), seiten_luecken-Abbildungsfehler (alle Kameras im Turm → robuste Abbildung + Tor), Wissensbaum 0 Lücken (942 nachgetragen, 24 Unteräste), `tools/wissen_suchen.py`, `tools/wissensbaum_luecken.py`.
-- Formsitz Modell 1122zb gegen volle Wolke (relativ zur Obergrenze): Süd 0,61 · West 0,52 · Nord 0,43 · Ost 0,09; med|dz| 0,15/0,20/0,29/3,57 m.
-- Bildwert-Stufe 1 (61/625 Bilder) für die Wolke ✗: 1,0 statt 16,8 Mio. Punkte, Formsitz 60–70 % von „alle“, Zufall kaum schlechter (Baum foto-sfm/fotoauswahl.md).
-- claude-mds: doku-pflege „Ast voll → Unterast, nie kürzen" (Commit 14f0b95, gepusht).
+## Stand 25.11. 02:00
+- main = 5c316a1b3 auf GitHub: Probe 31 gemergt (Bestand-Tor, Hand-Vergleich mit Höhenbezug, Linien-/Rund-/Nischen-Bausteine, Konvergenz-Messfehler, SIFT-Paarspeicher, Wissenswerkzeuge) + Wissenssuche-Agent. Probelauf rc 0 (Stand 5377c66d0), merge_sperre 0, Schnelltest 0 Fehler.
+- Wissenssuche am versiegelten Satz: neu 4/40 @5, alt 0/40 (nicht „gelöst"; 8 echte Fehlsuchen neu_24abend 0/8). Wissens-INDEX fehlt in main: einmal `CUDA_VISIBLE_DEVICES= /media/oem/scan/venv-seg/bin/python -I tools/wissen_bedeutung.py --bauen` (~20 min CPU, NICHT parallel zur Kette). Offen: bei 1-2-Wort-Anfragen Bedeutungssuche geringer gewichten.
+- Läuft: Job `bestand-anlegen-1122b` (Bestand-Tor-Grundlage für schwabentor-1122 aus STL `/media/oem/rcdaten/tmp/bau_parallel_agent/modelle/stl/schwabentor-1122_1-87.stl`, Log /media/oem/scan/rc-park_daten/job_logs/bestand-anlegen-1122b.log, Ende `JOB_ENDE`). Dauer > 1 h (24 Zonen, viele Fotos). OHNE Bestand würde die Kette den ersten Stand selbst als Bestand anlegen -> erst abwarten.
+- DANACH: echte Kette `tools/job_start.sh kette-schwabentor-null-1122zd ... tools/gesamtkette.py` (Aufruf wie 1122zc im Log kette-schwabentor-null-1122zc.log nachsehen), dann kette-schleife Schritt 2: Bestand-Vergleich Bilder (neben_*.jpg gegen Bestand + ZIEL), beide dem Nutzer schicken, Handvergleich „x von 11" (Ausgangslage 5/11 bezugsbereinigt; 1120 = 11/11), Fehlerliste, Realitäts-%.
 
-## Läuft gerade
-- Kette 1122zc seit 20:30 `--ab bauen` (Unit rcpark-kette-schwabentor-null-1122zc, Log /media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122zc.log, Ende = `JOB_ENDE rc=`), 20:43 bei fassaden_kette; Ende ca. 22:00–22:15. Danach: seiten.jpg + neben_details.jpg ansehen/schicken, Fehlerliste, Formsitz je Seite (audit/konvergenz.jsonl), 3D-HTML V10 gleiche URL (`tools/py tools/modell_3d_html.py ... --wolke ... --farben ...`, nach …_1122z_ende.html kopieren), Logbuchzeile.
-- Wissensverwaltung FERTIG, in Merge-Probe 31: Suche mit Rangfolge, Nachweis tools/wissen_wiederfinden.py (12/12 Verlustfaelle, Kontrollsatz nur 4/8 = Synonym-Schleife, kein Beweis fuer Neues), werkzeug_aehnlich.py (15 Doppelgaenger), wissen_ablage_pruefen.py, modelle/WIDERSPRUECHE.md, Doku/projekt/wissen.md; ab 25.11. Pflicht-Kopfzeile 'Verwandt/Vorlaeufer:' in neuen tools/*.py; claude-mds-Vorschlag in merge_probe31/tools/claude_mds_vorschlag/ (UEBERNAHME.txt). Offen fuer Nutzer: 33 doppelte Register-IDs umbenennen?, fehlende modelle/QUALITAETSSTUFEN.md.
-- Agenten (Worktrees .claude/worktrees/agent-*): Höhen waagerechter Bauteile angleichen (Höhensitz) · Ost-Grobform 3,6 m klären. Ergebnisse → Merge-Probe 31.
-- Merge-Probe 31 (/media/oem/scan/rc-park_tmp/merge_probe31): Höhensitz `tools/hoehensitz.py` + konvergenz-Einbau. Erst nach 1122zc-Ende in main.
-
-## Nachtrag 24.11. 21:40
-- Nutzer „Alles ja": Register-IDs eindeutig (49, Suffix b/c, tools/register_ids_eindeutig.py), 3 Archivdateien eingecheckt, alte Worktrees 11/14/28/29/flaechen-wt entfernt (Patches /media/oem/rcdaten/rc-park_archiv/worktree_patches_2026-11-24/) - alles in Probe 31.
-- claude-mds e1c78ab gepusht (Wissenswerkzeuge); Schnelltest-Gleichstand Kopie=Skill in Probe 31.
-- Hoehen-Angleich gemergt in Probe 31 (aendert am Schwabentor nichts: ueber 36,5 m keine Fotokanten).
-- Nutzer: „Beweise … generalisiert auch bei zukuenftigen" -> Agenten: versiegelter Pruefsatz (/media/oem/rcdaten/rc-park_archiv/pruefsatz_versiegelt/, Suche-Agent darf ihn NIE sehen), Suche verallgemeinern (Bedeutungssuche, Worktree), verlorene Gewinner (Bericht /media/oem/scan/rc-park_tmp/verlorene_gewinner_2026-11-24.md), Kantenstufe ueber Traufe + traufe/umgang, Kegeldach-Traufe aus Kanten. Ost-Grobform-Agent laeuft weiter.
-- VORSICHT Merge Probe 31 -> main: die 3 Archivdateien liegen in main noch untracked (identisch) -> vor Merge beiseite legen.
-- Offen eigene Idee: Erstversuch-Quote je neuem echten Verlustfall in wissen_wiederfinden.json mitzaehlen (laufender Beweis fuer Zukunft).
-
-## Nächste Schritte
-1. Nach JOB_ENDE 1122zc: auswerten wie oben, dem Nutzer Bilder + Zahlen je Seite (einfach erklärt).
-2. Agentenzweige in Probe 31 mergen; `bash tools/ketten_probelauf.sh --rev merge-probe-31` als Job (JOB_RAM_MB=7000 JOB_GPU_MB=3000), dann Merge main + `CUDA_VISIBLE_DEVICES= bash tools/schnelltest.sh` = 0, push.
-3. Wissens-Vorschlag prüfen (Recall@5 hoch?) → nach ~/git/claude-mds/claude/skills/doku-pflege übernehmen, committen, pushen.
-4. Nächste Kette mit Höhensitz; GPU-Pausen für Auflösungs-Leiter (BN: 1000/1200/1600 px, sweetspot.py anpassen).
-5. Worktree agent-a250d1c46da5208e8 (Bildwert, Commit 865b8b785) nur als Option mergen oder entfernen (Ergebnis ✗ für Wolke).
-
-## Entscheidungen des Nutzers
-- ✓ Probelauf darf rc-park_tmp/ketten_probe/{code,arbeit} jederzeit ersetzen.
-- ? Nicht eingecheckte fremde Dateien modelle/archiv/SPEC_FLAECHENMASS.md, STAND_2026-11-10_NACHMITTAG.md, STAND_2026-11-12_VORMITTAG_lang.md: einchecken? (SPEC = Flächenmaß-Vorläufer des Formsitz, 11.11.)
-- ? Alte Merge-Probe-Worktrees 11/14/28/29 + rc-park_tmp/flaechen/wt entfernen (Löschen nur nach „Ja").
-
-## Fehler und Lehren dieser Sitzung (Details: modelle/ERKENNTNISSE.md, Baum)
-- Vorarbeit Bildwert/Flächenmaß nicht gefunden → Wissenssuche vor jedem Auftrag (CLAUDE.md, Memory feedback-archiv-immer-auffindbar).
-- Suche findet noch nicht zuverlässig („Formmaß Fläche" → irrelevant oben) – Rangfolge/Nachweis-Test beauftragt; NICHT als bewiesen melden.
-- Probelauf-Auswertung 2× falsch (Endmarke) vor erstem echten Lauf; dann echter Absturz gefunden (zusatzfotos_registrieren None-Format).
-- Befund „schiefer Putz" falsch gelesen (war runder Treppenturm) – erst Bauteil prüfen, dann Auftrag.
-- Maschine lag 20 min leer – parallele Jobs bei jedem Start mitdenken.
+## Offene Befunde (ohne Agent)
+- Galerie-Baustein: feste Querschnitte (Pfosten 0,22, Rähm 0,25, Knagge 0,12) und MIT_KATALOG_GALERIE noch nicht entfernt (Nutzerentscheid „alle Maße aus Fotos").
+- Gesims Süd endet ~0,6 m vor den Ecken; Balkenköpfe Süd fehlen; Ost kein Ergebnis.
+- Nischen: Tiefe nur ANNAHME (Druckmindestmaß 0,07; Hand 0,15), Sohlbank ~9 cm zu tief, rechte Nische „korb" statt „rund"; Fensterlaibungen ~0,36 m zu tief (laibung_aus_fotos rechnet ab Fassadenebene); weitere Verwerf-Stellen: oeffnungen_wandbild.py:225-229, fenster_tiefe_tor.py:96-102, ebenen_masse.py:150, vordach_profil.py:290, erkennerkasten_pruefen.py:142.
+- Schwimmende Körper (2-5 getrennte), Abnahme rot seit 1122p; Tor-Scheitel/Breite; Dachknick/rund_aus_huelle rc 4; Uhrzeiger grob, Süd 3 Fotos; Gegenprobe an zweitem Objekt; `gps_unsicherheit.band` latent.
+- Konvergenz-F1 (Agent): grobes F1 trennt kaum (0,00-0,16 über Zufall) -> Bild entscheidet; West 2 Fotos OOM bei 2,6 Mio. Dreiecken; Süd/West fein braucht nahe Fotos (Fotoauftrag); gemeinsame Fassadenebene Hand vs. Kette im Süden ungeklärt.
+- 4 Baumdateien lokal geändert gewesen -> Patch `/media/oem/rcdaten/tmp/beiseite_merge/baumdateien_lokal.patch`; 3 Archivdateien dort beiseite (identisch in main eingecheckt).
+- Worktrees aufräumen (nur sauber, nie --force; Locks per `git worktree unlock`): .claude/worktrees/agent-a775d50f..., agent-a9c5caaf..., /media/oem/scan/rc-park_tmp/{merge_probe31, wt_konvergenz_f1}; Root-Platz >= 15 GB halten (zuletzt 13 GB).
+- Lehre heute: Warter nie mit `pgrep -f` auf eigenes Muster (findet sich selbst); `tools/py` kennt kein `-u` (PYTHONUNBUFFERED=1 setzen); eigene `timeout`-Grenzen bei GPU-Jobs weglassen, Job per job_start.sh.
 
 ## Vorsicht
-- Fremde uncommittete Dateien nie committen (modelle/INDEX.md, LIZENZ_WERKZEUGE.md, PIPELINE_FASSADEN.md, kaufhaus_grob3, martinstor*, archiv/ untracked).
-- Nur EINE Kette; Agenten ohne GPU/Rechenläufe während Kette. Worktrees nie --force; .claude/worktrees kein Symlink.
+- Nur EINE Kette; keine Rechenläufe daneben (Wissensindex erst nach dem Kettenstart-Fenster/zwischen Läufen).
+- Fremde uncommittete Dateien nie committen (modelle/kaufhaus_grob3 u. a.). Hook nur Nutzer.
