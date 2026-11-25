@@ -4,7 +4,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 
 ## Regeln, Methode, Vorlagen
 - `modelle/KI_AUFRAEUMEN_2026-11-20.md` (3 kB) KI-konformes Aufraeumen (20.11.2026)
-- `modelle/LIZENZ_WERKZEUGE.md` (37 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (18 Abschnitte)
+- `modelle/LIZENZ_WERKZEUGE.md` (37 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (19 Abschnitte)
 - `modelle/METHODE_EBENEN_BAUPLAN.md` (8 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)
 - `modelle/METHODE_MASSTABELLE.md` (13 kB) METHODE: Masstabelle + generischer Pruefstand (das Rueckgrat jeder Modellerzeugung aus Daten)
 - `modelle/METHODE_MESSEN_DANN_BAUEN.md` (26 kB) Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md) -> Inhalt `modelle/inhalt/METHODE_MESSEN_DANN_BAUEN.md` (10 Abschnitte)
