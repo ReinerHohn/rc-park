@@ -1,31 +1,25 @@
-# Übergabe 25.11.2026 13:45
+# Übergabe 25.11.2026 20:55
 Weiter mit: „weiter“. Vorher Skill `sitzungsbeginn`.
 
 ## Auftrag (Nutzerworte)
 - HAUPTZIEL (24.11.): Kette baut das Schwabentor automatisch mindestens so gut wie Handmodell schwab_v3, danach zweites Objekt. Plan `modelle/PLAN_HANDMODELL_IN_KETTE.md`.
-- „Alle Maße müssen aus Fotos kommen.“ Fehlt eins: mehr Fotos, dann ANNAHME mit Herleitung.
-- HART „sichere das hart ab“: nie schlechter als Bestand. Nach jedem Lauf ZUERST `audit/neben_*.jpg` neben `modelle/<obj>/bestand/` und ZIEL_* schicken, dann Zahlen. Rückschritt nie mergen. „Keine Handangriffe, nur Automatik.“
-- Deutsch, „mein grosser Meister“, keine breiten Tabellen, Fehlerliste vor Lob, Realitäts-% nur als Schätzung.
+- „Alle Maße müssen aus Fotos kommen.“ HART „sichere das hart ab“: nie schlechter als Bestand; nach jedem Lauf ZUERST `audit/neben_*.jpg` neben `modelle/schwabentor-1122/bestand/` + ZIEL_* schicken, dann Zahlen. „Keine Handangriffe, nur Automatik.“
+- Deutsch, „mein grosser Meister“, keine breiten Tabellen, Fehlerliste vor Lob.
 
-## Stand 25.11. 13:45
-- main = bab6e65af (nur Doku/Erkenntnisse). Code der Agenten steht NICHT in main: Probe 33 = Zweig `merge-probe-33`, Worktree `/media/oem/scan/rc-park_tmp/merge_probe33` (Symlinks modelle/{schwabentor-1122,schwab_auto,stl} und daten/* auf main; Originale in `/media/oem/rcdaten/tmp/probe33_beiseite/`).
-- LÄUFT: Kette `rcpark-kette-schwabentor-null-1122ze` (Start 12:06, Ende geschätzt 16:00-16:30), Log `/media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122ze.log`, Ende `JOB_ENDE`. Nichts anderes rechnen.
-- Ausgangslage: 1122zd 5/11, früher belegt 7/11, Handstand 1120 = 11/11. Abbruchregel P7: zwei Läufe ohne Anstieg = Methode wechseln.
+## Stand 25.11. 20:55
+- LÄUFT: Kette `rcpark-kette-schwabentor-null-1122zh` (Start 20:20, `--ab bauen`, Ende ca. 23:00), Log `/media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-null-1122zh.log`. Code = Zweig `merge-probe-33` (fast-forward auf merge-probe-34 = acac467ff), Worktree `/media/oem/scan/rc-park_tmp/merge_probe33` (Symlinks modelle/{schwabentor-1122,schwab_auto,stl,schwabentor-1122_gen.py}, daten/*). Erste Baustufe geprüft: STL 20:23 neu.
+- Probe 34 enthält: Matching-Fix, Generator-Abbruch, Teilbau (`tools/bauteil_schleife.py`), Foto-Korrektor (aus), freiraum_tor, ebene_sicht (Nachbarhaus-Fehlprojektion), Vordach-Relief, Höhen-Zirkel-Fix, Massstab-Tor (`massstab_hoehe_tor.py`), Bestand-Lage-Gegenprobe, Dach-Knotenveto (cd693bf62 hatte DOM1-Veto abgeschaltet), Tür f04 (Knick/Gewände/Breite), Konsolen-Konsistenz (6 statt 7).
+- main = 9f2209add (nur Doku). Merge-Sperre aktiv (1122zf Rückschritt Tür f04) - erst 1122zh kann sie lösen. Probelauf ist durch die Sperre ebenfalls gesperrt (nicht umgehen).
+- Erkenntnis 25.11.: Handstand-Höhen ~2,6 % zu tief (an Wolke gemessen); Kette stimmt. Höhen nur gegen Wolke/Laser werten. Bestand Tür f04 lag 0,27 m zu weit aussen -> Bestand nach gutem Lauf neu anlegen (Nutzer Bild zeigen).
 
-## Nach Laufende (Reihenfolge)
-1. `audit/neben_*.jpg` gegen `modelle/schwabentor-1122/bestand/` und ZIEL_*/1120 ansehen, dem Nutzer schicken.
-2. Dann x von 11, Fehlerliste, Bestand-Tor, Stufigkeits-Tor, Tauschtest, Schwellen.
-3. `ketten_probelauf.sh --rev merge-probe-33` (Job, JOB_RAM_MB=7000 JOB_GPU_MB=3000) = 0, `bash tools/merge_sperre.sh` = 0, Merge, `bash tools/schnelltest.sh` = 0 Fehler, `tools/baum_erzeugen.py` + `wissensbaum_luecken.py`, `git pull --no-rebase --no-edit && git push`, saubere Worktrees entfernen (nie --force).
-4. `agent-limap` mergen (nur Messwerkzeug/Doku): Ergebnis nicht einbauen für Gesims/Waagerechte; pytlsd-Kern AGPL = nur Test.
+## Nach Laufende
+1. `audit/neben_*.jpg` gegen `bestand/` + ZIEL schicken; 3D: `/media/oem/scan/rc-park_daten/schwabentor-1122/schwabentor-1122_3d.html` nach `scratchpad/schwabentor_3d_1122zd.html` kopieren, Artifact gleicher Pfad (Link https://claude.ai/artifact/GVKjQ4MwbbrmLHsx1X9rdz).
+2. Ergebnis, Bestand-Tor, Stufigkeit, Tauschtest, Maßstab-/Höhen-Tor, x von 11.
+3. `tools/bauteil_schleife.py einfrieren schwabentor-1122 --repo /home/oem/git/rc-park` (aus Worktree merge_probe34) -> Teilbau ab dann.
+4. Kein Rückschritt: `ketten_probelauf.sh --rev merge-probe-34` = 0, `merge_sperre.sh` = 0, Merge main, Schnelltest 0, Baum, push; Worktrees aufräumen (nie --force).
 
 ## Offen
-- 15 alte + 5 neue Gestalt-Schwellen (Klasse C) ohne Herleitung.
-- Fotoaufträge an den Nutzer: Galerie quer zur Wand 5-10 m und 45° von links/rechts ~6 m; Rähm-Höhe; Gesims Ost/Süd; Uhrzeiger.
-- Gedrechselter Pfosten (Fuß/Schaft/Kopf), Turmkranz über 11,5 m, Zirkularitäts-Tor breiter.
-- Sohlbank unter Druckmindestmaß: Modell zeigt Foto; Entscheidung beim Druck.
-- Nachtrag `modelle/LIZENZ_WERKZEUGE.md`: Pi3/Pi3X NC, UniK3D NC-SA, nvdiffrast NC, Metric3D unklar, pytlsd-Kern AGPL, MP-SfM-Zeile falsch (Datei lokal schon verändert, vorher Diff prüfen).
-- Aufräumen nach Merge: `/media/oem/rcdaten/tmp/{galerie_kamera,nischen2_agent,turmachse_agent,tuer_widerspruch,pfostentiefe_agent,schwellen_agent,limap_agent}`, Worktrees wt_*.
-- Memory-Lehre: Urteil „nicht schlechter“ erst nach Kontaktbogen der Schalter-Varianten; Mittelmaß ersetzt bei gedrechselten Teilen nicht das Profil über die Höhe.
-
-## Vorsicht
-- Nur EINE Kette; Root-Platte 14 GB frei (Ziel 15, Notgrenze 5). Fremde uncommittete Dateien (modelle/kaufhaus_grob3 u. a.) nie committen; nur explizites `git add <Datei>`. Löschen nur nach „Ja“. Hook nur Nutzer.
+- Streben-u aus feinem Wandbild 0,13-0,16 m neben Kanten-Konsolen; Kantenstufe F1 nur 0,23 (Präzision 0,14).
+- Stufigkeit Uhr/Laterne/Spitze/Gesims; Rähm 0,80 m; Ost/West Fotos fehlen.
+- referenz_hand.json (4 berichtigte Werte) nicht anfassen ohne Freigabe; Klasse-B-Schwellen herleiten; LIZENZ_WERKZEUGE-Nachtrag.
+- Root-Platte 10 GB (Ziel 15).
