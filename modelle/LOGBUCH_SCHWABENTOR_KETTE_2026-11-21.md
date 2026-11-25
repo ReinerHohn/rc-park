@@ -546,3 +546,6 @@ Stand und naechste Schritte: `.claude/UEBERGABE.md`. Kette 1122s laeuft (Sued er
 
 ## UEBERGABE 24.11.2026 21:00
 Siehe `.claude/UEBERGABE.md` (1122zc laeuft, Merge-Probe 31, 3 Agenten).
+
+## UEBERGABE 25.11.2026 23:20
+Stand: `.claude/UEBERGABE.md`. Lauf 1122zh (Probe 34): Galerie 6 Konsolen, Tuer f04 weiter Rueckschritt (F1 0,636 gegen 0,81, Lage aber 0,043 m an der Wolke), Merge gesperrt. Hoehen: Hand 2,6 % zu tief, Kette stimmt (Wolke). Teilbau-Stand stand_20261125_202029 eingefroren; Agenten Dach-Knick + Tuer im Teilbau.
