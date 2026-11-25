@@ -94,6 +94,7 @@ Die 12-14 % Massstabsluecke wirkt im Endmodell NICHT (Massstabsterm 0,1-0,4 %); 
 - P8 Offen (kein Agent, Plattenplatz): Tor-Scheitel/-Breite; Dachknick; Gegenprobe zweites Objekt.
 
 ## Stand (fortschreiben, neueste oben)
+- 25.11. 08:15 · Kette 1122zd (02:28-06:36, main 16c633f12, Probelauf rc 0): Handvergleich 5 von 11 (bezugsbereinigt 8 von 11, Hoehenbezug +0,41 m = EIN Befund, z-Null). Bild besser als Bestand: Uhr-Ring, Blendnischen mit Bogen, geschweiftes Vordach, Galerie mit Balkenkoepfen (keine Treppenkloetze). BESTAND-TOR ROT: fenster_tuer_f04 F1 0,81->0,70 / f04_3 0,81->0,69 (Tuer-Gewaende Nord fehlt im Modell, Bild belegt) -> Agent Tuergewaende; Galerie: Fremdblock unter der Galerie + feste Querschnitte -> Agent Galerie. Naechste Kette erst nach beiden. Nicht als Fortschritt gemeldet (Rueckschritt-Regel).
 - 24.11. 23:30 · Tiefenpruefung: 11/11 (1120) -> 4/11 -> 5/11 (1122); P1 Grundlinie erledigt, P2-P5 bei Agenten.
 - 24.11. 22:45 · Plan angelegt. In Arbeit: Galerie-Treppen + Bestand-Tor, Uhr, Vordach/Galerie-Pfosten, Weg-Analyse (WEG_HAND_ZU_KETTE.md),
   Kegeldach, Kanten ueber Traufe, Massstab. Checkliste: noch nicht gemessen.
