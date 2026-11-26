@@ -21,7 +21,7 @@ def kacheln(P, s, R, t, kachel):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("alt"); ap.add_argument("neu"); ap.add_argument("aus"); ap.add_argument("--ausrichtung", required=True)
-    ap.add_argument("--kachel", type=float, default=12.0); ap.add_argument("--radius", type=float, default=60.0); ap.add_argument("--faktor", type=float, default=1.3)
+    ap.add_argument("--kachel", type=float, default=12.0); ap.add_argument("--radius", type=float, default=60.0); ap.add_argument("--faktor", type=float, default=1.3); ap.add_argument("--npy", help="zusaetzlich Modellrahmen-Wolke <name>_modell.npy + <name>_farben.npy (fuer tools/modell_3d_html.py --wolke/--farben)")
     a = ap.parse_args()
     import cv2, teilfusion as TF
     T = json.load(open(a.ausrichtung))["transformation"]; s = T["s"]; R = cv2.Rodrigues(np.array(T["rvec"]))[0]; t = np.array(T["t"])
@@ -39,6 +39,8 @@ def main():
     G = np.concatenate([A[A_ok], N[N_ok]]); TF.ply_schreiben(a.aus, G)
     json.dump({"faktor": a.faktor, "kachel_m": a.kachel, "radius_m": a.radius, "punkte_alt": int(len(A)), "punkte_neu": int(len(N)), "punkte_vereint": int(len(G)), "kacheln_neu": len(nimm), "kacheln": bericht},
               open(a.aus + ".vereint.json", "w"), indent=1)
+    if a.npy:
+        X = np.c_[G["x"], G["y"], G["z"]].astype(float); np.save(a.npy + "_modell.npy", (X - t) @ R / s); np.save(a.npy + "_farben.npy", np.c_[G["r"], G["g"], G["b"]].astype(np.uint8))
     print(f"alt {len(A)} neu {len(N)} -> vereint {len(G)} ({len(nimm)} Kacheln aus neu, Rest alt)", flush=True); return 0
 
 

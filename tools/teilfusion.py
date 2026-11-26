@@ -42,6 +42,16 @@ def kmeans(X, k, it=50, seed=0):
     return L
 
 
+def verlust_warnung(info, faktor=0.5):
+    """Teile, die weit weniger Punkte behalten als ihr Bildanteil erwarten laesst (ANNAHME faktor 0,5; Messung 26.11. Schwabentor: Teil 3 erwartet 20 %, behalten 7 %,
+    Nordzelle bei EINER Fusion 5-fach dichter). Erwartung = Kern/(Kern+Nachbarn); nur Warnung, die Gegenprobe ist tools/kachelfusion.py + dichte_diagnose.py."""
+    w = []
+    for t in info:
+        gesamt = t["kern"] + t["nachbarn"]; erw = t["kern"] / gesamt if gesamt else 1.0; ist = t["punkte_behalten"] / t["punkte_teil"] if t["punkte_teil"] else 1.0
+        if ist < faktor * erw: w.append(dict(teil=t["teil"], erwartet=round(erw, 3), behalten=round(ist, 3)))
+    return w
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ws"); ap.add_argument("aus"); ap.add_argument("--max_bilder", type=int, default=0)
     ap.add_argument("--min_num_pixels", type=int, default=5); ap.add_argument("--max_image_size", type=int, default=1600); ap.add_argument("--input_type", default="photometric"); ap.add_argument("--kern_anteil", type=float, default=0.6)
@@ -94,7 +104,9 @@ def main():
         print(f"Teil {j + 1}/{len(teile)}: Kern {len(kern)} + {len(nachb)} Nachbarn -> {len(P)} Punkte, {int(behalten.sum())} behalten ({time.time() - t1:.0f} s)", flush=True)
     shutil.rmtree(tmp, ignore_errors=True)
     G = np.concatenate(alle) if alle else np.zeros(0, DT); ply_schreiben(a.aus, G)
-    json.dump(dict(bilder=N, max_bilder=a.max_bilder, teile=info, punkte=int(len(G)), sekunden=round(time.time() - t0), min_num_pixels=a.min_num_pixels, max_image_size=a.max_image_size), open(a.aus + ".teile.json", "w"), indent=1)
+    warn = verlust_warnung(info)
+    for x in warn: print(f"WARNUNG Teilfusion Verlust: Teil {x['teil']} behaelt {x['behalten']:.0%} der Punkte, erwartet {x['erwartet']:.0%} - Flaechen am Teilrand duenn? Gegenprobe tools/kachelfusion.py", flush=True)
+    json.dump(dict(verlust_warnung=warn, bilder=N, max_bilder=a.max_bilder, teile=info, punkte=int(len(G)), sekunden=round(time.time() - t0), min_num_pixels=a.min_num_pixels, max_image_size=a.max_image_size), open(a.aus + ".teile.json", "w"), indent=1)
     print(f"TEILFUSION {len(G)} Punkte aus {len(teile)} Teilen ({time.time() - t0:.0f} s) -> {a.aus}", flush=True); return 0 if len(G) else 3
 
 
