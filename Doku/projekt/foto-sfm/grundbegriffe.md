@@ -20,6 +20,7 @@ Wann was:
 - Test an diesen 50: feste Brennweite 8 Inlier-Erfolge, freie Brennweite 14, mit Verzeichnung 13, 24 px Toleranz 14, Median 0 Inlier. Vermutung „Linsenverzeichnung" damit großteils widerlegt; wahrscheinlich ist das Hauptnetz dort schwach oder falsch (Folgerung, nicht gemessen).
 - Mapper nur auf den 241 Fotos: 5 Teilmodelle (55/29/72/10/8 Bilder, Reproj 0,65–0,97 px). Einpassen über gemeinsame Fotos: Modell 0 (alle schon im Netz) und 3 (10 Bilder) passen, Modell 2 (72 Bilder, 40 neu) nur mit 1,0 m Rest (unbrauchbar), Modelle 1 und 4 (37 neue Fotos, vermutlich Brücke/Unterdurchgang) haben 0–1 gemeinsame Fotos = nicht einpassbar.
 - Fehler beim Vorgehen (Lehre): `--ref-db` muss zur Rekonstruktion `--sparse` passen (hier `db_mapper.db` zu `sfm/sparse/0`, nicht `db.db`); vor dem Start Rig-Kennungen vergleichen, sonst Absturz in `triangulate_points` nach 30 min Matching.
+- Abdeckungsmeldung (`tools/abdeckung_meldung.py`, Zonen `modelle/schwabentor-1122/abdeckung_zonen.json`): Wände Nord/Süd/West/Ost und Dach belegt, Treppenturm belegt (320 Kameras, 27 Handy), Brücke/Treppe/Unterdurchgang „Lage nicht im Netz“ -> Fotoauftrag mit Anschlussweg. Von den 144 nicht eingeordneten Fotos liegen 40 in Teilmodell 2 (eingepasst, 1,0 m Rest), 3 in 3, 34 in den nicht einpassbaren 1/4, 67 in keinem.
 
 ## Offen
 - Alle 677 scharfen Fotos (statt 241) mit SIFT + ALIKED/LightGlue neu matchen, dann gemeinsamer Mapper mit den Referenzbildern, Blick-Tor (Seitenverwechslung) und Pflichtbild.

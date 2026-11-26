@@ -23,6 +23,10 @@ oder, wo Fotos fehlen, einen konkreten Fotoauftrag. Ein Durchlauf dauert höchst
    c. **Fotoauftrag statt Erfinden:** Fehlt Abdeckung, nennt die Kette die Stelle und von wo/wie zu fotografieren ist (Karte oder Skizze, Standpunkt, Blickrichtung);
       im Modell steht dort "nicht belegt". Kein Spiegeln, keine Katalogteile, kein Raten.
    d. Nicht eingeordnete Fotos werden mit Grund gemeldet (keine Korrespondenz / zu wenige Matches / Lage nicht berechenbar), nicht stillschweigend verworfen.
+   **Stand 26.11. (Werkzeug, noch nicht in `gesamtkette.py`):** `tools/abdeckung_meldung.py` + Zonenliste `modelle/<obj>/abdeckung_zonen.json` erfüllt b–d
+   (Bild + Markdown + JSON), Test `tools/test_abdeckung_meldung.py` im Schnelltest. Echte Handyfotos: 97/241, Gründe 63 keine Korrespondenz / 53 zu wenige Matches /
+   28 Lage nicht berechenbar; Fotoauftrag Brücke, Treppe, Unterdurchgang (Lage nicht im Netz). **Treppenturm gilt dort als belegt** (320 Kameras, davon 27 Handy,
+   Fächer 230 Grad, Tiefe 0,88 der besten Wand) – Widerspruch zur Kontaktbogen-Aussage offen (Teilstelle, Verdeckung durch Nachbarn, oder Aussage falsch).
 2. **Laufzeit: Foto bis Modell höchstens 8 Stunden** je Gebäude (ANNAHME der Größenordnung ~700 Fotos; heute messbar: SIFT-Matching 677 Fotos ~1,4 h,
    LightGlue grob 840 157 Paare ~95 min bei ~145 Paaren/s, Registrierung ~10 min, Teilmodell-Mapper offen).
    Die 8 h werden nur gemeldet, nie erzwungen: kein Abbruch wegen Zeit (ein halbes Modell widerspricht Randfall 1); Abweichung = Meldung mit langsamster Stufe (Nutzer 26.11.).

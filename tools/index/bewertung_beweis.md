@@ -1,5 +1,6 @@
-# Werkzeuge: bewertung_beweis (27)
+# Werkzeuge: bewertung_beweis (28)
 - `tools/abdeckung.py` [col] abdeckung.py - Wo fehlen Fotos? Aufnahme-Assistent aus den vorhandenen Netzen (Register BI).
+- `tools/abdeckung_meldung.py` [col] abdeckung_meldung.py - ABDECKUNGSMELDUNG NACH DER REGISTRIERUNG je Wand, Dach und Sonderstelle + Fotoauftrag + Grund je nicht eingeordnetem Foto (Spec modelle/SPEC_VOLLAUTOMATIK_FO
 - `tools/abdeckung_quellen.py` [col] abdeckung_quellen.py - AUTOMATISCH zaehlen, aus welchen Richtungen/Hoehen/Abstaenden jede Quelle das Objekt sieht, und Luecken je Seite melden (Plan 3.7).
 - `tools/aenderung_check.py` [seg] aenderung_check.py — ÄNDERUNGS-WÄCHTER gegen Regressionen.
 - `tools/beweis_anker.py` [seg] beweis_anker.py - SICHTBEWEIS je Kamera (generisch, 2026-11-04): amtliche Anker (anker3d.json: LoD2-Ecken, First, Traufe) mit der Kamera aus K-<foto>.json ins Foto projizieren. Lie
