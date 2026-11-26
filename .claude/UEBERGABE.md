@@ -1,3 +1,13 @@
+# Übergabe 26.11.2026 05:30 (löst die von 25.11. 23:20 ab)
+Weiter mit: „weiter“ (/uebergabe fortsetzen). Vorher Skill `sitzungsbeginn`.
+- Lauf 1122zi2 (Start 01:37, Ende 04:26, Probe 34 4e553b602, Probelauf rc 0): Dach wieder Pyramide mit Kragen wie Handstand (Bild gesehen), Uhr 96 %, Tür f04 Gewände+Vertiefung im Bild richtig. ROT: Bestand-Tor f04 F1 0,54 (Bestand 0,81 im eingefrorenen Kasten u 0,229..0,804), Höhen-Tor Dach +1,23 m (Massstab belegt, DOM1 = Veto), Stufigkeit 5 (fenster_f03, linien_band_f03, linien_gesims_f01, oeffnung_bogen_f01, uhr_f01). 7/11 PASST. Merge main GESPERRT.
+- Lücke: Massstab-Tor nur in Stufe `tore`; `--ab bauen` überspringt ihn (Trennung OFFEN).
+- merge-probe-34 jetzt afe99ac54 = 4e553b602 + Dach-Fototor + Tür-Gewände/Zonen + Fensterform-Band (nischen_fenster, Test test_form_band). Worktree /media/oem/scan/rc-park_tmp/merge_probe34 hat Symlinks (modelle/{schwab_auto,schwabentor-1122,stl,_gen.py}, daten/*); git merge dort scheitert (stash) -> in temporärem Worktree mergen, dann update-ref + git checkout NEW -- <Dateien>.
+- Eingefroren: /media/oem/rcdaten/rc-park_teilbau/schwabentor-1122/stand_20261126_013724. Änderungen an nischen_fenster/befundliste/neben_details machen Teilbau VERALTET (code_stand fein zählt `__main__` als Modulebene) -> nur voller Lauf.
+- Läuft: Agent adbe10efb3d8c0418 (Stufigkeit 5 Bauteile, Worktree agent-adbe10efb3d8c0418, wartet auf eigenen Teilbau). Bei Bericht: Bilder ansehen, grüne Zweige wie oben in Probe 34, Schnelltest 0, dann neuer voller Lauf (Preflight: daten/schwabentor-1122 im Arbeitsbaum, Symlinks) mit `ketten_probelauf.sh` aus dem Probe-Worktree vorher.
+- Fehler dieser Nacht: Befund „Fotos zeigen rund“ aus Detektorlog ohne Foto übernommen (Fotos waren rechteckig); Probelauf erst mit main-Skript (Exit 4).
+- Entscheidungen offen (Nutzer): Bestandkasten f04 neu einfrieren? Höhen-Tor Dach nach Foto/Wolke bewerten (Laser nur Veto)? Freigabe der 4 Höhen wurde erteilt und umgesetzt (11bf900e0). Fotos Ost/West, Galerie quer, Rähm-Höhe fehlen.
+
 # Übergabe 25.11.2026 23:20
 Weiter mit: „weiter“ (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbeginn`.
 
