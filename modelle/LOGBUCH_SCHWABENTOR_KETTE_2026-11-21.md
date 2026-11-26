@@ -555,3 +555,10 @@ Stand: Lauf 1122zi2 fertig (Probe 34 4e553b602): Dach wie Handstand, Uhr 96 %, T
 
 ## UEBERGABE 26.11.2026 10:30
 Stand: Lauf 1122zj (Probe 34 ea13117b8) rc 6 durch Bestand-Tor f04. Dach Pyramide wie Handstand, Stufigkeit 0 %, Fensterform 0 FALSCH, Konvergenz 1 besser/11 gleich/0 schlechter. Relief-"Verlust" war nur das Sichtblatt (Fix Streiflicht f1757afdd). Bestandskasten f04 neu eingefroren (Nutzer 26.11.), Bestand 0,727; Tuer-Fix offline 0,499 -> 0,677. Probe 34 = 20da68993. Naechster Schritt: code_stand-Agent a040, dann voller Lauf 1122zk, danach neu einfrieren und Teilbau. Details: `.claude/UEBERGABE.md`.
+
+## 26.11.2026 ~11:05 Duenne Wolke hinter dem Tor (Nordzelle x 5-10, y 5-20): NICHT Fotos, sondern die TEILFUSION (Messung)
+- Nutzer: markierter Bereich Nord-Nebenhaus duenn; "doch nicht mehr Bilder". `tools/dichte_diagnose.py` (neu): Sparse/Kameras/Dichtpunkte je 5-m-Zelle -> 42 RECHEN-Zellen, 37 FOTO (Rand/Nachbarn), 3 BASIS.
+- Nordzelle: 190 Kameras sehen sie, alle in der Dichtrechnung (dicht_bildwahl behaelt 595). Tiefenkarten (vereint/dicht/stereo) sind dort GUT: 70 Bilder mit >= 10 Spur-Punkten im Bild, 82 % gueltig, 69 % passen zur SfM-Tiefe (5 %).
+- Verlust in `tools/teilfusion.py`: `fused.ply.teile.json` Teil 3: 3,49 Mio -> 245 000 behalten (7 %), Teil 6 3,98 Mio -> 875 000, Teil 1 4,46 -> 2,66 Mio. Regel "nur Punkte, deren Bezugsbild zum Kern gehoert" + Nachbarn je Teil nur bis max_bilder 147.
+- Gegenprobe: 120 Bilder mit den meisten Punkten der Zelle in EINER Fusion (min_num_pixels 3, gleiche Tiefenkarten, 44 s): 174 126 Punkte in der Zelle statt 34 392 (5,1-fach).
+- Offen: Kachelfusion (Raumkacheln mit `StereoFusionOptions.bounding_box`, Bilder je Kachel aus den Spuren) statt Blickziel-Teile; dann Gesamt-Lauf gegen Bestand-Tor (neben_*.jpg).
