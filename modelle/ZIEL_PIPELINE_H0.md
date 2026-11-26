@@ -136,3 +136,6 @@ OFFEN: Bogenumriss Kreis-Naeherung (Spannweiten 3,4-4,25 m, ~5 % breiter als Han
 
 ## NACHTRAG 20.11.2026 morgens
 Nacht 19./20.11. siehe modelle/LOGBUCH_KETTENTEST_2026-11-19.md (Abschnitt UEBERGABE 20.11. ~09:00 am Ende): Seitenverkleben-Ursache gefunden und behoben (Konsens-Seitenfilter, modell_zerlegen, gps_seiten_pruefen), FlexGlue zuschaltbar, Martinstor-Kettenlauf VON NULL (martinstor-1120) laeuft.
+
+## UEBERGABE 26.11.2026 21:30
+Stand, laufende Jobs (SIFT 677 Handyfotos, ALIKED+LightGlue eingereiht), naechste Schritte und Lehren: `.claude/UEBERGABE.md`. Handyfotos/Bruecke: `Doku/projekt/foto-sfm/grundbegriffe.md`, Spec `modelle/SPEC_SCHWABENTOR_DEMONSTRATOR.md`.
