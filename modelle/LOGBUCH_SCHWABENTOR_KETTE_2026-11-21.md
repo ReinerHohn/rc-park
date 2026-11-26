@@ -552,3 +552,6 @@ Stand: `.claude/UEBERGABE.md`. Lauf 1122zh (Probe 34): Galerie 6 Konsolen, Tuer 
 
 ## UEBERGABE 26.11.2026 04:40
 Stand: Lauf 1122zi2 fertig (Probe 34 4e553b602): Dach wie Handstand, Uhr 96 %, Tuer f04 Bild ok aber Bestand-Tor rot (F1 0,54 gegen 0,81, eingefrorener Kasten), Hoehen-Tor Dach +1,23 m rot (gewollt, Wolke stuetzt Foto), Stufigkeit 5 rot. Merge gesperrt. Entscheidung Nutzer: Bestandkasten f04 neu einfrieren? Hoehen-Tor-Bewertung Dach? Luecke: Massstab-Tor nur in Stufe tore, nicht bei --ab bauen.
+
+## UEBERGABE 26.11.2026 10:30
+Stand: Lauf 1122zj (Probe 34 ea13117b8) rc 6 durch Bestand-Tor f04. Dach Pyramide wie Handstand, Stufigkeit 0 %, Fensterform 0 FALSCH, Konvergenz 1 besser/11 gleich/0 schlechter. Relief-"Verlust" war nur das Sichtblatt (Fix Streiflicht f1757afdd). Bestandskasten f04 neu eingefroren (Nutzer 26.11.), Bestand 0,727; Tuer-Fix offline 0,499 -> 0,677. Probe 34 = 20da68993. Naechster Schritt: code_stand-Agent a040, dann voller Lauf 1122zk, danach neu einfrieren und Teilbau. Details: `.claude/UEBERGABE.md`.
