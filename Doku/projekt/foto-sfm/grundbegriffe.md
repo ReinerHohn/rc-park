@@ -1,0 +1,26 @@
+# Grundbegriffe: von Fotos zur dichten Wolke (Erklärung 26.11.2026, Schwabentor)
+← [foto-sfm](../foto-sfm.md) · Werkzeuge: `tools/zusatzfotos_registrieren.py`, `tools/zusatzfotos_lightglue.py`, `tools/handy_teilmodell.py`, `tools/teilmodell_ausrichten.py`, `tools/dichte_nachtrag.py`, `tools/kachelfusion.py`
+
+## Gilt
+Die Kette läuft in dieser Reihenfolge. Jeder Schritt beantwortet eine eigene Frage:
+1. **Merkmale** (SIFT oder ALIKED, GPU): „Welche Stellen im Foto sind markant?" Ecken, Kanten, Fugen; je Stelle ein Zahlen-Fingerabdruck (~5 700 je Bild).
+2. **Matching** (SIFT-Abgleich oder LightGlue, GPU): „Welche Stellen in Foto A sind dieselben wie in Foto B?" Ergebnis: **Punktpaare im Bild (2D)**. Kein 3D, keine Kameraposition. Jedes Paar wird geometrisch geprüft; Treffer, die nicht zu einer gemeinsamen Kamerabewegung passen, fliegen raus. Im Log sind das die „Blöcke".
+3. **Mapper** (inkrementelles COLMAP, CPU): „Wo standen die Kameras, wo im Raum liegen die Punkte, damit ALLE Paare gleichzeitig stimmen?" Ergebnis: Kameraposition + Blickrichtung je Foto, 3D-Punkt je Stelle = das **SfM-Modell**. Vorgehen: Startpaar, dann Foto für Foto das mit den meisten bekannten Punkten anhängen, neue Punkte triangulieren, zwischendurch Bündelausgleich; wenn nichts mehr passt, beginnt ein neues **Teilmodell**.
+4. **Registrierung** (PnP): ein neues Foto wird gegen ein **fertiges** Modell eingeordnet. Es braucht Stellen, für die das Modell schon 3D-Punkte hat. Das Hauptmodell bleibt unverändert.
+5. **Tiefenkarte** (PatchMatch, GPU): je Foto und Pixel eine Tiefe (+ Normale). Jedes Bild einzeln, verrauscht. `window_step` ist der Pixelabstand im Vergleichsfenster, NICHT die Auflösung der Karte (gemessen 26.11.: step 1 statt 2 = 46,6 statt 46,0 % gültige Pixel).
+6. **Fusion** (CPU): alle Tiefenkarten zurück in den Raum, ein Punkt bleibt nur, wenn ≥ 3 Pixel in anderen Karten ihn bestätigen = **dichte Wolke**. **Kachelfusion:** Raster aus Säulen (Draufsicht, alle Höhen), je Säule nur die Bilder, die sie sehen; behalten werden nur Punkte in der Säule. Kachelgröße ändert den Speicher, nicht die Auflösung.
+
+Wann was:
+- Neue Fotos zu einem guten Netz: **Registrierung** (schnell). Neue Fotos zu einer Stelle, die das Netz nicht oder falsch hat (Brücke, Unterdurchgang): Registrierung scheitert, es braucht den **gemeinsamen Mapper** über neue und alte Fotos oder ein Teilmodell mit starrem Einpassen über gemeinsame, schon eingeordnete Fotos (Umeyama; nie verformen, Regel 08.11. „ein Punkt ist ein Punkt").
+- Mehr Pixel in der Wolke kommen aus Bildgröße (aktuell 1600 px) und Fusionsstrenge, nicht aus der Kachelgröße.
+- Matching-Qualität bestimmt den Mapper: falsche Paare = falsches Modell, zu wenige Paare = unverbundene Teilmodelle. Bei Steinfugen und wiederholten Bögen hilft ALIKED + LightGlue mehr als SIFT.
+
+## Versucht (Schwabentor 26.11., Handyfotos vom Nutzer)
+- 241 von 739 Fotos nach Schärfe und Ähnlichkeit gewählt; Registrierung gegen `sparse/0`: 97 von 241 eingeordnet. Die 144 übrigen zeigen Brücke, Treppe, Unterdurchgang, Treppenturm (Kontaktbogen angesehen). 63 davon ohne jede Übereinstimmung mit bekannten 3D-Punkten, 31 mit 1–11, 50 mit ≥ 12 (bis 148), aber PnP scheitert.
+- Test an diesen 50: feste Brennweite 8 Inlier-Erfolge, freie Brennweite 14, mit Verzeichnung 13, 24 px Toleranz 14, Median 0 Inlier. Vermutung „Linsenverzeichnung" damit großteils widerlegt; wahrscheinlich ist das Hauptnetz dort schwach oder falsch (Folgerung, nicht gemessen).
+- Mapper nur auf den 241 Fotos: 5 Teilmodelle (55/29/72/10/8 Bilder, Reproj 0,65–0,97 px). Einpassen über gemeinsame Fotos: Modell 0 (alle schon im Netz) und 3 (10 Bilder) passen, Modell 2 (72 Bilder, 40 neu) nur mit 1,0 m Rest (unbrauchbar), Modelle 1 und 4 (37 neue Fotos, vermutlich Brücke/Unterdurchgang) haben 0–1 gemeinsame Fotos = nicht einpassbar.
+- Fehler beim Vorgehen (Lehre): `--ref-db` muss zur Rekonstruktion `--sparse` passen (hier `db_mapper.db` zu `sfm/sparse/0`, nicht `db.db`); vor dem Start Rig-Kennungen vergleichen, sonst Absturz in `triangulate_points` nach 30 min Matching.
+
+## Offen
+- Alle 677 scharfen Fotos (statt 241) mit SIFT + ALIKED/LightGlue neu matchen, dann gemeinsamer Mapper mit den Referenzbildern, Blick-Tor (Seitenverwechslung) und Pflichtbild.
+- Ob die Brücke damit ins Hauptmodell einpassbar ist (gemeinsame Fotos von Turm und Brücke), ist nicht belegt.

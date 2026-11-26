@@ -2,6 +2,7 @@
 Details: `modelle/PIPELINE_FASSADEN.md` (Inhalt: `modelle/inhalt/`) · Skill `fassaden` · Ast [kanten-messen](kanten-messen.md) · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [dichte-wolke](wolke-wandbild/dichte-wolke.md) · [oeffnungen](wolke-wandbild/oeffnungen.md) · [relief](wolke-wandbild/relief.md) · [wandbild](wolke-wandbild/wandbild.md)
 
 ## Gilt
+- **Schwabentor-Demonstrator (Nutzer 26.11.):** komplettes Tor inkl. Brücke, Halbautomatik erlaubt, stückweise drucken; Spec [modelle/SPEC_SCHWABENTOR_DEMONSTRATOR.md](../../modelle/SPEC_SCHWABENTOR_DEMONSTRATOR.md) [memory/project-schwabentor-demonstrator-halbautomatisch]
 - Dichte Wolke bleibt Standard (Nutzer 16.11.), liefert aber nur Lage-Veto, Höhe, Bruchstein-Relief [archiv/AUFGABENLISTE_2026-11-16 Z.29; PIPELINE_FASSADEN Z.5]
 - Bruchstein-Kette: `relief_einsatz` → `relief_putz` (Fotofarbe) → `steine_generieren` (nie in Öffnungen, generiert = ANNAHME); Torbogensteine nie generieren (Nutzer 15.11.) [PIPELINE_FASSADEN Stufe fassaden, Z.299]
 - Fenster = echte Löcher (`aushoehlen` am Generatorende, WAND_MM 1,2) + Rückwand in Leibungstiefe dahinter (Regel A, 18.11.) [PIPELINE_FASSADEN Z.104, Z.573]

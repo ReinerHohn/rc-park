@@ -20,7 +20,7 @@ import numpy as np
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("voll"); ap.add_argument("dicht"); ap.add_argument("bilder"); ap.add_argument("aus")
     ap.add_argument("--zelle", type=float, nargs=4, required=True, metavar=("X0", "X1", "Y0", "Y1")); ap.add_argument("--ausrichtung", required=True)
-    ap.add_argument("--min_punkte", type=int, default=20); ap.add_argument("--max_bilder", type=int, default=80); ap.add_argument("--nur_planen", action="store_true")
+    ap.add_argument("--min_punkte", type=int, default=20); ap.add_argument("--max_bilder", type=int, default=80); ap.add_argument("--nur_planen", action="store_true"); ap.add_argument("--window_step", type=int, default=2, help="PatchMatch window_step (2 = jeder zweite Pixel wie schnell, 1 = jeder Pixel)"); ap.add_argument("--praefix", help="nur Bilder, deren Name so beginnt (z. B. IMG_20261126 = neue Handyfotos)")
     a = ap.parse_args()
     import cv2, pycolmap
     T = json.load(open(a.ausrichtung))["transformation"]; s = T["s"]; R = cv2.Rodrigues(np.array(T["rvec"]))[0]; t = np.array(T["t"])
@@ -31,7 +31,7 @@ def main():
         m = (p.xyz - t) @ R / s
         if x0 <= m[0] < x1 and y0 <= m[1] < y1 and 0.5 < m[2] < 20:
             for e in p.track.elements: cnt[rec.images[e.image_id].name] = cnt.get(rec.images[e.image_id].name, 0) + 1
-    neu = sorted((n for n, c in cnt.items() if n not in set(alt) and c >= a.min_punkte), key=lambda n: -cnt[n])[:a.max_bilder]
+    neu = sorted((n for n, c in cnt.items() if n not in set(alt) and c >= a.min_punkte and (not a.praefix or n.startswith(a.praefix))), key=lambda n: -cnt[n])[:a.max_bilder]
     print(f"Bilder in der Zelle {len(cnt)}, davon nicht in der Dichtrechnung mit >= {a.min_punkte} Punkten: {len(neu)} (Summe Punkte {sum(cnt[n] for n in neu)})", flush=True)
     os.makedirs(a.aus, exist_ok=True); json.dump({"neu": neu, "punkte": {n: cnt[n] for n in neu}}, open(os.path.join(a.aus, "nachtrag.json"), "w"), indent=1)
     if a.nur_planen or not neu: return 0
@@ -46,7 +46,7 @@ def main():
     n0 = alt[0]; g_neu = Image.open(os.path.join(a.aus, "images", n0)).size; g_alt = Image.open(os.path.join(a.dicht, "images", n0)).size
     if g_neu != g_alt: print(f"ABBRUCH: Entzerrung weicht ab {g_neu} gegen {g_alt} bei {n0}"); return 4
     pm = os.path.join(a.aus, "stereo", "patch-match.cfg"); open(pm, "w").write("".join(f"{n}\n__auto__, 20\n" for n in neu))
-    po = pycolmap.PatchMatchOptions(); po.max_image_size = 1600; po.gpu_index = "0"; po.geom_consistency = False; po.filter = True; po.window_step = 2
+    po = pycolmap.PatchMatchOptions(); po.max_image_size = 1600; po.gpu_index = "0"; po.geom_consistency = False; po.filter = True; po.window_step = a.window_step
     pycolmap.patch_match_stereo(a.aus, options=po)
     for x in ("depth_maps", "normal_maps"):
         for n in alt:

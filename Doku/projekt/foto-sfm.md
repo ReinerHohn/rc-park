@@ -2,6 +2,7 @@
 Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTINSTOR.md` · `modelle/NICHTS_GEBRACHT.md` (Inhalt: `modelle/inhalt/`) · Nachbaräste: [lage-seiten](lage-seiten.md), [wolke-wandbild](wolke-wandbild.md), [kanten-messen](kanten-messen.md), [bauteile-kreis](bauteile-kreis.md), [betrieb](betrieb.md) · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [fotoauswahl](foto-sfm/fotoauswahl.md) · [kameras](foto-sfm/kameras.md) · [mapper](foto-sfm/mapper.md) · [zuordnung](foto-sfm/zuordnung.md)
 
 ## Gilt
+- **Grundbegriffe (Nutzer 26.11.):** Merkmale, Matching, Mapper, Registrierung, Tiefenkarte, Fusion, wann was → [foto-sfm/grundbegriffe.md](foto-sfm/grundbegriffe.md)
 - **Kernmethode (Nutzer 15.11.):** Form = Fotokanten + Triangulation mit SfM-Kameras; dichte Wolke/LoD2/DOM1 nur Lage-Veto, Höhe, Gegenprobe.
 - **Wandbild = Bauplan (17.11.):** jede Wand aus vielen Fotos entzerrt (1-cm-Raster) + Tiefe je Zelle → Gestalt nachbilden; kein Musterteil.
 - Neue Objekte: Fotos → SfM → LoD2 nur Abgleich (entschieden 20.11., Nutzer „neuer ist besser"; ersetzt „LOD2 = Massing" aus Okt.).
