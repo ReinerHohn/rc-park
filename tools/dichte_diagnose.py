@@ -58,8 +58,11 @@ def main():
     aus = a.aus or os.path.join(od, "audit", "dichte_diagnose.json"); json.dump(erg, open(aus, "w"), indent=1, ensure_ascii=False)
     print(f"Zellen {a.zelle:g} m: {zaehl} (Median Dichtpunkte je Sparse-Punkt {med:.0f})")
     for r in erg["zellen"][:12]: print(f"  {r['urteil']:6s} x {r['x0']:>5.0f} y {r['y0']:>5.0f}  sparse {r['sparse']:>5d}  kameras {r['kameras']:>3d}  dicht {r['dicht']:>8d}")
-    print("->", aus)
+    stark = [r for r in out if r["urteil"] == "RECHEN" and r["sparse"] >= 100]
+    erg["rechen_stark"] = len(stark); json.dump(erg, open(aus, "w"), indent=1, ensure_ascii=False)
+    print(f"RECHEN-Zellen mit >= 100 Sparse-Punkten: {len(stark)} (Hinweis-Tor ab 5: Fotos reichen, Dichtrechnung duenn -> tools/kachelfusion.py + wolke_vereinigen.py)")
+    print("->", aus); return 3 if len(stark) >= 5 else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

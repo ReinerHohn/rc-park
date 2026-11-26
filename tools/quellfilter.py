@@ -84,9 +84,34 @@ def zaehlen(X, kameras, threads=4):
     nq = np.sum([z[0] for z in Z], 0, dtype=np.int32); nv = np.sum([z[1] for z in Z], 0, dtype=np.int32); return nq, nv
 
 
+def zaehlen_gpu(X, kameras):
+    """GPU-Zaehlung per Unterprozess in der Torch-Umgebung (tools/quellfilter_gpu.py). -> nq, nv oder None (Rueckfall CPU)."""
+    import subprocess
+    if os.environ.get("RCPARK_QF_GPU", "1") == "0" or not all(hasattr(k[5], "pfad") for k in kameras): return None
+    py = os.environ.get("RCPARK_PY_TORCH", "/media/oem/scan/venv-seg/bin/python")
+    if not os.path.exists(py): return None
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from pfade import temp_ordner
+    tmp = temp_ordner("qf_gpu_")
+    try:
+        ein, aus = os.path.join(tmp, "ein.npz"), os.path.join(tmp, "aus.npz")
+        np.savez(ein, X=np.ascontiguousarray(X, np.float32), K=np.array([k[0] for k in kameras], np.float32), R=np.array([k[1] for k in kameras], np.float32), t=np.array([k[2] for k in kameras], np.float32),
+                 b=np.array([k[3] for k in kameras], np.float32), h=np.array([k[4] for k in kameras], np.float32), dateien=np.array([k[5].pfad for k in kameras]), tol_q=TOL_Q, tol_v=TOL_V, rand=RAND)
+        r = subprocess.run([py, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "quellfilter_gpu.py"), ein, aus], capture_output=True, text=True)
+        if r.returncode != 0 or not os.path.exists(aus): print("HINWEIS quellfilter: GPU-Weg fehlgeschlagen, CPU-Rueckfall:", (r.stderr or r.stdout)[-300:], flush=True); return None
+        Z = np.load(aus); return Z["nq"].astype(np.int32), Z["nv"].astype(np.int32)
+    finally:
+        import shutil; shutil.rmtree(tmp, ignore_errors=True)
+
+
 def entscheiden(nq, nv, min_v=MIN_V, verh=VERH):
     """True = Punkt weg (Freiraum >= min_v und >= verh x Quellen)."""
     return (nv >= min_v) & (nv >= verh * nq)
+
+
+class Karte:
+    """Tiefenkarte, die erst beim Aufruf gelesen wird; .pfad fuer den GPU-Weg."""
+    def __init__(self, pfad): self.pfad = pfad
+    def __call__(self): return tiefe_lesen(self.pfad)
 
 
 def kameras_aus_workspace(ws):
@@ -100,7 +125,7 @@ def kameras_aus_workspace(ws):
         else: continue                                                  # Workspace ist entzerrt; andere Modelle hier nicht erwartet
         f = next((os.path.join(dm, im.name + e) for e in (".geometric.bin", ".photometric.bin") if os.path.exists(os.path.join(dm, im.name + e))), None)
         if f is None: continue
-        T = im.cam_from_world().matrix(); kam.append((K, T[:, :3], T[:, 3], c.width, c.height, (lambda f=f: tiefe_lesen(f))))
+        T = im.cam_from_world().matrix(); kam.append((K, T[:, :3], T[:, 3], c.width, c.height, Karte(f)))
     return kam
 
 
@@ -153,7 +178,7 @@ def main():
     X = np.stack([P["x"], P["y"], P["z"]], 1) if sel is None else np.stack([P["x"][sel], P["y"][sel], P["z"][sel]], 1)
     kam = kameras_aus_workspace(a.ws); print(f"quellfilter: {len(X)} Punkte, {len(kam)} Kameras mit Tiefenkarte", flush=True)
     if not kam: print("HINWEIS quellfilter: keine Tiefenkarten - nichts gefiltert", flush=True); return 0
-    nq, nv = zaehlen(X, kam, a.threads); weg = entscheiden(nq, nv); anteil = float(weg.mean()) if len(weg) else 0.0
+    g = zaehlen_gpu(X, kam); nq, nv = g if g is not None else zaehlen(X, kam, a.threads); print("quellfilter: " + ("GPU" if g is not None else "CPU"), flush=True); weg = entscheiden(nq, nv); anteil = float(weg.mean()) if len(weg) else 0.0
     bericht = dict(stand=stand(), punkte_vorher=n0, gemessen=int(len(X)), weg=int(weg.sum()), anteil_weg=round(anteil, 5), regel=f"Freiraum >= {MIN_V} und >= {VERH} x Quellen",
                    toleranz=dict(quelle=TOL_Q, freiraum=TOL_V), kameras=len(kam), sekunden=round(time.time() - t0),
                    quellen_quantile=np.percentile(nq, [10, 50, 90]).tolist(), freiraum_quantile=np.percentile(nv, [10, 50, 90]).tolist())

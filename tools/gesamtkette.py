@@ -592,6 +592,8 @@ def main():
             erg["seiten_blick"] = _sb[0]
         if os.path.isdir(sp): erg["insel"] = lauf(B, f"tor_insel{tag}", [PYC, "-I", "tools/kette_insel_pruefen.py", ZR, sp], log, ok=(0, 3))[0]   # 15.11. (Schwabentor): Bildketten ohne Fremdstuetze (Videoclip) = Faecher/Geisterwolke; schreibt audit/kette_insel.json
         erg["grundriss"] = lauf(B, f"tor_grundriss{tag}", [PY, "-I", "tools/wolke_grundriss_pruefen.py", ZR, "--wolke", W], log)[0] if os.path.exists(W) else None
+        # 26.11.2026 DICHTE-DIAGNOSE (Schwabentor: duenne Wolke hinter dem Tor war Teilfusion-Verlust, nicht fehlende Fotos): je 5-m-Zelle Sparse/Kameras/Dichtpunkte -> FOTO/BASIS/RECHEN/OK; rc 3 = >= 5 RECHEN-Zellen (Hinweis-Tor, kein Abbruch).
+        if os.path.isdir(sp) and os.path.exists(W): erg["dichte_diagnose"] = lauf(B, f"tor_dichte_diagnose{tag}", [PYC, "-I", "tools/dichte_diagnose.py", ZR, sp, W], log, ok=(0, 3))[0]
         # 22.11.2026 LOT-TOR Wandneigung (Kettenlauf 1122n: Modell 3,2 Grad gekippt, alle Lage-Tore gruen -> Tiefensweep 'nicht belastbar', Bilderker fehlt): gemeinsame
         # Kippung der Waende des Zielgebaeudes in der dichten Wolke, rc 3 = kippt > 2 cm/m -> Lage nicht bestanden (lage_proben.lage_bestanden, RCPARK_LOT_TOR=hinweis = nur melden).
         if os.path.exists(W):
