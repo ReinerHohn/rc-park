@@ -7,6 +7,7 @@ sehen den Treppenturm nicht (dort fehlt die Einordnung), 'kameras_treppenturm' s
   2 Gegenprobe        Nord/Sued/Ost sind belegt und stehen NICHT im Auftrag (sonst waere 1 trivial); West haengt an den Treppenturm-Kameras (siehe 3).
   3 Tauschtest        + Treppenturm-Kameras -> Treppenturm verschwindet aus dem Auftrag (gemessen, nicht gelistet); Stellen ohne Lage bleiben.
   4 Gruende           je nicht eingeordnetem Foto genau ein Grund nach n_korr/min_inlier; Foto ohne Registriereintrag -> 'nicht versucht'; Summen stimmen.
+  6 Spurbeleg         Kamera zaehlt nur mit eigenen Spurpunkten an der Zone (26.11.: Strassenblicke durch Nachbarhaeuser); rote Gegenprobe spur=False zaehlt alle.
   5 Konfiguration     modelle/schwabentor-1122/abdeckung_zonen.json fuehrt die vier Sonderstellen; Markdown nennt jede Auftragsstelle.
 Python: /media/oem/scan/venv-seg/bin/python -I tools/test_abdeckung_meldung.py (cv2 nur fuer das Bild; ohne cv2 wird es uebersprungen)."""
 import os, sys, json, math, copy
@@ -63,6 +64,18 @@ for g in ("keine Korrespondenz", "zu wenige Matches", "Lage nicht berechenbar"):
 m3, _ = AM.melden(D["objekt"], D["zonen"], kam(D["kameras_wand"]), neu, reg, P, bilder=list(reg["bilder"]) + ["IMG_ohne_eintrag.jpg"])
 pruef(m3["gruende"]["nicht versucht"] == 1 and m3["nicht_eingeordnet"] == m["nicht_eingeordnet"] + 1, "Foto ohne Registriereintrag nicht als 'nicht versucht' gemeldet")
 pruef(m["eingeordnet"] + m["nicht_eingeordnet"] == m["fotos"] == len(reg["bilder"]), "Summen eingeordnet/nicht eingeordnet stimmen nicht")
+# ---------- 6 Spurbeleg (26.11.: Strassenblicke 'sahen' den Treppenturm durch die Hauszeile): Kamera zaehlt nur mit eigenen Spurpunkten an der Zone
+kt = kam(D["kameras_treppenturm"]); tt = next(z for z in zonen if z["name"] == "Treppenturm"); St = AM.sicht(kt, tt["X"], tt["N"], tt["koerper"])
+rng = np.random.default_rng(1); halb = len(kt) // 2; pruef(St.any(1).all() and halb >= 1, "Datensatz: Treppenturm-Kameras sehen den Turm geometrisch nicht")
+for i, k in enumerate(kt):
+    Xs = tt["X"][St[i]]; Y = Xs[rng.integers(0, len(Xs), 20)] + rng.normal(0, 0.2, (20, 3))
+    k["beob"] = Y if i < halb else Y + 6.0 * (k["C"] - Y) / np.linalg.norm(k["C"] - Y, axis=1)[:, None]    # 2. Haelfte: Punkte 6 m vor dem Turm = Nachbarhaus
+ms, _ = AM.melden(D["objekt"], D["zonen"], kt, neu, reg, P); zt = {e["name"]: e for e in ms["zonen"]}["Treppenturm"]
+pruef(zt["fotos"] == halb and zt["fotos_geometrisch"] == len(kt), f"Spurbeleg: {zt['fotos']} Fotos (geometrisch {zt['fotos_geometrisch']}), erwartet {halb} von {len(kt)}")
+mr, _ = AM.melden(D["objekt"], D["zonen"], kt, neu, reg, P, spur=False)       # rote Gegenprobe: ohne Spurbeleg zaehlen die verdeckten mit
+pruef({e["name"]: e for e in mr["zonen"]}["Treppenturm"]["fotos"] == len(kt), "Gegenprobe: ohne Spurbeleg muessten alle Kameras zaehlen (Test sonst trivial)")
+for k in kt: k["beob"] = tt["X"][[len(tt["X"]) // 2]] + 0.1 * rng.normal(size=(3, 3)) + 1e3   # Spurpunkte weit weg -> keine zaehlt
+pruef({e["name"]: e for e in AM.melden(D["objekt"], D["zonen"], kt, neu, reg, P)[0]["zonen"]}["Treppenturm"]["fotos"] == 0, "Spurbeleg ohne Punkte an der Zone zaehlt trotzdem")
 # ---------- 5 Konfiguration im Objektordner + Ausgabe
 live = json.load(open(os.path.join(T, "..", "modelle", "schwabentor-1122", "abdeckung_zonen.json")))
 pruef(set(VIER) - {"Treppenturm"} <= {s["name"] for s in live["sonderstellen"]} and "Treppenturm" in {s["name"] for s in live["sonderstellen"]},

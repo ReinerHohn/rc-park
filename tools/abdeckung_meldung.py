@@ -18,7 +18,11 @@ JE ZONE: Zellen (ZELLE_M) mit Aussennormale; Kamera sieht eine Zelle, wenn sie v
   belegt  <=> fotos >= MIN_FOTOS und faecher >= MIN_FAECHER_GRAD und zellen_gesehen >= MIN_ZELLEN und tiefe_rel >= MIN_TIEFE_REL; 0 Fotos = 'nicht belegt', sonst 'duenn'.
 SCHWELLEN (Herkunft):  MIN_FOTOS 3 = Regel "Formfamilie aus >= 3 Fotos" (CLAUDE.md); BLICK_MAX_GRAD 70 wie foto_auftrag.py; MAX_SCHRITT_GRAD 15 und MIN_TIEFE_REL 0,25 wie
   foto_auftrag_skizze.py (dort ANNAHME bzw. 1122-Wolke Sued 0,6 % / Ost 20 %); MIN_FAECHER_GRAD = 2 x MAX_SCHRITT_GRAD (ANNAHME: drei Standpunkte je Stelle);
-  ANNAHME: MAX_ABSTAND_M 150 (Register BI: Nordnetz 27-150 m brauchbar), ZELLE_M 2, MIN_PUNKTE 3, MIN_ZELLEN 0,5, keine Verdeckung (zaehlt eher zu viel).
+  ANNAHME: MAX_ABSTAND_M 150 (Register BI: Nordnetz 27-150 m brauchbar), ZELLE_M 2, MIN_PUNKTE 3, MIN_ZELLEN 0,5.
+VERDECKUNG: Hauptbaukoerper als Kasten (Strahltest verdeckt()); Nachbarhaeuser per SPURBELEG (seit 26.11.2026): eine Kamera zaehlt fuer eine Zone nur mit
+  >= MIN_PUNKTE eigenen Sparse-Spurpunkten <= ZELLE_M an ihren gesehenen Zellen (bei Sonderstellen ohne Punkte am Hauptbaukoerper). Befund: Treppenturm 320 geometrisch,
+  davon zeigten Altstadt-Strassenblicke die Hauszeile davor (Kontaktbogen). Versucht und verworfen: Voxel-Verdeckung durch Sparse-Masse (1-m-Voxel) - nahm 13 Kameras
+  mit >= 10 Turmspurpunkten weg und liess die Strassenblicke stehen (Nachbarhaeuser im Sparse zu duenn). JSON 'fotos_geometrisch' = Zaehlung ohne Spurbeleg.
 NICHT EINGEORDNET (Grund, Schwelle min_inlier aus registrierung.json): n_korr = 0 -> 'keine Korrespondenz'; n_korr < min_inlier -> 'zu wenige Matches';
   sonst (genug 2D-3D-Paare, PnP ohne konsistente Pose) -> 'Lage nicht berechenbar'; Foto im --bilder-Ordner ohne Eintrag -> 'nicht versucht'.
   Mit --teilmodelle (handy_teilmodell.py-Ordner + ausrichtung.json) steht je Foto zusaetzlich sein Teilmodell und ob es eingepasst ist.
@@ -122,6 +126,24 @@ def verdeckt(C, X, koerper, rand=0.3):
     tn = np.minimum(t1, t2).max(axis=2); tf = np.maximum(t1, t2).min(axis=2); return (tn <= tf) & (tf >= 0) & (tn <= tmax)
 
 
+def spurbeleg(kams, S, X, art, koerper=None, kante=0.5):
+    """bool (K, M): S nur fuer Kameras behalten, die auf den gesehenen Zellen der Zone >= MIN_PUNKTE eigene Sparse-Beobachtungen haben (kam['beob'] = Weltpunkte
+    ihrer Spuren im Modellrahmen; Punkt <= ZELLE_M von einer gesehenen Zelle). Grund (26.11.2026, Kontaktbogen): Strassenblicke der Altstadt 'sahen' den Treppenturm
+    geometrisch, obwohl die Hauszeile davor steht; Nachbarhaeuser sind nicht als Koerper bekannt, die Spuren der Kamera aber schon. Bei Sonderstellen zaehlen
+    Punkte am Hauptbaukoerper (Kasten + kante m) nicht (Westwandpunkte direkt neben dem Turm). Kamera ohne 'beob' bleibt ungefiltert."""
+    S = S.copy()
+    for k in np.nonzero(S.any(axis=1))[0]:
+        B = kams[k].get("beob")
+        if B is None: continue
+        B = np.asarray(B, float).reshape(-1, 3)
+        if art == "sonder" and koerper is not None and len(B):
+            u0, u1, v0, v1, zt = koerper; B = B[~((B[:, 0] > u0 - kante) & (B[:, 0] < u1 + kante) & (B[:, 1] > v0 - kante) & (B[:, 1] < v1 + kante) & (B[:, 2] < zt + kante))]
+        Xs = X[S[k]]; lo, hi = Xs.min(0) - ZELLE_M, Xs.max(0) + ZELLE_M; B = B[np.all((B >= lo) & (B <= hi), axis=1)]; n = 0
+        for a in range(0, len(B), 4000): n += int((np.linalg.norm(B[a:a + 4000, None, :] - Xs[None], axis=2).min(axis=1) <= ZELLE_M).sum())
+        if n < MIN_PUNKTE: S[k] = False
+    return S
+
+
 def faecher(C, mitte):
     if len(C) < 2: return 0.0
     az = np.sort(np.degrees(np.arctan2(C[:, 1] - mitte[1], C[:, 0] - mitte[0])) % 360); gaps = np.diff(np.r_[az, az[0] + 360]); return float(360 - gaps.max())
@@ -173,7 +195,7 @@ def standpunkte(z, obj, hfov):
     return out
 
 
-def melden(obj, cfg, kams, neu, reg, P=None, teil=None, bilder=None):
+def melden(obj, cfg, kams, neu, reg, P=None, teil=None, bilder=None, spur=True):
     """kams: [{name, C(3), R(3x3) Welt->Kamera im Modellrahmen, f, w, h}] aller eingeordneten Kameras (Referenz + neu); neu: Namen der neuen eingeordneten Fotos;
     reg: registrierung.json (dict); P: Punkte (n,3) Modellrahmen; teil: {foto: (teilmodell, status)}; bilder: Fotonamen des Satzes (None = reg['bilder'])."""
     zonen = zonen_bauen(cfg, obj); neu = set(neu); min_inl = int(reg.get("min_inlier", 30))
@@ -181,9 +203,11 @@ def melden(obj, cfg, kams, neu, reg, P=None, teil=None, bilder=None):
     hf = [math.degrees(2 * math.atan(k["w"] / 2 / k["f"])) for k in kams if k["name"] in neu]; hfov = float(np.median(hf)) if hf else HFOV_ANNAHME
     erg = []
     for z in zonen:
-        S = sicht(kams, z["X"], z["N"], z.get("koerper")); seh = S.any(axis=1); Cs = np.array([k["C"] for k, s in zip(kams, seh) if s]).reshape(-1, 3)
+        S = sicht(kams, z["X"], z["N"], z.get("koerper")); geo = int(S.any(axis=1).sum())
+        if spur: S = spurbeleg(kams, S, z["X"], z["art"], z.get("koerper"))
+        seh = S.any(axis=1); Cs = np.array([k["C"] for k, s in zip(kams, seh) if s]).reshape(-1, 3)
         nn = sum(1 for k, s in zip(kams, seh) if s and k["name"] in neu); e = dict(name=z["name"], art=z["art"], seite=z.get("seite"), lage_bekannt=z["mitte"] is not None,
-            fotos=int(seh.sum()), fotos_neu=nn, fotos_referenz=int(seh.sum()) - nn, zellen=len(z["X"]),
+            fotos=int(seh.sum()), fotos_neu=nn, fotos_referenz=int(seh.sum()) - nn, fotos_geometrisch=geo, zellen=len(z["X"]),
             faecher_grad=round(faecher(Cs, z["mitte"]), 0) if z["mitte"] is not None else 0.0,
             zellen_gesehen=round(float((S.sum(axis=0) >= MIN_FOTOS).mean()), 3) if len(z["X"]) else 0.0, tiefe=round(tiefe(P, z["X"]), 3), quelle=z.get("quelle", ""))
         if len(Cs): dd = np.linalg.norm(Cs[:, :2] - np.asarray(z["mitte"][:2]), axis=1); e["abstand_median_m"] = round(float(np.median(dd)), 1)
@@ -284,8 +308,10 @@ def laden_sparse(sparse, ausrichtung=None):
     for im in rec.images.values():
         if not im.has_pose: continue
         cam = rec.cameras[im.camera_id]; Rc = np.asarray(im.cam_from_world().rotation.matrix()); Cs = np.asarray(im.projection_center())
-        kams.append(dict(name=im.name, C=Ra.T @ (Cs - t) / s, R=Rc @ Ra, f=float(cam.params[0]), w=float(cam.width), h=float(cam.height)))
-    P = np.array([p.xyz for p in rec.points3D.values()]).reshape(-1, 3); P = (Ra.T @ (P - t).T).T / s
+        ids = [p.point3D_id for p in im.points2D if p.has_point3D()]
+        kams.append(dict(name=im.name, C=Ra.T @ (Cs - t) / s, R=Rc @ Ra, f=float(cam.params[0]), w=float(cam.width), h=float(cam.height), beob=ids))
+    pid = list(rec.points3D.keys()); P = np.array([rec.points3D[i].xyz for i in pid]).reshape(-1, 3); P = (Ra.T @ (P - t).T).T / s; idx = {i: j for j, i in enumerate(pid)}
+    for k in kams: k["beob"] = P[[idx[i] for i in k["beob"] if i in idx]].astype(np.float32)     # Spurpunkte je Kamera fuer spurbeleg()
     return kams, P
 
 

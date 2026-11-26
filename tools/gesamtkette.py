@@ -24,6 +24,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   seiten     tools/seiten_luecken.py --holen (Fotos fuer ungesehene Waende nachregistrieren, Tor tools/kameras_nachtragen_tor.py); sehen BELEGTE neue Kameras eine ungesehene Wand
              und steigt deren Abdeckung messbar: EIN Teillauf ab fenster bis seiten im selben Lauf (tools/seiten_wiederholung.py, 23.11.2026)
+             + (26.11.) Zusatzfotos (objekt.json 'zusatzfotos', registriert): tools/abdeckung_meldung.py -> audit/abdeckung_meldung.{json,md,png}, Schritt abdeckung_zusatz rot/gruen, kein Abbruch
   draehte    tools/wolke_draehte.py: Draehte/Oberleitung + Fahnen (Draht als schmales Blatt) + Freiraum (SfM-Strahlen durch Gewirr vor der Wand) aus einer KOPIE der Wolke -> <daten>/wolke_anzeige/ (nur Anzeige;
              Original + Wolke-Tore unveraendert), Bericht audit/wolke_draehte.json + audit/wolke_draehte.jpg (24.11.2026, Nutzerbefund 1122 Nordseite)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html (Wolke = gefilterte Kopie, wenn neuer als das Original)
@@ -316,6 +317,48 @@ def foto_auftrag_skizze(B, wann, ZR, Z, P, W, AU, FV, log):
               standpunkte=len(e.get("standpunkte") or []), fotos=sum(s_.get("anzahl", 0) for s_ in e.get("standpunkte") or []),
               hinweis="SOFORT DEM NUTZER SCHICKEN (Bild + Standpunktliste aus dem Text); Foto vor Ort pruefen: tools/foto_auftrag_skizze.py --pruefen <json> <foto>" if e.get("luecken") else "keine Luecke")
     except Exception as e_: print(f"Fotoauftrag-Skizze ({wann}) nicht erzeugt: {type(e_).__name__} {e_}", flush=True)
+
+
+def zusatz_ordner(obj):
+    """Registrierte Zusatzfotos (Handy) aus objekt.json 'zusatzfotos' (Ordner oder Liste). Gilt ein Ordner, wenn er selbst oder ein Unterordner (z. B. lg/)
+    registrierung.json + sparse_handy/0/images.bin hat (tools/zusatzfotos_registrieren.py registrieren --aus). -> (gefunden, ohne_registrierung)."""
+    w_ = obj.get("zusatzfotos") or []; w_ = [w_] if isinstance(w_, str) else list(w_); gef, fehlt = [], []
+    for o_ in w_:
+        k_ = next((k for k in [o_] + sorted(glob.glob(os.path.join(o_, "*"))) if os.path.isfile(os.path.join(k, "registrierung.json"))
+                   and os.path.isfile(os.path.join(k, "sparse_handy", "0", "images.bin"))), None)
+        (gef if k_ else fehlt).append(k_ or o_)
+    return gef, fehlt
+
+
+def abdeckung_zusatz(B, ZR, Z, AU, log, obj):
+    """26.11.2026 (Spec Vollautomatik 1b-1d; Handyfotos Schwabentor: Bruecke/Treppe/Unterdurchgang fehlten im Netz und wurden nirgends gemeldet): nach der Registrierung
+    von Zusatzfotos tools/abdeckung_meldung.py je Ordner -> audit/abdeckung_meldung.{json,md,png} (mehrere Ordner: audit/abdeckung_<ordner>/). Schritt 'abdeckung_zusatz'
+    rot mit Grund (Zone nicht belegt/duenn + Fotoauftrag), gruen wenn alle Zonen belegt. Nur Meldung: KEIN Abbruch der Kette. Ohne 'zusatzfotos' uebersprungen."""
+    gef, fehlt = zusatz_ordner(obj)
+    if not gef and not fehlt: notiz(B, "abdeckung_zusatz", True, uebersprungen="keine Zusatzfotos (objekt.json 'zusatzfotos' fehlt)"); return []
+    for o_ in fehlt: notiz(B, "abdeckung_zusatz", False, fehler=f"Zusatzordner {o_} ohne registrierung.json + sparse_handy/0 - Registrierung lief nicht (tools/zusatzfotos_registrieren.py registrieren)")
+    if not gef: return []
+    if not os.path.exists(AU): notiz(B, "abdeckung_zusatz", False, fehler=f"{AU} fehlt - ohne SFM-Ausrichtung keine Kameras im Modellrahmen, keine Abdeckungsmeldung"); return []
+    au_ = os.path.join(Z, "audit"); os.makedirs(au_, exist_ok=True); zon = os.path.join(Z, "abdeckung_zonen.json"); hw_ = ""
+    if not os.path.exists(zon):                                          # ohne Zonenliste: Waende + Dach aus objekt.json, keine Sonderstellen (nichts geraten)
+        zon = os.path.join(au_, "abdeckung_zonen_standard.json"); json.dump(dict(zweck="Standard der Kette: Waende aus objekt.json, Dach; Sonderstellen fehlen",
+                                                                                  waende="auto", dach=True, sonderstellen=[]), open(zon, "w"), indent=1)
+        hw_ = "modelle/<ziel>/abdeckung_zonen.json fehlt - nur Waende/Dach gemeldet, Sonderstellen (Anbauten, Bruecken) dort eintragen; "
+    erg = []
+    for o_ in gef:
+        aus = au_ if len(gef) == 1 else os.path.join(au_, "abdeckung_" + os.path.basename(os.path.normpath(o_))); t0 = time.time()
+        cmd = [PYC, "-I", "tools/abdeckung_meldung.py", "--objekt", ZR, "--zonen", zon, "--registrierung", os.path.join(o_, "registrierung.json"),
+               "--sparse", os.path.join(o_, "sparse_handy", "0"), "--ausrichtung", AU, "--aus", aus]
+        cmd += [x for n_, f_ in (("--bilder", "bilder"), ("--teilmodelle", "teilmodell")) if os.path.isdir(os.path.join(o_, f_)) for x in (n_, os.path.join(o_, f_))]
+        rc, _ = lauf(B, "abdeckung_meldung", cmd, log, timeout=1800)
+        j_ = os.path.join(aus, "abdeckung_meldung.json")
+        if not frisch(j_, t0): notiz(B, "abdeckung_zusatz", False, ordner=o_, fehler=f"{j_} nicht geschrieben (rc {rc}) - Abdeckung UNBEKANNT"); continue
+        m_ = json.load(open(j_)); offen = [f"{e['name']}: {e['status']} ({'; '.join(e['fehlt'])})" for e in m_["zonen"] if e["status"] != "belegt"]
+        notiz(B, "abdeckung_zusatz", not offen, ordner=o_, eingeordnet=f"{m_['eingeordnet']}/{m_['fotos']}", gruende=m_["gruende"], nicht_belegt=offen,
+              fotoauftrag=[a_["stelle"] for a_ in m_["fotoauftrag"]], bild=os.path.join(aus, "abdeckung_meldung.png"), md=os.path.join(aus, "abdeckung_meldung.md"),
+              hinweis=hw_ + "ANSEHEN: Bild + Fotoauftrag im MD; im Modell gilt an nicht belegten Stellen 'nicht belegt' (kein Erfinden)")
+        erg.append(m_)
+    return erg
 
 
 def seiten_wiederholen(B, a, ZR, Z, D, fo, sl, t_sl, log, bp, py_kette=None):
@@ -967,6 +1010,8 @@ def main():
             if not wiederholt: lauf(B, "foto_auftrag", [PY, "-W", "ignore", "-I", "tools/foto_auftrag.py", ZR, fo, os.path.join(D, f"fotoauftrag_{a.ziel}.html")] + (["--wunsch", wj] if os.path.exists(wj) else []) + (["--seiten-modelle", os.path.join(P, "sfm", "seiten_modelle.json")] if os.path.isfile(os.path.join(P, "sfm", "seiten_modelle.json")) else []), log)   # 16.11.2026: dem Nutzer zeigen, welche Fotos fehlen (Lageplan, Standorte, markierte Ziele)
             if not wiederholt: notiz(B, "seiten", not ung, ungesehen=ung, teilweise=teil, hinweis=("" if not teil else f"teilweise ungesehen {teil}: Nachholen je Kandidat nur einmal (seiten_nachholen/versucht_kandidaten.json); ohne Gewinn bleibt der Fotoauftrag. ") if not ung else "Nachholen brachte keine belegte Kamera / keinen messbaren Abdeckungsgewinn (Schritt 'seiten_wiederholung'), oder Teillauf-Bericht; bleibt die Wand leer: Kontaktbogen audit/seiten_luecken_kandidaten.jpg ansehen, Kamera aus Modellpunkten + tools/fassade_ein_foto.py (PIPELINE_FASSADEN.md 'Ungesehene Seite')")
         else: notiz(B, "seiten", False, fehler="kein fassaden.json (Stufe fenster) oder kein SfM-Netz/Datenbank")
+    if dran("seiten") and not TEILLAUF:                                  # 26.11.2026 Spec Vollautomatik 1b-1d: Abdeckung nach der Registrierung von Zusatzfotos (nur Meldung)
+        abdeckung_zusatz(B, ZR, Z, AU, log, json.load(open(ZJ)))
     # 21.11.2026 SACKGASSEN-TOR (Nutzer: "Warum wurde das nicht bemerkt? ... die fliessen nicht in die Kette ein"): der Ebenen-Sweep schrieb vier Tage lang Vorbau-'Vorschlaege',
     # die kein Generator las, und die Stufe stand als 'in Ordnung' im Bericht. Hier je Kettenergebnis: liegt die Datei vor und hat Inhalt, MUSS der Generator (oder das von ihm
     # gerufene Werkzeug) sie verbauen - sonst 'ok: False' mit Namen. Liste der bekannten offenen Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md.

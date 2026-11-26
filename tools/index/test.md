@@ -1,4 +1,4 @@
-# Werkzeuge: test (224)
+# Werkzeuge: test (225)
 - `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Datensatz: tools/te
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
@@ -50,6 +50,7 @@
 - `tools/test_fusion_vorab.py` [-] Test tools/fusion_vorab.py (24.11.2026, Laufzeit 1122z: dichte Wolke je Lauf ZWEIMAL fusioniert, 470 s + 445 s). Ersatzwerkzeuge zaehlen die Fusionsaufrufe (keine echte Fusion, kei
 - `tools/test_generator_elemente_schleife.py` [gen] test_generator_elemente_schleife.py - BEWEIS (bekannte Wahrheit) fuer generator_elemente_schleife.py. Synthetisch, ohne Fotos (Foto-Tor = eigener Lauf auf Kaufhaus). A Wahrheit = H
 - `tools/test_generator_schleife.py` [seg] test_generator_schleife.py - BEWEIS (bekannte Wahrheit, OHNE echte Fotos) fuer generator_schleife.py (2026-11-06).
+- `tools/test_gesamtkette_abdeckung.py` [-] Mini-Test (< 2 s) Stufe 'abdeckung_zusatz' in tools/gesamtkette.py (Abdeckungsmeldung nach der Registrierung von Zusatzfotos, 26.11.2026). lauf() ist ersetzt (kein Rechnen): er pru
 - `tools/test_gitter_kurven.py` [-] Beweistest gitter_kurven.py (synthetisch): Gerade, Kreisbogen (R 1,9 m, 150 Grad), kubische Bezier, Bogen in 2 Fragmenten (Luecke 33 cm) und Gerade in 2 Fragmenten (Luecke 20 cm) -
 - `tools/test_gps_anker.py` [-] Fester Test (Sekunden, ohne GPU) fuer den GPS-ANKER der LoD2-Ausrichtung (22.11.2026, Nulllauf kette-schwabentor-null-1122d: vereinte Seiten 0+1, GPS-Fit der Kameras gut, aber der 
 - `tools/test_gps_eine_quelle.py` [-] Fester Test (Sekunden, CPU): EINE Quelle der Wahrheit fuer das Foto-GPS in Ausrichtung (sfm_lod2_ausrichten) und GPS-Tor (lage_gps_pruefen) - 22.11.2026. Befund Lauf kette-schwaben
