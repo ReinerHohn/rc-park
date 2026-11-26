@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("dicht"); ap.add_argument("aus"); ap.add_argument("--ausrichtung", required=True)
     ap.add_argument("--kachel", type=float, default=12.0); ap.add_argument("--radius", type=float, default=60.0); ap.add_argument("--max_bilder", type=int, default=120)
-    ap.add_argument("--min_num_pixels", type=int, default=3); ap.add_argument("--max_image_size", type=int, default=1600); ap.add_argument("--min_sparse", type=int, default=30)
+    ap.add_argument("--min_num_pixels", type=int, default=3); ap.add_argument("--max_image_size", type=int, default=1600); ap.add_argument("--min_sparse", type=int, default=3); ap.add_argument("--mask_path", default="auto", help="Drahtmasken wie die Standardfusion (auto = <dicht>/drahtmasken, wenn vorhanden; none = aus)")
     ap.add_argument("--input_type", default="photometric"); ap.add_argument("--tmp", default="/media/oem/rcdaten/tmp/kachelfusion"); ap.add_argument("--nur", type=int, default=0, help="Test: nur die ersten N Kacheln")
     a = ap.parse_args()
     import cv2, pycolmap, teilfusion as TF
@@ -39,6 +39,9 @@ def main():
     shutil.rmtree(a.tmp, ignore_errors=True); os.makedirs(os.path.join(a.tmp, "stereo"))
     for x in ("images", "sparse"): os.symlink(os.path.abspath(os.path.join(a.dicht, x)), os.path.join(a.tmp, x))
     for x in ("depth_maps", "normal_maps"): os.symlink(os.path.abspath(os.path.join(a.dicht, "stereo", x)), os.path.join(a.tmp, "stereo", x))
+    mask = os.path.join(a.dicht, "drahtmasken") if a.mask_path == "auto" else ("" if a.mask_path == "none" else a.mask_path)
+    if mask and not os.path.isdir(mask): mask = ""
+    print("Drahtmasken:", mask or "keine", flush=True)
     names = {i: im.name for i, im in rec.images.items()}; teile = []; alle = []; t00 = time.time()
     for q, k in enumerate(ks):
         zeit = time.time(); cnt = {}
@@ -49,6 +52,7 @@ def main():
         out = os.path.join(a.tmp, "k.ply")
         if os.path.exists(out): os.remove(out)
         fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.max_image_size; fo.min_num_pixels = a.min_num_pixels
+        if mask: fo.mask_path = mask
         pycolmap.stereo_fusion(out, a.tmp, options=fo, input_type=a.input_type, output_type="ply")
         P = TF.ply_lesen(out); X = np.c_[P["x"], P["y"], P["z"]].astype(float); m = (X - t) @ R / s
         ok = (np.floor(m[:, 0] / a.kachel).astype(int) == k[0]) & (np.floor(m[:, 1] / a.kachel).astype(int) == k[1])
