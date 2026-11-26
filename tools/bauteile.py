@@ -1467,6 +1467,214 @@ def balkon(W, u0, u1, z_boden, w_vorne, z_handlauf, docken, pfosten, konsolen=()
     return g
 
 
+def _zahl(v):
+    """float oder None (fehlend, nicht endlich, kein Zahlwert)."""
+    try: v = float(v)
+    except (TypeError, ValueError): return None
+    return v if math.isfinite(v) else None
+
+
+def _cs(pts):
+    """CrossSection aus einem einfachen Polygon, Umlaufsinn egal (gegen den Uhrzeigersinn gedreht, sonst waere es unter FillRule Positive leer)."""
+    p = np.asarray(pts, float); fl = 0.5 * np.sum(p[:, 0] * np.roll(p[:, 1], -1) - np.roll(p[:, 0], -1) * p[:, 1])
+    return CrossSection([(p if fl > 0 else p[::-1]).tolist()])
+
+
+def _laengs(cs, x0, x1):
+    """Querschnitt (y, z) von x0 bis x1 entlang +x ziehen (Drehmatrix, det +1)."""
+    return M.extrude(cs, x1 - x0).transform([[0.0, 0.0, 1.0, x0], [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0]])
+
+
+def _quer(cs, breite):
+    """Profil (x, z) quer ueber die Breite ziehen, mittig um y = 0 (Drehmatrix, det +1)."""
+    return M.extrude(cs, breite).transform([[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, -1.0, breite / 2], [0.0, 1.0, 0.0, 0.0]])
+
+
+def treppen_profil(x0, z0, n, s, a, platte, richtung=1.0, rampe=False, hinten=0.02, podest=None, unterlage=0.02, anker="fuss", fuge=0.0):
+    """Treppenlauf-Profil (x, z) als CrossSection (GENERISCH, 26.11.2026): n Stufen, Steigung s, Auftritt a, steigend in Richtung richtung (+1 = +x, -1 = -x).
+    anker "fuss": (x0, z0) = Fuss des Laufs (Antritt); "kopf": (x0, z0) = Austritt oben (Oberkante der obersten Stufe, exakt z0 - kein Rundungsversatz
+    gegen einen Anschlussboden auf z0). Freier Lauf (podest None): Unterseite eine Gerade parallel zum Lauf, senkrecht 'platte' dick; die oberste Stufe reicht
+    'hinten' ueber das Laufende (Ueberlappung in den Anschluss, nie nur flaechengleich). Mit podest: aufliegender Lauf (Innentreppe) - Unterseite waagrecht
+    'unterlage' unter dem Fuss (greift in den Boden), oben ein Boden der Laenge 'podest' auf Fuss + n s. rampe=True: schiefe Ebene statt Stufen.
+    fuge > 0 (freier Lauf): die Ueberlappung 'hinten' liegt 'fuge' tiefer und beginnt 'fuge' vor dem Laufende - eine oberste Stufe flaechengleich mit einem
+    Anschlussboden, die die Anschlussflaeche kreuzt, gab doppelte Eckpunkte (trimesh nicht wasserdicht, Test 26.11.); 5 mm = 0,06 mm im Druck, unter der Duese."""
+    H = n * s; lauf = n * a; dv = platte / math.cos(math.atan2(s, a))
+    oben = [(0.0, 0.0)]
+    if rampe: oben.append((lauf, H))
+    else:
+        for i in range(n): oben += [(i * a, (i + 1) * s), ((i + 1) * a, (i + 1) * s)]
+    ende = lauf + (podest if podest is not None else hinten)
+    oben += [(lauf - fuge, H), (lauf - fuge, H - fuge), (ende, H - fuge)] if (fuge > 0 and podest is None) else [(ende, H)]
+    unten = [(ende, -unterlage), (0.0, -unterlage)] if podest is not None else [(ende, H - dv + (ende - lauf) * s / a), (0.0, -dv)]
+    q = []
+    for x, z in oben + unten:
+        if not q or abs(x - q[-1][0]) > 1e-12 or abs(z - q[-1][1]) > 1e-12: q.append((x, z))
+    if abs(q[0][0] - q[-1][0]) < 1e-12 and abs(q[0][1] - q[-1][1]) < 1e-12: q.pop()
+    if anker == "kopf": return _cs([(x0 + richtung * (x - lauf), z0 + (z - H)) for x, z in q])
+    return _cs([(x0 + richtung * x, z0 + z) for x, z in q])
+
+
+def ueberdachter_gang(P, massstab=None, min_mm=None):
+    """UEBERDACHTER GANG MIT TREPPE (Bruecke ueber eine Strasse zwischen zwei Baukoerpern; GENERISCH, 26.11.2026, SPEC_SCHWABENTOR_DEMONSTRATOR Anf. 4).
+    Alle Masse aus dem dict P (JSON, Meter, Modellmassstab 1:1) - keine Objektmasse im Code:
+      spannweite            lichter Abstand der beiden Anschlussfassaden (oder achse {a: [x, y], b: [x, y]} im Modellrahmen; beide angegeben -> muessen
+                            auf 'toleranz' (Vorgabe 0,05 m) uebereinstimmen, sonst NICHT gebaut - Quellen nicht mitteln)
+      breite                Aussenbreite der Seitenwaende;  z_boden  Oberkante Laufboden am Ende a (bzw. am Fuss einer Innentreppe);  hoehe  lichte Hoehe Boden -> Traufe innen
+      boden_dicke, wand_dicke   (Vorgabe = Druck-Mindestmass);  einbinden  Ueberlappung in die Baukoerper je Ende (Vorgabe 0,10 m, ANNAHME)
+      dach    {form: flach|pult|sattel, neigung_grad, ueberstand (seitlich), dicke}; sattel = First laengs ueber der Gangmitte, pult = hohe Seite auf +y (links der Achse a->b)
+      seiten  {art: geschlossen|offen, bruestung, pfosten (Anzahl inkl. Endpfosten), pfosten_breite, riegel (Wandband unter dem Dach)}
+      treppe  {lage: innen|aussen, ende: a|b, stufen, steigung (oder hub), auftritt und/oder lauflaenge, breite, platte}
+              innen: Lauf steigt vom Ende aus in den Gang, danach Boden auf z_boden + stufen x steigung (zwei Baukoerper mit verschiedener Geschosshoehe);
+              aussen: Lauf vor dem Gangende, abwaerts weg vom Gang bis z_boden - stufen x steigung (Abgang zur Strasse).
+    Lokaler Rahmen: x laengs (0 = Fassade a, spannweite = Fassade b), y quer (Mitte 0), z absolut; mit achse in den Modellrahmen gedreht/verschoben.
+    GUARD (parametrisch gueltig, nie degeneriert): Dicken < MINMM x SCALE (0,8 mm bei 1:87) -> angehoben (Beleg); unbekannte Dachform / Neigung ausserhalb 0..75 Grad
+    -> Flachdach; Treppe widerspruechlich, laenger als der Gang oder bis ans Dach -> Gang ohne Treppe; Stufe unter dem Mindestmass -> Rampe; kein Laufraum
+    (breite < 2 wand + Mindestmass) -> massiver Steg; Endkontrolle ein Koerper, sonst Fallback (erst ohne Oeffnungen, dann ohne Treppe).
+    Liefert (Manifold oder None, belege, masse) - masse = tatsaechlich gebaute Werte (fuer Tests/Abnahme)."""
+    massstab = float(massstab if massstab is not None else os.environ.get("SCALE", "87")); min_mm = float(min_mm if min_mm is not None else os.environ.get("MINMM", "0.8"))
+    dmin = min_mm * massstab / 1000.0; quelle = "bauteile.ueberdachter_gang; " + str(P.get("quelle", "JSON-Parameter"))
+    def nicht(grund):
+        return None, [dict(seite="bruecke", element="Ueberdachter Gang nicht gebaut", quelle=quelle, hinweis=grund)], dict(art="nicht gebaut", grund=grund)
+    # ---- Spannweite / Achse
+    L = _zahl(P.get("spannweite")); A = P.get("achse"); T = None
+    if A:
+        try: pa = np.array(A["a"][:2], float); pb = np.array(A["b"][:2], float)
+        except (KeyError, TypeError, ValueError): return nicht("achse unlesbar (erwartet {a: [x, y], b: [x, y]})")
+        La = float(np.linalg.norm(pb - pa))
+        if not math.isfinite(La) or La <= dmin: return nicht(f"achse a->b zu kurz ({La:.3f} m)")
+        tol = _zahl(P.get("toleranz")); tol = 0.05 if tol is None else tol
+        if L is not None and abs(L - La) > tol: return nicht(f"spannweite {L:.3f} m widerspricht der Achse a->b {La:.3f} m (> {tol} m) - Quellen nicht mitteln, Mass klaeren")
+        L = La; c, s_ = (pb - pa) / La; T = [[c, -s_, 0.0, pa[0]], [s_, c, 0.0, pa[1]], [0.0, 0.0, 1.0, 0.0]]
+    if L is None: return nicht("spannweite fehlt (weder 'spannweite' noch 'achse')")
+    B, zb, h = _zahl(P.get("breite")), _zahl(P.get("z_boden")), _zahl(P.get("hoehe"))
+    if None in (B, zb, h) or L <= dmin or B <= dmin or h <= 0: return nicht(f"Grundmass fehlt/ungueltig: spannweite {L}, breite {B}, z_boden {zb}, hoehe {h}")
+    hinw = []
+    def mind(name, v):
+        v = dmin if v is None else v
+        if v < dmin - 1e-12:
+            hinw.append(f"{name} {v:.3f} m < Druck-Mindestmass {dmin:.4f} m ({min_mm:g} mm bei 1:{massstab:g}) -> angehoben"); return dmin
+        return v
+    t = mind("wand_dicke", _zahl(P.get("wand_dicke"))); db = mind("boden_dicke", _zahl(P.get("boden_dicke")))
+    e = _zahl(P.get("einbinden")); e = 0.10 if e is None or e < 0 else e
+    # ---- Dach
+    D = P.get("dach") or {}; form = str(D.get("form", "flach")).lower(); al = _zahl(D.get("neigung_grad")); u = max(_zahl(D.get("ueberstand")) or 0.0, 0.0)
+    dd = mind("dach.dicke", _zahl(D.get("dicke")))
+    if form not in ("flach", "pult", "sattel"): hinw.append(f"Dachform '{form}' unbekannt -> Flachdach (Fallback)"); form = "flach"
+    if form != "flach" and (al is None or not 0.0 < al < 75.0): hinw.append(f"Dachneigung {al} Grad ungueltig (0..75) -> Flachdach (Fallback)"); form = "flach"
+    ta = math.tan(math.radians(al)) if form != "flach" else 0.0; dv = dd / math.cos(math.atan(ta))
+    massiv = B < 2 * t + dmin or h < dmin; art = "massiver Steg" if massiv else "gang"
+    if massiv: hinw.append(f"kein Laufraum (breite {B:.3f} < 2 x wand {t:.3f} + {dmin:.3f} oder hoehe {h:.3f} < {dmin:.3f}) -> massiver Steg (Fallback)")
+    zt = zb + h; yi = B / 2 if massiv else B / 2 - t; Y = B / 2 + u; zbot = zb - db
+    unter = {"flach": lambda y: zt, "sattel": lambda y: zt + (yi - abs(y)) * ta, "pult": lambda y: zt + (y + yi) * ta}[form]
+    ys = [-Y, 0.0, Y] if form == "sattel" else [-Y, Y]
+    dach = _cs([(y, unter(y)) for y in ys] + [(y, unter(y) + dv) for y in ys[::-1]])
+    yb = [-B / 2, 0.0, B / 2] if form == "sattel" else [-B / 2, B / 2]
+    unter_dach = _cs([(-B / 2, zbot), (B / 2, zbot)] + [(y, unter(y) + dv / 2) for y in yb[::-1]])     # Wandkopf in Dachmitte: nie auf der Dachkante (doppelte Eckpunkte)
+    hoch = zt + B * (ta + 1.0) + dv + 1.0
+    if massiv: kern = CrossSection.square([B, hoch - zbot]).translate((-B / 2, zbot)) ^ unter_dach
+    else:
+        waende = CrossSection.square([t, hoch - zbot]).translate((-B / 2, zbot)) + CrossSection.square([t, hoch - zbot]).translate((B / 2 - t, zbot))
+        kern = (waende ^ unter_dach) + CrossSection.square([B, db]).translate((-B / 2, zbot))
+    rumpf = _laengs(kern + dach, -e, L + e)
+    ms = dict(art=art, spannweite=L, breite=B, hoehe=h, wand_dicke=t, boden_dicke=db, dach=form, dach_dicke=dd, einbinden=e, treppe="keine", oeffnungen=0, fallback=[])
+    # ---- Treppe
+    TP = P.get("treppe"); treppe = None; boden_bei = lambda x: zb; tbeleg = None
+    if TP:
+        lage = str(TP.get("lage", "")).lower(); ende = str(TP.get("ende", "a")).lower(); n_ = _zahl(TP.get("stufen"))
+        s, a, lauf, hub = _zahl(TP.get("steigung")), _zahl(TP.get("auftritt")), _zahl(TP.get("lauflaenge")), _zahl(TP.get("hub"))
+        grund = None
+        if lage not in ("innen", "aussen") or ende not in ("a", "b"): grund = f"lage '{lage}' / ende '{ende}' ungueltig (innen|aussen, a|b)"
+        elif n_ is None or n_ < 1 or abs(n_ - round(n_)) > 1e-9: grund = f"stufen {TP.get('stufen')} ist keine ganze Zahl >= 1"
+        else:
+            n = int(round(n_))
+            if s is not None and hub is not None and abs(n * s - hub) > 0.01: grund = f"steigung x stufen {n * s:.3f} m widerspricht hub {hub:.3f} m"
+            elif a is not None and lauf is not None and abs(n * a - lauf) > 0.01: grund = f"auftritt x stufen {n * a:.3f} m widerspricht lauflaenge {lauf:.3f} m"
+            s = s if s is not None else (hub / n if hub is not None else None); a = a if a is not None else (lauf / n if lauf is not None else None)
+            if grund is None and (s is None or a is None): grund = "steigung (oder hub) und auftritt (oder lauflaenge) noetig"
+            elif grund is None and (s <= 0 or a <= 0): grund = f"steigung {s} / auftritt {a} muessen > 0 sein"
+        if grund is None:
+            H = n * s; lauf = n * a; platte = mind("treppe.platte", _zahl(TP.get("platte")))
+            rampe = min(s, a) < dmin
+            if rampe: hinw.append(f"Stufe {s:.3f} x {a:.3f} m unter dem Druck-Mindestmass {dmin:.4f} m -> Rampe statt Stufen (Fallback)")
+            wb = _zahl(TP.get("breite"))
+            if lage == "innen":
+                if massiv: grund = "kein Laufraum (massiver Steg) - Innentreppe nicht moeglich"
+                elif lauf + max(0.01 - e, 0.0) > L + e - 0.01 + 1e-9: grund = f"Lauf {lauf:.3f} m laenger als der Gang {L:.3f} m"
+                elif zb + H + dmin > zt: grund = f"Treppe stoesst ans Dach: oberer Boden z {zb + H:.3f} + {dmin:.3f} > Traufe innen z {zt:.3f}"
+                else:
+                    wi = B - 2 * t; wb = wi if wb is None or wb > wi else max(wb, dmin); wb = wb + (0.04 if wb >= wi else 0.0)   # volle Breite greift 2 cm in die Waende
+                    # Antritt an der Fassade; ohne Einbinden 1 cm nach innen (Antritt flaechengleich mit dem Gangende gab doppelte Eckpunkte, Zufallsprobe 26.11.)
+                    ve = max(0.01 - e, 0.0); r = 1.0 if ende == "a" else -1.0; x0 = ve if ende == "a" else L - ve
+                    # oberer Boden endet 1 cm vor dem Gangende: buendige Endflaeche gab doppelte Eckpunkte (trimesh nicht wasserdicht, Test 26.11.)
+                    treppe = _quer(treppen_profil(x0, zb, n, s, a, platte, r, rampe, podest=max(L + e - 0.01 - ve - lauf, 0.0)), wb)
+                    def boden_bei(x, r=r, x0=x0):
+                        d_ = (x - x0) * r
+                        if d_ <= 0: return zb
+                        if d_ >= lauf: return zb + H
+                        return zb + (H * d_ / lauf if rampe else s * (math.floor(d_ / a) + 1))
+            else:
+                wb = B - 0.02 if wb is None or wb > B - 0.02 else max(wb, dmin); r = 1.0 if ende == "a" else -1.0; x0 = -e if ende == "a" else L + e   # Breite 1 cm innerhalb der Wandflucht (nie flaechengleich)
+                treppe = _quer(treppen_profil(x0, zb, n, s, a, platte, r, rampe, hinten=0.02, anker="kopf", fuge=0.005), wb)
+        if grund is None:
+            ms.update(treppe="rampe" if rampe else "gebaut", stufen=n, steigung=s, auftritt=a, lauflaenge=lauf, hub=H, treppe_lage=lage, treppe_ende=ende,
+                      kopfhoehe=(zt - zb - H) if lage == "innen" else None)
+            tbeleg = dict(seite="bruecke", element=f"Treppe {lage} am Ende {ende}: {n} Stufen {s:.3f} x {a:.3f} m, Lauf {lauf:.3f} m, Hub {H:.3f} m" + (" (als Rampe)" if rampe else ""),
+                          quelle=quelle, hinweis=f"Schrittmass 2 s + a = {2 * s + a:.3f} m; Laufplatte {platte:.3f} m")
+        else:
+            ms.update(treppe="nicht gebaut", treppe_grund=grund); hinw.append("Treppe NICHT gebaut: " + grund)
+    # ---- Seiten offen: Felder zwischen Pfosten
+    S = P.get("seiten") or {}; felder = []
+    if str(S.get("art", "geschlossen")).lower() == "offen" and not massiv:
+        np_, br = _zahl(S.get("pfosten")), _zahl(S.get("bruestung"))
+        if np_ is None or np_ < 2 or abs(np_ - round(np_)) > 1e-9 or br is None or br < 0: hinw.append(f"seiten offen ungueltig (pfosten {S.get('pfosten')}, bruestung {S.get('bruestung')}) -> geschlossen (Fallback)")
+        else:
+            bp = mind("seiten.pfosten_breite", _zahl(S.get("pfosten_breite"))); ri = mind("seiten.riegel", _zahl(S.get("riegel")))
+            z1 = min(unter(-B / 2), unter(B / 2)) - ri; cs_ = np.linspace(bp / 2, L - bp / 2, int(round(np_)))
+            for c0, c1 in zip(cs_[:-1], cs_[1:]):
+                xa, xb = c0 + bp / 2, c1 - bp / 2; z0 = max(boden_bei(xa), boden_bei(xb)) + br
+                if xb - xa >= dmin and z1 - z0 >= dmin: felder.append(M.cube([xb - xa, B + 0.02, z1 - z0]).translate((xa, -B / 2 - 0.01, z0)))
+            if len(felder) < len(cs_) - 1: hinw.append(f"{len(cs_) - 1 - len(felder)} Seitenfeld(er) kleiner als das Mindestmass - geschlossen gelassen")
+    # ---- Zusammenbau mit Endkontrolle (ein Koerper, wasserdicht) und Fallback
+    def gut(m): return (m is not None and not m.is_empty() and str(m.status()).endswith("NoError") and m.volume() > 0 and len(m.decompose()) == 1
+                        and als_trimesh(m).is_watertight)          # STL-Export: auch nach dem Verschmelzen gleicher Eckpunkte wasserdicht
+    def bauen(mit_treppe, mit_feldern):
+        m = rumpf + treppe if (mit_treppe and treppe is not None) else rumpf
+        if mit_feldern and felder: m = m - M.batch_boolean(felder, OpType.Add)
+        return m
+    g = None
+    for mt, mf, fb in ((True, True, None), (True, False, "ohne Seitenfelder"), (False, False, "ohne Treppe und Seitenfelder")):
+        g = bauen(mt, mf)
+        if gut(g):
+            if fb: ms["fallback"].append(fb); hinw.append(f"Endkontrolle: erst {fb} ein Koerper (Fallback)")
+            if not mt and treppe is not None: ms.update(treppe="nicht gebaut", treppe_grund="Endkontrolle"); tbeleg = None
+            if mf: ms["oeffnungen"] = len(felder)
+            break
+        g = None
+    if g is None: return nicht("Endkontrolle: kein einzelner wasserdichter Koerper (auch Fallback nicht)")
+    if T is not None: g = g.transform(T)
+    belege = [dict(seite="bruecke", element=f"Ueberdachter Gang ({art}): Spannweite {L:.3f} m, Breite {B:.3f} m, lichte Hoehe {h:.3f} m, Dach {form}"
+                   + (f" {al:g} Grad" if form != "flach" else "") + (f", {len(felder)} offene Seitenfelder" if ms["oeffnungen"] else ""),
+                   quelle=quelle, hinweis="; ".join(hinw) if hinw else "alle Masse aus den Parametern")]
+    if tbeleg: belege.append(tbeleg)
+    return g, belege, ms
+
+
+def ueberdachter_gang_aus_json(koerper, datei, massstab=None, min_mm=None):
+    """Gang(e) aus einer JSON-Datei: {"gang": {...}} oder {"gaenge": [{...}, ...]} oder direkt das Parameter-dict (Schluessel siehe ueberdachter_gang).
+    koerper None -> nur die Gaenge. Liefert (koerper, belege)."""
+    J = json.load(open(datei)); liste = J.get("gaenge") or ([J["gang"]] if "gang" in J else [J]); belege = []
+    for P in liste:
+        g, b, _ = ueberdachter_gang(P, massstab, min_mm); belege += b
+        if g is not None: koerper = g if koerper is None else koerper + g
+    return koerper, belege
+
+
+def als_trimesh(m):
+    """Manifold -> trimesh.Trimesh (Export/Abnahme)."""
+    import trimesh
+    me = m.to_mesh(); return trimesh.Trimesh(np.asarray(me.vert_properties)[:, :3], np.asarray(me.tri_verts), process=True)
+
+
 def vorhangbogen(breite, unten, schulter, spitze, mitte, feld, exponent=1.9, nseg=14):
     """Querschnitt (quer, hoch) einer VORHANGBOGEN-Oeffnung (spaetgotischer Fensterkopf, GENERISCH, 17.11.2026 Kaufhaus Runde 2): senkrechte Seiten bis zur Schulter,
     aussen je ein hohl geschwungener Bogen (z = schulter + (spitze - schulter) * s^exponent, s = 0 an der Seite .. 1 an der Spitze) bis zu den Spitzen bei +-feld/2,
