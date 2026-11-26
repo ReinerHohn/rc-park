@@ -21,7 +21,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("dicht"); ap.add_argument("aus"); ap.add_argument("--ausrichtung", required=True)
     ap.add_argument("--kachel", type=float, default=12.0); ap.add_argument("--radius", type=float, default=60.0); ap.add_argument("--max_bilder", type=int, default=120)
     ap.add_argument("--min_num_pixels", type=int, default=3); ap.add_argument("--max_image_size", type=int, default=1600); ap.add_argument("--min_sparse", type=int, default=3); ap.add_argument("--mask_path", default="auto", help="Drahtmasken wie die Standardfusion (auto = <dicht>/drahtmasken, wenn vorhanden; none = aus)")
-    ap.add_argument("--input_type", default="photometric"); ap.add_argument("--tmp", default="/media/oem/rcdaten/tmp/kachelfusion"); ap.add_argument("--nur", type=int, default=0, help="Test: nur die ersten N Kacheln")
+    ap.add_argument("--input_type", default="photometric"); ap.add_argument("--tmp", default="/media/oem/rcdaten/tmp/kachelfusion"); ap.add_argument("--nur", type=int, default=0, help="Test: nur die ersten N Kacheln"); ap.add_argument("--box", type=float, nargs=4, metavar=("X0", "X1", "Y0", "Y1"), help="nur Kacheln, deren Mitte in diesem Modellausschnitt liegt")
     a = ap.parse_args()
     import cv2, pycolmap, teilfusion as TF
     T = json.load(open(a.ausrichtung))["transformation"]; s = T["s"]; R = cv2.Rodrigues(np.array(T["rvec"]))[0]; t = np.array(T["t"])
@@ -34,6 +34,7 @@ def main():
     for n, k in enumerate(map(tuple, ki)):
         if np.hypot((k[0] + .5) * a.kachel, (k[1] + .5) * a.kachel) <= a.radius: kachel.setdefault(k, []).append(n)
     ks = sorted(k for k, v in kachel.items() if len(v) >= a.min_sparse)
+    if a.box: ks = [k for k in ks if a.box[0] <= (k[0] + .5) * a.kachel < a.box[1] and a.box[2] <= (k[1] + .5) * a.kachel < a.box[3]]
     if a.nur: ks = ks[:a.nur]
     print(f"Kacheln {a.kachel:g} m im Umkreis {a.radius:g} m: {len(ks)} (von {len(kachel)} mit Punkten)", flush=True)
     shutil.rmtree(a.tmp, ignore_errors=True); os.makedirs(os.path.join(a.tmp, "stereo"))

@@ -37,7 +37,7 @@ def main():
     if a.nur_planen or not neu: return 0
     keep = set(alt) | set(neu); name2id = {im.name: i for i, im in rec.images.items()}
     for n, i in name2id.items():
-        if n not in keep and rec.images[i].has_pose: rec.deregister_image(i)
+        if n not in keep and rec.images[i].has_pose: rec.deregister_frame(rec.images[i].frame_id)
     sin = os.path.join(a.aus, "sparse_in"); os.makedirs(sin, exist_ok=True); rec.write(sin)
     uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = 1600
     pycolmap.undistort_images(a.aus, sin, a.bilder, output_type="COLMAP", undistort_options=uo)
