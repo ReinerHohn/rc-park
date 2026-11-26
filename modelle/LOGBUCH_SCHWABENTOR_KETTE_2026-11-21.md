@@ -549,3 +549,6 @@ Siehe `.claude/UEBERGABE.md` (1122zc laeuft, Merge-Probe 31, 3 Agenten).
 
 ## UEBERGABE 25.11.2026 23:20
 Stand: `.claude/UEBERGABE.md`. Lauf 1122zh (Probe 34): Galerie 6 Konsolen, Tuer f04 weiter Rueckschritt (F1 0,636 gegen 0,81, Lage aber 0,043 m an der Wolke), Merge gesperrt. Hoehen: Hand 2,6 % zu tief, Kette stimmt (Wolke). Teilbau-Stand stand_20261125_202029 eingefroren; Agenten Dach-Knick + Tuer im Teilbau.
+
+## UEBERGABE 26.11.2026 04:40
+Stand: Lauf 1122zi2 fertig (Probe 34 4e553b602): Dach wie Handstand, Uhr 96 %, Tuer f04 Bild ok aber Bestand-Tor rot (F1 0,54 gegen 0,81, eingefrorener Kasten), Hoehen-Tor Dach +1,23 m rot (gewollt, Wolke stuetzt Foto), Stufigkeit 5 rot. Merge gesperrt. Entscheidung Nutzer: Bestandkasten f04 neu einfrieren? Hoehen-Tor-Bewertung Dach? Luecke: Massstab-Tor nur in Stufe tore, nicht bei --ab bauen.
