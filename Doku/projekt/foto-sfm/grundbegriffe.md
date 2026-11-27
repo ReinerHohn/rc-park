@@ -20,7 +20,8 @@ Wann was:
 - Test an diesen 50: feste Brennweite 8 Inlier-Erfolge, freie Brennweite 14, mit Verzeichnung 13, 24 px Toleranz 14, Median 0 Inlier. Vermutung „Linsenverzeichnung" damit großteils widerlegt; wahrscheinlich ist das Hauptnetz dort schwach oder falsch (Folgerung, nicht gemessen).
 - Mapper nur auf den 241 Fotos: 5 Teilmodelle (55/29/72/10/8 Bilder, Reproj 0,65–0,97 px). Einpassen über gemeinsame Fotos: Modell 0 (alle schon im Netz) und 3 (10 Bilder) passen, Modell 2 (72 Bilder, 40 neu) nur mit 1,0 m Rest (unbrauchbar), Modelle 1 und 4 (37 neue Fotos, vermutlich Brücke/Unterdurchgang) haben 0–1 gemeinsame Fotos = nicht einpassbar.
 - Fehler beim Vorgehen (Lehre): `--ref-db` muss zur Rekonstruktion `--sparse` passen (hier `db_mapper.db` zu `sfm/sparse/0`, nicht `db.db`); vor dem Start Rig-Kennungen vergleichen, sonst Absturz in `triangulate_points` nach 30 min Matching.
+- 27.11.: Teilmodell aus allen 677 Fotos (634 Bilder, eigenes Netz) per Kamerazentren eingepasst = Steg 1 m zu hoch; neu über direkte 3D-Spuren (`tools/teilmodell_spuren_einpassen.py`): Steg in Modellmetern belegt durch DOM1-Dach (+0,07 m), LoD2-Turmbreite (≤ 2,8 %), GPS grob; Mitte UTM 414550/5316160, Dach 32,5 m lang, 3,5–3,8 m breit, First 10,4 m, waagerecht (Wolke −0,2°, DOM1 0,3°). Details/Bilder: `modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/`, Ast [ausrichtung](../lage-seiten/ausrichtung.md).
 
 ## Offen
-- Alle 677 scharfen Fotos (statt 241) mit SIFT + ALIKED/LightGlue neu matchen, dann gemeinsamer Mapper mit den Referenzbildern, Blick-Tor (Seitenverwechslung) und Pflichtbild.
-- Ob die Brücke damit ins Hauptmodell einpassbar ist (gemeinsame Fotos von Turm und Brücke), ist nicht belegt.
+- Hauptnetz sieht den Steg (vf_244, PnP-Posen) 1 m höher als Laser und Teilnetz; Hauptnetz hat dort nur 34 Punkte. Beleg fehlt: Fernfotos (Schlossberg-Weg oder gegenüberliegender Gehweg), die Turm UND ganzen Steg im selben Bild zeigen.
+- Höhe des Stegs −0,2/+0,5 m unsicher (DOM1-Dach gegen Kamerahöhe über DGM1); Seitenlage 0,45 m, Gierwinkel bis 1,7° gegen den DOM1-Streifen.

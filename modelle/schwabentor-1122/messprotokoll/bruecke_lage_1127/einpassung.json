@@ -1,0 +1,132 @@
+{
+ "teil": "/media/oem/rcdaten/rc-park_daten_neu/zusatz_20261126_voll/lg/teilmodell/0",
+ "ref": "/media/oem/rcdaten/rc-park_daten_neu/zusatz_20261126_voll/lg/sparse_handy/0",
+ "ausrichtung": "/home/oem/git/rc-park/modelle/schwabentor-1122/messprotokoll/SFM-AUSRICHTUNG-schwabentor-1122.json",
+ "spuren": {
+  "bilder": 324,
+  "paare_roh": 149138,
+  "paare": 67021,
+  "im_radius": 67021,
+  "inlier": 38720,
+  "rest_median_m": 0.05991070529709586,
+  "massstab_m_je_teileinheit": 5.284315676482546,
+  "M_teil_modell": [
+   [
+    -0.5280896079442742,
+    1.2452126308145592,
+    5.1082833749470415,
+    4.681084162654118
+   ],
+   [
+    -5.227885207538867,
+    0.4230882934242122,
+    -0.643587384496376,
+    -5.271698893377966
+   ],
+   [
+    -0.5606512209000875,
+    -5.1180498208542735,
+    1.189633728706433,
+    3.5515893084628063
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ]
+ },
+ "kandidaten": {
+  "spuren": {
+   "lot_bildx_neigung_grad": 0.7959952424074688,
+   "kamerazentren_gegen_pnp_m": {
+    "median": 0.808074221078724,
+    "p90": 8.68143304417837,
+    "n": 324
+   },
+   "kamerahoehe_dgm": {
+    "n": 119,
+    "kipp_x_grad": -0.5292774476812,
+    "kipp_y_grad": -0.4090338830498848,
+    "h0_m": 1.695503807826159,
+    "pivot": [
+     3.1330547173389363,
+     20.31233553683832,
+     7.047873818857616
+    ]
+   },
+   "kameras_hoch": 117,
+   "steg": {
+    "mitte_xy": [
+     1.9362895064860917,
+     -22.12865864559076
+    ],
+    "richtung_xy": [
+     -0.4334898128310947,
+     -0.9011584667369344
+    ],
+    "laenge_m": 34.75527593484282,
+    "breite_dach_m": 7.478324403666578,
+    "dach_z_p50": 8.953748140225784,
+    "dach_z_p98": 11.962810726063838,
+    "deck_unterkante_z": 3.600539606475507,
+    "neigung_dach_grad": -1.720950791458704,
+    "neigung_achse3d_grad": 2.1914784707763793,
+    "n_dach": 180423,
+    "kameras_steg": 88,
+    "kamera_z_median": 7.389029985252497,
+    "dom_dach_dz_m": 0.07271600179851845,
+    "dom_seite_m": 0.42850162686633286,
+    "dgm_unter_mitte": 0.900974628390486
+   },
+   "tor_rot": []
+  },
+  "alt": {
+   "lot_bildx_neigung_grad": 0.9675495190633474,
+   "kamerazentren_gegen_pnp_m": {
+    "median": 0.6891792959254447,
+    "p90": 8.437848304478667,
+    "n": 324
+   },
+   "kamerahoehe_dgm": {
+    "n": 120,
+    "kipp_x_grad": 0.9584628643692186,
+    "kipp_y_grad": 0.039624711625509366,
+    "h0_m": 1.4538780346024622,
+    "pivot": [
+     3.294000619992357,
+     20.71532955575866,
+     6.934339376731978
+    ]
+   },
+   "kameras_hoch": 132,
+   "steg": {
+    "mitte_xy": [
+     2.4099256170768504,
+     -21.57486096127439
+    ],
+    "richtung_xy": [
+     -0.4956550472435353,
+     -0.8685194725174612
+    ],
+    "laenge_m": 33.91142738117729,
+    "breite_dach_m": 7.745249066642966,
+    "dach_z_p50": 9.959622287557647,
+    "dach_z_p98": 12.977195554798005,
+    "deck_unterkante_z": 3.8617237396786948,
+    "neigung_dach_grad": -1.524097283814075,
+    "neigung_achse3d_grad": 2.6109759970447444,
+    "n_dach": 153413,
+    "kameras_steg": 88,
+    "kamera_z_median": 8.270364484079998,
+    "dom_dach_dz_m": 1.0405893289841757,
+    "dom_seite_m": -0.20249510751817823,
+    "dgm_unter_mitte": 0.9026694872137
+   },
+   "tor_rot": [
+    "Stegdach 1.04 m neben DOM1"
+   ]
+  }
+ }
+}
