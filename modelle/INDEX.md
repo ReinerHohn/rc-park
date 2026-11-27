@@ -85,4 +85,4 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/WIDERSPRUECHE.md` (2 kB) Widerspruchsliste: gleiche Groesse, verschiedene Werte (mit Status)
 
 ## Objekte (modelle/<objekt>/: objekt.json, masstabelle.json, MASSNACHWEIS.md, audit/)
-`hg_tv9o`, `hg_tv9p`, `hg_tv9v`, `hg_tv9y`, `hg_tvac`, `kaufhaus`, `kaufhaus_gk`, `kaufhaus_grob3`, `martinstor`, `martinstor_gk`, `martinstor_torbau`, `ober_tvdr`, `schwab_auto`, `schwab_nachbar`, `schwab_v3`, `schwabentor`, `schwabentor-1120`, `schwabentor-1122`
+`hg_tv9o`, `hg_tv9p`, `hg_tv9v`, `hg_tv9y`, `hg_tvac`, `kaufhaus`, `kaufhaus_gk`, `kaufhaus_grob3`, `martinstor`, `martinstor_gk`, `martinstor_torbau`, `ober_tvdr`, `schwab_auto`, `schwab_nachbar`, `schwab_v3`, `schwabentor`, `schwabentor-1120`

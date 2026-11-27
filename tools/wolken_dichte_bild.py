@@ -71,6 +71,32 @@ def main():
     for i, n in enumerate(namen): cv2.rectangle(k, (4 + 9 * len("Herkunft: ") + sum(9 * (len(x) + 2) for x in namen[:i]) - 4, 4), (4 + 9 * len("Herkunft: ") + sum(9 * (len(x) + 2) for x in namen[:i]) - 1, 20), farben[i % len(farben)], -1)
     dr.append(np.vstack([k, im])); d2 = np.hstack([np.pad(x, ((0, 0), (0, 6), (0, 0)), constant_values=255) for x in dr])
     w = max(bild.shape[1], d2.shape[1]); bild = np.vstack([np.pad(bild, ((0, 10), (0, w - bild.shape[1]), (0, 0)), constant_values=255), np.pad(d2, ((0, 0), (0, w - d2.shape[1]), (0, 0)), constant_values=255)])
+    pz = B.get("pruefzonen") and (WV.register_lesen(a.objekt).get("pruefzonen") or [])   # 27.11.: Pruefzonen (Anbau/Treppe/Steg) - Draufsicht + zwei Seitenansichten, Quelle je Pixel
+    if pz:
+        hz = reg.get("handy_teil") or next((reg[n] for n in zeige[1:]), None); Hroh = None
+        if hz is not None:
+            L = WV.Quelle(WV._pfad(hz["pfad"])); A, b = WV.rahmen_lesen(hz.get("rahmen", "modell")); Hroh = L.block(0, L.n)[0] @ A.T + b
+        Vall = np.asarray(PM); zeilen = []
+        for Z in pz:
+            mv = (np.hypot(Vall[:, 0] - Z["mitte"][0], Vall[:, 1] - Z["mitte"][1]) <= Z["r"]) & (Vall[:, 2] >= Z["z"][0]) & (Vall[:, 2] <= Z["z"][1]); V = Vall[mv]; qv = qn[mv]
+            felder_z = [("VEREINT", V, None), ("VEREINT Herkunft (grau Hauptnetz, gruen Handy)", V, qv)]
+            if Hroh is not None:
+                mh = (np.hypot(Hroh[:, 0] - Z["mitte"][0], Hroh[:, 1] - Z["mitte"][1]) <= Z["r"]) & (Hroh[:, 2] >= Z["z"][0]) & (Hroh[:, 2] <= Z["z"][1]); felder_z.insert(0, ("Handy roh", Hroh[mh], None))
+            reihe = []
+            for titel, P, qq in felder_z:
+                for ax, (i, j) in ((("Draufsicht x/y", (0, 1)),) if qq is not None else (("Draufsicht x/y", (0, 1)), ("Seite x/z", (0, 2)), ("Seite y/z", (1, 2)))):
+                    lo = [Z["mitte"][0] - Z["r"], Z["mitte"][1] - Z["r"], Z["z"][0]]; hi = [Z["mitte"][0] + Z["r"], Z["mitte"][1] + Z["r"], Z["z"][1]]; st = 0.05
+                    nx, ny = int((hi[i] - lo[i]) / st), int((hi[j] - lo[j]) / st); im = np.full((ny, nx, 3), 30, np.uint8)
+                    u = ((P[:, i] - lo[i]) / st).astype(int).clip(0, nx - 1); v = (ny - 1 - ((P[:, j] - lo[j]) / st).astype(int)).clip(0, ny - 1)
+                    if qq is None:
+                        H = np.zeros((ny, nx)); np.add.at(H, (v, u), 1); g = (np.log10(1 + H) / max(np.log10(1 + H).max(), 1) * 255).astype(np.uint8); im = cv2.applyColorMap(g, cv2.COLORMAP_INFERNO); im[H == 0] = (30, 30, 30)
+                    else:
+                        for k_ in np.unique(qq): m_ = qq == k_; im[v[m_], u[m_]] = farben[int(k_) % len(farben)]
+                    k = np.full((22, nx, 3), 255, np.uint8); cv2.putText(k, f"{Z['name']}: {titel}, {ax} ({len(P):,} P.)".replace(",", " "), (3, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 0, 0), 1)
+                    reihe.append(np.vstack([k, im])); reihe.append(np.full((im.shape[0] + 22, 6, 3), 255, np.uint8))
+            zeilen.append(np.hstack(reihe))
+        w = max(z_.shape[1] for z_ in zeilen); pzb = np.vstack([np.pad(z_, ((0, 8), (0, w - z_.shape[1]), (0, 0)), constant_values=255) for z_ in zeilen])
+        pa = (a.aus or os.path.join(a.ordner, "dichte_je_wand.jpg")).replace(".jpg", "_pruefzonen.jpg"); cv2.imwrite(pa, pzb, [cv2.IMWRITE_JPEG_QUALITY, 85]); print("BILD", pa, pzb.shape)
     aus = a.aus or os.path.join(a.ordner, "dichte_je_wand.jpg"); cv2.imwrite(aus, bild, [cv2.IMWRITE_JPEG_QUALITY, 85]); print("BILD", aus, bild.shape); return 0
 
 

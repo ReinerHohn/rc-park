@@ -20,7 +20,56 @@
    "pfad": "/media/oem/rcdaten/tmp/handy_teil_spuren/wolke_modell.ply",
    "rahmen": "modell",
    "lagetor": "spuren:/media/oem/rcdaten/tmp/handy_teil_spuren/einpassung.json",
-   "angemeldet": "2026-11-27 12:43"
+   "angemeldet": "2026-11-27 12:43",
+   "ohne_zonen": [
+    "Dach"
+   ],
+   "ohne_zonen_grund": "Nutzer 27.11.: Dach nur Hauptnetz (Handy-Dachpunkte 84 % > 5 cm neben der Hauptnetz-Ebene, vom Boden kaum sichtbar)"
   }
- ]
+ ],
+ "pruefzonen": [
+  {
+   "name": "Anbau/Treppe zum Steg",
+   "art": "kreis",
+   "mitte": [
+    7.5,
+    -10.6
+   ],
+   "r": 8,
+   "z": [
+    0,
+    16
+   ],
+   "quelle": "Nutzerbefund 27.11. (Treppe zum Uebergang, Steg-Turmende)"
+  },
+  {
+   "name": "Anbau Ost",
+   "art": "kreis",
+   "mitte": [
+    12,
+    -6
+   ],
+   "r": 8,
+   "z": [
+    0,
+    16
+   ],
+   "quelle": "Nutzerbefund 27.11."
+  },
+  {
+   "name": "Steg-Mitte",
+   "art": "kreis",
+   "mitte": [
+    0.5,
+    -25
+   ],
+   "r": 8,
+   "z": [
+    0,
+    16
+   ],
+   "quelle": "Nutzerbefund 27.11., BRUECKE-LAGE steg mitte_modell_xy"
+  }
+ ],
+ "pruefzonen_zweck": "ZELLENTEST tools/wolke_vereinigen.py: in jeder 5-m-Zelle und jeder Pruefzone darf vereint nicht weniger Punkte haben als eine Quelle ohne Begruendung (Doppelwand / ohne_zonen / Lagetor)"
 }

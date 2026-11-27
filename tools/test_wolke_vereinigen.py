@@ -5,7 +5,8 @@ SFM-AUSRICHTUNG, PLY mit Normalen) dicht oben, Quelle C (npy + Farben) nur an de
   1. vereint >= beste zugelassene Quelle in JEDER Zone (Nord/Sued/West/Ost/Dach/Bruecke), rc-Logik 'rot' leer;
   2. MUTATION Quelle weglassen (B fehlt im Vereinen, Zaehlung gegen B) -> rot; MUTATION Regel 'erste Quelle je Voxel' statt 'meiste Punkte' -> rot;
   3. Rahmen: B landet nach sfm-Rueckrechnung auf der Modellwand (< 1 mm), Normale zeigt nach aussen (+x);
-  4. Lagetor global: um 1 m verschobene Quelle -> ABGELEHNT; Blocktor: in einem Block um 20 cm verschobene Kopie -> nur dort weggelassen;
+  4. Lagetor global: um 1 m verschobene Quelle -> ABGELEHNT; Anbau-Fall: 20 cm versetzter Block wird NACHGEPASST (Treppe wandert mit, keine Doppelwand),
+     verrauschter Block -> eigene Schicht (Treppe bleibt, Wandpunkte nahe der Bezugswand weg); ZELLENTEST 5-m-Raster + Pruefzonen, MUTATION alter Blocktor -> rot;
   5. Lagetor-Eintrag spuren mit tor_rot -> nicht vereint; Register anmelden ersetzt gleichnamige Quelle.
 Aufruf: tools/py tools/test_wolke_vereinigen.py  (rc 0 = alles gruen)."""
 import os, sys, json, tempfile
@@ -97,15 +98,45 @@ def main():
     WV.gewinner = erste
     try: B3 = WV.vereinigen(q, os.path.join(tmp, "v3"), **kw)
     finally: WV.gewinner = alt
-    pruef(len(B3["rot"]) > 0, f"MUTATION Regel 'erste Quelle je Voxel' -> rot: {[r_['zone'] for r_ in B3['rot']]}")
+    pruef(len(B3["rot"]) > 0, f"MUTATION Regel 'erste Quelle je Voxel' -> rot: {sorted(set(str(r_.get('zone') or 'Zellen') for r_ in B3['rot']))}")
     # Lagetor global + Blocktor
     PE = PA + [1.0, 0, 0]; ply(os.path.join(tmp, "e.ply"), PE)
-    PD = PA.copy(); blk = (PD[:, 0] > 9) & (PD[:, 2] > 0) & (PD[:, 2] < 5) & (PD[:, 1] > 5) & (PD[:, 1] < 10); PD[blk, 0] += 0.20; ply(os.path.join(tmp, "d.ply"), PD)
-    B4 = WV.vereinigen([q[0], dict(name="E", pfad=os.path.join(tmp, "e.ply")), dict(name="D", pfad=os.path.join(tmp, "d.ply"))], os.path.join(tmp, "v4"), **dict(kw, block=5.0))
+    # Anbau-Fall (Nutzerbefund 27.11.): Block 1 Wand 20 cm versetzt + Treppe (nur in D) -> nachpassen, alles bleibt; Block 2 Wand verrauscht +-30 cm
+    # (nachpassen scheitert) + Treppe -> Punkte nahe der Bezugswand weg (Doppelwand, begruendet), Treppe bleibt als eigene Schicht
+    PD = PA.copy(); blk = (PD[:, 0] > 9) & (PD[:, 2] > 0) & (PD[:, 2] < 5) & (PD[:, 1] > 5) & (PD[:, 1] < 10); PD[blk, 0] += 0.20
+    rau = (PD[:, 1] > 9) & (PD[:, 2] > 5) & (PD[:, 2] < 10) & (PD[:, 0] > 0) & (PD[:, 0] < 5); PD[rau, 1] += rng.uniform(-0.3, 0.3, rau.sum())
+    T1 = np.c_[rng.uniform(10.6, 14, 8000), rng.uniform(5.5, 9.5, 8000), 2 + rng.normal(0, 0.003, 8000)] + [0.20, 0, 0]       # Treppe im versetzten Block
+    T2 = np.c_[rng.uniform(0.5, 4.5, 8000), rng.uniform(10.6, 14.5, 8000), 7 + rng.normal(0, 0.003, 8000)]                   # Treppe am verrauschten Block
+    # Block 3 (Nachbar des verrauschten Blocks): Bezug duenn (600 Punkte), D dicht MIT Relief (Haelfte 15 cm vor der Wand) -> D fuehrt, Relief bleibt
+    A3 = np.c_[rng.uniform(0.5, 4.5, 600), 17 + rng.normal(0, 0.003, 600), rng.uniform(5.5, 9.5, 600)]
+    D3 = np.c_[rng.uniform(0.5, 4.5, 16000), np.zeros(16000), rng.uniform(5.5, 9.5, 16000)]; D3[:, 1] = 17 + 0.15 * (np.sin(D3[:, 0] * 3) > 0) + rng.normal(0, 0.003, 16000)
+    PA4 = np.r_[PA2, A3]; ply(os.path.join(tmp, "a4.ply"), PA4, np.r_[NA2, np.zeros((600, 3))], np.full((len(PA4), 3), 100, np.uint8))
+    PD = np.r_[PD, T1, T2, D3]; ply(os.path.join(tmp, "d.ply"), PD)
+    pz = [dict(name="Anbau1", art="kreis", mitte=[12, 7.5], r=3, z=[0, 5]), dict(name="Anbau2", art="kreis", mitte=[2.5, 12], r=3, z=[5, 10])]
+    qs4 = [dict(q[0], pfad=os.path.join(tmp, "a4.ply")), dict(name="E", pfad=os.path.join(tmp, "e.ply")), dict(name="D", pfad=os.path.join(tmp, "d.ply"))]
+    B4 = WV.vereinigen(qs4, os.path.join(tmp, "v4"), **dict(kw, block=5.0, pruefzonen=pz))
     zE = next(z for z in B4["quellen"] if z["name"] == "E"); zD = next(z for z in B4["quellen"] if z["name"] == "D")
     pruef(zE.get("angenommen") is False and "Median" in zE.get("grund", ""), f"1 m verschobene Quelle ABGELEHNT ({zE.get('grund')})")
-    pruef(zD.get("angenommen") and len(zD.get("bloecke_weg", [])) >= 1 and 0 < zD["punkte_weg_blocktor"] < len(PD) // 4,
-          f"Blocktor: 20 cm verschobener Block weg ({len(zD.get('bloecke_weg', []))} Bloecke, {zD.get('punkte_weg_blocktor')} Punkte), Rest der Quelle bleibt")
+    np_ = zD.get("bloecke_nachgepasst", []); es = zD.get("bloecke_eigene_schicht", [])
+    pruef(any(abs(b_["verschiebung_m"] - 0.20) < 0.02 for b_ in np_), f"versetzter Block nachgepasst: {[(b_['mitte'], b_['verschiebung_m'], b_['median_nachher_m']) for b_ in np_]}")
+    pruef(len(es) >= 1, f"verrauschter Block: eigene Schicht ({[(b_['mitte'], b_.get('grund')) for b_ in es]})")
+    V4 = np.load(os.path.join(tmp, "v4", "punkte_modell.npy")); q4 = np.load(os.path.join(tmp, "v4", "vereint_modell.ply.quellen.npy"))
+    tr1 = (q4 == 2) & (np.abs(V4[:, 2] - 2) < 0.02) & (V4[:, 0] > 10.7) & (V4[:, 1] > 5.6) & (V4[:, 1] < 9.4)
+    pruef(tr1.sum() > 7000 and abs(np.median(V4[tr1, 0]) - 12.3) < 0.1, f"Treppe 1 bleibt und wird mitverschoben ({tr1.sum()} von 8000, x Median {np.median(V4[tr1, 0]) if tr1.any() else 0:.2f}, soll 12,3)")
+    nw = (q4 == 2) & (V4[:, 0] > 9.5) & (V4[:, 0] < 10.6) & (V4[:, 2] < 5) & (V4[:, 1] > 5.5) & (V4[:, 1] < 9.5)
+    pruef(nw.sum() == 0 or np.percentile(np.abs(V4[nw, 0] - 10), 95) < 0.02, f"keine Doppelwand am versetzten Block (D-Punkte an der Wand: p95 {np.percentile(np.abs(V4[nw, 0] - 10), 95) if nw.any() else 0:.3f} m)")
+    tr2 = (q4 == 2) & (np.abs(V4[:, 2] - 7) < 0.02) & (V4[:, 1] > 10.6)
+    dw = (q4 == 2) & (np.abs(V4[:, 1] - 10) < 0.3) & (V4[:, 2] > 5) & (V4[:, 2] < 10) & (V4[:, 0] > 0.3) & (V4[:, 0] < 5)      # x > 0,3: Ecke zur Suedwand (dort liegen sie AUF der Wand)
+    p95 = float(np.percentile(np.abs(V4[dw, 1] - 10), 95)) if dw.any() else 0.0
+    pruef(tr2.sum() > 6000 and dw.sum() < 0.3 * rau.sum() and p95 < 0.06, f"verrauschter Block: Treppe 2 bleibt ({tr2.sum()} von 8000), Doppelwand weg ({dw.sum()} von {rau.sum()} verrauschten Wandpunkten uebrig, p95 {p95:.3f} m an der Wand)")
+    r3 = (q4 == 2) & (V4[:, 1] > 16.9) & (V4[:, 1] < 17.25) & (V4[:, 0] > 0.5) & (V4[:, 0] < 4.5) & (V4[:, 2] > 5.5) & (V4[:, 2] < 9.5)
+    pruef(r3.sum() > 0.95 * 16000 and zD.get("bloecke_quelle_fuehrt", 0) >= 1, f"duenner Bezug, dichte Quelle mit Relief: Quelle fuehrt ({zD.get('bloecke_quelle_fuehrt')} Bloecke), Relief bleibt ({r3.sum()} von 16000)")
+    pruef(not B4["zellen_rot"] and all(p_["vereint"] >= p_["D_ohne_grund"] for p_ in B4["pruefzonen"]), f"Zellentest gruen, Pruefzonen {B4['pruefzonen']}")
+    # MUTATION 3: alter Blocktor (ganzer Block weg, ohne Begruendung) -> Zellentest rot
+    WV.BLOCKTOR_STRENG = True
+    try: B6 = WV.vereinigen(qs4, os.path.join(tmp, "v6"), **dict(kw, block=5.0, pruefzonen=pz))
+    finally: WV.BLOCKTOR_STRENG = False
+    pruef(len(B6["zellen_rot"]) > 0 and len(B6["rot"]) > 0, f"MUTATION Blocktor streng -> Zellen rot: {[(r_.get('zelle') or r_.get('pruefzone'), r_['quelle'], r_['quelle_n'], r_['vereint']) for r_ in B6['zellen_rot'][:4]]}")
     # Lagetor-Eintrag + Register
     ep = os.path.join(tmp, "einpassung.json"); json.dump({"kandidaten": {"spuren": {"tor_rot": ["Stegdach 1.04 m neben DOM1"]}}}, open(ep, "w"))
     B5 = WV.vereinigen([q[0], dict(q[2], lagetor="spuren:" + ep)], os.path.join(tmp, "v5"), **kw); z5 = B5["quellen"][1]
