@@ -5,8 +5,8 @@ RECHENKERN der dichten Wolke in EINEM Stueck (ohne Kacheln, ohne Teilfusion) - f
 Optionen wie die lokale Stufe 'schnell' von tools/dicht_modell.py (Handy-Teilmodell 27.11.: --ohne-bildwahl --stufe schnell), nur in voller Bildgroesse:
   undistort_images (max_image_size = --groesse, 0 = volle Groesse) -> PatchMatch (GPU, photometrisch, filter, window_step 2, geom_consistency aus)
   -> stereo_fusion (photometric, min_num_pixels 3, ALLE Bilder am Stueck, use_cache aus; Bilder-RAM-Bedarf siehe unten).
-FUSIONS-RAM: Bedarf = Bilder x Megapixel(Fusionsgroesse) x --ram_mb_je_mpx (22,5 MB/Mpx = 45 MB je 1600-px-Bild, Messung 18.11.; Mini-Test 27.11. siehe
-Doku/projekt/betrieb/cloud-runpod.md). Frei = min(MemAvailable, cgroup-Grenze des Containers) - Runpod zeigt in /proc/meminfo den GANZEN Host.
+FUSIONS-RAM: Bedarf = Bilder x Megapixel(Fusionsgroesse) x --ram_mb_je_mpx (27 MB/Mpx; gemessen Mini-Test 27.11. volle Groesse 26,2 MB/Mpx,
+frueher 45 MB je 1600-px-Bild = 22,5 MB/Mpx, Messung 18.11.; Doku/projekt/betrieb/cloud.md). Frei = min(MemAvailable, cgroup-Grenze des Containers) - Runpod zeigt in /proc/meminfo den GANZEN Host.
 Passt der Bedarf nicht in --ram_anteil x frei: --fusion_groesse auto verkleinert NUR die Fusion (Tiefenkarten bleiben voll) und protokolliert
 "FUSION VERKLEINERT"; --fusion_streng bricht stattdessen ab (rc 6). Grund: use_cache lief am 18.11. 4 h einspurig ohne Ende.
 Protokoll: <ergebnis>/protokoll.log (Takt --takt s: Phase, RAM des Prozesses/Spitze, frei, GPU-Last %, VRAM) und <ergebnis>/protokoll.json (Phasenzeiten, Spitzen).
@@ -70,7 +70,7 @@ def main(argv=None):
     ap.add_argument("--groesse", type=int, default=0, help="max_image_size fuer Entzerren+PatchMatch, 0 = volle Bildgroesse (lokal war 1600)")
     ap.add_argument("--window_step", type=int, default=2); ap.add_argument("--min_num_pixels", type=int, default=3); ap.add_argument("--gpu_index", default="0")
     ap.add_argument("--fusion_groesse", default="auto", help="auto = wie PatchMatch, nur bei RAM-Mangel kleiner; Zahl = fest"); ap.add_argument("--fusion_streng", action="store_true")
-    ap.add_argument("--ram_mb_je_mpx", type=float, default=22.5); ap.add_argument("--ram_anteil", type=float, default=0.8); ap.add_argument("--takt", type=int, default=30)
+    ap.add_argument("--ram_mb_je_mpx", type=float, default=27.0, help="Mini-Test lokal 27.11.: (3319-805 MB Grundlast)/(20 Bilder x 4,79 Mpx) = 26,2 MB/Mpx"); ap.add_argument("--ram_anteil", type=float, default=0.8); ap.add_argument("--takt", type=int, default=30)
     ap.add_argument("--nur_pruefen", action="store_true", help="Dry-Run: CUDA, Bilder, Platz, RAM-Plan; rechnet nichts")
     a = ap.parse_args(argv)
     os.makedirs(a.ergebnis, exist_ok=True); os.makedirs(a.arbeit, exist_ok=True); LOG = os.path.join(a.ergebnis, "protokoll.log"); PJ = os.path.join(a.ergebnis, "protokoll.json")

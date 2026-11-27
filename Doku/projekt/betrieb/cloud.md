@@ -11,8 +11,10 @@ Anleitungen: [tools/cloud/CLOUD_RUNPOD.md](../../../tools/cloud/CLOUD_RUNPOD.md)
 ## Versucht
 - 27.11. · Runpod-Lauf dichte Wolke Handy-Teilmodell (634 Bilder, volle Größe, Fusion am Stück) vorbereitet (Cloud, GPU mieten, PatchMatch, Fusion, RAM-Grenze) → ℹ vorbereitet, Cloud ungelaufen.
   Paket 972 MB (Sparse 159 MB + Rohbilder 909 MB; db.db 2,9 GB nicht nötig), Upload ≈ 7 min (ANNAHME 8,5 GB/h).
-  Dry-Run lokal: 4,93 Mpx je Bild, Fusion braucht geschätzt 70,6 GB (ANNAHME 22,5 MB/Mpx) und Platz ≈ 68 GB; lokal würde die Fusion auf 640 px verkleinert.
-  Mini-Test lokal: siehe nächste Zeile. Lehre: In Containern zeigt /proc/meminfo den Host, deshalb liest das Skript die cgroup-Grenze. [tools/cloud/runpod_dicht.py]
+  Dry-Run lokal: 4,93 Mpx je Bild, Fusion braucht geschätzt 87 GB (27 MB/Mpx) und Platz ≈ 68 GB; lokal würde die Fusion auf 640 px verkleinert.
+  Mini-Test lokal (20 Bilder Treppe/Anbau, volle Größe): rc 0, PatchMatch 177 s, Fusion-RAM 26,2 MB/Mpx, 21 164 Punkte.
+  Gegenprobe 1600 px: 98 s, 18 956 Punkte. Volle Größe heißt 2× Tiefenpixel, aber nur +12 % Fusionspunkte im Mini; im Mini sind die Karten nur zu 5–35 % gefüllt (20 Nachbarn).
+  Kostenbremse mit Ersatz-runpodctl geprüft (rc 7 ohne Bremse, Zeitlimit → Stopp). Lehre: In Containern zeigt /proc/meminfo den Host, deshalb liest das Skript die cgroup-Grenze. [tools/cloud/runpod_dicht.py]
 - 20.11. · vast.ai vorbereitet (vast.sh, Zeitgeber auf dem Laptop) → ℹ NICHT erprobt · 4090 + 64 GB ab 0,42 $/h · [tools/cloud/CLOUD_VAST.md]
 
 ## Offen

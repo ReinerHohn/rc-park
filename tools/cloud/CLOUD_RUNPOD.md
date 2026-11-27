@@ -21,7 +21,7 @@ Nicht nötig: `db.db` (2,9 GB, nur für SfM), `lg.npz`, Tiefenkarten und nicht r
   Der Zeitbedarf ist gleich, weil die Bilder dieselben sind.
 
 ## Pod-Wahl (Preisliste runpod.io/pricing, abgerufen 27.11.2026, Preise USD/h, RAM je GPU)
-- **RTX 4090 reicht NICHT**: Runpod gibt je 4090 nur 41 GB RAM und 6 vCPU. Die Fusion braucht in voller Größe geschätzt 71 GB.
+- **RTX 4090 reicht NICHT**: Runpod gibt je 4090 nur 41 GB RAM und 6 vCPU. Die Fusion braucht in voller Größe geschätzt 87 GB (634 × 5,07 Mpx × 27 MB/Mpx, gemessen im Mini-Test).
 - **Empfehlung RTX 3090**: 24 GB VRAM, **125 GB RAM**, 16 vCPU; Community 0,22 $/h, Secure 0,50 $/h.
 - Ersatz: L40S (48 GB, 94 GB RAM) für 0,79 bzw. 1,09 $/h. A6000 hat nur 50 GB RAM, 5090 nur 35 GB RAM; beide sind ungeeignet.
 - Filter: 1 GPU, CUDA ≥ 12.8 (das Wheel nutzt CUDA 12.9), Container-Platte 100 GB (Tiefen- und Normalenkarten ≈ 68 GB), Volume 20 GB.
@@ -32,9 +32,9 @@ Nicht nötig: `db.db` (2,9 GB, nur für SfM), `lg.npz`, Tiefenkarten und nicht r
 
 ## Zeit und Kosten (ANNAHME, ungemessen in der Cloud)
 - Lokal gemessen (27.11.): PatchMatch für 634 Bilder bei 1600 px mit window_step 2 auf der RTX 4060 Laptop dauerte 52 min (4,9 s je Bild).
-- Volle Größe hat 4,93 Mpx statt 2,0 Mpx je Bild, also ×2,5 → ≈ 130 min auf der 4060. ANNAHME: die 3090 ist 2–2,5× schneller → **55–65 min**.
+- Mini-Test lokal (20 Bilder): volle Größe 177 s gegen 98 s bei 1600 px, also ×1,8 → ≈ 95 min auf der 4060 für alle 634 Bilder. ANNAHME: die 3090 ist 2–2,5× schneller → **40–50 min**.
 - Fusion bei 16 vCPU, volle Größe: ANNAHME 20–40 min. Einrichten, Entpacken und Entzerren: ≈ 10 min.
-- Summe ≈ 1,5–2 h. Hinzu kommen das Download-Fenster (bis 45 min) und der Mini-Test (≤ 15 min).
+- Summe ≈ 1,2–1,7 h. Hinzu kommen das Download-Fenster (bis 45 min) und der Mini-Test (≤ 15 min).
 - Auf einer 3090 Community (0,22 $/h) ergibt das **≈ 0,6 $**, auf Secure (0,50 $/h) **≈ 1,4 $**. Das Zeitlimit von 3 h deckelt den Lauf bei 0,66 bzw. 1,50 $ zuzüglich Fenster.
   Beides liegt weit unter 6 EUR je Lauf bzw. 10 EUR gesamt (ANNAHME Kurs 1 EUR ≈ 1,15 $).
 
@@ -62,8 +62,9 @@ Nicht nötig: `db.db` (2,9 GB, nur für SfM), `lg.npz`, Tiefenkarten und nicht r
    `timeout 900 bash -c 'until ssh ... grep -q JOB_ENDE /workspace/erg_mini/lauf.log; do sleep 30; done'`
    Danach `ssh ... tail -20 /workspace/erg_mini/lauf.log /workspace/erg_mini/protokoll.log`.
    Prüfen: rc=0, `Kostenbremse: runpodctl erreicht Pod`, Punktzahl ähnlich lokal (Mini lokal: siehe Ast), RAM-Spitze der Fusion je Mpx.
-   Den Wert `ram_mb_je_mpx` aus `protokoll.json` (`spitzen.rss_je_phase_mb.fusion`) mit den Mpx der 20 Bilder vergleichen.
-   Wenn der Wert deutlich über 22,5 liegt, beim großen Lauf `-- --ram_mb_je_mpx <Wert>` setzen.
+   Die RAM-Spitze der Fusion (`protokoll.json` → `spitzen.rss_je_phase_mb.fusion`, lokal 3319 MB) gegen die Pause davor (`patchmatch`, lokal 805 MB) rechnen:
+   (Fusion − Grundlast) / (20 × 4,79 Mpx) ergab lokal 26,2 MB/Mpx; der Standard ist 27. Liegt der Wert deutlich darüber, beim großen Lauf `-- --ram_mb_je_mpx <Wert>` setzen.
+   Das Protokoll muss `RAM frei ... (Grenze ...)` zeigen; ist die Grenze kleiner als 109 GB, verkleinert das Skript die Fusion und meldet `FUSION VERKLEINERT`.
 5. GROSSER LAUF (auf demselben Pod, das Mini-Ergebnis ist geholt). Ein neuer Aufruf ersetzt den Wächter des Mini-Tests:
    `rsync ... handy_teil.tar.zst* root@<IP>:/workspace/`, dann
    `ssh ... 'cd /workspace && nohup bash runpod_dicht.sh --paket /workspace/handy_teil.tar.zst --stunden 3 --warte_min 45 > /workspace/lauf.out 2>&1 &'`
@@ -74,6 +75,14 @@ Nicht nötig: `db.db` (2,9 GB, nur für SfM), `lg.npz`, Tiefenkarten und nicht r
 8. Abrechnung: Runpod-Konsole → Billing (Verbrauch des Tages, Restguthaben); die Zahlen ins Logbuch und in den Ast `Doku/projekt/betrieb/cloud.md` (Versucht) eintragen.
 9. Lokal weiter: `tools/wolke_vereinigen.py` (Zweig wolken-vereinen, Stufe `wolken_vereinen_stufe.sh`) mit `--quelle handy_voll=<fused.ply>`.
    Dann Treppe/Anbau/Steg je Zelle zählen (`tools/dichte_diagnose.py`), gegen `handy_teil_dicht` (kachel.ply / vereint.ply) und Bild ansehen.
+
+## Lokaler Mini-Test 27.11. (20 Bilder, RTX 4060, job_start mit GPU-Buchung)
+- rc 0. Entzerren 1 s, PatchMatch 177 s (100 % GPU, VRAM-Spitze 3,8 GB), Fusion 22 s mit RAM-Spitze 3,3 GB. Ergebnis 21 164 Punkte.
+- Gegenprobe gleiches Paket mit `-- --groesse 1600`: 98 s, 18 956 Punkte. Volle Größe bringt 2,07× gültige Tiefenpixel (18,1 gegen 8,75 Mio), aber nur +12 % Punkte nach der Fusion.
+- Die Tiefenkarten sind im Mini nur zu 5–35 % gefüllt; im lokalen 634-Bilder-Lauf sind dieselben Bilder zu 28–59 % gefüllt. Ursache (ANNAHME): Nur 20 Nachbarbilder stehen zur Verfügung. Das Mini taugt nicht als Dichtemaß.
+- Bild: Draufsicht und Seitenansicht beider Mini-Wolken zeigen gleiche Lage. Die volle Größe reicht höher (z p95 15,7 gegen 11,8 m).
+- Kostenbremse lokal mit einem Ersatz-runpodctl geprüft: Ohne erreichbares runpodctl endet der Lauf mit rc 7, ohne zu rechnen.
+  Das Zeitlimit beendet den Kern (rc 143), packt und ruft `runpodctl pod stop <id>`. Nach Erfolg und Fenster 0 min folgt ebenfalls `pod stop`.
 
 ## Lokal testen (vor jedem Mieten)
 `JOB_CPU=alle JOB_GPU_MB=4500 JOB_RAM_MB=4000 bash tools/job_start.sh runpod-mini <log> bash tools/cloud/runpod_dicht.sh --lokal --paket /media/oem/rcdaten/tmp/runpod_paket/handy_mini20.tar.zst --arbeit <dir> --ergebnis <dir> --py /media/oem/scan/venv-colmap/bin/python`
