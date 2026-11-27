@@ -25,6 +25,7 @@ Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTIN
 
 ## Versucht
 **Merkmale & Zuordnung**
+- 27.11. · Runpod-Messreihe Schwabentor (RTX 4090, Volume ghhv7k1089): dichte Wolke 1600-5800 px und Registrierung in voller Aufloesung ohne Gewinn fuer Wand/Registrierung → ✗ kein Hebel; ALIKED+LightGlue voll aufgeloest (4000 px, 8192 kp) ordnet von 241 Handyfotos 109 ein (SIFT voll 91, alle 91 enthalten, +18 an Bruecke/Brueckenlaube/Treppenturm/Rundturm, Reproj 1,63 px) → ✓ wirkt an den schwachen Stellen, Lage/Qualitaetstor der Bruecke NICHT geprueft; RoMa (K5, nur Probe) 6 von 148 der nicht eingeordneten Fotos sicher (>=40 Inlier) → ~ kleine Ergaenzung. Lehre: SQLite-DB nie auf dem Netz-Volume (>1 h statt 3 min); Ergebnis /media/oem/rcdaten/tmp/runpod_test/lg_voll [SPEC_VERFAHREN_RUNPOD_2026-11-27]
 - 01.11. · COLMAP-SfM ueber alle 37 Turmfotos (pycolmap, 2000 px) → ✓ Methode · 36/37 in 10 s registriert; Problem ist Ausrichtung, nicht Rekonstruktion [VERSUCHSREGISTER AE]
 - 01.11. · ALIKED+LightGlue / hybrid statt SIFT (Martinstor, fast ebene Fassaden) → ✗ verworfen · registriert alles, aber Netz VERBOGEN; SIFT vorsichtiger [VERSUCHSREGISTER AK]
 - 01.11. · SIFT mit Vollaufloesungs-Ausschnitten fuer Luft-/Fernbilder → ✗ · 0 verifizierte Paare; Ausschnitt heilt Massstab, nicht Blickwinkel > 45 Grad [VERSUCHSREGISTER AJ]
