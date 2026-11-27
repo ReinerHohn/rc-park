@@ -221,6 +221,7 @@ Quelle: `research_notes/duenne_bruecken_methoden_2026-11-22.md` (dort Zitate und
 - GIM (xuelunshen/gim): API sagt MIT, README "research purposes only" -> **unklar, nicht fuer Verkauf** ohne Klaerung.
 - MASt3R/DUSt3R: LICENSE jetzt an der Quelle gelesen: CC BY-NC-SA 4.0 -> **nein** (bestaetigt die alte Zeile oben).
 - Doppelgangers++: CC BY-NC-SA 4.0 an der Quelle gelesen -> **nein**.
+- **KORREKTUR 28.11.2026 (HF-API geprueft): Pi3-Gewichte (yyfz233/Pi3) = BSD-2-Clause (frei); GlueMAP-Konfiguration 'frei' = Pi3 + SALAD (GPL-3.0, intern ok, ANNAHME) ohne VGGSfM-Tracker -> verkaufstauglich moeglich; GitHub meldet fuer colmap/gluemap 'NOASSERTION' (LICENSE-Datei noch lesen). NC bleiben: VGGSfM-Tracker, Pi3X, VGGT-1B, Doppelgangers++, MASt3R.**
 - VGGSfM (facebookresearch/vggsfm): CC BY-NC 4.0 -> **nein**; damit GlueMap (colmap/gluemap, Code BSD) nur mit Standard-Checkpoints Pi3/VGGSfM nicht verkaufstauglich -> Code ja, Standardkonfiguration **nein**.
 - MP-SfM (cvg/mpsfm): Code Apache-2.0; Standard-Priors (MASt3R NC, DepthPro/Metric3D/DSINE ungeprueft) -> nur mit MoGe-2 (MIT) als Prior **ja**.
 - Kimera-RPGO (MIT-SPARK): BSD-2-Clause -> **ja**. GTSAM (borglab): simplified BSD -> **ja**.
