@@ -87,7 +87,7 @@ def main():
     import bauteile as BT
     Wd = BT.Wand([0, 0], [1, 0], aussen=[0, -5]); wand = Wd.kasten(0, 12, 0, 20, -1.0, 0.0)
     jd = os.path.join(d, "bau.json")
-    json.dump(dict(fassaden=dict(f00=dict(o=[0, 0], d=[1, 0], n=[0, -1], bauteile=[dict(typ="gesims", u0=1.0, u1=11.0, z0=10.0, z1=10.5, ausladung=0.2, fotos=10,
+    json.dump(dict(fassaden=dict(f00=dict(o=[0, 0], d=[1, 0], n=[0, -1], bauteile=[dict(typ="gesims", u0=1.0, u1=11.0, z0=10.0, z1=10.5, ausladung=0.2, fotos=10, kanten=[dict(aus=None), dict(aus=None)],
               profil=[[10.0, 0.0], [10.4, 0.2], [10.5, 0.2]])], balkenkoepfe=[dict(n=2, u=[3.0, 7.0], b=0.4, z0=12.4, z1=12.8, ausladung=0.3)]))), open(jd, "w"))
     k, bel = BT.linien_aus_json(wand, jd)
     soll = 10.0 * (0.5 * 0.4 * 0.2 + 0.1 * 0.2) + 2 * 0.4 * 0.4 * 0.3            # Gesims: Dreieck (Unterseite) + Abdeckplatte; 2 Koepfe

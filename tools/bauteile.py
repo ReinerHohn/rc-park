@@ -536,7 +536,7 @@ def linien_aus_json(koerper, datei, einbinden=0.10):
             belege.append(dict(seite="wand", element=f"{B['typ'].capitalize()} {fid} z {B['z0']:.2f}-{B['z1']:.2f} m, u {u0:.2f}..{u1:.2f}, Ausladung {B['ausladung']:.2f} m",
                                quelle="tools/linien_bauteile.py: waagerechte Fotokanten (Ebenen-Sweep, " + str(B.get("fotos")) + " Fotos)" + (f", Profil von Wand {B['uebertragen']}" if B.get("uebertragen") else ""),
                                z0=B["z0"], z1=B["z1"], u0=u0, u1=u1, ausladung=B["ausladung"], profil=B["profil"], wand_w=round(wf, 3), fehlende_kanten_haufen=len(B.get("haufen") or []),
-                               hinweis="; ".join((B.get("annahmen") or []) + ann + [f"Ausladung aus {', '.join(sorted(set(k.get('aus', '?') for k in B.get('kanten', []))))}"])))
+                               hinweis="; ".join((B.get("annahmen") or []) + ann + [f"Ausladung aus {', '.join(sorted(set(str(k.get('aus') or '?') for k in B.get('kanten', []))))}"])))
         for R in F.get("balkenkoepfe", []):
             b, a, z0, z1 = float(R["b"]), float(R["ausladung"]), float(R["z0"]), float(R["z1"]); n_ok = 0
             for u_ in R["u"]:
