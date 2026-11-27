@@ -296,3 +296,4 @@
 - Z.362: ## 16.11.2026 abends: "ein Kern 100 %" - Ursache waren Kameras mit absurdem Standort
 - Z.369: ## 17.11.2026 nachts: Feinausrichtung der Wandbilder / Feinpunkt-Anker / Schattierungsmass (Agent Feinausrichtung)
 - Z.392: ## 18.11.2026 nachts: Rueckwand hinter Oeffnungen / Laubenrueckwand (Agent Rueckwand/Laube)
+- Z.417: ## 27.11.2026: Rundbogenfenster f00 - Fensterscheitel aus der Blickschraege (Agent rundbogen-1127)

@@ -413,3 +413,11 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
   koppelt 1122t in keinem Eckmodell beide Teile (Teil 0 Nord, 8-13 gemeinsame Bilder: Rest 0,53-0,87 % > 0,5 %; mit SIFT-Eckmodell auch Teil 1 nur 17-25 % stimmig) - Lage
   nur aus wenigen eng stehenden Kamerazentren. Bleibt als automatisch gewaehlte Variante (gewinnt nur mit mehr Teilen). Ohne pycolmap.set_random_seed nicht reproduzierbar
   (bis 0,96 Grad); align_reconstructions_via_points wirft IndexError bei Eckbildern ausserhalb des Teils.
+
+## 27.11.2026: Rundbogenfenster f00 - Fensterscheitel aus der Blickschraege (Agent rundbogen-1127)
+- Erste Annahme FALSCH: "die dunkle Oberkante im Einzelfoto ist die Ladenkante (Hinterkante), Steigung = Laibungstiefe 1,04 m". Gemessen: die staerkste
+  Dunkel->Hell-Kante im Einzelfoto ist die VORDERKANTE der Sturzlaibung (Steigung 0,63-0,67 = Nischenflaeche, Achsabschnitt 25,35/25,38 = Foto-Mass 25,33-25,41).
+  Das Tor "Steigung passt zur Laibungstiefe" lehnte damit die richtige Messung ab -> ersetzt durch "Steigung passt zur Wand-/Nischenflaeche (+-0,5 m)";
+  die Ladenkante (Steigung ~1,04) wird jetzt abgelehnt (Test B2). Lehre: Steigung erst messen, dann deuten (welche Kante?), nicht aus dem Modell vorgeben.
+- Sohlbank-Suche (sohlbank_aus_fotos) nach Anheben der Nischensohle um 0,14 m: "keine Auskragung" (30 statt 36 Fotos, andere Bandkanten im Suchfenster).
+  Ursache: die Suche laeuft in den Einzelfoto-ORTHOS (Wandbild-Rahmen), dort liegt die Kante weiter auf der alten Hoehe -> zone_von nimmt nische.z0_ortho.

@@ -1,0 +1,156 @@
+{
+ "fenster": "/tmp/claude-29999/-home-oem-git-rc-park/f87976ca-e135-45c4-b870-48f811eaf994/scratchpad/fa_bau_neu.json",
+ "falsch": 0,
+ "geprueft": 4,
+ "fassaden": {
+  "f00": [
+   {
+    "kasten": [
+     -2.281,
+     -1.591,
+     23.533,
+     25.382
+    ],
+    "fenster": {
+     "gebaut": "rund",
+     "stimmen": {
+      "rund": 14,
+      "stich": 2,
+      "korb": 6
+     },
+     "fotos": 22,
+     "urteil": "PASST",
+     "fotos_sagen": "rund",
+     "lage_wandbild": [
+      -2.281,
+      -1.591,
+      23.44,
+      24.96
+     ],
+     "lage_abweichung": 0.422,
+     "wandbild": "Umriss gefunden"
+    },
+    "nische": {
+     "gebaut": "rund",
+     "stimmen": {
+      "rund": 13,
+      "korb": 5,
+      "stich": 3
+     },
+     "fotos": 21,
+     "urteil": "PASST",
+     "fotos_sagen": "rund",
+     "lage_wandbild": [
+      -2.961,
+      -0.831,
+      23.38,
+      25.89
+     ],
+     "lage_abweichung": 0.153,
+     "wandbild": "Umriss gefunden"
+    },
+    "urteil": "PASST"
+   },
+   {
+    "kasten": [
+     1.909,
+     2.429,
+     23.515,
+     25.353
+    ],
+    "fenster": {
+     "gebaut": "rund",
+     "stimmen": {
+      "rund": 15,
+      "korb": 2
+     },
+     "fotos": 17,
+     "urteil": "PASST",
+     "fotos_sagen": "rund",
+     "lage_wandbild": [
+      1.909,
+      2.429,
+      23.45,
+      24.9
+     ],
+     "lage_abweichung": 0.453,
+     "wandbild": "Umriss gefunden"
+    },
+    "nische": {
+     "gebaut": "rund",
+     "stimmen": {
+      "rund": 9,
+      "korb": 8
+     },
+     "fotos": 17,
+     "urteil": "PASST",
+     "fotos_sagen": "rund",
+     "lage_wandbild": [
+      1.229,
+      3.329,
+      23.39,
+      25.89
+     ],
+     "lage_abweichung": 0.125,
+     "wandbild": "Umriss gefunden"
+    },
+    "urteil": "PASST"
+   },
+   {
+    "kasten": [
+     -2.921,
+     -2.581,
+     34.24,
+     34.78
+    ],
+    "fenster": {
+     "gebaut": "gerade",
+     "stimmen": {
+      "gerade": 7,
+      "rund": 2
+     },
+     "fotos": 9,
+     "urteil": "PASST",
+     "fotos_sagen": "gerade",
+     "lage_wandbild": [
+      -2.911,
+      -2.561,
+      34.31,
+      34.83
+     ],
+     "lage_abweichung": 0.07,
+     "wandbild": "Umriss gefunden"
+    },
+    "urteil": "PASST"
+   },
+   {
+    "kasten": [
+     2.839,
+     3.219,
+     34.24,
+     34.78
+    ],
+    "fenster": {
+     "gebaut": "gerade",
+     "stimmen": {
+      "rund": 5,
+      "gerade": 2,
+      "stich": 1
+     },
+     "fotos": 8,
+     "urteil": "UNBESTIMMT",
+     "fotos_sagen": "rund",
+     "lage_wandbild": [
+      2.869,
+      3.219,
+      34.25,
+      34.82
+     ],
+     "lage_abweichung": 0.04,
+     "wandbild": "Umriss gefunden"
+    },
+    "urteil": "UNBESTIMMT"
+   }
+  ]
+ }
+}

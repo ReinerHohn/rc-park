@@ -1,4 +1,4 @@
-# Werkzeuge: test (230)
+# Werkzeuge: test (231)
 - `tools/test_abdeckung_echt.py` [-] Fester Test (~5 s) fuer tools/abdeckung_meldung.py auf ECHTEN Kameras + Spurpunkten (Review 27.11.2026: der alte Test sicherte nur bedingte Logik, Mini-Datensatz ohne Spurpunkte, l
 - `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Hier OHNE Lagedatei
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
@@ -69,6 +69,7 @@
 - `tools/test_handy_masken_gross.py` [seg] test_handy_masken_gross.py - 22.11.2026 Nulllauf schwabentor-1122: grosse Bilder (27 MPx) liessen handy_masken bei jeder Breite CUDA-OOM laufen, weil 150 Klassen-Logits auf VOLLE B
 - `tools/test_handy_masken_v2.py` [-] Test handy_masken_v2 (ohne GPU): Statue haengt an Fassade -> frei; Person am Boden -> maskiert; Box ohne Boden -> frei; Fleck im Pflaster -> verworfen; Fahrzeug immer.
 - `tools/test_haufen_klaeren.py` [-] test_haufen_klaeren.py - synthetisch: Grundriss-Tor klaert Strassenhaufen automatisch (tools/haufen_klaeren.py, 22.11.2026).
+- `tools/test_hoehe_blickschraege.py` [-] test_hoehe_blickschraege.py - HOEHEN waagerechter Fensterkanten aus der senkrechten Blickschraege (laibung_aus_fotos.hoehe_messen, 27.11.2026).
 - `tools/test_hoehen_angleich.py` [gen] test_hoehen_angleich.py - synthetische Pruefung von tools/hoehen_angleich.py (Hoehen-Angleich waagerechter Bauteile, 24.11.2026) und bauteile.hoehen_aus_json.
 - `tools/test_hoehensitz.py` [seg] test_hoehensitz.py - synthetische Pruefung von tools/hoehensitz.py (hoehensensitives Formmass, 24.11.2026) und seines Einbaus in tools/konvergenz.py.
 - `tools/test_html_zielgroesse.py` [-] test_html_zielgroesse.py - fester Test (23.11.2026, Kettenlauf 1122p: html-Stufe schrieb 20 MB, Artifact-Grenze 16 MB) fuer modell_3d_html.zielgroesse: (1) Seite ueber der Zielgroe

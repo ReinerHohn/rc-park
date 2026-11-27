@@ -1,0 +1,271 @@
+[
+ {
+  "u0": -2.281,
+  "u1": -1.591,
+  "z0": 23.533,
+  "z1": 25.382,
+  "bogen": {
+   "form": "rund",
+   "kaempfer": 25.037,
+   "scheitel": 25.382
+  },
+  "nische": {
+   "u0": -2.961,
+   "u1": -0.831,
+   "z0": 23.533,
+   "z1": 25.937,
+   "bogen": {
+    "form": "rund",
+    "kaempfer": 24.872,
+    "scheitel": 25.937
+   },
+   "tiefe": 0.0696,
+   "tiefe_quelle": "ANNAHME Platzhalter Druckmindestmass (Sweep nicht messbar; Form aus >= 3 Fotos belegt) - laibung_aus_fotos misst die Nischenlaibung aus Schraegfotos",
+   "form_quelle": "13 von 21 Einzelfotos",
+   "z0_ortho": 23.39
+  },
+  "sohlbank": {
+   "u0": -2.887,
+   "u1": -0.814,
+   "z0": 23.483,
+   "z1": 23.533,
+   "auskragung": 0.06,
+   "auskragung_streuung": 0.007,
+   "fotos": 36,
+   "geschwister": 2,
+   "auskragung_aus": [
+    "bandhoehe"
+   ],
+   "auskragung_bandhoehe": {
+    "d": 0.06,
+    "streuung": 0.007,
+    "fotos": 36,
+    "spanne": 1.001,
+    "achsabschnitt": [
+     0.062,
+     0.061
+    ]
+   },
+   "auskragung_laenge": {
+    "d": 0.023,
+    "streuung": 0.012,
+    "fotos": 21,
+    "spanne": 0.643,
+    "achsabschnitt": [
+     2.078,
+     2.109
+    ]
+   },
+   "u_streuung": [
+    0.027,
+    0.035
+   ],
+   "laenge_fotos": [
+    19,
+    18
+   ],
+   "auskragung_quelle": null,
+   "w_bezug": -0.358,
+   "quelle": "Fotos: dunkles Band unter der Unterkante (Einzelfoto-Orthos + SfM-Kameras), Auskragung aus bandhoehe gegen die Blickschraege, 36 Fotos, 2 Geschwister gemeinsam (tools/sohlbank_aus_fotos.py)",
+   "z_band": [
+    23.26,
+    23.31
+   ],
+   "z_quelle": "Oberkante = Nischensohle aus laibung_aus_fotos.hoehe_messen (Achsabschnitt), Hoehe aus dem Band"
+  },
+  "hoehen_fotos": {
+   "scheitel": {
+    "z": 25.382,
+    "tiefe": 0.665,
+    "fotos": 20,
+    "kappa_spanne": [
+     0.32,
+     2.721
+    ],
+    "streuung_z": 0.006,
+    "rest_m": 0.014,
+    "fehler": null
+   },
+   "nische_scheitel": {
+    "z": 25.937,
+    "tiefe": 0.502,
+    "fotos": 15,
+    "kappa_spanne": [
+     0.328,
+     2.259
+    ],
+    "streuung_z": 0.006,
+    "rest_m": 0.005,
+    "fehler": null
+   },
+   "sohle": {
+    "z": 23.533,
+    "tiefe": 0.478,
+    "fotos": 16,
+    "kappa_spanne": [
+     0.135,
+     1.138
+    ],
+    "streuung_z": 0.01,
+    "rest_m": 0.013,
+    "fehler": null
+   },
+   "geaendert": [
+    [
+     "scheitel",
+     0.422
+    ],
+    [
+     "nische_scheitel",
+     0.047
+    ],
+    [
+     "sohle",
+     0.143
+    ]
+   ],
+   "quelle": "tools/laibung_aus_fotos.py hoehe_messen: Achsabschnitt Y = C_z + kappa C_w gegen kappa (Blickschraege senkrecht)"
+  }
+ },
+ {
+  "u0": 1.909,
+  "u1": 2.429,
+  "z0": 23.515,
+  "z1": 25.353,
+  "bogen": {
+   "form": "rund",
+   "kaempfer": 25.093,
+   "scheitel": 25.353
+  },
+  "nische": {
+   "u0": 1.229,
+   "u1": 3.329,
+   "z0": 23.515,
+   "z1": 25.911,
+   "bogen": {
+    "form": "rund",
+    "kaempfer": 24.861,
+    "scheitel": 25.911
+   },
+   "tiefe": 0.047,
+   "tiefe_quelle": "Fotos: Nischenlaibung in Schraegsicht (24 Fotos, 0.05 +- 0.01 m, tools/laibung_aus_fotos.py)",
+   "form_quelle": "7 von 18 Einzelfotos (Gleichstand mit korb 8 -> rund)",
+   "laibung": {
+    "seite": "rechts",
+    "tiefe_ab_wand": 0.047,
+    "fotos": 24,
+    "k_spanne": [
+     0.127,
+     1.362
+    ],
+    "streuung": 0.01,
+    "rest_m": 0.015,
+    "w_bezug": -0.358
+   },
+   "tiefe_vorher": 0.0696,
+   "z0_ortho": 23.36
+  },
+  "sohlbank": {
+   "u0": 1.249,
+   "u1": 3.331,
+   "z0": 23.46,
+   "z1": 23.515,
+   "auskragung": 0.06,
+   "auskragung_streuung": 0.007,
+   "fotos": 36,
+   "geschwister": 2,
+   "auskragung_aus": [
+    "bandhoehe"
+   ],
+   "auskragung_bandhoehe": {
+    "d": 0.06,
+    "streuung": 0.007,
+    "fotos": 36,
+    "spanne": 1.001,
+    "achsabschnitt": [
+     0.062,
+     0.061
+    ]
+   },
+   "auskragung_laenge": {
+    "d": 0.023,
+    "streuung": 0.012,
+    "fotos": 21,
+    "spanne": 0.643,
+    "achsabschnitt": [
+     2.078,
+     2.109
+    ]
+   },
+   "u_streuung": [
+    0.028,
+    0.044
+   ],
+   "laenge_fotos": [
+    18,
+    9
+   ],
+   "auskragung_quelle": null,
+   "w_bezug": -0.358,
+   "quelle": "Fotos: dunkles Band unter der Unterkante (Einzelfoto-Orthos + SfM-Kameras), Auskragung aus bandhoehe gegen die Blickschraege, 36 Fotos, 2 Geschwister gemeinsam (tools/sohlbank_aus_fotos.py)",
+   "z_band": [
+    23.25,
+    23.305
+   ],
+   "z_quelle": "Oberkante = Nischensohle aus laibung_aus_fotos.hoehe_messen (Achsabschnitt), Hoehe aus dem Band"
+  },
+  "hoehen_fotos": {
+   "scheitel": {
+    "z": 25.353,
+    "tiefe": 0.629,
+    "fotos": 22,
+    "kappa_spanne": [
+     0.216,
+     2.725
+    ],
+    "streuung_z": 0.012,
+    "rest_m": 0.025,
+    "fehler": null
+   },
+   "nische_scheitel": {
+    "z": 25.911,
+    "tiefe": 0.455,
+    "fotos": 10,
+    "kappa_spanne": [
+     0.328,
+     0.695
+    ],
+    "streuung_z": 0.005,
+    "rest_m": 0.004,
+    "fehler": null
+   },
+   "sohle": {
+    "z": 23.515,
+    "tiefe": 0.429,
+    "fotos": 16,
+    "kappa_spanne": [
+     0.134,
+     2.021
+    ],
+    "streuung_z": 0.006,
+    "rest_m": 0.01,
+    "fehler": null
+   },
+   "geaendert": [
+    [
+     "scheitel",
+     0.453
+    ],
+    [
+     "nische_scheitel",
+     0.021
+    ],
+    [
+     "sohle",
+     0.155
+    ]
+   ],
+   "quelle": "tools/laibung_aus_fotos.py hoehe_messen: Achsabschnitt Y = C_z + kappa C_w gegen kappa (Blickschraege senkrecht)"
+  }
+ }
+]
