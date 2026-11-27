@@ -1,0 +1,40 @@
+{
+ "stand": "2026-11-27",
+ "objekt": "Schwabentorsteg (ueberdachte Fussgaengerbruecke ueber den Schlossbergring), Schwabentor Freiburg",
+ "rahmen": "Modellmeter = objekt.json rahmen (mitte_utm 414525.9/5316153.75, x=xhat_utm, y=yhat_utm, z = H - 282.16 m), wie fused.ply nach SFM-AUSRICHTUNG-schwabentor-1122.json",
+ "einpassung": {
+  "werkzeug": "tools/teilmodell_spuren_einpassen.py (direkte 3D-Spuren, sim3_robust 0,15 m)",
+  "daten": "/media/oem/rcdaten/tmp/handy_teil_spuren/ (einpassung.json, teil_modell/, teil_sfm/, wolke_modell.ply 7,58 Mio Punkte, steg_modell.ply = grobe Zone)",
+  "paare": 67021, "inlier": 38720, "rest_median_m": 0.060, "massstab_m_je_teileinheit": 5.284, "massstab_alt": 5.372,
+  "hinweis": "Referenzpunkte nur mit >= 3 Hauptnetzbildern (keine Handy-PnP-Triangulation); Paare liegen fast alle am Turm/Anbau - an der Bruecke selbst hat das Hauptnetz 34 Punkte"
+ },
+ "diagnose_alt": {
+  "kamerazentren_324": "median 0,69 m, p90 8,4 m, max 28,7 m; < 0,5 m: 107, < 1 m: 213",
+  "rotation_je_bild_grad": "median 1,7, 45 Bilder > 5",
+  "neigung_lot_bildx_grad": 0.97,
+  "spuren_rest_median_m": 0.51,
+  "reprojektion_hauptpunkte_in_teilkameras_px": "alt 42,8 / neu 7,6 (median)",
+  "drift": "Rest je Zeitabschnitt 0,4-1,5 m ohne Trend; Teilnetz nicht starr: neue Sim3 Turm 0,09 m, Anbau 0,31-0,44 m, Steg-Streifen 0,9 m (gegen schwache Hauptnetzpunkte)",
+  "30_grad": "Darstellungsartefakt: im SfM-Rahmen ist oben = -y (10,4 Grad daneben); Stegachse liegt dort 33,0 Grad gegen die SfM-xy-Ebene, in Modellmetern 0,2 Grad"
+ },
+ "steg": {
+  "mitte_modell_xy": [0.53, -25.06], "mitte_utm32": [414550.1, 5316160.3], "achse_modell_xy": [-0.433, -0.901], "azimut_utm_grad": 101.6,
+  "laenge_dach_m": 32.5, "laenge_quelle": "DOM1-Dachstreifen (Rohzellen >= 9 m, quer <= 1 m), +-1 m Raster; Wolke zeigt Konstruktion ca. -13..+16 m (ANNAHME Ende West an Treppe/Anbau unscharf)",
+  "breite_dach_m": 3.8, "breite_dom1_m": 3.5,
+  "dach_first_z_m": 10.4, "dach_first_quelle": "Wolke p95 je 1-m-Zelle median 10,39; DOM1 auf Achse 10,54",
+  "laufebene_z_m": 5.8, "laufebene_quelle": "ANNAHME: Kamerahoehe auf dem Steg 7,44 (n 77) minus Augenhoehe 1,6; DGM1 an der Hangkante 6,0-6,1 (Steg endet buendig am Hang)",
+  "deck_unterkante_z_m": 5.0, "strasse_z_m": "0,8-1,0 (DGM1)",
+  "neigung_grad": {"wolke_dach": -0.23, "dom1_dach": 0.30, "kamerapfad": -0.68},
+  "unsicherheit": {"hoehe_m": "-0,2/+0,5 (DOM1-Dach gegen Kamerahoehe-ueber-DGM-Kippung)", "seite_m": "0,45 median, IQR -0,28..1,29 gegen DOM1-Streifen; Gierfehler bis 1,7 Grad", "laenge_m": 1.0, "massstab_prozent": 1.5}
+ },
+ "belege": {
+  "a_lot": "Bild-x-Lot gegen Modell-z: neu 0,80 Grad, alt 0,97 (Genauigkeit des Kameralots 2-4 Grad) - kein Widerspruch",
+  "a_kamerahoehe_dgm": "frei stehende Kameras (n 119): neu 1,72 (Turm) -> 1,01 m (Hang) ueber DGM, Kippkorrektur 0,66 Grad hebt den Steg um 0,3-0,5 m; alt 1,62 -> 2,22 m, Kippung 0,96 Grad",
+  "b_lod2_turmbreite": "Wolke p1-p99 gegen LoD2 bei z 22/27 m: neu 1,020/1,003 und 1,028/0,999; alt 1,038/1,037 und 1,048/1,031",
+  "c_dom1": "Stegdach neu +0,07 m (Werkzeug) bzw. -0,15 m (Zellmedian), alt +1,04 m = rot; Dachgefaelle DOM1 0,3 Grad (flach)",
+  "d_gps": "624 EXIF-GPS: Versatz median (-1,2/-0,1) m, Abstand median 7,2 m; Stegfotos 5,3 m - Gross-Lage bestaetigt, fuer < 2 m zu unscharf",
+  "e_vf244": "Hauptnetzkamera vf_244: alte Einpassung deckt den Steg, neue liegt ca. 1 m tiefer - WIDERSPRUCH",
+  "widerspruch": "Hauptnetz-Sicht (vf_244, PnP-Posen dz +0,94, LMedS Kamerazentren +0,6..1,0, Nah-Spuren < 20 m +0,5..1,1) gegen Laser (DOM1-Dach, Kamerahoehe ueber DGM). Ursache benannt: Hauptnetz hat im Stegstreifen 34 Punkte, seine 5 Kameras bei y < -30 stehen 3,4 m statt 1,6 m ueber DGM -> Hauptnetz dort nicht tragfaehig; nicht gemittelt"
+ },
+ "offen": ["gemeinsamer Buendelausgleich Teil+Haupt hilft am Steg nicht (keine Hauptpunkte dort); belastbarer waeren Fernfotos vom Schlossberg/Strasse, die Turm UND Steg zeigen", "steg_messen im Werkzeug misst die Zone grob (Laenge 34,8/Breite 7,5 inkl. Anbau) - Massangaben hier aus tools/versuche/bruecke_lage_1127/steg_mass.py"]
+}
