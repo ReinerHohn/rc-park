@@ -7,6 +7,8 @@ lauf() ist ersetzt (kein Rechnen): er prueft den Aufruf von tools/abdeckung_meld
   4 Werkzeug schreibt nichts (rc 1)    -> rot 'nicht geschrieben', KEIN Abbruch (Funktion kehrt zurueck)
   5 Ordner ohne Registrierung          -> rot mit Grund; ohne Zonenliste -> Standardzonen (Waende+Dach) + Hinweis
   6 Kette ruft abdeckung_zusatz in der Stufe seiten auf
+  7 (27.11., Review 4) ohne objekt.json 'zusatzfotos', aber messprotokoll/*/einpassung.json mit 'ref' -> Zusatzordner automatisch gefunden und gemeldet;
+    Gegenprobe: 'ref' zeigt ins Leere -> uebersprungen. Teile einer Sonderstelle mit Lagedatei offen -> foto_auftrag_lage.py fuer diese Stelle
 Python: /media/oem/scan/venv-seg/bin/python -I tools/test_gesamtkette_abdeckung.py"""
 import os, sys, json, re, tempfile
 T = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, T); os.environ["RCPARK_PLATZ_TOR"] = "test_ersetzt"
@@ -28,8 +30,10 @@ def fake_lauf(B, name, cmd, log, ok=(0,), timeout=None, platz=()):
     AUFRUFE.append(cmd); B["schritte"].append(dict(stufe=name, rc=0, ok=True))
     if MODUS[0] == "nichts": return 1, ""
     aus = cmd[cmd.index("--aus") + 1]; os.makedirs(aus, exist_ok=True)
+    if "tools/abdeckung_meldung.py" not in cmd: return 0, ""
     z = [dict(name="Nord", status="belegt", fehlt=[]), dict(name="Treppe", status="nicht belegt" if MODUS[0] == "rot" else "belegt",
                                                              fehlt=["Lage im Netz unbekannt"] if MODUS[0] == "rot" else [])]
+    if MODUS[0] == "steg": z.append(dict(name="Bruecke Dach", gruppe="Bruecke", status="nicht belegt", fehlt=["0 Fotos"]))
     json.dump(dict(fotos=10, eingeordnet=6, gruende={"keine Korrespondenz": 4}, zonen=z, fotoauftrag=[dict(stelle="Treppe")] if MODUS[0] == "rot" else []),
               open(os.path.join(aus, "abdeckung_meldung.json"), "w"))
     return 0, ""
@@ -65,6 +69,16 @@ pruef(len(AUFRUFE) == n0 + 1 and AUFRUFE[-1][AUFRUFE[-1].index("--zonen") + 1].e
 # 6
 q = open(os.path.join(T, "gesamtkette.py")).read()
 pruef(re.search(r'if dran\("seiten"\)[^\n]*\n\s+abdeckung_zusatz\(B, ZR, Z, AU, log', q) is not None, "6: gesamtkette ruft abdeckung_zusatz nicht in der Stufe seiten auf")
+# 7
+mp = os.path.join(Z, "messprotokoll", "bruecke_lage"); os.makedirs(mp); json.dump(dict(ref=os.path.join(lg, "sparse_handy", "0")), open(os.path.join(mp, "einpassung.json"), "w"))
+MODUS[0] = "steg"; B = neu(); n0 = len(AUFRUFE); G.abdeckung_zusatz(B, "modelle/obj/objekt.json", Z, AU, os.path.join(tmp, "log"), {}); neu_ = AUFRUFE[n0:]
+pruef(any("tools/abdeckung_meldung.py" in c and c[c.index("--registrierung") + 1] == os.path.join(lg, "registrierung.json") for c in neu_),
+      f"7: Zusatzordner aus einpassung.json nicht automatisch gefunden: {neu_}")
+fa = [c for c in neu_ if "tools/foto_auftrag_lage.py" in c]
+pruef(len(fa) == 1 and fa[0][fa[0].index("--stelle") + 1] == "Bruecke", f"7: offener Stegteil ohne foto_auftrag_lage-Aufruf: {fa}")
+json.dump(dict(ref="/gibt/es/nicht/sparse_handy/0"), open(os.path.join(mp, "einpassung.json"), "w")); B = neu(); n0 = len(AUFRUFE)
+G.abdeckung_zusatz(B, "modelle/obj/objekt.json", Z, AU, os.path.join(tmp, "log"), {})
+pruef(len(AUFRUFE) == n0 and schritt(B) and schritt(B)[0]["ok"] and "uebersprungen" in schritt(B)[0], "7 Gegenprobe: einpassung.json ins Leere darf nichts starten")
 __import__("shutil").rmtree(tmp, ignore_errors=True)
 if fehler: print(f"ROT: {len(fehler)} Fehler"); sys.exit(1)
 print("ok test_gesamtkette_abdeckung")

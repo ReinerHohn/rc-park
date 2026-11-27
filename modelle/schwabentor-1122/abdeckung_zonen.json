@@ -8,16 +8,50 @@
  "waende": "auto",
  "dach": true,
  "sonderstellen": [
-  {"name": "Treppenturm", "form": "zylinder", "mitte": [1.51, 22.82], "radius_m": 1.62, "z": [0.5, 11.6], "seite": "West",
-   "quelle": "Kreisausgleich der dichten Wolke (y 21,8-26, z 3-10, 19 954 Punkte): Mitte (1,51; 22,82), r 1,62 (Hand 1,555); Hoehe referenz_hand treppenturm traufe 11,57"},
-  {"name": "Bruecke", "form": "unbekannt", "mitte": null, "seite": null,
+  {
+   "name": "Treppenturm",
+   "form": "zylinder",
+   "mitte": [
+    1.51,
+    22.82
+   ],
+   "radius_m": 1.62,
+   "z": [
+    0.5,
+    11.6
+   ],
+   "seite": "West",
+   "quelle": "Kreisausgleich der dichten Wolke (y 21,8-26, z 3-10, 19 954 Punkte): Mitte (1,51; 22,82), r 1,62 (Hand 1,555); Hoehe referenz_hand treppenturm traufe 11,57"
+  },
+  {
+   "name": "Bruecke",
+   "form": "lage",
+   "mitte": null,
+   "seite": null,
    "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
-   "quelle": "Lage nicht im Netz (Doku/projekt/foto-sfm/grundbegriffe.md 26.11.: Teilmodelle 1/4 nicht einpassbar) - keine geratene Lage"},
-  {"name": "Treppe", "form": "unbekannt", "mitte": null, "seite": null,
+   "quelle": "Lage aus der Lagedatei (Einpassung Handy-Teilmodell ueber direkte 3D-Spuren 27.11., DOM1-Dach, Laenge/Breite aus DOM1) - nicht hier eingetragen; ohne Datei: Lage unbekannt",
+   "lage": "messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "enden": {
+    "nah": "Treppenende",
+    "fern": "Hangende"
+   },
+   "enden_quelle": "nah = naeher am Hauptbaukoerper (Treppe/Anbau, BRUECKE-LAGE.json laenge_quelle 'Ende West an Treppe/Anbau'), fern = Hang (laufebene_quelle 'Steg endet buendig am Hang')"
+  },
+  {
+   "name": "Treppe",
+   "form": "unbekannt",
+   "mitte": null,
+   "seite": null,
    "hinweis": "Treppe zum Gang (SPEC_SCHWABENTOR_DEMONSTRATOR.md 'ueberdachter Gang mit Treppe'): von unten und von der Seite",
-   "quelle": "Lage nicht im Netz"},
-  {"name": "Unterdurchgang", "form": "unbekannt", "mitte": null, "seite": null,
+   "quelle": "Lage nicht im Netz"
+  },
+  {
+   "name": "Unterdurchgang",
+   "form": "unbekannt",
+   "mitte": null,
+   "seite": null,
    "hinweis": "Durchgang unter dem Gang: Blick hinein von beiden Enden, Decke schraeg von unten",
-   "quelle": "Lage nicht im Netz"}
+   "quelle": "Lage nicht im Netz"
+  }
  ]
 }

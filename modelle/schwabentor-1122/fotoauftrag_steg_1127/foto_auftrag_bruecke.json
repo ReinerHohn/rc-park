@@ -1,0 +1,347 @@
+{
+ "stelle": "Bruecke",
+ "lagedatei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+ "lage": {
+  "mitte": [
+   0.53,
+   -25.06
+  ],
+  "achse": [
+   -0.4331537969016974,
+   -0.9013200254236244
+  ],
+  "laenge": 32.5,
+  "breite": 3.8,
+  "z_unten": 5.0,
+  "z_oben": 10.4,
+  "z_lauf": 5.8
+ },
+ "bildwinkel_grad": 56.6,
+ "fern_kandidaten": 772,
+ "standpunkte": [
+  {
+   "nr": "F1",
+   "art": "fern",
+   "x": -40.8,
+   "y": -62.9,
+   "lat": 47.992759,
+   "lon": 7.855269,
+   "blick_kompass_grad": 291,
+   "neigung_grad": -17,
+   "abstand_stelle_m": 56,
+   "abstand_haupt_m": 87,
+   "gelaende_m": 27.3,
+   "format": "Hochformat UND Querformat",
+   "stelle_sichtbar": "5/5",
+   "dach_sichtbar": true,
+   "baum": "Baum/Mast laut DOM1 in der Sichtlinie - im Winter meist kahl, sonst 5-10 m seitlich",
+   "text": "Turm UND Bruecke ganz im Bild (35 Grad von 57), Turm ab z 25 m frei; von oben: Dach sichtbar"
+  },
+  {
+   "nr": "F2",
+   "art": "fern",
+   "x": -10.8,
+   "y": -53.9,
+   "lat": 47.992999,
+   "lon": 7.855049,
+   "blick_kompass_grad": 267,
+   "neigung_grad": -9,
+   "abstand_stelle_m": 31,
+   "abstand_haupt_m": 70,
+   "gelaende_m": 13.7,
+   "format": "Hochformat UND Querformat",
+   "stelle_sichtbar": "5/5",
+   "dach_sichtbar": true,
+   "baum": "Baum/Mast laut DOM1 in der Sichtlinie - im Winter meist kahl, sonst 5-10 m seitlich",
+   "text": "Turm UND Bruecke ganz im Bild (21 Grad von 57), Turm ab z 28 m frei; von oben: Dach sichtbar"
+  },
+  {
+   "nr": "F3",
+   "art": "fern",
+   "x": 1.2,
+   "y": -56.9,
+   "lat": 47.993111,
+   "lon": 7.855047,
+   "blick_kompass_grad": 254,
+   "neigung_grad": -6,
+   "abstand_stelle_m": 32,
+   "abstand_haupt_m": 72,
+   "gelaende_m": 11.4,
+   "format": "Hochformat UND Querformat",
+   "stelle_sichtbar": "5/5",
+   "dach_sichtbar": true,
+   "baum": "Baum/Mast laut DOM1 in der Sichtlinie - im Winter meist kahl, sonst 5-10 m seitlich",
+   "text": "Turm UND Bruecke ganz im Bild (32 Grad von 57), Turm ab z 28 m frei; von oben: Dach sichtbar"
+  },
+  {
+   "nr": "F4",
+   "art": "fern",
+   "x": 16.2,
+   "y": -62.9,
+   "lat": 47.993255,
+   "lon": 7.855073,
+   "blick_kompass_grad": 240,
+   "neigung_grad": -5,
+   "abstand_stelle_m": 41,
+   "abstand_haupt_m": 80,
+   "gelaende_m": 11.3,
+   "format": "Hochformat UND Querformat",
+   "stelle_sichtbar": "5/5",
+   "dach_sichtbar": true,
+   "baum": "Baum/Mast laut DOM1 in der Sichtlinie - im Winter meist kahl, sonst 5-10 m seitlich",
+   "text": "Turm UND Bruecke ganz im Bild (36 Grad von 57), Turm ab z 27 m frei; von oben: Dach sichtbar"
+  },
+  {
+   "nr": "F5",
+   "art": "fern",
+   "x": 46.2,
+   "y": -74.9,
+   "lat": 47.993543,
+   "lon": 7.855125,
+   "blick_kompass_grad": 222,
+   "neigung_grad": 4,
+   "abstand_stelle_m": 68,
+   "abstand_haupt_m": 102,
+   "gelaende_m": 0.6,
+   "format": "Hochformat UND Querformat",
+   "stelle_sichtbar": "5/5",
+   "dach_sichtbar": false,
+   "baum": "Baum/Mast laut DOM1 in der Sichtlinie - im Winter meist kahl, sonst 5-10 m seitlich",
+   "text": "Turm UND Bruecke ganz im Bild (33 Grad von 57), Turm ab z 28 m frei; von unten/seitlich"
+  },
+  {
+   "nr": "N1",
+   "art": "nah",
+   "teil": "Bruecke Unterseite",
+   "status": "duenn",
+   "x": 5.8,
+   "y": -27.6,
+   "lat": 47.993083,
+   "lon": 7.854651,
+   "blick_kompass_grad": 192,
+   "neigung_grad": 22,
+   "abstand_m": 5.9,
+   "format": "Querformat",
+   "text": "neben/unter dem Rand, Blick schraeg hoch an die Unterseite (Stelle -0 m entlang); NUR vom Gehweg/Fussweg - liegt der Punkt auf der Fahrbahn, vom naechsten Gehweg aus"
+  },
+  {
+   "nr": "N2",
+   "art": "nah",
+   "teil": "Bruecke Unterseite",
+   "status": "duenn",
+   "x": 3.2,
+   "y": -33.0,
+   "lat": 47.993073,
+   "lon": 7.85473,
+   "blick_kompass_grad": 192,
+   "neigung_grad": 21,
+   "abstand_m": 5.9,
+   "format": "Querformat",
+   "text": "neben/unter dem Rand, Blick schraeg hoch an die Unterseite (Stelle +6 m entlang); NUR vom Gehweg/Fussweg - liegt der Punkt auf der Fahrbahn, vom naechsten Gehweg aus"
+  },
+  {
+   "nr": "N3",
+   "art": "nah",
+   "teil": "Bruecke Unterseite",
+   "status": "duenn",
+   "x": -0.2,
+   "y": -40.2,
+   "lat": 47.99306,
+   "lon": 7.854835,
+   "blick_kompass_grad": 192,
+   "neigung_grad": 21,
+   "abstand_m": 5.9,
+   "format": "Querformat",
+   "text": "neben/unter dem Rand, Blick schraeg hoch an die Unterseite (Stelle +14 m entlang); NUR vom Gehweg/Fussweg - liegt der Punkt auf der Fahrbahn, vom naechsten Gehweg aus"
+  },
+  {
+   "nr": "N4",
+   "art": "nah",
+   "teil": "Bruecke Hangende",
+   "status": "duenn",
+   "x": -12.5,
+   "y": -45.2,
+   "lat": 47.992965,
+   "lon": 7.854942,
+   "blick_kompass_grad": 297,
+   "neigung_grad": 1,
+   "abstand_m": 7.8,
+   "format": "Querformat",
+   "text": "vor Hangende, Blick auf die Lueckenmitte (-15 Grad zur Normale)"
+  },
+  {
+   "nr": "N5",
+   "art": "nah",
+   "teil": "Bruecke Hangende",
+   "status": "duenn",
+   "x": -10.8,
+   "y": -46.3,
+   "lat": 47.992982,
+   "lon": 7.854951,
+   "blick_kompass_grad": 282,
+   "neigung_grad": -10,
+   "abstand_m": 7.8,
+   "format": "Querformat",
+   "text": "vor Hangende, Blick auf die Lueckenmitte (+0 Grad zur Normale)"
+  },
+  {
+   "nr": "N6",
+   "art": "nah",
+   "teil": "Bruecke Hangende",
+   "status": "duenn",
+   "x": -8.8,
+   "y": -47.0,
+   "lat": 47.993,
+   "lon": 7.854952,
+   "blick_kompass_grad": 267,
+   "neigung_grad": -6,
+   "abstand_m": 7.8,
+   "format": "Querformat",
+   "text": "vor Hangende, Blick auf die Lueckenmitte (+15 Grad zur Normale)"
+  },
+  {
+   "nr": "N7",
+   "art": "nah",
+   "teil": "Bruecke Deck innen",
+   "status": "duenn",
+   "x": 4.0,
+   "y": -17.8,
+   "lat": 47.993045,
+   "lon": 7.854531,
+   "blick_kompass_grad": 102,
+   "neigung_grad": 0,
+   "abstand_m": 6.0,
+   "format": "Querformat",
+   "text": "AUF dem Steg (-8 m entlang): je 1 Foto in BEIDE Richtungen entlang des Stegs, Boden + Gelaender + Decke im Bild",
+   "blick2_kompass_grad": 282
+  },
+  {
+   "nr": "N8",
+   "art": "nah",
+   "teil": "Bruecke Deck innen",
+   "status": "duenn",
+   "x": -1.2,
+   "y": -28.7,
+   "lat": 47.993024,
+   "lon": 7.854689,
+   "blick_kompass_grad": 102,
+   "neigung_grad": 0,
+   "abstand_m": 6.0,
+   "format": "Querformat",
+   "text": "AUF dem Steg (+4 m entlang): je 1 Foto in BEIDE Richtungen entlang des Stegs, Boden + Gelaender + Decke im Bild",
+   "blick2_kompass_grad": 282
+  },
+  {
+   "nr": "N9",
+   "art": "nah",
+   "teil": "Bruecke Deck innen",
+   "status": "duenn",
+   "x": -4.7,
+   "y": -35.9,
+   "lat": 47.993011,
+   "lon": 7.854794,
+   "blick_kompass_grad": 102,
+   "neigung_grad": 0,
+   "abstand_m": 6.0,
+   "format": "Querformat",
+   "text": "AUF dem Steg (+12 m entlang): je 1 Foto in BEIDE Richtungen entlang des Stegs, Boden + Gelaender + Decke im Bild",
+   "blick2_kompass_grad": 282
+  }
+ ],
+ "luecken": [
+  {
+   "teil": "Bruecke Dach",
+   "status": "nicht belegt",
+   "fehlt": [
+    "0 Fotos",
+    "Blickwinkelfaecher 0 < 30 Grad",
+    "nur 0 % der Flaeche von >= 3 Fotos gesehen (< 50 %)"
+   ],
+   "fotos": 0
+  },
+  {
+   "teil": "Bruecke Unterseite",
+   "status": "duenn",
+   "fehlt": [
+    "nur 38 % der Flaeche von >= 3 Fotos gesehen (< 50 %)"
+   ],
+   "fotos": 33
+  },
+  {
+   "teil": "Bruecke Hangende",
+   "status": "duenn",
+   "fehlt": [
+    "Blickwinkelfaecher 0 < 30 Grad"
+   ],
+   "fotos": 3
+  },
+  {
+   "teil": "Bruecke Deck innen",
+   "status": "duenn",
+   "fehlt": [
+    "nur 19 % der Flaeche von >= 3 Fotos gesehen (< 50 %)"
+   ],
+   "fotos": 17
+  }
+ ],
+ "teile": [
+  {
+   "name": "Bruecke Seite Nord",
+   "status": "belegt",
+   "fotos": 38,
+   "faecher_grad": 165.0,
+   "zellen_gesehen": 0.854
+  },
+  {
+   "name": "Bruecke Seite Sued",
+   "status": "belegt",
+   "fotos": 83,
+   "faecher_grad": 163.0,
+   "zellen_gesehen": 1.0
+  },
+  {
+   "name": "Bruecke Dach",
+   "status": "nicht belegt",
+   "fotos": 0,
+   "faecher_grad": 0.0,
+   "zellen_gesehen": 0.0
+  },
+  {
+   "name": "Bruecke Unterseite",
+   "status": "duenn",
+   "fotos": 33,
+   "faecher_grad": 61.0,
+   "zellen_gesehen": 0.375
+  },
+  {
+   "name": "Bruecke Treppenende",
+   "status": "belegt",
+   "fotos": 55,
+   "faecher_grad": 119.0,
+   "zellen_gesehen": 1.0
+  },
+  {
+   "name": "Bruecke Hangende",
+   "status": "duenn",
+   "fotos": 3,
+   "faecher_grad": 0.0,
+   "zellen_gesehen": 0.5
+  },
+  {
+   "name": "Bruecke Deck innen",
+   "status": "duenn",
+   "fotos": 17,
+   "faecher_grad": 186.0,
+   "zellen_gesehen": 0.188
+  }
+ ],
+ "dach_ueber_fern": true,
+ "schwellen": {
+  "D_MIN": 30.0,
+  "D_MAX": 180.0,
+  "MIN_STELLE_SICHT": 3,
+  "BILD_ANTEIL": 0.85,
+  "MIN_AZ_ABSTAND": 20.0,
+  "sicht": "DOM1 (Daecher + Baeume) + DGM1 (Gelaende)"
+ }
+}

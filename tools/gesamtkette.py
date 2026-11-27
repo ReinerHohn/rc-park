@@ -319,10 +319,24 @@ def foto_auftrag_skizze(B, wann, ZR, Z, P, W, AU, FV, log):
     except Exception as e_: print(f"Fotoauftrag-Skizze ({wann}) nicht erzeugt: {type(e_).__name__} {e_}", flush=True)
 
 
-def zusatz_ordner(obj):
-    """Registrierte Zusatzfotos (Handy) aus objekt.json 'zusatzfotos' (Ordner oder Liste). Gilt ein Ordner, wenn er selbst oder ein Unterordner (z. B. lg/)
-    registrierung.json + sparse_handy/0/images.bin hat (tools/zusatzfotos_registrieren.py registrieren --aus). -> (gefunden, ohne_registrierung)."""
+def zusatz_aus_einpassung(Z):
+    """27.11.2026 (Review-Punkt 4): Zusatzordner ohne Handeintrag in objekt.json - jede modelle/<ziel>/messprotokoll/*/einpassung.json
+    (tools/teilmodell_spuren_einpassen.py) nennt 'ref' = <zusatz>/sparse_handy/0; der Zusatzordner ist dessen Grossvater. Nur existierende Ordner."""
+    out = []
+    for ep in sorted(glob.glob(os.path.join(Z, "messprotokoll", "*", "einpassung.json"))):
+        try: ref = json.load(open(ep)).get("ref") or ""
+        except Exception: continue
+        o_ = os.path.dirname(os.path.dirname(os.path.normpath(ref))) if ref else ""
+        if o_ and os.path.isfile(os.path.join(o_, "registrierung.json")) and o_ not in out: out.append(o_)
+    return out
+
+
+def zusatz_ordner(obj, Z=None):
+    """Registrierte Zusatzfotos (Handy) aus objekt.json 'zusatzfotos' (Ordner oder Liste); ohne Eintrag automatisch aus messprotokoll/*/einpassung.json (Z).
+    Gilt ein Ordner, wenn er selbst oder ein Unterordner (z. B. lg/) registrierung.json + sparse_handy/0/images.bin hat (tools/zusatzfotos_registrieren.py
+    registrieren --aus). -> (gefunden, ohne_registrierung)."""
     w_ = obj.get("zusatzfotos") or []; w_ = [w_] if isinstance(w_, str) else list(w_); gef, fehlt = [], []
+    if not w_ and Z: w_ = zusatz_aus_einpassung(Z)
     for o_ in w_:
         k_ = next((k for k in [o_] + sorted(glob.glob(os.path.join(o_, "*"))) if os.path.isfile(os.path.join(k, "registrierung.json"))
                    and os.path.isfile(os.path.join(k, "sparse_handy", "0", "images.bin"))), None)
@@ -334,8 +348,8 @@ def abdeckung_zusatz(B, ZR, Z, AU, log, obj):
     """26.11.2026 (Spec Vollautomatik 1b-1d; Handyfotos Schwabentor: Bruecke/Treppe/Unterdurchgang fehlten im Netz und wurden nirgends gemeldet): nach der Registrierung
     von Zusatzfotos tools/abdeckung_meldung.py je Ordner -> audit/abdeckung_meldung.{json,md,png} (mehrere Ordner: audit/abdeckung_<ordner>/). Schritt 'abdeckung_zusatz'
     rot mit Grund (Zone nicht belegt/duenn + Fotoauftrag), gruen wenn alle Zonen belegt. Nur Meldung: KEIN Abbruch der Kette. Ohne 'zusatzfotos' uebersprungen."""
-    gef, fehlt = zusatz_ordner(obj)
-    if not gef and not fehlt: notiz(B, "abdeckung_zusatz", True, uebersprungen="keine Zusatzfotos (objekt.json 'zusatzfotos' fehlt)"); return []
+    gef, fehlt = zusatz_ordner(obj, Z)
+    if not gef and not fehlt: notiz(B, "abdeckung_zusatz", True, uebersprungen="keine Zusatzfotos (objekt.json 'zusatzfotos' fehlt, keine messprotokoll/*/einpassung.json)"); return []
     for o_ in fehlt: notiz(B, "abdeckung_zusatz", False, fehler=f"Zusatzordner {o_} ohne registrierung.json + sparse_handy/0 - Registrierung lief nicht (tools/zusatzfotos_registrieren.py registrieren)")
     if not gef: return []
     if not os.path.exists(AU): notiz(B, "abdeckung_zusatz", False, fehler=f"{AU} fehlt - ohne SFM-Ausrichtung keine Kameras im Modellrahmen, keine Abdeckungsmeldung"); return []
@@ -358,6 +372,10 @@ def abdeckung_zusatz(B, ZR, Z, AU, log, obj):
               fotoauftrag=[a_["stelle"] for a_ in m_["fotoauftrag"]], bild=os.path.join(aus, "abdeckung_meldung.png"), md=os.path.join(aus, "abdeckung_meldung.md"),
               hinweis=hw_ + "ANSEHEN: Bild + Fotoauftrag im MD; im Modell gilt an nicht belegten Stellen 'nicht belegt' (kein Erfinden)")
         erg.append(m_)
+        # Sonderstelle mit Lagedatei und offenen Teilen -> Fotoauftrag mit Karte (Fernfotos Hauptbau+Stelle, Nahfotos je Teil); nur Meldung
+        for g_ in sorted({e.get("gruppe") for e in m_["zonen"] if e.get("gruppe") and e["status"] != "belegt"}):
+            fa_ = os.path.join(aus, "fotoauftrag_" + g_.lower())
+            lauf(B, "foto_auftrag_lage", [PY, "-I", "tools/foto_auftrag_lage.py", "--objekt", ZR, "--zonen", zon, "--meldung", j_, "--stelle", g_, "--aus", fa_], log, ok=(0, 1), timeout=900)
     return erg
 
 

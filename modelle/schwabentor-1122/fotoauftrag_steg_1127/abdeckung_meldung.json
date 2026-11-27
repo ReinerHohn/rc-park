@@ -1,0 +1,1479 @@
+{
+ "fotos": 677,
+ "eingeordnet": 637,
+ "davon_ueber_einpassung": 310,
+ "nicht_eingeordnet": 40,
+ "gruende": {
+  "keine Korrespondenz": 30,
+  "zu wenige Matches": 8,
+  "Lage nicht berechenbar": 2,
+  "nicht versucht": 0
+ },
+ "min_inlier": 30,
+ "bildwinkel_grad": 56.6,
+ "zonen": [
+  {
+   "name": "Nord",
+   "art": "wand",
+   "seite": "Nord",
+   "lage_bekannt": true,
+   "fotos": 381,
+   "fotos_neu": 59,
+   "fotos_referenz": 322,
+   "fotos_geometrisch": 412,
+   "zellen": 108,
+   "faecher_grad": 150.0,
+   "zellen_gesehen": 1.0,
+   "tiefe": 1.0,
+   "quelle": "objekt.json rahmen_wand",
+   "zellen_luecke": [],
+   "abstand_median_m": 19.1,
+   "tiefe_rel": 1.0,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Sued",
+   "art": "wand",
+   "seite": "Sued",
+   "lage_bekannt": true,
+   "fotos": 318,
+   "fotos_neu": 27,
+   "fotos_referenz": 291,
+   "fotos_geometrisch": 324,
+   "zellen": 108,
+   "faecher_grad": 155.0,
+   "zellen_gesehen": 1.0,
+   "tiefe": 0.991,
+   "quelle": "objekt.json rahmen_wand",
+   "zellen_luecke": [],
+   "abstand_median_m": 23.5,
+   "tiefe_rel": 0.991,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "West",
+   "art": "wand",
+   "seite": "West",
+   "lage_bekannt": true,
+   "fotos": 234,
+   "fotos_neu": 69,
+   "fotos_referenz": 165,
+   "fotos_geometrisch": 246,
+   "zellen": 108,
+   "faecher_grad": 155.0,
+   "zellen_gesehen": 1.0,
+   "tiefe": 0.944,
+   "quelle": "objekt.json rahmen_wand",
+   "zellen_luecke": [],
+   "abstand_median_m": 13.4,
+   "tiefe_rel": 0.944,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Ost",
+   "art": "wand",
+   "seite": "Ost",
+   "lage_bekannt": true,
+   "fotos": 174,
+   "fotos_neu": 74,
+   "fotos_referenz": 100,
+   "fotos_geometrisch": 312,
+   "zellen": 108,
+   "faecher_grad": 145.0,
+   "zellen_gesehen": 1.0,
+   "tiefe": 0.87,
+   "quelle": "objekt.json rahmen_wand",
+   "zellen_luecke": [],
+   "abstand_median_m": 38.8,
+   "tiefe_rel": 0.87,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Dach",
+   "art": "dach",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 173,
+   "fotos_neu": 50,
+   "fotos_referenz": 123,
+   "fotos_geometrisch": 207,
+   "zellen": 49,
+   "faecher_grad": 195.0,
+   "zellen_gesehen": 0.735,
+   "tiefe": 0.776,
+   "quelle": "Rechteck der Waende, zeltdach wand_oben_m..dach_oben_m (Form = ANNAHME aus der Konfiguration)",
+   "zellen_luecke": [
+    [
+     -6.2,
+     19.3,
+     40.9
+    ],
+    [
+     -6.2,
+     21.4,
+     36.0
+    ],
+    [
+     -4.2,
+     17.3,
+     45.9
+    ],
+    [
+     -4.2,
+     19.3,
+     40.9
+    ],
+    [
+     -4.2,
+     21.4,
+     36.0
+    ],
+    [
+     -2.1,
+     17.3,
+     45.9
+    ],
+    [
+     -2.1,
+     19.3,
+     40.9
+    ],
+    [
+     -2.1,
+     21.4,
+     36.0
+    ],
+    [
+     -0.1,
+     17.3,
+     45.9
+    ],
+    [
+     -0.1,
+     19.3,
+     40.9
+    ],
+    [
+     -0.1,
+     21.4,
+     36.0
+    ],
+    [
+     1.9,
+     19.3,
+     40.9
+    ],
+    [
+     1.9,
+     21.4,
+     36.0
+    ]
+   ],
+   "abstand_median_m": 62.7,
+   "tiefe_rel": 0.776,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Treppenturm",
+   "art": "sonder",
+   "seite": "West",
+   "lage_bekannt": true,
+   "fotos": 240,
+   "fotos_neu": 75,
+   "fotos_referenz": 165,
+   "fotos_geometrisch": 372,
+   "zellen": 36,
+   "faecher_grad": 229.0,
+   "zellen_gesehen": 1.0,
+   "tiefe": 1.0,
+   "quelle": "Kreisausgleich der dichten Wolke (y 21,8-26, z 3-10, 19 954 Punkte): Mitte (1,51; 22,82), r 1,62 (Hand 1,555); Hoehe referenz_hand treppenturm traufe 11,57",
+   "zellen_luecke": [],
+   "abstand_median_m": 11.5,
+   "tiefe_rel": 1.0,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Bruecke Seite Nord",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 38,
+   "fotos_neu": 38,
+   "fotos_referenz": 0,
+   "fotos_geometrisch": 69,
+   "zellen": 48,
+   "faecher_grad": 165.0,
+   "zellen_gesehen": 0.854,
+   "tiefe": 0.958,
+   "quelle": "Lagedatei modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json: Mitte [0.53, -25.06], Achse [-0.4331537969016974, -0.9013200254236244], Laenge 32.5, Breite 3.8, z 5.0..10.4",
+   "zellen_luecke": [
+    [
+     0.9,
+     -28.6,
+     7.7
+    ],
+    [
+     0.0,
+     -30.5,
+     5.9
+    ],
+    [
+     0.0,
+     -30.5,
+     7.7
+    ],
+    [
+     0.0,
+     -30.5,
+     9.5
+    ],
+    [
+     -0.8,
+     -32.3,
+     5.9
+    ],
+    [
+     -0.8,
+     -32.3,
+     7.7
+    ],
+    [
+     -0.8,
+     -32.3,
+     9.5
+    ]
+   ],
+   "abstand_median_m": 16.2,
+   "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
+   "normal2": [
+    0.9013,
+    -0.4332
+   ],
+   "gruppe": "Bruecke",
+   "lage_datei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "tiefe_rel": 0.958,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Bruecke Seite Sued",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 83,
+   "fotos_neu": 65,
+   "fotos_referenz": 18,
+   "fotos_geometrisch": 306,
+   "zellen": 48,
+   "faecher_grad": 163.0,
+   "zellen_gesehen": 1.0,
+   "tiefe": 0.875,
+   "quelle": "Lagedatei modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json: Mitte [0.53, -25.06], Achse [-0.4331537969016974, -0.9013200254236244], Laenge 32.5, Breite 3.8, z 5.0..10.4",
+   "zellen_luecke": [],
+   "abstand_median_m": 25.1,
+   "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
+   "normal2": [
+    -0.9013,
+    0.4332
+   ],
+   "gruppe": "Bruecke",
+   "lage_datei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "tiefe_rel": 0.875,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Bruecke Dach",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 0,
+   "fotos_neu": 0,
+   "fotos_referenz": 0,
+   "fotos_geometrisch": 26,
+   "zellen": 32,
+   "faecher_grad": 0.0,
+   "zellen_gesehen": 0.0,
+   "tiefe": 0.688,
+   "quelle": "Lagedatei modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json: Mitte [0.53, -25.06], Achse [-0.4331537969016974, -0.9013200254236244], Laenge 32.5, Breite 3.8, z 5.0..10.4",
+   "zellen_luecke": [
+    [
+     6.3,
+     -10.9,
+     10.4
+    ],
+    [
+     8.0,
+     -11.7,
+     10.4
+    ],
+    [
+     5.4,
+     -12.7,
+     10.4
+    ],
+    [
+     7.1,
+     -13.6,
+     10.4
+    ],
+    [
+     4.5,
+     -14.6,
+     10.4
+    ],
+    [
+     6.2,
+     -15.4,
+     10.4
+    ],
+    [
+     3.6,
+     -16.4,
+     10.4
+    ],
+    [
+     5.3,
+     -17.2,
+     10.4
+    ],
+    [
+     2.8,
+     -18.2,
+     10.4
+    ],
+    [
+     4.5,
+     -19.1,
+     10.4
+    ],
+    [
+     1.9,
+     -20.1,
+     10.4
+    ],
+    [
+     3.6,
+     -20.9,
+     10.4
+    ],
+    [
+     1.0,
+     -21.9,
+     10.4
+    ],
+    [
+     2.7,
+     -22.7,
+     10.4
+    ],
+    [
+     0.1,
+     -23.7,
+     10.4
+    ],
+    [
+     1.8,
+     -24.6,
+     10.4
+    ],
+    [
+     -0.8,
+     -25.6,
+     10.4
+    ],
+    [
+     0.9,
+     -26.4,
+     10.4
+    ],
+    [
+     -1.6,
+     -27.4,
+     10.4
+    ],
+    [
+     0.1,
+     -28.2,
+     10.4
+    ],
+    [
+     -2.5,
+     -29.2,
+     10.4
+    ],
+    [
+     -0.8,
+     -30.0,
+     10.4
+    ],
+    [
+     -3.4,
+     -31.1,
+     10.4
+    ],
+    [
+     -1.7,
+     -31.9,
+     10.4
+    ],
+    [
+     -4.3,
+     -32.9,
+     10.4
+    ],
+    [
+     -2.6,
+     -33.7,
+     10.4
+    ],
+    [
+     -5.2,
+     -34.7,
+     10.4
+    ],
+    [
+     -3.5,
+     -35.5,
+     10.4
+    ],
+    [
+     -6.0,
+     -36.5,
+     10.4
+    ],
+    [
+     -4.3,
+     -37.4,
+     10.4
+    ],
+    [
+     -6.9,
+     -38.4,
+     10.4
+    ],
+    [
+     -5.2,
+     -39.2,
+     10.4
+    ]
+   ],
+   "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
+   "gruppe": "Bruecke",
+   "lage_datei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "tiefe_rel": 0.688,
+   "status": "nicht belegt",
+   "fehlt": [
+    "0 Fotos",
+    "Blickwinkelfaecher 0 < 30 Grad",
+    "nur 0 % der Flaeche von >= 3 Fotos gesehen (< 50 %)"
+   ]
+  },
+  {
+   "name": "Bruecke Unterseite",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 33,
+   "fotos_neu": 33,
+   "fotos_referenz": 0,
+   "fotos_geometrisch": 49,
+   "zellen": 32,
+   "faecher_grad": 61.0,
+   "zellen_gesehen": 0.375,
+   "tiefe": 1.0,
+   "quelle": "Lagedatei modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json: Mitte [0.53, -25.06], Achse [-0.4331537969016974, -0.9013200254236244], Laenge 32.5, Breite 3.8, z 5.0..10.4",
+   "zellen_luecke": [
+    [
+     1.0,
+     -21.9,
+     5.0
+    ],
+    [
+     2.7,
+     -22.7,
+     5.0
+    ],
+    [
+     0.1,
+     -23.7,
+     5.0
+    ],
+    [
+     1.8,
+     -24.6,
+     5.0
+    ],
+    [
+     -0.8,
+     -25.6,
+     5.0
+    ],
+    [
+     0.9,
+     -26.4,
+     5.0
+    ],
+    [
+     -1.6,
+     -27.4,
+     5.0
+    ],
+    [
+     0.1,
+     -28.2,
+     5.0
+    ],
+    [
+     -2.5,
+     -29.2,
+     5.0
+    ],
+    [
+     -0.8,
+     -30.0,
+     5.0
+    ],
+    [
+     -3.4,
+     -31.1,
+     5.0
+    ],
+    [
+     -1.7,
+     -31.9,
+     5.0
+    ],
+    [
+     -4.3,
+     -32.9,
+     5.0
+    ],
+    [
+     -2.6,
+     -33.7,
+     5.0
+    ],
+    [
+     -5.2,
+     -34.7,
+     5.0
+    ],
+    [
+     -3.5,
+     -35.5,
+     5.0
+    ],
+    [
+     -6.0,
+     -36.5,
+     5.0
+    ],
+    [
+     -4.3,
+     -37.4,
+     5.0
+    ],
+    [
+     -6.9,
+     -38.4,
+     5.0
+    ],
+    [
+     -5.2,
+     -39.2,
+     5.0
+    ]
+   ],
+   "abstand_median_m": 13.9,
+   "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
+   "gruppe": "Bruecke",
+   "lage_datei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "tiefe_rel": 1.0,
+   "status": "duenn",
+   "fehlt": [
+    "nur 38 % der Flaeche von >= 3 Fotos gesehen (< 50 %)"
+   ]
+  },
+  {
+   "name": "Bruecke Treppenende",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 55,
+   "fotos_neu": 25,
+   "fotos_referenz": 30,
+   "fotos_geometrisch": 203,
+   "zellen": 6,
+   "faecher_grad": 119.0,
+   "zellen_gesehen": 1.0,
+   "tiefe": 1.0,
+   "quelle": "Lagedatei modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json: Mitte [0.53, -25.06], Achse [-0.4331537969016974, -0.9013200254236244], Laenge 32.5, Breite 3.8, z 5.0..10.4",
+   "zellen_luecke": [],
+   "abstand_median_m": 20.2,
+   "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
+   "normal2": [
+    0.4332,
+    0.9013
+   ],
+   "gruppe": "Bruecke",
+   "lage_datei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "tiefe_rel": 1.0,
+   "status": "belegt",
+   "fehlt": []
+  },
+  {
+   "name": "Bruecke Hangende",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 3,
+   "fotos_neu": 3,
+   "fotos_referenz": 0,
+   "fotos_geometrisch": 28,
+   "zellen": 6,
+   "faecher_grad": 0.0,
+   "zellen_gesehen": 0.5,
+   "tiefe": 1.0,
+   "quelle": "Lagedatei modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json: Mitte [0.53, -25.06], Achse [-0.4331537969016974, -0.9013200254236244], Laenge 32.5, Breite 3.8, z 5.0..10.4",
+   "zellen_luecke": [
+    [
+     -7.4,
+     -39.3,
+     5.9
+    ],
+    [
+     -7.4,
+     -39.3,
+     7.7
+    ],
+    [
+     -7.4,
+     -39.3,
+     9.5
+    ]
+   ],
+   "abstand_median_m": 9.6,
+   "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
+   "normal2": [
+    -0.4332,
+    -0.9013
+   ],
+   "gruppe": "Bruecke",
+   "lage_datei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "tiefe_rel": 1.0,
+   "status": "duenn",
+   "fehlt": [
+    "Blickwinkelfaecher 0 < 30 Grad"
+   ]
+  },
+  {
+   "name": "Bruecke Deck innen",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": true,
+   "fotos": 17,
+   "fotos_neu": 17,
+   "fotos_referenz": 0,
+   "fotos_geometrisch": 23,
+   "zellen": 32,
+   "faecher_grad": 186.0,
+   "zellen_gesehen": 0.188,
+   "tiefe": 1.0,
+   "quelle": "Lagedatei modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json: Mitte [0.53, -25.06], Achse [-0.4331537969016974, -0.9013200254236244], Laenge 32.5, Breite 3.8, z 5.0..10.4",
+   "zellen_luecke": [
+    [
+     6.3,
+     -10.9,
+     5.8
+    ],
+    [
+     8.0,
+     -11.7,
+     5.8
+    ],
+    [
+     5.4,
+     -12.7,
+     5.8
+    ],
+    [
+     7.1,
+     -13.6,
+     5.8
+    ],
+    [
+     1.9,
+     -20.1,
+     5.8
+    ],
+    [
+     3.6,
+     -20.9,
+     5.8
+    ],
+    [
+     1.0,
+     -21.9,
+     5.8
+    ],
+    [
+     2.7,
+     -22.7,
+     5.8
+    ],
+    [
+     0.1,
+     -23.7,
+     5.8
+    ],
+    [
+     1.8,
+     -24.6,
+     5.8
+    ],
+    [
+     -0.8,
+     -25.6,
+     5.8
+    ],
+    [
+     0.9,
+     -26.4,
+     5.8
+    ],
+    [
+     -1.6,
+     -27.4,
+     5.8
+    ],
+    [
+     0.1,
+     -28.2,
+     5.8
+    ],
+    [
+     -2.5,
+     -29.2,
+     5.8
+    ],
+    [
+     -0.8,
+     -30.0,
+     5.8
+    ],
+    [
+     -3.4,
+     -31.1,
+     5.8
+    ],
+    [
+     -1.7,
+     -31.9,
+     5.8
+    ],
+    [
+     -4.3,
+     -32.9,
+     5.8
+    ],
+    [
+     -2.6,
+     -33.7,
+     5.8
+    ],
+    [
+     -5.2,
+     -34.7,
+     5.8
+    ],
+    [
+     -3.5,
+     -35.5,
+     5.8
+    ],
+    [
+     -6.0,
+     -36.5,
+     5.8
+    ],
+    [
+     -4.3,
+     -37.4,
+     5.8
+    ],
+    [
+     -6.9,
+     -38.4,
+     5.8
+    ],
+    [
+     -5.2,
+     -39.2,
+     5.8
+    ]
+   ],
+   "abstand_median_m": 11.8,
+   "hinweis": "ueberdachter Gang ueber die Strasse (SPEC_SCHWABENTOR_DEMONSTRATOR.md): Unterseite, beide Seiten, Anschluss an den Turm",
+   "gruppe": "Bruecke",
+   "lage_datei": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json",
+   "tiefe_rel": 1.0,
+   "status": "duenn",
+   "fehlt": [
+    "nur 19 % der Flaeche von >= 3 Fotos gesehen (< 50 %)"
+   ]
+  },
+  {
+   "name": "Treppe",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": false,
+   "fotos": 0,
+   "fotos_neu": 0,
+   "fotos_referenz": 0,
+   "fotos_geometrisch": 0,
+   "zellen": 0,
+   "faecher_grad": 0.0,
+   "zellen_gesehen": 0.0,
+   "tiefe": 0.0,
+   "quelle": "Lage nicht im Netz",
+   "hinweis": "Treppe zum Gang (SPEC_SCHWABENTOR_DEMONSTRATOR.md 'ueberdachter Gang mit Treppe'): von unten und von der Seite",
+   "tiefe_rel": 0.0,
+   "status": "nicht belegt",
+   "fehlt": [
+    "Lage im Netz unbekannt (kein eingeordnetes Foto zeigt die Stelle)",
+    "0 Fotos",
+    "Tiefe 0.00 der besten Wand < 0.25"
+   ]
+  },
+  {
+   "name": "Unterdurchgang",
+   "art": "sonder",
+   "seite": null,
+   "lage_bekannt": false,
+   "fotos": 0,
+   "fotos_neu": 0,
+   "fotos_referenz": 0,
+   "fotos_geometrisch": 0,
+   "zellen": 0,
+   "faecher_grad": 0.0,
+   "zellen_gesehen": 0.0,
+   "tiefe": 0.0,
+   "quelle": "Lage nicht im Netz",
+   "hinweis": "Durchgang unter dem Gang: Blick hinein von beiden Enden, Decke schraeg von unten",
+   "tiefe_rel": 0.0,
+   "status": "nicht belegt",
+   "fehlt": [
+    "Lage im Netz unbekannt (kein eingeordnetes Foto zeigt die Stelle)",
+    "0 Fotos",
+    "Tiefe 0.00 der besten Wand < 0.25"
+   ]
+  }
+ ],
+ "fotoauftrag": [
+  {
+   "stelle": "Bruecke Dach",
+   "art": "sonder",
+   "status": "nicht belegt",
+   "grund": "0 Fotos; Blickwinkelfaecher 0 < 30 Grad; nur 0 % der Flaeche von >= 3 Fotos gesehen (< 50 %)",
+   "im_modell": "nicht belegt",
+   "standpunkte": [
+    {
+     "nr": 1,
+     "x": 30.7,
+     "y": -25.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.993293,
+      7.854532
+     ],
+     "blick_kompass_grad": 166.0,
+     "blick_modell_grad": 180.0,
+     "neigung_grad": 16.0
+    },
+    {
+     "nr": 2,
+     "x": 0.5,
+     "y": 5.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.992961,
+      7.854245
+     ],
+     "blick_kompass_grad": 76.0,
+     "blick_modell_grad": 270.0,
+     "neigung_grad": 16.0
+    },
+    {
+     "nr": 3,
+     "x": -29.6,
+     "y": -25.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.992769,
+      7.85474
+     ],
+     "blick_kompass_grad": 346.0,
+     "blick_modell_grad": 360.0,
+     "neigung_grad": 16.0
+    },
+    {
+     "nr": 4,
+     "x": 0.5,
+     "y": -55.2,
+     "abstand_m": 30.2,
+     "gps": [
+      47.993101,
+      7.855027
+     ],
+     "blick_kompass_grad": 256.0,
+     "blick_modell_grad": 90.0,
+     "neigung_grad": 16.0
+    }
+   ],
+   "anweisung": "je Standpunkt 1 Foto quer + 1 hoch, feste Linse, kein Zoom; Stelle formatfuellend, Blickwinkel zwischen Nachbarstandpunkten <= 15 Grad"
+  },
+  {
+   "stelle": "Bruecke Unterseite",
+   "art": "sonder",
+   "status": "duenn",
+   "grund": "nur 38 % der Flaeche von >= 3 Fotos gesehen (< 50 %)",
+   "im_modell": "nicht belegt",
+   "standpunkte": [
+    {
+     "nr": 1,
+     "x": 30.7,
+     "y": -25.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.993293,
+      7.854532
+     ],
+     "blick_kompass_grad": 166.0,
+     "blick_modell_grad": 180.0,
+     "neigung_grad": 6.0
+    },
+    {
+     "nr": 2,
+     "x": 0.5,
+     "y": 5.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.992961,
+      7.854245
+     ],
+     "blick_kompass_grad": 76.0,
+     "blick_modell_grad": 270.0,
+     "neigung_grad": 6.0
+    },
+    {
+     "nr": 3,
+     "x": -29.6,
+     "y": -25.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.992769,
+      7.85474
+     ],
+     "blick_kompass_grad": 346.0,
+     "blick_modell_grad": 360.0,
+     "neigung_grad": 6.0
+    },
+    {
+     "nr": 4,
+     "x": 0.5,
+     "y": -55.2,
+     "abstand_m": 30.2,
+     "gps": [
+      47.993101,
+      7.855027
+     ],
+     "blick_kompass_grad": 256.0,
+     "blick_modell_grad": 90.0,
+     "neigung_grad": 6.0
+    }
+   ],
+   "anweisung": "je Standpunkt 1 Foto quer + 1 hoch, feste Linse, kein Zoom; Stelle formatfuellend, Blickwinkel zwischen Nachbarstandpunkten <= 15 Grad"
+  },
+  {
+   "stelle": "Bruecke Hangende",
+   "art": "sonder",
+   "status": "duenn",
+   "grund": "Blickwinkelfaecher 0 < 30 Grad",
+   "im_modell": "nicht belegt",
+   "standpunkte": [
+    {
+     "nr": 1,
+     "x": -11.0,
+     "y": -45.0,
+     "abstand_m": 6.9,
+     "gps": [
+      47.992977,
+      7.854934
+     ],
+     "blick_kompass_grad": 297.0,
+     "blick_modell_grad": 49.0,
+     "neigung_grad": 41.0
+    },
+    {
+     "nr": 2,
+     "x": -9.5,
+     "y": -46.0,
+     "abstand_m": 6.9,
+     "gps": [
+      47.992992,
+      7.854942
+     ],
+     "blick_kompass_grad": 282.0,
+     "blick_modell_grad": 64.0,
+     "neigung_grad": 41.0
+    },
+    {
+     "nr": 3,
+     "x": -7.8,
+     "y": -46.5,
+     "abstand_m": 6.9,
+     "gps": [
+      47.993008,
+      7.854943
+     ],
+     "blick_kompass_grad": 267.0,
+     "blick_modell_grad": 79.0,
+     "neigung_grad": 41.0
+    }
+   ],
+   "anweisung": "je Standpunkt 1 Foto quer + 1 hoch, feste Linse, kein Zoom; Stelle formatfuellend, Blickwinkel zwischen Nachbarstandpunkten <= 15 Grad"
+  },
+  {
+   "stelle": "Bruecke Deck innen",
+   "art": "sonder",
+   "status": "duenn",
+   "grund": "nur 19 % der Flaeche von >= 3 Fotos gesehen (< 50 %)",
+   "im_modell": "nicht belegt",
+   "standpunkte": [
+    {
+     "nr": 1,
+     "x": 30.7,
+     "y": -25.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.993293,
+      7.854532
+     ],
+     "blick_kompass_grad": 166.0,
+     "blick_modell_grad": 180.0,
+     "neigung_grad": 8.0
+    },
+    {
+     "nr": 2,
+     "x": 0.5,
+     "y": 5.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.992961,
+      7.854245
+     ],
+     "blick_kompass_grad": 76.0,
+     "blick_modell_grad": 270.0,
+     "neigung_grad": 8.0
+    },
+    {
+     "nr": 3,
+     "x": -29.6,
+     "y": -25.1,
+     "abstand_m": 30.2,
+     "gps": [
+      47.992769,
+      7.85474
+     ],
+     "blick_kompass_grad": 346.0,
+     "blick_modell_grad": 360.0,
+     "neigung_grad": 8.0
+    },
+    {
+     "nr": 4,
+     "x": 0.5,
+     "y": -55.2,
+     "abstand_m": 30.2,
+     "gps": [
+      47.993101,
+      7.855027
+     ],
+     "blick_kompass_grad": 256.0,
+     "blick_modell_grad": 90.0,
+     "neigung_grad": 8.0
+    }
+   ],
+   "anweisung": "je Standpunkt 1 Foto quer + 1 hoch, feste Linse, kein Zoom; Stelle formatfuellend, Blickwinkel zwischen Nachbarstandpunkten <= 15 Grad"
+  },
+  {
+   "stelle": "Treppe",
+   "art": "sonder",
+   "status": "nicht belegt",
+   "grund": "Lage im Netz unbekannt (kein eingeordnetes Foto zeigt die Stelle); 0 Fotos; Tiefe 0.00 der besten Wand < 0.25",
+   "im_modell": "nicht belegt",
+   "standpunkte": [],
+   "anweisung": "Lage unbekannt, Anschlusswand nicht konfiguriert - Anschlussweg: an der naechsten eingeordneten Wand beginnen (Foto mit Wand UND Weg zur Stelle), dann in Schritten <= 15 Grad Blickwinkel / ~2 m zur Stelle 'Treppe' gehen, dort >= 3 Fotos aus 30 Grad Faecher; jedes Foto ueberlappt das vorige um >= 2/3. Treppe zum Gang (SPEC_SCHWABENTOR_DEMONSTRATOR.md 'ueberdachter Gang mit Treppe'): von unten und von der Seite"
+  },
+  {
+   "stelle": "Unterdurchgang",
+   "art": "sonder",
+   "status": "nicht belegt",
+   "grund": "Lage im Netz unbekannt (kein eingeordnetes Foto zeigt die Stelle); 0 Fotos; Tiefe 0.00 der besten Wand < 0.25",
+   "im_modell": "nicht belegt",
+   "standpunkte": [],
+   "anweisung": "Lage unbekannt, Anschlusswand nicht konfiguriert - Anschlussweg: an der naechsten eingeordneten Wand beginnen (Foto mit Wand UND Weg zur Stelle), dann in Schritten <= 15 Grad Blickwinkel / ~2 m zur Stelle 'Unterdurchgang' gehen, dort >= 3 Fotos aus 30 Grad Faecher; jedes Foto ueberlappt das vorige um >= 2/3. Durchgang unter dem Gang: Blick hinein von beiden Enden, Decke schraeg von unten"
+  }
+ ],
+ "nicht_eingeordnete_fotos": [
+  {
+   "foto": "IMG_20261126_152239.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_154808.jpg",
+   "grund": "Lage nicht berechenbar",
+   "status_registrierung": "PnP gescheitert/zu wenige Inlier",
+   "n_korr": 31,
+   "inlier": 12,
+   "referenzbilder": 4
+  },
+  {
+   "foto": "IMG_20261126_154947.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_154954.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 10,
+   "inlier": null,
+   "referenzbilder": 2
+  },
+  {
+   "foto": "IMG_20261126_155034.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "PnP gescheitert/zu wenige Inlier",
+   "n_korr": 28,
+   "inlier": 7,
+   "referenzbilder": 7
+  },
+  {
+   "foto": "IMG_20261126_155229.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "PnP gescheitert/zu wenige Inlier",
+   "n_korr": 15,
+   "inlier": 9,
+   "referenzbilder": 2
+  },
+  {
+   "foto": "IMG_20261126_155230_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_155232_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 1
+  },
+  {
+   "foto": "IMG_20261126_155357.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_155420.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_155427_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_155430.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 2
+  },
+  {
+   "foto": "IMG_20261126_155432_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_155650.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_155653.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "PnP gescheitert/zu wenige Inlier",
+   "n_korr": 18,
+   "inlier": 5,
+   "referenzbilder": 1
+  },
+  {
+   "foto": "IMG_20261126_155830.jpg",
+   "grund": "Lage nicht berechenbar",
+   "status_registrierung": "PnP gescheitert/zu wenige Inlier",
+   "n_korr": 149,
+   "inlier": 15,
+   "referenzbilder": 6
+  },
+  {
+   "foto": "IMG_20261126_160010.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160044_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160107_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160237_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160311_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160339.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160420.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160516_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160520.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160521_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160523.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160524_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160720.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_160742_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_161037_1.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_161914.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_161915.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 3,
+   "inlier": null,
+   "referenzbilder": 2
+  },
+  {
+   "foto": "IMG_20261126_162126.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_162308.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 7,
+   "inlier": null,
+   "referenzbilder": 2
+  },
+  {
+   "foto": "IMG_20261126_162314.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 5,
+   "inlier": null,
+   "referenzbilder": 3
+  },
+  {
+   "foto": "IMG_20261126_162456.jpg",
+   "grund": "zu wenige Matches",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 4,
+   "inlier": null,
+   "referenzbilder": 2
+  },
+  {
+   "foto": "IMG_20261126_163745.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_163902.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  },
+  {
+   "foto": "IMG_20261126_164348.jpg",
+   "grund": "keine Korrespondenz",
+   "status_registrierung": "zu wenige Korrespondenzen",
+   "n_korr": 0,
+   "inlier": null,
+   "referenzbilder": 0
+  }
+ ],
+ "schwellen": {
+  "MIN_FOTOS": 3,
+  "MIN_FAECHER_GRAD": 30.0,
+  "MIN_ZELLEN": 0.5,
+  "MIN_TIEFE_REL": 0.25,
+  "BLICK_MAX_GRAD": 70.0,
+  "MAX_ABSTAND_M": 150.0,
+  "ZELLE_M": 2.0,
+  "MIN_PUNKTE": 3,
+  "herkunft": "siehe Kopf abdeckung_meldung.py (ANNAHME gekennzeichnet)"
+ },
+ "kamera_quellen": [
+  {
+   "sparse": "/media/oem/rcdaten/rc-park_daten_neu/zusatz_20261126_voll/lg/sparse_handy/0",
+   "ausrichtung": "/home/oem/git/rc-park/modelle/schwabentor-1122/messprotokoll/SFM-AUSRICHTUNG-schwabentor-1122.json"
+  },
+  {
+   "einpassung": "modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/einpassung.json",
+   "kameras": 634,
+   "punkte": 259225
+  }
+ ],
+ "punkte_quellen": "Sparse (Haupt + Einpassungen)"
+}

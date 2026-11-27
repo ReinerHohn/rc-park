@@ -11,7 +11,12 @@ unbelegter Zone, Grund je nicht eingeordnetem Foto aus registrierung.json (zusat
 ZONEN (Datei --zonen, JSON):  {"wand_unten_m": 0.5, "wand_oben_m": 36, "dach_oben_m": 50, "waende": "auto" | [ {name, a:[x,y], b:[x,y], normal:[x,y]} ],
   "dach": true, "sonderstellen": [ {name, form: "zylinder"|"kasten"|"unbekannt", mitte:[x,y] | null, radius_m, groesse_m:[dx,dy], z:[z0,z1], seite, hinweis, quelle} ]}
   'waende: auto' = Rechteck objekt.json rahmen_wand (u = x, v = y im Modellrahmen) mit Seitennamen aus objekt.json seiten_konvention (+x/-x/+y/-y).
-  Sonderstelle ohne 'mitte' = Lage im Netz unbekannt (nie eingeordnet) -> immer 'nicht belegt' + Fotoauftrag mit Anschlussweg (kein Raten einer Lage).
+  Sonderstelle ohne 'mitte' = Lage im Netz unbekannt (nie eingeordnet) -> immer 'nicht belegt' + Fotoauftrag mit Anschlussweg (kein Raten einer Lage) -
+  AUSSER es gibt eine LAGEDATEI (27.11.2026, Review: Bruecke stand fest auf 'mitte: null' = Zirkelschluss): 'lage' (Pfad relativ zur Zonenliste) oder automatisch
+  <Ordner der Zonenliste>/messprotokoll/*/<NAME>-LAGE*.json (lage_lesen: mitte*, achse*, laenge*, breite*, *unterkante_z*, *first_z* im Modellrahmen). Dann wird die
+  Stelle als laenglicher Kasten GEMESSEN, je Teil eine Zone '<Name> <Teil>' (Seite <Himmelsrichtung> x2, Dach, Unterseite, Deck innen = nur Kameras im Kasten,
+  Ende nah/fern = Zonenliste 'enden'). Eine einpassung.json neben der Lagedatei (teilmodell_spuren_einpassen.py: 'teil' + spuren.M_teil_modell) bringt die
+  eingepassten Teilmodell-Kameras + Punkte automatisch dazu (auch --einpassung). Harte Regel: Zone mit 0 Fotos ist nie belegt.
 JE ZONE: Zellen (ZELLE_M) mit Aussennormale; Kamera sieht eine Zelle, wenn sie vor der Kamera im Bild liegt, <= MAX_ABSTAND_M und Blick zur Normale <= BLICK_MAX_GRAD.
   fotos (neu/referenz), faecher_grad = 360 - groesste Azimutluecke der sehenden Kameras um die Zonenmitte, zellen_gesehen = Anteil Zellen mit >= MIN_FOTOS Kameras,
   tiefe = Anteil Zellen mit >= MIN_PUNKTE Punkten (Wolke/Sparse im Modellrahmen), tiefe_rel = tiefe / beste Wand.
@@ -34,7 +39,8 @@ FOTOAUFTRAG je nicht belegter Zone: Stelle, Grund (welche Schwelle), Standpunkte
 AUFRUF: tools/py tools/abdeckung_meldung.py --objekt modelle/<obj>/objekt.json --zonen <zonen.json> --registrierung <Z>/registrierung.json --sparse <Z>/sparse_handy/0
           [--ausrichtung messprotokoll/SFM-AUSRICHTUNG-<obj>.json] [--punkte wolke.npy] [--teilmodelle <Z>/teilmodell] [--bilder <Z>/bilder] --aus <ordner>
   Ohne --punkte: Punkte des --sparse. Ausgabe <aus>/abdeckung_meldung.json, .md, .png (Draufsicht, wenn cv2 da). Nur CPU, Sekunden.
-TEST: tools/test_abdeckung_meldung.py (fester Mini-Datensatz tools/testdata/abdeckung_handy_20261126_mini.json).
+TEST: tools/test_abdeckung_meldung.py (fester Mini-Datensatz tools/testdata/abdeckung_handy_20261126_mini.json), tools/test_abdeckung_echt.py (echte Kameras +
+  Spurpunkte, echte Zonenliste + Lagedatei, Treppenturm 186/320). Fotoauftrag mit Karte fuer eine Stelle mit Lagedatei: tools/foto_auftrag_lage.py.
 """
 import os, sys, json, math, argparse, collections
 import numpy as np
@@ -53,8 +59,92 @@ def _wand_zellen(a, b, n, z0, z1):
     X = np.array([[*(a + u * (b - a)), z] for u in us for z in zs]); N = np.tile([n[0], n[1], 0.0], (len(X), 1)); return X, N
 
 
-def zonen_bauen(cfg, obj):
-    """Zonenliste [{name, art, mitte(3)|None, X(M,3), N(M,3)|None, breite, normal2|None, seite, ...}] aus Konfiguration + objekt.json (nichts objektspezifisch im Code)."""
+def lage_finden(s, basis):
+    """Lagedatei einer Sonderstelle: 'lage' (Pfad relativ zum Ordner der Zonenliste) oder automatisch <basis>/messprotokoll/*/<NAME>-LAGE*.json (NAME = Zonenname
+    gross, z. B. Bruecke -> BRUECKE-LAGE.json). Kein Fund -> None (Lage bleibt unbekannt, nie geraten)."""
+    if not basis: return None
+    if s.get("lage"):
+        p = s["lage"] if os.path.isabs(s["lage"]) else os.path.join(basis, s["lage"]); return p if os.path.isfile(p) else None
+    import glob
+    k = sorted(glob.glob(os.path.join(basis, "messprotokoll", "*", s["name"].upper() + "-LAGE*.json"))); return k[-1] if k else None
+
+
+def _feld(d, praefixe, n=None, ohne=("utm", "quelle")):
+    for k, v in d.items():
+        if any(k.startswith(p) for p in praefixe) and not any(o in k for o in ohne):
+            if n is None and isinstance(v, (int, float)) and not isinstance(v, bool): return float(v)
+            if n and isinstance(v, list) and len(v) >= n and all(isinstance(x, (int, float)) for x in v[:n]): return [float(x) for x in v[:n]]
+    return None
+
+
+def rel(p):
+    """Pfad relativ zur Repo-Wurzel, wenn darin (Meldungen ohne Worktree-Pfade)."""
+    r = os.path.relpath(p, os.path.dirname(T)); return p if r.startswith("..") else r
+
+
+def lage_lesen(pfad):
+    """Lagedatei (z. B. messprotokoll/bruecke_lage_1127/BRUECKE-LAGE.json) -> dict mitte(2), achse(2, Einheitsvektor), laenge, breite, z_unten, z_oben, z_lauf|None
+    im Modellrahmen. Felder per Namensanfang (mitte*, achse*, laenge*, breite*, *unterkante_z*/unten_z*, *first_z*/oben_z*/dach_z*, laufebene_z*) in der Datei selbst
+    oder einem Unterobjekt; fehlt eins -> ValueError (dann Lage unbekannt). Keine Objektwerte im Code."""
+    d = json.load(open(pfad)); kand = [d] + [v for v in d.values() if isinstance(v, dict)]
+    for c in kand:
+        m, a = _feld(c, ("mitte",), 2), _feld(c, ("achse",), 2)
+        if m is None or a is None: continue
+        L, B = _feld(c, ("laenge",)), _feld(c, ("breite",))
+        zo = next((_feld(c, (p,)) for p in ("dach_first_z", "first_z", "oben_z", "dach_z") if _feld(c, (p,)) is not None), None)
+        zu = next((_feld(c, (p,)) for p in ("deck_unterkante_z", "unterkante_z", "unten_z") if _feld(c, (p,)) is not None), None); zl = _feld(c, ("laufebene_z",))
+        if zu is None: zu = zl
+        fehlt = [n for n, v in (("laenge", L), ("breite", B), ("oben_z", zo), ("unten_z", zu)) if v is None]
+        if fehlt: raise ValueError("fehlt " + ", ".join(fehlt))
+        if not (L > 0 and B > 0 and zo > zu): raise ValueError(f"ungueltig: laenge {L}, breite {B}, z {zu}..{zo}")
+        a = np.asarray(a); a = a / np.linalg.norm(a)
+        return dict(mitte=m, achse=[float(a[0]), float(a[1])], laenge=L, breite=B, z_unten=zu, z_oben=zo, z_lauf=zl)
+    raise ValueError("keine Felder mitte*/achse* (Modellrahmen)")
+
+
+def _flaeche(p0, e1, e2, n1, n2, nrm):
+    """Zellen einer Rechteckflaeche p0 + s e1 + t e2 (s,t in -1/2..1/2, Laengen n1/n2 m) mit Normale nrm."""
+    a, b = max(1, int(round(n1 / ZELLE_M))), max(1, int(round(n2 / ZELLE_M))); s = (np.arange(a) + 0.5) / a - 0.5; t = (np.arange(b) + 0.5) / b - 0.5
+    X = np.array([p0 + si * n1 * e1 + ti * n2 * e2 for si in s for ti in t]); return X, np.tile(nrm, (len(X), 1))
+
+
+def himmel(obj, d):
+    k = kompass(obj, d)
+    return None if k is None else ("Nord", "Nordost", "Ost", "Suedost", "Sued", "Suedwest", "West", "Nordwest")[int(((k + 22.5) % 360) // 45)]
+
+
+def lage_zonen(s, L, pfad, koerper, obj=None):
+    """Sonderstelle mit Lagedatei = laenglicher Kasten (Mitte, Achse, Laenge, Breite, z_unten..z_oben) -> je TEIL eine Zone: zwei Seiten (Normale quer), Dach (+z),
+    Unterseite (-z), Deck innen (Laufebene, nur von Kameras IM Kasten), zwei Enden (Ende nah = naeher am Hauptbaukoerper; Namen aus der Zonenliste 'enden')."""
+    c = np.asarray(L["mitte"]); u = np.asarray(L["achse"]); q = np.array([-u[1], u[0]]); Ln, B, zu, zo = L["laenge"], L["breite"], L["z_unten"], L["z_oben"]
+    zm, H = (zu + zo) / 2, zo - zu; u3, q3, z3 = np.r_[u, 0], np.r_[q, 0], np.array([0, 0, 1.0]); c3 = np.r_[c, zm]
+    km = np.array([(koerper[0] + koerper[1]) / 2, (koerper[2] + koerper[3]) / 2]); nah = 1.0 if np.linalg.norm(c + u * Ln / 2 - km) < np.linalg.norm(c - u * Ln / 2 - km) else -1.0
+    en = s.get("enden") or {}; n_nah, n_fern = en.get("nah", "Ende am Hauptbau"), en.get("fern", "Ende fern")
+    box = dict(c=c.tolist(), u=u.tolist(), laenge=Ln, breite=B, z=[zu, zo])
+    teile = [("Seite +q", c3 + q3 * B / 2, u3, z3, Ln, H, q3, q.tolist()), ("Seite -q", c3 - q3 * B / 2, u3, z3, Ln, H, -q3, (-q).tolist()),
+             ("Dach", np.r_[c, zo], u3, q3, Ln, B, z3, None), ("Unterseite", np.r_[c, zu], u3, q3, Ln, B, -z3, None),
+             (n_nah, c3 + nah * u3 * Ln / 2, q3, z3, B, H, nah * u3, (nah * u).tolist()), (n_fern, c3 - nah * u3 * Ln / 2, q3, z3, B, H, -nah * u3, (-nah * u).tolist())]
+    if L.get("z_lauf") is not None and zu <= L["z_lauf"] < zo: teile.append(("Deck innen", np.r_[c, L["z_lauf"]], u3, q3, Ln, B, z3, None))
+    out = []; u0, u1, v0, v1, _ = koerper
+    for nm, p0, e1, e2, n1, n2, nrm, n2d in teile:
+        if nm.startswith("Seite"): nm = "Seite " + (himmel(obj or {}, n2d) or nm[-2:])
+        X, N = _flaeche(p0, e1, e2, n1, n2, nrm); innen = (X[:, 0] > u0) & (X[:, 0] < u1) & (X[:, 1] > v0) & (X[:, 1] < v1); X, N = X[~innen], N[~innen]
+        out.append(dict(name=f"{s['name']} {nm}", art="sonder", gruppe=s["name"], seite=s.get("seite"), hinweis=s.get("hinweis", ""), mitte=[*p0[:2], p0[2]] if len(X) else None,
+                        X=X, N=N, normal2=n2d, breite=max(n1, 2 * ZELLE_M) if n2d else max(n1, n2), hoehe=n2 if n2d else 0.0, koerper=koerper,
+                        innen_box=box if nm == "Deck innen" else None, lage_datei=rel(pfad),
+                        quelle=f"Lagedatei {rel(pfad)}: Mitte {L['mitte']}, Achse {L['achse']}, Laenge {Ln}, Breite {B}, z {zu}..{zo}"))
+    return out
+
+
+def im_kasten(C, box):
+    """bool (K,): Kamera im laenglichen Kasten (Deck innen nur von dort sichtbar; Dach verdeckt von aussen)."""
+    d = C[:, :2] - np.asarray(box["c"]); u = np.asarray(box["u"]); q = np.array([-u[1], u[0]])
+    return (np.abs(d @ u) <= box["laenge"] / 2) & (np.abs(d @ q) <= box["breite"] / 2) & (C[:, 2] >= box["z"][0]) & (C[:, 2] <= box["z"][1])
+
+
+def zonen_bauen(cfg, obj, basis=None):
+    """Zonenliste [{name, art, mitte(3)|None, X(M,3), N(M,3)|None, breite, normal2|None, seite, ...}] aus Konfiguration + objekt.json (nichts objektspezifisch im Code).
+    basis = Ordner der Zonenliste (Lagedateien relativ dazu / automatisch in <basis>/messprotokoll/*/)."""
     z0, z1 = float(cfg.get("wand_unten_m", 0.5)), float(cfg.get("wand_oben_m", obj.get("hoehe_m", 20.0)))
     waende = cfg.get("waende", "auto"); out = []; box = None
     if waende == "auto":
@@ -82,6 +172,13 @@ def zonen_bauen(cfg, obj):
                         quelle=f"Rechteck der Waende, {cfg.get('dach_form', 'zelt')}dach wand_oben_m..dach_oben_m (Form = ANNAHME aus der Konfiguration)"))
     for z in out: z["koerper"] = (*box, z1)
     for s in cfg.get("sonderstellen", []):
+        if s.get("mitte") is None:
+            pf = lage_finden(s, basis); L = None
+            if pf:
+                try: L = lage_lesen(pf)
+                except ValueError as ex: s = dict(s, quelle=f"{s.get('quelle', '')}; Lagedatei {pf} unbrauchbar: {ex}")
+            if L:
+                out += lage_zonen(s, L, pf, (*box, z1), obj); continue
         e = dict(name=s["name"], art="sonder", seite=s.get("seite"), hinweis=s.get("hinweis", ""), quelle=s.get("quelle", ""), mitte=None, X=np.zeros((0, 3)), N=None, normal2=None)
         zz = s.get("z", [z0, z1])
         if s.get("mitte") is not None and s.get("form", "kasten") != "unbekannt":
@@ -151,7 +248,7 @@ def faecher(C, mitte):
 
 def tiefe(P, X):
     if not len(X) or P is None or not len(P): return 0.0
-    n = 0
+    P = P[np.all((P >= X.min(0) - ZELLE_M) & (P <= X.max(0) + ZELLE_M), axis=1)]; n = 0      # Vorfilter Huelle (Geschwindigkeit, gleiches Ergebnis)
     for x in X: n += int(np.count_nonzero(np.all(np.abs(P - x) <= ZELLE_M / 2, axis=1)) >= MIN_PUNKTE)
     return n / len(X)
 
@@ -195,30 +292,38 @@ def standpunkte(z, obj, hfov):
     return out
 
 
-def melden(obj, cfg, kams, neu, reg, P=None, teil=None, bilder=None, spur=True):
+def melden(obj, cfg, kams, neu, reg, P=None, teil=None, bilder=None, spur=True, basis=None, eingepasst=()):
     """kams: [{name, C(3), R(3x3) Welt->Kamera im Modellrahmen, f, w, h}] aller eingeordneten Kameras (Referenz + neu); neu: Namen der neuen eingeordneten Fotos;
     reg: registrierung.json (dict); P: Punkte (n,3) Modellrahmen; teil: {foto: (teilmodell, status)}; bilder: Fotonamen des Satzes (None = reg['bilder'])."""
-    zonen = zonen_bauen(cfg, obj); neu = set(neu); min_inl = int(reg.get("min_inlier", 30))
+    zonen = zonen_bauen(cfg, obj, basis); neu = set(neu); min_inl = int(reg.get("min_inlier", 30))
     if P is not None and len(P) > MAX_PUNKTE: P = P[np.random.default_rng(0).choice(len(P), MAX_PUNKTE, replace=False)]
     hf = [math.degrees(2 * math.atan(k["w"] / 2 / k["f"])) for k in kams if k["name"] in neu]; hfov = float(np.median(hf)) if hf else HFOV_ANNAHME
     erg = []
     for z in zonen:
-        S = sicht(kams, z["X"], z["N"], z.get("koerper")); geo = int(S.any(axis=1).sum())
+        S = sicht(kams, z["X"], z["N"], z.get("koerper"))
+        if z.get("innen_box") and len(kams): S &= im_kasten(np.array([k["C"] for k in kams]), z["innen_box"])[:, None]
+        geo = int(S.any(axis=1).sum())
         if spur: S = spurbeleg(kams, S, z["X"], z["art"], z.get("koerper"))
         seh = S.any(axis=1); Cs = np.array([k["C"] for k, s in zip(kams, seh) if s]).reshape(-1, 3)
         nn = sum(1 for k, s in zip(kams, seh) if s and k["name"] in neu); e = dict(name=z["name"], art=z["art"], seite=z.get("seite"), lage_bekannt=z["mitte"] is not None,
             fotos=int(seh.sum()), fotos_neu=nn, fotos_referenz=int(seh.sum()) - nn, fotos_geometrisch=geo, zellen=len(z["X"]),
             faecher_grad=round(faecher(Cs, z["mitte"]), 0) if z["mitte"] is not None else 0.0,
             zellen_gesehen=round(float((S.sum(axis=0) >= MIN_FOTOS).mean()), 3) if len(z["X"]) else 0.0, tiefe=round(tiefe(P, z["X"]), 3), quelle=z.get("quelle", ""))
+        if len(z["X"]):        # Luecke: Zellen mit < MIN_FOTOS Kameras (Ort fuer gezielte Standpunkte)
+            lu = z["X"][S.sum(axis=0) < MIN_FOTOS]; e["zellen_luecke"] = np.round(lu, 1).tolist()[:400]
         if len(Cs): dd = np.linalg.norm(Cs[:, :2] - np.asarray(z["mitte"][:2]), axis=1); e["abstand_median_m"] = round(float(np.median(dd)), 1)
         if z.get("hinweis"): e["hinweis"] = z["hinweis"]
+        if z.get("gruppe") and z.get("normal2") is not None: e["normal2"] = [round(float(v), 4) for v in z["normal2"]]
+        for k_ in ("gruppe", "lage_datei"):
+            if z.get(k_): e[k_] = z[k_]
         erg.append((z, e))
     tmax = max([e["tiefe"] for z, e in erg if z["art"] == "wand"] + [1e-9])
     auftraege = []
     for z, e in erg:
         e["tiefe_rel"] = round(e["tiefe"] / tmax, 3); fehlt = []
         if not e["lage_bekannt"]: fehlt.append("Lage im Netz unbekannt (kein eingeordnetes Foto zeigt die Stelle)")
-        if e["fotos"] < MIN_FOTOS: fehlt.append(f"{e['fotos']} Fotos < {MIN_FOTOS}")
+        if e["fotos"] == 0: fehlt.append("0 Fotos")                                     # harte Regel: ohne Foto nie belegt (unabhaengig von Schwellen)
+        elif e["fotos"] < MIN_FOTOS: fehlt.append(f"{e['fotos']} Fotos < {MIN_FOTOS}")
         if e["lage_bekannt"] and e["faecher_grad"] < MIN_FAECHER_GRAD: fehlt.append(f"Blickwinkelfaecher {e['faecher_grad']:.0f} < {MIN_FAECHER_GRAD:.0f} Grad")
         if e["lage_bekannt"] and e["zellen_gesehen"] < MIN_ZELLEN: fehlt.append(f"nur {100 * e['zellen_gesehen']:.0f} % der Flaeche von >= {MIN_FOTOS} Fotos gesehen (< {100 * MIN_ZELLEN:.0f} %)")
         if e["tiefe_rel"] < MIN_TIEFE_REL: fehlt.append(f"Tiefe {e['tiefe_rel']:.2f} der besten Wand < {MIN_TIEFE_REL}")
@@ -236,16 +341,17 @@ def melden(obj, cfg, kams, neu, reg, P=None, teil=None, bilder=None, spur=True):
                               f"{MIN_FAECHER_GRAD:.0f} Grad Faecher; jedes Foto ueberlappt das vorige um >= 2/3. {z.get('hinweis', '')}").strip()
         auftraege.append(a)
     # ---- nicht eingeordnete Fotos mit Grund
-    rb = reg.get("bilder", {}); namen = sorted(set(bilder) if bilder is not None else set(rb)); nicht = []
+    rb = reg.get("bilder", {}); namen = sorted(set(bilder) if bilder is not None else set(rb)); nicht = []; n_ein = 0; eingepasst = set(eingepasst)
     for n in namen:
         r = rb.get(n)
         if r is not None and r.get("status") == "registriert": continue
+        if n in eingepasst: n_ein += 1; continue                                       # ueber ein eingepasstes Teilmodell im Modellrahmen
         g = grund(r, min_inl); x = dict(foto=n, grund=g, status_registrierung=(r or {}).get("status"), n_korr=(r or {}).get("n_korr"), inlier=(r or {}).get("inlier"),
                                          referenzbilder=(r or {}).get("referenzbilder"))
         if teil and n in teil: x["teilmodell"], x["teilmodell_status"] = teil[n]
         nicht.append(x)
     zaehl = collections.Counter(x["grund"] for x in nicht)
-    return dict(fotos=len(namen), eingeordnet=len(namen) - len(nicht), nicht_eingeordnet=len(nicht), gruende={g: zaehl.get(g, 0) for g in GRUENDE},
+    return dict(fotos=len(namen), eingeordnet=len(namen) - len(nicht), davon_ueber_einpassung=n_ein, nicht_eingeordnet=len(nicht), gruende={g: zaehl.get(g, 0) for g in GRUENDE},
                 min_inlier=min_inl, bildwinkel_grad=round(hfov, 1), zonen=[e for z, e in erg], fotoauftrag=auftraege, nicht_eingeordnete_fotos=nicht,
                 schwellen=dict(MIN_FOTOS=MIN_FOTOS, MIN_FAECHER_GRAD=MIN_FAECHER_GRAD, MIN_ZELLEN=MIN_ZELLEN, MIN_TIEFE_REL=MIN_TIEFE_REL, BLICK_MAX_GRAD=BLICK_MAX_GRAD,
                                MAX_ABSTAND_M=MAX_ABSTAND_M, ZELLE_M=ZELLE_M, MIN_PUNKTE=MIN_PUNKTE, herkunft="siehe Kopf abdeckung_meldung.py (ANNAHME gekennzeichnet)")), zonen
@@ -298,12 +404,15 @@ def rodrigues(r):
     k = r / th; K = np.array([[0, -k[2], k[1]], [k[2], 0, -k[0]], [-k[1], k[0], 0]]); return np.eye(3) + math.sin(th) * K + (1 - math.cos(th)) * K @ K
 
 
-def laden_sparse(sparse, ausrichtung=None):
-    """pycolmap-Rekonstruktion -> Kameras + Punkte im Modellrahmen (X_sfm = s R X_modell + t laut SFM-AUSRICHTUNG; ohne Datei: Sparse = Modellrahmen)."""
+def laden_sparse(sparse, ausrichtung=None, M=None):
+    """pycolmap-Rekonstruktion -> Kameras + Punkte im Modellrahmen (X_sfm = s R X_modell + t laut SFM-AUSRICHTUNG; ohne Datei: Sparse = Modellrahmen).
+    M (4x4, X_modell = M X_teil, z. B. einpassung.json spuren.M_teil_modell von teilmodell_spuren_einpassen.py) statt ausrichtung."""
     import pycolmap
     rec = pycolmap.Reconstruction(sparse); s, Ra, t = 1.0, np.eye(3), np.zeros(3)
     if ausrichtung:
         tr = json.load(open(ausrichtung))["transformation"]; s, Ra, t = float(tr["s"]), rodrigues(tr["rvec"]), np.asarray(tr["t"], float)
+    if M is not None:      # X_m = sm Rm X_t + tm  <=>  X_t = (1/sm) Rm^T (X_m - tm): gleiche Form wie oben mit s = 1/sm, Ra = Rm^T, t = -(1/sm) Rm^T tm
+        M = np.asarray(M, float); sm = float(np.cbrt(np.linalg.det(M[:3, :3]))); Rm = M[:3, :3] / sm; s, Ra, t = 1 / sm, Rm.T, -(Rm.T @ M[:3, 3]) / sm
     kams = []
     for im in rec.images.values():
         if not im.has_pose: continue
@@ -313,6 +422,24 @@ def laden_sparse(sparse, ausrichtung=None):
     pid = list(rec.points3D.keys()); P = np.array([rec.points3D[i].xyz for i in pid]).reshape(-1, 3); P = (Ra.T @ (P - t).T).T / s; idx = {i: j for j, i in enumerate(pid)}
     for k in kams: k["beob"] = P[[idx[i] for i in k["beob"] if i in idx]].astype(np.float32)     # Spurpunkte je Kamera fuer spurbeleg()
     return kams, P
+
+
+def laden_einpassung(pfad):
+    """einpassung.json (tools/teilmodell_spuren_einpassen.py): 'teil' = Rekonstruktion im Teilrahmen, spuren.M_teil_modell = Sim3 in Modellmeter -> (kams, P)."""
+    e = json.load(open(pfad)); M = (e.get("spuren") or {}).get("M_teil_modell") or e.get("M_teil_modell")
+    if M is None or not os.path.isfile(os.path.join(e.get("teil", ""), "images.bin")): raise ValueError(f"{pfad}: 'teil' oder M_teil_modell fehlt")
+    return laden_sparse(e["teil"], M=M)
+
+
+def punkte_laden(p):
+    """Punkte (n,3) aus .npy oder binaerem PLY (x,y,z float zuerst), auf MAX_PUNKTE ausgeduennt."""
+    if p.endswith(".npy"): P = np.load(p, mmap_mode="r"); return np.asarray(P[:: max(1, len(P) // MAX_PUNKTE)])[:, :3]
+    with open(p, "rb") as f:
+        kopf = b""
+        while not kopf.endswith(b"end_header\n"): kopf += f.readline()
+        k = kopf.decode("latin1").split("\n"); n = int(next(x for x in k if x.startswith("element vertex")).split()[2]); typ = {"float": "f4", "double": "f8", "uchar": "u1", "int": "i4", "uint": "u4", "short": "i2", "ushort": "u2"}
+        dt = np.dtype([(x.split()[2], "<" + typ[x.split()[1]]) for x in k if x.startswith("property")]); off = f.tell()
+    A = np.memmap(p, dt, "r", off, (n,)); A = A[:: max(1, n // MAX_PUNKTE)]; return np.stack([A["x"], A["y"], A["z"]], 1).astype(np.float64)
 
 
 def laden_teilmodelle(d):
@@ -325,19 +452,42 @@ def laden_teilmodelle(d):
     return out
 
 
+def einpassungen_finden(cfg, basis, explizit=()):
+    """einpassung.json neben jeder gefundenen Lagedatei (gleicher messprotokoll-Ordner) + explizite --einpassung; nur existierende, ohne Doppel."""
+    out = list(explizit)
+    for s in cfg.get("sonderstellen", []):
+        pf = lage_finden(s, basis) if s.get("mitte") is None else None
+        if pf and os.path.isfile(os.path.join(os.path.dirname(pf), "einpassung.json")): out.append(os.path.join(os.path.dirname(pf), "einpassung.json"))
+    return list(dict.fromkeys(os.path.abspath(x) for x in out if os.path.isfile(x)))
+
+
+def kameras_vereinen(haupt, zusatz):
+    """Kameras nach Name vereinen; eingepasste Teilmodell-Kameras ersetzen gleichnamige (je Foto genau eine Pose)."""
+    d = {k["name"]: k for k in haupt}
+    for k in zusatz: d[k["name"]] = k
+    return list(d.values())
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0]); ap.add_argument("--objekt", required=True); ap.add_argument("--zonen", required=True)
-    ap.add_argument("--registrierung", required=True); ap.add_argument("--sparse", required=True); ap.add_argument("--ausrichtung"); ap.add_argument("--punkte")
+    ap.add_argument("--registrierung", required=True); ap.add_argument("--sparse", required=True); ap.add_argument("--ausrichtung"); ap.add_argument("--punkte", action="append", default=[])
+    ap.add_argument("--einpassung", action="append", default=[], help="einpassung.json eines eingepassten Teilmodells (zusaetzliche Kameras); neben Lagedateien automatisch")
     ap.add_argument("--teilmodelle"); ap.add_argument("--bilder"); ap.add_argument("--aus", required=True); a = ap.parse_args(argv)
     obj = json.load(open(a.objekt)); cfg = json.load(open(a.zonen)); reg = json.load(open(a.registrierung)); kams, P = laden_sparse(a.sparse, a.ausrichtung)
-    if a.punkte: P = np.load(a.punkte, mmap_mode="r"); P = np.asarray(P[:: max(1, len(P) // MAX_PUNKTE)])
-    neu = [n for n, v in reg.get("bilder", {}).items() if v.get("status") == "registriert"]
+    ein_namen = set(); basis = os.path.dirname(os.path.abspath(a.zonen)); neu = [n for n, v in reg.get("bilder", {}).items() if v.get("status") == "registriert"]; Ps = [P]; quellen = []
+    for ep in einpassungen_finden(cfg, basis, a.einpassung):
+        try: kz, Pz = laden_einpassung(ep)
+        except Exception as ex: print(f"WARNUNG Einpassung {ep} nicht geladen: {ex}"); quellen.append(dict(einpassung=ep, fehler=str(ex))); continue
+        kams = kameras_vereinen(kams, kz); ein_namen |= {k["name"] for k in kz}; neu += [k["name"] for k in kz]; Ps.append(Pz); quellen.append(dict(einpassung=rel(ep), kameras=len(kz), punkte=len(Pz)))
+    if a.punkte: Ps = [punkte_laden(p) for p in a.punkte]
+    P = np.vstack([np.asarray(x, float).reshape(-1, 3) for x in Ps])
     bilder = sorted(f for f in os.listdir(a.bilder) if f.lower().endswith((".jpg", ".jpeg", ".png"))) if a.bilder else None
-    m, zonen = melden(obj, cfg, kams, neu, reg, P, laden_teilmodelle(a.teilmodelle) if a.teilmodelle else None, bilder)
+    m, zonen = melden(obj, cfg, kams, sorted(set(neu)), reg, P, laden_teilmodelle(a.teilmodelle) if a.teilmodelle else None, bilder, basis=basis, eingepasst=ein_namen)
+    m["kamera_quellen"] = [dict(sparse=a.sparse, ausrichtung=a.ausrichtung)] + quellen; m["punkte_quellen"] = a.punkte or "Sparse (Haupt + Einpassungen)"
     os.makedirs(a.aus, exist_ok=True); j = os.path.join(a.aus, "abdeckung_meldung.json"); json.dump(m, open(j, "w"), indent=1, ensure_ascii=False)
     open(os.path.join(a.aus, "abdeckung_meldung.md"), "w").write(markdown(m)); b = bild(os.path.join(a.aus, "abdeckung_meldung.png"), m, zonen, kams, set(neu))
-    print(f"{m['eingeordnet']}/{m['fotos']} eingeordnet; Gruende {m['gruende']}")
-    for e in m["zonen"]: print(f"  {e['name']:14s} {e['status']:12s} Fotos {e['fotos']:4d} (neu {e['fotos_neu']:3d}) Faecher {e['faecher_grad']:5.0f} gesehen {e['zellen_gesehen']:.2f} Tiefe_rel {e['tiefe_rel']:.2f}")
+    print(f"{m['eingeordnet']}/{m['fotos']} eingeordnet; Gruende {m['gruende']}; Kameras {len(kams)} ({len(quellen)} Einpassungen)")
+    for e in m["zonen"]: print(f"  {e['name']:24s} {e['status']:12s} Fotos {e['fotos']:4d} (neu {e['fotos_neu']:3d}, geo {e['fotos_geometrisch']:4d}) Faecher {e['faecher_grad']:5.0f} gesehen {e['zellen_gesehen']:.2f} Tiefe_rel {e['tiefe_rel']:.2f}")
     print("FOTOAUFTRAG: " + ", ".join(x["stelle"] for x in m["fotoauftrag"])); print(f"-> {j}" + (f", {b}" if b else "")); return 0
 
 

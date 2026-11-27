@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026).
-Datensatz: tools/testdata/abdeckung_handy_20261126_mini.json = echte Kameras/Punkte/Registriereintraege der Handyfotos Schwabentor 26.11. (Modellrahmen), 'kameras_wand'
+Hier OHNE Lagedateien (Zonen aus dem Datensatz, keine basis): Bruecke/Treppe/Unterdurchgang = 'Lage unbekannt'. Mit Lagedatei + echten Spurpunkten:
+tools/test_abdeckung_echt.py. Datensatz: tools/testdata/abdeckung_handy_20261126_mini.json = echte Kameras/Punkte/Registriereintraege der Handyfotos Schwabentor 26.11. (Modellrahmen), 'kameras_wand'
 sehen den Treppenturm nicht (dort fehlt die Einordnung), 'kameras_treppenturm' sehen ihn.
   1 Einordnung fehlt  nur Wandkameras -> Fotoauftrag nennt Bruecke, Treppe, Unterdurchgang UND Treppenturm (ROT, wenn eine fehlt); Treppenturm mit Standpunkten ausserhalb
                       des Baukoerpers, Blick zur Turmmitte, Kompass + GPS; Stellen ohne Lage mit Anschlussweg, im Modell 'nicht belegt'.
