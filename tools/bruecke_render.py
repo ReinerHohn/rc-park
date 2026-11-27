@@ -3,14 +3,20 @@
 
 Warum: die Profilspitzen-Messung (bruecke_messen.messen) musste jede Spitze im Hoehenprofil einem Bauteil ZUORDNEN (unterste = Unterkante, oberste = Traufe ...).
 Kanten anderer Ebenen (Geisterkanten der Gegenseite, Dach, Strasse) erschienen als zusaetzliche Spitzen -> falsche Zuordnung (Synthetik: Traufe 10,56 statt 8,60,
-Tauschtest instabil). Hier wird nichts zugeordnet: das GANZE Modell (bauteile.ueberdachter_gang, derselbe Baustein wie im Bau) wird je Kamera mit eigener
-Verdeckung gerastert (render_kern.dreiecke_rastern, GPU), seine sichtbaren scharfen Kanten werden mit den Fotokanten verglichen, und die Parameter werden per
-Koordinatensuche (Rasterabtastung je Parameter, grob -> fein) so gewaehlt, dass die Foto-F1 (wie teil_fotoform: Praezision = Modellkanten mit Fotokante in der Naehe,
-Recall = Fotokanten im Modellbereich mit Modellkante in der Naehe) maximal ist. Welche Linie welches Bauteil ist, folgt aus dem Modell selbst.
+Tauschtest instabil). Hier ordnet das MODELL zu: der Baustein bauteile.ueberdachter_gang (derselbe wie im Bau) wird je Kamera mit eigener Verdeckung gerastert
+(render_kern.dreiecke_rastern, GPU), seine sichtbaren scharfen Kanten werden mit den Fotokanten verglichen, die Parameter werden so gewaehlt, dass die Guete maximal ist.
 
-Foto-Kanten: LSD-Geraden (>= min_len px) in NB Richtungsklassen; Abstandsfeld je Klasse (Nachbarklassen eingeschlossen, +-1,5 Klassen ~ +-34 Grad).
-Verdeckung: (1) Modell verdeckt sich selbst (Tiefenpuffer des Modells), (2) Umgebung aus der Wolke AUSSERHALB der Zone (bruecke_messen.tiefenpuffer) - beides nur Sicht.
-Suchraum: Zone aus BRUECKE-LAGE.json, je Seite um 50 % erweitert - die Zone ist NUR Suchraum und Startwert; Tauschtest (+-30 %) muss dieselben Werte liefern.
+Guete je Foto (Pixel des halben Bildes): BELEGT = Fotokantenpixel, an denen eine sichtbare Modellkante gleicher Richtung naeher als TAU liegt (jedes Fotopixel EINMAL,
+weich gewichtet) minus STRAFE x Bildlaenge sichtbarer Modellkanten ohne Fotokante. Gesamt = Mittel ueber die Fotos.
+VERSUCHT 27.11. (Synthetik, Wahrheit bekannt): F1 mit Recall im Modellbereich -> schmales kurzes Modell schlug die Wahrheit (0,54 gegen 0,51); Summe ueber Modellpunkte
+minus Zufallsrate -> zwei Modellkanten an einer Fotokante doppelt belohnt (duenne Wand + dickes Dach 141 gegen 113); STRAFE 0,5 -> Flachdach schlug das echte
+(kantenarme Modelle gewinnen, wo gleich helle Flaechen keine Fotokante haben); 0,25 -> Wahrheit vor allen Gegenmodellen. CMA-ES ueber alle 15 Parameter und reine
+Koordinatensuche ab Zonenmitte -> lokale Optima (geschlossener schmaler Gang) -> verworfen.
+
+Suche: (1) KANDIDATEN aus dem Linien-Sweep (bruecke_messen.messen: Wandebenen, Pfostenabstand, Enden, ALLE Hoehenspitzen - ohne Zuordnung); (2) ZUORDNUNG
+Spitzen -> Unterkante/Holm/Riegel/Traufe und Wandpaar per Render-Guete nur auf Laengskanten der Waende (unabhaengig von Dach und Pfosten); (3) DACH gemeinsam
+(Traufe, Neigung, Ueberstand, Dicke; beste 8 Rasterpunkte lokal verfeinert); (4) PFOSTEN gemeinsam (Zahl x Breite); (5) Koordinatenrunden ueber alle Parameter;
+(2)-(5) wiederholt, bis sich nichts aendert; (6) Feinrunden. Die Zone ist nur Suchraum/Start; Tauschtest (+-30 %) muss dieselben Werte liefern.
 Beleg je Parameter: in der letzten Feinabtastung hat jedes Foto eine eigene Guetekurve; ein Foto STIMMT ZU, wenn sein eigenes Maximum (mit Kontrast) beim
 gemeinsamen Bestwert liegt. < 3 zustimmende Fotos -> 'fehlt' (nicht belegt), nie ein Ersatzwert.
 
@@ -19,7 +25,7 @@ Aufruf (tools/py waehlt venv-seg wegen torch):
 rc 0 = Massliste geschrieben (einzelne Masse duerfen 'fehlt'/'instabil' sein -> Bau-Tor ROT), 2 = keine Fotokanten / kein Modell.
 """
 import sys, os, json, math, time, copy
-import numpy as np, cv2
+import numpy as np, cv2, trimesh
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
 import bauteile as BT
 import bruecke_messen as BM
@@ -38,7 +44,7 @@ def _klasse(theta):
 
 class FotoKanten:
     """Fotokanten EINES Fotos im verkleinerten Raster (teiler): Abstandsfeld je Richtungsklasse + Kantenpixel je Klasse + Umgebungsverdeckung."""
-    def __init__(self, c, grau, teiler=2, min_len=12, verdeckt=None, z_zone=None):
+    def __init__(self, c, grau, teiler=2, min_len=12, verdeckt=None):
         self.c = c; self.T = teiler; H, W = grau.shape[0] // teiler, grau.shape[1] // teiler; self.W, self.H = W, H
         # LSD im VOLLEN Bild (27.11.: im halben Bild fehlten kontrastarme Pfostenkanten -> Pfostenzahl ohne Einfluss), Segmente in das Raster 1/teiler
         seg = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD).detect(cv2.GaussianBlur(grau, (0, 0), 0.8))[0]
@@ -54,20 +60,8 @@ class FotoKanten:
         for b in range(NB):
             u = M[b] | M[(b - 1) % NB] | M[(b + 1) % NB]
             self.dt[b] = np.minimum(cv2.distanceTransform((1 - u).astype(np.uint8), cv2.DIST_L2, 3) * DQ, 255).astype(np.uint8) if u.any() else 255
-        # Zufallsrate je Richtungsklasse: mittlere Trefferguete eines beliebigen Bildpunkts (ganzes Bild, unabhaengig von Zone/Modell) = Strafe je Modellpunkt
-        self._zufall = {}
         self.pix = [np.nonzero(M[b]) for b in range(NB)]                    # (ys, xs) je Klasse
         self.verdeckt = verdeckt
-        self.umg = None
-        if verdeckt is not None and z_zone is not None:                       # Umgebung vor der Zone (statisch je Foto, fuer die Recall-Diagnose)
-            yy, xx = np.mgrid[0:H, 0:W]; uvf = np.stack([(xx + 0.5) * teiler - 0.5, (yy + 0.5) * teiler - 0.5], -1)
-            self.umg = verdeckt(uvf, np.full((H, W), z_zone), rand=1.5)
-
-    def zufall(self, tau):
-        """Mittlere Trefferguete eines beliebigen Bildpunkts je Richtungsklasse (ganzes Bild) bei Kappe tau - je tau einmal gerechnet."""
-        if tau not in self._zufall:
-            self._zufall[tau] = np.array([float(np.clip(1 - self.dt[b][::2, ::2].astype(np.float32) / DQ / tau, 0, 1).mean()) for b in range(NB)])
-        return self._zufall[tau]
 
 
 def kanten_modell(t, winkel=25.0, schritt=SCHRITT):
@@ -79,9 +73,10 @@ def kanten_modell(t, winkel=25.0, schritt=SCHRITT):
     return X, eid, A, B
 
 
-def foto_guete(t, X, eid, A, B, fk, tau=TAU, recall=False):
-    """Kantenabgleich EINES Fotos fuer das Modell t (sichtbare Modellkanten gegen Fotokanten). Liefert (p_sum, p_n, r_sum, r_n):
-    p_sum = Summe der Trefferguete (1 bei 0 px, 0 ab tau) ueber die sichtbaren Modellkanten-Abtastpunkte, p_n = deren Zahl; Recall nur mit recall=True (Diagnose)."""
+def foto_guete(t, X, eid, A, B, fk, tau=TAU):
+    """Kantenabgleich EINES Fotos fuer das Modell t (sichtbare Modellkanten gegen Fotokanten). Liefert (belegt, unbelegt, p_sum, p_n):
+    belegt = Fotokantenpixel mit sichtbarer Modellkante gleicher Richtung naeher als tau (jedes Pixel einmal, weich gewichtet), unbelegt = Bildlaenge (px)
+    sichtbarer Modellkanten ohne Fotokante, p_sum/p_n = Trefferguete-Summe/Zahl der sichtbaren Modellpunkte (Diagnose, Praezision = p_sum/p_n)."""
     import render_kern as RK
     c = fk.c; T = fk.T; W, H = fk.W, fk.H; Rn = np.asarray(c["Rn"], float); tn = np.asarray(c["tn"], float)
     f2 = c["f"] / T; cx2 = (c["cx"] + 0.5) / T - 0.5; cy2 = (c["cy"] + 0.5) / T - 0.5
@@ -94,12 +89,13 @@ def foto_guete(t, X, eid, A, B, fk, tau=TAU, recall=False):
     dp = np.full(len(X), np.inf); dp[ok] = depth[vp[ok], up[ok]]
     vis = ok & ~(dp < z - (0.05 + 0.004 * z))                                # Selbstverdeckung
     if fk.verdeckt is not None and vis.any(): vis[vis] = ~fk.verdeckt(uvf[vis], z[vis], rand=1.5)
-    # Bildrichtung je Kante (verzeichnete Projektion der Endpunkte); Kanten mit < 3 px Bildlaenge (Blick laengs der Kante) fallen weg
-    ua, _ = BM.projizieren(c, A); ub, _ = BM.projizieren(c, B); dd = (ub - ua) / T; lb = np.hypot(dd[:, 0], dd[:, 1])
-    kl_e = _klasse(np.arctan2(dd[:, 1], dd[:, 0])); vis &= (lb >= 3.0)[eid]
+    # Bildrichtung und Bildlaenge je Abtastpunkt aus dem NACHBARPUNKT derselben Kante (27.11. echte Fotos: Kantenenden hinter der Kamera gaben aus den
+    # Endpunkten riesige Bildlaengen -> Guete -4e10); Punkte, deren Nachbar nicht vor der Kamera liegt, und Bildschritte > 8 px fallen weg
+    nb = np.r_[np.arange(1, len(X)), len(X) - 1]; letzt = np.r_[eid[1:] != eid[:-1], True]; nb[letzt] = np.arange(len(X))[letzt] - 1
+    du = (uvf[nb] - uvf) / T; du[letzt] *= -1; w = np.hypot(du[:, 0], du[:, 1])
+    vis &= (z[nb] > 0.5) & (w > 1e-6) & (w <= 8.0)
     if not vis.any(): return 0.0, 0.0, 0.0, 0
-    kl = kl_e[eid[vis]]; u_, v_ = ud[vis], vd[vis]
-    ne = np.bincount(eid, minlength=len(A)); w = (lb / np.maximum(ne - 1, 1))[eid[vis]]          # Bildlaenge (px) je Abtastpunkt
+    kl = _klasse(np.arctan2(du[vis, 1], du[vis, 0])); u_, v_ = ud[vis], vd[vis]; w = w[vis]                  # Bildlaenge (px) je Abtastpunkt
     d = fk.dt[kl, v_, u_].astype(np.float32) / DQ; p = np.clip(1 - d / tau, 0, 1)
     unbelegt = float(((1 - p) * w).sum())                                                       # Modellkante ohne Fotokante (px)
     # Belegte Fotokante (px): jedes Fotokantenpixel zaehlt EINMAL, wenn eine sichtbare Modellkante gleicher Richtung naeher als tau liegt
@@ -112,7 +108,6 @@ def foto_guete(t, X, eid, A, B, fk, tau=TAU, recall=False):
         if not s.any(): continue
         u = Mm[b_] | Mm[(b_ - 1) % NB] | Mm[(b_ + 1) % NB]
         if not u.any(): continue
-        sl = (slice(None),)
         ys_, xs_ = py[s] - y0, px[s] - x0
         dm = cv2.distanceTransform((1 - u).astype(np.uint8), cv2.DIST_L2, 3)[ys_, xs_]; belegt += float(np.clip(1 - dm / tau, 0, 1).sum())
     return belegt, unbelegt, float(p.sum()), int(len(p))
@@ -140,7 +135,7 @@ class Abgleich:
         self.ex = ThreadPoolExecutor(threads); self.aussen = ThreadPoolExecutor(4)
 
     def guete(self, x):
-        """Gesamtguete (Mittel der Foto-F1) + F1 je Foto. Ungueltige Parameter (Baustein baut nicht / Ersatzform) -> -1."""
+        """Gesamtguete (Mittel ueber die Fotos) + Guete je Foto. Ungueltige Parameter (Baustein baut nicht / Ersatzform) -> -1e9."""
         key = tuple(round(float(x[k]), 4) for k in SCHLUESSEL) + (self.tau, self.filter)
         if key in self.cache: return self.cache[key]
         self.n_eval += 1
@@ -148,6 +143,9 @@ class Abgleich:
         if g is None or ms.get("art") in ("nicht gebaut", "massiver Steg") or any(r["bauteil"] in ("dach", "seiten", "gang") for r in ms.get("rot", [])):
             r = (-1e9, np.full(len(self.fks), -1e9)); self.cache[key] = r; return r
         t = BT.als_trimesh(g); X, eid, A, B = kanten_modell(t)
+        # Raster am unterteilten Netz: render_kern verwirft Dreiecke mit einer Ecke < 1 m vor der Kamera; lange Deck-/Dachflaechen ueber einer Kamera unter
+        # der Bruecke fielen sonst ganz weg (keine Verdeckung) (27.11.)
+        v_, f_ = trimesh.remesh.subdivide_to_size(t.vertices, t.faces, max_edge=1.0); tr = trimesh.Trimesh(v_, f_, process=False)
         if self.filter == "laengs_wand":
             # nur LAENGSkanten der Wandebenen unter der Traufe zaehlen (Verdeckung rechnet weiter das ganze Modell): Hoehenzuordnung unabhaengig von
             # Dachneigung und Pfostenzahl, die zu dem Zeitpunkt noch nicht gemessen sind (27.11.: gekoppelte Stufen blieben eine Spitze zu hoch haengen)
@@ -156,9 +154,8 @@ class Abgleich:
             ok_e = (np.abs(dv[:, :2] @ Rg.d) > 0.95) & (np.maximum(A[:, 2], B[:, 2]) <= x["zt"] + 0.02) & (np.abs(qa - qc) <= hb) & (np.abs(qb - qc) <= hb)
             m = ok_e[eid]; X, eid = X[m], eid[m]
             if not len(X): r = (-1e9, np.full(len(self.fks), -1e9)); self.cache[key] = r; return r
-        res = list(self.ex.map(lambda fk: foto_guete(t, X, eid, A, B, fk, self.tau), self.fks))
-        # Guete je Foto = belegte Kantenlaenge minus STRAFE x sichtbare Kantenlaenge (Meter): jede sichtbare Modellkante muss sich ihren Platz durch eine
-        # Fotokante verdienen. Kein Recall-Bereich, der vom Modell abhaengt (27.11.: F1 mit Modell-ROI belohnte ein schmales, kurzes Modell - 0,54 gegen Wahrheit 0,51).
+        res = list(self.ex.map(lambda fk: foto_guete(tr, X, eid, A, B, fk, self.tau), self.fks))
+        # Guete je Foto = belegte Fotokante (px) - STRAFE x Modellkante ohne Fotokante (px); kein Bereich, der vom Modell abhaengt (siehe Kopf: VERSUCHT)
         F = np.array([bel - STRAFE * unb for bel, unb, _, _ in res])
         r = (float(F.mean()), F); self.cache[key] = r; return r
 
@@ -215,37 +212,6 @@ def start_aus_zone(zone):
 TAU_GROB = (8.0, 5.0)   # grobe Runden mit weicher Kappe (breites Einzugsgebiet), feine mit TAU
 
 
-HOEHEN = ("zu", "zb", "zh", "zr", "zt")
-
-
-def reparieren(x, dmin):
-    """Hoehen aufsteigend sortieren (Unterkante < Laufebene < Holm < Riegel < Traufe) mit Mindestabstand, Waende ql < qr, Pfostenzahl ganz."""
-    x = dict(x); z = sorted(x[k] for k in HOEHEN); d = dmin + 0.01
-    for i in range(1, 5): z[i] = max(z[i], z[i - 1] + d)
-    for k, v in zip(HOEHEN, z): x[k] = v
-    if x["ql"] > x["qr"]: x["ql"], x["qr"] = x["qr"], x["ql"]
-    if x["qr"] - x["ql"] < 0.6: m = 0.5 * (x["ql"] + x["qr"]); x["ql"], x["qr"] = m - 0.3, m + 0.3
-    x["pfosten"] = int(round(x["pfosten"])); return x
-
-
-def cma_suche(ab, zone, x0, tau=5.0, sigma=0.2, popsize=24, max_eval=3000, seed=1, log=print):
-    """Gemeinsame Suche aller Parameter (CMA-ES, Paket cma BSD-3; gekoppelte Parameter - Wandlage, Holm, Pfostenzahl - bewegen sich zusammen,
-    27.11.: Koordinatensuche blieb in einem geschlossenen schmalen Gang haengen, Guete 81,9 gegen Wahrheit 103,9). Normiert auf den Suchraum, feste Saat."""
-    import cma
-    S = suchraum(zone); ks = [k for k in SCHLUESSEL if k != "gier"]; lo = np.array([S[k][0] for k in ks], float); hi = np.array([S[k][1] for k in ks], float)
-    def aus(u): x = dict(x0); x.update({k: float(lo[i] + np.clip(u[i], 0, 1) * (hi[i] - lo[i])) for i, k in enumerate(ks)}); return reparieren(x, ab.dmin)
-    u0 = np.clip([(x0[k] - lo[i]) / (hi[i] - lo[i]) for i, k in enumerate(ks)], 0, 1)
-    ab.tau = tau; es = cma.CMAEvolutionStrategy(u0, sigma, dict(bounds=[0, 1], popsize=popsize, seed=seed, verbose=-9, maxfevals=max_eval))
-    best = (-np.inf, None); t0 = time.time(); it = 0
-    while not es.stop():
-        U = es.ask(); X = [aus(u) for u in U]; G = [g for g, _ in ab.aussen.map(ab.guete, X)]
-        for g, x in zip(G, X):
-            if g > best[0]: best = (g, x)
-        es.tell(U, [-g for g in G]); it += 1
-        if it % 20 == 0: log(f"    CMA {it}: beste Guete {best[0]:.1f} ({es.countevals} Auswertungen, {time.time() - t0:.0f} s)")
-    return best[1], best[0]
-
-
 def kandidaten_aus_sweep(kams, bilder, zone, raster=0.04, reserve=0.6, max_hoehen=10, log=print):
     """KANDIDATEN aus dem Linien-Sweep (bruecke_messen.messen): Wandebenen, Pfostenabstand, Enden und ALLE Hoehenspitzen der Wandprofile - ohne Zuordnung.
     Welche Spitze Unterkante/Holm/Riegel/Traufe ist, entscheidet danach der Render-Abgleich (Modell mit Verdeckung), nicht eine Reihenfolgeregel."""
@@ -266,11 +232,13 @@ def kandidaten_aus_sweep(kams, bilder, zone, raster=0.04, reserve=0.6, max_hoehe
     if P_.get("breite", {}).get("wert") is not None: b = P_["breite"]["wert"]; K["waende"].append((ml["qc"] - b / 2, ml["qc"] + b / 2))
     r = diag.get("r"); qm = zone["qmax"] * (1 + reserve); qs = np.arange(-qm, qm + 1e-9, raster)
     if r is not None and len(r) == len(qs):
-        lok = sorted([i for i in range(1, len(r) - 1) if r[i] >= r[i - 1] and r[i] >= r[i + 1]], key=lambda i: -r[i])[:6]
-        for i in lok:
-            for j in lok:
-                if qs[i] < -0.0 < qs[j] and qs[j] - qs[i] >= 0.8 and (qs[i], qs[j]) not in K["waende"]: K["waende"].append((float(qs[i]), float(qs[j])))
-    K["waende"] = K["waende"][:4]
+        # je Seite der Zonenmitte die 3 staerksten lokalen Maxima (27.11. echte Fotos: die 6 staerksten lagen alle auf der fotoreichen Seite -> kein Paar)
+        lok = sorted([i for i in range(1, len(r) - 1) if r[i] >= r[i - 1] and r[i] >= r[i + 1]], key=lambda i: -r[i])
+        neg = [i for i in lok if qs[i] < -0.3][:3]; pos = [i for i in lok if qs[i] > 0.3][:3]
+        for i in neg:
+            for j in pos:
+                if qs[j] - qs[i] >= 0.8 and (qs[i], qs[j]) not in K["waende"]: K["waende"].append((float(qs[i]), float(qs[j])))
+    K["waende"] = K["waende"][:6]
     K["abstand"] = P_.get("pfosten", {}).get("abstand_m")
     log(f"  Sweep-Kandidaten [{time.time() - t0:.0f} s]: Hoehen {', '.join(f'{h:.2f}' for h in K['hoehen'])}; Waende {', '.join(f'{a:+.2f}/{b:+.2f}' for a, b in K['waende'])}; "
         f"Pfostenabstand {K['abstand']}; Enden {K['s_a']}..{K['s_b']}")
@@ -300,15 +268,17 @@ def dach_suchen(ab, x, K, log=print):
     kand = [dict(x, zt=zt, neigung=float(n), ueberstand=u, dach_dicke=dd) for zt in zts for n in np.arange(5.0, 60.1, 5.0) for u in (0.0, 0.15, 0.3, 0.5, 0.8)
             for dd in (0.08, 0.15, 0.25)]
     kand.append(dict(x)); G = [g for g, _ in ab.aussen.map(ab.guete, kand)]
-    # Die Guete ist um die richtige Dachform sehr schmal (Synthetik: 2 cm Traufe kosten 5 %), das Raster trifft sie nicht genau: die 8 besten
-    # Rasterpunkte (verschiedene Traufe/Neigung) je kurz lokal verfeinern, dann entscheiden (27.11.: Raster allein waehlte Flachdach 5 Grad)
-    o = np.argsort(G)[::-1]; top = []
-    for i in o:
-        if all(abs(kand[i]["zt"] - t_["zt"]) > 0.05 or abs(kand[i]["neigung"] - t_["neigung"]) > 7 for t_ in top): top.append(kand[i])
-        if len(top) >= 8: break
+    # Die Guete ist um die richtige Dachform sehr schmal (Synthetik: 2 cm Traufe kosten 5 %), das Raster trifft sie nicht genau: die besten
+    # Rasterpunkte je Neigungsband kurz lokal verfeinern, dann entscheiden (27.11.: Raster allein waehlte Flachdach 5 Grad)
+    # je Neigungsband (10 Grad) der beste Rasterpunkt + der bisherige Stand: sonst fuellen flache Varianten mit verschiedener Traufe alle Plaetze (27.11.)
+    o = np.argsort(G)[::-1]; top = [kand[-1]]; baender = set()
+    for i in o[:]:
+        b = int(kand[i]["neigung"] // 10)
+        if b not in baender: baender.add(b); top.append(kand[i])
     best = (-np.inf, x); tau0 = ab.tau; ab.tau = TAU
     for t_ in top:
-        y = verfeinern(ab, t_, (("zt", 0.02, 0.1), ("neigung", 1.0, 4.0), ("ueberstand", 0.05, 0.15), ("dach_dicke", 0.02, 0.06), ("wand_dicke", 0.01, 0.04)))
+        y = verfeinern(ab, t_, (("zt", 0.02, 0.1), ("neigung", 1.0, 4.0), ("ueberstand", 0.05, 0.15), ("dach_dicke", 0.02, 0.06), ("wand_dicke", 0.01, 0.04),
+                                ("zr", 0.02, 0.12), ("ql", 0.02, 0.06), ("qr", 0.02, 0.06)))      # Riegel/Waende tragen das Dach: mit verfeinern (27.11.)
         g = ab.guete(y)[0]
         if g > best[0]: best = (g, y)
     ab.tau = tau0
@@ -380,7 +350,7 @@ def massliste(x, ab, beleg, zone, min_fotos=3, namen=None):
     for k, w in werte.items():
         bl = [beleg.get(p, dict(n_fotos=0)) for p in MESS[k]]; n = min(b["n_fotos"] for b in bl)
         sd = [b.get("streuung") for b in bl if b.get("streuung") is not None]
-        e = dict(wert=w, quelle="Render-Abgleich (Modell mit Selbst- und Umgebungsverdeckung gegen LSD-Fotokanten, Koordinatensuche F1)", n_fotos=n,
+        e = dict(wert=w, quelle="Render-Abgleich (Modell mit Selbst- und Umgebungsverdeckung gegen LSD-Fotokanten, Kandidaten aus dem Linien-Sweep, Suche nach maximaler belegter Fotokante)", n_fotos=n,
                  streuung=max(sd) if sd else None, suchparameter=list(MESS[k]))
         if namen is not None: e["fotos"] = sorted({namen[j] for b in bl for j in b.get("fotos", [])})[:60]
         if n < min_fotos: e.update(status="fehlt", grund=f"nicht belegt: nur {n} Fotos stimmen dem Wert zu (< {min_fotos})")
@@ -391,12 +361,18 @@ def massliste(x, ab, beleg, zone, min_fotos=3, namen=None):
 
 def abgleich(kams, bilder, zone, teiler=2, wolke=None, log=print, threads=8, grob_runden=3, fein_runden=2, namen=None, sweep=True):
     """Kern: Kameras + Grauwertbilder + Zone -> Massliste (dict wie bruecke_messen.messen, methode 'render_abgleich')."""
-    t0 = time.time(); R = zone["rahmen"]; Zm = R.welt(0.0, 0.0, 0.5 * (zone["z0"] + zone["z1"]))
-    fks = []
-    for c, im in zip(kams, bilder):
-        vd = BM.tiefenpuffer(c, wolke) if wolke is not None and len(wolke) else None
-        zz = float(np.linalg.norm(np.asarray(c.get("C", (-np.asarray(c["Rn"]).T @ np.asarray(c["tn"])).tolist())) - Zm)) - 0.5 * (zone["s1"] - zone["s0"]) if vd else None
-        fks.append(FotoKanten(c, im, teiler, verdeckt=vd, z_zone=max(zz, 1.0) if zz is not None else None))
+    t0 = time.time(); R = zone["rahmen"]
+    # Kameras IN der Zone (Fotos auf dem Steg) nicht verwenden: die Kamera steckt im Modell, Nahebene des Rasterers (1 m) -> Sicht nicht rechenbar.
+    # ANNAHME/Luecke: Laufebene und Deck innen bleiben so ohne Beleg (wie Abdeckung abd-steg: Deck innen duenn).
+    innen = []
+    for j, c in enumerate(kams):
+        Cc = np.asarray(c.get("C", (-np.asarray(c["Rn"]).T @ np.asarray(c["tn"])).tolist()), float); l = R.lokal(Cc[None])[0]
+        if zone["s0"] - 1 <= l[0] <= zone["s1"] + 1 and abs(l[1]) <= zone["qmax"] and zone["z0"] <= l[2] <= zone["z1"]: innen.append(j)
+    if innen:
+        log(f"  {len(innen)} Kameras in der Zone (auf dem Steg) ausgelassen")
+        kams = [c for j, c in enumerate(kams) if j not in innen]; bilder = [b for j, b in enumerate(bilder) if j not in innen]
+        if namen is not None: namen = [n for j, n in enumerate(namen) if j not in innen]
+    fks = [FotoKanten(c, im, teiler, verdeckt=BM.tiefenpuffer(c, wolke) if wolke is not None and len(wolke) else None) for c, im in zip(kams, bilder)]
     nseg = sum(f.n_seg for f in fks); log(f"  Fotokanten: {len(fks)} Fotos, {nseg} LSD-Segmente  [{time.time() - t0:.0f} s]")
     if nseg < 10 * len(fks): return dict(status="nicht belegt", grund=f"zu wenige Fotokanten ({nseg})", methode="render_abgleich")
     ab = Abgleich(fks, zone, threads=threads, log=log)
@@ -426,11 +402,12 @@ def lauf(kamwahl, lage, ausdir, wolke=None, skala=1.0, tausch=True, teiler=2, ma
     with ThreadPoolExecutor(16) as ex: bilder = list(ex.map(lambda nc: BM.bild_laden(Wj["bilddir"], nc[0], nc[1]), zip(names, kams)))
     zone = BM.zone_aus_lage(L, skala); X = None
     if wolke: X = BM.ausser_zone(BM.ply_lesen(wolke, nmax=2_000_000), BM.zone_aus_lage(L, 1.6)); print(f"  Wolke (ausserhalb der Zone x1,6): {len(X)} Punkte")
-    print(f"Render-Abgleich Zone x{skala}"); ml = abgleich(kams, bilder, zone, teiler, X, threads=threads, namen=names)
+    lg = lambda *a: print(*a, flush=True)
+    lg(f"Render-Abgleich Zone x{skala}"); ml = abgleich(kams, bilder, zone, teiler, X, threads=threads, namen=names, log=lg)
     if tausch and ml["status"] == "gemessen":
         andere = []
         for f in (0.7, 1.3):
-            print(f"Tauschtest Zone x{skala * f:.2f}"); andere.append(abgleich(kams, bilder, BM.zone_aus_lage(L, skala * f), teiler, X, threads=threads, namen=names))
+            lg(f"Tauschtest Zone x{skala * f:.2f}"); andere.append(abgleich(kams, bilder, BM.zone_aus_lage(L, skala * f), teiler, X, threads=threads, namen=names, log=lg))
         BM.tausch_pruefen(ml, andere); ml["tausch"] = [dict(skala=round(skala * f, 2), werte={k: v.get("wert") for k, v in a.get("parameter", {}).items()}) for f, a in zip((0.7, 1.3), andere)]
         print("  Tauschtest:", ", ".join(f"{k} {v['tausch_werte']}" for k, v in ml["parameter"].items() if v.get("status") == "instabil") or "stabil")
     ml.update(kameras=names, zone_skala=skala, lage=os.path.abspath(lage), wolke=wolke)

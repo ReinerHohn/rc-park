@@ -23,12 +23,17 @@ Lage/Maßstab der Handyfotos: Zweig `lage-bruecke`, `modelle/schwabentor-1122/me
 - 27.11. · Synthetik (12 Kameras, bekannte Brücke) → ✗ · Wandebenen und Unterkante/Traufe stimmen, Labeling falsch (Geisterkanten anderer Ebenen, einseitig sichtbare Holmkante), Spannweite/Pfosten daneben · Ursache benannt, offen.
 - 27.11. · Beidseitige Höhenprofile (Minimum beider Kameraseiten) gegen Geisterkanten → ✗ verworfen · echt tauschstabil, aber falsch (Traufe 6,6 statt ~8,5 m, Holm weg: einseitig sichtbare Kanten fallen heraus); Synthetik maß gar nichts mehr · Lehre: Stabilität ist nicht Richtigkeit — Tauschtest braucht Pflichtmaße + Bildvergleich.
 
+- 27.11. abends · Render-Abgleich (`tools/bruecke_render.py`): Gütemaß F1 mit Recall im Modellbereich → ✗ · schmales, kurzes Modell schlägt die Wahrheit (0,54 gegen 0,51).
+- 27.11. abends · Gütemaß Summe über Modellpunkte minus Zufallsrate → ✗ · zwei Modellkanten an EINER Fotokante doppelt belohnt (dünne Wand + dickes Dach 141 gegen Wahrheit 113).
+- 27.11. abends · Gütemaß „belegte Fotokante (jedes Pixel einmal) − Strafe × Modellkante ohne Fotokante“ → ✓ mit Strafe 0,25 · Strafe 0,5: Flachdach schlägt das echte (gleich helle Flächen ohne Fotokante).
+- 27.11. abends · Suche: Koordinaten ab Zonenmitte und CMA-ES über 15 Parameter → ✗ lokale Optima (geschlossener schmaler Gang) · Sweep liefert Kandidaten (Spitzen, Wände, Enden, Pfostenabstand), Render entscheidet Zuordnung (nur Längskanten der Wände), Dach gemeinsam (8 beste Rasterpunkte verfeinert), Pfosten gemeinsam.
+- 27.11. abends · Synthetik-Fotos als Kantenzeichnung (Strahltest) → ✗ · Silhouetten an Streifkanten fehlten; jetzt schattiertes Rasterbild + Störlinien vor/hinter der Brücke + Rauschen, LSD im vollen Bild (im halben fehlten Pfostenkanten).
+
 ## Stand 27.11. (Lauf `/media/oem/rcdaten/tmp/bruecke_baustein/lauf3`)
 - Gemessen: Breite Pfostenebenen 3,16–3,20 · Unterkante 5,42 · Laufebene 6,30 (ANNAHME Stirnbrett) · Holm 7,25 · Riegel 8,43 · Traufe 8,78 · First 10,48 (DOM1 10,54) · Pfostenabstand 3,1 m · Spannweite 28 m (DOM1 32,5: Widerspruch, ROT).
 - Tauschtest instabil: Traufe, Laufebene, Holm, Riegel, Spannweite; Pfostenzahl am Foto in keinem Foto vollständig bestätigt → Tor ROT.
 
 ## Offen
-- Kantenzuordnung (Laufebene/Holm/Riegel) robust machen: Analyse durch Synthese (Modellkanten mit Sichtbarkeit gegen Fotokanten, `teil_fotoform`-Art) statt Spitzenetiketten.
 - Treppe am Ende a: Podesttreppe mit Wendung + Betonstützen (Fotos 160254, 160233, 155647) — Baustein kann nur geraden Lauf; Stufenkanten-Sweep fehlt → ROT.
 - Stützen unter dem Deck: Kandidaten nur am Turmende, Querschnitt nicht gemessen → ROT. Ende b (Hang/Widerlager) nicht als Gelände-Auflager modelliert.
 - Pfostenbreite, Wand-/Dachdicke = Druck-Mindestmaß (ANNAHME); Gegenseite (q > 0) hat wenige Fotos → Fotoauftrag A5 der Recherche.
