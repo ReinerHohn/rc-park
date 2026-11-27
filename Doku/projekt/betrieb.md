@@ -1,5 +1,5 @@
 # ⚙️ Betrieb: GPU, Jobs, Platten, Umgebungen, COLMAP-Bau, Git  ← [PROJEKT.md](../../PROJEKT.md)
-Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/INDEX.md` · CLAUDE.md Abschnitt Technik · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [platten-git](betrieb/platten-git.md) · [rechner-jobs](betrieb/rechner-jobs.md)
+Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/INDEX.md` · CLAUDE.md Abschnitt Technik · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [platten-git](betrieb/platten-git.md) · [rechner-jobs](betrieb/rechner-jobs.md) · [cloud](betrieb/cloud.md) (Runpod/vast.ai, Befehlsliste)
 
 ## Gilt
 - Lange Jobs nur `tools/job_start.sh` (systemd --user) mit `JOB_GPU_MB`/`JOB_RAM_MB`-Buchung, nie `run_in_background` [CLAUDE.md, Memory lange-jobs-systemd]
@@ -83,6 +83,8 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 - 24.11. · Merge von 16 Aenderungen nur mit Schnelltest 0 → ✗ Kette 1122za brach nach 2 min ab (Netz neu, Wolke "aelter", Handanweisung) · Ketten-Probelauf `tools/ketten_probelauf.sh` vor jedem Merge (kprobe_kaufhaus, 60 Fotos, Kopie in rc-park_tmp, Szenario Cache + verstellte Code-Staende); nur Trockenlauf/Test geprueft, echter Lauf + Laufzeit offen
 **Tore**
 - 24.11. · tor_kamera_gelaende 1122 seit 23.11. dauernd rc 3 (nur Bericht) → Ursache benannt: zaehlte SfM-Kameras statt Fusionsbilder; 1122z 28 tief, 25 davon NIE in der dichten Wolke (Commons/Archiv bis 40 km tief), 3 eigene (Teil 1, -1,5..-1,6 m) nahm das Neufusionieren heraus → danach 0, Tor trotzdem rot. Ost-Versatz NICHT Ursache (Gruppen commons_orig2 12 + netz_commons_geo 7 in Teil 0) → ✔ `--fusion`: rc 3 nur solange eine tiefe Kamera in fusion.cfg steht (Grenzen unveraendert) [tools/test_kamera_gelaende.py]
+
+- 27.11. · Runpod-Lauf dichte Wolke am Stück vorbereitet (Paket 972 MB, Kostenbremse Selbststopp, Pod RTX 3090 125 GB RAM statt 4090 41 GB) → ℹ lokal getestet, Cloud offen · [betrieb/cloud](betrieb/cloud.md)
 
 ## Offen
 - (20.11.) Versteckte Bremsen gesucht: COLMAP/Ceres ohne AVX2/FMA gebaut (Testbau `colmap_opt_bau` läuft), 91 % der Abgleich-Paare vergeblich, Mapper-Kaskade bis 5 Läufe bei Datenmangel, LightGlue fp16 in 2 Werkzeugen aus (−34 % gemessen) – Rangliste und Messwerte [modelle/PERFORMANCE_BREMSEN_2026-11-20.md]
