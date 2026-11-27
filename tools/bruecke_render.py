@@ -212,7 +212,23 @@ def start_aus_zone(zone):
 TAU_GROB = (8.0, 5.0)   # grobe Runden mit weicher Kappe (breites Einzugsgebiet), feine mit TAU
 
 
-def kandidaten_aus_sweep(kams, bilder, zone, raster=0.04, reserve=0.6, max_hoehen=10, log=print):
+def lichtraum_unterkante(Xall, zone, kern=0.6, bin_m=0.1, anteil=0.1):
+    """LAGE-VETO aus der Wolke (nur Veto, nie Form): unter einer Bruecke ist der Raum zwischen Strasse und Deck fast leer (Strasse, Autos, Menschen
+    geben nur duenne Punkte), das Deck ist die UNTERSTE DICHTE Schicht. Im Kern des Grundrisses (|q| < kern x qmax, mittlere kern-Anteile der Laenge)
+    z-Histogramm der Wolke; erste Klasse von unten mit >= anteil x der vollsten Klasse = Deck-Unterseite laut Wolke. Rueckgabe dict oder None (zu wenig Punkte).
+    27.11.: Hoehenkandidaten 1,78/1,98/2,16 (Strassenkanten) wurden sonst als Unterkante zugeordnet. Echte Wolke: 0-4,5 m je 0,5 m 30-120 Punkte,
+    4,5-5,0 m 2165, 5,0-5,5 m 24332 (leere Luecke gibt es nicht - Strassenpunkte streuen bis 4 m; deshalb Dichte statt Leerstelle)."""
+    if Xall is None or not len(Xall): return None
+    l = zone["rahmen"].lokal(Xall); L = zone["s1"] - zone["s0"]; m = 0.5 * (zone["s0"] + zone["s1"])
+    sel = (np.abs(l[:, 1]) < kern * zone["qmax"]) & (np.abs(l[:, 0] - m) < 0.5 * kern * L) & (l[:, 2] < zone["z1"])
+    z = l[sel, 2]
+    if len(z) < 500: return None
+    bins = np.arange(np.percentile(z, 0.5), zone["z1"] + bin_m, bin_m); h = np.histogram(z, bins)[0]
+    i = int(np.argmax(h >= anteil * h.max()))
+    return dict(deck_unten=round(float(bins[i]), 2), punkte=int(len(z)), voll=int(h.max()))
+
+
+def kandidaten_aus_sweep(kams, bilder, zone, raster=0.04, reserve=0.6, max_hoehen=10, log=print, lichtraum=None):
     """KANDIDATEN aus dem Linien-Sweep (bruecke_messen.messen): Wandebenen, Pfostenabstand, Enden und ALLE Hoehenspitzen der Wandprofile - ohne Zuordnung.
     Welche Spitze Unterkante/Holm/Riegel/Traufe ist, entscheidet danach der Render-Abgleich (Modell mit Verdeckung), nicht eine Reihenfolgeregel."""
     t0 = time.time(); kbs = [BM.kantenbild(b) for b in bilder]
@@ -227,7 +243,11 @@ def kandidaten_aus_sweep(kams, bilder, zone, raster=0.04, reserve=0.6, max_hoehe
     for s in sp:
         if all(abs(s["x"] - h) > 0.1 for h in H): H.append(s["x"])
         if len(H) >= max_hoehen: break
-    K["hoehen"] = sorted(H)
+    if lichtraum:     # Kanten unter der Deck-Unterseite laut Wolke (Strasse, Autos) koennen nicht zur Bruecke gehoeren; 0,3 m Spiel fuer Wolkenrauschen
+        weg = [h for h in H if h < lichtraum["deck_unten"] - 0.3]
+        if weg: log(f"  Lichtraum-Veto (Wolke: unterste dichte Schicht ab {lichtraum['deck_unten']} m): Hoehen {', '.join(f'{h:.2f}' for h in sorted(weg))} verworfen")
+        H = [h for h in H if h >= lichtraum["deck_unten"] - 0.3]
+    K["hoehen"] = sorted(H); K["lichtraum"] = lichtraum
     P_ = ml["parameter"]
     if P_.get("breite", {}).get("wert") is not None: b = P_["breite"]["wert"]; K["waende"].append((ml["qc"] - b / 2, ml["qc"] + b / 2))
     r = diag.get("r"); qm = zone["qmax"] * (1 + reserve); qs = np.arange(-qm, qm + 1e-9, raster)
@@ -363,7 +383,7 @@ def massliste(x, ab, beleg, zone, min_fotos=3, namen=None):
     return P
 
 
-def abgleich(kams, bilder, zone, teiler=2, wolke=None, log=print, threads=8, grob_runden=3, fein_runden=2, namen=None, sweep=True):
+def abgleich(kams, bilder, zone, teiler=2, wolke=None, log=print, threads=8, grob_runden=3, fein_runden=2, namen=None, sweep=True, wolke_alle=None):
     """Kern: Kameras + Grauwertbilder + Zone -> Massliste (dict wie bruecke_messen.messen, methode 'render_abgleich')."""
     t0 = time.time(); R = zone["rahmen"]; kams_alle, bilder_alle = list(kams), list(bilder)
     # Kameras IN der Zone (Fotos auf dem Steg) nicht verwenden: die Kamera steckt im Modell, Nahebene des Rasterers (1 m) -> Sicht nicht rechenbar.
@@ -380,7 +400,7 @@ def abgleich(kams, bilder, zone, teiler=2, wolke=None, log=print, threads=8, gro
     nseg = sum(f.n_seg for f in fks); log(f"  Fotokanten: {len(fks)} Fotos, {nseg} LSD-Segmente  [{time.time() - t0:.0f} s]")
     if nseg < 10 * len(fks): return dict(status="nicht belegt", grund=f"zu wenige Fotokanten ({nseg})", methode="render_abgleich")
     ab = Abgleich(fks, zone, threads=threads, log=log)
-    K = kandidaten_aus_sweep(kams_alle, bilder_alle, zone, log=log) if sweep else None     # Sweep braucht keine Rasterung: alle Kameras, auch die auf dem Steg
+    K = kandidaten_aus_sweep(kams_alle, bilder_alle, zone, log=log, lichtraum=lichtraum_unterkante(wolke_alle, zone)) if sweep else None     # Sweep braucht keine Rasterung: alle Kameras, auch die auf dem Steg
     x, kurven = suchen(ab, zone, grob_runden, fein_runden, log, K=K)
     g, F = ab.guete(x)
     if g <= -1e8 or g <= 0: return dict(status="nicht belegt", grund=f"kein gueltiges oder kein belegtes Modell (Guete {g:.3f} m)", methode="render_abgleich")
@@ -405,13 +425,14 @@ def lauf(kamwahl, lage, ausdir, wolke=None, skala=1.0, tausch=True, teiler=2, ma
     names = list(Wj["kameras"])[:max_kam]; kams = [Wj["kameras"][n] for n in names]
     with ThreadPoolExecutor(16) as ex: bilder = list(ex.map(lambda nc: BM.bild_laden(Wj["bilddir"], nc[0], nc[1]), zip(names, kams)))
     zone = BM.zone_aus_lage(L, skala); X = None
-    if wolke: X = BM.ausser_zone(BM.ply_lesen(wolke, nmax=2_000_000), BM.zone_aus_lage(L, 1.6)); print(f"  Wolke (ausserhalb der Zone x1,6): {len(X)} Punkte")
+    Xall = None
+    if wolke: Xall = BM.ply_lesen(wolke, nmax=2_000_000); X = BM.ausser_zone(Xall, BM.zone_aus_lage(L, 1.6)); print(f"  Wolke (ausserhalb der Zone x1,6): {len(X)} Punkte")
     lg = lambda *a: print(*a, flush=True)
-    lg(f"Render-Abgleich Zone x{skala}"); ml = abgleich(kams, bilder, zone, teiler, X, threads=threads, namen=names, log=lg)
+    lg(f"Render-Abgleich Zone x{skala}"); ml = abgleich(kams, bilder, zone, teiler, X, threads=threads, namen=names, log=lg, wolke_alle=Xall)
     if tausch and ml["status"] == "gemessen":
         andere = []
         for f in (0.7, 1.3):
-            lg(f"Tauschtest Zone x{skala * f:.2f}"); andere.append(abgleich(kams, bilder, BM.zone_aus_lage(L, skala * f), teiler, X, threads=threads, namen=names, log=lg))
+            lg(f"Tauschtest Zone x{skala * f:.2f}"); andere.append(abgleich(kams, bilder, BM.zone_aus_lage(L, skala * f), teiler, X, threads=threads, namen=names, log=lg, wolke_alle=Xall))
         BM.tausch_pruefen(ml, andere); ml["tausch"] = [dict(skala=round(skala * f, 2), werte={k: v.get("wert") for k, v in a.get("parameter", {}).items()}) for f, a in zip((0.7, 1.3), andere)]
         print("  Tauschtest:", ", ".join(f"{k} {v['tausch_werte']}" for k, v in ml["parameter"].items() if v.get("status") == "instabil") or "stabil")
     ml.update(kameras=names, zone_skala=skala, lage=os.path.abspath(lage), wolke=wolke)

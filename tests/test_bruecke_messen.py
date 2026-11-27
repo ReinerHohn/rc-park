@@ -9,8 +9,9 @@
   4 SAEGEZAHN   Treppe und Rampe mit Kerben getrennt. Fehler 'saege': Schaetzer, der nur Hoehen-Spruenge zaehlt -> ROT.
   5 KEIN STILLER FALLBACK  leere Kantenbilder -> 'nicht belegt'; Gang ohne Treppe/mit Ersatzform -> bruecke_tor ROT. Fehler 'still': altes Tor (nur art) -> ROT.
   6 QUELLEN NICHT MITTELN  Spannweite gegen DOM1-Laenge > Toleranz -> Widerspruch (ROT). Fehler 'mitteln': Mittelwert statt Meldung -> ROT.
+  8 STRASSENKANTEN  Hoehenkandidaten unter der untersten dichten Wolkenschicht (Strasse/Autos) verworfen, Zone +-30 %. Fehler 'strasse': ohne Veto -> ROT.
   7 DRUCK       Teilung: jedes Teil ein wasserdichter Koerper, <= Bett, Wand >= 0,8 mm. Fehler 'druck': Mindestmass 0,3 mm -> ROT.
-Aufruf: test_bruecke_messen.py [--fehler kamera|zirkulaer|autokorr|saege|still|mitteln|druck] [--nur 1,3,...]  (rc 0 = alle bestanden)
+Aufruf: test_bruecke_messen.py [--fehler kamera|zirkulaer|autokorr|saege|still|mitteln|druck|strasse] [--nur 1,3,...]  (rc 0 = alle bestanden)
 """
 import sys, os, math, copy, json
 import numpy as np, cv2
@@ -192,6 +193,17 @@ def main():
         pruef(f"{tei['teile_n']} Teile, jedes ein wasserdichter Koerper <= Bett", all(t_["ok"] for t_ in teile), str([(t_["mass_mm"], t_["wasserdicht"], t_["koerper"]) for t_ in teile]))
         wd = msl["wand_dicke"] * 1000 / 87.0
         pruef("Wand-/Pfostendicke >= 0,8 mm (H0)", wd >= 0.8 - 1e-9, f"{wd:.2f} mm")
+    if NUR is None or "8" in NUR:
+        print("8 STRASSENKANTEN (Lichtraum-Veto aus der Wolke)")
+        rng = np.random.default_rng(8); R = BM.zone_aus_lage(LAGE)["rahmen"]
+        def wolke(n, s0, s1, q, z0, z1): return R.welt(rng.uniform(s0, s1, n), rng.uniform(-q, q, n), rng.uniform(z0, z1, n))
+        X = np.concatenate([wolke(300, -12, 12, 6, 0.8, 1.0), wolke(400, -12, 12, 6, 1.0, 2.3), wolke(200, -12, 12, 6, 2.3, 4.5),   # Strasse, Autos, Streu
+                            wolke(20000, -12, 12, 1.5, 5.4, 6.0), wolke(8000, -12, 12, 1.5, 6.0, 9.9)])                              # Deck, Waende/Dach
+        kand = [1.78, 1.98, 2.16, 5.40, 7.00, 8.60]
+        for f in (0.7, 1.0, 1.3):
+            lr = None if FEHLER == "strasse" else BR.lichtraum_unterkante(X, BM.zone_aus_lage(LAGE, f))
+            bleib = [h for h in kand if lr is None or h >= lr["deck_unten"] - 0.3]
+            pruef(f"Zone x{f}: Strassenkanten verworfen, Deck-Unterkante 5,40 bleibt", bleib == [5.40, 7.00, 8.60], f"{lr} -> {bleib}")
     print("ERGEBNIS:", "alle Pruefungen bestanden" if F == 0 else f"{F} FEHLER" + (f" (eingebauter Fehler '{FEHLER}')" if FEHLER else ""))
     return 0 if F == 0 else 1
 
