@@ -3,6 +3,7 @@ Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTIN
 
 ## Gilt
 - **Grundbegriffe (Nutzer 26.11.):** Merkmale, Matching, Mapper, Registrierung, Tiefenkarte, Fusion, wann was → [foto-sfm/grundbegriffe.md](foto-sfm/grundbegriffe.md)
+- **Teilmodell-Einpassung nur mit Qualitätstor (27.11.):** `ausgerichtet` nur bei Rest relativ ≤ 0,025, Drehfehler ≤ 0,6°, genug verteilten Ankern; sonst UNSICHER, und die Nachtkette bricht vor der dichten Wolke ab → [foto-sfm/teilmodell_qualitaetstor.md](foto-sfm/teilmodell_qualitaetstor.md)
 - **Kernmethode (Nutzer 15.11.):** Form = Fotokanten + Triangulation mit SfM-Kameras; dichte Wolke/LoD2/DOM1 nur Lage-Veto, Höhe, Gegenprobe.
 - **Wandbild = Bauplan (17.11.):** jede Wand aus vielen Fotos entzerrt (1-cm-Raster) + Tiefe je Zelle → Gestalt nachbilden; kein Musterteil.
 - Neue Objekte: Fotos → SfM → LoD2 nur Abgleich (entschieden 20.11., Nutzer „neuer ist besser"; ersetzt „LOD2 = Massing" aus Okt.).

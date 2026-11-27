@@ -5,9 +5,13 @@
 T=${T:-/media/oem/rcdaten/tmp/handy_teil_dicht}
 PY=/media/oem/scan/venv-colmap/bin/python
 AUS=modelle/schwabentor-1122/messprotokoll/SFM-AUSRICHTUNG-schwabentor-1122.json
+# Qualitaetstor (27.11.): die Wolke in $T stammt aus dem eingepassten Teilmodell TM in EIN; Fusion nur bei status "ausgerichtet" (tools/teilmodell_ausrichten.py --tor)
+EIN=${EIN:-/media/oem/rcdaten/rc-park_daten_neu/zusatz_20261126_voll/lg/teilmodell/ausrichtung.json}; TM=${TM:-0}
 cd "$(dirname "$0")/.." || exit 2
 t() { echo "$(date '+%F %T') $*"; }
 warte() { local l=$1 m=$2 i=0; while [ $i -lt $m ]; do grep -q '^JOB_ENDE' "$l" 2>/dev/null && { grep '^JOB_ENDE' "$l" | tail -1 | sed 's/.*rc=//'; return 0; }; sleep 30; i=$((i+30)); done; echo 99; }
+g=$($PY -I tools/teilmodell_ausrichten.py --tor "$EIN" --modell "$TM"); rc=$?; t "$g"
+[ "$rc" = 0 ] || { t "ABBRUCH: Einpassung von Teilmodell $TM nicht belegt (Qualitaetstor), keine Fusion - erst tools/teilmodell_spuren_einpassen.py + Gegenproben"; exit 1; }
 t "warte auf Ende von dicht_modell (Tiefenkarten + Teilfusion, max 5 h)"
 rc=$(warte "$T/dicht.log" 18000); t "ENDE dicht_modell rc=$rc"
 [ "$rc" = 0 ] && [ -f "$T/dicht/fused.ply" ] || { t "HINWEIS: Teilfusion (Methode A) fehlt oder rc!=0; Kachelfusion laeuft trotzdem"; A=0; }

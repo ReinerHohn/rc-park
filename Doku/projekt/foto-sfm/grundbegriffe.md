@@ -1,5 +1,5 @@
 # Grundbegriffe: von Fotos zur dichten Wolke (Erklärung 26.11.2026, Schwabentor)
-← [foto-sfm](../foto-sfm.md) · Werkzeuge: `tools/zusatzfotos_registrieren.py`, `tools/zusatzfotos_lightglue.py`, `tools/handy_teilmodell.py`, `tools/teilmodell_ausrichten.py`, `tools/dichte_nachtrag.py`, `tools/kachelfusion.py`
+← [foto-sfm](../foto-sfm.md) · Werkzeuge: `tools/zusatzfotos_registrieren.py`, `tools/zusatzfotos_lightglue.py`, `tools/handy_teilmodell.py`, `tools/teilmodell_ausrichten.py` (Qualitätstor: [teilmodell_qualitaetstor.md](teilmodell_qualitaetstor.md)), `tools/dichte_nachtrag.py`, `tools/kachelfusion.py`
 
 ## Gilt
 Die Kette läuft in dieser Reihenfolge. Jeder Schritt beantwortet eine eigene Frage:
@@ -21,6 +21,7 @@ Wann was:
 - Mapper nur auf den 241 Fotos: 5 Teilmodelle (55/29/72/10/8 Bilder, Reproj 0,65–0,97 px). Einpassen über gemeinsame Fotos: Modell 0 (alle schon im Netz) und 3 (10 Bilder) passen, Modell 2 (72 Bilder, 40 neu) nur mit 1,0 m Rest (unbrauchbar), Modelle 1 und 4 (37 neue Fotos, vermutlich Brücke/Unterdurchgang) haben 0–1 gemeinsame Fotos = nicht einpassbar.
 - Fehler beim Vorgehen (Lehre): `--ref-db` muss zur Rekonstruktion `--sparse` passen (hier `db_mapper.db` zu `sfm/sparse/0`, nicht `db.db`); vor dem Start Rig-Kennungen vergleichen, sonst Absturz in `triangulate_points` nach 30 min Matching.
 - 27.11.: Teilmodell aus allen 677 Fotos (634 Bilder, eigenes Netz) per Kamerazentren eingepasst = Steg 1 m zu hoch; neu über direkte 3D-Spuren (`tools/teilmodell_spuren_einpassen.py`): Steg in Modellmetern belegt durch DOM1-Dach (+0,07 m), LoD2-Turmbreite (≤ 2,8 %), GPS grob; Mitte UTM 414550/5316160, Dach 32,5 m lang, 3,5–3,8 m breit, First 10,4 m, waagerecht (Wolke −0,2°, DOM1 0,3°). Details/Bilder: `modelle/schwabentor-1122/messprotokoll/bruecke_lage_1127/`, Ast [ausrichtung](../lage-seiten/ausrichtung.md).
+- 27.11. · Einpassung Teilmodell über Kamerazentren ohne Qualitätstor (`teilmodell_ausrichten.py`) → ⚠ Falle (Tor fehlte) · Handy-Teilmodell 0 (324 gemeinsame Bilder) hieß „ausgerichtet“ bei Rest 1,43 m (max. 8,8 m). Die Nachtkette rechnete darauf die dichte Wolke. Die Spur-Einpassung (lage-bruecke) zeigte: Steg 1 m zu hoch, Maßstab +1,7 %. Ursache: die PnP-Posen des Hauptnetzes sind an der Brücke schwach (Drehfehler-Median 1,6°); eine Extrapolation lag nicht vor (Hebel 1,4). Lehre: ein Status ohne Schwelle ist kein Urteil. Neues Tor: Rest relativ ≤ 0,025, Drehfehler ≤ 0,6°, Anker/Linie/Hebel; die Nachtkette bricht ab → [teilmodell_qualitaetstor.md](teilmodell_qualitaetstor.md) · Test `tools/test_teilmodell_qualitaetstor.py`
 
 ## Offen
 - Hauptnetz sieht den Steg (vf_244, PnP-Posen) 1 m höher als Laser und Teilnetz; Hauptnetz hat dort nur 34 Punkte. Beleg fehlt: Fernfotos (Schlossberg-Weg oder gegenüberliegender Gehweg), die Turm UND ganzen Steg im selben Bild zeigen.
