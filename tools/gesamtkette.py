@@ -729,6 +729,16 @@ def main():
         if gesperrt:
             notiz(B, "lage_tor", False, fehler=f"Lage des Fotonetzes ist NICHT belegt ({B['lage'].get('hinweis') or B['lage'].get('fehler') or ''} Tore {B['lage'].get('tore')}) - Stufen {', '.join(gesperrt)} uebersprungen. Erst Ausrichtung klaeren (mehr Fotos rundum, GPS, Stufe 'tore'); erzwingen: --trotz-lage")
             _dran0 = dran; dran = lambda s_: _dran0(s_) and s_ not in gesperrt
+    # 27.11.2026 WOLKEN VEREINEN (Nutzer: "Ich dachte, das machst du automatisch. Wie machst du das in Zukunft? Immer vereinen."; Schwabentor: Handy-Wolke hatte Nord 4x weniger
+    # Punkte als die alte, die Nachtkette rechnete nur auf ihr). Nach bestandenen Toren: frische Wolke W als Bezug + alle Wolken aus modelle/<ziel>/wolken.json (fehlt es: das der Quelle)
+    # -> tools/wolke_vereinigen.py (Lagetore je Quelle und Block, Voxel-Gewinner; rc 3 = eine Zone vereint < beste Quelle). Nur bei rc 0 rechnen die Folgestufen mit der vereinten Wolke.
+    if dran("tore") and os.path.exists(W) and os.environ.get("RCPARK_WOLKEN_VEREINEN", "1") != "0" and (B.get("lage") or {}).get("bestanden", True):
+        _WVK = __import__("wolken_vereinen_kette"); n_wv, t_wv = _WVK.vorbereiten(ZJ, QJ if os.path.exists(QJ) else None, W)
+        if n_wv < 2: notiz(B, "wolken_vereinen", True, hinweis=f"nur eine Wolke im Register ({t_wv}) - nichts zu vereinen")
+        else:
+            AWV = os.path.join(D, "wolken_vereint"); rc_wv, _ = lauf(B, "wolken_vereinen", _WVK.befehl(PYC, ZR, AWV), log, ok=(0, 3), platz=[D])
+            ok_wv, txt_wv, W_wv = _WVK.ergebnis(AWV, rc_wv); notiz(B, "wolken_vereinen_ergebnis", ok_wv, hinweis=t_wv + " | " + txt_wv)
+            if W_wv: W = W_wv; print(f"    WOLKE fuer die Folgestufen: {W}", flush=True)
     if dran("dach"):
         lauf(B, "dach", [PY, "-I", "tools/dach_vermessen.py", ZR] + (["--wolke", W] if os.path.exists(W) else []), log)
     if dran("bauen"):

@@ -1,6 +1,6 @@
 #!/bin/bash
 # handy_dicht_nachlauf.sh - zweite Nachtstufe nach tools/handy_nachlauf.sh: dichte Wolke der registrierten Handyfotos 26.11. (Schwabentor).
-# Wartet auf "FERTIG" in $Z/nachlauf.log, dann: Union-Bilderordner -> dichte_nachtrag (GPU, ueber job_start gebucht) -> kachelfusion -> wolke_vereinigen.
+# Wartet auf "FERTIG" in $Z/nachlauf.log, dann: Union-Bilderordner -> dichte_nachtrag (GPU, ueber job_start gebucht) -> kachelfusion -> wolken_vereinen_stufe.sh (alle Wolken des Objekts).
 # Befehle wie die erste Handy-Wolke vom 26.11. (journalctl: handy-dicht-1126b / handy-fusion-1126b / handy-vereinigen-1126). Protokoll: $Z/dicht_nachlauf.log
 # Qualitaetstor (27.11.): SP = Eingangs-Rekonstruktion (Standard Registrierung $Z/lg/sparse_handy/0, KEIN Teilmodell -> Tor entfaellt, wird protokolliert).
 # Ist SP ein eingepasstes Teilmodell (<teil>/<n>_ausgerichtet) oder EIN gesetzt, rechnet die Wolke nur bei status "ausgerichtet" in EIN (tools/teilmodell_ausrichten.py --tor).
@@ -35,8 +35,8 @@ t "START dichte_nachtrag"; rc=$(warte "$L1" 21600); t "ENDE dichte_nachtrag rc=$
 L2=$O/fusion.log; rm -f "$L2"
 JOB_RAM_MB=11000 bash tools/job_start.sh handy2-fusion "$L2" $PY -I tools/kachelfusion.py "$O/dicht" "$O/handy_fusion.ply" --ausrichtung $AUS --box -30 30 -30 30 --ohne_muster LMS3Va6psfY
 t "START kachelfusion"; rc=$(warte "$L2" 14400); t "ENDE kachelfusion rc=$rc"; [ "$rc" = 0 ] || { t "ABBRUCH kachelfusion"; exit 1; }
-# 3. Vereinigen mit der bestehenden dichten Wolke
-L3=$O/vereinigen.log; rm -f "$L3"
-JOB_RAM_MB=11000 bash tools/job_start.sh handy2-vereinigen "$L3" $PY -I tools/wolke_vereinigen.py "$D/pipe/dicht/fused.ply" "$O/handy_vereint.ply" --ausrichtung $AUS --quelle handy_fusion="$O/handy_fusion.ply" --npy "$O/handy_vereint"
-t "START wolke_vereinigen"; rc=$(warte "$L3" 7200); t "ENDE wolke_vereinigen rc=$rc"; [ "$rc" = 0 ] || { t "ABBRUCH wolke_vereinigen"; exit 1; }
-t "FERTIG: dichte Wolke $O/handy_vereint.ply (Bruecke/Treppe sichtbar? Bild rendern)"
+# 3. Vereinigen mit ALLEN Wolken des Objekts (27.11.2026, Nutzer: "Immer vereinen"; vorher nur mit pipe/dicht/fused.ply): Register modelle/<obj>/wolken.json, Lagetore
+OBJ=${OBJ:-modelle/schwabentor-1122/objekt.json}
+bash tools/wolken_vereinen_stufe.sh "$OBJ" "${WV_NAME:-handy2_fusion}" "$O/handy_fusion.ply" "sfm:$AUS" "${EIN:+teilmodell:$EIN#${TM:-0}}"; rc=$?
+t "ENDE wolken_vereinen rc=$rc (3 = nicht vereint/ROT, Grund oben)"; [ "$rc" = 0 ] || [ "$rc" = 3 ] || { t "ABBRUCH wolken_vereinen"; exit 1; }
+t "FERTIG: dichte Wolke $O/handy_fusion.ply, vereint: /media/oem/rcdaten/tmp/wolken_vereint/$(basename "$(dirname "$OBJ")")/ (Bruecke/Treppe sichtbar? Bild rendern)"

@@ -1,4 +1,4 @@
-# Werkzeuge: test (230)
+# Werkzeuge: test (233)
 - `tools/test_abdeckung_echt.py` [-] Fester Test (~5 s) fuer tools/abdeckung_meldung.py auf ECHTEN Kameras + Spurpunkten (Review 27.11.2026: der alte Test sicherte nur bedingte Logik, Mini-Datensatz ohne Spurpunkte, l
 - `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Hier OHNE Lagedatei
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
@@ -226,6 +226,9 @@
 - `tools/test_wolke_solid.py` [gen] test_wolke_solid.py - Beweise T1-T4' der Spec S3b (vorab festgelegt, modelle/archiv/SPEC_S3b_WOLKE_ZUERST.md + Nutzerentscheid 5.11. 20:10/20:15).
 - `tools/test_wolke_umgebung.py` [gen] test_wolke_umgebung.py - BEWEIS (bekannte Wahrheit) fuer wolke_umgebung.py. Synthetisch: Haus 12x8x8 + Erker (giebel) an +y, Wolke mit bekanntem Rauschen sigma=0.03 m. R gemessenes
 - `tools/test_wolke_verdeckung.py` [-] Synthetischer Beweis fuer wolke_verdeckung.py (L-KR26): Teil (Wand in 10 m) hinter einer Wolken-'Decke' (6 m), die nicht im Modell ist. Aufruf: /media/oem/scan/venv-seg/bin/python 
+- `tools/test_wolke_vereinigen.py` [seg] test_wolke_vereinigen.py - ROTER TEST fuer tools/wolke_vereinigen.py (27.11.2026, Nutzer: "Immer vereinen"; Schwabentor: Handy-Wolke ersetzte die alte NICHT). Synthetische Wolken (
+- `tools/test_wolken_vereinen_kette.py` [-] test_wolken_vereinen_kette.py - Dummy-Test des Kettenschritts wolken_vereinen (tools/wolken_vereinen_kette.py, tools/gesamtkette.py) ohne Rechenjob (27.11.2026). Prueft: Register d
+- `tools/test_wolken_vereinen_stufe.sh` [sh] test_wolken_vereinen_stufe.sh - Dummy-Test der Nachtketten-Schlussstufe tools/wolken_vereinen_stufe.sh (27.11.2026): zwei kleine Wolken, direkt (WV_DIREKT=1, kein systemd-Job). Erw
 - `tools/test_zonen_verworfen.py` [-] Test: verworfene Erkennungen sind keine Bauteil-Zonen (befundliste.bauteil_zonen -> neben_details, befundliste).
 - `tools/test_zusatzfotos_kameras.py` [-] Test zusatzfotos_registrieren.kamera_gruppen: Gruppen aus Format UND Zoomklasse, f/k1/cy aus Parameter-JSON (f in Bildpixeln = f_orig*skala), Hauptpunkt auf das UNGECROPPTE Origina
 - `tools/test_zusatzfotos_lightglue.py` [-] Test zusatzfotos_lightglue.py: Stufen/Argumente vorhanden, Modul ohne torch/pycolmap importierbar, GPU-Werkzeugliste enthaelt es; bei vorhandenem Ergebnis (kaufhaus_handy/lg) Plaus

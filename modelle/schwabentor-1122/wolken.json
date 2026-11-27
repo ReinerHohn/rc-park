@@ -1,0 +1,26 @@
+{
+ "zweck": "dichte Wolken dieses Objekts fuer tools/wolke_vereinigen.py (Reihenfolge = Vorrang, erste = Bezug)",
+ "quellen": [
+  {
+   "name": "hauptnetz_alles",
+   "pfad": "/media/oem/rcdaten/tmp/kf_ergebnis/fused_alles.ply",
+   "rahmen": "sfm:modelle/schwabentor-1122/messprotokoll/SFM-AUSRICHTUNG-schwabentor-1122.json",
+   "lagetor": "",
+   "angemeldet": "2026-11-27 12:43"
+  },
+  {
+   "name": "kette",
+   "pfad": "modelle/schwabentor-1122/sfm/punkte_modell_schwabentor-1122.npy",
+   "rahmen": "modell",
+   "lagetor": "",
+   "angemeldet": "2026-11-27 12:43"
+  },
+  {
+   "name": "handy_teil",
+   "pfad": "/media/oem/rcdaten/tmp/handy_teil_spuren/wolke_modell.ply",
+   "rahmen": "modell",
+   "lagetor": "spuren:/media/oem/rcdaten/tmp/handy_teil_spuren/einpassung.json",
+   "angemeldet": "2026-11-27 12:43"
+  }
+ ]
+}

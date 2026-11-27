@@ -2,6 +2,7 @@
 Details: `modelle/GLOBALER_MAPPER_STABIL.md` · `modelle/VERSUCHSREGISTER_MARTINSTOR.md` · `modelle/NICHTS_GEBRACHT.md` (Inhalt: `modelle/inhalt/`) · Nachbaräste: [lage-seiten](lage-seiten.md), [wolke-wandbild](wolke-wandbild.md), [kanten-messen](kanten-messen.md), [bauteile-kreis](bauteile-kreis.md), [betrieb](betrieb.md) · **Unteräste (vollständig, je Quelleintrag eine Zeile):** [fotoauswahl](foto-sfm/fotoauswahl.md) · [kameras](foto-sfm/kameras.md) · [mapper](foto-sfm/mapper.md) · [zuordnung](foto-sfm/zuordnung.md)
 
 ## Gilt
+- **Immer vereinen (Nutzer 27.11.):** jede neue dichte Wolke mit ALLEN Wolken des Objekts in einen Modellrahmen (Register `modelle/<obj>/wolken.json`, Lagetore je Quelle/Block, Voxel-Gewinner, rot wenn eine Zone unter die beste Quelle faellt) → [foto-sfm/wolken-vereinen.md](foto-sfm/wolken-vereinen.md)
 - **Grundbegriffe (Nutzer 26.11.):** Merkmale, Matching, Mapper, Registrierung, Tiefenkarte, Fusion, wann was → [foto-sfm/grundbegriffe.md](foto-sfm/grundbegriffe.md)
 - **Teilmodell-Einpassung nur mit Qualitätstor (27.11.):** `ausgerichtet` nur bei Rest relativ ≤ 0,025, Drehfehler ≤ 0,6°, genug verteilten Ankern; sonst UNSICHER, und die Nachtkette bricht vor der dichten Wolke ab → [foto-sfm/teilmodell_qualitaetstor.md](foto-sfm/teilmodell_qualitaetstor.md)
 - **Kernmethode (Nutzer 15.11.):** Form = Fotokanten + Triangulation mit SfM-Kameras; dichte Wolke/LoD2/DOM1 nur Lage-Veto, Höhe, Gegenprobe.

@@ -1,4 +1,4 @@
-# Werkzeuge: wolke_dicht (99)
+# Werkzeuge: wolke_dicht (102)
 - `tools/bauteil_element_wolke.py` [gen] bauteil_element_wolke.py - Elemente, die die AUTOMATISCHE Elementschleife (generator_elemente_schleife.py) aus dem Restfeld der Wolke ableitet.
 - `tools/bauteil_rumpf_wolke.py` [-] bauteil_rumpf_wolke.py - Rumpf + Dach AUS DER DICHTEN PUNKTWOLKE (Spec S3b, Nutzerregel 6.11.: Wolke = erste Wahrheit).
 - `tools/bogen_aus_wolke.py` [seg] bogen_aus_wolke.py - Bogenoeffnungen als LOECHER in einer duennen Platte der Wolke um die Fassadenebene messen (3D-Lage, keine Foto-Ebenenannahme). Schritte: Rahmen (Umeyama) -> Ti
@@ -93,8 +93,11 @@
 - `tools/wolke_umgebung.py` [seg] wolke_umgebung.py - UMGEBUNGSMASKE und RAUSCHMESSUNG fuer die Elementschleife (generator_elemente_schleife.py). Nichts Objektspezifisches.
 - `tools/wolke_verdeckung.py` [seg] wolke_verdeckung.py - FOTOWOLKEN-VERDECKUNG fuer die Sichtbarkeitspruefung (teil_fotoform, L-KR26, Nutzer 10.11. abends).
 - `tools/wolke_verdeckung_karte.py` [seg] Diagnose zu wolke_verdeckung: Wolkentiefenkarte je Foto als Bild (Farbe = Tiefe, schwarz = keine gestuetzte Wolke) neben dem Foto. Aufruf: venv-seg/bin/python -W ignore -I tools/wo
-- `tools/wolke_vereinigen.py` [seg] wolke_vereinigen.py <basis.ply> <aus.ply> --ausrichtung SFM-AUSRICHTUNG.json --quelle NAME=PFAD.ply [--quelle ...] [--voxel 0.015] [--max_abw 0.05]
+- `tools/wolke_vereinigen.py` [seg] wolke_vereinigen.py - ALLE dichten Wolken EINES Objekts zu einer vereinen, in EINEM Modellrahmen (Nutzer 26./27.11.2026: "alles mergen", "Immer vereinen").
 - `tools/wolke_vs_modell.py` [seg] wolke_vs_modell.py - GENERISCH: dichte Fotowolke gegen Modell-STL, automatisch, je Fassadenseite (Register AN).
 - `tools/wolke_zu_mesh.py` [-] wolke_zu_mesh.py - farbiges, geschlossenes Netz direkt aus der dichten Punktwolke (Poisson), ohne Handwerte; belegt/geschaetzt getrennt (Register BR).
 - `tools/wolke_zu_netz.py` [gen] wolke_zu_netz.py - Kandidaten Punktwolke -> Netz mit VERSCHIEDENEN Algorithmen (open3d), alle im Modellrahmen als STL (mm im Massstab 1:87) fuer tools/modell_wettbewerb.py. /media/
+- `tools/wolken_dichte_bild.py` [seg] wolken_dichte_bild.py - Kontrollbild zur Wolkenvereinigung (27.11.2026): je Wand Punktdichte in der Wandansicht (Laenge x Hoehe) fuer jede Quelle und VEREINT, dazu Draufsicht (Dich
+- `tools/wolken_vereinen_kette.py` [-] wolken_vereinen_kette.py - Kettenschritt 'wolken_vereinen' fuer tools/gesamtkette.py (27.11.2026, Nutzer: "Ich dachte, das machst du automatisch. ... Immer vereinen.").
+- `tools/wolken_vereinen_stufe.sh` [sh] wolken_vereinen_stufe.sh <objekt.json> <name> <wolke.ply|npy> <rahmen> [lagetor] - Schlussstufe JEDER Nachtkette mit neuer dichter Wolke (27.11.2026, Nutzer: "Immer vereinen"). 1. 
 - `tools/wolken_vergleich.py` [-] wolken_vergleich.py - mehrere Punktwolken derselben Seite MIT GLEICHEM SCHAETZER nebeneinander (Bewertung der Bodenwolke, Nutzerwunsch Sweetspot).
