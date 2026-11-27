@@ -315,6 +315,10 @@ def suchen(ab, zone, grob_runden=2, fein_runden=2, log=print, K=None):
             log(f"  grob {r + 1}: unveraendert -> Grobsuche beendet"); break
         log(f"  grob {r + 1}: Guete {ab.guete(x)[0]:.4f} ({ab.n_eval} Auswertungen, {time.time() - t0:.0f} s) " + ", ".join(f"{k} {x[k]:.2f}" for k in REIHE))
     kurven = {}; ab.tau = TAU
+    if K and K.get("hoehen"):
+        # Dach ZULETZT noch einmal bei feiner Kappe, wenn Waende/Hoehen/Pfosten stehen (27.11. Synthetik: in den Grobrunden lag das echte 40-Grad-Dach
+        # wegen 2-8 cm Restfehlern an Riegel/Wand unter einem Flachdach mit dicker Platte; mit den Endwerten gewinnt es)
+        x = dach_suchen(ab, x, K, log); ab.tau = TAU
     for r in range(fein_runden):
         for k in REIHE:
             st, w = FEIN[k]; lo, hi = S[k]; x = ab.abtasten(x, k, max(lo, x[k] - w), min(hi, x[k] + w), st, kurven if r == fein_runden - 1 else None)
@@ -361,7 +365,7 @@ def massliste(x, ab, beleg, zone, min_fotos=3, namen=None):
 
 def abgleich(kams, bilder, zone, teiler=2, wolke=None, log=print, threads=8, grob_runden=3, fein_runden=2, namen=None, sweep=True):
     """Kern: Kameras + Grauwertbilder + Zone -> Massliste (dict wie bruecke_messen.messen, methode 'render_abgleich')."""
-    t0 = time.time(); R = zone["rahmen"]
+    t0 = time.time(); R = zone["rahmen"]; kams_alle, bilder_alle = list(kams), list(bilder)
     # Kameras IN der Zone (Fotos auf dem Steg) nicht verwenden: die Kamera steckt im Modell, Nahebene des Rasterers (1 m) -> Sicht nicht rechenbar.
     # ANNAHME/Luecke: Laufebene und Deck innen bleiben so ohne Beleg (wie Abdeckung abd-steg: Deck innen duenn).
     innen = []
@@ -376,7 +380,7 @@ def abgleich(kams, bilder, zone, teiler=2, wolke=None, log=print, threads=8, gro
     nseg = sum(f.n_seg for f in fks); log(f"  Fotokanten: {len(fks)} Fotos, {nseg} LSD-Segmente  [{time.time() - t0:.0f} s]")
     if nseg < 10 * len(fks): return dict(status="nicht belegt", grund=f"zu wenige Fotokanten ({nseg})", methode="render_abgleich")
     ab = Abgleich(fks, zone, threads=threads, log=log)
-    K = kandidaten_aus_sweep(kams, bilder, zone, log=log) if sweep else None
+    K = kandidaten_aus_sweep(kams_alle, bilder_alle, zone, log=log) if sweep else None     # Sweep braucht keine Rasterung: alle Kameras, auch die auf dem Steg
     x, kurven = suchen(ab, zone, grob_runden, fein_runden, log, K=K)
     g, F = ab.guete(x)
     if g <= -1e8 or g <= 0: return dict(status="nicht belegt", grund=f"kein gueltiges oder kein belegtes Modell (Guete {g:.3f} m)", methode="render_abgleich")
