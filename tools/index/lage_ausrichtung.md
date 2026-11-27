@@ -7,7 +7,7 @@
 - `tools/bewerter_geometrie.py` [-] Juror 1 — GEOMETRIE-TREUE. Frage: Bildet das Modell den ECHTEN Ort geometrisch treu ab, oder frisst Glättung/Auflösung die markanten Kanten weg?
 - `tools/dgm_xyz_to_npy.py` [-] dgm_xyz_to_npy.py — LGL-DGM1 XYZ-Subkacheln -> ein north-up Höhenfeld (.npy).
 - `tools/dom1_kachel.py` [-] dom1_kachel.py - GENERISCH: DOM1-/DGM1-Hoehe an UTM-Lagen direkt aus den amtlichen LGL-Kacheln (GeoTIFF + .tfw = Mitte des Pixels links oben).
-- `tools/foto_auftrag_lage.py` [-] foto_auftrag_lage.py - FOTOAUFTRAG fuer eine SONDERSTELLE MIT LAGEDATEI (Bruecke/Steg, Anbau ...): Fernfotos, die HAUPTBAU UND STELLE zugleich zeigen, plus gezielte Nahstandpunkte 
+- `tools/foto_auftrag_lage.py` [-] foto_auftrag_lage.py - FOTOAUFTRAG fuer eine SONDERSTELLE MIT LAGEDATEI (Bruecke/Steg, Anbau ...): Fernfotos, die HAUPTBAU UND STELLE zugleich zeigen, plus Verwandt: tools/foto_auf
 - `tools/foto_georef_overlay.py` [seg] foto_georef_overlay.py — GENERISCH & georef: ein in Weltkoordinaten (UTM) stehendes Modell aus Kamera-Metadaten (GPS/Höhe/Kompass) in ein Foto projizieren — struktur-agnostisch (Vi
 - `tools/foto_lod2_zuordnen.py` [-] foto_lod2_zuordnen.py - GENERISCH: Was ist das Ding im Foto? LoD2-Gebaeude der Umgebung in die kalibrierte Kamera eines Fotos projizieren und fuer eine Bildstelle (u, v) sagen, wel
 - `tools/generator_ausrichten.py` [gen] generator_ausrichten.py - BS51: alten Generator-Kaufhaus (kaufhaus_measured.glb, Meter, eigener Rahmen) in den Wolkenrahmen (Netzrahmen, m) legen. Global: FPFH+RANSAC (Open3D, Mass

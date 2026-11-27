@@ -18,7 +18,8 @@ fehler = []
 def pruef(b, t):
     if not b: fehler.append(t); print("FEHLER:", t)
 
-tmp = tempfile.mkdtemp(prefix="test_gk_abdeckung_"); Z = os.path.join(tmp, "modelle", "obj"); os.makedirs(Z)
+from pfade import temp_ordner
+tmp = temp_ordner("test_gk_abdeckung_"); Z = os.path.join(tmp, "modelle", "obj"); os.makedirs(Z)
 AU = os.path.join(Z, "SFM-AUSRICHTUNG-obj.json"); open(AU, "w").write("{}")
 zo = os.path.join(tmp, "zusatz"); lg = os.path.join(zo, "lg"); os.makedirs(os.path.join(lg, "sparse_handy", "0")); os.makedirs(os.path.join(lg, "bilder"))
 open(os.path.join(lg, "registrierung.json"), "w").write("{}"); open(os.path.join(lg, "sparse_handy", "0", "images.bin"), "wb").write(b"x")

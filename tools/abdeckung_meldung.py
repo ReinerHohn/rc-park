@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """abdeckung_meldung.py - ABDECKUNGSMELDUNG NACH DER REGISTRIERUNG je Wand, Dach und Sonderstelle + Fotoauftrag + Grund je nicht eingeordnetem Foto
+Verwandt: tools/abdeckung_quellen.py (Richtungen/Abstaende je Quelle), tools/seiten_luecken.py (Luecken je Seite), tools/foto_auftrag_lage.py (Fotoauftrag zur Stelle).
+Vorlaeufer: keiner je Zone/Sonderstelle - Lage kommt aus Lagedatei, Fotos je Teil gemessen (27.11.).
 (Spec modelle/SPEC_VOLLAUTOMATIK_FOTOS_ZU_3D.md Anforderung 1b-1d, 26.11.2026; Handyfotos Schwabentor: 97 von 241 eingeordnet, Bruecke/Treppe/Unterdurchgang/
 Treppenturm fehlten im Netz und wurden nirgends gemeldet).
 

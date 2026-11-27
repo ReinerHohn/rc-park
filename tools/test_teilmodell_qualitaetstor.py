@@ -69,7 +69,9 @@ r = TA.einpassung_guete(A, Bm, np.ones(n, bool), *TA.umeyama(A, Bm), 1.0, None, 
 pruef(r["status"].startswith("UNSICHER") and "nicht pruefbar" in r["status"], "ohne Drehungen -> UNSICHER (nicht pruefbar)")
 
 # Tor fuer die Nachtkette
-d = tempfile.mkdtemp(); p = os.path.join(d, "ausrichtung.json")
+import sys as _s, os as _o; _s.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+from pfade import temp_ordner
+d = temp_ordner("test_qtor_"); p = os.path.join(d, "ausrichtung.json")
 json.dump({"0": {"status": g["status"], "rest_mittel_m": 1.43}, "1": {"status": "ausgerichtet"}}, open(p, "w"))
 pruef(TA.tor(p, "0")[0] == 3 and TA.tor(p, "1")[0] == 0 and TA.tor(p, "7")[0] == 3 and TA.tor(os.path.join(d, "fehlt.json"))[0] == 3, "tor(): nur 'ausgerichtet' -> rc 0; UNSICHER/fehlend -> rc 3")
 for sh in ("handy_dicht_nachlauf.sh", "handy_fusion_nachlauf.sh"):

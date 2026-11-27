@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """foto_auftrag_lage.py - FOTOAUFTRAG fuer eine SONDERSTELLE MIT LAGEDATEI (Bruecke/Steg, Anbau ...): Fernfotos, die HAUPTBAU UND STELLE zugleich zeigen, plus
+Verwandt: tools/foto_auftrag_skizze.py (Sicht, Raster, Luftbild), tools/foto_auftrag.py (HTML-Auftrag), tools/abdeckung_meldung.py (liefert die offenen Teile).
+Vorlaeufer: foto_auftrag_skizze.py kannte keine Sonderstelle mit Lagedatei und keinen Fernstandpunkt mit Turm UND Stelle im Bild.
 gezielte Nahstandpunkte fuer die duennen/nicht belegten Teile der Stelle aus tools/abdeckung_meldung.py (27.11.2026, Schwabentorsteg).
 
 WARUM: Die Lage des Stegs stammt aus einem eingepassten Handy-Teilmodell; das Hauptnetz hat am Steg nur 34 Punkte, Hauptnetzkamera vf_244 und Laser (DOM1-Dach,
