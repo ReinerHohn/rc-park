@@ -157,19 +157,11 @@ def senk_sweep(kams, kbs, R, ss, qs, z_mitte, laenge=1.2, M=16, min_px=40.0, sch
 
 def hoehen_profil(kams, kbs, R, s0, s1, q, zs, fenster=4.0, M=24, min_px=120.0, schwelle=0.3):
     """1D-Profil P[z] fuer waagrechte Laengsgeraden in der senkrechten Ebene q (Seitenwand, Firstachse): Anteil zustimmender Fotos, gemittelt ueber Fenster.
-    BEIDSEITIG (27.11., Synthetik): eine Gerade, die wirklich in der Ebene q liegt, sehen Fotos von BEIDEN Seiten (q_kamera < q und > q) auf derselben Hoehe;
-    eine Gerade aus einer anderen Ebene erscheint wegen der fast waagrechten Strahlen nur von einer Seite auf dieser Hoehe (Geisterkante).
-    P = Minimum der beiden Seiten; fehlt eine Seite ganz -> P aus der einen Seite und einseitig=True."""
-    zs = np.asarray(zs, float); seite = np.array([R.lokal(np.asarray(c["C"], float)[None])[0, 1] - q for c in kams])
-    teile = []
-    for m in (seite < 0, seite > 0):
-        if m.sum() >= 2:
-            S, Kf, mit = quer_sweep([k for k, x in zip(kams, m) if x], [k for k, x in zip(kbs, m) if x], R, s0, s1, np.array([float(q)]), zs, fenster=fenster, M=M, min_px=min_px, schwelle=schwelle)
-            teile.append((S[:, 0], Kf[:, :, 0], mit))
-    if not teile: return np.zeros(len(zs)), np.full((1, len(zs)), np.nan), np.array([0.5 * (s0 + s1)])
-    if len(teile) == 1: return teile[0]
-    (P1, K1, mit), (P2, K2, _) = teile
-    return np.minimum(P1, P2), np.fmin(K1, K2), mit
+    Hoehen sind von der Strasse aus gut bestimmt (Strahlen fast waagrecht), daher Hoehen als Profil, Querlagen aus den senkrechten Kanten.
+    VERSUCHT 27.11.: Minimum beider Kameraseiten gegen Geisterkanten -> tauschstabil, aber FALSCH (einseitig sichtbare Holm-/Traufkanten fielen weg,
+    Traufe 6,6 statt ~8,5 m) -> verworfen; Geisterkanten bleiben offen (Doku/projekt/bauteile-kreis/bruecke.md)."""
+    S, Kf, mit = quer_sweep(kams, kbs, R, s0, s1, np.array([float(q)]), np.asarray(zs, float), fenster=fenster, M=M, min_px=min_px, schwelle=schwelle)
+    return S[:, 0], Kf[:, :, 0], mit
 
 
 def spitzen_2d(S, abst=3, schwelle=None, maxn=20):

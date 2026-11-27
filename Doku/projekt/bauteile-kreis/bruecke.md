@@ -21,7 +21,11 @@ Lage/Maßstab der Handyfotos: Zweig `lage-bruecke`, `modelle/schwabentor-1122/me
 - 27.11. · Tauschtest Zone ±30 % auf echten Fotos → ✗ · Pfostenzahl, Breite, Unterkante, First stabil; Traufe, Laufebene, Holm, Riegel, Spannweite springen (Kantenzuordnung mehrdeutig) → Status `instabil`, Tor ROT.
 - 27.11. · Zweiter Durchgang mit Kern aus den gemessenen Enden → ↺ · Breite/Unterkante/First/Überstand stabil, Höhenkanten weiter nicht.
 - 27.11. · Synthetik (12 Kameras, bekannte Brücke) → ✗ · Wandebenen und Unterkante/Traufe stimmen, Labeling falsch (Geisterkanten anderer Ebenen, einseitig sichtbare Holmkante), Spannweite/Pfosten daneben · Ursache benannt, offen.
-- 27.11. · Beidseitige Höhenprofile (Minimum beider Kameraseiten) gegen Geisterkanten → ↺ · Geister weg, aber einseitig sichtbare Kanten (Holm hinter der Brüstung) auch weg.
+- 27.11. · Beidseitige Höhenprofile (Minimum beider Kameraseiten) gegen Geisterkanten → ✗ verworfen · echt tauschstabil, aber falsch (Traufe 6,6 statt ~8,5 m, Holm weg: einseitig sichtbare Kanten fallen heraus); Synthetik maß gar nichts mehr · Lehre: Stabilität ist nicht Richtigkeit — Tauschtest braucht Pflichtmaße + Bildvergleich.
+
+## Stand 27.11. (Lauf `/media/oem/rcdaten/tmp/bruecke_baustein/lauf3`)
+- Gemessen: Breite Pfostenebenen 3,16–3,20 · Unterkante 5,42 · Laufebene 6,30 (ANNAHME Stirnbrett) · Holm 7,25 · Riegel 8,43 · Traufe 8,78 · First 10,48 (DOM1 10,54) · Pfostenabstand 3,1 m · Spannweite 28 m (DOM1 32,5: Widerspruch, ROT).
+- Tauschtest instabil: Traufe, Laufebene, Holm, Riegel, Spannweite; Pfostenzahl am Foto in keinem Foto vollständig bestätigt → Tor ROT.
 
 ## Offen
 - Kantenzuordnung (Laufebene/Holm/Riegel) robust machen: Analyse durch Synthese (Modellkanten mit Sichtbarkeit gegen Fotokanten, `teil_fotoform`-Art) statt Spitzenetiketten.

@@ -109,6 +109,8 @@ def main():
                 ml_ = zirk(zone); andere = [zirk(BM.zone_aus_lage(LAGE, f)) for f in (0.7, 1.3)]
             else:
                 ml_ = ml; andere = [BM.messen(K, kbs, BM.zone_aus_lage(LAGE, f), z_strasse=0.9, log=still)[0] for f in (0.7, 1.3)]
+            pflicht = [k for k in ("breite", "unterkante", "traufe", "spannweite", "pfosten") if ml_["parameter"].get(k, {}).get("wert") is None]
+            pruef("Tauschtest nicht leer (Pflichtmasse gemessen)", not pflicht, "fehlen: " + ", ".join(pflicht))
             BM.tausch_pruefen(ml_, andere); inst = [k for k, v in ml_["parameter"].items() if v.get("status") == "instabil"]
             pruef("Tauschtest: kein Parameter instabil", not inst, ", ".join(f"{k} {ml_['parameter'][k]['wert']:.2f}->{ml_['parameter'][k]['tausch_werte']}" for k in inst))
     if NUR is None or "3" in NUR:
