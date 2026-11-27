@@ -1,4 +1,5 @@
-# Werkzeuge: test (220)
+# Werkzeuge: test (225)
+- `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Datensatz: tools/te
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -49,6 +50,7 @@
 - `tools/test_fusion_vorab.py` [-] Test tools/fusion_vorab.py (24.11.2026, Laufzeit 1122z: dichte Wolke je Lauf ZWEIMAL fusioniert, 470 s + 445 s). Ersatzwerkzeuge zaehlen die Fusionsaufrufe (keine echte Fusion, kei
 - `tools/test_generator_elemente_schleife.py` [gen] test_generator_elemente_schleife.py - BEWEIS (bekannte Wahrheit) fuer generator_elemente_schleife.py. Synthetisch, ohne Fotos (Foto-Tor = eigener Lauf auf Kaufhaus). A Wahrheit = H
 - `tools/test_generator_schleife.py` [seg] test_generator_schleife.py - BEWEIS (bekannte Wahrheit, OHNE echte Fotos) fuer generator_schleife.py (2026-11-06).
+- `tools/test_gesamtkette_abdeckung.py` [-] Mini-Test (< 2 s) Stufe 'abdeckung_zusatz' in tools/gesamtkette.py (Abdeckungsmeldung nach der Registrierung von Zusatzfotos, 26.11.2026). lauf() ist ersetzt (kein Rechnen): er pru
 - `tools/test_gitter_kurven.py` [-] Beweistest gitter_kurven.py (synthetisch): Gerade, Kreisbogen (R 1,9 m, 150 Grad), kubische Bezier, Bogen in 2 Fragmenten (Luecke 33 cm) und Gerade in 2 Fragmenten (Luecke 20 cm) -
 - `tools/test_gps_anker.py` [-] Fester Test (Sekunden, ohne GPU) fuer den GPS-ANKER der LoD2-Ausrichtung (22.11.2026, Nulllauf kette-schwabentor-null-1122d: vereinte Seiten 0+1, GPS-Fit der Kameras gut, aber der 
 - `tools/test_gps_eine_quelle.py` [-] Fester Test (Sekunden, CPU): EINE Quelle der Wahrheit fuer das Foto-GPS in Ausrichtung (sfm_lod2_ausrichten) und GPS-Tor (lage_gps_pruefen) - 22.11.2026. Befund Lauf kette-schwaben
@@ -114,6 +116,7 @@
 - `tools/test_nachhol_tempo.py` [-] test_nachhol_tempo.py - Tempo des Nachholens (Kette 1122q: merkmale 20 min, paare 50 min, Downloads 13,5 min davon 12 min HTTP-429-Warten), 23.11.2026. Nur CPU, vorgespielte Daten 
 - `tools/test_neben_details.py` [seg] test_neben_details.py - synthetische Pruefung von tools/neben_details.py (Detailansicht je Bauteil, 22.11.2026). Kein echtes Objekt, Sekunden. 1. Kamerawahl front: von vier Kameras
 - `tools/test_netz_fotos_holen.py` [-] Test netz_fotos_holen (19.11.2026): Suchbegriffe aus objekt.json, Zwischenspeicher je Quelle (frisch = uebersprungen), Trockenlauf ohne Netz.
+- `tools/test_nische_annahme.py` [seg] test_nische_annahme.py - fester synthetischer Test (24.11.2026, WEG_HAND_ZU_KETTE Punkt 2: Blendnischen der Nordfenster fehlten), < 60 s (unter Last mehr), nur CPU. Verwandt: tools
 - `tools/test_nischen_fenster.py` [seg] test_nischen_fenster.py - fester synthetischer Test fuer tools/nischen_fenster.py (+ Bau in bauteile.fenster_aus_json), < 10 s, nur CPU.
 - `tools/test_nullstart_schritte.py` [-] test_nullstart_schritte.py - BEWEIS, dass jede gelernte Erkenntnis ein fester Nullstart-Schritt mit Tor ist (2026-11-04, Nutzerregel beweis-pflicht-nullstart). Quelle der Pflicht: 
 - `tools/test_oeffnungen_aus_kanten.py` [seg] test_oeffnungen_aus_kanten.py - fester Test (ohne GPU, ohne Daten) fuer tools/oeffnungen_aus_kanten.py.
@@ -129,6 +132,7 @@
 - `tools/test_putz_uhr.py` [seg] test_putz_uhr.py - fester synthetischer Test (21.11.2026, Nutzerbild schwabentor-1120 umgang_bau_ansicht: Kruemel auf dem Putz, Uhr nur flacher Kreis) fuer (1) putz_wandbild.glatt_
 - `tools/test_quader_raster.py` [-] Test tools/quader_raster.py (21.11.2026, Schwabentor Stadtseite: Quader 'geschmolzen', Eckquader 'Rauschen'). Synthetisch, numpy/scipy/PIL, < 30 s. A) Wandbild-Raster 1 cm, 4 x 4 m
 - `tools/test_quader_relief.py` [-] Beweis quader_relief an KUENSTLICHER SZENE (Wahrheit bekannt): Wand s=0, 2 Erker (0,8 m vor der Wand, z 5-11), 4 Segmentbogen-Arkaden (3,3 m breit, 3,9 m tief), Treppengiebel-Oberk
+- `tools/test_quellfilter_gpu.py` [-] test_quellfilter_gpu.py [workspace] - GPU-Zaehlung des Quellfilters gleich der CPU-Zaehlung (26.11.2026). Ohne Workspace: synthetischer Test (eine Ebene + Hintergrund). Mit Workspa
 - `tools/test_raster_block.py` [gen] (kein Docstring)
 - `tools/test_realitaet_form.py` [-] test_realitaet_form.py - Beweis zu tools/realitaet_form.py (Spec modelle/archiv/SPEC_FORMNOTE.md). 1. Fallen fallen alle durch (form < 0,5). 2. Bekannte Paare: besseres Teil hat ho
 - `tools/test_regeln_cb.py` [-] test_regeln_cb.py - Gegenbeweis zu Register CB (2026-11-03): der Fehler 'zwei Boegen + Zwischenpfeiler je Flaeche' darf sich nicht wiederholen.
@@ -179,6 +183,7 @@
 - `tools/test_teil_gelaende_tor.py` [-] Test tools/teil_gelaende_tor.py + Einbindung in tools/sfm_seiten_modelle.py (24.11.2026, 1122z: Ost-Teil 6,4 m im Boden, kein Tor fand es). Synthetische Szene in Metern (Strasse 40
 - `tools/test_teil_verformung.py` [-] Synthetischer Test teil_verformung.py (Sekunden): Feldauswertung (Trend / Sprung / starr), Wandrichtung aus projizierten waagerechten 3D-Kanten, Rundgang-Koordinate.
 - `tools/test_teile_sichtpruefung.py` [seg] test_teile_sichtpruefung.py - BEWEIS, dass tools/teile_sichtpruefung.py die Fehler der Runde 5 (Kaufhaus) automatisch findet.
+- `tools/test_teilfusion_verlust.py` [-] test_teilfusion_verlust.py - Verlustwarnung der Teilfusion (26.11.2026). Echte Zahlen von Schwabentor 1122 (fused.ply.teile.json): Teil 3 und 6 muessen warnen, Teil 2 nicht. Verwan
 - `tools/test_teilmodell_sim3.py` [-] Test teilmodell_sim3: synthetische Sim3 (mit Ausreissern, Rauschen, fast ebene Anker), Rotationsvariante, Entartungsmass.
 - `tools/test_temp_ordner.py` [-] test_temp_ordner.py - Temp nicht auf Root, Tests raeumen selbst auf (tools/pfade.temp_wurzel/temp_ordner, 22.11.2026). Anlass: /tmp/test_vordach_* (je 23 MB) und 180 weitere Testre
 - `tools/test_tiefe_belegt.py` [seg] test_tiefe_belegt.py - fester synthetischer Test (21.11.2026, schwabentor-1120 Westwand w00: Kruemelbaender im Relief, Lauf 1121r) fuer (1) putz_wandbild.tiefe_belegt: einzelne Net
