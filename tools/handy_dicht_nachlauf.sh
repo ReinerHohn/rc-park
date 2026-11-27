@@ -18,7 +18,8 @@ grep -q 'FERTIG' "$Z/nachlauf.log" || { t "ABBRUCH: Registrierung nicht rechtzei
 [ -f "$Z/lg/sparse_handy/0/images.bin" ] || { t "ABBRUCH: $Z/lg/sparse_handy/0 fehlt"; exit 1; }
 mkdir -p "$O"; U=$O/bilder_union
 if [ ! -d "$U" ]; then mkdir -p "$U"; cp -a /media/oem/rcdaten/tmp/handy_bilder_union/. "$U"/; fi
-for f in "$Z"/bilder/*.jpg; do [ -e "$U/$(basename "$f")" ] || ln -s "$f" "$U/$(basename "$f")"; done
+# Namen der Registrierung IMMER auf die Bilder von $Z/bilder (Wasserzeichen-Streifen abgeschnitten, Hoehe 1425 statt 1500); sonst passt Kamera nicht zum Bild (Undistort-Abbruch 27.11.)
+for f in "$Z"/bilder/*.jpg; do ln -sfn "$f" "$U/$(basename "$f")"; done
 t "Union-Ordner: $(ls "$U" | wc -l) Bilder"
 # 1. Tiefenkarten (GPU)
 L1=$O/dicht.log; rm -f "$L1"
