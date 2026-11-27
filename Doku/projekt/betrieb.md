@@ -7,6 +7,7 @@ Details: `modelle/GPU_PARALLEL_UNTERSUCHUNG.md` · Skill `langer-job` · `tools/
 - Jedes neue Rechenwerkzeug von Anfang an GPU; vorhandene Werkzeuge vor Start auf GPU-/CPU-only-Voreinstellung prüfen; Libs immer mit CUDA bauen [Memory feedback-gpu-bauen-immer, feedback-gpu-flag-pruefen]
 - Immer maximal parallel (CPU 28 Kerne + GPU), aber nur verlustfreie Beschleunigung; genauere Methode als Standard [Memory immer-maximal-parallel, quality-over-speed]
 - Große Daten nur auf der Datenplatte, Symlinks im Repo; Laufwerke per UUID benennen [REGELN Technik, Memory reference-laufwerke-uuid]
+- Runpod-Zugang (27.11.): Schluessel in ~/.runpod (nie einchecken), Volume EU-RO-1, rclone braucht sign_accept_encoding=false [Memory reference-runpod-zugang]
 - Nach tools-Änderung: `schnelltest.sh` (30 s) + `regression.py --pruefen`; Schnappschuss nur bewusst erneuern mit Registereintrag [CLAUDE.md, Register AW]
 - Kein wiederkehrender Wach-/GPU-Check-Zeitplan (stört den Nutzer) [Memory project-nachtwache-und-ssd, 15.11.]
 - Sitzungsbeginn `hpwmi_pruefen.sh` (ohne Modul CPU ~38 statt 55 W) [Memory hpwmi-modul-pruefen]

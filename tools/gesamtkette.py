@@ -192,6 +192,36 @@ def bauen(B, name, ziel, log, zwischen=True):
     return r
 
 
+def ebenen_schleife_stufe(B, ZR, Z, D, fo, KD, eb_, W, ziel, log, gp_):
+    """27.11.2026 K7 (modelle/SPEC_VERFAHREN_RUNPOD_2026-11-27.md; modelle/METHODE_EBENEN_BAUPLAN.md Schritte 1 + 6): SCHALTER RCPARK_EBENEN_SCHLEIFE=1, Standard AUS
+    (laufende Nachtkette/Bestand unberuehrt). Modell aus gemessenen Kanten statt Kanten aus dem Modell:
+      (1) Ebenenfinder Schichtstapel (tools/ebenen_stapel.py -> ebenen_bauplan.py --stapel; Spitzen der Punktzahl + Wolke >= 80 %) -> <daten>/ebenen_stapel/ebenen.json
+          (rc 3 = keine bestaetigte Zusatzebene -> die Ebenen der Stufe bauplan_ebenen);
+      (2) Abweichungsschleife (tools/ebenen_schleife.py --neu_eigene --ohne_wandversatz: je Runde der groesste Fleck, Umbau nur bei steigender Kennzahl seiner Ebene, keine
+          andere faellt, Wolke faellt nicht, erfundene Modellkanten steigen nicht; Wand setzt weiter wandlage_fotokanten.py).
+    Guard/Fallback: Abbruch der Schleife (rc 2/Absturz) -> audit/schleife_korrekturen.json auf den Stand VOR der Schleife zurueck und neu bauen (= alter Weg).
+    Gebaut wird ueber bauen() nur, wenn sich die Korrekturen geaendert haben. -> dict fuer erg_ (None = Schalter aus)."""
+    if os.environ.get("RCPARK_EBENEN_SCHLEIFE") != "1": return None
+    erg = {}
+    if not (os.path.exists(os.path.join(eb_, "ebenen.json")) and os.path.exists(gp_)):
+        notiz(B, "bauplan_ebenen_schleife", False, fehler=f"{eb_}/ebenen.json oder Generator fehlt - Schleife nicht gerechnet (alter Weg)"); return erg
+    wo_ = ["--wolke", W] if W and os.path.exists(W) else []; st_ = os.path.join(D, "ebenen_stapel"); ein_ = eb_
+    erg["ebenen_stapel_rc"] = lauf(B, "bauplan_ebenen_stapel", [PY, "-W", "ignore", "-I", "tools/ebenen_stapel.py", ZR, fo, KD, eb_, st_] + wo_, log, ok=(0, 3))[0]
+    if erg["ebenen_stapel_rc"] == 0 and os.path.exists(os.path.join(st_, "ebenen.json")): ein_ = st_
+    kp = os.path.join(Z, "audit", "schleife_korrekturen.json"); alt = open(kp).read() if os.path.exists(kp) else None
+    rc = lauf(B, "bauplan_ebenen_schleife", [PY, "-W", "ignore", "-I", "tools/ebenen_schleife.py", ZR, ein_, "--neu_eigene", "--ohne_wandversatz"] + wo_, log, ok=(0, 3))[0]
+    erg.update(ebenen_schleife_rc=rc, ebenen_schleife_ebenen=os.path.relpath(ein_, D))
+    if rc not in (0, 3):                                                   # Abbruch: Korrekturen eines halben Laufs (Kandidat 'angenommen' None) nie bauen
+        if alt is None:
+            if os.path.exists(kp): os.remove(kp)
+        else: open(kp, "w").write(alt)
+        notiz(B, "bauplan_ebenen_schleife_fallback", False, fehler=f"ebenen_schleife rc {rc} - Korrekturen auf den Stand vor der Schleife zurueck, Neubau (alter Weg)")
+        bauen(B, "bauen_nach_ebenen_schleife_abbruch", ziel, log); erg["ebenen_schleife_fallback"] = True; return erg
+    neu = open(kp).read() if os.path.exists(kp) else None
+    if neu != alt: bauen(B, "bauen_mit_ebenen_schleife", ziel, log)
+    return erg
+
+
 def abnahme_nachholen(B, ziel, log):
     """Volle Abnahme (bauen_abnehmen.sh --nur-pruefen) auf dem aktuellen STL, wenn der letzte Bau ein Zwischenbau ohne Abnahme war (bauen)."""
     if not _BAU_OFFEN[0]: return None
@@ -998,6 +1028,9 @@ def main():
                 if k_.get("baulaeufe") or rr_ == 0 or rh_ == 0 or sp_rc_ == 0 or tr_rc_ == 0 or fl_rc_ == 0: bauen(B, "bauen_mit_wolkenkoerpern", a.ziel, log)
                 if isinstance(erg_.get("wolke_am_modell_vorher"), int) and isinstance(erg_.get("wolke_am_modell_nachher"), int) and erg_["wolke_am_modell_nachher"] < erg_["wolke_am_modell_vorher"]:
                     notiz(B, "bauplan_wolkenkoerper", False, fehler=f"Wolkenkoerper/Dachprofil verschlechtern den Abgleich ({erg_['wolke_am_modell_vorher']} -> {erg_['wolke_am_modell_nachher']} Wolkenpunkte am Modell) - audit/koerper_auto.json / dach_profil.json pruefen ('angenommen': false setzt sie ausser Kraft)")
+            # 27.11.2026 K7 hinter RCPARK_EBENEN_SCHLEIFE=1 (Standard aus): Schichtstapel als Ebenenfinder + Abweichungsschleife, VOR der Schluss-Abweichung (misst dann den Endstand)
+            k7_ = ebenen_schleife_stufe(B, ZR, Z, D, fo, KD, eb_, W, a.ziel, log, gp_)
+            if k7_ is not None: erg_.update(k7_)
             if os.path.exists(os.path.join(eb_, "ebenen.json")): lauf(B, "bauplan_abweichung", [PY, "-W", "ignore", "-I", "tools/ebenen_abweichung.py", ZR, eb_] + (["--wolke", W] if os.path.exists(W) else []), log)      # Schritt 3: Abweichung Modell gegen Bauplan je Ebene (audit/ebenen_abweichung.json, abweichung_<ebene>.jpg)
             # 24.11.2026 (Hoehensitz-Befund 1122): HOEHEN-ANGLEICH waagerechter Bauteile - jede waagerechte Strukturlinie des GEBAUTEN Modells gegen Wolken-Linien UND
             # triangulierte Fotokanten (Kantenstufe sweep.npz); angeglichen nur, wenn beide Quellen einig sind (tools/hoehen_angleich.py -> audit/hoehen_angleich.json,

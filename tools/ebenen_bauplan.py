@@ -23,6 +23,11 @@ def kipp(ne, u, z):
     return ne["b_u"] * (np.asarray(u, float) - ne["u_ref"]) + ne["c_z"] * (np.asarray(z, float) - ne["z_ref"])
 
 
+def nur_passt(i, nur):
+    """--nur: Komma-Liste aus Ids, jedes Glied darf auf '*' enden (27.11.2026, Stapel aller Waende in einem Lauf: 'f00_s*,f01_s*'; vorher nur EIN Muster fuer die ganze Liste)."""
+    return any(i == p or (p.endswith("*") and i.startswith(p[:-1])) for p in nur.split(",") if p)
+
+
 def frontal_kameras(K, e, wahl, n_max=24, winkel=45.0, min_sicht=0.5, max_gsd=0.03, n_proben=600):
     """24.11.2026 (Befund 1122z f02/Ost: 1316 Fotokantenpunkte statt 13 501 an f00): die Kantenstufe waehlt 80 Kameras GLOBAL (12 Azimut-Sektoren um die Modellmitte,
     Abstand <= 80 m, Rang Sicht/sqrt(Abstand)). Fuer f02 lagen 49 SfM-Kameras frontal (< winkel Grad), sehen >= 50 % der Wand und hatten 1,2-6,6 cm/px - KEINE davon in
@@ -89,7 +94,7 @@ def main():
         for e_ in [e_ for e_ in E if e_["art"] == "wand"]:
             for j, wj in enumerate(np.arange(w0s, w1s + 1e-6, ds)):
                 E.append(dict(id=f"{e_['id'][:3]}_s{j:02d}", art="schicht", fassade=e_["fassade"], o=e_["o"], d=e_["d"], n=e_["n"], w=round(e_["w"] + float(wj), 3), w_wand=e_["w"], neigung=e_.get("neigung"), zone=e_["zone"], band=round(ds / 2, 3)))
-    if a.nur: E = [e for e in E if e["id"] in a.nur.split(",") or (a.nur.endswith("*") and e["id"].startswith(a.nur[:-1]))]
+    if a.nur: E = [e for e in E if nur_passt(e["id"], a.nur)]
     PY = sys.executable; n_ok = 0
     for e in E:
         t0 = time.time(); ed = os.path.join(a.aus, e["id"]); os.makedirs(ed, exist_ok=True); o = np.array(e["o"]); d = np.array(e["d"]); n = np.array(e["n"]); u0, u1, z0, z1 = e["zone"]; z0 = max(z0, 0.0)
@@ -100,7 +105,8 @@ def main():
         kw_e = KW
         # 24.11.2026 (Rueckfall Treppenkloetze 1122z-zc): auch die VORBAU-Ebene bekommt frontale Zusatzkameras - f00_vb0 hatte 3375 statt 13 116 Kantenpunkte,
         # die Galerie-Fotos (IMG_..._1131xx, frontal, nah) standen nicht in kam_wahl -> Holm/Unterkante luechig, kein Kantenkasten. OHNE_VORBAU_KAM=1 = alter Weg.
-        if (e["art"] == "wand" or (e["art"] == "vorbau" and os.environ.get("OHNE_VORBAU_KAM") != "1")) and a.kam_ergaenzen > 0 and KALLE:
+        # 27.11.2026 (K7): Schichten des Stapels bekommen dieselben frontalen Kameras wie ihre Wand (sonst f02-Befund 24.11.: Schichten fast leer -> keine Spitze)
+        if (e["art"] in ("wand", "schicht") or (e["art"] == "vorbau" and os.environ.get("OHNE_VORBAU_KAM") != "1")) and a.kam_ergaenzen > 0 and KALLE:
             plus = frontal_kameras(KALLE, e, KWAHL, n_max=a.kam_ergaenzen)
             if plus:
                 kw_e = os.path.join(ed, "kam_wand.json"); json.dump({**KWAHL, **{f: KALLE[f] for f in plus}}, open(kw_e, "w")); kp = os.path.join(ed, "kam_plus.json"); json.dump({f: KALLE[f] for f in plus}, open(kp, "w"))
