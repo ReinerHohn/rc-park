@@ -65,10 +65,11 @@
    "seite": "Stadtseite",
    "masse": {
     "anzahl": 2,
-    "sohlbank_z": 22.97,
+    "sohlbank_z": 23.43,
     "nische_breite": 1.95
    },
    "toleranz_m": 0.4,
+   "korrektur": "27.11.2026 Freigabe Nutzer (Ja): sohlbank_z 22,97 -> 23,43. Quelle: Triangulation Sohle 23,575 m (Modellrahmen) an 4 Kameras, Strahlabstand <= 3,6 cm (M-eigen__IMG_20261106_113205-001/-002/-005/-006) minus Hoehenbezug 0,14 m; Hand war 0,46-0,60 m zu tief.",
    "hand_original": {
     "sohlbank_z": 22.59
    }
