@@ -198,7 +198,7 @@ def suchraum(zone, ext=0.5):
 
 GROB = dict(s_a=0.3, s_b=0.3, ql=0.1, qr=0.1, gier=0.5, zu=0.15, zb=0.15, zh=0.15, zr=0.15, zt=0.15, neigung=2.5, ueberstand=0.1, pfosten_breite=0.04, pfosten=1, wand_dicke=0.04, dach_dicke=0.04)
 FEIN = dict(s_a=(0.1, 1.0), s_b=(0.1, 1.0), ql=(0.03, 0.3), qr=(0.03, 0.3), gier=(0.2, 1.0), zu=(0.03, 0.3), zb=(0.03, 0.3), zh=(0.03, 0.3), zr=(0.03, 0.3),
-            zt=(0.03, 0.3), neigung=(1.0, 5.0), ueberstand=(0.05, 0.3), pfosten_breite=(0.02, 0.1), pfosten=(1, 3), wand_dicke=(0.02, 0.1), dach_dicke=(0.02, 0.1))
+            zt=(0.03, 0.3), neigung=(1.0, 5.0), ueberstand=(0.05, 1.2), pfosten_breite=(0.02, 0.1), pfosten=(1, 3), wand_dicke=(0.02, 0.1), dach_dicke=(0.02, 0.1))
 REIHE = ("ql", "qr", "zt", "zb", "zu", "s_a", "s_b", "zh", "zr", "neigung", "ueberstand", "pfosten", "pfosten_breite", "wand_dicke", "dach_dicke", "gier")
 
 
@@ -273,8 +273,13 @@ def zuordnung_suchen(ab, x, K, log=print):
         for zu, zh, zr, zt in itertools.combinations(K["hoehen"], 4):
             if zh - zu < 0.3 or zt - zr < ab.dmin: continue
             xx = dict(x, ql=ql, qr=qr, zu=zu, zh=zh, zr=zr, zt=zt, zb=zu + min(0.6, 0.5 * (zh - zu))); kand.append(xx)
-    ab.filter = "laengs_wand"; best = (ab.guete(x)[0], x)
-    for xx, (g, _) in zip(kand, ab.aussen.map(ab.guete, kand)):
+    # Die Dachneigung ist hier noch nicht gemessen, verdeckt aber obere Wandkanten (steiles Dach mit Ueberstand) -> Zuordnung je Kandidat ueber mehrere
+    # Neigungen MAXIMIERT (Neigung herausrechnen, nicht raten). 27.11. Synthetik: mit fester Startneigung 40 Grad an leicht verschobenen Werten
+    # gewann die um eine Spitze zu hohe Zuordnung (Holm 7,14 / Riegel 8,62 / Traufe 9,22 statt 7,0/8,2/8,6), bei 10 Grad die Wahrheit (2321 gegen 2016).
+    ab.filter = "laengs_wand"; NEIG = (10.0, 40.0)     # 4 Neigungen kosteten 714 s je Zuordnung; flach (wenig Verdeckung) + steil reicht fuer die Synthetik
+    alle = [dict(xx, neigung=n) for xx in [x] + kand for n in NEIG]; G = np.array([g for g, _ in ab.aussen.map(ab.guete, alle)]).reshape(-1, len(NEIG)).max(1)
+    best = (G[0], x)
+    for xx, g in zip(kand, G[1:]):
         if g > best[0]: best = (g, xx)
     ab.filter = None
     log(f"  Zuordnung (nur Laengskanten der Waende): {len(kand)} Kombinationen geprueft, beste Guete {best[0]:.1f}: " + ", ".join(f"{k} {best[1][k]:.2f}" for k in ("ql", "qr", "zu", "zh", "zr", "zt")))
@@ -363,7 +368,7 @@ def beleg_je_parameter(kurven, x, min_kontrast=0.1):
 
 # Messgroessen (Schluessel wie bruecke_messen.massliste) aus dem Suchvektor; je Messgroesse die Suchparameter, die sie belegen
 MESS = dict(spannweite=("s_a", "s_b"), breite=("ql", "qr"), unterkante=("zu",), laufebene=("zb",), holm=("zh",), riegel=("zr",), traufe=("zt",),
-            first=("neigung", "zt", "breite"), ueberstand=("ueberstand",), pfosten=("pfosten",), pfosten_breite=("pfosten_breite",), wand_dicke=("wand_dicke",), dach_dicke=("dach_dicke",), ende_a=("s_a",), ende_b=("s_b",))
+            first=("neigung", "zt", "ql", "qr"), ueberstand=("ueberstand",), pfosten=("pfosten",), pfosten_breite=("pfosten_breite",), wand_dicke=("wand_dicke",), dach_dicke=("dach_dicke",), ende_a=("s_a",), ende_b=("s_b",))
 
 
 def massliste(x, ab, beleg, zone, min_fotos=3, namen=None):
@@ -377,7 +382,9 @@ def massliste(x, ab, beleg, zone, min_fotos=3, namen=None):
         e = dict(wert=w, quelle="Render-Abgleich (Modell mit Selbst- und Umgebungsverdeckung gegen LSD-Fotokanten, Kandidaten aus dem Linien-Sweep, Suche nach maximaler belegter Fotokante)", n_fotos=n,
                  streuung=max(sd) if sd else None, suchparameter=list(MESS[k]))
         if namen is not None: e["fotos"] = sorted({namen[j] for b in bl for j in b.get("fotos", [])})[:60]
+        nk = min(b.get("fotos_mit_kontrast", 0) for b in bl)
         if n < min_fotos: e.update(status="fehlt", grund=f"nicht belegt: nur {n} Fotos stimmen dem Wert zu (< {min_fotos})")
+        elif 2 * n <= nk: e.update(status="instabil", grund=f"nur {n} von {nk} Fotos mit Kontrast stimmen zu (keine Mehrheit)")
         else: e["status"] = "gemessen"
         P[k] = e
     return P
@@ -410,6 +417,7 @@ def abgleich(kams, bilder, zone, teiler=2, wolke=None, log=print, threads=8, gro
               rahmen=dict(mitte=R.gedreht(x["gier"]).m.tolist(), achse=R.gedreht(x["gier"]).d.tolist(), neigung_grad=math.degrees(math.atan(R.tg))),
               qc=0.5 * (x["ql"] + x["qr"]), s_a=x["s_a"], s_b=x["s_b"], auswertungen=ab.n_eval, dauer_s=round(time.time() - t0, 1), beleg=beleg, sweep_kandidaten=K)
     ml["gang"] = baustein_param(x, zone, ab.dmin)
+    ml["kurven"] = {k: [(float(a), round(float(gg), 4), [round(float(f), 3) for f in F]) for a, gg, F in kv] for k, kv in kurven.items()}   # Diagnose je Foto
     return ml
 
 

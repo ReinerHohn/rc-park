@@ -28,6 +28,10 @@ Lage/Maßstab der Handyfotos: Zweig `lage-bruecke`, `modelle/schwabentor-1122/me
 - 27.11. abends · Gütemaß „belegte Fotokante (jedes Pixel einmal) − Strafe × Modellkante ohne Fotokante“ → ✓ mit Strafe 0,25 · Strafe 0,5: Flachdach schlägt das echte (gleich helle Flächen ohne Fotokante).
 - 27.11. abends · Suche: Koordinaten ab Zonenmitte und CMA-ES über 15 Parameter → ✗ lokale Optima (geschlossener schmaler Gang) · Sweep liefert Kandidaten (Spitzen, Wände, Enden, Pfostenabstand), Render entscheidet Zuordnung (nur Längskanten der Wände), Dach gemeinsam (8 beste Rasterpunkte verfeinert), Pfosten gemeinsam.
 - 27.11. abends · Synthetik-Fotos als Kantenzeichnung (Strahltest) → ✗ · Silhouetten an Streifkanten fehlten; jetzt schattiertes Rasterbild + Störlinien vor/hinter der Brücke + Rauschen, LSD im vollen Bild (im halben fehlten Pfostenkanten).
+- 27.11. nachts · Zuordnung der Höhenspitzen mit fester Startneigung 40° → ✗ · steiles Dach verdeckt obere Wandkanten, Zuordnung rutscht eine Spitze hoch (Traufe 9,22 statt 8,6); jetzt Maximum über 10°/40°.
+- 27.11. nachts · „First nicht belegt (0 Fotos)“ → ✗ Programmfehler, nicht Beleglücke · Belegschlüssel „breite“ ist kein Suchparameter (jetzt ql/qr); Neigung hatte 14/14 Fotos, First 9,94 gegen Wahrheit 9,915.
+- 27.11. nachts · Feinsuche Überstand ±0,3 m → ✗ · blieb bei 0,8 (Wahrheit 0,3; Güte bei 0,3 höher, Kurve zweigipflig); jetzt ganzer Bereich. Neu: Messwert nur „gemessen“, wenn die Mehrheit der Fotos mit Kontrast zustimmt (Überstand 5/14 → instabil).
+- 27.11. nachts · Straßenkanten (1,78/1,98/2,16 m) als Unterkante → ✗ · jetzt Lichtraum-Veto aus der Wolke: unterste dichte Schicht im Grundrisskern = Deck-Unterseite (echt 4,87–4,93 m, Zone ±30 % stabil), Kandidaten darunter verworfen (Test 8).
 
 ## Stand 27.11. (Lauf `/media/oem/rcdaten/tmp/bruecke_baustein/lauf3`)
 - Gemessen: Breite Pfostenebenen 3,16–3,20 · Unterkante 5,42 · Laufebene 6,30 (ANNAHME Stirnbrett) · Holm 7,25 · Riegel 8,43 · Traufe 8,78 · First 10,48 (DOM1 10,54) · Pfostenabstand 3,1 m · Spannweite 28 m (DOM1 32,5: Widerspruch, ROT).
