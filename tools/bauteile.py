@@ -1534,7 +1534,7 @@ def ueberdachter_gang(P, massstab=None, min_mm=None):
     massstab = float(massstab if massstab is not None else os.environ.get("SCALE", "87")); min_mm = float(min_mm if min_mm is not None else os.environ.get("MINMM", "0.8"))
     dmin = min_mm * massstab / 1000.0; quelle = "bauteile.ueberdachter_gang; " + str(P.get("quelle", "JSON-Parameter"))
     def nicht(grund):
-        return None, [dict(seite="bruecke", element="Ueberdachter Gang nicht gebaut", quelle=quelle, hinweis=grund)], dict(art="nicht gebaut", grund=grund)
+        return None, [dict(seite="bruecke", element="Ueberdachter Gang nicht gebaut", quelle=quelle, hinweis=grund)], dict(art="nicht gebaut", grund=grund, rot=[dict(bauteil="bruecke", grund=grund)])
     # ---- Spannweite / Achse
     L = _zahl(P.get("spannweite")); A = P.get("achse"); T = None
     if A:
@@ -1548,7 +1548,9 @@ def ueberdachter_gang(P, massstab=None, min_mm=None):
     if L is None: return nicht("spannweite fehlt (weder 'spannweite' noch 'achse')")
     B, zb, h = _zahl(P.get("breite")), _zahl(P.get("z_boden")), _zahl(P.get("hoehe"))
     if None in (B, zb, h) or L <= dmin or B <= dmin or h <= 0: return nicht(f"Grundmass fehlt/ungueltig: spannweite {L}, breite {B}, z_boden {zb}, hoehe {h}")
-    hinw = []
+    hinw = []; rot = []                       # rot: (bauteil, grund) fuer jede Ersatzform/fehlende Messung -> Bestand-Tor ROT (bruecke_tor)
+    def ersatz(bauteil, grund): hinw.append(grund); rot.append(dict(bauteil=bauteil, grund=grund))
+    for f_ in P.get("fehlt", []) or []: rot.append(dict(bauteil=str(f_.get("bauteil", f_)) if isinstance(f_, dict) else str(f_), grund=str(f_.get("grund", "Messung fehlt")) if isinstance(f_, dict) else "Messung fehlt"))
     def mind(name, v):
         v = dmin if v is None else v
         if v < dmin - 1e-12:
@@ -1559,11 +1561,11 @@ def ueberdachter_gang(P, massstab=None, min_mm=None):
     # ---- Dach
     D = P.get("dach") or {}; form = str(D.get("form", "flach")).lower(); al = _zahl(D.get("neigung_grad")); u = max(_zahl(D.get("ueberstand")) or 0.0, 0.0)
     dd = mind("dach.dicke", _zahl(D.get("dicke")))
-    if form not in ("flach", "pult", "sattel"): hinw.append(f"Dachform '{form}' unbekannt -> Flachdach (Fallback)"); form = "flach"
-    if form != "flach" and (al is None or not 0.0 < al < 75.0): hinw.append(f"Dachneigung {al} Grad ungueltig (0..75) -> Flachdach (Fallback)"); form = "flach"
+    if form not in ("flach", "pult", "sattel"): ersatz("dach", f"Dachform '{form}' unbekannt -> Flachdach (Fallback)"); form = "flach"
+    if form != "flach" and (al is None or not 0.0 < al < 75.0): ersatz("dach", f"Dachneigung {al} Grad ungueltig (0..75) -> Flachdach (Fallback)"); form = "flach"
     ta = math.tan(math.radians(al)) if form != "flach" else 0.0; dv = dd / math.cos(math.atan(ta))
     massiv = B < 2 * t + dmin or h < dmin; art = "massiver Steg" if massiv else "gang"
-    if massiv: hinw.append(f"kein Laufraum (breite {B:.3f} < 2 x wand {t:.3f} + {dmin:.3f} oder hoehe {h:.3f} < {dmin:.3f}) -> massiver Steg (Fallback)")
+    if massiv: ersatz("gang", f"kein Laufraum (breite {B:.3f} < 2 x wand {t:.3f} + {dmin:.3f} oder hoehe {h:.3f} < {dmin:.3f}) -> massiver Steg (Fallback)")
     zt = zb + h; yi = B / 2 if massiv else B / 2 - t; Y = B / 2 + u; zbot = zb - db
     unter = {"flach": lambda y: zt, "sattel": lambda y: zt + (yi - abs(y)) * ta, "pult": lambda y: zt + (y + yi) * ta}[form]
     ys = [-Y, 0.0, Y] if form == "sattel" else [-Y, Y]
@@ -1576,7 +1578,7 @@ def ueberdachter_gang(P, massstab=None, min_mm=None):
         waende = CrossSection.square([t, hoch - zbot]).translate((-B / 2, zbot)) + CrossSection.square([t, hoch - zbot]).translate((B / 2 - t, zbot))
         kern = (waende ^ unter_dach) + CrossSection.square([B, db]).translate((-B / 2, zbot))
     rumpf = _laengs(kern + dach, -e, L + e)
-    ms = dict(art=art, spannweite=L, breite=B, hoehe=h, wand_dicke=t, boden_dicke=db, dach=form, dach_dicke=dd, einbinden=e, treppe="keine", oeffnungen=0, fallback=[])
+    ms = dict(art=art, spannweite=L, breite=B, hoehe=h, wand_dicke=t, boden_dicke=db, dach=form, dach_dicke=dd, einbinden=e, treppe="keine", oeffnungen=0, fallback=[], rot=rot)
     # ---- Treppe
     TP = P.get("treppe"); treppe = None; boden_bei = lambda x: zb; tbeleg = None
     if TP:
@@ -1595,7 +1597,7 @@ def ueberdachter_gang(P, massstab=None, min_mm=None):
         if grund is None:
             H = n * s; lauf = n * a; platte = mind("treppe.platte", _zahl(TP.get("platte")))
             rampe = min(s, a) < dmin
-            if rampe: hinw.append(f"Stufe {s:.3f} x {a:.3f} m unter dem Druck-Mindestmass {dmin:.4f} m -> Rampe statt Stufen (Fallback)")
+            if rampe: ersatz("treppe", f"Stufe {s:.3f} x {a:.3f} m unter dem Druck-Mindestmass {dmin:.4f} m -> Rampe statt Stufen (Fallback)")
             wb = _zahl(TP.get("breite"))
             if lage == "innen":
                 if massiv: grund = "kein Laufraum (massiver Steg) - Innentreppe nicht moeglich"
@@ -1621,19 +1623,33 @@ def ueberdachter_gang(P, massstab=None, min_mm=None):
             tbeleg = dict(seite="bruecke", element=f"Treppe {lage} am Ende {ende}: {n} Stufen {s:.3f} x {a:.3f} m, Lauf {lauf:.3f} m, Hub {H:.3f} m" + (" (als Rampe)" if rampe else ""),
                           quelle=quelle, hinweis=f"Schrittmass 2 s + a = {2 * s + a:.3f} m; Laufplatte {platte:.3f} m")
         else:
-            ms.update(treppe="nicht gebaut", treppe_grund=grund); hinw.append("Treppe NICHT gebaut: " + grund)
+            ms.update(treppe="nicht gebaut", treppe_grund=grund); ersatz("treppe", "Treppe NICHT gebaut: " + grund)
     # ---- Seiten offen: Felder zwischen Pfosten
     S = P.get("seiten") or {}; felder = []
     if str(S.get("art", "geschlossen")).lower() == "offen" and not massiv:
         np_, br = _zahl(S.get("pfosten")), _zahl(S.get("bruestung"))
-        if np_ is None or np_ < 2 or abs(np_ - round(np_)) > 1e-9 or br is None or br < 0: hinw.append(f"seiten offen ungueltig (pfosten {S.get('pfosten')}, bruestung {S.get('bruestung')}) -> geschlossen (Fallback)")
+        if np_ is None or np_ < 2 or abs(np_ - round(np_)) > 1e-9 or br is None or br < 0: ersatz("seiten", f"seiten offen ungueltig (pfosten {S.get('pfosten')}, bruestung {S.get('bruestung')}) -> geschlossen (Fallback)")
         else:
             bp = mind("seiten.pfosten_breite", _zahl(S.get("pfosten_breite"))); ri = mind("seiten.riegel", _zahl(S.get("riegel")))
             z1 = min(unter(-B / 2), unter(B / 2)) - ri; cs_ = np.linspace(bp / 2, L - bp / 2, int(round(np_)))
+            pl = S.get("pfosten_lagen")                                   # gemessene Lagen laengs (m ab Ende a), sonst gleichmaessig zwischen den Enden
+            if pl:
+                pl = np.clip(np.sort(np.asarray(pl, float)), bp / 2, L - bp / 2)
+                if len(pl) != int(round(np_)): ersatz("seiten", f"pfosten_lagen ({len(pl)}) widerspricht pfosten ({int(round(np_))}) - gleichmaessig verteilt")
+                else: cs_ = pl
             for c0, c1 in zip(cs_[:-1], cs_[1:]):
                 xa, xb = c0 + bp / 2, c1 - bp / 2; z0 = max(boden_bei(xa), boden_bei(xb)) + br
                 if xb - xa >= dmin and z1 - z0 >= dmin: felder.append(M.cube([xb - xa, B + 0.02, z1 - z0]).translate((xa, -B / 2 - 0.01, z0)))
-            if len(felder) < len(cs_) - 1: hinw.append(f"{len(cs_) - 1 - len(felder)} Seitenfeld(er) kleiner als das Mindestmass - geschlossen gelassen")
+            if len(felder) < len(cs_) - 1: ersatz("seiten", f"{len(cs_) - 1 - len(felder)} Seitenfeld(er) kleiner als das Mindestmass - geschlossen gelassen")
+    # ---- Stuetzen unter dem Boden (27.11.2026): stuetzen {lagen: [[x, y], ...] im lokalen Rahmen, breite, z_fuss}; jede reicht 1 cm in den Boden
+    ST = P.get("stuetzen")
+    if ST and ST.get("keine"): ms["stuetzen_keine_belegt"] = bool(ST.get("beleg"))      # "keine Stuetzen" nur mit Fotobeleg (Zaehlprotokoll) gruen
+    elif ST:
+        bs, zf = _zahl(ST.get("breite")), _zahl(ST.get("z_fuss")); lg = ST.get("lagen") or []
+        if bs is None or zf is None or not lg or zf >= zbot - dmin: ersatz("stuetzen", f"stuetzen ungueltig (breite {bs}, z_fuss {zf}, {len(lg)} Lagen, Boden-Unterkante {zbot:.3f}) - nicht gebaut")
+        else:
+            bs = mind("stuetzen.breite", bs); sts = [M.cube([bs, bs, zbot + 0.01 - zf]).translate((float(x) - bs / 2, float(y) - bs / 2, zf)) for x, y in lg]
+            rumpf = rumpf + M.batch_boolean(sts, OpType.Add); ms.update(stuetzen=len(sts))
     # ---- Zusammenbau mit Endkontrolle (ein Koerper, wasserdicht) und Fallback
     def gut(m): return (m is not None and not m.is_empty() and str(m.status()).endswith("NoError") and m.volume() > 0 and len(m.decompose()) == 1
                         and als_trimesh(m).is_watertight)          # STL-Export: auch nach dem Verschmelzen gleicher Eckpunkte wasserdicht
@@ -1645,7 +1661,7 @@ def ueberdachter_gang(P, massstab=None, min_mm=None):
     for mt, mf, fb in ((True, True, None), (True, False, "ohne Seitenfelder"), (False, False, "ohne Treppe und Seitenfelder")):
         g = bauen(mt, mf)
         if gut(g):
-            if fb: ms["fallback"].append(fb); hinw.append(f"Endkontrolle: erst {fb} ein Koerper (Fallback)")
+            if fb: ms["fallback"].append(fb); ersatz("seiten" if mt else "treppe", f"Endkontrolle: erst {fb} ein Koerper (Fallback)")
             if not mt and treppe is not None: ms.update(treppe="nicht gebaut", treppe_grund="Endkontrolle"); tbeleg = None
             if mf: ms["oeffnungen"] = len(felder)
             break
@@ -1667,6 +1683,20 @@ def ueberdachter_gang_aus_json(koerper, datei, massstab=None, min_mm=None):
         g, b, _ = ueberdachter_gang(P, massstab, min_mm); belege += b
         if g is not None: koerper = g if koerper is None else koerper + g
     return koerper, belege
+
+
+def bruecke_tor(masse, pflicht=("dach", "seiten", "treppe", "stuetzen")):
+    """Tor fuer den Brueckenbaustein (27.11.2026, PLAN_HANDMODELL_IN_KETTE §3 'kein stiller Kasten-Fallback'): ROT, sobald ein Bauteil per Ersatzform gebaut,
+    nicht gebaut oder in der Massliste als 'fehlt' markiert ist; jeder Eintrag nennt den Bauteilnamen. pflicht: Bauteile, deren Fehlen ROT ist, auch wenn der
+    Parameterblock ganz fehlt (fehlt 'treppe' im JSON -> ROT 'treppe: kein Parameterblock'). Liefert dict(status, rot=[...])."""
+    rot = list(masse.get("rot", []))
+    if masse.get("art") == "nicht gebaut" and not any(r["bauteil"] == "bruecke" for r in rot): rot.append(dict(bauteil="bruecke", grund=masse.get("grund", "nicht gebaut")))
+    if masse.get("art") == "massiver Steg" and not any(r["bauteil"] == "gang" for r in rot): rot.append(dict(bauteil="gang", grund="massiver Steg (Ersatzform)"))
+    if "treppe" in pflicht and masse.get("treppe") in ("keine", None) and not any(r["bauteil"] == "treppe" for r in rot) and masse.get("art") != "nicht gebaut":
+        rot.append(dict(bauteil="treppe", grund="kein Parameterblock 'treppe' (Treppe nicht gemessen)"))
+    if "stuetzen" in pflicht and not masse.get("stuetzen") and not any(r["bauteil"] == "stuetzen" for r in rot) and masse.get("art") != "nicht gebaut" and not masse.get("stuetzen_keine_belegt"):
+        rot.append(dict(bauteil="stuetzen", grund="keine Stuetzen gebaut und 'keine Stuetzen' nicht am Foto belegt"))
+    return dict(status="ROT" if rot else "GRUEN", rot=rot)
 
 
 def als_trimesh(m):
