@@ -27,7 +27,7 @@
     "Doku/modellbau/": "Scan/Druck/Modelle",
     "Doku/archiv/": "Bericht/Status"
   },
-  "main_branch": "kaufhaus-freiburg",
+  "main_branch": "main",
   "wissen": {
     "_hinweis": "Quellen fuer wissen_suchen.py / luecken.py / wiederfinden.py (Skill doku-pflege, Abschnitt Wissen finden; rc-park-Kopie tools/wissen_suchen.py)",
     "baum": ["PROJEKT.md", "Doku/projekt/**/*.md"],
