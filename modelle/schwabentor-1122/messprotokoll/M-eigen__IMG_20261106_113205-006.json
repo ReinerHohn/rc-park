@@ -1,0 +1,49 @@
+{
+ "id": "M-eigen__IMG_20261106_113205-006",
+ "typ": "triangulation",
+ "foto": "eigen__IMG_20261106_113205",
+ "name": "Sohlbank rechts f00, linkes Ende Oberkante",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113205",
+   "px": [
+    2238.6,
+    3014.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113130",
+   "px": [
+    1632.5,
+    713.2
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113532",
+   "px": [
+    1343.2,
+    1310.2
+   ]
+  }
+ ],
+ "P": [
+  3.195,
+  16.562,
+  23.573
+ ],
+ "strahl_abstand_m": [
+  0.009,
+  0.005,
+  0.008
+ ],
+ "schnittwinkel_grad": [
+  4.7,
+  52.2,
+  53.1
+ ],
+ "z": 23.573,
+ "unsicherheit_m": 0.074,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113205, K-eigen__IMG_20261106_113130, K-eigen__IMG_20261106_113532 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 3.685,
+ "u": -16.46
+}

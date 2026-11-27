@@ -22,6 +22,12 @@ NACHTRAG 24.11.2026 (WEG_HAND_ZU_KETTE Punkt 2, Nutzer "Alle Masse muessen aus F
  (nische_messen: Suchfeld zwischen Oeffnung und Nischenkante, bereich_nische; beide Hell/Dunkel-Richtungen, Putz gegen Putz) - zuerst, weil die Fenstertiefe
  ab dem Nischengrund zaehlt. T der Nische gilt ab der WAND (T ab Ebene + Relief s im Ring um die Nische; trennt sich die Hinterkante nicht
  von der Vorderkante, < 3 cm: kein Mass, Kopie 1122 f00). Ersetzt nur eine ANNAHME-Tiefe (nischen_fenster), eine Sweep-Messung bleibt (Fotowert steht in nische.laibung). Test: test_nische_annahme.py.
+NACHTRAG 27.11.2026 (Handvergleich Kette 1122zm: 'rundbogenfenster' einzige FALSCH-Zeile; Foto-Triangulation M-eigen__IMG_20261106_113205-001..-006):
+ HOEHEN der waagerechten Kanten (Sohle = Nischengrund auf der Sohlbank, Fensterscheitel, Nischenscheitel) kamen aus dem fusionierten Wandbild und lagen zu tief:
+ Sohle 23,36-23,39 statt 23,57 (Messflaeche w -0,36, Putzwand dort -0,52..-0,56: Fotos von unten zeigen jede Kante (Ebenenfehler x kappa) tiefer),
+ Scheitel 24,90-24,96 statt 25,33-25,38 (Oberkante des dunklen Ladens 0,7 m tief statt Vorderkante der Sturzlaibung). Neu hoehe_messen: je Einzelfoto die Kante
+ im Band (hoehen_baender) direkt aus dem Foto, Gerade Y = C_z + kappa C_w gegen kappa -> Achsabschnitt = Hoehe (unabhaengig von der Messflaeche), Steigung = Tiefe
+ (muss zur Wand-/Nischenflaeche passen, sonst kein Mass: Laden-Kante wird abgelehnt). Schalter --ohne_hoehen = alter Stand. Test: test_hoehe_blickschraege.py.
 """
 import sys, os, json, glob, argparse, numpy as np
 
@@ -220,6 +226,117 @@ def nische_messen(bilder, kam, rel, rast, qn, a, felder=None, t_max=1.0):
     return e
 
 
+def hoehen_baender(q, T=None):
+    """27.11.2026 (Handvergleich 'rundbogenfenster' FALSCH, Schwabentor f00, Lauf 1122zm): Suchbaender (art, [(ua, ue)], za, ze) fuer WAAGERECHTE Kanten eines Fensters,
+    deren Hoehe hoehe_messen aus der senkrechten Blickschraege misst. Immer 'dunkel unten -> hell oben' (Kante zur hellen Wand/Laibung darueber):
+      'scheitel'        Fensteroeffnung, Mittelspalten (+-40 % der halben Breite), von z1 - 0,6 bis unter den Nischenscheitel bzw. z1 + T;
+                        nur mit gemessener Laibungstiefe T (tiefe Oeffnung: Wandbild-Umriss = Oberkante des dunklen Ladens, nicht die Vorderkante - hoehe_messen);
+      'nische_scheitel' Nische, Mittelspalten (+-30 %), Nischenscheitel +-0,3 m (Schattenkante unter dem Nischenbogen gegen die Wand darueber);
+      'sohle'           Nischengrund auf der Sohlbank: Spalten links/rechts NEBEN der Oeffnung in der Nische, Sohle +-0,3 m (helle Nische ueber dunkler Bank)."""
+    out = []; m = (q["u0"] + q["u1"]) / 2; a = (q["u1"] - q["u0"]) / 2; N = q.get("nische")
+    if T:
+        ze = min(N["z1"] - 0.15, q["z1"] + T) if N else q["z1"] + T
+        za = max(q["z0"] + 0.2, q["z1"] - 0.6)
+        if ze - za >= 0.2: out.append(("scheitel", [(m - 0.4 * a, m + 0.4 * a)], za, ze))
+    if N:
+        mn = (N["u0"] + N["u1"]) / 2; an = (N["u1"] - N["u0"]) / 2
+        out.append(("nische_scheitel", [(mn - 0.3 * an, mn + 0.3 * an)], N["z1"] - 0.3, N["z1"] + 0.3))
+        sp = [(N["u0"] + 0.1, q["u0"] - 0.1), (q["u1"] + 0.1, N["u1"] - 0.1)]; sp = [s for s in sp if s[1] - s[0] >= 0.1]
+        if sp: out.append(("sohle", sp, N["z0"] - 0.3, N["z0"] + 0.3))
+    return out
+
+
+def hoehe_messen(felder, kam3, c, a, t_soll=None, t_tol=0.0, z_ref=None, t_min=0.5, z_min=None):
+    """27.11.2026: HOEHE einer waagerechten Kante aus Einzelfotos - senkrechtes Gegenstueck zu fenster_messen (gleiches Modell wie sohlbank_aus_fotos).
+    Eine Kante in Hoehe z, T hinter der Fassadenebene (w = -T), erscheint auf der Abtastebene w = s eines Fotos bei z_obs; mit kappa = (z_obs - C_z)/(C_w - s) gilt EXAKT
+          Y := C_z + kappa C_w = z - kappa T        ->  Gerade in kappa: ACHSABSCHNITT = wahre Hoehe, Steigung = Tiefe hinter der Ebene.
+    Der Achsabschnitt haengt NICHT von der Abtast-/Wandebene ab: ein Wandbild auf einer Ebene, die nicht auf der Wand liegt, verschiebt Kanten in Fotos von unten
+    um (Ebenenfehler) x kappa nach unten - im Mittel ueber viele Fotos bleibt ein fester Hoehenfehler (Schwabentor f00: Wand 0,2 m hinter der Messflaeche, Sohle -0,13 m).
+    Sturz einer TIEFEN Oeffnung (Laden/Glas 0,7 m hinter der Wand): im fusionierten Wandbild ist die staerkste Kante die Oberkante des dunklen Ladens (Hinterkante,
+    von unten zusaetzlich von der Sturzlaibung verdeckt) - nischen_fenster nahm sie als Scheitel (f00: 24,96 statt 25,38 m). Die Vorderkante (Sturzlaibung gegen die
+    helle Nischen-/Wandflaeche) ist im Wandbild verschmiert (Messflaeche nicht auf der Wand), in jedem EINZELfoto aber eine scharfe Kante; ihr Achsabschnitt ist der
+    Scheitel der Oeffnung. Pruefung, dass es die Vorderkante ist: Steigung = Tiefe der Wand-/Nischenflaeche (t_soll = Wandtiefe aus dem Relief, +- t_min 0,5 m;
+    gemessen 0,63-0,67 m gegen Laden 1,04 m) und Hoehe nicht unter dem Wandbild-Umriss (z_min).
+    felder: {foto: (Feld (Zeilen z absteigend), ua, s_ref, za)}; kam3: {foto: (C_u, C_w, C_z)}. Liefert dict(z, tiefe, fotos, kappa_spanne, streuung_z, rest_m, punkte) oder dict(fehler)."""
+    P = []
+    for name, (A_, ua, s_ref, za) in felder.items():
+        if name not in kam3: continue
+        Cu, Cw, Cz = kam3[name]
+        if Cw - s_ref < 2.0: continue
+        r = kante_im_feld(np.ascontiguousarray(A_.T[:, ::-1]), za, c, +1)          # Spalten = z aufsteigend: dunkel unten -> hell oben
+        if r is None: continue
+        z_obs, _, st = r; ka = (z_obs - Cz) / (Cw - s_ref)
+        P.append(dict(foto=name, z_obs=round(z_obs, 3), kappa=round(ka, 4), Y=round(Cz + ka * Cw, 4), staerke=round(st, 2)))
+    if not P: return dict(fehler="kein Foto zeigt die Kante", punkte=[])
+    st = np.array([p["staerke"] for p in P]); Q = [p for p in P if p["staerke"] >= a.staerke_rel * np.median(st)]
+    if len(Q) < a.min_fotos: return dict(fehler=f"weniger als {a.min_fotos} Fotos mit Kante", punkte=P)
+    ka = np.array([p["kappa"] for p in Q]); Y = np.array([p["Y"] for p in Q])
+    if np.ptp(ka) < a.k_spanne: return dict(fehler=f"Blickschraege-Spanne < {a.k_spanne}", punkte=P)
+    A = np.column_stack([np.ones_like(ka), -ka])
+
+    def fit(m): x, *_ = np.linalg.lstsq(A[m], Y[m], rcond=None); return x, Y - A @ x
+    m = np.ones(len(Q), bool); x, r = fit(m)
+    for _ in range(2):                                                       # Ausreisser (Kabel, Mast, falsche Kante): > 3 x MAD, mindestens 3 cm
+        mad = float(np.median(np.abs(r[m]))); m2 = np.abs(r) <= max(3 * 1.4826 * mad, 0.03)
+        if m2.sum() < a.min_fotos or (m2 == m).all(): break
+        m = m2; x, r = fit(m)
+    if m.sum() < a.min_fotos or np.ptp(ka[m]) < a.k_spanne: return dict(fehler="nach Ausreissern zu wenige Fotos / zu kleine Spanne", punkte=P)
+    rng = np.random.default_rng(0); idx = np.flatnonzero(m); bs = []
+    for _ in range(200):
+        i_ = rng.choice(idx, len(idx)); mm = np.zeros(len(Q), bool); mm[i_] = True
+        if np.ptp(ka[mm]) >= 0.5 * a.k_spanne: bs.append(fit(mm)[0])
+    bs = np.array(bs) if bs else np.zeros((0, 2))
+    aus = [Q[i]["foto"] for i in np.flatnonzero(~m)]
+    for p in P: p["ausreisser"] = p["foto"] in aus or p not in Q
+    e = dict(z=round(float(x[0]), 3), tiefe=round(float(x[1]), 3), fotos=int(m.sum()), kappa_spanne=[round(float(ka[m].min()), 3), round(float(ka[m].max()), 3)],
+             streuung_z=round(float(bs[:, 0].std()), 3) if len(bs) else None, streuung_tiefe=round(float(bs[:, 1].std()), 3) if len(bs) else None,
+             rest_m=round(float(np.median(np.abs(r[m]))), 3), punkte=P)
+    if e["streuung_z"] is None or e["streuung_z"] > 0.1: e["fehler"] = f"Hoehe unsicher (Streuung {e['streuung_z']} m > 0,1)"
+    elif t_soll is not None and abs(e["tiefe"] - t_soll) > max(t_tol * abs(t_soll), t_min):
+        e["fehler"] = f"Steigung (Tiefe) {e['tiefe']} m passt nicht zur Wand-/Nischenflaeche {t_soll} m (+-{max(t_tol * abs(t_soll), t_min)}) - nicht die Vorderkante"
+    elif z_ref is not None and abs(e["z"] - z_ref) > 1.0: e["fehler"] = f"Hoehe {e['z']} m mehr als 1 m neben dem Wandbild-Wert {z_ref}"
+    elif z_min is not None and e["z"] < z_min: e["fehler"] = f"Hoehe {e['z']} m unter dem Wandbild-Umriss {z_min} m (Vorderkante kann nicht tiefer liegen)"
+    return e
+
+
+def hoehen_anwenden(q, H):
+    """Gemessene Hoehen (hoehe_messen je Art, ohne 'fehler') in den Eintrag q uebernehmen; Bogenform bleibt (Kaempfer wandert mit dem Scheitel).
+    Fensterunterkante folgt der Sohle, wenn sie vorher mit dem Nischengrund zusammenfiel (<= 15 cm, Wandbild f00: 5-9 cm) oder sonst unter ihr laege. Liefert Liste der Aenderungen."""
+    ae = []; N = q.get("nische")
+
+    def scheitel(E, z):
+        dz = z - E["z1"]; B = E.get("bogen")
+        E["z1"] = round(z, 3)
+        if B: B["scheitel"] = round(z, 3); B["kaempfer"] = round(float(B.get("kaempfer") or z) + dz, 3) if B.get("form") != "gerade" else round(z, 3)
+        return dz
+    if "scheitel" in H: ae.append(("scheitel", round(scheitel(q, H["scheitel"]["z"]), 3)))
+    if N is not None and "nische_scheitel" in H: ae.append(("nische_scheitel", round(scheitel(N, H["nische_scheitel"]["z"]), 3)))
+    if N is not None and "sohle" in H:
+        zs = H["sohle"]["z"]; mit = abs(q["z0"] - N["z0"]) <= 0.15 or q["z0"] < zs; ae.append(("sohle", round(zs - N["z0"], 3))); N.setdefault("z0_ortho", N["z0"]); N["z0"] = round(zs, 3)
+        if mit: q["z0"] = round(zs, 3)
+    for E in [q] + ([N] if N is not None else []):                           # Guard: Kaempfer zwischen Unterkante und Scheitel
+        B = E.get("bogen")
+        if B and not (E["z0"] < B["kaempfer"] <= E["z1"]): B["kaempfer"] = round(min(max(B["kaempfer"], E["z0"] + 0.01), E["z1"]), 3)
+    return ae
+
+
+def hoehen_fenster(q, felder_q, kam3, c, a, s_w):
+    """27.11.2026: alle waagerechten Kanten eines Fensters (felder_q = {art: {foto: Feld-Tupel}} aus hoehen_baender) messen und in q uebernehmen.
+    s_w = Tiefe der Wand-/Nischenflaeche hinter der Fassadenebene (Relief im Ring) - Pruefgroesse der Steigung. 'scheitel' nur bei gemessener Laibung (q['laibung']).
+    Liefert ({art: Messung} uebernommen, [Berichtseintraege]); setzt q['hoehen_fotos']."""
+    T = (q.get("laibung") or {}).get("tiefe_ab_wand"); H, HB, L = {}, {}, []
+    for art, fe in felder_q.items():
+        if art == "scheitel" and not T: continue                             # nur tiefe Oeffnungen (Laibung gemessen): dort ist der Wandbild-Scheitel die Ladenkante
+        E_ = q if art == "scheitel" else q.get("nische")
+        if E_ is None: continue
+        h = hoehe_messen(fe, kam3, c, a, t_soll=s_w, z_ref=E_["z0"] if art == "sohle" else E_["z1"], z_min=q["z1"] - 0.05 if art == "scheitel" else None)
+        h["art"] = art; h["fenster"] = [q["u0"], q["u1"], q["z0"], q["z1"]]; L.append(h); HB[art] = {k: h.get(k) for k in ("z", "tiefe", "fotos", "kappa_spanne", "streuung_z", "rest_m", "fehler")}
+        if "fehler" not in h: H[art] = h
+    if H: q["hoehen_fotos"] = dict(HB, geaendert=hoehen_anwenden(q, H), quelle="tools/laibung_aus_fotos.py hoehe_messen: Achsabschnitt Y = C_z + kappa C_w gegen kappa (senkrechte Blickschraege)")
+    elif HB: q["hoehen_fotos"] = dict(HB, geaendert=[])
+    return H, L
+
+
 def bild(pfad, erg):
     """Je Fenster Y gegen |kappa| (Punkte, Ausreisser grau) und die Geraden je Seite - Steigung = Laibungstiefe."""
     import cv2
@@ -245,6 +362,7 @@ def main():
     ap.add_argument("--k_spanne", type=float, default=0.1, help="Spanne der Blickschraege |k| ueber die Fotos (sonst ist die Steigung nicht bestimmt)")
     ap.add_argument("--staerke_rel", type=float, default=0.4, help="Fotos mit Kantensprung < 40 %% des Medians (verdeckt, unscharf) zaehlen nicht")
     ap.add_argument("--ohne_foto", action="store_true", help="nur Einzelfoto-Orthos (alter Weg; haengt vom Fensterkasten des gebauten Modells ab)")
+    ap.add_argument("--ohne_hoehen", action="store_true", help="27.11.2026: Hoehen (Scheitel, Nischenscheitel, Sohle) NICHT aus der Blickschraege nachmessen (alter Stand, rote Probe)")
     a = ap.parse_args()
     aus = a.aus or os.path.dirname(os.path.abspath(a.fenster)); os.makedirs(aus, exist_ok=True)
     try: obj = json.load(open(a.objekt))
@@ -258,16 +376,16 @@ def main():
         if fid not in FF or not os.path.isdir(ed): bericht[fid] = "keine Einzelfoto-Orthos"; continue
         rs = FF[fid]["raster"]; rast = (rs["u0"], rs["z1"], rs["zelle"]); o = np.array(FF[fid]["o"], float); d = np.array(FF[fid]["d"], float); n = np.array(FF[fid]["n"], float)
         rp = os.path.join(a.fein, f"relief_{fid}.png"); rel = cv2.imread(rp, cv2.IMREAD_UNCHANGED) if os.path.exists(rp) else None
-        kam, bilder, KK = {}, [], {}
+        kam, bilder, KK, kam3 = {}, [], {}, {}
         for p in sorted(glob.glob(os.path.join(ed, "*.png"))):
             name = os.path.basename(p)[:-4]; kf = os.path.join(mp, f"K-{name}.json")
             if not os.path.exists(kf): continue
             K = json.load(open(kf)).get("kamera")
             if not isinstance(K, dict) or "rvec" not in K: continue
-            C = kamera_zentrum(K); kam[name] = (float((C[:2] - o) @ d), float((C[:2] - o) @ n))
+            C = kamera_zentrum(K); kam[name] = (float((C[:2] - o) @ d), float((C[:2] - o) @ n)); kam3[name] = kam[name] + (float(C[2]),)
             g = cv2.imread(p, cv2.IMREAD_GRAYSCALE)
             if g is not None: bilder.append((name, g)); KK[name] = K
-        felder = [{} for _ in F["fenster"]]; felder_n = [{} for _ in F["fenster"]]
+        felder = [{} for _ in F["fenster"]]; felder_n = [{} for _ in F["fenster"]]; felder_h = [{} for _ in F["fenster"]]
         QN = [dict(q["nische"], _innen=(q["u0"], q["u1"])) if q.get("nische") else None for q in F["fenster"]]     # 24.11.: Nischenlaibung (bereich_nische)
         if not a.ohne_foto:                                                  # 22.11.2026: Vorrang Foto direkt auf flacher Ebene (unabhaengig vom Fensterkasten des vorigen Baus)
             sref = [ring_s(rel, rast, q) for q in F["fenster"]]
@@ -292,6 +410,15 @@ def main():
                     if im is None: break
                     A_ = foto_feld(im, KK[name], (o, d, n), b, rast[2], sref[qi])
                     if A_ is not None and (A_ == 0).mean() <= 0.1: felder_n[qi][name] = (A_, b[0], sref[qi])
+                if not a.ohne_hoehen:                                        # 27.11.2026: waagerechte Kanten (Scheitel, Nischenscheitel, Sohle) - hoehe_messen
+                    for qi, q in enumerate(F["fenster"]):
+                        for art, spalten, za, ze in hoehen_baender(q, T=1.0):          # Abtastung mit T <= 1 m; das Scheitel-Mass gilt erst mit gemessener Laibung
+                            if verdeckt(g, rast, q, (min(s[0] for s in spalten), max(s[1] for s in spalten), za, ze)): continue
+                            if im is None: im = cv2.imread(pf, cv2.IMREAD_GRAYSCALE)
+                            if im is None: break
+                            T_ = [foto_feld(im, KK[name], (o, d, n), (s0, s1, za, ze), rast[2], sref[qi]) for s0, s1 in spalten]
+                            if any(t_ is None or (t_ == 0).mean() > 0.1 for t_ in T_) or len({t_.shape[0] for t_ in T_}) != 1: continue
+                            felder_h[qi].setdefault(art, {})[name] = (np.hstack(T_), spalten[0][0], sref[qi], za)
                 del im
         L = []; tafel = []
         for qi, q in enumerate(F["fenster"]):                                 # 24.11.2026: zuerst die NISCHE (ihre Tiefe ist der Bezug der Fensterlaibung)
@@ -318,10 +445,17 @@ def main():
             q["laibung"] = {k: e[k] for k in ("seite", "tiefe_ab_wand", "fotos", "k_spanne", "streuung", "rest_m")}
             q["tiefe"] = round(T - t0, 3); q["tiefe_quelle"] = f"Fotos: Laibung in Schraegsicht ({e['fotos']} Fotos, Tiefe ab Wand {T:.2f} +- {e['streuung']:.2f} m, tools/laibung_aus_fotos.py)"
             n_ok += 1; print(f"{fid} u {q['u0']:+.2f}: LAIBUNG {T:.2f} m ab Wand (+-{e['streuung']:.2f}, {e['fotos']} Fotos, |k| {e['k_spanne']}) -> Fenster {q['tiefe']:.2f} m hinter dem Nischengrund")
+        for qi, q in enumerate(F["fenster"]):                                 # 27.11.2026: HOEHEN waagerechter Kanten aus der senkrechten Blickschraege (hoehe_messen)
+            if not felder_h[qi]: continue
+            H, LH = hoehen_fenster(q, felder_h[qi], kam3, rast[2], a, -ring_s(rel, rast, q)); L += LH
+            for h in LH:
+                if "fehler" in h: print(f"{fid} u {q['u0']:+.2f}: {h['art']} nicht gemessen - {h['fehler']}")
+            if H:
+                n_ok += 1; txt = ", ".join("%s %.2f (%d Fotos, Tiefe %.2f)" % (k, v["z"], v["fotos"], v["tiefe"]) for k, v in H.items()); print(f"{fid} u {q['u0']:+.2f}: HOEHEN aus {txt} -> geaendert {q['hoehen_fotos']['geaendert']}")
         bericht[fid] = L; bild(os.path.join(aus, f"laibung_{fid}.jpg"), tafel)
     json.dump(bericht, open(os.path.join(aus, "laibung_aus_fotos.json"), "w"), indent=1, ensure_ascii=False)
     # 22.11.2026: Zusammenfassung je Fassade als letzte Zeile - das Kettenlog zeigt nur die letzten Zeilen (1121v: nur f02/f03 sichtbar, f00 'T 4,68' verborgen)
-    print("JE FASSADE: " + ", ".join(f"{f}: {sum('fehler' not in e for e in L)}/{len(L)} gemessen" + (" [" + "; ".join(f"T {e['tiefe_ab_wand']}" if 'fehler' not in e else e['fehler'][:40] for e in L) + "]")
+    print("JE FASSADE: " + ", ".join(f"{f}: {sum('fehler' not in e for e in L)}/{len(L)} gemessen" + (" [" + "; ".join((f"{e['art']} z {e['z']}" if "z" in e else f"T {e['tiefe_ab_wand']}") if 'fehler' not in e else e['fehler'][:40] for e in L) + "]")
                                      for f, L in bericht.items() if isinstance(L, list)))
     if not n_ok: print("keine Laibung gemessen"); return 3
     json.dump(J, open(os.path.join(aus, os.path.basename(a.fenster)), "w"), indent=1); print(f"-> {n_ok} Laibungen gemessen"); return 0

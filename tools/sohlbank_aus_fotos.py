@@ -30,9 +30,11 @@ def kamera_zentrum(K):
 
 
 def zone_von(q):
-    """Unterkante und Breite, unter der die Sohlbank gesucht wird: Nische (aeussere Ebene) vor Fenster. Liefert (u0, u1, z_unten, fenster_u0, fenster_u1)."""
+    """Unterkante und Breite, unter der die Sohlbank gesucht wird: Nische (aeussere Ebene) vor Fenster. Liefert (u0, u1, z_unten, fenster_u0, fenster_u1).
+    27.11.2026: gesucht wird in den Einzelfoto-ORTHOS (Wandbild-Rahmen) - dort liegt die Kante dort, wo das Wandbild sie zeigt ('z0_ortho'), nicht auf der
+    wahren Hoehe, die laibung_aus_fotos.hoehe_messen danach eintraegt (Fotos von unten + Messflaeche vor der Wand: Wandbild 0,14 m tiefer, Schwabentor f00)."""
     N = q.get("nische") or q
-    return float(N["u0"]), float(N["u1"]), float(N["z0"]), float(q["u0"]), float(q["u1"])
+    return float(N["u0"]), float(N["u1"]), float(N.get("z0_ortho", N["z0"])), float(q["u0"]), float(q["u1"])
 
 
 def _kante(p, z, i_lo, i_hi, vorz):
@@ -302,6 +304,10 @@ def main():
             e["fenster"] = [q["u0"], q["u1"], q["z0"], q["z1"]]; L.append(e); tafel.append((f"{fid} u {q['u0']:+.2f}..{q['u1']:+.2f}", e))
             if "fehler" in e: print(f"{fid} u {q['u0']:+.2f}: keine Sohlbank - {e['fehler']}"); q.pop("sohlbank", None); continue
             q["sohlbank"] = {k: e.get(k) for k in ("u0", "u1", "z0", "z1", "auskragung", "auskragung_streuung", "fotos", "geschwister", "auskragung_aus", "auskragung_bandhoehe", "auskragung_laenge", "u_streuung", "laenge_fotos", "auskragung_quelle")}
+            zs = (((q.get("hoehen_fotos") or {}).get("sohle") or {}).get("z") if not ((q.get("hoehen_fotos") or {}).get("sohle") or {}).get("fehler") else None)
+            if zs is not None and q.get("nische"):                           # 27.11.2026: Oberkante = gemessene Nischensohle (dieselbe Kante, direkt als Kante gemessen)
+                hs = float(e["z1"]) - float(e["z0"]); q["sohlbank"]["z_band"] = [e["z0"], e["z1"]]; q["sohlbank"]["z1"] = e["z1"] = round(float(zs), 3)
+                q["sohlbank"]["z0"] = e["z0"] = round(float(zs) - hs, 3); q["sohlbank"]["z_quelle"] = "Oberkante = Nischensohle aus laibung_aus_fotos.hoehe_messen (Achsabschnitt), Hoehe aus dem Band"
             q["sohlbank"]["quelle"] = (f"Fotos: dunkles Band unter der Unterkante (Einzelfoto-Orthos + SfM-Kameras), Auskragung aus {'+'.join(e['auskragung_aus'])} gegen die Blickschraege, "
                                        f"{e['fotos']} Fotos, {e['geschwister']} Geschwister gemeinsam (tools/sohlbank_aus_fotos.py)" + (" - " + e["auskragung_quelle"] if e.get("auskragung_quelle") else ""))
             n_ok += 1; print(f"{fid} u {q['u0']:+.2f}: SOHLBANK u {e['u0']:+.2f}..{e['u1']:+.2f} z {e['z0']:.2f}..{e['z1']:.2f} Auskragung {e['auskragung']:.3f} " + (f"+-{e['auskragung_streuung']:.3f} m" if e.get('auskragung_streuung') is not None else "m ANNAHME") + f" ({e['fotos']} Fotos)")

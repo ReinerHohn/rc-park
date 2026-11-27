@@ -1,0 +1,32 @@
+{
+ "id": "M-eigen__IMG_20261106_113205-003",
+ "foto": "eigen__IMG_20261106_113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "0.99956,0.029656,0=3.55",
+ "name": "Fensteroeffnung links f00: Sohlbank-Oberkante -> Bogenscheitel (Aussenkante Laibung)",
+ "mess_px": [
+  1627.9,
+  2993.2,
+  1624.8,
+  2714.5
+ ],
+ "P1": [
+  3.157,
+  13.314,
+  23.678
+ ],
+ "P2": [
+  3.152,
+  13.464,
+  25.413
+ ],
+ "dz": 1.735,
+ "dy": 0.15,
+ "dx": -0.004,
+ "abstand": 1.741,
+ "z1": 23.678,
+ "z2": 25.413,
+ "unsicherheit_rel": 0.0023,
+ "unsicherheit_m": 0.026,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99956,0.029656,0=3.55 (+-0.1 m)"
+}
