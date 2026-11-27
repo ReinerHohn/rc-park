@@ -1,0 +1,162 @@
+<title>Verfahren der Kette</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: senkrechter Ablauf, ein Schritt je Karte, Verfahren als farbige Marken; Farbe = Aufgabe im Ablauf */
+:root{
+  --bg:#f3f4f1; --fg:#1d2420; --muted:#5b665f; --card:#ffffff; --line:#d5dad4;
+  --punkt:#1f6f5c; --paar:#2b5fa8; --netz:#8a4fa0; --wolke:#b0651f; --form:#a8372f; --pruef:#4d6b1f;
+  --punkt-bg:#dcefe9; --paar-bg:#dde7f6; --netz-bg:#eddff2; --wolke-bg:#f6e6d3; --form-bg:#f6dedb; --pruef-bg:#e6efd6;
+  --font-head:"Space Grotesk",system-ui,sans-serif; --font-body:Inter,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a17; --fg:#e8ede9; --muted:#9aa89f; --card:#1d2621; --line:#33403a;
+  --punkt:#6fd0b6; --paar:#8db4ee; --netz:#cfa2e3; --wolke:#eab07a; --form:#f1a29b; --pruef:#b6d37f;
+  --punkt-bg:#1d3a33; --paar-bg:#1f3050; --netz-bg:#35243c; --wolke-bg:#40301f; --form-bg:#432421; --pruef-bg:#2c3a1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a17; --fg:#e8ede9; --muted:#9aa89f; --card:#1d2621; --line:#33403a;
+  --punkt:#6fd0b6; --paar:#8db4ee; --netz:#cfa2e3; --wolke:#eab07a; --form:#f1a29b; --pruef:#b6d37f;
+  --punkt-bg:#1d3a33; --paar-bg:#1f3050; --netz-bg:#35243c; --wolke-bg:#40301f; --form-bg:#432421; --pruef-bg:#2c3a1b; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.5;
+  padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--font-head);font-size:clamp(26px,5vw,34px);line-height:1.15;margin:0;text-wrap:balance}
+h2{font-family:var(--font-head);font-size:20px;margin:0;text-wrap:balance}
+p{margin:0}
+.lead{color:var(--muted);max-width:60ch}
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.who div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.who b{display:block;font-family:var(--font-head);font-size:16px;margin-bottom:2px}
+.who span{color:var(--muted);font-size:13.5px}
+.k-punkt b{color:var(--punkt)} .k-paar b{color:var(--paar)} .k-netz b{color:var(--netz)} .k-wolke b{color:var(--wolke)} .k-form b{color:var(--form)}
+.flow{display:flex;flex-direction:column;gap:0}
+.step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.step+.step{margin-top:26px}
+.step+.step::before{content:"";position:absolute;left:34px;top:-27px;height:26px;width:2px;background:var(--line)}
+.step+.step::after{content:"";position:absolute;left:29px;top:-9px;border:6px solid transparent;border-top:8px solid var(--line);border-bottom:0}
+.head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.nr{font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--muted);min-width:1.4em}
+.frage{color:var(--muted);font-size:14px}
+.tools{display:flex;flex-direction:column;gap:8px}
+.tool{display:flex;gap:10px;align-items:flex-start;min-width:0}
+.chip{flex:none;font-family:var(--font-head);font-weight:700;font-size:13px;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.tool span.t{font-size:14px;min-width:0}
+.c-punkt{background:var(--punkt-bg);color:var(--punkt)} .c-paar{background:var(--paar-bg);color:var(--paar)}
+.c-netz{background:var(--netz-bg);color:var(--netz)} .c-wolke{background:var(--wolke-bg);color:var(--wolke)}
+.c-form{background:var(--form-bg);color:var(--form)} .c-pruef{background:var(--pruef-bg);color:var(--pruef)}
+.befund{border-top:1px dashed var(--line);padding-top:9px;font-size:13.5px;color:var(--muted)}
+.befund b{color:var(--fg);font-weight:600}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);margin-left:6px;vertical-align:1px}
+.fazit{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.fazit ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.fn{font-size:12.5px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <h1>Verfahren der Kette</h1>
+    <p class="lead">Vom Foto zum druckbaren H0-Modell. Jede Marke ist ein Verfahren, die Farbe zeigt, was es im Ablauf tut. Stand 27.11.2026, mit den Messungen vom Runpod-Test.</p>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2>Wer ist wer?</h2>
+    <div class="who">
+      <div class="k-punkt"><b>SIFT</b><span>Findet markante Punkte im Foto (Ecken, Fugen). Klassisch, in COLMAP eingebaut.</span></div>
+      <div class="k-punkt"><b>ALIKED</b><span>Findet dieselbe Art Punkte mit einem neuronalen Netz, bis zu 8192 je Foto.</span></div>
+      <div class="k-paar"><b>LightGlue</b><span>Entscheidet, welcher Punkt in Foto A derselbe ist wie in Foto B. Neuronal, arbeitet mit ALIKED.</span></div>
+      <div class="k-netz"><b>COLMAP</b><span>Das Gesamtprogramm: Punkte, Paare, Kameras und dichte Wolke. SIFT und sein Matcher gehören dazu.</span></div>
+      <div class="k-netz"><b>GLOMAP</b><span>Ein Mapper, der alle Kameras auf einmal löst. Er hat das Netz an der Brücke schon verbogen.</span></div>
+      <div class="k-netz"><b>PnP</b><span>Berechnet aus bekannten 3D-Punkten, wo ein neues Foto stand.</span></div>
+    </div>
+  </section>
+
+  <section class="flow" aria-label="Ablauf">
+    <div class="step">
+      <div class="head"><span class="nr">1</span><h2>Fotos vorbereiten</h2></div>
+      <p class="frage">Welche Fotos taugen, und was darf nicht ins Bild?</p>
+      <div class="tools">
+        <div class="tool"><span class="chip c-pruef">Vorprüfung</span><span class="t">Schärfe, EXIF, Dubletten (MD5), Wasserzeichen unten abschneiden.</span></div>
+        <div class="tool"><span class="chip c-pruef">SegFormer</span><span class="t">Maskiert Personen, Autos, Zelte, Bäume. <span class="tag">Lizenz NC</span> Ersatz gesucht.</span></div>
+      </div>
+      <p class="befund"><b>Runpod:</b> Masken in voller Auflösung nicht getestet.</p>
+    </div>
+
+    <div class="step">
+      <div class="head"><span class="nr">2</span><h2>Merkmale finden</h2></div>
+      <p class="frage">Welche Stellen im Foto kann man in anderen Fotos wiederfinden?</p>
+      <div class="tools">
+        <div class="tool"><span class="chip c-punkt">SIFT</span><span class="t">Das Referenznetz (903 Fotos) hängt an SIFT. Läuft auf der GPU.</span></div>
+        <div class="tool"><span class="chip c-punkt">ALIKED</span><span class="t">Zusätzlich, für schräge Blickwinkel und Steinfugen.</span></div>
+      </div>
+      <p class="befund"><b>Runpod:</b> SIFT und ALIKED in voller Auflösung (4000 px) laufen dort, <b>lokal nicht gemessen</b>.</p>
+    </div>
+
+    <div class="step">
+      <div class="head"><span class="nr">3</span><h2>Paare bilden und matchen</h2></div>
+      <p class="frage">Welche Fotos sehen dieselbe Stelle, und welche Punkte gehören zusammen?</p>
+      <div class="tools">
+        <div class="tool"><span class="chip c-paar">COLMAP-Matcher</span><span class="t">Vergleicht SIFT-Punkte, alle oder nur gewählte Paare.</span></div>
+        <div class="tool"><span class="chip c-paar">LightGlue</span><span class="t">Matcht ALIKED-Punkte. Vorrunde mit 512 Punkten wählt je Foto 12 Partner, für schwache Fotos 30.</span></div>
+        <div class="tool"><span class="chip c-paar">Verifikation</span><span class="t">COLMAP wirft Paare raus, die zu keiner echten Kamerabewegung passen.</span></div>
+      </div>
+      <p class="befund"><b>Runpod:</b> Die Vorrunde (840 157 Paare) war der Engpass, wiederverwendet statt neu gerechnet: <b>4 Stunden gespart</b>. Volles Matching 11 742 Paare in 4,4 Minuten.</p>
+    </div>
+
+    <div class="step">
+      <div class="head"><span class="nr">4</span><h2>Kameras und Netz</h2></div>
+      <p class="frage">Wo stand jede Kamera, und wie liegt alles im Raum?</p>
+      <div class="tools">
+        <div class="tool"><span class="chip c-netz">COLMAP-Mapper</span><span class="t">Baut das Netz Foto für Foto auf (eigene Version 4.3.dev, sonst pycolmap 4.2.1).</span></div>
+        <div class="tool"><span class="chip c-netz">GLOMAP</span><span class="t">Alle Kameras auf einmal. Nur mit Vorsicht.</span></div>
+        <div class="tool"><span class="chip c-netz">PnP-Registrierung</span><span class="t">Hängt neue Fotos in ein fertiges Netz, in Runden.</span></div>
+        <div class="tool"><span class="chip c-netz">Starres Einpassen</span><span class="t">Ein Teilmodell (Brücke) wird per Maßstab, Drehung und Verschiebung angesetzt, nie verformt. Tor: Rest und Drehfehler.</span></div>
+        <div class="tool"><span class="chip c-netz">Ausrichtung</span><span class="t">GPS, DOM1-Höhe (Laser), LoD2-Maße und Lot legen das Netz in die Welt.</span></div>
+      </div>
+      <p class="befund"><b>Runpod:</b> Registrierung in voller Auflösung ordnet <b>91 von 241</b> Fotos ein, bei halber Auflösung waren es 97. <b>Mehr Pixel helfen hier nicht.</b></p>
+    </div>
+
+    <div class="step">
+      <div class="head"><span class="nr">5</span><h2>Dichte Wolke</h2></div>
+      <p class="frage">Viele Punkte auf den Wänden, nur als Lage-Veto, nie als Form.</p>
+      <div class="tools">
+        <div class="tool"><span class="chip c-wolke">PatchMatch</span><span class="t">Tiefenkarte je Foto auf der GPU.</span></div>
+        <div class="tool"><span class="chip c-wolke">Fusion</span><span class="t">Verschmilzt die Tiefenkarten zur Wolke. Hier frisst der RAM.</span></div>
+        <div class="tool"><span class="chip c-wolke">Wolken vereinen</span><span class="t">Neue Wolken ersetzen alte nie.</span></div>
+      </div>
+      <p class="befund"><b>Runpod:</b> 1600 px 0,60 Mio. Punkte, 4000 px 1,78 Mio., 5800 px 1,83 Mio. Die Wand wird <b>nicht ebener</b> (Streuung 8 cm in allen Stufen). 4000 px braucht 14,7 GB RAM, 5800 px 22,7 GB RAM und 9,2 GB VRAM. Das sprengt die 4060 <span class="tag">ohne Nutzen</span></p>
+    </div>
+
+    <div class="step">
+      <div class="head"><span class="nr">6</span><h2>Form</h2></div>
+      <p class="frage">Wie sieht das Gebäude aus, gemessen an Fotokanten?</p>
+      <div class="tools">
+        <div class="tool"><span class="chip c-form">Kanten-Sweep</span><span class="t">Kanten aus mehreren Fotos werden zu 3D-Linien trianguliert. Die Kernmethode.</span></div>
+        <div class="tool"><span class="chip c-form">Wandbild</span><span class="t">Wand aus vielen Fotos entzerrt, mit Tiefe je Zelle.</span></div>
+        <div class="tool"><span class="chip c-form">Bauteile</span><span class="t">Generator mit trimesh, Maße aus Fotos, nie von Hand.</span></div>
+        <div class="tool"><span class="chip c-form">Render-Abgleich</span><span class="t">Brücke: Modell gegen Fotokanten gerendert. In Arbeit, der echte Lauf scheitert noch.</span></div>
+      </div>
+      <p class="befund"><b>Runpod:</b> Nicht getestet. Offen sind LIMAP-Linien, MP-SfM, differenzierbares Rendern.</p>
+    </div>
+
+    <div class="step">
+      <div class="head"><span class="nr">7</span><h2>Prüfen und drucken</h2></div>
+      <p class="frage">Ist es besser als der beste Stand, und lässt es sich drucken?</p>
+      <div class="tools">
+        <div class="tool"><span class="chip c-pruef">Foto-F1</span><span class="t">Modell gegen Foto je Bauteil, dazu Bild &bdquo;Foto neben Modell&ldquo;.</span></div>
+        <div class="tool"><span class="chip c-pruef">Bestand-Tor</span><span class="t">Nie schlechter als der beste Stand, sonst nicht nach main.</span></div>
+        <div class="tool"><span class="chip c-pruef">STL</span><span class="t">Mindestmaß 0,8 mm, ein Körper, wasserdicht. Gedruckt wird erst auf Wunsch.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="fazit">
+    <h2>Was Runpod bisher gezeigt hat</h2>
+    <ul>
+      <li>Die 4060 hat uns bei dichter Wolke und Registrierung <b>keine messbare Qualität gekostet</b>. Mehr Auflösung bringt Punkte, keine bessere Wand.</li>
+      <li>Nur Runpod kann: dichte Wolke ab 5800 px (RAM und VRAM). Bei 4000 px bleibt der Laptop am Limit.</li>
+      <li>Nicht bewiesen: dass die 4060 SIFT, ALIKED und LightGlue in voller Auflösung schafft. Der lokale Vergleichslauf steht aus.</li>
+      <li>Der Hebel liegt bei Kameras an schwachen Stellen (Brücke, Treppe, Unterdurchgang) und bei der Kantenmessung.</li>
+    </ul>
+    <p class="fn">Quellen: Messungen auf Runpod vom 27.11.2026 (Pod-Berichte und Registrierung), Spec modelle/SPEC_VERFAHREN_RUNPOD_2026-11-27.md.</p>
+  </section>
+</div>
