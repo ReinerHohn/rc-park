@@ -17,7 +17,7 @@ oder, wo Fotos fehlen, einen konkreten Fotoauftrag. Ein Durchlauf dauert höchst
 ## Anforderungen (Reihenfolge = Priorität, Nutzer 26.11.)
 1. **Abdeckung zuerst (Fotos reichen nicht ins Netz).**
    a. Aufnahme-Anleitung (eine Seite, mit Skizze): Rundgang, Überlappung, Abstände, Höhen, Weitwinkel/Detail, feste Linse, keine Zoom-Wechsel; aus den Messungen der Handyfotos 26.11. begründet
-      (Schwabentor, Handyfotos 26.11.: 739 aufgenommen, 241 gewählt, 97 davon eingeordnet = 40 %; Brücke/Treppe/Unterdurchgang/Treppenturm fehlten im Netz; Nutzer 26.11.: diese Zahl ist die Basis, die frühere "283 von 677" ist überholt).
+      (Schwabentor, Handyfotos 26.11.: 739 aufgenommen, 677 scharf gewählt (`zusatz_20261126_voll`), davon **327 eingeordnet = 48 %** (Registrierung 27.11. 00:02, `lg/registrierung.json`, ALIKED+LightGlue). Nutzer 27.11.: **das ist die Basis**. Früherer Zwischenstand 97 von 241 (40 %, nur SIFT, kleinerer Fotosatz) und die ältere "283 von 677" sind überholt. Teilmodell-Mapper: 634 Bilder in einem Netz, 310 davon nur dort (Brücke, Treppe, Treppenturm sichtbar); Einpassung ins Hauptnetz unsicher, Rest mittel 1,43 m, Maßstab 0,53. Die Gründe je nicht eingeordnetem Foto (63/53/28) gelten für den alten Satz von 241 und sind für 677 neu zu messen).
    b. Automatische Abdeckungsmeldung nach der Registrierung: je Wand, Dach und Sonderstelle (Brücke, Treppe, Vorbau) Anzahl Fotos, Blickwinkelfächer, Tiefenabdeckung;
       Ausgabe als Bild + Liste. Schwellen aus Daten herleiten oder als `ANNAHME` eintragen.
    c. **Fotoauftrag statt Erfinden:** Fehlt Abdeckung, nennt die Kette die Stelle und von wo/wie zu fotografieren ist (Karte oder Skizze, Standpunkt, Blickrichtung);
