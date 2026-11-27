@@ -1,5 +1,5 @@
 # Grundbegriffe: von Fotos zur dichten Wolke (Erklärung 26.11.2026, Schwabentor)
-← [foto-sfm](../foto-sfm.md) · Werkzeuge: `tools/zusatzfotos_registrieren.py`, `tools/zusatzfotos_lightglue.py`, `tools/handy_teilmodell.py`, `tools/teilmodell_ausrichten.py`, `tools/dichte_nachtrag.py`, `tools/kachelfusion.py`
+← [foto-sfm](../foto-sfm.md) · Werkzeuge: `tools/zusatzfotos_registrieren.py`, `tools/zusatzfotos_lightglue.py`, `tools/handy_teilmodell.py`, `tools/teilmodell_ausrichten.py` (Qualitätstor: [teilmodell_qualitaetstor.md](teilmodell_qualitaetstor.md)), `tools/dichte_nachtrag.py`, `tools/kachelfusion.py`
 
 ## Gilt
 Die Kette läuft in dieser Reihenfolge. Jeder Schritt beantwortet eine eigene Frage:
@@ -20,6 +20,7 @@ Wann was:
 - Test an diesen 50: feste Brennweite 8 Inlier-Erfolge, freie Brennweite 14, mit Verzeichnung 13, 24 px Toleranz 14, Median 0 Inlier. Vermutung „Linsenverzeichnung" damit großteils widerlegt; wahrscheinlich ist das Hauptnetz dort schwach oder falsch (Folgerung, nicht gemessen).
 - Mapper nur auf den 241 Fotos: 5 Teilmodelle (55/29/72/10/8 Bilder, Reproj 0,65–0,97 px). Einpassen über gemeinsame Fotos: Modell 0 (alle schon im Netz) und 3 (10 Bilder) passen, Modell 2 (72 Bilder, 40 neu) nur mit 1,0 m Rest (unbrauchbar), Modelle 1 und 4 (37 neue Fotos, vermutlich Brücke/Unterdurchgang) haben 0–1 gemeinsame Fotos = nicht einpassbar.
 - Fehler beim Vorgehen (Lehre): `--ref-db` muss zur Rekonstruktion `--sparse` passen (hier `db_mapper.db` zu `sfm/sparse/0`, nicht `db.db`); vor dem Start Rig-Kennungen vergleichen, sonst Absturz in `triangulate_points` nach 30 min Matching.
+- 27.11. · Einpassung Teilmodell über Kamerazentren ohne Qualitätstor (`teilmodell_ausrichten.py`) → ⚠ Falle (Tor fehlte) · Handy-Teilmodell 0 (324 gemeinsame Bilder) hieß „ausgerichtet“ bei Rest 1,43 m (max. 8,8 m). Die Nachtkette rechnete darauf die dichte Wolke. Die Spur-Einpassung (lage-bruecke) zeigte: Steg 1 m zu hoch, Maßstab +1,7 %. Ursache: die PnP-Posen des Hauptnetzes sind an der Brücke schwach (Drehfehler-Median 1,6°); eine Extrapolation lag nicht vor (Hebel 1,4). Lehre: ein Status ohne Schwelle ist kein Urteil. Neues Tor: Rest relativ ≤ 0,025, Drehfehler ≤ 0,6°, Anker/Linie/Hebel; die Nachtkette bricht ab → [teilmodell_qualitaetstor.md](teilmodell_qualitaetstor.md) · Test `tools/test_teilmodell_qualitaetstor.py`
 
 ## Offen
 - Alle 677 scharfen Fotos (statt 241) mit SIFT + ALIKED/LightGlue neu matchen, dann gemeinsamer Mapper mit den Referenzbildern, Blick-Tor (Seitenverwechslung) und Pflichtbild.
