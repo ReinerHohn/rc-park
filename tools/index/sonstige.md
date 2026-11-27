@@ -1,4 +1,4 @@
-# Werkzeuge: sonstige (142)
+# Werkzeuge: sonstige (145)
 - `tools/anbau_verbinden.py` [gen] anbau_verbinden.py - PROTOTYP (5.11.): allgemeine Druckregel fuer Anbauteile ohne Kontakt (Figuren, Zier, Erkerteile, Spitzen). Jeder Teilkoerper ausser dem groessten: Splitter (< 
 - `tools/arch_profile.py` [seg] arch_profile.py — GENERISCH: echte Bogen-Intrados-Kurve aus einem Foto messen (nicht eine Kreis-/Halbkreis-ANNAHME aufzwingen) und als wiederverwendbare „Bogen-Signatur" (Radius-Ab
 - `tools/aufloesung_karte.py` [seg] aufloesung_karte.py - wo reichen die vorhandenen Fotos aufloesungsmaessig, wo fehlen bessere Ansichten? (Auswahl fuer gezielte Nachbeschaffung je Ausschnitt) Je Oberflaechenpunkt d
@@ -27,6 +27,7 @@
 - `tools/handy_kalibrieren.py` [col] handy_kalibrieren.py - Brennweite f (und k1) der Handykamera je Formatgruppe unabhaengig bestimmen, mit Unsicherheit (Register DB).
 - `tools/handy_masken.py` [seg] handy_masken.py - GPU-Masken fuer bewegte/nicht zum Bauwerk gehoerende Dinge in Handyfotos (Personen, Fahrzeuge, Fahrraeder, Marktstaende/Zelte, Kisten). Wie video_masken.py (nicht
 - `tools/handy_masken_v2.py` [seg] handy_masken_v2.py - Handy-Masken v2 (Register DI). v1 (handy_masken.py) bleibt unveraendert. Aenderungen gegenueber v1, alle aus den Segmentierungsklassen (ADE20K id2label) bzw. O
+- `tools/handy_nachlauf.sh` [sh] handy_nachlauf.sh - wartet auf das Ende von LightGlue "paare" (JOB_ENDE im lg_paare.log), dann einlesen -> registrieren (--je-bild) fuer die Handyfotos 26.11. (Schwabentor). Jede S
 - `tools/haufen_herkunft.py` [col] haufen_herkunft.py - welche BILDER haben einen Strassenhaufen des Grundriss-Tors erzeugt? (20.11.2026, Schwabentor: Flugpunkt-Faecher auf dem Platz)
 - `tools/haufen_klaeren.py` [-] haufen_klaeren.py - Strassenhaufen des Grundriss-Tors (tools/wolke_grundriss_pruefen.py, Test A) AUTOMATISCH klaeren: Doppelwand oder Umgebung?
 - `tools/haut_find.py` [-] haut_find.py — Haut-Teil(e) auf der Bauplan-Karte FINDEN (Nummer -> wo hin).
@@ -37,6 +38,7 @@
 - `tools/hybrid_abgleich.py` [gen] hybrid_abgleich.py - Dachflaechen je QUELLE getrennt fitten (Strassenwolke, Drohnenwolke, Generator) und Abweichungen melden (Register BR/BS).
 - `tools/insert_plate.py` [-] insert_plate.py — EBENE EINHÄNG-PLATTE für eine man-made Fläche (Einschnitt/Trog/ Portal-Deck/Stützwand), die das grobe Egg-Crate systematisch übertreppt.
 - `tools/insert_plates_auto.py` [seg] insert_plates_auto.py — schneidet die Flächen, die das grobe Egg-Crate vertreppt, als flache Einhäng-Platten auf die ECHTE Kontur (keine Rechtecke), in zwei Kategorien:
+- `tools/kachel_vereinen.py` [seg] kachel_vereinen.py <alt.ply> <neu.ply> <aus.ply> --ausrichtung SFM-AUSRICHTUNG.json [--kachel 12] [--radius 60] [--faktor 1.3]
 - `tools/kaufhaus_bauplan.py` [-] kaufhaus_bauplan.py — bemaßter Bauplan Historisches Kaufhaus Freiburg, aus dem Frontalfoto vermessen (Referenz Traufe 9,7 / First 21,4 m = LOD2 amtlich). Front-Ansicht + Querschnit
 - `tools/kaufhaus_measured.py` [gen] kaufhaus_measured.py — Historisches Kaufhaus Freiburg, FEIN vermessen aus den hochauflösenden Frontalen/Detailfotos (kh_front2025b, kh_fenster, kh_erker) gegen Referenz Traufe 9,7 
 - `tools/ketten_match.py` [seg] ketten_match.py - Linienzuege (Rippen) per Mehrfoto-Zuordnung triangulieren: Ketten werden in JEDEM Foto aus der Stabilitaetskarte extrahiert (Skelett, Lueckenschluss, Kreuzungen g
@@ -135,6 +137,7 @@
 - `tools/vorbauten_bauplan.py` [seg] vorbauten_bauplan.py - Vorbauten (Erker, Galerie, Vordach, Balkon) aus dem Ebenen-Sweep in eine BAULISTE uebersetzen (20.11.2026).
 - `tools/vorwissen_empfindlichkeit.py` [-] vorwissen_empfindlichkeit.py - Wie viel Vorwissen steckt im Nullstart? (Register BI)
 - `tools/werkzeug_aehnlich.py` [-] werkzeug_aehnlich.py - Doppelgaenger-Warnung: welche tools/*.py tun schon (fast) dasselbe wie ein neuer Auftrag / ein neues Werkzeug?
+- `tools/wissen_bedeutung.py` [seg] wissen_bedeutung.py - Bedeutungssuche (Satz-Embedding) fuer tools/wissen_suchen.py: findet Zeilen auch OHNE gemeinsames Wort.
 - `tools/wissen_suchen.py` [-] Wissen suchen: EIN Aufruf durchsucht Wissensbaum, Register, Archiv, Logbuecher, Memory, Werkzeug-Kopfkommentare und git log.
 - `tools/wissen_wiederfinden.py` [-] wissen_wiederfinden.py - NACHWEIS: findet die Baumsuche verlorenes Wissen wieder? Recall@5 auf echten Verlustfaellen.
 - `tools/zeit_je_modell.py` [-] zeit_je_modell.py - Wanduhr je Nullstart-Stufe und je Schritt aus ALLEN vorhandenen nullstart_bericht.json (Sweetspot 'viele Modelle in kurzer Zeit'). Zeigt, wo die Zeit eines Mode

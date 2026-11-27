@@ -52,3 +52,7 @@
 - Z.503: ## 23.11.2026 ~14:50 Probe 21 in main, 1122s abgebrochen
 - Z.544: ## UEBERGABE 24.11.2026 11:00
 - Z.547: ## UEBERGABE 24.11.2026 21:00
+- Z.550: ## UEBERGABE 25.11.2026 23:20
+- Z.553: ## UEBERGABE 26.11.2026 04:40
+- Z.556: ## UEBERGABE 26.11.2026 10:30
+- Z.559: ## 26.11.2026 ~11:05 Duenne Wolke hinter dem Tor (Nordzelle x 5-10, y 5-20): NICHT Fotos, sondern die TEILFUSION (Messung)

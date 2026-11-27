@@ -1,5 +1,6 @@
-# Werkzeuge: test (225)
-- `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Datensatz: tools/te
+# Werkzeuge: test (230)
+- `tools/test_abdeckung_echt.py` [-] Fester Test (~5 s) fuer tools/abdeckung_meldung.py auf ECHTEN Kameras + Spurpunkten (Review 27.11.2026: der alte Test sicherte nur bedingte Logik, Mini-Datensatz ohne Spurpunkte, l
+- `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Hier OHNE Lagedatei
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
@@ -40,6 +41,7 @@
 - `tools/test_formfund_tor.py` [gen] test_formfund_tor.py - BEWEIS des Formfund-Pruefers (Spec modelle/archiv/SPEC_FORMFUND_TOR.md): positive Faelle muessen bestehen, negative durchfallen.
 - `tools/test_formsitz.py` [seg] test_formsitz.py - synthetische Pruefung von tools/formsitz.py (trennscharfes Formmass, 24.11.2026) und seines Einbaus in tools/konvergenz.py.
 - `tools/test_formsitz_durchblick.py` [-] test_formsitz_durchblick.py - synthetische Pruefung des Durchblick-Schutzes in tools/formsitz.py (tiefe_vorn / durchblick_fuellen, 24.11.2026).
+- `tools/test_foto_auftrag_lage.py` [-] Fester Test (synthetisch, ~5 s) fuer tools/foto_auftrag_lage.py - Fotoauftrag fuer eine Sonderstelle mit Lagedatei (27.11.2026, Schwabentorsteg). Ebenes Gelaende (ohne DOM/DGM), Ha
 - `tools/test_foto_auftrag_skizze.py` [-] Fester Test (synthetisch, ~5 s) fuer tools/foto_auftrag_skizze.py - Fotoauftrag frueh und als Bild (22.11.2026, schwabentor-1122: Suedseite nicht angebunden). 1 Rechteck frei Ziel 
 - `tools/test_foto_diff.py` [seg] test_foto_diff.py - BEWEIS (bekannte Wahrheit) fuer foto_diff.py, generisch fuer jedes Objekt mit K-Kamera (2026-11-04). Das "Foto" ist ein Render des Modells mit derselben Kamera 
 - `tools/test_foto_diff_batch.py` [-] Test foto_diff_batch.py (Register BS8): Ergebnisgleichheit zum Original-foto_diff (je Foto eigener Prozess). /media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_foto_diff_b
@@ -83,6 +85,7 @@
 - `tools/test_kantenstufe_traufzone.py` [seg] test_kantenstufe_traufzone.py - WAECHTER Traufzone der Kantenstufe (CPU, ohne Daten, ~30 s; 24.11.2026). Verwandt/Vorlaeufer: tools/test_kantenstufe_kreis.py (Szene/Kameras/Stabilk
 - `tools/test_kegeldach_rund.py` [seg] test_kegeldach_rund.py - fester synthetischer Test fuer das KEGELDACH auf Rundkoerpern (rund_aus_umriss.kegeldach + bauteile.kegeldach_teile), 23.11.2026. Anlass: Kettenlauf 1122o 
 - `tools/test_keilsteine.py` [-] test_keilsteine.py - fester synthetischer Test fuer quader_raster.keilsteine (21.11.2026 spaet), < 20 s, nur CPU.
+- `tools/test_keine_ekernbindung.py` [-] test_keine_ekernbindung.py - Hardware-Bug-Test (27.11.2026): CPU-Jobs duerfen NICHT immer auf die langsamen E-Kerne 16-27 festgenagelt werden. Lehre: job_start.sh band jeden reinen
 - `tools/test_kette_1122c.py` [-] test_kette_1122c.py - fester Test (CPU, Sekunden, echte kleine Fixtures aus dem Kettenlauf schwabentor-1120 1122c, 22.11.2026).
 - `tools/test_kette_beleg.py` [-] test_kette_beleg.py - Beleg-Helfer gegen 'stille Erfolge' (tools/kette_beleg.py, gesamtkette.beleg/sweep_altstand; Audit modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md). Synthetisch, S
 - `tools/test_kette_kreis_orthos.py` [seg] test_kette_kreis_orthos.py - fester Test (CPU, < 20 s, ohne Daten) fuer den KREISFALL der Kette (22.11.2026, Kettenlauf schwabentor 1121v).
@@ -184,7 +187,9 @@
 - `tools/test_teil_verformung.py` [-] Synthetischer Test teil_verformung.py (Sekunden): Feldauswertung (Trend / Sprung / starr), Wandrichtung aus projizierten waagerechten 3D-Kanten, Rundgang-Koordinate.
 - `tools/test_teile_sichtpruefung.py` [seg] test_teile_sichtpruefung.py - BEWEIS, dass tools/teile_sichtpruefung.py die Fehler der Runde 5 (Kaufhaus) automatisch findet.
 - `tools/test_teilfusion_verlust.py` [-] test_teilfusion_verlust.py - Verlustwarnung der Teilfusion (26.11.2026). Echte Zahlen von Schwabentor 1122 (fused.ply.teile.json): Teil 3 und 6 muessen warnen, Teil 2 nicht. Verwan
+- `tools/test_teilmodell_qualitaetstor.py` [-] Test Qualitaetstor teilmodell_ausrichten.einpassung_guete (27.11.2026, Sekunden, nur numpy). 1. ECHTE alte Einpassung 27.11. (Handy-Teilmodell 0, 324 gemeinsame Bilder; Rest 1,43 m
 - `tools/test_teilmodell_sim3.py` [-] Test teilmodell_sim3: synthetische Sim3 (mit Ausreissern, Rauschen, fast ebene Anker), Rotationsvariante, Entartungsmass.
+- `tools/test_teilmodell_spuren_einpassen.py` [-] Test teilmodell_spuren_einpassen (Sekunden): direkte Paare, robuste Sim3 aus Spuren mit Ausreissern, Steg-Messung (Laenge/Neigung), Steg-Tor wird ROT bei geneigtem Steg (> 5 Grad o
 - `tools/test_temp_ordner.py` [-] test_temp_ordner.py - Temp nicht auf Root, Tests raeumen selbst auf (tools/pfade.temp_wurzel/temp_ordner, 22.11.2026). Anlass: /tmp/test_vordach_* (je 23 MB) und 180 weitere Testre
 - `tools/test_tiefe_belegt.py` [seg] test_tiefe_belegt.py - fester synthetischer Test (21.11.2026, schwabentor-1120 Westwand w00: Kruemelbaender im Relief, Lauf 1121r) fuer (1) putz_wandbild.tiefe_belegt: einzelne Net
 - `tools/test_tiefe_lokal_paar.py` [-] test_tiefe_lokal_paar.py - Feinrechnung der Tiefe (tools/tiefe_lokal.py) bekommt ein passendes Buendel/Bild-Paar (21.11.2026). Anlass: Kettenlauf schwabentor 1121o/p - tiefe_lokal 

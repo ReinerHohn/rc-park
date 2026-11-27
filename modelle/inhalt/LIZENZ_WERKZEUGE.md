@@ -17,3 +17,4 @@
 - Z.155: ## 2026-11-11 Relief aus Einzelbild (Beweistest, tools/relief_aus_foto.py)
 - Z.159: ## Nachtrag 2026-11-22: Primaerquellen-Pruefung Code UND Gewichte (9 Werkzeuge)
 - Z.216: ## Nachtrag 2026-11-22 (spaet): Befunde aus der Bruecken-Recherche
+- Z.231: ## Nachtrag 2026-11-25 (Wissenssuche: Satz-Embedding, nur internes Werkzeug)

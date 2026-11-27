@@ -1,4 +1,4 @@
-# Werkzeuge: druck_stl (38)
+# Werkzeuge: druck_stl (41)
 - `tools/abgeschaltete_teile.py` [-] abgeschaltete_teile.py - listet Schluessel in objekt.json, die ein Teil abgeschaltet/verworfen haben (Muster *_verworfen, deaktiv*, abgeschaltet). Anlass 12.11.: 'stirn_verworfen' 
 - `tools/bambu_slice.py` [-] bambu_slice.py - STL -> .gcode.3mf fuer den Bambu P1S ueber die Kommandozeile von Bambu Studio (Register CB, Lehre 2026-11-03). Loest die Vererbung ('inherits') der System-Profile 
 - `tools/bausatz.sh` [sh] bausatz.sh <objekt> <masken (relief/a_putz.npz,relief/b_putz.npz)> [WAND_MM=2.4] [SPIEL_MM=0.3] [BAUART=tasche|einsatz] [INNEN_MM=1.0] - Bausatz fuer ZWEI Drucker in einem Lauf (17
@@ -16,6 +16,8 @@
 - `tools/fehlteile_finden.py` [seg] fehlteile_finden.py - AUTOMATISCH finden, wo das Foto Struktur zeigt, die das Modell nicht hat (und umgekehrt).
 - `tools/feinteil_tor.py` [seg] feinteil_tor.py - FEINTEIL-MASS: sieht, ob das Modell die FEINSTRUKTUR des Fotos dort hat, wo das Foto sie hat (Figuren, Masswerk, Schindeln, Gesimse), und dort glatt ist, wo das F
 - `tools/h0_druckfertig.py` [gen] h0_druckfertig.py — beliebiges Mesh (Scan, LOD2-Bau, Generator-GLB) -> druckfertiges Modell fuer H0 (1:87).
+- `tools/handy_teilmodell.py` [-] handy_teilmodell.py <db> <bilder> <vorbereitet.json> <aus-ordner> [--threads 12]
+- `tools/handy_teilmodell_nachlauf.sh` [sh] handy_teilmodell_nachlauf.sh - parallele Nachtstufe: Teilmodell-Mapper NUR aus den Handyfotos (Bruecke/Treppe/Unterdurchgang, die nicht per PnP ins Hauptnetz kamen), dann Einpassen
 - `tools/huellen_stl.py` [gen] Huellen-npz (objekte_huellen.py / objekte_schnitzen.py) -> STL: Gesamt und je Objekt. Aufruf: python -I tools/huellen_stl.py IN.npz AUSVERZ
 - `tools/llm_urteil_auswerten.py` [-] llm_urteil_auswerten.py - sammelt Urteile unabhaengiger Beurteiler (<lauf>/urteile/<beurteiler>/<Pnn>.json {"urteil":"links|rechts|gleich","grund":..}), entschluesselt mit _schlues
 - `tools/mesh_druckbar.py` [gen] mesh_druckbar.py — beliebiges (auch GEKAUFTES, nicht-druckfertiges) Mesh → druckbarer Solid.
@@ -34,6 +36,7 @@
 - `tools/teile_sichtpruefung.py` [seg] teile_sichtpruefung.py - JEDES aktive Bauteil gegen VIELE Fotos pruefen (nicht nur das Nahfoto, an dem man gerade arbeitet).
 - `tools/teile_testdruck.py` [gen] teile_testdruck.py - Generator-STL in DRUCKBARE, STECKBARE Einzelteile zerlegen (Bambu u.a.). Boolesche Schnitte mit manifold3d (wasserdicht), Zapfen/Bohrung mit Spiel. Teile (Schn
 - `tools/teilmodell_sim3.py` [col] teilmodell_sim3.py - Bildserie, die nicht ans Referenznetz anschliesst (Insel), als eigenes SfM-Teilmodell rekonstruieren und per Sim3 ins Referenzsystem legen (Register DK, 2026-1
+- `tools/teilmodell_spuren_einpassen.py` [-] teilmodell_spuren_einpassen.py - Teilmodell (eigenes SfM-Netz, z. B. Handyfotos 26.11.) ueber DIREKTE 3D-SPUREN ins Hauptnetz legen und unabhaengig pruefen (27.11.2026).
 - `tools/testdruck_bauen.py` [gen] testdruck_bauen.py - Testdruck fuer die Duese: Pruefplatte + echte Martinstor-Ausschnitte (1:87). /media/oem/scan/venv-seg/bin/python -W ignore -I tools/testdruck_bauen.py [modell.
 - `tools/testdruck_mauerwerk.py` [gen] testdruck_mauerwerk.py - GENERISCH: Mauerwerks-Musterplatte eines Objekts im Massstab (Standard H0 1:87) fuer den Bambu P1S.
 - `tools/tile_stl.py` [gen] tile_stl.py — zerlegt ein großes STL in bett-taugliche Druckkacheln (Gitter).

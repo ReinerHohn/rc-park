@@ -1,4 +1,4 @@
-# Werkzeuge: wolke_dicht (93)
+# Werkzeuge: wolke_dicht (99)
 - `tools/bauteil_element_wolke.py` [gen] bauteil_element_wolke.py - Elemente, die die AUTOMATISCHE Elementschleife (generator_elemente_schleife.py) aus dem Restfeld der Wolke ableitet.
 - `tools/bauteil_rumpf_wolke.py` [-] bauteil_rumpf_wolke.py - Rumpf + Dach AUS DER DICHTEN PUNKTWOLKE (Spec S3b, Nutzerregel 6.11.: Wolke = erste Wahrheit).
 - `tools/bogen_aus_wolke.py` [seg] bogen_aus_wolke.py - Bogenoeffnungen als LOECHER in einer duennen Platte der Wolke um die Fassadenebene messen (3D-Lage, keine Foto-Ebenenannahme). Schritte: Rahmen (Umeyama) -> Ti
@@ -14,13 +14,18 @@
 - `tools/dicht_modell.py` [-] dicht_modell.py <sparse-ordner> <bilder-ordner> <aus-ordner> [--ohne unstabil.txt] [--stufe schnell|fein|grob] [--ohne-bildwahl]
 - `tools/dicht_verformen.py` [-] dicht_verformen.py <dicht_pts.npy> <alte_wolke.npy> <aus_prefix> [--iter 15] [--u0 -14 --u1 14 --z0 4 --z1 12] [--ordnung 2] Verformende Ausrichtung (Regel: Wolken verziehen sich u
 - `tools/dicht_vorpruefung.py` [-] dicht_vorpruefung.py - billige Schranke VOR einer teuren dichten Rechnung (Sweetspot-Ziel: viele Modelle in kurzer Zeit; Lehre aus der Bodenwolke 3.11., >1 h GPU).
+- `tools/dichte_diagnose.py` [col] dichte_diagnose.py - WARUM ist die dichte Wolke an einer Stelle duenn? Foto-Bedarf oder Rechen-Bedarf? (Nutzer 26.11.2026, generisch fuer jedes Objekt)
+- `tools/dichte_nachtrag.py` [col] dichte_nachtrag.py <voll-sparse> <dicht-ordner> <bilder-ordner> <aus-ordner> --zelle x0 x1 y0 y1 --ausrichtung SFM-AUSRICHTUNG.json [--min_punkte 20]
 - `tools/fassade_tiefe.py` [seg] fassade_tiefe.py <objekt.json> <fassaden-ordner> <nr> [--zelle 0.04] [--w -0.8 2.5] [--dw 0.05] [--fotos a,b,...] [--min_m2 0.5] [--min_w 0.25]
 - `tools/fenster_tiefe_tor.py` [-] fenster_tiefe_tor.py - Fensterliste (audit/fenster_auto.json) mit dem Ebenen-Sweep pruefen und ergaenzen (21.11.2026, Kettenstufe 'bauplan').
 - `tools/foto_punkt_picker.py` [seg] foto_punkt_picker.py — erzeugt eine eigenständige HTML-Seite zum PRÄZISEN Markieren von Modell-Passpunkten in einem Foto (Handy/Desktop). Du klickst die bekannten Bauwerks-Punkte (
 - `tools/fusion_vorab.py` [-] fusion_vorab.py - EINE Fusion je Kettenlauf statt zwei (24.11.2026, Laufzeit-Bericht 1122z: TEILFUSION 470 s in 'sfm' + 445 s in 'neu_fusionieren').
 - `tools/gruppen_punkt_tor.py` [col] gruppen_punkt_tor.py <sparse> <objekt.json> <picks.json> [--tol 0.3] - TOR: derselbe Objektpunkt, aus verschiedenen FOTOGRUPPEN trianguliert, muss zusammenfallen.
+- `tools/handy_dicht_nachlauf.sh` [sh] handy_dicht_nachlauf.sh - zweite Nachtstufe nach tools/handy_nachlauf.sh: dichte Wolke der registrierten Handyfotos 26.11. (Schwabentor). Wartet auf "FERTIG" in $Z/nachlauf.log, da
+- `tools/handy_fusion_nachlauf.sh` [sh] handy_fusion_nachlauf.sh - Mehrmethoden-Fusion der Handy-Teilmodell-Wolke (Nutzer 27.11.: "mehrere Methoden, mergen, lieber mehr Zeit, hoehere Qualitaet"). A = Teilfusion (laeuft a
 - `tools/helm_profil_wolke.py` [-] helm_profil_wolke.py - Profil r(z) eines N-eckigen Helms/Turms (Apothem je Hoehe) aus der Fotowolke, mit Achslage und Flaechenphase (generisch, kein Objektname).
 - `tools/iphone_dicht.py` [col] iphone_dicht.py <bilder> <sparse/N> <ausgabeordner> [max_bild] - COLMAP dicht (undistort -> PatchMatch-Stereo CUDA -> Fusion). Nutzer 8.11.: Punktwolke aus iPhone-Fotos ergaenzen.
+- `tools/kachelfusion.py` [col] kachelfusion.py <dicht-ordner> <aus.ply> --ausrichtung SFM-AUSRICHTUNG.json [--kachel 12] [--radius 60] [--max_bilder 120] [--min_num_pixels 3]
 - `tools/kanten_fusion.py` [-] Median-Fusion der Kantenquellen je Wolkenpunkt (KEIN Mittelwert): Anteil_i = kan_i / vis; fusioniert = Median ueber die Quellen (bei 3 Quellen: mindestens 2 muessen den Punkt klar 
 - `tools/kanten_tiefe_sweep.py` [seg] Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen; je Tiefe zaehlen, in wie vielen Nachbar
 - `tools/kanten_tiefe_sweep_flaeche.py` [seg] Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen; je Tiefe zaehlen, in wie vielen Nachbar
@@ -88,6 +93,7 @@
 - `tools/wolke_umgebung.py` [seg] wolke_umgebung.py - UMGEBUNGSMASKE und RAUSCHMESSUNG fuer die Elementschleife (generator_elemente_schleife.py). Nichts Objektspezifisches.
 - `tools/wolke_verdeckung.py` [seg] wolke_verdeckung.py - FOTOWOLKEN-VERDECKUNG fuer die Sichtbarkeitspruefung (teil_fotoform, L-KR26, Nutzer 10.11. abends).
 - `tools/wolke_verdeckung_karte.py` [seg] Diagnose zu wolke_verdeckung: Wolkentiefenkarte je Foto als Bild (Farbe = Tiefe, schwarz = keine gestuetzte Wolke) neben dem Foto. Aufruf: venv-seg/bin/python -W ignore -I tools/wo
+- `tools/wolke_vereinigen.py` [seg] wolke_vereinigen.py <basis.ply> <aus.ply> --ausrichtung SFM-AUSRICHTUNG.json --quelle NAME=PFAD.ply [--quelle ...] [--voxel 0.015] [--max_abw 0.05]
 - `tools/wolke_vs_modell.py` [seg] wolke_vs_modell.py - GENERISCH: dichte Fotowolke gegen Modell-STL, automatisch, je Fassadenseite (Register AN).
 - `tools/wolke_zu_mesh.py` [-] wolke_zu_mesh.py - farbiges, geschlossenes Netz direkt aus der dichten Punktwolke (Poisson), ohne Handwerte; belegt/geschaetzt getrennt (Register BR).
 - `tools/wolke_zu_netz.py` [gen] wolke_zu_netz.py - Kandidaten Punktwolke -> Netz mit VERSCHIEDENEN Algorithmen (open3d), alle im Modellrahmen als STL (mm im Massstab 1:87) fuer tools/modell_wettbewerb.py. /media/

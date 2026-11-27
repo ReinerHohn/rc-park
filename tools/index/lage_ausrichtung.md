@@ -1,4 +1,4 @@
-# Werkzeuge: lage_ausrichtung (55)
+# Werkzeuge: lage_ausrichtung (57)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
@@ -7,6 +7,7 @@
 - `tools/bewerter_geometrie.py` [-] Juror 1 — GEOMETRIE-TREUE. Frage: Bildet das Modell den ECHTEN Ort geometrisch treu ab, oder frisst Glättung/Auflösung die markanten Kanten weg?
 - `tools/dgm_xyz_to_npy.py` [-] dgm_xyz_to_npy.py — LGL-DGM1 XYZ-Subkacheln -> ein north-up Höhenfeld (.npy).
 - `tools/dom1_kachel.py` [-] dom1_kachel.py - GENERISCH: DOM1-/DGM1-Hoehe an UTM-Lagen direkt aus den amtlichen LGL-Kacheln (GeoTIFF + .tfw = Mitte des Pixels links oben).
+- `tools/foto_auftrag_lage.py` [-] foto_auftrag_lage.py - FOTOAUFTRAG fuer eine SONDERSTELLE MIT LAGEDATEI (Bruecke/Steg, Anbau ...): Fernfotos, die HAUPTBAU UND STELLE zugleich zeigen, plus gezielte Nahstandpunkte 
 - `tools/foto_georef_overlay.py` [seg] foto_georef_overlay.py — GENERISCH & georef: ein in Weltkoordinaten (UTM) stehendes Modell aus Kamera-Metadaten (GPS/Höhe/Kompass) in ein Foto projizieren — struktur-agnostisch (Vi
 - `tools/foto_lod2_zuordnen.py` [-] foto_lod2_zuordnen.py - GENERISCH: Was ist das Ding im Foto? LoD2-Gebaeude der Umgebung in die kalibrierte Kamera eines Fotos projizieren und fuer eine Bildstelle (u, v) sagen, wel
 - `tools/generator_ausrichten.py` [gen] generator_ausrichten.py - BS51: alten Generator-Kaufhaus (kaufhaus_measured.glb, Meter, eigener Rahmen) in den Wolkenrahmen (Netzrahmen, m) legen. Global: FPFH+RANSAC (Open3D, Mass
@@ -49,6 +50,7 @@
 - `tools/seiten_vereinen.py` [col] seiten_vereinen.py <modell_A> <modell_B> <db.db> --aus <ordner> [--min-paare 60] [--rel 0.02]
 - `tools/stadt_lod2_schneiden.py` [gen] stadt_lod2_schneiden.py - Stadt-Freiburg-LoD2 (Quellentyp 18, STADT_LOD2) auf ein Objekt zuschneiden (Auftrag G4).
 - `tools/teile_lage_pruefen.py` [gen] teile_lage_pruefen.py <objekt> [wolke.npy] - je aktivem Bauteil (NUR_BAUTEIL) Median-Abstand Wolke->Teil und Hoehe/Lage; markiert Teile ohne Wolkenstuetzung und Doppelungen. Sichtf
+- `tools/teilmodell_ausrichten.py` [col] teilmodell_ausrichten.py <hauptmodell-sparse> <teilmodelle-ordner> [--ausrichtung SFM-AUSRICHTUNG.json] [--min_gemeinsam 4] teilmodell_ausrichten.py --tor <teilmodelle>/ausrichtung
 - `tools/umzug_auslagerung.sh` [sh] umzug_auslagerung.sh QUELLE ZIEL [--trocken | --nur_umbiegen]   (--nur_umbiegen: nichts kopieren, nur Verknuepfungen QUELLE -> ZIEL umbiegen - Schlussdurchgang nach allen Umzuegen)
 - `tools/video_ausrichten.py` [col] video_ausrichten.py - Drohnen-/Video-SfM (video_sfm.py) per 3D-3D-Punktkorrespondenzen am Nordnetz ausrichten (Aehnlichkeitstransformation, RANSAC) (Register BQ).
 - `tools/wand_feinausrichtung.py` [seg] wand_feinausrichtung.py - Feinausrichtung mehrerer entzerrter Wandbilder (gleiches Wandraster) gegeneinander, NACH Homographie/Kameraprojektion.

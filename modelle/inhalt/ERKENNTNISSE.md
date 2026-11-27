@@ -1,0 +1,53 @@
+# Inhalt von modelle/ERKENNTNISSE.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Erkenntnis-Register (destilliert; Ablauf: allgemeiner Skill `erkenntnis` (~/git/claude-mds) + `.claude/erkenntnis.md`; Einzelheiten in den
+  - Z.5: - 21.11.2026 · DATEN · Seitenverklebung Martinstor kam von einer PERSON im Vordergrund (Selbstaufnahme-Video v
+  - Z.6: - 21.11.2026 · DATEN · 286 von 2042 heruntergeladenen Bildern haben > 30 % Vordergrund (Personen/Fahrzeuge) · 
+  - Z.7: - 21.11.2026 · NICHT IN DER KETTE · Seitenerkennung/-vereinen (19.11.), Masken (4./8.11.), DB-Bereinigung Kame
+  - Z.8: - 21.11.2026 · MESSFEHLER · Urteil "globaler Lauf verformt" (20.11., Median 2,48 %) kam vom nicht robusten Aus
+  - Z.9: - 21.11.2026 · ANNAHME WIDERLEGT · "Einzelfoto-Streuung ist eine Schwaeche des globalen Mappers": zwei schritt
+  - Z.10: - 21.11.2026 · METHODE · Brennweiten-Schaerfe je Kamera am fertigen Modell sagt wandernde Fotos vorher: 'unbes
+  - Z.11: - 21.11.2026 · DATEN · Ketten-DB Martinstor: jedes der 2107 Bilder eine eigene Kamera (auch Videobilder), EXIF
+  - Z.12: - 21.11.2026 · METHODE · Koerper, die auf keiner Wandebene liegen (Treppenturm, Dachueberstand, Laterne), find
+  - Z.13: - 21.11.2026 · ARBEITSWEISE · 10 % der Commits von zwei Tagen gingen in den Bau aus Fotokanten; der Handlauf w
+  - Z.14: - 21.11.2026 · METHODE · Globaler Mapper auf gefilterter DB (Masken + Seitenerkennung) ist fuer scharf bestimm
+  - Z.15: - 21.11.2026 · DATEN · `handy_masken.py` las nur *.jpg/*.png: 65 von 2107 Bildern (.jpeg/.JPG) blieben OHNE Ma
+  - Z.16: - 21.11.2026 · DATEN · Der schrittweise Mapper haengt am Ende an Bildern mit fraglichem Motiv (Tor winzig hint
+  - Z.17: - 21.11.2026 · MESSFEHLER/METHODE · Vereinen der Seiten scheiterte (19./20./21.11.), weil die Klappung den zwe
+  - Z.18: - 21.11.2026 · DATEN (Nutzer am 3D-Bild, nachgemessen) · Suedseite steht im vereinten Martinstor GEKIPPT: Lot 
+  - Z.19: - 21.11.2026 · GESCHWISTER Schwabentor · gleiche Muster: Ketten-DB 798 Bilder = 798 Kameras; 20 Bilder (.jpeg/
+  - Z.20: - 21.11.2026 · DATEN (Nutzer am 3D-Bild von oben, nachgemessen) · Suedseite war im vereinten Martinstor 16,7 G
+  - Z.21: - 21.11.2026 · ANNAHME WIDERLEGT (Lizenz) · SegFormer-Gewichte der Masken (handy_masken, video_masken, gebaeud
+  - Z.22: - 21.11.2026 · METHODE · Vereinen ist gegen Fehler der Klappung unempfindlich: 8 absichtlich verfaelschte Laeu
+  - Z.23: - 21.11.2026 · TOR FALSCH (Grundmenge) · Martinstor-Kettenlauf 1121a brach nach 90 min SfM+dichter Wolke ab: S
+  - Z.24: - 21.11.2026 · NICHT WIE HAND (Kette weicht ab) · Martinstor-Vereinen abgelehnt (Turmhoehen 19,8 %), weil die 
+  - Z.25: - 21.11.2026 · MESSFEHLER · Runde Koerper haben keine festen Kanten; Silhouetten-Tangenten bei voller Aufloesu
+  - Z.26: - 21.11.2026 · DATEN · Eine falsche Kamera (eigen__192, Gesims 4 m zu tief) liess Stufe 5c 49 % des West-Felde
+  - Z.27: - 21.11.2026 · MESSFEHLER · Torbreite aus Wolke/Sweep 4,86-5,37 m = Aussenkante der Fase, Form 'rund'; Wandbil
+  - Z.28: - 21.11.2026 · DATEN (offen) · Hoehen am Schwabentor uneinheitlich daneben: Uhr +0,7, Sohlbank +0,45..0,53, To
+  - Z.29: - 21.11.2026 · DATEN (offen) · Schwabentor Sued (w05-w07) und Ost (w04) ohne verwertbare Fotos (Ost: 126 Fotos
+  - Z.30: - 21.11.2026 · ARBEITSWEISE · ca. 45 min verloren: Neubauten scheiterten still am Platz-Tor (Root < 5 GB), Lau
+  - Z.31: - 21.11.2026 · ARBEITSWEISE · Tag halb mit Handmessen verbracht, Kette erst nachmittags; Handstand-Vergleich n
+  - Z.32: - 21.11.2026 · MESSFEHLER (zirkulaer) · Vordach-Anschluss fiel 19,39 -> ANNAHME 16,74, weil fassade_ortho die 
+  - Z.33: - 24.11.2026 · DATEN (Tor fehlt) · Ost-Teil (Teil 1, 65 Bilder) nach Wand-Bindung 5-6 m UNTER Gelaende - kein 
+  - Z.34: - 24.11.2026 · DATEN (Tor fehlt) · himmelblaue Geisterwolke vor der Nordwand trotz Drahtmasken · 0,83 % der Pu
+  - Z.35: - 24.11.2026 · ARBEITSWEISE · "Messung uneindeutig -> nur Bericht, Rueckfallwert trotzdem angewandt" laesst fa
+  - Z.36: - 24.11.2026 · ARBEITSWEISE · Seitenname aus der Uebergabe uebernommen ("Sued-Teil") statt aus seiten_konventi
+  - Z.37: - 24.11.2026 · NICHT IN DER AUTOMATIK (Laufzeit) · Doppelarbeit und Zeitwachstum blieben unbemerkt: dichte Wol
+  - Z.38: - 24.11.2026 · ARBEITSWEISE · 40 verwaiste Warteschleifen (3-74 h alt) liefen weiter - sie warteten auf Erfolg
+  - Z.39: - 24.11.2026 · MESSFEHLER · Grobes Foto-F1 (konvergenz.py) liegt am Schwabentor je Seite nur 0,00-0,16 ueber Z
+  - Z.40: - 24.11.2026 · ARBEITSWEISE · Merge ohne Ketten-Probelauf: 1122za brach nach 2 min ab (Seitenmodell-Code geaen
+  - Z.41: - 24.11.2026 · ARBEITSWEISE · Systematischer Fehler unter allen Befunden: Koerperwand auf LoD2-Ebene statt Fot
+  - Z.42: - 24.11.2026 · ARBEITSWEISE · Bildwert/Sweet-Spot-Auswahl (Register BM/BN 02.11., foto_wichtigkeit 07.11.) neu
+  - Z.43: - 24.11.2026 · ARBEITSWEISE · Wiederfinde-Nachweis: Verlorenes Wissen wird jetzt messbar wiedergefunden. Recal
+  - Z.44: - 25.11.2026 · ARBEITSWEISE+DATEN · Hoehenfeld als Gestalt zum DRITTEN Mal (Galerie 21.11., Galerie/Vordach 24
+  - Z.45: - 25.11.2026 · MESSFEHLER · Zirkulaere Messung dreimal an einem Tag: (1) Hoehenbereinigung im hand_vergleich z
+  - Z.46: - 25.11.2026 · ARBEITSWEISE · Dokumentierte Ursache war falsch und wurde ungeprueft in den Agentenauftrag uebe
+  - Z.47: - 25.11.2026 · ARBEITSWEISE · Nutzerbeobachtung nie als Eingabe: Dem ersten Dach-Agenten stand 'zweistufiges g
+  - Z.48: - 25.11.2026 · ANNAHME WIDERLEGT · Handstand schwab_v3 ist in der HOEHE keine Wahrheit: an der dichten Wolke (
+  - Z.49: - 26.11.2026 · DATEN · Duenne Wolke hinter dem Schwabentor (Nordzelle x 5-10, y 5-20) lag NICHT an fehlenden F
+  - Z.50: - 26.11.2026 · DATEN · Bildwahl `dicht_bildwahl.py` (Zylinder um den Turm) verwirft Bilder, die nur das Nebenh
+  - Z.51: - 26.11.2026 · MESSFEHLER · Meine erste Zaehlung der verworfenen Bilder verglich gegen `dicht_bildwahl.json` (
+  - Z.52: - 26.11.2026 · ARBEITSWEISE · Kachelfusion (Ersatz fuer Teilfusion) war auf den Turmwaenden SCHLECHTER (-18..-
+  - Z.53: - 26.11.2026 · ANNAHME WIDERLEGT · 'Der Bilderdeckel (120 je Kachel) kostet die Turmwaende 18-22 % Punkte': 3 
+  - Z.54: - 26.11.2026 · NICHT IN DER AUTOMATIK · Quellfilter rechnete auf 11 CPU-Kernen (Nutzerregel: GPU immer): GPU-Z
+  - Z.55: - 26.11.2026 · ANNAHME WIDERLEGT · Kontaktbogen-Aussage 'Treppenturm fehlt im Netz' (Handyfotos) war falsch: 2

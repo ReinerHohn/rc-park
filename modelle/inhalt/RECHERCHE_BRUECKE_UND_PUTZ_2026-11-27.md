@@ -1,0 +1,18 @@
+# Inhalt von modelle/RECHERCHE_BRUECKE_UND_PUTZ_2026-11-27.md (erzeugt; lesen mit Read offset=Zeile)
+- Z.1: # Recherche + Plan: Schwabentor-Brücke als Kettenbaustein (Teil A) und Putz/Bruchstein im H0-Druck (Teil B)
+- Z.7: ## 0. Vorab-Suche (`python3 -I tools/wissen_suchen.py`, 26.11. abends)
+- Z.22: ## TEIL A: Brücke (überdachter Gang mit Treppe) aus Fotokanten
+- Z.24: ### A1. Abgleich aus dem Netz (NIE Quelle der Form)
+- Z.35: ### A2. Bewertung des vorhandenen Zweigs `worktree-agent-af57fdd5b839f216f` (nur gelesen)
+- Z.51: ### A3. Bauplan als Kettenstufe `bruecke` (Reihenfolge = Abhängigkeit)
+- Z.83: ### A4. Prüfungen (je eine rote Probe vorab)
+- Z.93: ### A5. Minimalfotos (Standpunkte, GPS im Handy AN)
+- Z.102: ### A6. Risiken
+- Z.111: ### A7. Mehrsicht-Linienverfahren (Netzrecherche, mit Lizenz)
+- Z.121: ## TEIL B: Putz und Bruchstein bei H0 (1:87) realistisch
+- Z.123: ### B1. Was bei 1:87 überhaupt sichtbar ist (ANNAHME: Rechnung)
+- Z.130: ### B2. Druckeinstellungen
+- Z.143: ### B3. Nachbearbeitung FDM
+- Z.151: ### B4. Struktur und Bemalung (Krippen- und Modellbau)
+- Z.163: ### B5. Testplan Wandstück (nur auf Nutzerwunsch drucken)
+- Z.175: ## Fehlerliste / Unsicherheiten (vor jedem Lob)
