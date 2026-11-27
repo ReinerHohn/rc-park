@@ -71,10 +71,13 @@ ende() {  # $1 rc
 trap 'ende 98' INT TERM
 
 # 2. Umgebung
+if [ ! -d "$PAKET" ] && ! command -v zstd >/dev/null; then
+  apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq zstd >/dev/null 2>&1 || { t "ABBRUCH: zstd fehlt und apt-get scheitert"; ende 8; }
+fi
 if [ -z "$PY" ]; then
-  command -v zstd >/dev/null || { apt-get update -qq >/dev/null && apt-get install -y -qq zstd >/dev/null; }
-  python3 -m venv /root/venv && /root/venv/bin/pip install -q "pycolmap-cuda12==4.2.1" pillow >>"$LOG" 2>&1 || { t "ABBRUCH: pip install pycolmap-cuda12"; ende 8; }
-  PY=/root/venv/bin/python
+  # venv (python3-venv fehlt manchem Image -> dann ohne venv ins System-Python; Pod ist Wegwerf-Container)
+  if python3 -m venv /root/venv >>"$LOG" 2>&1; then PY=/root/venv/bin/python; else t "HINWEIS: kein venv moeglich, installiere ins System-Python"; PY=$(command -v python3); fi
+  $PY -m pip install -q "pycolmap-cuda12==4.2.1" pillow >>"$LOG" 2>&1 || { t "ABBRUCH: pip install pycolmap-cuda12==4.2.1"; ende 8; }
 fi
 $PY -I -c "import pycolmap,sys;print('pycolmap',pycolmap.__version__,'cuda',pycolmap.has_cuda);sys.exit(0 if pycolmap.has_cuda else 1)" >>"$LOG" 2>&1 || { t "ABBRUCH: pycolmap ohne CUDA"; ende 8; }
 nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader >>"$LOG" 2>&1
