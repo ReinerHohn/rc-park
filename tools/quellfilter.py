@@ -84,7 +84,7 @@ def zaehlen(X, kameras, threads=4):
     nq = np.sum([z[0] for z in Z], 0, dtype=np.int32); nv = np.sum([z[1] for z in Z], 0, dtype=np.int32); return nq, nv
 
 
-def zaehlen_gpu(X, kameras):
+def zaehlen_gpu(X, kameras, mit_winkel=False):
     """GPU-Zaehlung per Unterprozess in der Torch-Umgebung (tools/quellfilter_gpu.py). -> nq, nv oder None (Rueckfall CPU)."""
     import subprocess
     if os.environ.get("RCPARK_QF_GPU", "1") == "0" or not all(hasattr(k[5], "pfad") for k in kameras): return None
@@ -98,7 +98,7 @@ def zaehlen_gpu(X, kameras):
                  b=np.array([k[3] for k in kameras], np.float32), h=np.array([k[4] for k in kameras], np.float32), dateien=np.array([k[5].pfad for k in kameras]), tol_q=TOL_Q, tol_v=TOL_V, rand=RAND)
         r = subprocess.run([py, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "quellfilter_gpu.py"), ein, aus], capture_output=True, text=True)
         if r.returncode != 0 or not os.path.exists(aus): print("HINWEIS quellfilter: GPU-Weg fehlgeschlagen, CPU-Rueckfall:", (r.stderr or r.stdout)[-300:], flush=True); return None
-        Z = np.load(aus); return Z["nq"].astype(np.int32), Z["nv"].astype(np.int32)
+        Z = np.load(aus); return (Z["nq"].astype(np.int32), Z["nv"].astype(np.int32)) + ((Z["winkel"],) if mit_winkel else ())
     finally:
         import shutil; shutil.rmtree(tmp, ignore_errors=True)
 

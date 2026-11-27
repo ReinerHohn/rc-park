@@ -17,6 +17,7 @@ def main():
     Z = np.load(sys.argv[1], allow_pickle=True); dev = "cuda"
     X = torch.as_tensor(Z["X"], device=dev); n = len(X); nq = torch.zeros(n, dtype=torch.int32, device=dev); nv = torch.zeros(n, dtype=torch.int32, device=dev)
     tol_q, tol_v, rand = float(Z["tol_q"]), float(Z["tol_v"]), int(Z["rand"])
+    U0 = torch.zeros(n, 3, device=dev); has0 = torch.zeros(n, dtype=torch.bool, device=dev); cosmin = torch.ones(n, device=dev)   # Strahlwinkel der Quellen (26.11.): kleinster cos zum ersten Quellstrahl
     for j in range(len(Z["dateien"])):
         f = str(Z["dateien"][j])
         if not f: continue
@@ -32,8 +33,12 @@ def main():
             ok = (z > 0.1) & (u >= 0) & (u < bb - 1) & (v >= 0) & (v < hh - 1)
             ui = torch.clamp(torch.round(u * sx).long(), 0, W - 1); vi = torch.clamp(torch.round(v * sy).long(), 0, H - 1)
             dd = d[vi, ui]; dm = tmin[vi, ui]
-            nq[a:a + BLOCK] += (ok & (torch.abs(dd - z) < tol_q * z)).int(); nv[a:a + BLOCK] += (ok & (dd > 0) & (dm > (1 + tol_v) * z)).int()
-    np.savez(sys.argv[2], nq=nq.cpu().numpy(), nv=nv.cpu().numpy()); print("GPU-Zaehlung fertig", n, "Punkte", len(Z["dateien"]), "Karten", flush=True)
+            qm = ok & (torch.abs(dd - z) < tol_q * z); nq[a:a + BLOCK] += qm.int(); nv[a:a + BLOCK] += (ok & (dd > 0) & (dm > (1 + tol_v) * z)).int()
+            if qm.any():
+                Cw = -(Rm.T @ tv); u = X[a:a + BLOCK] - Cw; u = u / (u.norm(dim=1, keepdim=True) + 1e-9); h0 = has0[a:a + BLOCK]; ne = qm & ~h0
+                U0[a:a + BLOCK][ne] = u[ne]; has0[a:a + BLOCK] |= qm
+                c = (u * U0[a:a + BLOCK]).sum(1); cm = cosmin[a:a + BLOCK]; cosmin[a:a + BLOCK] = torch.where(qm & h0, torch.minimum(cm, c), cm)
+    np.savez(sys.argv[2], nq=nq.cpu().numpy(), nv=nv.cpu().numpy(), winkel=torch.rad2deg(torch.acos(torch.clamp(cosmin, -1, 1))).cpu().numpy().astype(np.float32)); print("GPU-Zaehlung fertig", n, "Punkte", len(Z["dateien"]), "Karten", flush=True)
 
 
 if __name__ == "__main__":
