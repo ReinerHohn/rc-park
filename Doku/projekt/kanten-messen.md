@@ -15,6 +15,8 @@ Details: `modelle/METHODE_MESSEN_DANN_BAUEN.md` · `modelle/LOGBUCH_RIPPEN_2026-
 - Nie eine fotobelegte Kante verlieren: Gitter über Läufe vereinigen (`gitter_zurueck.py`) (Nutzer 9.11.) [memory feedback-nie-belegte-kanten-verlieren]
 
 ## Versucht
+- 27.11. · K2 LIMAP (BSD-3, DeepLSD/GlueStick MIT) auf 295 Handykameras, Schwabentor (Pod) → ✓ fuer Turm/Anbau, ✗ fuer Steg · 2734 3D-Linien (>=3 Bilder), Reproj Median 0,31 px, Turm 1584 Linien lot-/waagrecht, im Foto auf Quaderfugen/Fenstern (angesehen); Steg nur 5 Linien/5,9 m (Ursache nicht belegt: Handy-Posen am Steg ~0,9 m Drift?); Foto-F1 gegen Bestand NICHT gerechnet [BERICHT_K2_K8_2026-11-27]
+- 27.11. · K8 S23DR-2026 (Code Apache-2.0, Gewichte CC-BY-NC) Dachgitter → ✗ nicht brauchbar · noetige HoHo-Gestalt-Segmentierung nicht oeffentlich; mit leeren Masken Unsinn (Turm 7-9 Ecken kreuz und quer); NC-Lizenz [BERICHT_K2_K8_2026-11-27]
 - 27.11. · Kantenstufe (Stabilitaetskarten) bei 2250/3000 px statt 1500, Wand f00 Schwabentor, 96 Kameras (Pod) → ✗ kein Hebel · Punkte 178 513→456 320, Streuung MAD 3,8→3,3 cm, an Modellflaeche 94→92 %, an Kante 69→64 % (15 cm), bei 5 cm 55→52 %; 'erfunden' 72→56 % nur weil mehr Punkte; Zeit 188→318 s [SPEC_VERFAHREN_RUNPOD_2026-11-27 K6]
 **Kanten-Drahtgitter & Linien-Features**
 - 9.11. · Canny, Phasenkongruenz, Subpixel, gleichgewichtete Fusion → ✗ verworfen · Textur, keine Trennung; korrelierte Stimmen verwässern [archiv/LOGBUCH_2026-11-09; LAGEBILD_KANTENGITTER]
