@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """test_bruecke_messen.py - rote Pruefungen der Kettenstufe BRUECKE (27.11.2026, RECHERCHE_BRUECKE_UND_PUTZ_2026-11-27.md A4, SPEC_SCHWABENTOR Anf. 4). CPU, ~1-2 min.
 
-  1 SYNTHETIK   bekannte Bruecke (bauteile.ueberdachter_gang) -> 12 kuenstliche Kameras -> Kantenbilder (sichtbare Modellkanten) -> bruecke_messen.messen
+  1 SYNTHETIK   bekannte Bruecke (bauteile.ueberdachter_gang) -> 14 kuenstliche Kameras -> schattierte Fotos mit Stoerlinien/Rauschen -> bruecke_render.abgleich
+                (seit 27.11. abends Render-Abgleich statt Profilspitzen; Teile 1+2 dauern ~10 min GPU, nicht im Schnelltest)
                 -> Parameter gegen Wahrheit (Toleranzen TOL unten). Fehler 'kamera': alle Kameras 1,2 m verschoben -> muss ROT werden.
   2 TAUSCHTEST  Zone (Suchraum) +-30 % -> dieselben Parameter (tausch_pruefen). Fehler 'zirkulaer': Messung klebt an der Zone -> ROT.
   3 OBERWELLE   14 Stufen, Rauschen auf jeder zweiten Kante, Luecken, Doppelfunde -> 14 (nicht 7/28). Fehler 'autokorr': reiner Autokorrelationsschaetzer -> ROT.
@@ -17,6 +18,7 @@ HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.jo
 import bauteile as BT
 import bruecke_messen as BM
 import bruecke_bauen as BB
+import bruecke_render as BR
 
 FEHLER = sys.argv[sys.argv.index("--fehler") + 1] if "--fehler" in sys.argv else ""
 NUR = set(sys.argv[sys.argv.index("--nur") + 1].split(",")) if "--nur" in sys.argv else None
@@ -48,6 +50,7 @@ def kameras(versatz=0.0):
     for s in (-10, -5, 0, 5, 10):
         for q in (-18, 18): K.append(kamera([q, s, 1.6], [0, s * 0.5, 7.5]))
     K.append(kamera([8, -26, 3.0], [0, 0, 7.5])); K.append(kamera([-8, 26, 3.0], [0, 0, 7.5]))
+    K.append(kamera([-8, -26, 3.0], [0, 0, 7.5])); K.append(kamera([8, 26, 3.0], [0, 0, 7.5]))   # 4 Schraegblicke auf die Giebel (Dachneigung >= 3 Fotos)
     if versatz:                                               # Fehler: Posen 1,2 m daneben (Bild bleibt, Kamera falsch)
         for k in K: C = np.array(k["C"]) + [versatz, 0, versatz * 0.5]; R = np.array(k["Rn"]); k["C"] = C.tolist(); k["tn"] = (-R @ C).tolist()
     return K
@@ -71,17 +74,41 @@ def rendern(t, K, seed=0):
     return out
 
 
+def rendern_flaechen(t, K, seed=0, n_hinten=60, n_vorne=8, rauschen=4.0):
+    """Synthetisches FOTO (nicht Kantenzeichnung): Netz exakt gerastert (render_kern, GPU), Flaechen nach Lichtrichtung schattiert, Stoerlinien hinter
+    (Hintergrund) und einige VOR der Bruecke (Aeste/Leitungen), Rauschen. Die Kanten entstehen erst durch die Fotokantensuche (LSD) aus Grauwertspruengen -
+    unabhaengig von der Sichtbarkeitsrechnung des Messwerkzeugs (Test 1 vorher: Kantenzeichnung per Strahltest liess Silhouetten an Streifkanten weg)."""
+    import render_kern as RK
+    rng = np.random.default_rng(seed); out = []; L_ = np.array([0.35, -0.5, 0.8]); L_ /= np.linalg.norm(L_)
+    hell = 70 + 150 * np.abs(t.face_normals @ L_)
+    for c in K:
+        im = np.full((c["H"], c["W"]), 185, np.float32)
+        for _ in range(n_hinten):
+            p = rng.uniform([0, 0], [c["W"], c["H"]], (2, 2)).astype(int); cv2.line(im, tuple(p[0]), tuple(p[1]), float(rng.integers(60, 160)), 2)
+        _, fid, _ = RK.dreiecke_rastern(t, np.array(c["Rn"]), np.array(c["tn"]), c["f"], c["cx"], c["cy"], c["W"], c["H"])
+        m = fid >= 0; im[m] = hell[fid[m]]
+        for _ in range(n_vorne):
+            p = rng.uniform([0, 0], [c["W"], c["H"]], (2, 2)).astype(int); cv2.line(im, tuple(p[0]), tuple(p[1]), float(rng.integers(30, 90)), 3)
+        im += rng.normal(0, rauschen, im.shape).astype(np.float32); out.append(np.clip(im, 0, 255).astype(np.uint8))
+    return out
+
+
 def wahrheit(P):
     """Erwartete Messgroessen aus der Wahrheit (dieselben Kanten, die die Messung sucht)."""
     return dict(breite=P["breite"], unterkante=P["z_boden"] - P["boden_dicke"], laufebene=P["z_boden"], holm=P["z_boden"] + P["seiten"]["bruestung"],
                 traufe=P["z_boden"] + P["hoehe"], first=None, spannweite=float(np.linalg.norm(np.subtract(P["achse"]["b"], P["achse"]["a"]))))
 
 
+UNSICHTBAR = ("laufebene",)   # Synthetik hat keine Kamera AUF dem Steg: Bodenoberkante ist von der Strasse nicht zu sehen -> 'fehlt' ist dort richtig, ein Wert muss stimmen
+
+
 def vergleich(ml, W, name):
     fehl = []
     for k, tol in TOL.items():
-        v = ml["parameter"].get(k, {}).get("wert"); w = W.get(k)
+        e = ml["parameter"].get(k, {}); v = e.get("wert"); w = W.get(k)
         if w is None: continue
+        if e.get("status") == "fehlt" and k in UNSICHTBAR: continue
+        if e.get("status") == "fehlt": fehl.append(f"{k} nicht belegt ({e.get('grund', '')[:60]})"); continue
         if v is None or abs(v - w) > tol: fehl.append(f"{k} {v if v is None else round(v, 2)} statt {w:.2f}")
     n = ml["parameter"].get("pfosten", {}).get("wert")
     if n != W["pfosten"]: fehl.append(f"pfosten {n} statt {W['pfosten']}")
@@ -95,10 +122,10 @@ def main():
     TOL["first"] = 0.3
     still = lambda *a, **k: None
     if NUR is None or "1" in NUR or "2" in NUR:
-        K = kameras(); bilder = rendern(t, K); kbs = [BM.kantenbild(b) for b in bilder]
-        print("1 SYNTHETIK Kanten -> Parameter")
+        K = kameras(); bilder = rendern_flaechen(t, K)
+        print("1 SYNTHETIK schattierte Fotos -> Render-Abgleich (bruecke_render) -> Parameter")
         K1 = kameras(1.2) if FEHLER == "kamera" else K
-        zone = BM.zone_aus_lage(LAGE); ml, _ = BM.messen(K1, kbs, zone, z_strasse=0.9, log=still)
+        zone = BM.zone_aus_lage(LAGE); ml = BR.abgleich(K1, bilder, zone, log=still)
         if ml["status"] != "gemessen": pruef("Synthetik gemessen", False, ml.get("grund", ""))
         else: vergleich(ml, W, "Synthetik: Parameter innerhalb Toleranz" + (" (Fehler kamera eingebaut)" if FEHLER == "kamera" else ""))
         if NUR is None or "2" in NUR:
@@ -108,7 +135,7 @@ def main():
                     m = copy.deepcopy(ml); m["parameter"]["traufe"]["wert"] = zz["z1"] - 1.0; m["parameter"]["breite"]["wert"] = 2 * zz["qmax"] - 2.0; return m
                 ml_ = zirk(zone); andere = [zirk(BM.zone_aus_lage(LAGE, f)) for f in (0.7, 1.3)]
             else:
-                ml_ = ml; andere = [BM.messen(K, kbs, BM.zone_aus_lage(LAGE, f), z_strasse=0.9, log=still)[0] for f in (0.7, 1.3)]
+                ml_ = ml; andere = [BR.abgleich(K, bilder, BM.zone_aus_lage(LAGE, f), log=still) for f in (0.7, 1.3)]
             pflicht = [k for k in ("breite", "unterkante", "traufe", "spannweite", "pfosten") if ml_["parameter"].get(k, {}).get("wert") is None]
             pruef("Tauschtest nicht leer (Pflichtmasse gemessen)", not pflicht, "fehlen: " + ", ".join(pflicht))
             BM.tausch_pruefen(ml_, andere); inst = [k for k, v in ml_["parameter"].items() if v.get("status") == "instabil"]
