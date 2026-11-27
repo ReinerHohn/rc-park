@@ -41,6 +41,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = "/media/oem/scan/venv-seg/bin/python"; PYC = "/media/oem/scan/venv-colmap/bin/python"
 STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "bauplan", "seiten", "draehte", "html", "vergleich", "druck"]
+
+
+def farbdatei(w):
+    """Farbdatei zur Punktdatei: punkte_modell_<obj>.npy -> punkte_farben_<obj>.npy, vereinte Wolke punkte_modell.npy -> punkte_farben.npy.
+    Nie die Punktdatei selbst (27.11.2026: Austausch mit Unterstrich traf die vereinte Wolke nicht, Koordinaten gingen als Farben an draehte -> RGBA-Absturz)."""
+    d, n = os.path.split(w); f = os.path.join(d, n.replace("punkte_modell", "punkte_farben", 1))
+    return f if f != w else w + ".farben_fehlt"
+
 UEBERNEHMEN = ["name", "ort", "lod2", "rahmen", "rahmen_wand", "koordinate_utm", "hoehe_m", "fotos_dir", "seiten_konvention", "bildquellen"]
 
 
@@ -1104,7 +1112,7 @@ def main():
         notiz(B, "sackgassen", not sg_, offen=sg_, hinweis="Kettenergebnisse ohne Verbraucher im Generator; bekannte, noch nicht verbaute Uebergaenge: modelle/KETTE_LUECKEN_2026-11-20.md")
     W_ANZ = os.path.join(D, "wolke_anzeige", os.path.basename(W))                         # 24.11.2026: Anzeige-Kopie ohne Draehte/Fahnen (tools/wolke_draehte.py)
     if dran("draehte") and os.path.exists(W):
-        t_dr = time.time(); wf_ = W.replace("punkte_modell_", "punkte_farben_"); os.makedirs(os.path.join(Z, "audit"), exist_ok=True); os.makedirs(os.path.dirname(W_ANZ), exist_ok=True)
+        t_dr = time.time(); wf_ = farbdatei(W); os.makedirs(os.path.join(Z, "audit"), exist_ok=True); os.makedirs(os.path.dirname(W_ANZ), exist_ok=True)
         sp_ = os.path.join(P, "sfm", "sparse", "0"); si_ = os.path.join(os.path.dirname(W_ANZ), "sicht.npz")      # Freiraum-Test: SfM-Beobachtungen durchleuchten Fahnen vor der Wand
         if os.path.exists(si_): os.remove(si_)
         if os.path.isdir(sp_) and os.path.exists(AU): lauf(B, "draehte_sicht", [PYC, "-I", "tools/wolke_draehte.py", si_, "--sicht_export", sp_, AU], log, ok=(0, 5))   # 5 = anderes SfM-Modell
@@ -1114,7 +1122,7 @@ def main():
     if not (os.path.exists(W_ANZ) and os.path.exists(W) and os.path.getmtime(W_ANZ) >= os.path.getmtime(W)): W_ANZ = W   # Kopie fehlt/veraltet -> Original zeigen
     if dran("html"):
         args = [PY, "-I", "tools/modell_3d_html.py", ZR, os.path.join(D, f"{a.ziel}_3d.html")]
-        if os.path.exists(W_ANZ): args += ["--wolke", W_ANZ] + (["--farben", W_ANZ.replace("punkte_modell_", "punkte_farben_")] if os.path.exists(W_ANZ.replace("punkte_modell_", "punkte_farben_")) else [])
+        if os.path.exists(W_ANZ): args += ["--wolke", W_ANZ] + (["--farben", farbdatei(W_ANZ)] if os.path.exists(farbdatei(W_ANZ)) else [])
         lauf(B, "html", args, log)
     if dran("vergleich") and a.referenz_wolke and os.path.exists(W):       # 15.11.: in venv-seg (torch/gpu_knn); die Kette selbst laeuft mit System-Python
         code = ("import sys, json, numpy as np; sys.path.insert(0, 'tools'); from gpu_knn import min_abstand; rng = np.random.default_rng(0); "

@@ -1,4 +1,4 @@
-# Werkzeuge: geometrie_flaechen (38)
+# Werkzeuge: geometrie_flaechen (39)
 - `tools/arkaden_fit.py` [seg] arkaden_fit.py - Arkadenboegen als FORMFAMILIE statt freier Kettenbildung (Koordinator 9.11., Runde 3). Eingabe: Gitter mit "saeulen" [{cx,cy,R,z_fuss,z_kopf}], ein oder mehrere Sw
 - `tools/auto_fit_alle.py` [-] auto_fit_alle.py <objekt> --wolke w.npy --fotos kam.json --bilder dir [--typen a,b,..] [--iter 40] Automatische Annaeherung ALLER parametrischen Bauteile an die Wolke (Nutzerwunsch
 - `tools/autofit.py` [seg] autofit.py — ARCHETYP-AGNOSTISCHER Autofit-Kern.
@@ -8,6 +8,7 @@
 - `tools/ebenen_einrasten.py` [gen] ebenen_einrasten.py - Familie 'Ebenen': RANSAC-Ebenen aus der Wolke (Modellrahmen, m), dann Netzknoten nahe einer Ebene (Abstand < --tol, Normale < --winkel) auf die Ebene projizie
 - `tools/ebenen_modell.py` [gen] ebenen_modell.py - Scharfes Netz aus gemessenen Ebenen + Carving-Belegung (SPEC S8 Baustein 2+4+5). Keine Vorlagen, kein STL/Generator.
 - `tools/ebenen_schleife.py` [gen] ebenen_schleife.py - KONVERGIERENDE SCHLEIFE: Arbeitsliste der Abweichung abarbeiten, Umbau nur bei besserer Kennzahl behalten (21.11.2026).
+- `tools/ebenen_stapel.py` [-] ebenen_stapel.py - EBENENFINDER Schichtstapel aus Kanten fuer die Abweichungsschleife (27.11.2026, Kandidat K7 aus modelle/SPEC_VERFAHREN_RUNPOD_2026-11-27.md).
 - `tools/ebenen_zellen_schnitt.py` [gen] ebenen_zellen_schnitt.py - Familie 'Ebenenanordnung + Graph-Cut' (eigene Nachbildung des PolyFit/Kinetic-Gedankens, KEIN CGAL-Code, daher lizenzfrei): 1 RANSAC-Ebenen aus der Wolke
 - `tools/element_compare.py` [-] element_compare.py — FORM-Abgleich pro Bauteil: legt Foto-Ausschnitt NEBEN Modell-Ausschnitt.
 - `tools/element_einpassen.py` [seg] element_einpassen.py - SPEC S9: Erkennen + Einpassen von Elementen mit FREIEN PARAMETERN + Restpruefung (6.11.2026). Erster Durchstich: Arkadenboegen.

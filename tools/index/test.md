@@ -1,4 +1,4 @@
-# Werkzeuge: test (233)
+# Werkzeuge: test (235)
 - `tools/test_abdeckung_echt.py` [-] Fester Test (~5 s) fuer tools/abdeckung_meldung.py auf ECHTEN Kameras + Spurpunkten (Review 27.11.2026: der alte Test sicherte nur bedingte Logik, Mini-Datensatz ohne Spurpunkte, l
 - `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Hier OHNE Lagedatei
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
@@ -26,9 +26,11 @@
 - `tools/test_durchfahrt_wandbild.py` [gen] test_durchfahrt_wandbild.py - Tordurchfahrt, deren Sweep-Form verworfen wurde, kommt ueber die Fotokanten doch ins Modell (23.11.2026). Ohne Dateien, < 30 s.
 - `tools/test_ebenen_kam_ergaenzen.py` [-] test_ebenen_kam_ergaenzen.py - fester synthetischer Test (24.11.2026, Befund 1122z f02/Ost: 1316 Fotokantenpunkte, 49 frontale SfM-Kameras nicht in kam_wahl) fuer tools/ebenen_baup
 - `tools/test_ebenen_modell.py` [seg] test_ebenen_modell.py - synthetischer Beweis fuer kanten_3d.py + ebenen_modell.py (SPEC S8). Szene (Modellrahmen, m): Kasten 20 x 10 x 8, Halle dahinter, 4 Rundbogen-Arkaden in der
+- `tools/test_ebenen_stapel_schleife.py` [-] test_ebenen_stapel_schleife.py - fester synthetischer Test (27.11.2026, K7: Schichtstapel + Abweichungsschleife in der Kette hinter RCPARK_EBENEN_SCHLEIFE=1). Rot ohne die K7-Aende
 - `tools/test_eck_reproj.py` [col] Test seiten_eck_koppeln REPROJ (23.11.2026): Kopplungsweg pycolmap.align_reconstructions_via_reprojections, dieselben Tore wie der Punkt-Weg. (1) Synthetisch (pycolmap.synthesize_d
 - `tools/test_eck_teilkameras.py` [-] Test seiten_eck_koppeln, Stand 23.11.2026 (Befund 1122t: Teil 1 'Massstab nicht belegt', Haelften 2,3 %): (1) KAMERA-PROBE: flache Wand + gespiegelter Teil - die Punkte allein best
 - `tools/test_element_einpassen.py` [seg] test_element_einpassen.py - S9 Beweis 1 (synthetisch, Wahrheit bekannt, VOR dem Kaufhaus gelaufen): Rund-, Stich-, Spitzbogen verschiedener Masse (je andere Breite/Hoehe/Lage) + Kl
+- `tools/test_farbdatei.py` [-] test_farbdatei.py - gesamtkette.farbdatei: Farbdatei zur Punktdatei, auch fuer die vereinte Wolke (27.11.2026). Vorfall: wf_ = W.replace("punkte_modell_", "punkte_farben_") traf pu
 - `tools/test_farbteile_neigung.py` [gen] test_farbteile_neigung.py - Schnelltest fuer tools/druck_farbteile.py: Plattentiefe folgt der OERTLICHEN Wand (18.11.2026). Synthetisch: Quader 12 x 8 x 10 m, um 2 Grad gegen die M
 - `tools/test_feinmass.py` [seg] test_feinmass.py - SYNTHETISCHER BEWEIS fuer f1_fein (modelle/archiv/SPEC_ORNAMENT_FEINMASS.md). Testflaeche mit aufgesetzten Rippen (bekannte Lage, Metrik in m) wird mit der echte
 - `tools/test_feinsuche.py` [seg] test_feinsuche.py - SYNTHETISCHER BEWEIS fuer foto_feinsuche (modelle/archiv/SPEC_FEINSUCHE.md, Beweis 1). Eine Testplatte mit aufgesetzten Rippen (bekannte Lage in Weltmetern) wir
