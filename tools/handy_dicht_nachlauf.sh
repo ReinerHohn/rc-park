@@ -27,10 +27,10 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True JOB_GPU_MB=6500 JOB_RAM_MB=6000
 t "START dichte_nachtrag"; rc=$(warte "$L1" 21600); t "ENDE dichte_nachtrag rc=$rc"; [ "$rc" = 0 ] || { t "ABBRUCH dichte_nachtrag"; exit 1; }
 # 2. Fusion (CPU)
 L2=$O/fusion.log; rm -f "$L2"
-JOB_RAM_MB=11000 bash tools/job_start.sh handy2-fusion "$L2" taskset -c 16-27 $PY -I tools/kachelfusion.py "$O/dicht" "$O/handy_fusion.ply" --ausrichtung $AUS --box -30 30 -30 30 --ohne_muster LMS3Va6psfY
+JOB_RAM_MB=11000 bash tools/job_start.sh handy2-fusion "$L2" $PY -I tools/kachelfusion.py "$O/dicht" "$O/handy_fusion.ply" --ausrichtung $AUS --box -30 30 -30 30 --ohne_muster LMS3Va6psfY
 t "START kachelfusion"; rc=$(warte "$L2" 14400); t "ENDE kachelfusion rc=$rc"; [ "$rc" = 0 ] || { t "ABBRUCH kachelfusion"; exit 1; }
 # 3. Vereinigen mit der bestehenden dichten Wolke
 L3=$O/vereinigen.log; rm -f "$L3"
-JOB_RAM_MB=11000 bash tools/job_start.sh handy2-vereinigen "$L3" taskset -c 16-27 $PY -I tools/wolke_vereinigen.py "$D/pipe/dicht/fused.ply" "$O/handy_vereint.ply" --ausrichtung $AUS --quelle handy_fusion="$O/handy_fusion.ply" --npy "$O/handy_vereint"
+JOB_RAM_MB=11000 bash tools/job_start.sh handy2-vereinigen "$L3" $PY -I tools/wolke_vereinigen.py "$D/pipe/dicht/fused.ply" "$O/handy_vereint.ply" --ausrichtung $AUS --quelle handy_fusion="$O/handy_fusion.ply" --npy "$O/handy_vereint"
 t "START wolke_vereinigen"; rc=$(warte "$L3" 7200); t "ENDE wolke_vereinigen rc=$rc"; [ "$rc" = 0 ] || { t "ABBRUCH wolke_vereinigen"; exit 1; }
 t "FERTIG: dichte Wolke $O/handy_vereint.ply (Bruecke/Treppe sichtbar? Bild rendern)"

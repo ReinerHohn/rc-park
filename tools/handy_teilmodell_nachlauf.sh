@@ -10,7 +10,7 @@ t "warte auf FERTIG in nachlauf.log (max 6 h)"
 for i in $(seq 1 720); do grep -q 'FERTIG' "$Z/nachlauf.log" && break; grep -q 'ABBRUCH' "$Z/nachlauf.log" && { t "ABBRUCH: Registrierung fehlgeschlagen"; exit 1; }; sleep 30; done
 grep -q 'FERTIG' "$Z/nachlauf.log" || { t "ABBRUCH: Registrierung nicht rechtzeitig fertig"; exit 1; }
 L=$Z/lg/teilmodell.log; rm -f "$L"
-JOB_RAM_MB=6000 bash tools/job_start.sh handy-teilmodell-nachlauf "$L" taskset -c 0-11 $PY -I tools/handy_teilmodell.py "$Z/lg/db.db" "$Z/lg/bilder" "$Z/lg/vorbereitet.json" "$Z/lg/teilmodell" --threads 12
+JOB_RAM_MB=6000 bash tools/job_start.sh handy-teilmodell-nachlauf "$L" $PY -I tools/handy_teilmodell.py "$Z/lg/db.db" "$Z/lg/bilder" "$Z/lg/vorbereitet.json" "$Z/lg/teilmodell" --threads 12
 t "START Teilmodell-Mapper"
 for i in $(seq 1 480); do grep -q '^JOB_ENDE' "$L" 2>/dev/null && break; sleep 30; done   # max 4 h
 rc=$(grep '^JOB_ENDE' "$L" 2>/dev/null | sed 's/.*rc=//'); rc=${rc:-99}; t "ENDE Teilmodell-Mapper rc=$rc"

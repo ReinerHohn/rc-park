@@ -99,7 +99,14 @@ CMD=$(printf '%q ' "$@")
 # 20.11.2026: Orchestratoren (Gesamtkette, SfM, Mapper, dichte Wolke) sind KEINE Nebenjobs - ohne GPU-Buchung landeten sie auf den 12 langsamen Kernen
 # (Kette martinstor-1120: SfM > 3 h statt 110 min, Abbruch am Zeitlimit; die 16 schnellen Faeden standen leer). Sie bekommen immer alle Kerne.
 case "$*" in *gesamtkette.py*|*pipeline_objekt.py*|*iphone_sfm.py*|*global_mapper*|*"colmap mapper"*|*patch_match_stereo*|*stereo_fusion*|*flexglue*) JOB_CPU=alle;; esac
-if [ "${BUDGET:-0}" -gt 0 ] 2>/dev/null || [ "${JOB_CPU:-}" = "alle" ]; then CPUW=1000; PIN=""; else CPUW=20; PIN="taskset -c ${JOB_CPU_KERNE:-16-27} "; fi
+if [ "${BUDGET:-0}" -gt 0 ] 2>/dev/null || [ "${JOB_CPU:-}" = "alle" ]; then CPUW=1000; PIN=""; else
+  # 27.11.2026 (Nutzer: "Katastrophe"): die Bindung an die 12 langsamen E-Kerne 16-27 galt IMMER, auch bei leerer GPU -> Fusion/Vereinigen liefen nur auf E-Kernen (3,9 GHz).
+  # Jetzt nur, wenn die GPU gerade Rechenprozesse hat (GPU-Zufuehrer behalten die schnellen Kerne, Messung 15.11.); sonst alle 28 Kerne. JOB_CPU_KERNE=<liste> erzwingt eine Bindung, JOB_CPU=alle hebt sie auf.
+  CPUW=20; PIN=""
+  if [ -n "${JOB_CPU_KERNE:-}" ]; then PIN="taskset -c $JOB_CPU_KERNE "
+  elif [ "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | grep -c .)" -gt 0 ]; then PIN="taskset -c 16-27 "; echo "HINWEIS job_start: GPU belegt -> CPU-Job auf E-Kernen 16-27 (JOB_CPU=alle hebt das auf)" >&2
+  else echo "HINWEIS job_start: GPU frei -> CPU-Job ohne Kernbindung (alle 28 Kerne)" >&2; fi
+fi
 systemd-run --user --unit "rcpark-$NAME" --collect -p MemoryHigh="${JOB_MEMORY_HIGH:-11G}" -p CPUWeight="$CPUW" --setenv=RCPARK_JOB="$NAME" --setenv=RCPARK_GPU_MB="${BUDGET:-0}" --setenv=RCPARK_RAM_MB="${JOB_RAM_MB:-2000}" -p WorkingDirectory="$(pwd)" \
   /bin/bash -c "$PIN$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; ( flock 9; sed -i '/^$NAME /d' '$BUCH' 2>/dev/null ) 9>>'$BUCH.lock'; ( flock 8; sed -i '/^$NAME /d' '$RBUCH' 2>/dev/null ) 8>>'$RBUCH.lock'; [ \$rc -ne 0 ] && echo \"\$(date +%FT%T) $NAME rc=\$rc log=$LOG | \$(grep -v JOB_ENDE '$LOG' | tail -2 | tr '\\n' ' ' | cut -c1-300)\" >> /media/oem/scan/rc-park_daten/job_fehler.log; exit \$rc"
 if [ "${RCPARK_OHNE_GPU_WACHE:-0}" != "1" ]; then                    # GPU-Wache (Lehre 14.11.: CPU-Werkzeug lief unbemerkt auf 18 Kernen, GPU 0 %)
