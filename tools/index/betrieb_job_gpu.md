@@ -1,4 +1,4 @@
-# Werkzeuge: betrieb_job_gpu (50)
+# Werkzeuge: betrieb_job_gpu (51)
 - `tools/aufraeumen_2026-11-10.sh` [sh] Aufraeumen Root-Platte 10.11.2026 (vom Koordinator geprueft, Ausfuehren durch den Nutzer: Loeschen nur per Nutzer-Skript). Aufruf im eigenen Terminal:  sudo bash tools/aufraeumen_2
 - `tools/aufraeumen_datenplatte.sh` [sh] aufraeumen_datenplatte.sh - gibt Platz auf /media/oem/scan frei, OHNE Ergebnisse zu loeschen (Stand 2026-11-03, Platte 99 % voll). Loescht NUR regenerierbare Zwischenprodukte der d
 - `tools/backup_rcdaten.sh` [sh] backup_rcdaten.sh ZIEL [--los] [--pruefen] [--spiegeln] [--nur rcdaten|daten|repo]       (18.11.2026, Nutzerauftrag "Backup vorbereiten") Sichert ALLES, was nach dem Umzug nur noch
@@ -48,4 +48,5 @@
 - `tools/platz_schaffen_2026-11-08.sh` [sh] platz_schaffen_2026-11-08.sh - NUR vom Nutzer ausfuehren:  ! bash tools/platz_schaffen_2026-11-08.sh --ja     (ohne --ja: Trockenlauf, loescht nichts) Loescht NUR die regenerierbar
 - `tools/platz_waechter.sh` [sh] platz_waechter.sh - Nutzerauftrag 8.11. ("wenn zu wenig Platz auf der SSD, dann auslagern und nicht deswegen stoppen") und 11.11. 21:0x ("Abbruch ist Kacke. Du musst dafuer sorgen,
 - `tools/prim_fit_gpu.py` [seg] prim_fit_gpu.py - Satteldach (und weitere ebene Primitive) per Gradientenabstieg auf der GPU in die Punktwolke einpassen: alle Parameter zugleich, Millisekunden je Schritt. Modell:
+- `tools/quellfilter_gpu.py` [seg] quellfilter_gpu.py <eingabe.npz> <aus.npz> - GPU-Zaehlung fuer tools/quellfilter.py (Nutzerregel: GPU immer nutzen; Messung 26.11.2026: CPU 286 s fuer 21,5 Mio Punkte x 645 Kameras
 - `tools/wissensbaum_luecken.py` [-] Wissensbaum-Lueckenpruefung: steht jeder Register-/Archiv-/Logbuch-/Memory-Eintrag als Zeile im lebenden Wissensbaum?

@@ -1,4 +1,4 @@
-# Werkzeuge: bauteil_generator (65)
+# Werkzeuge: bauteil_generator (66)
 - `tools/_test_baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baukasten_gen.py` [gen] baukasten_gen.py - GENERISCHER Baukasten-Generator (Plan NULLSTART_GENERALITAET B1): ein Objekt = objekt.json['bauteile'], kein Objektcode.
 - `tools/baum_erzeugen.py` [-] baum_erzeugen.py - Wissensbaum fuer KI-Suche (Nutzer 20.11.2026: "Informationen baumartig, damit der Kontext nicht vollballert"). Erzeugt (nie von Hand pflegen, nach neuen Dateien 
@@ -64,3 +64,4 @@
 - `tools/teil_verformung.py` [col] teil_verformung.py <sparse> <fotos> [--aus teil_verformung.json] [--faeden N] [--max-n N] (22.11.2026, Recherche duenne Bruecken Methode 2)
 - `tools/testdruck_dachziegel.py` [gen] testdruck_dachziegel.py - Testplatte: wie sehen Dachdeckungen im Massstab (Standard H0 1:87) auf dem Bambu P1S (0,4-mm-Duese) aus?
 - `tools/vordach_profil.py` [seg] vordach_profil.py - DACHPROFIL eines Vordachs aus Fotokanten (21.11.2026, Kettenstufe 'bauplan', nach tools/ebenen_masse.py).
+- `tools/wissen_fragen.py` [-] wissen_fragen.py - Alltagsfragen je Wissenszeile (doc2query): schliesst die Vokabelluecke zwischen Fachkurzschrift und Frage.

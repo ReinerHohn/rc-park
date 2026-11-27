@@ -1,4 +1,4 @@
-# Werkzeuge: lage_ausrichtung (55)
+# Werkzeuge: lage_ausrichtung (56)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
@@ -49,6 +49,7 @@
 - `tools/seiten_vereinen.py` [col] seiten_vereinen.py <modell_A> <modell_B> <db.db> --aus <ordner> [--min-paare 60] [--rel 0.02]
 - `tools/stadt_lod2_schneiden.py` [gen] stadt_lod2_schneiden.py - Stadt-Freiburg-LoD2 (Quellentyp 18, STADT_LOD2) auf ein Objekt zuschneiden (Auftrag G4).
 - `tools/teile_lage_pruefen.py` [gen] teile_lage_pruefen.py <objekt> [wolke.npy] - je aktivem Bauteil (NUR_BAUTEIL) Median-Abstand Wolke->Teil und Hoehe/Lage; markiert Teile ohne Wolkenstuetzung und Doppelungen. Sichtf
+- `tools/teilmodell_ausrichten.py` [-] teilmodell_ausrichten.py <hauptmodell-sparse> <teilmodelle-ordner> [--ausrichtung SFM-AUSRICHTUNG.json] [--min_gemeinsam 4]
 - `tools/umzug_auslagerung.sh` [sh] umzug_auslagerung.sh QUELLE ZIEL [--trocken | --nur_umbiegen]   (--nur_umbiegen: nichts kopieren, nur Verknuepfungen QUELLE -> ZIEL umbiegen - Schlussdurchgang nach allen Umzuegen)
 - `tools/video_ausrichten.py` [col] video_ausrichten.py - Drohnen-/Video-SfM (video_sfm.py) per 3D-3D-Punktkorrespondenzen am Nordnetz ausrichten (Aehnlichkeitstransformation, RANSAC) (Register BQ).
 - `tools/wand_feinausrichtung.py` [seg] wand_feinausrichtung.py - Feinausrichtung mehrerer entzerrter Wandbilder (gleiches Wandraster) gegeneinander, NACH Homographie/Kameraprojektion.
