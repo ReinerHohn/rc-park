@@ -139,3 +139,6 @@ Nacht 19./20.11. siehe modelle/LOGBUCH_KETTENTEST_2026-11-19.md (Abschnitt UEBER
 
 ## UEBERGABE 26.11.2026 21:30
 Stand, laufende Jobs (SIFT 677 Handyfotos, ALIKED+LightGlue eingereiht), naechste Schritte und Lehren: `.claude/UEBERGABE.md`. Handyfotos/Bruecke: `Doku/projekt/foto-sfm/grundbegriffe.md`, Spec `modelle/SPEC_SCHWABENTOR_DEMONSTRATOR.md`.
+
+## UEBERGABE 28.11.2026 13:55
+Stand, laufende Agenten (Hybrid-Registrierung 138 Handyfotos, LIMAP-Test, Pod-Aufbau), offene Schritte und Lehren: siehe `.claude/UEBERGABE.md`.
