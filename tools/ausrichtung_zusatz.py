@@ -4,6 +4,8 @@ KOPIE der SFM-Ausrichtung haengen, damit die KANTENSTUFE (tools/kantenstufe.py: 
 
 Anlass 28.11.2026 (schwabentor-1122): 327 Handyfotos vom 26.11. und 72 vom 28.11. waren registriert, gingen aber nur in die dichte Wolke (Lage-Veto) -
 die Kantenstufe las nur 'kameras' der SFM-AUSRICHTUNG (903 Bilder des Hauptnetzes) und Bilder aus dem Sammelordner. Kernmethode = Form aus Fotokanten.
+Verwandt: tools/zusatz_kameras_lot2.py (gleiche Aufgabe fuer den Kaufhaus-Rahmen kam_lot2, andere Rahmenkette), tools/kameras_nachtragen.py (K-<foto>.json fuer
+Foto-Tor/Wandbild/F1), tools/zusatzfotos_registrieren.py (erzeugt sparse_handy/0). Vorlaeufer: keiner - Handykameras gingen nur in die dichte Wolke.
 
 Rahmen: zusatzfotos_registrieren veraendert das Referenznetz nicht -> sparse_handy liegt im SfM-Rahmen der Ausrichtung. Dieselbe Formel wie
 sfm_lod2_ausrichten.py beim Schreiben (X_sfm = s R X_m + t): Rc = R_cw R, tc = (R_cw t + t_cw) / s. RAHMEN-TOR je Ordner (keine Annahme): die
