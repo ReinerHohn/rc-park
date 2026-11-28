@@ -1,4 +1,6 @@
 # RC-Park Freiburg – Arbeitsregeln
+## ⛔ OBERSTE REGEL (Nutzer 28.11.2026, ging bisher unter): GESTALT NUR AUS FOTOKANTEN
+Masse/Konturen/Dach/Kaesten/Baender kommen aus Fotokanten (Sweep, Wandbild). Dichte Wolke/LoD2/DOM1 NUR Lage-Veto, Hoehe, Gegenprobe - NIE als Quelle der Gestalt, auch nicht als Rueckfall. Fotos uneinig -> Ursache klaeren oder Teil nicht bauen. Spec + Pruefungen: `modelle/SPEC_GESTALT_AUS_FOTOKANTEN.md` (pfadabhaengige Regel `.claude/rules/gestalt-aus-fotokanten.md`). Jeder Agentenauftrag nennt diese Regel.
 ## 🔥💥 ZUERST LESEN: `0_DURCHBRUCH_AGENTEN_SCHLEIFE.md` – GIGANTISCHE, BOMBENGEILE HARDCORE-ERFAHRUNG (Nutzer 22.11.2026) 💥🔥
 Skill `kette-schleife`. Kettenlauf -> Nebeneinander-Bild ansehen -> je Befund ein Agent (Vorlage, Worktree, opus, Kettenstufe+Test, nicht rechnen waehrend Kette) -> Merge nur bei Schnelltest 0 -> naechster Lauf. Bild schlaegt Zahl.
 Gesamtprojekt: Miniatur-Wunderland zum Selbersteuern (Konzept/Businessplan) + 3D-Pipeline Fotos -> SfM (COLMAP) -> druckbares H0-Modell (1:87), wird verkauft.
