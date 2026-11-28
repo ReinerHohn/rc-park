@@ -96,3 +96,4 @@
 - 25.11. · Nutzerbeobachtung nie als Eingabe (Dach zweistufig); Agent-Augenmass-% nie ungeprueft melden → ✓ Regel · [ERKENNTNISSE §Nutzerbeobachtung nie als Eingabe]
 - 25.11. · Memory feedback-tauschtest-gegen-zirkulaere-messung: Tauschtest je Messstufe, Ursache erst Gut-gegen-Schlecht-Vergleich (memory/feedback-tauschtest-gegen-zirkulaere-messung) → ✓ Regel
 - 25.11. · Memory feedback-beobachtung-nur-als-abnahme: Nutzerbeobachtung nur als Abnahme nach Erkennung (memory/feedback-beobachtung-nur-als-abnahme) → ✓ Regel
+- 28.11. · Lizenz beim Testen egal (NC, AGPL, ohne Lizenz duerfen getestet werden; Lizenz erst fuers Produkt klaeren, notfalls bei den Autoren anfragen; Register `modelle/LIZENZ_WERKZEUGE.md`) → ✓ Regel · Nutzer 28.11. · [memory/feedback-lizenz-beim-testen-egal]
