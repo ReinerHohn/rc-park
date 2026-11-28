@@ -1,8 +1,9 @@
-# Werkzeuge: lage_ausrichtung (57)
+# Werkzeuge: lage_ausrichtung (58)
 - `tools/auslagern.sh` [sh] auslagern.sh ORDNER... - kalte Daten von /media/oem/scan auf die Toshiba-Platte (NTFS, HDD, langsam) verschieben, Symlink zurueck. Nutzerfreigabe 6.11.: Toshiba "TOSHIBA EXT" darf 
 - `tools/ausrichtung_lot_korrigieren.py` [seg] ausrichtung_lot_korrigieren.py <SFM-AUSRICHTUNG.json> <lot_aus_fotos.json> --drehpunkt x y z [--aus NEU.json] - Rahmen starr so drehen, dass das Foto-Lot = z wird.
 - `tools/ausrichtung_massstab_korrigieren.py` [seg] ausrichtung_massstab_korrigieren.py <SFM-AUSRICHTUNG.json> --faktor k --drehpunkt x y z --quelle "..." [--aus NEU.json] [--punkte a.npy b.npy ...] [--netz n.npz ...]
 - `tools/ausrichtung_uebertragen.py` [col] ausrichtung_uebertragen.py - Ausrichtung eines schon ausgerichteten SfM-Modells auf ein NEUES SfM-Modell uebertragen (gemeinsame Kameras).
+- `tools/ausrichtung_zusatz.py` [col] ausrichtung_zusatz.py - nachregistrierte Zusatzfotos (Handy; tools/zusatzfotos_registrieren.py -> <ordner>/sparse_handy/0) als Kameras in eine KOPIE der SFM-Ausrichtung haengen, da
 - `tools/bewerter_bauwerk_geom.py` [gen] Harter GEOMETRIE-Test für BAUWERKE (Viadukt / Bogen-Staumauer / Gewichtsmauer).
 - `tools/bewerter_geometrie.py` [-] Juror 1 — GEOMETRIE-TREUE. Frage: Bildet das Modell den ECHTEN Ort geometrisch treu ab, oder frisst Glättung/Auflösung die markanten Kanten weg?
 - `tools/dgm_xyz_to_npy.py` [-] dgm_xyz_to_npy.py — LGL-DGM1 XYZ-Subkacheln -> ein north-up Höhenfeld (.npy).

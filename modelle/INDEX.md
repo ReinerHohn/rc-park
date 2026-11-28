@@ -4,7 +4,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 
 ## Regeln, Methode, Vorlagen
 - `modelle/KI_AUFRAEUMEN_2026-11-20.md` (3 kB) KI-konformes Aufraeumen (20.11.2026)
-- `modelle/LIZENZ_WERKZEUGE.md` (37 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (19 Abschnitte)
+- `modelle/LIZENZ_WERKZEUGE.md` (38 kB) Lizenz-Register: Werkzeuge und Daten (für späteren Verkauf der Bausätze) -> Inhalt `modelle/inhalt/LIZENZ_WERKZEUGE.md` (19 Abschnitte)
 - `modelle/METHODE_EBENEN_BAUPLAN.md` (8 kB) Methode: Bauplan je Ebene und Abweichungsschleife (ab 21.11.2026)
 - `modelle/METHODE_MASSTABELLE.md` (13 kB) METHODE: Masstabelle + generischer Pruefstand (das Rueckgrat jeder Modellerzeugung aus Daten)
 - `modelle/METHODE_MESSEN_DANN_BAUEN.md` (26 kB) Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md) -> Inhalt `modelle/inhalt/METHODE_MESSEN_DANN_BAUEN.md` (10 Abschnitte)
@@ -14,7 +14,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/VORLAGE_BAUTEIL_RUNDE.md` (9 kB) Vorlage: Bauteil-Runde (ein Bauteil neu oder richtig bauen)
 
 ## Ziel, Stand, Aufgaben
-- `modelle/ZIEL_PIPELINE_H0.md` (23 kB) ZIEL: Pipeline von null -> H0-druckbares Modell fuer beliebiges Ziel (Nutzer-/goal 18.11.2026) -> Inhalt `modelle/inhalt/ZIEL_PIPELINE_H0.md` (8 Abschnitte)
+- `modelle/ZIEL_PIPELINE_H0.md` (23 kB) ZIEL: Pipeline von null -> H0-druckbares Modell fuer beliebiges Ziel (Nutzer-/goal 18.11.2026) -> Inhalt `modelle/inhalt/ZIEL_PIPELINE_H0.md` (9 Abschnitte)
 
 ## SfM, Mapper, Lage
 - `modelle/GLOBALER_MAPPER_STABIL.md` (35 kB) Globaler Mapper stabil machen - Versuchsprotokoll und Rezept (ab 19.11.2026) -> Inhalt `modelle/inhalt/GLOBALER_MAPPER_STABIL.md` (18 Abschnitte)
@@ -51,6 +51,9 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/ANLEITUNG_FOTOS_NUBIA.md` (7 kB) Anleitung Fotos mit dem nubia (Z2462N, "Focus 2 5G") fuer Photogrammetrie
 - `modelle/AUDIT_STILLE_ERFOLGE_2026-11-23.md` (7 kB) Audit "stille Erfolge" in tools/gesamtkette.py (23.11.2026)
 - `modelle/BELEUCHTUNG.md` (3 kB) Beleuchtung — „geile" Monument-Lichttechnik (Miniatur-Wunderland)
+- `modelle/BERICHT_K1B_2026-11-27.md` (7 kB) Bericht K1b - Feedforward-Kameraposen an Steg/Treppe (MapAnything, VGGT, MASt3R-SfM) - Runpod 27./28.11.2026
+- `modelle/BERICHT_K2_K8_2026-11-27.md` (5 kB) Bericht K2 (Linien-Triangulation) und K8 (S23DR-Dachdrahtgitter) - Runpod 27.11.2026
+- `modelle/BERICHT_K9_2026-11-27.md` (18 kB) Bericht K9: GlueMAP gegen Global-Mapper (GLOMAP in COLMAP) an Steg, Laube und Treppe (Runpod, 27./28.11.2026)
 - `modelle/CPU_LEISTUNG.md` (13 kB) CPU/GPU maximal auslasten - Messung, Werkzeuge, Einrichtung (Stand 2026-11-06)
 - `modelle/ERKENNTNISSE.md` (24 kB) Erkenntnis-Register (destilliert; Ablauf: allgemeiner Skill `erkenntnis` (~/git/claude-mds) + `.claude/erkenntnis.md`; Einzelheiten in den Logbuechern -> Inhalt `modelle/inhalt/ERKENNTNISSE.md` (52 Abschnitte)
 - `modelle/ERKLAERUNG_DRAHTGITTER.md` (3 kB) Wie das Kanten-Drahtgitter entsteht (einfach erklaert, Stand 9.11.2026 abends)
@@ -76,6 +79,7 @@ Werkzeuge: tools/INDEX.md. Archiv (alte Staende/Plaene): modelle/archiv/INDEX.md
 - `modelle/PROTOKOLL_VALIDATOR.md` (18 kB) Protokoll: Einheitlicher vollautomatischer Modell-Validator
 - `modelle/QUELLEN_REGISTER.md` (7 kB) QUELLEN-REGISTER — kanonische Liste ALLER Datenquellen für Bauwerks-/Geländemodelle
 - `modelle/SPEC_SCHWABENTOR_DEMONSTRATOR.md` (4 kB) SPEC: Schwabentor-Demonstrator (Freiburg) inkl. Brücke
+- `modelle/SPEC_VERFAHREN_RUNPOD_2026-11-27.md` (9 kB) SPEC: Neue Verfahren mit Runpod erproben, um druckbare H0-Modelle aus Bildern besser zu erreichen (27.11.2026)
 - `modelle/SPEC_VOLLAUTOMATIK_FOTOS_ZU_3D.md` (7 kB) SPEC: "Ich fotografiere nur" - Vollautomatik Fotos -> druckbares 3D-Modell
 - `modelle/SPEZIALCODE_AUDIT_2026-11-03.md` (3 kB) Spezialcode-Audit (2026-11-03, Nutzerauftrag "Suche nach Spezialcode. Ich will generalisieren.")
 - `modelle/SWEET_SPOTS.md` (3 kB) Sweet Spots — Miniatur-Wunderland-Pitch (Freiburg)

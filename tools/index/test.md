@@ -1,7 +1,8 @@
-# Werkzeuge: test (235)
+# Werkzeuge: test (236)
 - `tools/test_abdeckung_echt.py` [-] Fester Test (~5 s) fuer tools/abdeckung_meldung.py auf ECHTEN Kameras + Spurpunkten (Review 27.11.2026: der alte Test sicherte nur bedingte Logik, Mini-Datensatz ohne Spurpunkte, l
 - `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Hier OHNE Lagedatei
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
+- `tools/test_ausrichtung_zusatz.py` [-] Mini-Test (< 2 s, ohne pycolmap) tools/ausrichtung_zusatz.py + gesamtkette.kanten_mit_zusatz (28.11.2026: registrierte Handyfotos gingen nur in die dichte Wolke, nicht in die Kante
 - `tools/test_bauteil_erkennen.py` [-] Beweis bauteil_erkennen: kuenstliche Fassade mit 4 Segmentbogen-Arkaden (Kreissegment wie baukasten_gen.segmentbogen), 3 cm Rauschen, Luecken, Ausreisser. Kriterium (vorher): u0, u
 - `tools/test_befundliste.py` [seg] test_befundliste.py - synthetische Pruefung von tools/befundliste.py (22.11.2026, Agenten-Schleife automatisch).
 - `tools/test_bestand_tor.py` [-] Test BESTAND-TOR (24.11.2026, Rueckfall Galerie -> Treppenkloetze 1122z-zc; Verwandt: test_foto_tor_bezug.py, test_vorbau_keine_treppe.py; Vorlaeufer: keiner je Zone). Ohne GPU: Me

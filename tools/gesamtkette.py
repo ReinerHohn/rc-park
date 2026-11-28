@@ -382,6 +382,29 @@ def zusatz_ordner(obj, Z=None):
     return gef, fehlt
 
 
+def kanten_mit_zusatz(B, Z, AU, FV, KD, log, obj):
+    """28.11.2026 (schwabentor-1122: 327 + 72 registrierte Handyfotos gingen NUR in die dichte Wolke, die Kantenstufe las nur die 903 Kameras der Ausrichtung):
+    registrierte Zusatzordner (zusatz_ordner: objekt.json 'zusatzfotos' oder messprotokoll/*/einpassung.json) per tools/ausrichtung_zusatz.py (Rahmen-Tor an den
+    gemeinsamen Referenzbildern) in eine KOPIE der Ausrichtung + Bild-Linkordner unter KD/zusatz. -> (ausrichtung, bilder) fuer die Kantenstufe; ohne Zusatz
+    oder bei Fehler die Originale (Meldung). Abschalten: RCPARK_KANTEN_ZUSATZ=0."""
+    zd = os.path.join(KD, "zusatz"); aj = os.path.join(zd, "ausrichtung_mit_zusatz.json"); ab = os.path.join(zd, "bilder"); t0 = time.time()
+    def altstand_weg():                                                  # Linkordner eines frueheren Laufs nicht stehen lassen: ebenen_bauplan/vordach_profil nehmen ihn sonst als Bildordner
+        if os.path.isdir(ab):
+            for f_ in os.listdir(ab):
+                if os.path.islink(os.path.join(ab, f_)): os.unlink(os.path.join(ab, f_))
+            if not os.listdir(ab): os.rmdir(ab)
+    if os.environ.get("RCPARK_KANTEN_ZUSATZ", "1") == "0": altstand_weg(); return AU, FV
+    gef, _ = zusatz_ordner(obj, Z)
+    if not gef: altstand_weg(); notiz(B, "kanten_zusatz", True, uebersprungen="keine registrierten Zusatzordner"); return AU, FV
+    rc, _ = lauf(B, "kanten_zusatz", [PYC, "-I", "tools/ausrichtung_zusatz.py", "--ausrichtung", AU, "--fotos", FV, "--zusatz"] + gef + ["--aus_json", aj, "--aus_bilder", ab], log, ok=(0, 3))
+    if rc != 0 or not frisch(aj, t0):
+        altstand_weg(); notiz(B, "kanten_zusatz_ergebnis", rc == 3, ordner=gef, hinweis=f"rc {rc}: keine Zusatzkamera uebernommen - Kantenstufe mit den Kameras der Ausrichtung (Bericht {aj}.bericht.json)"); return AU, FV
+    ber = json.load(open(aj + ".bericht.json"))
+    notiz(B, "kanten_zusatz_ergebnis", True, neu=ber["neu_gesamt"], kameras=ber["kameras_gesamt"],
+          ordner=[f"{e['ordner']}: rahmen {'ok' if e['rahmen_ok'] else 'ABGELEHNT ' + e.get('grund', '')}, neu {e['neu']}" for e in ber["ordner"]])
+    return aj, ab
+
+
 def abdeckung_zusatz(B, ZR, Z, AU, log, obj):
     """26.11.2026 (Spec Vollautomatik 1b-1d; Handyfotos Schwabentor: Bruecke/Treppe/Unterdurchgang fehlten im Netz und wurden nirgends gemeldet): nach der Registrierung
     von Zusatzfotos tools/abdeckung_meldung.py je Ordner -> audit/abdeckung_meldung.{json,md,png} (mehrere Ordner: audit/abdeckung_<ordner>/). Schritt 'abdeckung_zusatz'
@@ -783,10 +806,12 @@ def main():
         t_b = time.time(); lauf(B, "bauen", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1)); stl_b = os.path.join(ROOT, json.load(open(ZJ)).get("stl") or os.path.join("modelle", "stl", f"{a.ziel}_1-87.stl"))
         if not frisch(stl_b, t_b): notiz(B, "bauen_stl", False, fehler=f"{os.path.relpath(stl_b, ROOT)} wurde vom Bau NICHT neu geschrieben - Kanten, Foto-Tor, Fassadenbilder und 3D-Seite dieses Laufs zeigen das Modell eines frueheren Baus")      # 17.11.2026: nach gescheitertem Bau lasen alle Folgestufen das alte STL als frisch
     KD = os.path.join(D, "kanten"); t_k = None                          # t_k: Start der Kantenstufe in DIESEM Lauf (None = nicht gelaufen -> Kantendateien nur auf Existenz)
+    AU_K, FV_K = AU, FV                                                  # 28.11.2026: Kantenstufe mit registrierten Zusatzfotos (kanten_mit_zusatz)
     if dran("kanten"):
         if os.path.exists(AU):
+            AU_K, FV_K = kanten_mit_zusatz(B, Z, AU, FV, KD, log, json.load(open(ZJ)))
             t_k = time.time()
-            if lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD] + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 4))[0] == 4:      # 22.11.2026 KREISFALL: Suchraum = modellfreier Messkoerper (Standard der Kantenstufe), Wolke nur Lage-Veto      # 17.11.2026: rc 4 (< 6 Kameras sehen das Modell / < 2000 Kantenpunkte) stand als 'in Ordnung' im Bericht -
+            if lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU_K, "--bilder", FV_K, "--aus", KD] + (["--wolke", W] if os.path.exists(W) else []), log, ok=(0, 4))[0] == 4:      # 22.11.2026 KREISFALL: Suchraum = modellfreier Messkoerper (Standard der Kantenstufe), Wolke nur Lage-Veto      # 17.11.2026: rc 4 (< 6 Kameras sehen das Modell / < 2000 Kantenpunkte) stand als 'in Ordnung' im Bericht -
                 notiz(B, "kanten_ergebnis", False, fehler="Kantenstufe OHNE Ergebnis (rc 4: zu wenige Kameras oder Kantenpunkte, kein Kanten-F1) - Kernmethode nicht erfuellt; Kameras/Stabilkarten pruefen (kanten_bericht.json 'fehler')")      # die Kernmethode (Fotokanten) lief leer
         else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
     if t_k is not None:                                                  # 23.11.2026 AUDIT: kantenstufe endet bei fehlendem Suchraum (rc 4) VOR kam/kam_wahl, bei < 6 Kameras VOR dem Sweep -
@@ -1053,7 +1078,7 @@ def main():
     # 18.11.2026: die Kantenstufe bewertet den LoD2-Klotz VOR den Fassaden (Kaufhaus gk2 F1 0,01 - Fotokanten im Fensterband, der Klotz hat dort keine). Zweite Bewertung am
     # FERTIGEN Modell mit demselben Sweep -> kanten_bericht_fertig.json, audit/kanten3d_fertig.png (Kernmethode: misst, ob Fassaden/Bauplan die Fotokanten treffen).
     if (dran("bauplan") or dran("fassaden")) and os.path.exists(os.path.join(KD, "sweep.npz")) and os.path.exists(AU):
-        lauf(B, "kanten_fertig", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD, "--nur_bewerten", "--name", "_fertig"], log, ok=(0, 4))
+        lauf(B, "kanten_fertig", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU_K, "--bilder", FV_K, "--aus", KD, "--nur_bewerten", "--name", "_fertig"], log, ok=(0, 4))
     if dran("seiten") and os.path.exists(AU):                           # 16.11.2026 Nutzer (Schwabentor Ostseite): "Er muss doch wissen, dass dort Bilder fehlen und die sich dann holen, notfalls downloaden. Alles muss in die Pipeline."
         # 18.11.2026: dicht/sparse (ENTZERRT, PINHOLE) ans Ende - Nachregistrieren braucht das Modell der Originalbilder zur Datenbank (Kaufhaus gk2i: Absturz nach 90 min)
         fo = os.path.join(D, "fassade"); sp = next((q_ for q_ in (os.path.join(P, "sparse_ba"), os.path.join(P, "sparse", "0"), os.path.join(P, "sfm", "sparse", "0"), os.path.join(P, "sfm", "sparse_dicht"), os.path.join(P, "sfm", "sparse"), os.path.join(P, "dicht", "sparse")) if os.path.exists(os.path.join(q_, "images.bin"))), None); db = next((q_ for q_ in (os.path.join(P, "db.db"), os.path.join(P, "sfm", "db.db")) if os.path.exists(q_)), os.path.join(P, "db.db"))

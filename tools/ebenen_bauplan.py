@@ -62,7 +62,7 @@ def main():
     KW, SD = os.path.join(a.kanten, "kam_wahl.json"), os.path.join(a.kanten, "stabil")
     if not (os.path.exists(KW) and os.path.isdir(SD)): print("Kantenstufe fehlt (kam_wahl.json / stabil) - erst Stufe 'kanten'"); return 3
     KWAHL = json.load(open(KW)); KJ_ = os.path.join(a.kanten, "kam.json"); KALLE = json.load(open(KJ_)) if a.kam_ergaenzen > 0 and os.path.exists(KJ_) else {}
-    BILDER = a.bilder or os.path.join(os.path.dirname(os.path.abspath(a.kanten)), "fotos")
+    BILDER = a.bilder or next((q_ for q_ in (os.path.join(a.kanten, "zusatz", "bilder"), os.path.join(os.path.dirname(os.path.abspath(a.kanten)), "fotos")) if os.path.isdir(q_)), "")      # 28.11.2026: kanten/zusatz/bilder = Sammelordner + Zusatzfotos (gesamtkette.kanten_mit_zusatz)
     if not os.path.isdir(BILDER): KALLE = {}
     E = []
     for i, F in enumerate(FA):

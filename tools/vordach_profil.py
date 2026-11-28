@@ -297,7 +297,7 @@ def main():
     ap.add_argument("--max_fotos", type=int, default=16); ap.add_argument("--min_fotos", type=int, default=3); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); vj = os.path.join(od, "audit", "vorbauten_auto.json")
     if not os.path.exists(vj): print("keine audit/vorbauten_auto.json"); return 3
-    KA = json.load(open(os.path.join(a.kanten, "kam.json"))); fdir = a.fotos or os.path.join(os.path.dirname(os.path.abspath(a.kanten)), "fotos")
+    KA = json.load(open(os.path.join(a.kanten, "kam.json"))); fdir = a.fotos or next((q_ for q_ in (os.path.join(a.kanten, "zusatz", "bilder"), os.path.join(os.path.dirname(os.path.abspath(a.kanten)), "fotos")) if os.path.isdir(q_)), "")      # 28.11.2026: Zusatzfotos (gesamtkette.kanten_mit_zusatz)
     aus = a.aus or os.path.join(od, "audit", "vordach_profil.json"); E = []
     for F in json.load(open(vj)).get("fassaden", []):
         for gi, g in enumerate(F.get("gruppen", [])):
