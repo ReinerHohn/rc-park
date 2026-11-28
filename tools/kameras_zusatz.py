@@ -8,6 +8,8 @@ Warum nicht kameras_nachtragen.py: das schaetzt eine Umeyama-Abbildung aus Kamer
 (sparse_handy liegt im SfM-Rahmen der Ausrichtung, Rahmen-Tor 0,05 m / 0,5 Grad an den gemeinsamen Referenzbildern). Warum nicht kameras_aus_buendel.py
 auf der erweiterten Ausrichtung: es setzt den Rahmenstempel (RAHMEN.json) aus der Datei - die Kopie mit Zusatzkameras ergaebe einen FREMDEN Rahmen und
 alle 903 Kameras galten als veraltet.
+Verwandt: tools/ausrichtung_zusatz.py (gleiche Zusatzordner + Rahmen-Tor, fuer die Kantenstufe), tools/kameras_aus_buendel.py (gleiche Umrechnung, herkunft 'abgeleitet'),
+tools/kamera_rahmen.py (Rahmenstempel), tools/kameras_nachtragen.py (Umeyama, hier unpassend). Vorlaeufer: keiner - Handyfotos hatten keine K-Dateien.
 
 Ablauf (nichts Objektspezifisches, Namen nur aus den Netzen):
   1. ausrichtung_zusatz.erweitern() auf der ORIGINAL-Ausrichtung (dasselbe Rahmen-Tor, Schwellen NICHT einstellbar - nicht lockern).
