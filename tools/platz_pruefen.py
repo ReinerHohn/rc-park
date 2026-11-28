@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Platzpruefung vor Laeufen: freie GB auf Root- und Datenplatte. Exit 0 = beide ueber Grenze, Exit 3 sonst."""
 import argparse, shutil, sys, os, subprocess
-HART_GB = 5.0   # Notgrenze: darunter wirklich abbrechen (Platte liefe voll)
+HART_GB = 2.0   # Notgrenze: darunter wirklich abbrechen (Platte liefe voll); Nutzer 28.11.2026: von 5 auf 2 GB gesenkt (bremste die Kette: Lauf 1128c rc 3 bei 4,7 GB)
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
