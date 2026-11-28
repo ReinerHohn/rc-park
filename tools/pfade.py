@@ -37,6 +37,13 @@ def repo_pfad(rel, root=None):
     return p
 
 
+def foto_aus_k(kamera):
+    """Bild einer K-Datei-Kamera, das NICHT im fotos_dir liegt: kamera['bild_datei'] (tools/kameras_zusatz.py, 28.11.2026: vorbereitete Handybilder der
+    Zusatzordner - der Sammelordner bleibt unveraendert, seine Namensliste ist der Fotosatz-Hash der SfM-Stufe). -> [pfad] oder [] (Leser: 'glob(...) or foto_aus_k(kk)')."""
+    p = (kamera or {}).get("bild_datei") if isinstance(kamera, dict) else None
+    return [p] if p and os.path.isfile(p) else []
+
+
 TEMP_KANDIDATEN =(os.path.join(GROSS, "tmp"), os.path.join(SCAN, "rc-park_tmp"))   # 22.11.2026: Root (48 GB) lief zweimal voll, u. a. /tmp/test_vordach_* je 23 MB nach jedem Schnelltest
 
 

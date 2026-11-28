@@ -1,4 +1,4 @@
-# Werkzeuge: test (236)
+# Werkzeuge: test (237)
 - `tools/test_abdeckung_echt.py` [-] Fester Test (~5 s) fuer tools/abdeckung_meldung.py auf ECHTEN Kameras + Spurpunkten (Review 27.11.2026: der alte Test sicherte nur bedingte Logik, Mini-Datensatz ohne Spurpunkte, l
 - `tools/test_abdeckung_meldung.py` [-] Fester Test (~2 s) fuer tools/abdeckung_meldung.py - Abdeckungsmeldung nach der Registrierung (Spec Vollautomatik 1b-1d, Abnahmekriterium 2, Nutzer 26.11.2026). Hier OHNE Lagedatei
 - `tools/test_anschluss_stufe.py` [seg] test_anschluss_stufe.py - Vordach-Wandanschluss als Niveauwechsel (vorbauten_bauplan.anschluss_aus_uneinig / stufe_je_spalte / stufenkante), 21.11.2026.
@@ -82,6 +82,7 @@
 - `tools/test_kamera_rahmen.py` [-] test_kamera_rahmen.py - K-Kameras im alten Rahmen (schwabentor-1122, 23.11.2026: 231 nachgetragene/verfeinerte Kameras aus dem Nachholen 1122q blieben nach neuem SfM 1122r liegen, 
 - `tools/test_kamera_verfeinern_stapel.py` [seg] test_kamera_verfeinern_stapel.py - Stapelmodus von tools/kamera_verfeinern.py (--liste) == Folge der Einzelaufrufe (23.11.2026, Kette 1122q: 327 Einzelprozesse = 75 von 165 min der
 - `tools/test_kamerahoehe_dgm.py` [-] Test kamerahoehe_dgm (24.11.2026, Kette 1122z Teil 1 = Ost-Teil: Hang-Kameras am Schlossberg ECHT 20-36 m ueber dem Turmfuss, DGM1 an der GPS-Lage). Kern ohne pycolmap/DGM-Kacheln:
+- `tools/test_kameras_zusatz.py` [-] Mini-Test (< 3 s, ohne pycolmap) tools/kameras_zusatz.py + gesamtkette.k_zusatz + Leser-Rueckfall pfade.foto_aus_k (28.11.2026: Handyfotos in der Kantenstufe, aber ohne K-Datei fue
 - `tools/test_kanten_feld3d.py` [seg] test_kanten_feld3d.py - S10 Teil B Bewertung (1): Synth-Szene mit BEKANNTEN 3D-Kanten (analytisch gerendert: Arkadenwand mit 4 Rundboegen, Gesims-Platte mit wanderndem Schatten, ro
 - `tools/test_kanten_pipelines.py` [seg] test_kanten_pipelines.py - synthetischer Beweis der vier Kantenkarten-Pipelines (S10 Teil A) mit BEKANNTEN Kanten.
 - `tools/test_kantenstufe_kreis.py` [seg] test_kantenstufe_kreis.py - WAECHTER gegen den Kreis in der KERNMETHODE (CPU, ohne Daten, ~1 min; 22.11.2026).

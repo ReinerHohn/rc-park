@@ -210,7 +210,8 @@ def main(argv=None):
         for d in ([a.bilder_dir] if a.bilder_dir else []) + [os.path.join(ROOT, obj["fotos_dir"])]:
             g = sorted(glob.glob(os.path.join(d, nr + ".*")) + glob.glob(os.path.join(d, nr + "_*")))
             if g: return g[0]
-        return None
+        try: return (__import__("pfade").foto_aus_k(json.load(open(os.path.join(os.path.dirname(os.path.abspath(a.objekt)), "messprotokoll", f"K-{nr}.json"))).get("kamera")) or [None])[0]   # 28.11.2026: Zusatzfotos (kameras_zusatz.py)
+        except (OSError, ValueError): return None
     erg = dict(objekt=name, zeit=time.strftime("%Y-%m-%d %H:%M"), stl=os.path.relpath(stl, ROOT), parameter=p, fotos={}); neu_m = {}
     for nr in fotos:
         t0 = time.time(); bp = bildpfad(nr); eb = B["fotos"].get(nr); npz = os.path.join(mdir, nr + ".npz")

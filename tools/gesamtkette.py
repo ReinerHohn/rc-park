@@ -405,6 +405,26 @@ def kanten_mit_zusatz(B, Z, AU, FV, KD, log, obj):
     return aj, ab
 
 
+def k_zusatz(B, Z, ZR, AU, FV, log, obj):
+    """28.11.2026 (schwabentor-1122: Kantenstufe nahm 399 Handyfotos, Foto-Tor/Wandbild/Foto-F1 lesen aber messprotokoll/K-*.json - fuer sie gab es keine):
+    tools/kameras_zusatz.py schreibt K-Dateien der registrierten Zusatzordner (zusatz_ordner) im gueltigen Rahmen (RAHMEN.json, nach fototor_kameras),
+    Rahmen-Tor wie ausrichtung_zusatz.py. Abschalten RCPARK_K_ZUSATZ=0 (oder RCPARK_KANTEN_ZUSATZ=0); dann und bei Fehler Rueckfall auf das Original
+    (eigene Zusatz-K-Dateien beiseite, rote Notiz bei Fehler - kein stilles Weiter)."""
+    weg = [PYC, "-I", "tools/kameras_zusatz.py", ZR, "--weg"]
+    if os.environ.get("RCPARK_K_ZUSATZ", "1") == "0" or os.environ.get("RCPARK_KANTEN_ZUSATZ", "1") == "0":
+        lauf(B, "k_zusatz_weg", weg, log, ok=(3,)); notiz(B, "k_zusatz", True, uebersprungen="abgeschaltet (RCPARK_K_ZUSATZ/RCPARK_KANTEN_ZUSATZ=0) - nur Original-K-Dateien"); return
+    gef, _ = zusatz_ordner(obj, Z)
+    if not gef: lauf(B, "k_zusatz_weg", weg, log, ok=(3,)); notiz(B, "k_zusatz", True, uebersprungen="keine registrierten Zusatzordner"); return
+    rc, _ = lauf(B, "k_zusatz", [PYC, "-I", "tools/kameras_zusatz.py", ZR, "--ausrichtung", AU, "--fotos", FV, "--zusatz"] + gef, log, ok=(0, 3))
+    bj = os.path.join(ROOT, obj.get("audit", os.path.join(os.path.relpath(Z, ROOT), "audit")), "kameras_zusatz.json")
+    ber = json.load(open(bj)) if os.path.isfile(bj) else {}
+    if rc not in (0, 3) or ber.get("rc") != rc:
+        if ber.get("rc") != rc: lauf(B, "k_zusatz_weg", weg, log, ok=(3,))        # Absturz: Bericht fehlt/alt -> eigene K-Dateien sicher beiseite
+        notiz(B, "k_zusatz_ergebnis", False, ordner=gef, fehler=f"rc {rc}: {ber.get('fehler') or 'Absturz'} - Zusatz-K-Dateien NICHT geschrieben, Foto-Tor/Wandbild/F1 nur mit den Original-Kameras ({bj})"); return
+    notiz(B, "k_zusatz_ergebnis", True, geschrieben=ber.get("geschrieben", 0), verworfen=len(ber.get("verworfen") or []), beiseite=ber.get("beiseite", 0), rahmen=ber.get("rahmen"),
+          ordner=[f"{e['ordner']}: rahmen {'ok' if e.get('rahmen_ok') else 'ABGELEHNT ' + str(e.get('grund') or e.get('fehler', ''))}, kandidaten {e.get('neu', 0)}" for e in ber.get("ordner") or []])
+
+
 def abdeckung_zusatz(B, ZR, Z, AU, log, obj):
     """26.11.2026 (Spec Vollautomatik 1b-1d; Handyfotos Schwabentor: Bruecke/Treppe/Unterdurchgang fehlten im Netz und wurden nirgends gemeldet): nach der Registrierung
     von Zusatzfotos tools/abdeckung_meldung.py je Ordner -> audit/abdeckung_meldung.{json,md,png} (mehrere Ordner: audit/abdeckung_<ordner>/). Schritt 'abdeckung_zusatz'
@@ -821,12 +841,13 @@ def main():
         if dran(s_) and not os.path.exists(AU): notiz(B, s_, False, fehler=f"keine Ausrichtung {AU} - Stufe {s_} NICHT gelaufen")
     if dran("fototor") and os.path.exists(AU):
         rc_k = lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU, "--fotos", FV] + (["--sparse", os.path.join(P, "sfm", "sparse", "0")] if os.path.exists(os.path.join(P, "sfm", "sparse", "0", "images.bin")) else []), log)[0]
+        if rc_k == 0: k_zusatz(B, Z, ZR, AU, FV, log, json.load(open(ZJ)))      # 28.11.2026: K-Dateien der Zusatzfotos (Handy), VOR kamera_plausibel / Foto-Tor / Wandbild / F1
         lauf(B, "kamera_plausibel", [PY, "-I", "tools/kamera_plausibel.py", Z, "--beiseite", "--tief=3"], log, ok=(0, 3))      # 16.11.2026: Kameras "am Mond" (Abstand/Zoom nicht trennbar) beiseitelegen, bevor ein Werkzeug sie benutzt
         kw = os.path.join(KD, "kam_wahl.json"); wahl = list(json.load(open(kw))) if os.path.exists(kw) else []
         wahl = [f for f in wahl if os.path.exists(os.path.join(Z, "messprotokoll", "K-" + os.path.splitext(f)[0] + ".json"))][:6]      # erst filtern, dann die besten 6 (vorher [:6] zuerst: waren die ersten 6 beiseitegelegt, blieb das Foto-Tor leer)      # 17.11.2026: beiseitegelegte (unplausible) Kameras standen noch in der Fotowahl der Kantenstufe -> 3 Stufen "keine Kamera" am Martinstor
         if rc_k != 0: notiz(B, "fototor", False, fehler=f"Kameras nicht geschrieben (fototor_kameras rc {rc_k}) - Foto-Tor NICHT gelaufen; K-Dateien eines frueheren Laufs sind fuer diese Ausrichtung nicht belegt"); wahl = []
         elif not wahl: notiz(B, "fototor", False, fehler=f"KEIN Foto geprueft ({kw} fehlt/leer oder alle gewaehlten Kameras beiseitegelegt) - das Foto-Tor ist damit NICHT bestanden (17.11.2026: lief mit 0 Fotos still durch)")
-        for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0], "--bild", os.path.join(FV, f)], log)
+        for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0]] + (["--bild", os.path.join(FV, f)] if os.path.exists(os.path.join(FV, f)) else []), log)   # 28.11.2026: Zusatzfoto (nicht im Sammelordner) -> foto_diff findet es ueber K bild_datei
         # 17.11.2026: foto_diff-Zahlen allein trennen gut/schlecht nicht (Messreihe im Kopf von foto_diff.py) -> URTEIL nur im Paarvergleich gegen den Bezugsstand je Foto
         # (tools/foto_tor_bezug.py, Nachweis tools/test_foto_tor_bezug.py). rc 3 = belegte Verschlechterung (rot, Bezug bleibt; rc 1 = Absturz), 2 = nicht beurteilbar (kein Bezug -> wird angelegt), 0 = gleich/besser (Bezug fortgeschrieben)
         wahl_t = [f for f in (list(json.load(open(kw))) if os.path.exists(kw) else []) if os.path.exists(os.path.join(Z, "messprotokoll", "K-" + os.path.splitext(f)[0] + ".json"))][:15] if wahl else []   # Urteil = Mittel ueber Fotos: mit 6 Fotos 83 %, mit ~10 sitzenden 92 % der deutlichen Faelle (Nachweis) -> bis 15 Fotos, ~10 s je Foto

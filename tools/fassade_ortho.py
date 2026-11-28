@@ -516,7 +516,7 @@ def main(argv=None):
         return idx.astype(np.int32), px[idx], mpp[idx], (cosw[idx] / mpp[idx]).astype(np.float32)
 
     def ein_foto(nr):
-        K = json.load(open(FF.k_datei(a.objekt, obj, ROOT, nr))); kk = K["kamera"]; fd_ = __import__("pfade").repo_pfad(obj["fotos_dir"], ROOT); pf = glob.glob(os.path.join(fd_, nr + ".*")) or glob.glob(os.path.join(fd_, nr + "_*"))   # 22.11.2026: repo_pfad = im Worktree-Schnelltest fehlende Fotos lesend aus dem Hauptordner   # 15.11.2026: Fotos heissen bei neuen Objekten <nr>.jpg (ohne das fand der Lauf 0 Fotos, 8 min umsonst)
+        K = json.load(open(FF.k_datei(a.objekt, obj, ROOT, nr))); kk = K["kamera"]; fd_ = __import__("pfade").repo_pfad(obj["fotos_dir"], ROOT); pf = glob.glob(os.path.join(fd_, nr + ".*")) or glob.glob(os.path.join(fd_, nr + "_*")) or __import__("pfade").foto_aus_k(kk)   # 28.11.2026: Zusatzfotos (kameras_zusatz.py: bild_datei, nicht im fotos_dir)   # 22.11.2026: repo_pfad = im Worktree-Schnelltest fehlende Fotos lesend aus dem Hauptordner   # 15.11.2026: Fotos heissen bei neuen Objekten <nr>.jpg (ohne das fand der Lauf 0 Fotos, 8 min umsonst)
         if not pf: return nr, None
         if "cx" in kk and "rvec" in kk:                                   # 16.11.2026 (Aufgabenliste 1a, Messung: nicht die Strahlen, das LADEN aller Fotos kostet): erst grob pruefen, ob das Foto irgendeine Fassade sieht
             R0 = cv2.Rodrigues(np.asarray(kk["rvec"], float))[0]; t0 = np.asarray(kk["t"], float); C0_ = -R0.T @ t0; sieht = False

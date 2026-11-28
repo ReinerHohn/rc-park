@@ -234,7 +234,7 @@ def main(argv=None):
             kp = FF.k_datei(objp, obj, R0, nr)
             if not kp: return
             K = json.load(open(kp)); kk = K["kamera"]
-            bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + ".*")) or glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*"))   # 22.11.2026: Kettenfotos heissen <nr>.jpg (ohne _-Zusatz) - vorher still "0 Teile beurteilt"; genauer Name zuerst (wie flaeche_ortho), sonst traf <nr>_2.jpg
+            bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + ".*")) or glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*")) or __import__("pfade").foto_aus_k(kk)   # 28.11.2026: Zusatzfotos (kameras_zusatz.py)   # 22.11.2026: Kettenfotos heissen <nr>.jpg (ohne _-Zusatz) - vorher still "0 Teile beurteilt"; genauer Name zuerst (wie flaeche_ortho), sonst traf <nr>_2.jpg
             if not bild: erg["fotos"][nr] = "kein Foto in fotos_dir"; return
             im0, K = FD.foto_skalieren(cv2.imread(bild[0]), K); kk = K["kamera"]; H, W = im0.shape[:2]; im0_voll = im0   # RCPARK_FOTO_SKALA (Standard 1 = unveraendert)
             voll = os.path.join(tmp, f"voll_{W}x{H}.png"); cv2.imwrite(voll, np.full((H, W), 255, np.uint8)) if not os.path.exists(voll) else None
