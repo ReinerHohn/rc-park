@@ -1,53 +1,47 @@
-# Übergabe 28.11.2026 13:55 (löst die von 26.11. ab)
-Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbeginn`. Anrede „mein grosser Meister", Deutsch, keine breiten Tabellen. Nutzer will bei JEDER Neuigkeit eine Meldung.
+# Übergabe 28.11.2026 15:50 (löst die von 13:55 ab)
+Weiter mit: „weiter" (oder /uebergabe fortsetzen). Vorher Skill `sitzungsbeginn`. Anrede „mein grosser Meister", Deutsch, keine breiten Tabellen. Nutzer schläft ab ~15:45 und will beim Aufwachen Ergebnisse + Bilder sehen („ich will einfach Ergebnisse sehen, wo wir gerade sind"). Autonom weiterarbeiten (Nutzer 28.11.: „Arbeite ab jetzt autonom weiter").
 
 ## Auftrag
-- Ziel: Schwabentor-Turm (Brücke später) als druckbares H0-Modell 1:87. Nutzer 28.11.: „Der Turm muss gut sein. Den Rest können wir nacharbeiten." „Ziehe alle Register, Pod ist auch erlaubt … nichts ist verboten." „Lizenz ist scheißegal, erstmal durchtesten."
-- Nutzer ist vor Ort gewesen und hat Fotos gemacht (siehe unten); will wissen, wann Modell/Wolke besser werden. Ihn ärgert Warten ohne Zahlen: nie Zeiten ohne Messung versprechen, ANNAHME kennzeichnen.
+- Ziel: Schwabentor-TURM (Brücke später) aus Fotos in der KOMPLETTEN Kette zu einem sehr guten Modell (druckbar 1:87). Nutzer 28.11.: „uns erstmal auf den Turm konzentrieren". „geh alles an, geh Adaptionen an … Du darfst alles überlegen, entscheiden." Lizenz beim Testen egal. Pods erlaubt (Kostenrahmen Pod-Agent bis ca. 10 $ zusätzlich, Reserve 5 $).
+- Nie Zeiten ohne Messung versprechen (ANNAHME kennzeichnen). Bei jeder Meldung Zahlen + wenn vorhanden Bild.
 
-## Erledigt und geprüft
-- Kette 1128d (Ende ~12:15, rc 4, 96 Stufen, 5 rot: bauplan_oeffnungen_aussen, bauplan_wolkenkoerper, abdeckung_zusatz, freiraum_tor_ergebnis, tauschtest_ergebnis). Handvergleich 9 von 11 PASST, Bestand-Tor „kein Rückschritt", 0 Tracebacks, 0 OOM, bestand_tor 14,6 min. Bilder angesehen: Dach/Uhr/Rundbögen/Georgs-Vordach besser als Bestand 24.11.; Ost/West flach, Tür Kasten, Brücke fehlt, Konsolen unter Vordach dünner (kleiner Rückschritt). Modell nur gesichtet, nicht in main.
-- Probelauf `ketten-probe-par1` (merge-1128, RCPARK_STUFEN_PARALLEL=1): rc 0, Szenario cache 165 Stufen 29,3 min, marke 60 Stufen 12,9 min, 0 Ablauffehler. Bitgleichheit gegen Lauf ohne Schalter NICHT geprüft.
-- 138 Handyfotos von heute (IMG_20261128_083156..122834, 136 mit GPS) als Originale in `/media/oem/rcdaten/tmp/handy_1128_original/` (Größenvergleich mit Handy ok). Ältere Kopien `handy_alle_original/` (~270) und `handy_schwabentor_original/` (228) liegen herum, NICHT gelöscht (nur nach „Ja").
-- STL 1128d (`/media/oem/scan/rc-park_tmp/kette_integ/modelle/stl/schwabentor-1122_1-87.stl`): Hauptkörper wasserdicht 163×189×612 mm; ZWEI lose Teile (14 Dreiecke Volumen 0; 12 Dreiecke 7×7×13 mm) = Bauschritt-Fehler, Ursache offen; Höhe 53,2 m gegen DOM1-Max 49,6 m/Traufe 38,3 m offen.
-- SIFT-Registrierung der 138: 66/138, Reproj 1,42 px (median 1,24); GPS-Abweichung median 10,2 m, max 42,7 m (schwache Gegenprobe, Handy-GPS in der Stadt).
-- Recherche LIMAP/LiP-Map (Agent, nur gelesen): LIMAP bei uns schon 3× gelaufen (25.11. Gesims f01: K_L 0,0–1,4 m gegen Sweep 7,5 m); Stand im Zweig `agent-limap` (41 Commits vor main, ungemergt); AGPL in pytlsd; K2-Bericht nennt fälschlich „verkaufstauglich" (Zeile korrigieren); LiP-Map ohne Lizenz, nur Innenräume belegt. Beschluss Nutzer: Lizenz beim Testen egal (Memory `feedback-lizenz-beim-testen-egal.md` gespeichert).
-- Kühlung: i7-14700HX (OMEN 16), Turbo an, platform_profile performance, RAPL 75/75/200 W; 92 °C bei 55,6 W vorher, nach Erhöhen + Zusatzlüfter 79–83 °C bei 60–64 W (nur Hinweis, nicht kontrolliert).
-- Git: main 2 Commits VOR origin (Notgrenze 2 GB `32c93d544`, Doku `3986ec0e4`), ~3455 uncommittete Dateien im Arbeitsbaum (Altlast modelle/…, nicht von mir; nie `git add -A`).
+## Erledigt (28.11. Nachmittag)
+- Befund: registrierte Handyfotos (327 vom 26.11. + 72 vom 28.11.) gingen NUR in die dichte Wolke, nie in Kantenstufe/Foto-Tor/Wandbild/F1. Fix gemergt + gepusht (main 0ba2ae47e): `tools/ausrichtung_zusatz.py` (903 → 1302 Kameras, Rahmen-Tor), `tools/kameras_zusatz.py` (Kettenschritt `k_zusatz`, 393 K-Dateien geschrieben, 6 verworfen: 11–19 m unter Gelände, alle 26.11.), `gesamtkette.kanten_mit_zusatz`. Schnelltest 0 Fehler (332 s). `modelle/schwabentor-1122/objekt.json` (UNVERSIONIERT, nur im Hauptordner) hat jetzt `zusatzfotos` = beide `lg`-Ordner (Sicherung: Scratchpad `objekt_schwabentor_vor_zusatz.json`).
+- Messung Kameraauswahl der Kantenstufe (max 80, Rang Sichtanteil/√Abstand, je 30°-Sektor): gewählt 23 vom 26.11., 0 vom 28.11. (57 von 72 zugelassen, Median-Abstand 44,7 m gegen 28,7 m der gewählten, bestes Foto Platz 9 bei 6–7 Plätzen je Sektor). OFFEN: Variante mit Kontingent für Zusatzfotos messen.
+- Erkenntnis „Nutzungsbilanz": Branch `erkenntnis-nutzung` (Worktree `.claude/worktrees/erkenntnis-nutzung`, 3 Commits bis d7b1aa626, NICHT in main): `tools/foto_nutzung_bilanz.py` + Kettenschritt `foto_nutzung` (nach Kantenstufe, rc 3 wenn registrierte Zusatzfotos die Kantenstufe nicht erreichen) + `tools/test_foto_nutzung_bilanz.py` (Gegenprobe rot ohne Kettenschritt) + Register-Eintrag `modelle/ERKENNTNISSE.md` + Baumzeile + Memory `feedback-erfolgsmass-nutzung-statt-einordnung`. Volle Schnelltest-Prüfung dieses Zweigs steht AUS (RAM wegen laufender Kette), danach Merge nach main (git -C /home/oem/git/rc-park merge erkenntnis-nutzung; bei Überschneidung mit erzeugten Dateien modelle/INDEX.md, modelle/inhalt/*.md: Kopie sichern, `git checkout --` der 3 Dateien, Merge, `python3 tools/baum_erzeugen.py`, vergleichen — so beim letzten Merge gemacht).
+- Laufzeitmessung 1128a–d (164 min): nur ~2 % GPU, Rest CPU einfädig; Top: bauen_abnehmen.sh 28,9 min in 12 Bauten, bestand_tor 14,6, fassaden_kette 11,7, konvergenz 11,5, wolke_vereinigen 9,7, ebenen_bauplan 8,5, oeffnungen_wandbild 7,6. Einfaden-Test (20 Mio Schleifen): lokal P-Kern 0,67–0,85 s, 5090-Pod (Ryzen 9 9950X) 1,00 s, 4090-Pod (EPYC 7352) 3,11 s ⇒ GPU-Pods bringen für die Kette fast nichts; „5090 2× schneller" (frühere Meldung) beruhte auf UNVOLLSTÄNDIGEN Pod-Läufen (~36 von 96 Stufen; OpenMVS + HF-Modelle fehlten) und ist vorläufig/nicht belegt.
+- LIMAP-Test (Agent a0d533bbe3d553620, beendet, Zweig `worktree-agent-a0d533bbe3d553620`, nichts in main): Gesims f01 mit GlueStick K_L 7,0 m gegen Sweep 7,5 m (eine lange Linie, Wiederholbarkeit NICHT geprüft); senkrechte Eckquader: Sweep klar besser. Empfehlung: nicht einbauen, nach Turmlauf weitermessen. Der Agent startet nichts neu, bis ich das Ende des Turmlaufs melde (SendMessage an a0d533bbe3d553620).
+- Kühlung/CPU: E-Kern-Bindung (taskset 16–27) der LIMAP-Tests aufgehoben (Regel 27.11. keine dauerhafte E-Kern-Bindung); Platzwächter ist noch auf 16–27 gebunden (leicht).
 
 ## Läuft gerade
-- Hybrid-Registrierung (Agent a0f7e37a418f7bce9, Dienst `rcpark-hybrid1128`): Zielordner `/media/oem/rcdaten/rc-park_daten_neu/zusatz_20261128_hybrid/`, `zeiten.txt`/`lauf.log`; lg_paare fertig (1260 s), seit 13:54 Stufe `einlesen`, danach registrieren_hybrid. Prüfen: `cat …/zeiten.txt; tail -n3 …/lauf.log`; Ergebnis `registrierung.json` + `gps_gegenprobe.json`. Auftrag erweitert: danach die 144 alten, nicht eingeordneten Handyfotos (26.11., v.a. Brücke/Treppe) gegen die neuen erneut versuchen, getrennt melden.
-- LIMAP-Test (Agent a0d533bbe3d553620, Worktree agent-a0d533bbe3d553620, Dienst `rcpark-limapt1`): Gesims f01 mit allen Optionen, senkrechte Kanten, ggf. LiP-Map; Abbruchregeln im Auftrag. Bericht abwarten.
-- Pod (Agent aeb8e9aa07b304032): Upload auf Volume ghhv7k1089 (`rc_kette/`, 6 TAR; fehlt nur zusatz.tar 2,1 GB; Dienst `rcpark-upload2-kette-pod`, Log `/media/oem/rcdaten/tmp/runpod_test/kette_pod/upload2.log`, Ende `UPLOAD2_ENDE`). CPU-Dummy-Pod `deuf2ebaki3v1b` (0,32 $/h, läuft seit 13:45, cpu3g 8 vCPU, 20 GB Platte; nach Dummy löschen + per list-pods prüfen!). Danach GPU-Pod RTX 4090 (0,89 $/h, Preis vorher nennen, Guthaben 43,55 $, ≥5 $ halten). Vorrang: 1 Kette grund+par, 2 LIMAP/LiP-Map (erst nach lokalem Bericht), 3 ALIKED/LG volle Auflösung, 4 dichte Wolke nur wenn Zeit.
+- TURM-KETTENLAUF `rcpark-kette-schwabentor-main-1128e` (Start 15:11, `gesamtkette.py schwab_auto --ziel schwabentor-1122 --ab kanten --dicht-stufe schnell`, aus main-Checkout /home/oem/git/rc-park, Buchung 7 GB RAM/6 GB GPU), Log `/media/oem/scan/rc-park_daten/job_logs/kette-schwabentor-main-1128e.log`. Stand 15:38: Stufe fassaden_kette (seit 15:20), 0 Tracebacks. Warter (Hintergrund, endet bei JOB_ENDE/Traceback/45 min Stillstand). Kantenstufe hatte 1302 Kameras, F1 0,239 (Präzision 0,151, Recall 0,567) – kanten_fertig des früheren Laufs: F1 0,243; erst `kanten_bericht_fertig.json` NACH diesem Lauf ist vergleichbar. In main wird während der Kette NICHTS an tools/ geändert (nur Worktrees).
+- Agent a04009bb382a4adf2 (Worktree, Phase 1 nur Code): Abhängigkeitsgraph der Kettenstufen, Doppelbauten (12 Bauten), `stufen_parallel.py` erweitern, Tests; Phase 2 (Messlauf per `tools/ketten_probelauf.sh`, Bitgleichheit) erst auf meine Meldung, wenn Maschine frei.
+- Pod-Agent aeb8e9aa07b304032: 5090-Pod `8ow3sznnllhmwa` (1,39 $/h, EU-RO-1, Volume ghhv7k1089); 4090-Pods gelöscht; Paket extra3.tar (OpenMVS, HF-Modelle) hochgeladen → vollständiger 5090-Lauf ab tore mit Stufenzahl-Prüfung (Vollständigkeit gegen 96 lokale Stufen); CPU-Pod-Probe cpu5c (~1,1 $/h, 3 min) autorisiert; Handoff-Konzept CPU-Pod → Volume → GPU-Pod nur Konzept+Messung. Bitgleichheit grund gegen par auf Pod nacheinander. Guthaben zuletzt 40,36 $, ≥ 5 $ Reserve.
 - Dauerdienste (nicht melden): editordraht, platz_waechter, *-gpuwache.
 
-## Nächste Schritte
-1. Agenten-Meldungen lesen (Registrierung, LIMAP-Test, Pod) und dem Nutzer SOFORT berichten, mit Zahlen (eingeordnet x/138, davon Gruppen Treppe/Steg/Giebel; alte 144 zusätzlich; GPS-Gegenprobe gegen die schon registrierten Fotos als Vergleich).
-2. Nach Registrierung: neue Kette `tools/gesamtkette.py` mit den neuen Kameras (nur EINE Kette; Probelauf/Merge-Sperre vorher): `bash tools/merge_sperre.sh` = 0, `bash tools/schnelltest.sh` = 0 (RAM ≥ 8 GB), dann merge-1128 → main (nie --force), `git fetch` + merge + push, `python3 tools/baum_erzeugen.py`; danach Bild-Vergleich `audit/neben_*.jpg` gegen `modelle/schwabentor-1122/bestand/`.
-3. Turm-STL: lose Teile ursächlich im Bauschritt entfernen (generisch), Höhe 53,2 m aus Fotokanten gegenprüfen (Laser kann falsch sein), Druck-Check (Mindestmaß 0,8 mm, ein Körper); Druck nur auf Nutzerwunsch.
-4. Bitgleichheit Parallelschalter prüfen (Lauf mit/ohne `RCPARK_STUFEN_PARALLEL=1`), erst dann Standard AN.
-5. `agent-limap` nach main bringen (Konflikte), K2-Lizenzzeile korrigieren, Viewer mit 1128d-Modell neu bauen (`.claude/viewer_v2/schwabentor_3d_v2b.html` ist von 09:20, ALT).
-6. Offen: Nordwand frontal + Durchfahrt innen noch nicht fotografiert (Nutzer evtl. vor Ort); Nordwand = Uhr-/Georg-Wand (Modell +x, Azimut 344°), nicht „ohne Uhr".
+## Nächste Schritte (Nacht, in dieser Reihenfolge)
+1. Nach Ende von 1128e (Warter meldet): Bestand-Vergleich ZUERST: `modelle/schwabentor-1122/audit/neben_*.jpg` + `seiten.jpg` neben `modelle/schwabentor-1122/bestand/` (Bestbild `seiten__2026-11-24_0750.jpg`, `neben_details__…`), BEIDE per SendUserFile, dann Zahlen (kanten_bericht_fertig F1, Foto-Tor, bestand_tor, `audit/foto_nutzung.json` falls Schritt schon in main; Tracebacks, OOM `journalctl -k | grep -ci oom`). Rückschritt ⇒ NICHT mergen, Ursache-Agent.
+2. Danach `bash tools/schnelltest.sh` im Worktree `erkenntnis-nutzung` (6 min, Maschine frei), bei 0 Fehlern mergen + pushen (siehe oben).
+3. LIMAP-Agent und Parallelisierungs-Agent: Phase 2 freigeben, wenn kein Kettenlauf läuft.
+4. Kameraauswahl-Variante messen (Kontingent für Zusatzfotos/Nahaufnahmen, `kantenstufe.waehlen`), Ergebnis am Bild vergleichen; STL: lose Teile (14 + 12 Dreiecke) im Bauschritt entfernen, Höhe 53,2 m vs DOM1-Max 49,6 m aus Fotokanten gegenprüfen.
+5. Fotos fehlen: Nordwand frontal + Durchfahrt innen (Nutzer evtl. vor Ort); Treppe 0/21 und Stegdach 5/14 nicht eingeordnet (Teilmodell `tools/handy_teilmodell.py`), Brücke erst nach Turm (Stufe-B-Job `rcpark-hybrid1128` auf Nutzerwunsch beendet; Ergebnis A in `/media/oem/rcdaten/rc-park_daten_neu/zusatz_20261128_hybrid/`).
 
 ## Entscheidungen des Nutzers
-- ✓ Turm zuerst, Rest später. ✓ Pod nutzen, alles erlaubt. ✓ Lizenz beim Testen egal. ✓ Hybrid (ALIKED+LightGlue) für Registrierung. ✓ nur Fotos von heute (Handy-Kopie).
-- ? Soll LIMAP-Test für senkrechte Kanten + Zweig agent-limap-Merge Priorität bekommen (Agent testet gerade)? ? Löschen der Kopien `handy_alle_original/`, `handy_schwabentor_original/` (nur nach „Ja").
+- ✓ Turm zuerst. ✓ Pods erlaubt, CPU-/GPU-Aufteilung prüfen, ich darf entscheiden. ✓ Lizenz egal beim Testen. ✓ LIMAP-Tests beenden für den Turm-Kettenlauf. ✓ 5090-Probe/Upload ok.
+- ? Löschen der Kopien `/media/oem/rcdaten/tmp/handy_alle_original/`, `handy_schwabentor_original/` nur nach „Ja".
 
 ## Fehler und Lehren dieser Sitzung
-- Ich habe mehrfach Zeiten und Richtungen ohne Messung genannt (Probelauf „~1 h", Himmelsrichtung Uhrwand Ost statt Nord, Upload „12 Kerne"/„0 Bytes" wegen falschem Pfad, „ALIKED/LightGlue nicht benutzt" obwohl lg-Lauf es nutzte): vor Aussagen nachmessen.
-- `pkill -f` mit Muster aus der eigenen Befehlszeile hat meine Shell beendet (Regel bekannt): stattdessen `pgrep` + `kill <pid>`.
-- Voller `schnelltest.sh` lief gleichzeitig mit der Registrierung (Last 31); Urheber nicht ermittelt; Agenten sollen ihn nicht fahren.
-- `foto_check.sh` braucht `modelle/<obj>/audit/fotoauftrag.json` (für schwabentor-1122 fehlt sie; gab sinnlose „nan m"): nicht als Urteil nutzen, ggf. ersetzen.
-- Runpod-S3: Kleindateien extrem langsam, 524-Timeouts, Umlaute brechen setzen der Änderungszeit → TAR-Pakete + `--size-only --no-update-modtime`. Wissensbaum-Eintrag noch offen (Doku/projekt/betrieb/rechner-jobs.md, local Commit vorhanden).
+- Ich habe „5090 ~2× schneller" und „Pod-Lauf läuft" gemeldet, bevor die Stufenzahl geprüft war (Pod-Läufe waren unvollständig). Immer Stufenzahl/Vollständigkeit melden.
+- `kette_integ` (/media/oem/scan/rc-park_tmp/kette_integ) hat ~1048 uncommittete Dateien (u. a. 22 tools-Dateien, +1334 Zeilen gegen seinen HEAD) und ist auf 26352da88 detached; NICHT angefasst; Turm-Kette läuft stattdessen aus dem main-Checkout (modelle/schwabentor-1122 dort ist ein Symlink auf main).
+- Unversionierte Dateien (objekt.json, schwabentor-1122_gen.py) fehlen in Worktrees/Pods – hat Pod-Agent 2× aufgehalten.
+- Schnelltest-Fehler „Werkzeugkopf ohne Verwandt/Vorlaeufer" bei JEDEM neuen Werkzeug: Kopfzeile `Verwandt:`/`Vorlaeufer:` von Anfang an setzen (`python3 -I tools/werkzeug_aehnlich.py --wie tools/<x>.py`, `--kopf-pruefen`).
 
 ## Wichtige Pfade und Befehle
-- Chain-Worktree `/media/oem/scan/rc-park_tmp/kette_integ`, Merge-Zweig `merge-1128` (`/media/oem/scan/rc-park_tmp/merge_1128`), Logs `/media/oem/scan/rc-park_daten/job_logs/`.
-- Pod-Daten: `/media/oem/rcdaten/tmp/runpod_test/kette_pod/` (upload2.sh, pod_kette.sh). rclone: `. ~/.runpod/rclone_env.sh; ~/.local/bin/rclone size rp:ghhv7k1089/rc_kette`.
-- Handy per MTP: `/run/user/$(id -u)/gvfs/mtp:host=Unisoc_Unisoc_Phone_324452041248/Interner gemeinsamer Speicher/DCIM/Camera` (heute abgezogen).
-- Verfahrens-Grafik: Scratchpad `verfahren_kette.html` (27.11.), Stand-Bild `verfahren_stand.png`.
+- Kette starten (Beispiel, gebucht): `JOB_RAM_MB=7000 JOB_GPU_MB=6000 bash tools/job_start.sh kette-schwabentor-main-1128f <log> env PYTHONUNBUFFERED=1 RCPARK_BESTAND_EINZELN=1 /media/oem/scan/venv-seg/bin/python -I tools/gesamtkette.py schwab_auto --ziel schwabentor-1122 --ab kanten --dicht-stufe schnell` (aus /home/oem/git/rc-park). Laufzeitbericht: `python3 -I tools/laufzeit_bericht.py <log>`.
+- Pod-Daten: `/media/oem/rcdaten/tmp/runpod_test/kette_pod/`. rclone: `. ~/.runpod/rclone_env.sh; ~/.local/bin/rclone size rp:ghhv7k1089/rc_kette`.
+- Messskripte (Scratchpad): `sicht_zusatz.py` (Kamera-Rang), `lz_*.json` (Laufzeiten).
 
 ## Vorsicht
-- Nur EIN Kettenlauf, keine zweiten Rechenjobs auf gleicher Zwischendatei; GPU-VRAM-Summe ≤ 7000 MiB (Registrierung + LIMAP teilen die lokale GPU).
-- Nichts löschen ohne „Ja"; Worktrees nie `--force`; Referenznetz/DB nie verändern; Root-Platte nur ~8,6 GB frei, alles Große nach /media/oem/rcdaten.
+- Nur EIN lokaler Kettenlauf; keine Rechenjobs der Agenten während der Kette. Kein wiederkehrender Cron/Loop für Job-Checks (nur Warter mit Ende+Timeout).
+- Nichts löschen ohne „Ja"; Worktrees nie `--force`; Root-Platte ~8 GB frei, Daten-Platte /media/oem/scan ~20 GB frei (Grenze 15 GB, Notgrenze 2 GB).
 - Pods: Preis vor Anlegen nennen, nach Lauf löschen und per `list-pods` prüfen; Zugangsdaten nur in `~/.runpod/`.
-- Kühlung: Nutzer hat Laptop erhöht + Zusatzlüfter; PL1/PL2 nicht ohne Okay ändern.
